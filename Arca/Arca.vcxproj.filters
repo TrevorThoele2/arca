@@ -1,0 +1,309 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Exception.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TypeRegistration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RelicFactoryBase.cpp">
+      <Filter>Source Files\Relic\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="RelicBatchException.cpp">
+      <Filter>Source Files\Relic\Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="RelicBatchSource.cpp">
+      <Filter>Source Files\Relic\Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="Curator.cpp">
+      <Filter>Source Files\Curator</Filter>
+    </ClCompile>
+    <ClCompile Include="CuratorDependencyNotFound.cpp">
+      <Filter>Source Files\Curator</Filter>
+    </ClCompile>
+    <ClCompile Include="CuratorProvider.cpp">
+      <Filter>Source Files\Curator</Filter>
+    </ClCompile>
+    <ClCompile Include="Reliquary.cpp">
+      <Filter>Source Files\Reliquary</Filter>
+    </ClCompile>
+    <ClCompile Include="ReliquaryException.cpp">
+      <Filter>Source Files\Reliquary</Filter>
+    </ClCompile>
+    <ClCompile Include="SignalBatchException.cpp">
+      <Filter>Source Files\Signal\Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="SignalBatchSource.cpp">
+      <Filter>Source Files\Signal\Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="ExtendedRelic.cpp">
+      <Filter>Source Files\Relic</Filter>
+    </ClCompile>
+    <ClCompile Include="RelicTypeDescription.cpp">
+      <Filter>Source Files\Relic\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="RelicTypeDescriptionGroup.cpp">
+      <Filter>Source Files\Relic\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="RelicTypeGraph.cpp">
+      <Filter>Source Files\Relic\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="RelicTypeGraphNode.cpp">
+      <Filter>Source Files\Relic\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="RelicTypeNameSerializer.cpp">
+      <Filter>Source Files\Relic\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="OwnedRelic.cpp">
+      <Filter>Source Files\Relic</Filter>
+    </ClCompile>
+    <ClCompile Include="CuratorHandle.cpp">
+      <Filter>Source Files\Curator</Filter>
+    </ClCompile>
+    <ClCompile Include="CuratorTypeDescription.cpp">
+      <Filter>Source Files\Curator\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="ExtendedRelicSerializer.cpp">
+      <Filter>Source Files\Relic</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Exception.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IDManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IDManagerIterator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IntervalList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Serialization.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticAssert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeRegistration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeValidation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Curator.h">
+      <Filter>Header Files\Curator</Filter>
+    </ClInclude>
+    <ClInclude Include="CuratorDependencyNotFound.h">
+      <Filter>Header Files\Curator</Filter>
+    </ClInclude>
+    <ClInclude Include="CuratorLayout.h">
+      <Filter>Header Files\Curator</Filter>
+    </ClInclude>
+    <ClInclude Include="CuratorProvider.h">
+      <Filter>Header Files\Curator</Filter>
+    </ClInclude>
+    <ClInclude Include="CuratorScribe.h">
+      <Filter>Header Files\Curator</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicID.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicMap.h">
+      <Filter>Header Files\Relic\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicMapIterator.h">
+      <Filter>Header Files\Relic\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicFactoryBase.h">
+      <Filter>Header Files\Relic\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicFactoryTraits.h">
+      <Filter>Header Files\Relic\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicBatch.h">
+      <Filter>Header Files\Relic\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicBatchException.h">
+      <Filter>Header Files\Relic\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicBatchSource.h">
+      <Filter>Header Files\Relic\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicBatchSourceDefinition.h">
+      <Filter>Header Files\Relic\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcessedCuratorTraits.h">
+      <Filter>Header Files\Curator\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="CuratorTraits.h">
+      <Filter>Header Files\Curator\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="Reliquary.h">
+      <Filter>Header Files\Reliquary</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquaryException.h">
+      <Filter>Header Files\Reliquary</Filter>
+    </ClInclude>
+    <ClInclude Include="SignalBatch.h">
+      <Filter>Header Files\Signal\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="SignalBatchException.h">
+      <Filter>Header Files\Signal\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="SignalBatchSource.h">
+      <Filter>Header Files\Signal\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="SignalBatchSourceDefinition.h">
+      <Filter>Header Files\Signal\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="CuratorDependencyList.h">
+      <Filter>Header Files\Curator</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicCreated.h">
+      <Filter>Header Files\Signal\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="BeforeRelicDestroyed.h">
+      <Filter>Header Files\Signal\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="ExtendedRelic.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicTypeDescription.h">
+      <Filter>Header Files\Relic\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicTypeDescriptionGroup.h">
+      <Filter>Header Files\Relic\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicTypeGraph.h">
+      <Filter>Header Files\Relic\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicTypeGraphIterator.h">
+      <Filter>Header Files\Relic\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicTypeGraphNode.h">
+      <Filter>Header Files\Relic\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicTypeList.h">
+      <Filter>Header Files\Relic\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicTypeNameSerializer.h">
+      <Filter>Header Files\Relic\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcessedRelicTraits.h">
+      <Filter>Header Files\Relic\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicTraits.h">
+      <Filter>Header Files\Relic\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicScribe.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicExtension.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="Relic.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicRelicFactory.h">
+      <Filter>Header Files\Relic\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="OwnedRelicFactory.h">
+      <Filter>Header Files\Relic\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="OwnedRelic.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="CuratorHandle.h">
+      <Filter>Header Files\Curator</Filter>
+    </ClInclude>
+    <ClInclude Include="CuratorTypeDescription.h">
+      <Filter>Header Files\Curator\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeHandle.h">
+      <Filter>Header Files\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="ExtendedRelicSerializer.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{38a71136-fe4c-4c1e-8370-e297d953dfe2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{f9382c22-8267-4e1a-bc77-7f7482547983}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Signal">
+      <UniqueIdentifier>{30ff5c2d-4d02-41dc-9f5b-fba84c33964d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Signal">
+      <UniqueIdentifier>{b7a2aa65-2c14-448b-ac2d-132ea6da6267}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Curator">
+      <UniqueIdentifier>{36834c0c-c900-4819-8422-4c3541f667f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Curator\Traits">
+      <UniqueIdentifier>{924ad080-84c8-4984-84e7-b65aab945b9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Relic">
+      <UniqueIdentifier>{12448d81-7f9e-44ad-b44e-72566d9f0a0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Relic\Batch">
+      <UniqueIdentifier>{bcfd2ad5-69d6-4875-9249-17e48d5a7ac6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Relic\Factory">
+      <UniqueIdentifier>{e4c408b5-1d97-4662-8491-1fc826f5be7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Relic\Map">
+      <UniqueIdentifier>{1b4b1fbd-1b42-4058-bc8b-bd793cfff3b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Relic">
+      <UniqueIdentifier>{38c74878-8ca6-4c08-97fd-8d3c30950bad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Relic\Batch">
+      <UniqueIdentifier>{e260ea4d-cc81-4ade-844b-be478463fc84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Relic\Factory">
+      <UniqueIdentifier>{97a7681b-7d3e-4b2f-adb1-82d6c5c2fb3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Curator">
+      <UniqueIdentifier>{8543afc7-ab74-4468-a3d6-8c9df732b5e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Reliquary">
+      <UniqueIdentifier>{5f06d77e-0a08-424c-94a1-b8a469507637}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Reliquary">
+      <UniqueIdentifier>{2967c371-6dff-49cb-9bae-294e1b175214}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Signal\Batch">
+      <UniqueIdentifier>{d7034a81-7396-4ed9-81f7-1acbd6d3c6f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Signal\Batch">
+      <UniqueIdentifier>{9568fc45-0ac8-481b-881e-adf17f4b5dce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Signal\Common">
+      <UniqueIdentifier>{7dde23e0-1c87-454c-a219-2c243f6fe070}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Relic\Type">
+      <UniqueIdentifier>{0a3d7655-28cd-4cf3-a85d-f657369806db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Relic\Traits">
+      <UniqueIdentifier>{532a2870-c780-46f8-a354-639f39dfdf13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Relic\Type">
+      <UniqueIdentifier>{f47e6e40-11e2-4ec1-bbe3-42422bc3a45c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Type">
+      <UniqueIdentifier>{9803a3ae-e196-4124-a6c5-664a16c4cc9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Curator\Type">
+      <UniqueIdentifier>{62b9571f-cc00-4197-9bcc-65dd8e3135bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Curator\Type">
+      <UniqueIdentifier>{0a400a7f-fa2f-4e22-9f5d-a229e977697c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
