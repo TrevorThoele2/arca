@@ -5,11 +5,11 @@
 
 #include "ReliquaryException.h"
 
-#include "ExtendedRelic.h"
-#include "ExtendedRelicSerializer.h"
 #include "BasicRelicFactory.h"
 #include "RelicBatch.h"
 #include "RelicBatchSource.h"
+#include "AbstractRelicBatch.h"
+#include "AbstractRelicBatchSource.h"
 #include "ProcessedRelicTraits.h"
 
 #include "SignalBatch.h"
@@ -17,7 +17,6 @@
 #include "RelicCreated.h"
 #include "BeforeRelicDestroyed.h"
 
-#include "RelicTraits.h"
 #include "RelicTypeGraph.h"
 
 #include "Curator.h"
@@ -25,8 +24,6 @@
 #include "CuratorLayout.h"
 #include "CuratorHandle.h"
 #include "ProcessedCuratorTraits.h"
-
-#include "IDManager.h"
 
 #include "Serialization.h"
 
@@ -47,33 +44,26 @@ namespace Arca
         void Initialize(const std::function<void(Reliquary&)>& afterCuratorsCreated = [](Reliquary&) {});
         void Work();
     public:
-        template<class RelicT, class... Args, std::enable_if_t<!ProcessedRelicTraits<RelicT>::isStatic, int> = 0>
-        RelicT& CreateRelic(Args&& ... args);
-        template<class RelicT, class... Args, std::enable_if_t<!ProcessedRelicTraits<RelicT>::isStatic, int> = 0>
-        RelicT* CreateRelicWithID(RelicID id, Args&& ... args);
+        template<
+            class RelicT,
+            class... Args,
+            std::enable_if_t<!ProcessedRelicTraits<RelicT>::isStatic && !std::is_abstract_v<RelicT>, int> = 0
+        > Ref<RelicT> CreateRelic(Args&& ... args);
 
-        template<class RelicT>
-        [[nodiscard]] RelicT* FindRelic(RelicID id);
         template<class RelicT, std::enable_if_t<ProcessedRelicTraits<RelicT>::isStatic, int> = 0>
-        [[nodiscard]] RelicT* StaticRelic();
+        [[nodiscard]] Ref<RelicT> StaticRelic();
 
         template<class RelicT, std::enable_if_t<!ProcessedRelicTraits<RelicT>::isStatic, int> = 0>
-        void DestroyRelic(RelicT& relic);
+        void DestroyRelic(Ref<RelicT>& destroy);
 
         [[nodiscard]] SizeT RelicCount() const;
 
-        template<class RelicT>
-        [[nodiscard]] std::optional<RelicExtension> ExtensionFor(RelicT& relic) const;
-        template<class RelicT>
-        [[nodiscard]] std::optional<RelicTypeDescription> TypeDescriptionFor(RelicT& relic) const;
-        template<class RelicT>
-        [[nodiscard]] std::optional<RelicID> IDFor(RelicT& relic) const;
+        template<class RelicT, std::enable_if_t<!std::is_abstract_v<RelicT>, int> = 0>
+        [[nodiscard]] RelicBatch<RelicT> StartRelicBatch();
+        template<class RelicT, std::enable_if_t<std::is_abstract_v<RelicT>, int> = 0>
+        [[nodiscard]] AbstractRelicBatch<RelicT> StartRelicBatch();
 
-        [[nodiscard]] RelicTypeDescriptionGroup DescriptionGroupForRelic(const TypeHandle& typeHandle) const;
         [[nodiscard]] RelicTypeGraph RelicTypeGraph() const;
-
-        template<class RelicT>
-        RelicBatch<RelicT> StartRelicBatch();
 
         template<class RelicT, std::enable_if_t<!ProcessedRelicTraits<RelicT>::isStatic, int> = 0>
         void RegisterRelicType();
@@ -104,30 +94,26 @@ namespace Arca
     private:
         bool isInitialized = false;
     private:
-        using RelicPtr = std::unique_ptr<AnyExtendedRelic>;
-        using RelicList = IDManager<RelicID, RelicPtr>;
-        RelicList relics;
-
-        using RelicToExtensionMap = std::unordered_map<void*, RelicExtension>;
-        RelicToExtensionMap relicToExtensionMap;
+        const RelicID staticRelicID = 1;
 
         using StaticRelicInitializer = void(*)(Reliquary&);
         using StaticRelicInitializerList = std::vector<StaticRelicInitializer>;
         StaticRelicInitializerList staticRelicInitializerList;
 
-        using StaticRelicMap = std::unordered_map<std::type_index, AnyExtendedRelic*>;
-        StaticRelicMap staticRelicMap;
-
         Arca::RelicTypeGraph relicTypeGraph;
 
         template<class RelicT, class... Args>
-        ExtendedRelic<RelicT>* CreateRelicCommon(const std::optional<RelicID>& id, Args&& ... args);
-        AnyExtendedRelic* AddRelic(RelicPtr&& relic);
+        Ref<RelicT> CreateRelicCommon(Args&& ... args);
 
         template<class RelicT>
-        void NotifyCreation(RelicT& relic);
+        void NotifyAddedAbstractRelicBatchSources(Ref<RelicT>& relic);
         template<class RelicT>
-        void NotifyDestruction(RelicT& relic);
+        void NotifyDestroyedAbstractRelicBatchSources(Ref<RelicT>& relic);
+
+        template<class RelicT>
+        void SignalCreation(const Ref<RelicT>& relic);
+        template<class RelicT>
+        void SignalDestruction(const Ref<RelicT>& relic);
 
         template<class RelicT, class... Args, std::enable_if_t<ProcessedRelicTraits<RelicT>::isStatic, int> = 0>
         void CreateStaticRelicInitializer(Args&& ... args);
@@ -143,11 +129,28 @@ namespace Arca
         template<class RelicT>
         static RelicTypeDescription TypeDescriptionForRelic();
     private:
-        using ExtendedRelicSerializerMap = std::unordered_map<TypeHandle, ExtendedRelicSerializer>;
-        ExtendedRelicSerializerMap extendedRelicSerializerMap;
+        using RelicBatchSourcePtr = std::unique_ptr<RelicBatchSourceBase>;
+        using RelicBatchSourceList = std::unordered_map<TypeHandle, RelicBatchSourcePtr>;
+        RelicBatchSourceList relicBatchSources;
 
-        template<class RelicT>
-        void CreateExtendedRelicSerializer();
+        using AbstractRelicBatchSourcePtr = std::unique_ptr<AbstractRelicBatchSourceBase>;
+        using AbstractRelicBatchSourceList = std::unordered_map<TypeHandle, AbstractRelicBatchSourcePtr>;
+        AbstractRelicBatchSourceList abstractRelicBatchSources;
+
+        // Will return an already created source if it exists
+        template<class T, std::enable_if_t<!std::is_abstract_v<T>, int> = 0>
+        RelicBatchSource<T>* CreateRelicBatchSource();
+        // Will return an already created source if it exists
+        template<class T, std::enable_if_t<std::is_abstract_v<T>, int> = 0>
+        AbstractRelicBatchSource<T>* CreateRelicBatchSource();
+
+        RelicBatchSourceBase* FindRelicBatchSource(const TypeHandle& typeHandle);
+        AbstractRelicBatchSourceBase* FindAbstractRelicBatchSource(const TypeHandle& typeHandle);
+
+        template<class T, std::enable_if_t<!std::is_abstract_v<T>, int> = 0>
+        RelicBatchSource<T>* FindRelicBatchSource();
+        template<class T, std::enable_if_t<std::is_abstract_v<T>, int> = 0>
+        AbstractRelicBatchSource<T>* FindRelicBatchSource();
     private:
         using RelicFactoryPtr = std::unique_ptr<RelicFactoryBase>;
         using RelicFactoryList = std::unordered_map<TypeHandle, RelicFactoryPtr>;
@@ -185,22 +188,6 @@ namespace Arca
         template<class Curator>
         static TypeHandle TypeHandleForCurator();
     private:
-        using RelicBatchSourcePtr = std::unique_ptr<RelicBatchSourceBase>;
-        using RelicBatchSourceList = std::unordered_map<TypeHandle, RelicBatchSourcePtr>;
-
-        RelicBatchSourceList relicBatchSources;
-
-        // Will return an already created source if it exists
-        template<class T>
-        RelicBatchSource<T>* CreateRelicBatchSource();
-        RelicBatchSourceBase* FindRelicBatchSource(const TypeHandle& typeHandle);
-        template<class T>
-        RelicBatchSource<T>* FindRelicBatchSource();
-        template<class T>
-        void DestroyRelicBatchSource();
-        void NotifyRelicBatchSourcesCreation(AnyExtendedRelic& relic);
-        void NotifyRelicBatchSourcesDestruction(AnyExtendedRelic& relic);
-    private:
         using SignalBatchSourcePtr = std::unique_ptr<SignalBatchSourceBase>;
         using SignalBatchSourceList = std::unordered_map<std::type_index, SignalBatchSourcePtr>;
 
@@ -231,114 +218,71 @@ namespace Arca
         INSCRIPTION_ACCESS;
     };
 
-    template<class RelicT, class... Args, std::enable_if_t<!ProcessedRelicTraits<RelicT>::isStatic, int>>
-    RelicT& Reliquary::CreateRelic(Args&& ... args)
+    template<
+        class RelicT,
+        class... Args,
+        std::enable_if_t<!ProcessedRelicTraits<RelicT>::isStatic && !std::is_abstract_v<RelicT>, int>
+    > Ref<RelicT> Reliquary::CreateRelic(Args&& ... args)
     {
         if (!isInitialized)
             throw NotInitialized();
 
-        auto created = CreateRelicCommon<RelicT>(std::optional<RelicID>(), std::forward<Args>(args)...);
-        NotifyRelicBatchSourcesCreation(*created);
-        NotifyCreation(created->relic);
-        return created->relic;
-    }
-
-    template<class RelicT, class... Args, std::enable_if_t<!ProcessedRelicTraits<RelicT>::isStatic, int>>
-    RelicT* Reliquary::CreateRelicWithID(RelicID id, Args&& ... args)
-    {
-        if (!isInitialized)
-            throw NotInitialized();
-
-        auto created = CreateRelicCommon<RelicT>(id, std::forward<Args>(args)...);
-        NotifyRelicBatchSourcesCreation(*created);
-        NotifyCreation(created->relic);
-        return &created->relic;
-    }
-
-    template<class RelicT>
-    RelicT* Reliquary::FindRelic(RelicID id)
-    {
-        for (auto& loop : relics)
-        {
-            if (loop->id != id)
-                continue;
-
-            auto casted = static_cast<ExtendedRelic<RelicT>*>(loop.get());
-            return &casted->relic;
-        }
-
-        return nullptr;
+        auto created = CreateRelicCommon<RelicT>(std::forward<Args>(args)...);
+        SignalCreation(created);
+        return created;
     }
 
     template<class RelicT, std::enable_if_t<ProcessedRelicTraits<RelicT>::isStatic, int>>
-    RelicT* Reliquary::StaticRelic()
+    Ref<RelicT> Reliquary::StaticRelic()
     {
         if (!isInitialized)
             throw NotInitialized();
 
-        auto found = staticRelicMap.find(typeid(RelicT));
-        if (found == staticRelicMap.end())
-            return nullptr;
+        auto batchSource = FindRelicBatchSource<RelicT>();
+        if (!batchSource)
+            throw NotRegistered();
 
-        auto casted = static_cast<ExtendedRelic<RelicT>*>(found->second);
-        return &casted->relic;
+        return batchSource->Find(staticRelicID);
     }
 
     template<class RelicT, std::enable_if_t<!ProcessedRelicTraits<RelicT>::isStatic, int>>
-    void Reliquary::DestroyRelic(RelicT& relic)
+    void Reliquary::DestroyRelic(Ref<RelicT>& destroy)
     {
-        for (auto loop = relics.begin(); loop != relics.end(); ++loop)
-        {
-            if ((*loop)->RelicMemory() != &relic)
-                continue;
+        if (!isInitialized)
+            throw NotInitialized();
 
-            auto casted = static_cast<ExtendedRelic<RelicT>*>(loop->get());
-            NotifyRelicBatchSourcesDestruction(**loop);
-            NotifyDestruction(casted->relic);
-            relicToExtensionMap.erase(casted->RelicMemory());
-            relics.Remove(casted->id);
-            return;
-        }
-    }
-
-    template<class RelicT>
-    std::optional<RelicExtension> Reliquary::ExtensionFor(RelicT& relic) const
-    {
-        auto found = relicToExtensionMap.find(&relic);
-        if (found == relicToExtensionMap.end())
-            return {};
-
-        return found->second;
-    }
-
-    template<class RelicT>
-    std::optional<RelicTypeDescription> Reliquary::TypeDescriptionFor(RelicT& relic) const
-    {
-        auto extension = ExtensionFor(relic);
-        if (!extension)
-            return {};
-
-        return extension->typeDescription;
-    }
-
-    template<class RelicT>
-    std::optional<RelicID> Reliquary::IDFor(RelicT& relic) const
-    {
-        auto extension = ExtensionFor(relic);
-        if (!extension)
-            return {};
-
-        return extension->id;
-    }
-
-    template<class T>
-    RelicBatch<T> Reliquary::StartRelicBatch()
-    {
-        if (!IsRelicRegistered<T>())
+        auto batchSource = FindRelicBatchSource<RelicT>();
+        if (!batchSource)
             throw NotRegistered();
 
-        auto source = CreateRelicBatchSource<T>();
-        return RelicBatch<T>(*source);
+        batchSource->Destroy(destroy);
+        NotifyDestroyedAbstractRelicBatchSources(destroy);
+    }
+
+    template<class RelicT, std::enable_if_t<!std::is_abstract_v<RelicT>, int>>
+    RelicBatch<RelicT> Reliquary::StartRelicBatch()
+    {
+        if (!isInitialized)
+            throw NotInitialized();
+
+        auto batchSource = FindRelicBatchSource<RelicT>();
+        if (!batchSource)
+            throw NotRegistered();
+
+        return RelicBatch<RelicT>(*batchSource);
+    }
+
+    template<class RelicT, std::enable_if_t<std::is_abstract_v<RelicT>, int>>
+    AbstractRelicBatch<RelicT> Reliquary::StartRelicBatch()
+    {
+        if (!isInitialized)
+            throw NotInitialized();
+
+        auto batchSource = FindRelicBatchSource<RelicT>();
+        if (!batchSource)
+            throw NotRegistered();
+
+        return AbstractRelicBatch<RelicT>(*batchSource);
     }
 
     template<class CuratorT>
@@ -445,32 +389,57 @@ namespace Arca
     }
 
     template<class RelicT, class... Args>
-    ExtendedRelic<RelicT>* Reliquary::CreateRelicCommon(const std::optional<RelicID>& id, Args&& ... args)
+    Ref<RelicT> Reliquary::CreateRelicCommon(Args&& ... args)
     {
         auto factory = FindRelicFactory<RelicT>();
-        if (!factory)
+        auto batchSource = FindRelicBatchSource<RelicT>();
+        if (!factory || !batchSource)
             throw NotRegistered();
 
-        auto useId = (id) ?
-            *id :
-            relics.NextAutomaticID();
         auto created = factory->CreateRelic(std::forward<Args>(args)...);
         if (!created)
-            return nullptr;
+            return {};
 
-        auto added = AddRelic(std::make_unique<ExtendedRelic<RelicT>>(*created, useId, *this));
-        return static_cast<ExtendedRelic<RelicT>*>(added);
+        auto added = batchSource->Add(std::move(*created));
+        NotifyAddedAbstractRelicBatchSources(added);
+        return added;
     }
 
     template<class RelicT>
-    void Reliquary::NotifyCreation(RelicT& relic)
+    void Reliquary::NotifyAddedAbstractRelicBatchSources(Ref<RelicT>& relic)
+    {
+        auto bases = relicTypeGraph.AllBasesFor(TypeHandleForRelic<RelicT>());
+        for (auto& loop : bases)
+        {
+            auto found = FindAbstractRelicBatchSource(loop.typeHandle);
+            if (!found)
+                continue;
+            found->NotifyAdded(&*relic);
+        }
+    }
+
+    template<class RelicT>
+    void Reliquary::NotifyDestroyedAbstractRelicBatchSources(Ref<RelicT>& relic)
+    {
+        auto bases = relicTypeGraph.AllBasesFor(TypeHandleForRelic<RelicT>());
+        for (auto& loop : bases)
+        {
+            auto found = FindAbstractRelicBatchSource(loop.typeHandle);
+            if (!found)
+                continue;
+            found->NotifyDestroyed(&*relic);
+        }
+    }
+
+    template<class RelicT>
+    void Reliquary::SignalCreation(const Ref<RelicT>& relic)
     {
         RelicCreated<RelicT> signal{ relic };
         RaiseSignal(signal);
     }
 
     template<class RelicT>
-    void Reliquary::NotifyDestruction(RelicT& relic)
+    void Reliquary::SignalDestruction(const Ref<RelicT>& relic)
     {
         BeforeRelicDestroyed<RelicT> signal{ relic };
         RaiseSignal(signal);
@@ -481,8 +450,7 @@ namespace Arca
     {
         staticRelicInitializerList.push_back([](Reliquary& reliquary)
         {
-            auto created = reliquary.CreateRelicCommon<RelicT>(std::optional<RelicID>(), std::forward<Args>(args)...);
-            reliquary.staticRelicMap.emplace(typeid(RelicT), created);
+            reliquary.CreateRelicCommon<RelicT>(std::forward<Args>(args)...);
         });
     }
 
@@ -496,8 +464,8 @@ namespace Arca
             throw AlreadyRegistered();
 
         relicTypeGraph.AddDescription(TypeDescriptionForRelic<RelicT>());
+        CreateRelicBatchSource<RelicT>();
         CreateRelicFactory<RelicT>();
-        CreateExtendedRelicSerializer<RelicT>();
     }
 
     template<class RelicT>
@@ -516,16 +484,6 @@ namespace Arca
     RelicTypeDescription Reliquary::TypeDescriptionForRelic()
     {
         return ProcessedRelicTraits<RelicT>::TypeDescription();
-    }
-
-    template<class RelicT>
-    void Reliquary::CreateExtendedRelicSerializer()
-    {
-        extendedRelicSerializerMap.emplace
-        (
-            RelicTraits<RelicT>::typeHandle,
-            ExtendedRelicSerializer(::Chroma::Type<RelicT>{})
-        );
     }
 
     template<class RelicT>
@@ -590,7 +548,7 @@ namespace Arca
         return CuratorTraits<Curator>::typeHandle;
     }
 
-    template<class T>
+    template<class T, std::enable_if_t<!std::is_abstract_v<T>, int>>
     RelicBatchSource<T>* Reliquary::CreateRelicBatchSource()
     {
         auto found = FindRelicBatchSource<T>();
@@ -599,12 +557,26 @@ namespace Arca
 
         auto typeHandle = TypeHandleForRelic<T>();
 
-        auto created = new RelicBatchSource<T>(*this);
-        relicBatchSources.emplace(typeHandle, RelicBatchSourcePtr(created));
-        return created;
+        auto created = std::make_unique<RelicBatchSource<T>>();
+        auto emplaced = relicBatchSources.emplace(typeHandle, std::move(created)).first->second.get();
+        return static_cast<RelicBatchSource<T>*>(emplaced);
     }
 
-    template<class T>
+    template<class T, std::enable_if_t<std::is_abstract_v<T>, int>>
+    AbstractRelicBatchSource<T>* Reliquary::CreateRelicBatchSource()
+    {
+        auto found = FindRelicBatchSource<T>();
+        if (found)
+            return found;
+
+        auto typeHandle = TypeHandleForRelic<T>();
+
+        auto created = std::make_unique<AbstractRelicBatchSource<T>>();
+        auto emplaced = abstractRelicBatchSources.emplace(typeHandle, std::move(created)).first->second.get();
+        return static_cast<AbstractRelicBatchSource<T>*>(emplaced);
+    }
+
+    template<class T, std::enable_if_t<!std::is_abstract_v<T>, int>>
     RelicBatchSource<T>* Reliquary::FindRelicBatchSource()
     {
         auto found = relicBatchSources.find(TypeHandleForRelic<T>());
@@ -614,10 +586,14 @@ namespace Arca
         return static_cast<RelicBatchSource<T>*>(found->second.get());
     }
 
-    template<class T>
-    void Reliquary::DestroyRelicBatchSource()
+    template<class T, std::enable_if_t<std::is_abstract_v<T>, int>>
+    AbstractRelicBatchSource<T>* Reliquary::FindRelicBatchSource()
     {
-        relicBatchSources.erase(TypeHandleForRelic<T>());
+        auto found = abstractRelicBatchSources.find(TypeHandleForRelic<T>());
+        if (found == abstractRelicBatchSources.end())
+            return nullptr;
+
+        return static_cast<AbstractRelicBatchSource<T>*>(found->second.get());
     }
 
     template<class SignalT>
@@ -704,5 +680,4 @@ namespace Inscription
     }
 }
 
-#include "RelicBatchSourceDefinition.h"
 #include "SignalBatchSourceDefinition.h"

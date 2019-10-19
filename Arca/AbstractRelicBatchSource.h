@@ -9,23 +9,25 @@
 
 namespace Arca
 {
-    class RelicBatchSourceBase
+    class AbstractRelicBatchSourceBase
     {
     public:
         using SizeT = size_t;
     public:
-        virtual ~RelicBatchSourceBase() = 0;
+        virtual ~AbstractRelicBatchSourceBase() = 0;
 
         [[nodiscard]] virtual SizeT Size() const = 0;
     protected:
+        virtual void NotifyAdded(void* relic) = 0;
+        virtual void NotifyDestroyed(void* relic) = 0;
         friend class Reliquary;
     };
 
     template<class T>
-    class RelicBatchSource : public RelicBatchSourceBase
+    class AbstractRelicBatchSource : public AbstractRelicBatchSourceBase
     {
     public:
-        using RelicT = T;
+        using RelicT = std::add_pointer_t<T>;
         using Reference = Ref<T>;
     private:
         using List = IDManager<RelicID, RelicT>;
@@ -33,14 +35,7 @@ namespace Arca
         using iterator = typename List::iterator;
         using const_iterator = typename List::const_iterator;
     public:
-        RelicBatchSource() = default;
-
-        Reference Add(const RelicT& add);
-        Reference Add(RelicT&& add);
-
-        void Destroy(Reference destroy);
-        void Destroy(iterator destroy);
-        void Destroy(const_iterator destroy);
+        AbstractRelicBatchSource() = default;
 
         Reference Find(RelicID id);
 
@@ -51,6 +46,9 @@ namespace Arca
         [[nodiscard]] const_iterator begin() const;
         [[nodiscard]] iterator end();
         [[nodiscard]] const_iterator end() const;
+    protected:
+        void NotifyAdded(void* relic) override;
+        void NotifyDestroyed(void* relic) override;
     private:
         List list;
     private:
@@ -61,42 +59,7 @@ namespace Arca
     };
 
     template<class T>
-    auto RelicBatchSource<T>::Add(const RelicT& add) -> Reference
-    {
-        auto added = list.Add(add);
-        return Reference(added.ID(), *this);
-    }
-
-    template<class T>
-    auto RelicBatchSource<T>::Add(RelicT&& add) -> Reference
-    {
-        auto added = list.Add(std::move(add));
-        return Reference(added.ID(), *this);
-    }
-
-    template<class T>
-    void RelicBatchSource<T>::Destroy(Reference destroy)
-    {
-        if (destroy.batchSource != this)
-            return;
-
-        list.Remove(destroy.id);
-    }
-
-    template<class T>
-    void RelicBatchSource<T>::Destroy(iterator destroy)
-    {
-        list.Remove(destroy);
-    }
-
-    template<class T>
-    void RelicBatchSource<T>::Destroy(const_iterator destroy)
-    {
-        list.Destroy(destroy);
-    }
-
-    template<class T>
-    auto RelicBatchSource<T>::Find(RelicID id) -> Reference
+    auto AbstractRelicBatchSource<T>::Find(RelicID id) -> Reference
     {
         auto found = list.Find(id);
         if (found == list.end())
@@ -106,38 +69,56 @@ namespace Arca
     }
 
     template<class T>
-    auto RelicBatchSource<T>::Size() const -> SizeT
+    auto AbstractRelicBatchSource<T>::Size() const -> SizeT
     {
         return list.Size();
     }
 
     template<class T>
-    bool RelicBatchSource<T>::IsEmpty() const
+    bool AbstractRelicBatchSource<T>::IsEmpty() const
     {
         return list.IsEmpty();
     }
 
     template<class T>
-    auto RelicBatchSource<T>::begin() -> iterator
+    auto AbstractRelicBatchSource<T>::begin() -> iterator
     {
         return list.begin();
     }
 
     template<class T>
-    auto RelicBatchSource<T>::begin() const -> const_iterator
+    auto AbstractRelicBatchSource<T>::begin() const -> const_iterator
     {
         return list.begin();
     }
 
     template<class T>
-    auto RelicBatchSource<T>::end() -> iterator
+    auto AbstractRelicBatchSource<T>::end() -> iterator
     {
         return list.end();
     }
 
     template<class T>
-    auto RelicBatchSource<T>::end() const -> const_iterator
+    auto AbstractRelicBatchSource<T>::end() const -> const_iterator
     {
         return list.end();
+    }
+
+    template<class T>
+    void AbstractRelicBatchSource<T>::NotifyAdded(void* relic)
+    {
+        auto casted = reinterpret_cast<T*>(relic);
+        list.Add(casted);
+    }
+
+    template<class T>
+    void AbstractRelicBatchSource<T>::NotifyDestroyed(void* relic)
+    {
+        auto casted = reinterpret_cast<T*>(relic);
+        list.Remove(std::remove_if(list.begin(), list.end(),
+            [casted](auto& entry)
+            {
+                return casted == entry;
+            }));
     }
 }

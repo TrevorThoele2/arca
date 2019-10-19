@@ -108,7 +108,10 @@ namespace Arca
             static void Do(const RelicTypeList<BaseTypes...>& baseList, RelicTypeDescription::BaseTypeList& fillList)
             {
                 using BaseListT = RelicTypeList<BaseTypes...>;
-                using BaseTraitsT = ProcessedRelicTraits<typename BaseListT::template Parameter<i>::Type>;
+                using Parameter = typename BaseListT::template Parameter<i>::Type;
+                using BaseTraitsT = ProcessedRelicTraits<Parameter>;
+
+                static_assert(std::is_abstract_v<Parameter>, "Every base of a relic MUST be abstract.");
 
                 fillList.push_back(BaseTraitsT::TypeDescription());
             }

@@ -6,7 +6,7 @@ namespace Arca
     class IDManagerIteratorBase
     {
     public:
-        using IdentifierT = typename WrappedIteratorT::value_type::first_type;
+        using IdentifierT = typename WrappedIteratorT::value_type::IdentifierT;
     public:
         IDManagerIteratorBase();
         IDManagerIteratorBase(const WrappedIteratorT& wrapped);
@@ -53,13 +53,13 @@ namespace Arca
     template<class T, class WrappedIteratorT>
     T& IDManagerIteratorBase<T, WrappedIteratorT>::operator*()
     {
-        return wrapped->second;
+        return wrapped->value;
     }
 
     template<class T, class WrappedIteratorT>
     T* IDManagerIteratorBase<T, WrappedIteratorT>::operator->()
     {
-        return &wrapped->second;
+        return &wrapped->value;
     }
 
     template<class T, class WrappedIteratorT>
@@ -93,8 +93,8 @@ namespace Arca
     }
 
     template<class T, class WrappedIteratorT>
-    typename IDManagerIteratorBase<T, WrappedIteratorT>::IdentifierT IDManagerIteratorBase<T, WrappedIteratorT>::ID() const
+    auto IDManagerIteratorBase<T, WrappedIteratorT>::ID() const -> IdentifierT
     {
-        return wrapped->first;
+        return wrapped->id;
     }
 }

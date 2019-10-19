@@ -37,9 +37,6 @@
     <ClCompile Include="SignalBatchSource.cpp">
       <Filter>Source Files\Signal\Batch</Filter>
     </ClCompile>
-    <ClCompile Include="ExtendedRelic.cpp">
-      <Filter>Source Files\Relic</Filter>
-    </ClCompile>
     <ClCompile Include="RelicTypeDescription.cpp">
       <Filter>Source Files\Relic\Type</Filter>
     </ClCompile>
@@ -55,17 +52,14 @@
     <ClCompile Include="RelicTypeNameSerializer.cpp">
       <Filter>Source Files\Relic\Type</Filter>
     </ClCompile>
-    <ClCompile Include="OwnedRelic.cpp">
-      <Filter>Source Files\Relic</Filter>
-    </ClCompile>
     <ClCompile Include="CuratorHandle.cpp">
       <Filter>Source Files\Curator</Filter>
     </ClCompile>
     <ClCompile Include="CuratorTypeDescription.cpp">
       <Filter>Source Files\Curator\Type</Filter>
     </ClCompile>
-    <ClCompile Include="ExtendedRelicSerializer.cpp">
-      <Filter>Source Files\Relic</Filter>
+    <ClCompile Include="AbstractRelicBatchSource.cpp">
+      <Filter>Source Files\Relic\Batch</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -132,9 +126,6 @@
     <ClInclude Include="RelicBatchSource.h">
       <Filter>Header Files\Relic\Batch</Filter>
     </ClInclude>
-    <ClInclude Include="RelicBatchSourceDefinition.h">
-      <Filter>Header Files\Relic\Batch</Filter>
-    </ClInclude>
     <ClInclude Include="ProcessedCuratorTraits.h">
       <Filter>Header Files\Curator\Traits</Filter>
     </ClInclude>
@@ -167,9 +158,6 @@
     </ClInclude>
     <ClInclude Include="BeforeRelicDestroyed.h">
       <Filter>Header Files\Signal\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="ExtendedRelic.h">
-      <Filter>Header Files\Relic</Filter>
     </ClInclude>
     <ClInclude Include="RelicTypeDescription.h">
       <Filter>Header Files\Relic\Type</Filter>
@@ -213,9 +201,6 @@
     <ClInclude Include="OwnedRelicFactory.h">
       <Filter>Header Files\Relic\Factory</Filter>
     </ClInclude>
-    <ClInclude Include="OwnedRelic.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="CuratorHandle.h">
       <Filter>Header Files\Curator</Filter>
     </ClInclude>
@@ -225,8 +210,17 @@
     <ClInclude Include="TypeHandle.h">
       <Filter>Header Files\Type</Filter>
     </ClInclude>
-    <ClInclude Include="ExtendedRelicSerializer.h">
+    <ClInclude Include="RelicBatchIterator.h">
+      <Filter>Header Files\Relic\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="Ref.h">
       <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="AbstractRelicBatchSource.h">
+      <Filter>Header Files\Relic\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="AbstractRelicBatch.h">
+      <Filter>Header Files\Relic\Batch</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

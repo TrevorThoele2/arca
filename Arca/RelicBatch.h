@@ -1,43 +1,41 @@
 #pragma once
 
-#include <vector>
-
-#include "ExtendedRelic.h"
-#include "RelicID.h"
-
 #include "RelicBatchSource.h"
-#include "RelicBatchException.h"
-
-#include <Chroma/ScopedEventConnection.h>
+#include "RelicBatchIterator.h"
 
 namespace Arca
 {
     using RelicBatchSizeT = size_t;
 
-    template<class RelicT>
+    template<class T>
     class RelicBatch
     {
     private:
-        using SourceT = RelicBatchSource<RelicT>;
+        using SourceT = RelicBatchSource<T>;
     public:
+        using RelicT = typename SourceT::RelicT;
+        using Reference = typename SourceT::Reference;
+
         using SizeT = RelicBatchSizeT;
-        using iterator = typename SourceT::iterator;
-        using const_iterator = typename SourceT::const_iterator;
+        using iterator = RelicBatchIteratorBase<RelicT, typename SourceT::iterator, SourceT>;
+        using const_iterator = RelicBatchIteratorBase<const RelicT, typename SourceT::const_iterator, SourceT>;
     public:
         RelicBatch();
         explicit RelicBatch(SourceT& source);
         RelicBatch(const RelicBatch& arg);
         RelicBatch(RelicBatch&& arg) noexcept;
-        ~RelicBatch();
 
         RelicBatch& operator=(const RelicBatch& arg);
         RelicBatch& operator=(RelicBatch&& arg) noexcept;
 
-        iterator Remove(iterator itr);
-        iterator Remove(const_iterator itr);
+        Reference Add(const RelicT& add);
+        Reference Add(RelicT&& add);
 
-        [[nodiscard]] iterator Find(RelicID id);
-        [[nodiscard]] const_iterator Find(RelicID id) const;
+        void Destroy(Reference destroy);
+        void Destroy(iterator destroy);
+        void Destroy(const_iterator destroy);
+
+        Reference Find(RelicID id);
 
         [[nodiscard]] SizeT Size() const;
         [[nodiscard]] bool IsEmpty() const;
@@ -48,201 +46,132 @@ namespace Arca
         [[nodiscard]] const_iterator end() const;
     private:
         SourceT* source = nullptr;
-
-        void IncrementSource();
-        void DecrementSource();
-    private:
-        bool isInvalid = false;
-
-        void Invalidate();
-        void ThrowIfInvalid() const;
-    private:
-        std::vector<::Chroma::ScopedEventConnection> sourceConnections;
-
-        void SubscribeToSource();
-        void UnsubscribeFromSource();
     private:
         INSCRIPTION_ACCESS;
     };
 
-    template<class RelicT>
-    RelicBatch<RelicT>::RelicBatch()
+    template<class T>
+    RelicBatch<T>::RelicBatch()
     {}
 
-    template<class RelicT>
-    RelicBatch<RelicT>::RelicBatch(SourceT& source) : source(&source)
-    {
-        IncrementSource();
-        SubscribeToSource();
-    }
+    template<class T>
+    RelicBatch<T>::RelicBatch(SourceT& source) : source(&source)
+    {}
 
-    template<class RelicT>
-    RelicBatch<RelicT>::RelicBatch(const RelicBatch& arg) : source(arg.source)
-    {
-        IncrementSource();
-        SubscribeToSource();
-    }
+    template<class T>
+    RelicBatch<T>::RelicBatch(const RelicBatch& arg) : source(arg.source)
+    {}
 
-    template<class RelicT>
-    RelicBatch<RelicT>::RelicBatch(RelicBatch&& arg) noexcept : source(std::move(arg.source))
+    template<class T>
+    RelicBatch<T>::RelicBatch(RelicBatch&& arg) noexcept : source(std::move(arg.source))
     {
         arg.source = nullptr;
-        SubscribeToSource();
     }
 
-    template<class RelicT>
-    RelicBatch<RelicT>::~RelicBatch()
+    template<class T>
+    RelicBatch<T>& RelicBatch<T>::operator=(const RelicBatch& arg)
     {
-        if (isInvalid)
-            return;
-
-        DecrementSource();
-        UnsubscribeFromSource();
-    }
-
-    template<class RelicT>
-    RelicBatch<RelicT>& RelicBatch<RelicT>::operator=(const RelicBatch& arg)
-    {
-        UnsubscribeFromSource();
         source = arg.source;
-        source->IncrementReference();
-        SubscribeToSource();
+
         return *this;
     }
 
-    template<class RelicT>
-    RelicBatch<RelicT>& RelicBatch<RelicT>::operator=(RelicBatch&& arg) noexcept
+    template<class T>
+    RelicBatch<T>& RelicBatch<T>::operator=(RelicBatch&& arg) noexcept
     {
-        UnsubscribeFromSource();
         source = std::move(arg.source);
         arg.source = nullptr;
-        SubscribeToSource();
+
         return *this;
     }
 
-    template<class RelicT>
-    auto RelicBatch<RelicT>::Remove(iterator itr) -> iterator
+    template<class T>
+    auto RelicBatch<T>::Add(const RelicT& add) -> Reference
     {
-        ThrowIfInvalid();
+        if (!source)
+            return {};
 
-        return source->Remove(itr);
+        return source->Add(add);
     }
 
-    template<class RelicT>
-    auto RelicBatch<RelicT>::Remove(const_iterator itr) -> iterator
+    template<class T>
+    auto RelicBatch<T>::Add(RelicT&& add) -> Reference
     {
-        ThrowIfInvalid();
+        if (!source)
+            return {};
 
-        return source->Remove(itr);
+        return source->Add(std::move(add));
     }
 
-    template<class RelicT>
-    auto RelicBatch<RelicT>::Find(RelicID id) -> iterator
+    template<class T>
+    void RelicBatch<T>::Destroy(Reference destroy)
     {
-        ThrowIfInvalid();
+        if (!source)
+            return;
+
+        source->Destroy(destroy);
+    }
+
+    template<class T>
+    void RelicBatch<T>::Destroy(iterator destroy)
+    {
+        if (!source)
+            return;
+
+        source->Destroy(destroy.wrapped);
+    }
+
+    template<class T>
+    void RelicBatch<T>::Destroy(const_iterator destroy)
+    {
+        if (!source)
+            return;
+
+        source->Destroy(destroy.wrapped);
+    }
+
+    template<class T>
+    auto RelicBatch<T>::Find(RelicID id) -> Reference
+    {
+        if (!source)
+            return {};
 
         return source->Find(id);
     }
 
-    template<class RelicT>
-    auto RelicBatch<RelicT>::Find(RelicID id) const -> const_iterator
+    template<class T>
+    auto RelicBatch<T>::Size() const -> SizeT
     {
-        ThrowIfInvalid();
-
-        return source->Find(id);
-    }
-
-    template<class RelicT>
-    auto RelicBatch<RelicT>::Size() const -> SizeT
-    {
-        ThrowIfInvalid();
-
         return source->Size();
     }
 
-    template<class RelicT>
-    bool RelicBatch<RelicT>::IsEmpty() const
+    template<class T>
+    bool RelicBatch<T>::IsEmpty() const
     {
-        ThrowIfInvalid();
-
         return source->IsEmpty();
     }
 
-    template<class RelicT>
-    auto RelicBatch<RelicT>::begin() -> iterator
+    template<class T>
+    auto RelicBatch<T>::begin() -> iterator
     {
-        ThrowIfInvalid();
-
-        return source->begin();
+        return iterator(source->begin(), *source);
     }
 
-    template<class RelicT>
-    auto RelicBatch<RelicT>::begin() const -> const_iterator
+    template<class T>
+    auto RelicBatch<T>::begin() const -> const_iterator
     {
-        ThrowIfInvalid();
-
-        return source->begin();
+        return iterator(source->begin(), *source);
     }
 
-    template<class RelicT>
-    auto RelicBatch<RelicT>::end() -> iterator
+    template<class T>
+    auto RelicBatch<T>::end() -> iterator
     {
-        ThrowIfInvalid();
-
-        return source->end();
+        return iterator(source->end(), *source);
     }
 
-    template<class RelicT>
-    auto RelicBatch<RelicT>::end() const -> const_iterator
+    template<class T>
+    auto RelicBatch<T>::end() const -> const_iterator
     {
-        ThrowIfInvalid();
-
-        return source->end();
-    }
-
-    template<class RelicT>
-    void RelicBatch<RelicT>::IncrementSource()
-    {
-        if (!source)
-            return;
-
-        source->IncrementReference();
-    }
-
-    template<class RelicT>
-    void RelicBatch<RelicT>::DecrementSource()
-    {
-        if (!source)
-            return;
-
-        source->DecrementReference();
-    }
-
-    template<class RelicT>
-    void RelicBatch<RelicT>::Invalidate()
-    {
-        isInvalid = true;
-    }
-
-    template<class RelicT>
-    void RelicBatch<RelicT>::ThrowIfInvalid() const
-    {
-        if (isInvalid)
-            throw RelicBatchInvalidated();
-    }
-
-    template<class RelicT>
-    void RelicBatch<RelicT>::SubscribeToSource()
-    {
-        if (!source)
-            return;
-
-        sourceConnections.push_back(source->onInvalidated.Subscribe(&RelicBatch::Invalidate, *this));
-    }
-
-    template<class RelicT>
-    void RelicBatch<RelicT>::UnsubscribeFromSource()
-    {
-        sourceConnections.clear();
+        return iterator(source->end(), *source);
     }
 }

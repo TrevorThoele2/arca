@@ -1,7 +1,7 @@
 #pragma once
 
-#include <unordered_map>
-#include <Inscription/UnorderedMapScribe.h>
+#include <vector>
+#include <Inscription/VectorScribe.h>
 
 #include "IDManagerIterator.h"
 #include "IntervalList.h"
@@ -20,12 +20,27 @@ namespace Arca
 
         static constexpr IdentifierT nullID = 0;
     private:
-        using ValueMap = std::unordered_map<IdentifierT, ValueT>;
-        using BasicIterator = typename ValueMap::iterator;
-        using ConstBasicIterator = typename ValueMap::const_iterator;
+        struct Entry
+        {
+            using IdentifierT = IdentifierT;
+            using ValueT = ValueT;
+
+            IdentifierT id;
+            ValueT value;
+
+            Entry(IdentifierT id, const ValueT& value);
+            Entry(IdentifierT id, ValueT&& value);
+
+            bool operator==(const Entry& arg) const;
+            bool operator!=(const Entry& arg) const;
+        };
+
+        using EntryList = std::vector<Entry>;
+        using BasicIterator = typename EntryList::iterator;
+        using ConstBasicIterator = typename EntryList::const_iterator;
     public:
-        using iterator = IDManagerIteratorBase<ValueT, typename ValueMap::iterator>;
-        using const_iterator = IDManagerIteratorBase<const ValueT, typename ValueMap::const_iterator>;
+        using iterator = IDManagerIteratorBase<ValueT, typename EntryList::iterator>;
+        using const_iterator = IDManagerIteratorBase<const ValueT, typename EntryList::const_iterator>;
     public:
         bool operator==(const IDManager& arg) const;
         bool operator!=(const IDManager& arg) const;
@@ -38,6 +53,7 @@ namespace Arca
         iterator Remove(iterator itr);
         iterator Remove(const_iterator itr);
         void Clear();
+
         [[nodiscard]] iterator Find(IdentifierT id);
         [[nodiscard]] const_iterator Find(IdentifierT id) const;
 
@@ -52,7 +68,7 @@ namespace Arca
         [[nodiscard]] IdentifierT NextAutomaticID() const;
     private:
         IntervalList<IdentifierT> occupiedIDs;
-        ValueMap values;
+        EntryList entries;
     private:
         iterator AddAutomatic(const ValueT& add);
         iterator AddAutomatic(ValueT&& add);
@@ -77,9 +93,29 @@ namespace Arca
     };
 
     template<class ID, class T>
+    IDManager<ID, T>::Entry::Entry(IdentifierT id, const ValueT& value) : id(id), value(value)
+    {}
+
+    template<class ID, class T>
+    IDManager<ID, T>::Entry::Entry(IdentifierT id, ValueT&& value) : id(id), value(std::move(value))
+    {}
+
+    template<class ID, class T>
+    bool IDManager<ID, T>::Entry::operator==(const Entry& arg) const
+    {
+        return id == arg.id && value == arg.value;
+    }
+
+    template<class ID, class T>
+    bool IDManager<ID, T>::Entry::operator!=(const Entry& arg) const
+    {
+        return !(*this == arg);
+    }
+
+    template<class ID, class T>
     bool IDManager<ID, T>::operator==(const IDManager& arg) const
     {
-        return values == arg.values && occupiedIDs == arg.occupiedIDs;
+        return entries == arg.entries && occupiedIDs == arg.occupiedIDs;
     }
 
     template<class ID, class T>
@@ -89,43 +125,43 @@ namespace Arca
     }
 
     template<class ID, class T>
-    typename IDManager<ID, T>::iterator IDManager<ID, T>::Add(const T& add)
+    auto IDManager<ID, T>::Add(const T& add) -> iterator
     {
         return AddAutomatic(add);
     }
 
     template<class ID, class T>
-    typename IDManager<ID, T>::iterator IDManager<ID, T>::Add(T&& add)
+    auto IDManager<ID, T>::Add(T&& add) -> iterator
     {
         return AddAutomatic(std::move(add));
     }
 
     template<class ID, class T>
-    typename IDManager<ID, T>::iterator IDManager<ID, T>::Add(IdentifierT id, const T& add)
+    auto IDManager<ID, T>::Add(IdentifierT id, const T& add) -> iterator
     {
         return AddManual(id, add);
     }
 
     template<class ID, class T>
-    typename IDManager<ID, T>::iterator IDManager<ID, T>::Add(IdentifierT id, T&& add)
+    auto IDManager<ID, T>::Add(IdentifierT id, T&& add) -> iterator
     {
         return AddManual(id, std::move(add));
     }
 
     template<class ID, class T>
-    typename IDManager<ID, T>::iterator IDManager<ID, T>::Remove(IdentifierT id)
+    auto IDManager<ID, T>::Remove(IdentifierT id) -> iterator
     {
         return RemoveByID(id);
     }
 
     template<class ID, class T>
-    typename IDManager<ID, T>::iterator IDManager<ID, T>::Remove(iterator itr)
+    auto IDManager<ID, T>::Remove(iterator itr) -> iterator
     {
         return Wrap(RemoveByIterator(Unwrap(itr)));
     }
 
     template<class ID, class T>
-    typename IDManager<ID, T>::iterator IDManager<ID, T>::Remove(const_iterator itr)
+    auto IDManager<ID, T>::Remove(const_iterator itr) -> iterator
     {
         return Wrap(RemoveByIterator(Unwrap(itr)));
     }
@@ -134,25 +170,33 @@ namespace Arca
     void IDManager<ID, T>::Clear()
     {
         occupiedIDs.clear();
-        values.clear();
+        entries.clear();
     }
 
     template<class ID, class T>
     typename IDManager<ID, T>::iterator IDManager<ID, T>::Find(IdentifierT id)
     {
-        return Wrap(values.find(id));
+        return Wrap(std::find_if(entries.begin(), entries.end(),
+            [id](const Entry& entry)
+            {
+                return entry.id == id;
+            }));
     }
 
     template<class ID, class T>
     typename IDManager<ID, T>::const_iterator IDManager<ID, T>::Find(IdentifierT id) const
     {
-        return Wrap(values.find(id));
+        return Wrap(std::find_if(entries.begin(), entries.end(),
+            [id](const Entry& entry)
+            {
+                return entry.id == id;
+            }));
     }
 
     template<class ID, class T>
     typename IDManager<ID, T>::SizeT IDManager<ID, T>::Size() const
     {
-        return values.size();
+        return entries.size();
     }
 
     template<class ID, class T>
@@ -164,25 +208,25 @@ namespace Arca
     template<class ID, class T>
     typename IDManager<ID, T>::iterator IDManager<ID, T>::begin()
     {
-        return Wrap(values.begin());
+        return Wrap(entries.begin());
     }
 
     template<class ID, class T>
     typename IDManager<ID, T>::const_iterator IDManager<ID, T>::begin() const
     {
-        return Wrap(values.begin());
+        return Wrap(entries.begin());
     }
 
     template<class ID, class T>
     typename IDManager<ID, T>::iterator IDManager<ID, T>::end()
     {
-        return Wrap(values.end());
+        return Wrap(entries.end());
     }
 
     template<class ID, class T>
     typename IDManager<ID, T>::const_iterator IDManager<ID, T>::end() const
     {
-        return Wrap(values.end());
+        return Wrap(entries.end());
     }
 
     template<class ID, class T>
@@ -222,27 +266,33 @@ namespace Arca
     typename IDManager<ID, T>::iterator IDManager<ID, T>::AddCommon(IdentifierT id, const ValueT& add)
     {
         occupiedIDs.Include(id);
-        return Wrap(values.emplace(id, add).first);
+        entries.push_back(Entry(id, add));
+        return Wrap(--entries.end());
     }
 
     template<class ID, class T>
     typename IDManager<ID, T>::iterator IDManager<ID, T>::AddCommon(IdentifierT id, ValueT&& add)
     {
         occupiedIDs.Include(id);
-        return Wrap(values.emplace(id, std::move(add)).first);
+        entries.push_back(Entry(id, std::move(add)));
+        return Wrap(--entries.end());
     }
 
     template<class ID, class T>
     typename IDManager<ID, T>::BasicIterator IDManager<ID, T>::RemoveByID(IdentifierT id)
     {
-        return RemoveByIterator(values.find(id));
+        return RemoveByIterator(std::find_if(entries.begin(), entries.end(),
+            [id](const Entry& entry)
+            {
+                return entry.id == id;
+            }));
     }
 
     template<class ID, class T>
     auto IDManager<ID, T>::RemoveByIterator(BasicIterator itr) -> BasicIterator
     {
-        occupiedIDs.Remove(itr->first);
-        return values.erase(itr);
+        occupiedIDs.Remove(itr->id);
+        return entries.erase(itr);
     }
 
     template<class ID, class T>
@@ -292,13 +342,35 @@ namespace Inscription
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
         {
-            archive(object.values);
+            using Entry = typename ObjectT::Entry;
 
-            if (archive.IsInput())
+            if (archive.IsOutput())
             {
+                ContainerSize size(object.entries.size());
+                archive(size);
+                for (auto loop = object.entries.begin(); loop != object.entries.end(); ++loop)
+                {
+                    archive(loop->id);
+                    archive(loop->value);
+                }
+            }
+            else
+            {
+                ContainerSize size;
+                archive(size);
+
+                object.entries.clear();
+                while (size-- > 0)
+                {
+                    ScopeConstructor<typename ObjectT::IdentifierT> id(archive);
+                    ScopeConstructor<typename ObjectT::ValueT> value(archive);
+                    object.entries.push_back(Entry(std::move(id.GetMove()), std::move(value.GetMove())));
+                    archive.AttemptReplaceTrackedObject(*value.Get(), object.entries.back().value);
+                }
+
                 object.occupiedIDs.Clear();
-                for (auto& loop : object.values)
-                    object.occupiedIDs.Include(loop.first);
+                for (auto& loop : object.entries)
+                    object.occupiedIDs.Include(loop.id);
             }
         }
     };

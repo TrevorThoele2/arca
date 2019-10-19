@@ -250,7 +250,6 @@ namespace Arca
     void TypeRegistration::RelicEntry<T>::PushTo(::Inscription::BinaryArchive& archive)
     {
         archive.RegisterType<T>();
-        archive.RegisterType<ExtendedRelic<T>>();
     }
 
     template<class T>
