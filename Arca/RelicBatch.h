@@ -14,11 +14,10 @@ namespace Arca
         using SourceT = RelicBatchSource<T>;
     public:
         using RelicT = typename SourceT::RelicT;
-        using Reference = typename SourceT::Reference;
 
         using SizeT = RelicBatchSizeT;
-        using iterator = RelicBatchIteratorBase<RelicT, typename SourceT::iterator, SourceT>;
-        using const_iterator = RelicBatchIteratorBase<const RelicT, typename SourceT::const_iterator, SourceT>;
+        using iterator = RelicBatchIteratorBase<RelicT, typename SourceT::iterator>;
+        using const_iterator = RelicBatchIteratorBase<const RelicT, typename SourceT::const_iterator>;
     public:
         RelicBatch();
         explicit RelicBatch(SourceT& source);
@@ -27,15 +26,6 @@ namespace Arca
 
         RelicBatch& operator=(const RelicBatch& arg);
         RelicBatch& operator=(RelicBatch&& arg) noexcept;
-
-        Reference Add(const RelicT& add);
-        Reference Add(RelicT&& add);
-
-        void Destroy(Reference destroy);
-        void Destroy(iterator destroy);
-        void Destroy(const_iterator destroy);
-
-        Reference Find(RelicID id);
 
         [[nodiscard]] SizeT Size() const;
         [[nodiscard]] bool IsEmpty() const;
@@ -86,60 +76,6 @@ namespace Arca
     }
 
     template<class T>
-    auto RelicBatch<T>::Add(const RelicT& add) -> Reference
-    {
-        if (!source)
-            return {};
-
-        return source->Add(add);
-    }
-
-    template<class T>
-    auto RelicBatch<T>::Add(RelicT&& add) -> Reference
-    {
-        if (!source)
-            return {};
-
-        return source->Add(std::move(add));
-    }
-
-    template<class T>
-    void RelicBatch<T>::Destroy(Reference destroy)
-    {
-        if (!source)
-            return;
-
-        source->Destroy(destroy);
-    }
-
-    template<class T>
-    void RelicBatch<T>::Destroy(iterator destroy)
-    {
-        if (!source)
-            return;
-
-        source->Destroy(destroy.wrapped);
-    }
-
-    template<class T>
-    void RelicBatch<T>::Destroy(const_iterator destroy)
-    {
-        if (!source)
-            return;
-
-        source->Destroy(destroy.wrapped);
-    }
-
-    template<class T>
-    auto RelicBatch<T>::Find(RelicID id) -> Reference
-    {
-        if (!source)
-            return {};
-
-        return source->Find(id);
-    }
-
-    template<class T>
     auto RelicBatch<T>::Size() const -> SizeT
     {
         return source->Size();
@@ -154,24 +90,24 @@ namespace Arca
     template<class T>
     auto RelicBatch<T>::begin() -> iterator
     {
-        return iterator(source->begin(), *source);
+        return iterator(source->begin());
     }
 
     template<class T>
     auto RelicBatch<T>::begin() const -> const_iterator
     {
-        return iterator(source->begin(), *source);
+        return iterator(source->begin());
     }
 
     template<class T>
     auto RelicBatch<T>::end() -> iterator
     {
-        return iterator(source->end(), *source);
+        return iterator(source->end());
     }
 
     template<class T>
     auto RelicBatch<T>::end() const -> const_iterator
     {
-        return iterator(source->end(), *source);
+        return iterator(source->end());
     }
 }

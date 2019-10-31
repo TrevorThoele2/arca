@@ -6,6 +6,6 @@ namespace Arca
     struct BeforeRelicDestroyed
     {
         using RelicT = Relic;
-        Ref<RelicT> relic;
+        RelicT& relic;
     };
 }

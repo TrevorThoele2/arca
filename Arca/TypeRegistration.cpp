@@ -13,16 +13,10 @@ namespace Arca
         infrastructure->RegisterInfrastructure<SignalBatchSourceBase>();
     }
 
-    void TypeRegistration::PushAllTo(Reliquary& reliquary)
+    void TypeRegistration::PushAllTo(ReliquaryOrigin& reliquary)
     {
         for (auto& loop : groups)
             loop.PushTo(reliquary);
-    }
-
-    void TypeRegistration::PushAllTo(RelicTypeGraph& graph)
-    {
-        for (auto& loop : groups)
-            loop.PushTo(graph);
     }
 
     void TypeRegistration::PushAllTo(::Inscription::BinaryArchive& archive)
@@ -42,16 +36,10 @@ namespace Arca
     TypeRegistration::Group::Group(Group&& arg) noexcept : entryList(std::move(arg.entryList))
     {}
 
-    void TypeRegistration::Group::PushTo(Reliquary& reliquary)
+    void TypeRegistration::Group::PushTo(ReliquaryOrigin& reliquary)
     {
         for (auto& loop : entryList)
             loop->PushTo(reliquary);
-    }
-
-    void TypeRegistration::Group::PushTo(RelicTypeGraph& graph)
-    {
-        for (auto& loop : entryList)
-            loop->PushTo(graph);
     }
 
     void TypeRegistration::Group::PushTo(::Inscription::BinaryArchive& archive)

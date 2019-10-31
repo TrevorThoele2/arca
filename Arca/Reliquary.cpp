@@ -9,74 +9,96 @@
 #include <Inscription/InputJumpTable.h>
 
 #include <cassert>
+#include <utility>
 
 namespace Arca
 {
     Reliquary::Reliquary(Reliquary&& arg) noexcept :
-        staticRelicInitializerList(std::move(arg.staticRelicInitializerList)),
-        relicTypeGraph(std::move(arg.relicTypeGraph)), relicFactories(std::move(arg.relicFactories)),
-        curators(std::move(arg.curators)), relicBatchSources(std::move(arg.relicBatchSources)),
-        abstractRelicBatchSources(std::move(arg.abstractRelicBatchSources)),
+        vesselMetadataList(std::move(arg.vesselMetadataList)),
+        occupiedVesselIDs(std::move(arg.occupiedVesselIDs)),
+        staticVesselIDMap(std::move(arg.staticVesselIDMap)),
+        relicFactoryMap(std::move(arg.relicFactoryMap)),
+        relicBatchSources(std::move(arg.relicBatchSources)),
+        curators(std::move(arg.curators)),
+        curatorLayouts(std::move(arg.curatorLayouts)),
         signalBatchSources(std::move(arg.signalBatchSources))
     {
-        for (auto& loop : relicFactories)
-            loop.second->owner = this;
-
         for (auto& loop : curators)
             loop->Get()->owner = this;
-
-        for (auto& loop : signalBatchSources)
-            loop.second->owner = this;
     }
 
     Reliquary& Reliquary::operator=(Reliquary&& arg) noexcept
     {
-        relicTypeGraph = std::move(arg.relicTypeGraph);
-        staticRelicInitializerList = std::move(arg.staticRelicInitializerList);
-        relicFactories = std::move(arg.relicFactories);
-        curators = std::move(arg.curators);
+        vesselMetadataList = std::move(arg.vesselMetadataList);
+        occupiedVesselIDs = std::move(arg.occupiedVesselIDs);
+        staticVesselIDMap = std::move(arg.staticVesselIDMap);
+        relicFactoryMap = std::move(arg.relicFactoryMap);
         relicBatchSources = std::move(arg.relicBatchSources);
-        return *this;
-    }
-
-    void Reliquary::Initialize(const std::function<void(Reliquary&)>& afterCuratorsCreated)
-    {
-        if (isInitialized)
-            return;
-
-        CreateAllStaticRelics();
-        staticRelicInitializerList.clear();
-
-        CreateAllCurators();
-
-        afterCuratorsCreated(*this);
+        curators = std::move(arg.curators);
+        curatorLayouts = std::move(arg.curatorLayouts);
+        signalBatchSources = std::move(arg.signalBatchSources);
 
         for (auto& loop : curators)
-            loop->Get()->Initialize();
+            loop->Get()->owner = this;
 
-        isInitialized = true;
+        return *this;
     }
 
     void Reliquary::Work()
     {
-        if (!isInitialized)
-            throw NotInitialized();
-
         for (auto& loop : curators)
             loop->Get()->Work();
     }
 
-    Reliquary::SizeT Reliquary::RelicCount() const
+    Vessel Reliquary::CreateVessel()
     {
-        SizeT accumulated = 0;
-        for (auto& loop : relicBatchSources)
-            accumulated += loop.second->Size();
-        return accumulated;
+        const auto dynamism = VesselDynamism::Dynamic;
+        const auto id = SetupNewVesselInternals(dynamism);
+        return Vessel(id, dynamism, *this);
     }
 
-    RelicTypeGraph Reliquary::RelicTypeGraph() const
+    Vessel Reliquary::CreateVessel(const VesselStructure& structure)
     {
-        return relicTypeGraph;
+        const auto dynamism = VesselDynamism::Fixed;
+        const auto id = SetupNewVesselInternals(dynamism);
+        SatisfyVesselStructure(structure, id);
+        return Vessel(id, dynamism, *this);
+    }
+
+    void Reliquary::ParentVessel(VesselID parent, VesselID child)
+    {
+        auto parentMetadata = VesselMetadataFor(parent);
+        if (!parentMetadata)
+            throw CannotFindVessel();
+
+        auto childMetadata = VesselMetadataFor(child);
+        if (!childMetadata)
+            throw CannotFindVessel();
+
+        if (childMetadata->parent.has_value())
+            throw VesselAlreadyParented();
+
+        parentMetadata->children.push_back(child);
+        childMetadata->parent = parent;
+    }
+
+    void Reliquary::DestroyVessel(Vessel& vessel)
+    {
+        DestroyVessel(vessel.ID());
+    }
+
+    std::optional<Vessel> Reliquary::FindVessel(VesselID id)
+    {
+        const auto metadata = VesselMetadataFor(id);
+        if (!metadata)
+            return {};
+
+        return Vessel(id, metadata->dynamism, *this);
+    }
+
+    Reliquary::SizeT Reliquary::VesselCount() const
+    {
+        return vesselMetadataList.size();
     }
 
     std::vector<CuratorTypeDescription> Reliquary::CuratorTypeDescriptions() const
@@ -87,18 +109,82 @@ namespace Arca
         return returnValue;
     }
 
-    void Reliquary::RegisterCuratorLayout(const CuratorLayout& layout)
+    void Reliquary::Initialize()
     {
-        if (isInitialized)
-            throw CannotRegister();
-
-        curatorLayouts.push_back(layout);
+        for (auto& loop : curators)
+            loop->Get()->Initialize();
     }
 
-    void Reliquary::CreateAllStaticRelics()
+    Reliquary::VesselMetadata::VesselMetadata(
+        VesselID id,
+        VesselDynamism dynamism,
+        std::optional<TypeHandle> typeHandle)
+        :
+        id(id), dynamism(dynamism), typeHandle(std::move(typeHandle))
+    {}
+
+    VesselID Reliquary::SetupNewVesselInternals(VesselDynamism dynamism)
     {
-        for (auto& loop : staticRelicInitializerList)
-            loop(*this);
+        const auto id = NextVesselID();
+        occupiedVesselIDs.Include(id);
+        vesselMetadataList.push_back({ id, dynamism });
+        return id;
+    }
+
+    VesselID Reliquary::SetupNewVesselInternals(VesselDynamism dynamism, const TypeHandle& typeHandle)
+    {
+        const auto id = NextVesselID();
+        occupiedVesselIDs.Include(id);
+        vesselMetadataList.push_back({ id, dynamism, typeHandle });
+        return id;
+    }
+
+    void Reliquary::DestroyVesselMetadata(VesselID id)
+    {
+        occupiedVesselIDs.Remove(id);
+        const auto itr = std::remove_if(
+            vesselMetadataList.begin(),
+            vesselMetadataList.end(),
+            [id](const VesselMetadata& metadata) { return metadata.id == id; });
+        vesselMetadataList.erase(itr);
+    }
+
+    auto Reliquary::VesselMetadataFor(VesselID id) -> VesselMetadata*
+    {
+        const auto found = std::find_if(
+            vesselMetadataList.begin(),
+            vesselMetadataList.end(),
+            [id](const VesselMetadata& metadata) { return metadata.id == id; });
+        return found != vesselMetadataList.end() ? &*found : nullptr;
+    }
+
+    void Reliquary::SatisfyVesselStructure(const VesselStructure& structure, VesselID id)
+    {
+        for(auto& typeHandle : structure)
+            CreateRelic(typeHandle, id);
+    }
+
+    void Reliquary::DestroyVessel(VesselID id)
+    {
+        for (auto& relicBatchSource : relicBatchSources)
+            relicBatchSource.second->DestroyFromBase(id);
+    }
+
+    VesselID Reliquary::NextVesselID() const
+    {
+        const auto itr = occupiedVesselIDs.begin();
+        return itr == occupiedVesselIDs.end() || itr->Start() > 1
+            ? 1
+            : itr->Start() + 1;
+    }
+
+    void Reliquary::CreateRelic(const TypeHandle& typeHandle, VesselID id)
+    {
+        const auto factory = relicFactoryMap.find(typeHandle);
+        if (factory == relicFactoryMap.end())
+            throw NotRegistered();
+
+        factory->second(*this, id);
     }
 
     RelicBatchSourceBase* Reliquary::FindRelicBatchSource(const TypeHandle& typeHandle)
@@ -108,40 +194,6 @@ namespace Arca
             return nullptr;
 
         return found->second.get();
-    }
-
-    AbstractRelicBatchSourceBase* Reliquary::FindAbstractRelicBatchSource(const TypeHandle& typeHandle)
-    {
-        const auto found = abstractRelicBatchSources.find(typeHandle);
-        if (found == abstractRelicBatchSources.end())
-            return nullptr;
-
-        return found->second.get();
-    }
-
-    void Reliquary::CreateAllCurators()
-    {
-        CuratorProviderBase::CuratorMap createdCurators;
-        CuratorProviderBase::CuratorProviderMap storedProviders;
-
-        std::vector<CuratorProviderBase::Provided> provided;
-
-        for (auto& loop : curatorProviders)
-            provided.push_back(loop.second->Provide(createdCurators, storedProviders, *this));
-
-        for (auto& loop : provided)
-        {
-            CuratorHandlePtr handle;
-
-            if (loop.curator.index() == 0)
-                handle = std::make_unique<OwnedCuratorHandle>(std::move(std::get<0>(loop.curator)), loop.description);
-            else
-                handle = std::make_unique<UnownedCuratorHandle>(std::get<1>(loop.curator), loop.description);
-
-            curators.push_back(std::move(handle));
-        }
-
-        curatorProviders.clear();
     }
 
     void Reliquary::DoOnCurators(const std::function<void(Curator*)>& function)
@@ -263,7 +315,7 @@ namespace Inscription
             }
         }
 
-        object.staticRelicInitializerList.clear();
+        object.staticVesselInitializerList.clear();
         object.CreateAllCurators();
 
         // Curators

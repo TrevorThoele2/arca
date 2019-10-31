@@ -4,8 +4,7 @@
 #include <list>
 #include <typeindex>
 
-#include "Reliquary.h"
-#include "RelicTypeGraph.h"
+#include "ReliquaryOrigin.h"
 
 #include <Inscription/BinaryArchive.h>
 
@@ -16,8 +15,7 @@ namespace Arca
     public:
         TypeRegistration();
 
-        void PushAllTo(Reliquary& reliquary);
-        void PushAllTo(RelicTypeGraph& graph);
+        void PushAllTo(ReliquaryOrigin& reliquary);
         void PushAllTo(::Inscription::BinaryArchive& archive);
     private:
         class Entry
@@ -32,10 +30,9 @@ namespace Arca
             Entry& operator=(const Entry& arg) = default;
             Entry& operator=(Entry&& arg) = default;
 
-            [[nodiscard]] virtual Entry* Clone() const = 0;
+            [[nodiscard]] virtual std::unique_ptr<Entry> Clone() const = 0;
 
-            virtual void PushTo(Reliquary& reliquary) = 0;
-            virtual void PushTo(RelicTypeGraph& graph) = 0;
+            virtual void PushTo(ReliquaryOrigin& reliquary) = 0;
             virtual void PushTo(::Inscription::BinaryArchive& archive) = 0;
 
             [[nodiscard]] virtual std::type_index Type() const = 0;
@@ -52,17 +49,14 @@ namespace Arca
             Group& operator=(const Group& arg) = delete;
             Group& operator=(Group&& arg) = delete;
 
-            template<class T, std::enable_if_t<!std::is_abstract_v<T>, int> = 0>
-            void RegisterRelic();
-            template<class T, std::enable_if_t<std::is_abstract_v<T>, int> = 0>
+            template<class T>
             void RegisterRelic();
             template<class T>
             void RegisterSignal();
             template<class T, std::enable_if_t<std::is_base_of_v<Curator, T> && !std::is_same_v<Curator, T>, int> = 0>
             void RegisterCurator();
 
-            void PushTo(Reliquary& reliquary);
-            void PushTo(RelicTypeGraph& graph);
+            void PushTo(ReliquaryOrigin& reliquary);
             void PushTo(::Inscription::BinaryArchive& archive);
         private:
             template<class T>
@@ -92,75 +86,56 @@ namespace Arca
         Group* CreateGroup();
     private:
         template<class T>
-        class RelicEntry : public Entry
+        class RelicEntry final : public Entry
         {
         public:
             ~RelicEntry() = default;
 
-            RelicEntry* Clone() const override;
+            [[nodiscard]] std::unique_ptr<Entry> Clone() const override;
 
-            void PushTo(Reliquary& reliquary) override;
-            void PushTo(RelicTypeGraph& graph) override;
+            void PushTo(ReliquaryOrigin& reliquary) override;
             void PushTo(::Inscription::BinaryArchive& archive) override;
 
             [[nodiscard]] std::type_index Type() const override;
         };
 
         template<class T>
-        class AbstractRelicEntry : public Entry
-        {
-        public:
-            ~AbstractRelicEntry() = default;
-
-            AbstractRelicEntry* Clone() const override;
-
-            void PushTo(Reliquary& reliquary) override;
-            void PushTo(RelicTypeGraph& graph) override;
-            void PushTo(::Inscription::BinaryArchive& archive) override;
-
-            [[nodiscard]] std::type_index Type() const override;
-        };
-
-        template<class T>
-        class SignalEntry : public Entry
+        class SignalEntry final : public Entry
         {
         public:
             ~SignalEntry() = default;
 
-            SignalEntry* Clone() const override;
+            [[nodiscard]] std::unique_ptr<Entry> Clone() const override;
 
-            void PushTo(Reliquary& reliquary) override;
-            void PushTo(RelicTypeGraph& graph) override;
+            void PushTo(ReliquaryOrigin& reliquary) override;
             void PushTo(::Inscription::BinaryArchive& archive) override;
 
             [[nodiscard]] std::type_index Type() const override;
         };
 
         template<class T>
-        class CuratorEntry : public Entry
+        class CuratorEntry final : public Entry
         {
         public:
             ~CuratorEntry() = default;
 
-            CuratorEntry* Clone() const override;
+            [[nodiscard]] std::unique_ptr<Entry> Clone() const override;
 
-            void PushTo(Reliquary& reliquary) override;
-            void PushTo(RelicTypeGraph& graph) override;
+            void PushTo(ReliquaryOrigin& reliquary) override;
             void PushTo(::Inscription::BinaryArchive& archive) override;
 
             [[nodiscard]] std::type_index Type() const override;
         };
 
         template<class T>
-        class InfrastructureEntry : public Entry
+        class InfrastructureEntry final : public Entry
         {
         public:
             ~InfrastructureEntry() = default;
 
-            InfrastructureEntry* Clone() const override;
+            [[nodiscard]] std::unique_ptr<Entry> Clone() const override;
 
-            void PushTo(Reliquary& reliquary) override;
-            void PushTo(RelicTypeGraph& graph) override;
+            void PushTo(ReliquaryOrigin& reliquary) override;
             void PushTo(::Inscription::BinaryArchive& archive) override;
 
             [[nodiscard]] std::type_index Type() const override;
@@ -170,16 +145,10 @@ namespace Arca
         GroupList groups;
     };
 
-    template<class T, std::enable_if_t<!std::is_abstract_v<T>, int>>
+    template<class T>
     void TypeRegistration::Group::RegisterRelic()
     {
         RegisterCommon<T, RelicEntry>();
-    }
-
-    template<class T, std::enable_if_t<std::is_abstract_v<T>, int>>
-    void TypeRegistration::Group::RegisterRelic()
-    {
-        RegisterCommon<T, AbstractRelicEntry>();
     }
 
     template<class T>
@@ -228,22 +197,15 @@ namespace Arca
     }
 
     template<class T>
-    auto TypeRegistration::RelicEntry<T>::Clone() const -> RelicEntry*
+    auto TypeRegistration::RelicEntry<T>::Clone() const -> std::unique_ptr<Entry>
     {
-        return new RelicEntry<T>(*this);
+        return std::make_unique<RelicEntry>(*this);
     }
 
     template<class T>
-    void TypeRegistration::RelicEntry<T>::PushTo(Reliquary& reliquary)
+    void TypeRegistration::RelicEntry<T>::PushTo(ReliquaryOrigin& reliquary)
     {
-        reliquary.RegisterRelicType<T>();
-    }
-
-    template<class T>
-    void TypeRegistration::RelicEntry<T>::PushTo(RelicTypeGraph& graph)
-    {
-        auto description = ProcessedRelicTraits<T>::TypeDescription();
-        graph.AddDescription(description);
+        reliquary.Relic<T>();
     }
 
     template<class T>
@@ -259,51 +221,16 @@ namespace Arca
     }
 
     template<class T>
-    auto TypeRegistration::AbstractRelicEntry<T>::Clone() const -> AbstractRelicEntry*
+    auto TypeRegistration::SignalEntry<T>::Clone() const -> std::unique_ptr<Entry>
     {
-        return new AbstractRelicEntry(*this);
+        return std::make_unique<SignalEntry>(*this);
     }
 
     template<class T>
-    void TypeRegistration::AbstractRelicEntry<T>::PushTo(Reliquary& reliquary)
+    void TypeRegistration::SignalEntry<T>::PushTo(ReliquaryOrigin& reliquary)
     {
-        reliquary.RegisterRelicType<T>();
+        reliquary.Signal<T>();
     }
-
-    template<class T>
-    void TypeRegistration::AbstractRelicEntry<T>::PushTo(RelicTypeGraph& graph)
-    {
-        auto description = ProcessedRelicTraits<T>::TypeDescription();
-        graph.AddDescription(description);
-    }
-
-    template<class T>
-    void TypeRegistration::AbstractRelicEntry<T>::PushTo(::Inscription::BinaryArchive& archive)
-    {
-        archive.RegisterType<T>();
-    }
-
-    template<class T>
-    std::type_index TypeRegistration::AbstractRelicEntry<T>::Type() const
-    {
-        return std::type_index(typeid(T));
-    }
-
-    template<class T>
-    auto TypeRegistration::SignalEntry<T>::Clone() const -> SignalEntry*
-    {
-        return new SignalEntry<T>(*this);
-    }
-
-    template<class T>
-    void TypeRegistration::SignalEntry<T>::PushTo(Reliquary& reliquary)
-    {
-        reliquary.RegisterSignalType<T>();
-    }
-
-    template<class T>
-    void TypeRegistration::SignalEntry<T>::PushTo(RelicTypeGraph& graph)
-    {}
 
     template<class T>
     void TypeRegistration::SignalEntry<T>::PushTo(::Inscription::BinaryArchive& archive)
@@ -318,20 +245,16 @@ namespace Arca
     }
 
     template<class T>
-    auto TypeRegistration::CuratorEntry<T>::Clone() const -> CuratorEntry*
+    auto TypeRegistration::CuratorEntry<T>::Clone() const -> std::unique_ptr<Entry>
     {
-        return new CuratorEntry<T>(*this);
+        return std::make_unique<CuratorEntry>(*this);
     }
 
     template<class T>
-    void TypeRegistration::CuratorEntry<T>::PushTo(Reliquary& reliquary)
+    void TypeRegistration::CuratorEntry<T>::PushTo(ReliquaryOrigin& reliquary)
     {
-        reliquary.RegisterCuratorType<T>();
+        reliquary.Curator<T>();
     }
-
-    template<class T>
-    void TypeRegistration::CuratorEntry<T>::PushTo(RelicTypeGraph& graph)
-    {}
 
     template<class T>
     void TypeRegistration::CuratorEntry<T>::PushTo(::Inscription::BinaryArchive& archive)
@@ -346,17 +269,13 @@ namespace Arca
     }
 
     template<class T>
-    auto TypeRegistration::InfrastructureEntry<T>::Clone() const -> InfrastructureEntry*
+    auto TypeRegistration::InfrastructureEntry<T>::Clone() const -> std::unique_ptr<Entry>
     {
-        return new InfrastructureEntry<T>(*this);
+        return std::make_unique<InfrastructureEntry>(*this);
     }
 
     template<class T>
-    void TypeRegistration::InfrastructureEntry<T>::PushTo(Reliquary& reliquary)
-    {}
-
-    template<class T>
-    void TypeRegistration::InfrastructureEntry<T>::PushTo(RelicTypeGraph& graph)
+    void TypeRegistration::InfrastructureEntry<T>::PushTo(ReliquaryOrigin& reliquary)
     {}
 
     template<class T>

@@ -26,9 +26,9 @@ SCENARIO_METHOD(CuratorTestsFixture, "Curator", "[focused]")
 {
     GIVEN("reliquary registered and initialized with curator")
     {
-        Reliquary reliquary;
-        reliquary.RegisterCuratorType<BasicCurator>();
-        reliquary.Initialize();
+        auto reliquary = ReliquaryOrigin()
+            .Curator<BasicCurator>()
+            .Actualize();
 
         WHEN("finding curator")
         {
@@ -43,9 +43,9 @@ SCENARIO_METHOD(CuratorTestsFixture, "Curator", "[focused]")
 
     GIVEN("type registration pushed to reliquary")
     {
-        Reliquary reliquary;
-        typeRegistration.PushAllTo(reliquary);
-        reliquary.Initialize();
+        ReliquaryOrigin origin;
+        typeRegistration.PushAllTo(origin);
+        auto reliquary = origin.Actualize();
 
         WHEN("saving and loading reliquary")
         {
@@ -57,8 +57,9 @@ SCENARIO_METHOD(CuratorTestsFixture, "Curator", "[focused]")
                 outputArchive(reliquary);
             }
 
-            Reliquary loadedReliquary;
-            typeRegistration.PushAllTo(loadedReliquary);
+            ReliquaryOrigin loadedOrigin;
+            typeRegistration.PushAllTo(loadedOrigin);
+            auto loadedReliquary = loadedOrigin.Actualize();
 
             {
                 auto inputArchive = CreateRegistered<::Inscription::InputBinaryArchive>();

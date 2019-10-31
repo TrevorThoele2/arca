@@ -36,9 +36,9 @@ T GeneralFixture::CreateRegistered()
 template<>
 ::Arca::Reliquary GeneralFixture::CreateRegistered()
 {
-    ::Arca::Reliquary reliquary;
-    typeRegistration.PushAllTo(reliquary);
-    return reliquary;
+    ::Arca::ReliquaryOrigin origin;
+    typeRegistration.PushAllTo(origin);
+    return origin.Actualize();
 }
 
 template<>

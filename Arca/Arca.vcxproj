@@ -19,21 +19,20 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AbstractRelicBatch.h" />
-    <ClInclude Include="AbstractRelicBatchSource.h" />
     <ClInclude Include="CuratorDependencyList.h" />
     <ClInclude Include="CuratorHandle.h" />
     <ClInclude Include="CuratorTypeDescription.h" />
-    <ClInclude Include="OwnedRelicFactory.h" />
-    <ClInclude Include="Ref.h" />
+    <ClInclude Include="KnownPolymorphicList.h" />
     <ClInclude Include="Relic.h" />
     <ClInclude Include="RelicBatchIterator.h" />
     <ClInclude Include="RelicCreated.h" />
     <ClInclude Include="Exception.h" />
     <ClInclude Include="RelicExtension.h" />
-    <ClInclude Include="RelicFactoryBase.h" />
-    <ClInclude Include="RelicFactoryTraits.h" />
-    <ClInclude Include="RelicID.h" />
+    <ClInclude Include="ReliquaryOrigin.h" />
+    <ClInclude Include="TypedVessel.h" />
+    <ClInclude Include="VesselDefinition.h" />
+    <ClInclude Include="VesselDynamism.h" />
+    <ClInclude Include="VesselID.h" />
     <ClInclude Include="IDManager.h" />
     <ClInclude Include="IDManagerIterator.h" />
     <ClInclude Include="IntervalList.h" />
@@ -42,8 +41,6 @@
     <ClInclude Include="ReliquaryException.h" />
     <ClInclude Include="RelicMap.h" />
     <ClInclude Include="ProcessedCuratorTraits.h" />
-    <ClInclude Include="ProcessedRelicTraits.h" />
-    <ClInclude Include="RelicScribe.h" />
     <ClInclude Include="Serialization.h" />
     <ClInclude Include="SignalBatch.h" />
     <ClInclude Include="SignalBatchException.h" />
@@ -55,45 +52,34 @@
     <ClInclude Include="CuratorScribe.h" />
     <ClInclude Include="CuratorTraits.h" />
     <ClInclude Include="RelicTraits.h" />
-    <ClInclude Include="RelicTypeDescription.h" />
-    <ClInclude Include="RelicTypeDescriptionGroup.h" />
-    <ClInclude Include="RelicTypeGraph.h" />
-    <ClInclude Include="RelicTypeGraphIterator.h" />
-    <ClInclude Include="RelicTypeGraphNode.h" />
-    <ClInclude Include="RelicTypeList.h" />
-    <ClInclude Include="RelicTypeNameSerializer.h" />
-    <ClInclude Include="SignalBatchSourceDefinition.h" />
     <ClInclude Include="TypeHandle.h" />
     <ClInclude Include="TypeRegistration.h" />
     <ClInclude Include="TypeValidation.h" />
     <ClInclude Include="RelicBatch.h" />
     <ClInclude Include="RelicBatchException.h" />
     <ClInclude Include="RelicBatchSource.h" />
-    <ClInclude Include="BasicRelicFactory.h" />
     <ClInclude Include="RelicMapIterator.h" />
     <ClInclude Include="StaticAssert.h" />
+    <ClInclude Include="Vessel.h" />
+    <ClInclude Include="VesselStructure.h" />
+    <ClInclude Include="VesselTraits.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AbstractRelicBatchSource.cpp" />
     <ClCompile Include="CuratorHandle.cpp" />
     <ClCompile Include="CuratorTypeDescription.cpp" />
     <ClCompile Include="RelicBatchException.cpp" />
     <ClCompile Include="RelicBatchSource.cpp" />
     <ClCompile Include="Exception.cpp" />
-    <ClCompile Include="RelicFactoryBase.cpp" />
     <ClCompile Include="Reliquary.cpp" />
+    <ClCompile Include="ReliquaryOrigin.cpp" />
     <ClCompile Include="ReliquaryException.cpp" />
     <ClCompile Include="SignalBatchException.cpp" />
     <ClCompile Include="SignalBatchSource.cpp" />
     <ClCompile Include="Curator.cpp" />
     <ClCompile Include="CuratorDependencyNotFound.cpp" />
     <ClCompile Include="CuratorProvider.cpp" />
-    <ClCompile Include="RelicTypeDescription.cpp" />
-    <ClCompile Include="RelicTypeDescriptionGroup.cpp" />
-    <ClCompile Include="RelicTypeGraph.cpp" />
-    <ClCompile Include="RelicTypeGraphNode.cpp" />
-    <ClCompile Include="RelicTypeNameSerializer.cpp" />
     <ClCompile Include="TypeRegistration.cpp" />
+    <ClCompile Include="Vessel.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

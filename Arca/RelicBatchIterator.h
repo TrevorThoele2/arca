@@ -1,15 +1,14 @@
 #pragma once
 
-#include "RelicID.h"
-#include "Ref.h"
+#include "VesselID.h"
 
 namespace Arca
 {
-    template<class ReturnT, class WrapT, class BatchSourceT>
+    template<class ReturnT, class WrapT>
     class RelicBatchIteratorBase
     {
     public:
-        explicit RelicBatchIteratorBase(const WrapT& wrap, BatchSourceT& batchSource);
+        explicit RelicBatchIteratorBase(const WrapT& wrap);
         RelicBatchIteratorBase(const RelicBatchIteratorBase& arg);
 
         RelicBatchIteratorBase& operator=(const RelicBatchIteratorBase& arg);
@@ -25,104 +24,95 @@ namespace Arca
         RelicBatchIteratorBase& operator--();
         RelicBatchIteratorBase operator--(int) const;
 
-        [[nodiscard]] RelicID ID() const;
-
-        [[nodiscard]] Ref<ReturnT> ToRef();
+        [[nodiscard]] VesselID ID() const;
     private:
         WrapT wrapped;
-        BatchSourceT* batchSource;
     private:
         template<class U>
         friend class RelicBatch;
     };
 
-    template<class ReturnT, class WrapT, class BatchSourceT>
-    RelicBatchIteratorBase<ReturnT, WrapT, BatchSourceT>::RelicBatchIteratorBase(
-        const WrapT& wrap, BatchSourceT& batchSource)
+    template<class ReturnT, class WrapT>
+    RelicBatchIteratorBase<ReturnT, WrapT>::RelicBatchIteratorBase(
+        const WrapT& wrap)
         :
-        wrapped(wrap), batchSource(&batchSource)
+        wrapped(wrap)
     {}
 
-    template<class ReturnT, class WrapT, class BatchSourceT>
-    RelicBatchIteratorBase<ReturnT, WrapT, BatchSourceT>::RelicBatchIteratorBase(const RelicBatchIteratorBase& arg) :
+    template<class ReturnT, class WrapT>
+    RelicBatchIteratorBase<ReturnT, WrapT>::RelicBatchIteratorBase(const RelicBatchIteratorBase& arg) :
         wrapped(arg.wrapped)
     {}
 
-    template<class ReturnT, class WrapT, class BatchSourceT>
-    RelicBatchIteratorBase<ReturnT, WrapT, BatchSourceT>&
-        RelicBatchIteratorBase<ReturnT, WrapT, BatchSourceT>::operator=(const RelicBatchIteratorBase& arg)
+    template<class ReturnT, class WrapT>
+    RelicBatchIteratorBase<ReturnT, WrapT>&
+        RelicBatchIteratorBase<ReturnT, WrapT>::operator=(const RelicBatchIteratorBase& arg)
     {
         wrapped = arg.wrapped;
         return *this;
     }
 
-    template<class ReturnT, class WrapT, class BatchSourceT>
-    bool RelicBatchIteratorBase<ReturnT, WrapT, BatchSourceT>::operator==(const RelicBatchIteratorBase& arg) const
+    template<class ReturnT, class WrapT>
+    bool RelicBatchIteratorBase<ReturnT, WrapT>::operator==(const RelicBatchIteratorBase& arg) const
     {
         return wrapped == arg.wrapped;
     }
 
-    template<class ReturnT, class WrapT, class BatchSourceT>
-    bool RelicBatchIteratorBase<ReturnT, WrapT, BatchSourceT>::operator!=(const RelicBatchIteratorBase& arg) const
+    template<class ReturnT, class WrapT>
+    bool RelicBatchIteratorBase<ReturnT, WrapT>::operator!=(const RelicBatchIteratorBase& arg) const
     {
         return !(*this == arg);
     }
 
-    template<class ReturnT, class WrapT, class BatchSourceT>
-    ReturnT& RelicBatchIteratorBase<ReturnT, WrapT, BatchSourceT>::operator*()
+    template<class ReturnT, class WrapT>
+    ReturnT& RelicBatchIteratorBase<ReturnT, WrapT>::operator*()
     {
-        return *wrapped;
+        return wrapped->relic;
     }
 
-    template<class ReturnT, class WrapT, class BatchSourceT>
-    ReturnT* RelicBatchIteratorBase<ReturnT, WrapT, BatchSourceT>::operator->()
+    template<class ReturnT, class WrapT>
+    ReturnT* RelicBatchIteratorBase<ReturnT, WrapT>::operator->()
     {
-        return &*wrapped;
+        return &wrapped->relic;
     }
 
-    template<class ReturnT, class WrapT, class BatchSourceT>
-    RelicBatchIteratorBase<ReturnT, WrapT, BatchSourceT>&
-        RelicBatchIteratorBase<ReturnT, WrapT, BatchSourceT>::operator++()
+    template<class ReturnT, class WrapT>
+    RelicBatchIteratorBase<ReturnT, WrapT>&
+        RelicBatchIteratorBase<ReturnT, WrapT>::operator++()
     {
         ++wrapped;
         return *this;
     }
 
-    template<class ReturnT, class WrapT, class BatchSourceT>
-    RelicBatchIteratorBase<ReturnT, WrapT, BatchSourceT>
-        RelicBatchIteratorBase<ReturnT, WrapT, BatchSourceT>::operator++(int) const
+    template<class ReturnT, class WrapT>
+    RelicBatchIteratorBase<ReturnT, WrapT>
+        RelicBatchIteratorBase<ReturnT, WrapT>::operator++(int) const
     {
         auto copy = *this;
         ++wrapped;
         return copy;
     }
 
-    template<class ReturnT, class WrapT, class BatchSourceT>
-    RelicBatchIteratorBase<ReturnT, WrapT, BatchSourceT>&
-        RelicBatchIteratorBase<ReturnT, WrapT, BatchSourceT>::operator--()
+    template<class ReturnT, class WrapT>
+    RelicBatchIteratorBase<ReturnT, WrapT>&
+        RelicBatchIteratorBase<ReturnT, WrapT>::operator--()
     {
         --wrapped;
         return *this;
     }
 
-    template<class ReturnT, class WrapT, class BatchSourceT>
-    RelicBatchIteratorBase<ReturnT, WrapT, BatchSourceT>
-        RelicBatchIteratorBase<ReturnT, WrapT, BatchSourceT>::operator--(int) const
+    template<class ReturnT, class WrapT>
+    RelicBatchIteratorBase<ReturnT, WrapT>
+        RelicBatchIteratorBase<ReturnT, WrapT>::operator--(int) const
     {
         auto copy = *this;
         --wrapped;
         return copy;
     }
 
-    template<class ReturnT, class WrapT, class BatchSourceT>
-    RelicID RelicBatchIteratorBase<ReturnT, WrapT, BatchSourceT>::ID() const
+    template<class ReturnT, class WrapT>
+    VesselID RelicBatchIteratorBase<ReturnT, WrapT>::ID() const
     {
-        return wrapped.ID();
-    }
-
-    template<class ReturnT, class WrapT, class BatchSourceT>
-    [[nodiscard]] Ref<ReturnT> RelicBatchIteratorBase<ReturnT, WrapT, BatchSourceT>::ToRef()
-    {
-        return Ref(wrapped->id, *batchSource);
+        return wrapped->id;
     }
 }

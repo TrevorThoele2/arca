@@ -7,9 +7,6 @@
     <ClCompile Include="TypeRegistration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RelicFactoryBase.cpp">
-      <Filter>Source Files\Relic\Factory</Filter>
-    </ClCompile>
     <ClCompile Include="RelicBatchException.cpp">
       <Filter>Source Files\Relic\Batch</Filter>
     </ClCompile>
@@ -37,29 +34,17 @@
     <ClCompile Include="SignalBatchSource.cpp">
       <Filter>Source Files\Signal\Batch</Filter>
     </ClCompile>
-    <ClCompile Include="RelicTypeDescription.cpp">
-      <Filter>Source Files\Relic\Type</Filter>
-    </ClCompile>
-    <ClCompile Include="RelicTypeDescriptionGroup.cpp">
-      <Filter>Source Files\Relic\Type</Filter>
-    </ClCompile>
-    <ClCompile Include="RelicTypeGraph.cpp">
-      <Filter>Source Files\Relic\Type</Filter>
-    </ClCompile>
-    <ClCompile Include="RelicTypeGraphNode.cpp">
-      <Filter>Source Files\Relic\Type</Filter>
-    </ClCompile>
-    <ClCompile Include="RelicTypeNameSerializer.cpp">
-      <Filter>Source Files\Relic\Type</Filter>
-    </ClCompile>
     <ClCompile Include="CuratorHandle.cpp">
       <Filter>Source Files\Curator</Filter>
     </ClCompile>
     <ClCompile Include="CuratorTypeDescription.cpp">
       <Filter>Source Files\Curator\Type</Filter>
     </ClCompile>
-    <ClCompile Include="AbstractRelicBatchSource.cpp">
-      <Filter>Source Files\Relic\Batch</Filter>
+    <ClCompile Include="Vessel.cpp">
+      <Filter>Source Files\Vessel</Filter>
+    </ClCompile>
+    <ClCompile Include="ReliquaryOrigin.cpp">
+      <Filter>Source Files\Reliquary</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -73,9 +58,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IntervalList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Serialization.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StaticAssert.h">
@@ -102,20 +84,11 @@
     <ClInclude Include="CuratorScribe.h">
       <Filter>Header Files\Curator</Filter>
     </ClInclude>
-    <ClInclude Include="RelicID.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="RelicMap.h">
       <Filter>Header Files\Relic\Map</Filter>
     </ClInclude>
     <ClInclude Include="RelicMapIterator.h">
       <Filter>Header Files\Relic\Map</Filter>
-    </ClInclude>
-    <ClInclude Include="RelicFactoryBase.h">
-      <Filter>Header Files\Relic\Factory</Filter>
-    </ClInclude>
-    <ClInclude Include="RelicFactoryTraits.h">
-      <Filter>Header Files\Relic\Factory</Filter>
     </ClInclude>
     <ClInclude Include="RelicBatch.h">
       <Filter>Header Files\Relic\Batch</Filter>
@@ -147,9 +120,6 @@
     <ClInclude Include="SignalBatchSource.h">
       <Filter>Header Files\Signal\Batch</Filter>
     </ClInclude>
-    <ClInclude Include="SignalBatchSourceDefinition.h">
-      <Filter>Header Files\Signal\Batch</Filter>
-    </ClInclude>
     <ClInclude Include="CuratorDependencyList.h">
       <Filter>Header Files\Curator</Filter>
     </ClInclude>
@@ -159,47 +129,14 @@
     <ClInclude Include="BeforeRelicDestroyed.h">
       <Filter>Header Files\Signal\Common</Filter>
     </ClInclude>
-    <ClInclude Include="RelicTypeDescription.h">
-      <Filter>Header Files\Relic\Type</Filter>
-    </ClInclude>
-    <ClInclude Include="RelicTypeDescriptionGroup.h">
-      <Filter>Header Files\Relic\Type</Filter>
-    </ClInclude>
-    <ClInclude Include="RelicTypeGraph.h">
-      <Filter>Header Files\Relic\Type</Filter>
-    </ClInclude>
-    <ClInclude Include="RelicTypeGraphIterator.h">
-      <Filter>Header Files\Relic\Type</Filter>
-    </ClInclude>
-    <ClInclude Include="RelicTypeGraphNode.h">
-      <Filter>Header Files\Relic\Type</Filter>
-    </ClInclude>
-    <ClInclude Include="RelicTypeList.h">
-      <Filter>Header Files\Relic\Type</Filter>
-    </ClInclude>
-    <ClInclude Include="RelicTypeNameSerializer.h">
-      <Filter>Header Files\Relic\Type</Filter>
-    </ClInclude>
-    <ClInclude Include="ProcessedRelicTraits.h">
-      <Filter>Header Files\Relic\Traits</Filter>
-    </ClInclude>
     <ClInclude Include="RelicTraits.h">
       <Filter>Header Files\Relic\Traits</Filter>
-    </ClInclude>
-    <ClInclude Include="RelicScribe.h">
-      <Filter>Header Files\Relic</Filter>
     </ClInclude>
     <ClInclude Include="RelicExtension.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
     <ClInclude Include="Relic.h">
       <Filter>Header Files\Relic</Filter>
-    </ClInclude>
-    <ClInclude Include="BasicRelicFactory.h">
-      <Filter>Header Files\Relic\Factory</Filter>
-    </ClInclude>
-    <ClInclude Include="OwnedRelicFactory.h">
-      <Filter>Header Files\Relic\Factory</Filter>
     </ClInclude>
     <ClInclude Include="CuratorHandle.h">
       <Filter>Header Files\Curator</Filter>
@@ -213,14 +150,35 @@
     <ClInclude Include="RelicBatchIterator.h">
       <Filter>Header Files\Relic\Batch</Filter>
     </ClInclude>
-    <ClInclude Include="Ref.h">
-      <Filter>Header Files\Relic</Filter>
+    <ClInclude Include="KnownPolymorphicList.h">
+      <Filter>Header Files\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="AbstractRelicBatchSource.h">
-      <Filter>Header Files\Relic\Batch</Filter>
+    <ClInclude Include="Serialization.h">
+      <Filter>Header Files\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="AbstractRelicBatch.h">
-      <Filter>Header Files\Relic\Batch</Filter>
+    <ClInclude Include="Vessel.h">
+      <Filter>Header Files\Vessel</Filter>
+    </ClInclude>
+    <ClInclude Include="VesselID.h">
+      <Filter>Header Files\Vessel</Filter>
+    </ClInclude>
+    <ClInclude Include="VesselDynamism.h">
+      <Filter>Header Files\Vessel</Filter>
+    </ClInclude>
+    <ClInclude Include="VesselStructure.h">
+      <Filter>Header Files\Vessel</Filter>
+    </ClInclude>
+    <ClInclude Include="TypedVessel.h">
+      <Filter>Header Files\Vessel</Filter>
+    </ClInclude>
+    <ClInclude Include="VesselTraits.h">
+      <Filter>Header Files\Vessel</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquaryOrigin.h">
+      <Filter>Header Files\Reliquary</Filter>
+    </ClInclude>
+    <ClInclude Include="VesselDefinition.h">
+      <Filter>Header Files\Vessel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -248,9 +206,6 @@
     <Filter Include="Header Files\Relic\Batch">
       <UniqueIdentifier>{bcfd2ad5-69d6-4875-9249-17e48d5a7ac6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Relic\Factory">
-      <UniqueIdentifier>{e4c408b5-1d97-4662-8491-1fc826f5be7e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Relic\Map">
       <UniqueIdentifier>{1b4b1fbd-1b42-4058-bc8b-bd793cfff3b9}</UniqueIdentifier>
     </Filter>
@@ -259,9 +214,6 @@
     </Filter>
     <Filter Include="Source Files\Relic\Batch">
       <UniqueIdentifier>{e260ea4d-cc81-4ade-844b-be478463fc84}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Relic\Factory">
-      <UniqueIdentifier>{97a7681b-7d3e-4b2f-adb1-82d6c5c2fb3a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Curator">
       <UniqueIdentifier>{8543afc7-ab74-4468-a3d6-8c9df732b5e3}</UniqueIdentifier>
@@ -281,14 +233,8 @@
     <Filter Include="Header Files\Signal\Common">
       <UniqueIdentifier>{7dde23e0-1c87-454c-a219-2c243f6fe070}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Relic\Type">
-      <UniqueIdentifier>{0a3d7655-28cd-4cf3-a85d-f657369806db}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Relic\Traits">
       <UniqueIdentifier>{532a2870-c780-46f8-a354-639f39dfdf13}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Relic\Type">
-      <UniqueIdentifier>{f47e6e40-11e2-4ec1-bbe3-42422bc3a45c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Type">
       <UniqueIdentifier>{9803a3ae-e196-4124-a6c5-664a16c4cc9f}</UniqueIdentifier>
@@ -298,6 +244,15 @@
     </Filter>
     <Filter Include="Source Files\Curator\Type">
       <UniqueIdentifier>{0a400a7f-fa2f-4e22-9f5d-a229e977697c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Serialization">
+      <UniqueIdentifier>{fc740c7f-fc42-4913-9767-1b9cc1444ab7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Vessel">
+      <UniqueIdentifier>{3df72553-bb17-43bf-b78f-26e792faf1a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Vessel">
+      <UniqueIdentifier>{5d11221a-c8ed-40ec-b972-7a6dde6a4e76}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

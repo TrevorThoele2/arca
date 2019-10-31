@@ -5,49 +5,30 @@
 RelicBatchFixture::RelicBatchFixture()
 {
     auto typeGroup = typeRegistration.CreateGroup();
-    typeGroup->RegisterRelic<AbstractRelic>();
-    typeGroup->RegisterRelic<DerivedRelic>();
+    typeGroup->RegisterRelic<Relic>();
 }
 
-RelicBatchFixture::AbstractRelic::~AbstractRelic() = default;
-
-RelicBatchFixture::AbstractRelic::AbstractRelic(const std::string& abstractValue) : abstractValue(abstractValue)
+RelicBatchFixture::Relic::Relic(int value) :
+    value(value)
 {}
 
-RelicBatchFixture::AbstractRelic::AbstractRelic(const ::Inscription::BinaryTableData<AbstractRelic>& data) :
-    abstractValue(data.abstractValue)
-{}
-
-RelicBatchFixture::DerivedRelic::DerivedRelic(const std::string& abstractValue, int derivedValue) :
-    AbstractRelic(abstractValue), derivedValue(derivedValue)
-{}
-
-RelicBatchFixture::DerivedRelic::DerivedRelic(const ::Inscription::BinaryTableData<DerivedRelic>& data) :
-    AbstractRelic(std::get<0>(data.bases)), derivedValue(data.derivedValue)
+RelicBatchFixture::Relic::Relic(const ::Inscription::BinaryTableData<Relic>& data) :
+    value(data.value)
 {}
 
 namespace Arca
 {
-    const TypeHandle RelicTraits<RelicBatchFixture::AbstractRelic>::typeHandle = "RelicBatchTestsAbstractRelic";
-    const TypeHandle RelicTraits<RelicBatchFixture::DerivedRelic>::typeHandle = "RelicBatchTestsDerivedRelic";
+    const TypeHandle RelicTraits<RelicBatchFixture::Relic>::typeHandle = "RelicBatchTestsRelic";
     const TypeHandle RelicTraits<RelicBatchFixture::UnregisteredRelic>::typeHandle = "RelicBatchTestsUnregisteredRelic";
 }
 
 namespace Inscription
 {
-    Scribe<::RelicBatchFixture::AbstractRelic, BinaryArchive>::Table::Table()
+    Scribe<::RelicBatchFixture::Relic, BinaryArchive>::Table::Table()
     {
         MergeDataLinks
         ({
-            DataLink::Auto(&ObjectT::abstractValue, &DataT::abstractValue) }
-        );
-    }
-
-    Scribe<::RelicBatchFixture::DerivedRelic, BinaryArchive>::Table::Table()
-    {
-        MergeDataLinks
-        ({
-            DataLink::Auto(&ObjectT::derivedValue, &DataT::derivedValue) }
+            DataLink::Auto(&ObjectT::value, &DataT::value) }
         );
     }
 }
@@ -57,6 +38,7 @@ SCENARIO_METHOD(RelicBatchFixture, "RelicBatch")
     GIVEN("registered reliquary")
     {
         auto reliquary = CreateRegistered<Reliquary>();
+        auto vessel = reliquary.CreateVessel();
 
         WHEN("starting batch with unregistered relic")
         {
@@ -66,80 +48,55 @@ SCENARIO_METHOD(RelicBatchFixture, "RelicBatch")
             }
         }
 
-        WHEN("initialized reliquary")
+        WHEN("creating relic")
         {
-            reliquary.Initialize();
+            auto createdRelic = vessel.CreateRelic<Relic>();
+
+            WHEN("starting batch")
+            {
+                auto batch = reliquary.StartRelicBatch<Relic>();
+                auto& first = *batch.begin();
+
+                THEN("batch contains relic")
+                {
+                    REQUIRE(!batch.IsEmpty());
+                    REQUIRE(batch.Size() == 1);
+                    REQUIRE(first.value == createdRelic->value);
+                    REQUIRE(&first == createdRelic);
+                }
+
+                THEN("removing relic empties the batch")
+                {
+                    vessel.DestroyRelic<Relic>();
+                    REQUIRE(batch.IsEmpty());
+                }
+            }
+        }
+
+        WHEN("starting batch")
+        {
+            auto batch = reliquary.StartRelicBatch<Relic>();
+
+            REQUIRE(batch.IsEmpty());
+            REQUIRE(batch.Size() == 0);
 
             WHEN("creating derived relic")
             {
-                auto& createdRelic = *reliquary.CreateRelic<DerivedRelic>(
-                    dataGeneration.Random<std::string>(),
-                    dataGeneration.Random<int>());
+                auto createdRelic = vessel.CreateRelic<Relic>();
+                auto& first = *batch.begin();
 
-                WHEN("starting derived batch")
+                THEN("batch contains derived relic")
                 {
-                    auto batch = reliquary.StartRelicBatch<DerivedRelic>();
-                    auto& first = *batch.begin();
-
-                    THEN("batch contains derived relic")
-                    {
-                        REQUIRE(!batch.IsEmpty());
-                        REQUIRE(batch.Size() == 1);
-                        REQUIRE(first.abstractValue == createdRelic.abstractValue);
-                        REQUIRE(first.derivedValue == createdRelic.derivedValue);
-                        REQUIRE(&first == &createdRelic);
-                    }
-
-                    THEN("removing relic empties the batch")
-                    {
-                        batch.Destroy(batch.begin());
-                        REQUIRE(batch.IsEmpty());
-                    }
+                    REQUIRE(!batch.IsEmpty());
+                    REQUIRE(batch.Size() == 1);
+                    REQUIRE(first.value == createdRelic->value);
+                    REQUIRE(&first == createdRelic);
                 }
 
-                WHEN("starting base batch")
+                THEN("removing relic empties the batch")
                 {
-                    auto batch = reliquary.StartRelicBatch<AbstractRelic>();
-                    auto& first = *batch.begin();
-
-                    THEN("base batch is occupied")
-                    {
-                        REQUIRE(!batch.IsEmpty());
-                        REQUIRE(batch.Size() == 1);
-                        REQUIRE(first->abstractValue == createdRelic.abstractValue);
-                        REQUIRE(&*first == &createdRelic);
-                    }
-                }
-            }
-
-            WHEN("starting derived batch")
-            {
-                auto batch = reliquary.StartRelicBatch<DerivedRelic>();
-
-                REQUIRE(batch.IsEmpty());
-                REQUIRE(batch.Size() == 0);
-
-                WHEN("creating derived relic")
-                {
-                    auto& createdRelic = *reliquary.CreateRelic<DerivedRelic>(
-                        dataGeneration.Random<std::string>(),
-                        dataGeneration.Random<int>());
-                    auto& first = *batch.begin();
-
-                    THEN("batch contains derived relic")
-                    {
-                        REQUIRE(!batch.IsEmpty());
-                        REQUIRE(batch.Size() == 1);
-                        REQUIRE(first.abstractValue == createdRelic.abstractValue);
-                        REQUIRE(first.derivedValue == createdRelic.derivedValue);
-                        REQUIRE(&first == &createdRelic);
-                    }
-
-                    THEN("removing relic empties the batch")
-                    {
-                        batch.Destroy(batch.begin());
-                        REQUIRE(batch.IsEmpty());
-                    }
+                    vessel.DestroyRelic<Relic>();
+                    REQUIRE(batch.IsEmpty());
                 }
             }
         }

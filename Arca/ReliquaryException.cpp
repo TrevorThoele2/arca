@@ -2,10 +2,6 @@
 
 namespace Arca
 {
-    NotInitialized::NotInitialized() :
-        Exception("The Reliquary has not been initialized.")
-    {}
-
     AttemptedLoadWhileInitialized::AttemptedLoadWhileInitialized() :
         Exception("Loading an already initialized reliquary is not possible.")
     {}
@@ -24,5 +20,21 @@ namespace Arca
 
     AlreadyRegistered::AlreadyRegistered() :
         Exception("A relic has already been registered with that type name.")
+    {}
+
+    CannotCreateRelic::CannotCreateRelic() :
+        Exception("A relic cannot be created.")
+    {}
+
+    CannotDestroyRelic::CannotDestroyRelic() :
+        Exception("A relic cannot be destroyed.")
+    {}
+
+    CannotFindVessel::CannotFindVessel() :
+        Exception("A vessel cannot be found.")
+    {}
+
+    VesselAlreadyParented::VesselAlreadyParented() :
+        Exception("This vessel has already been parented. Reparenting is not supported.")
     {}
 }
