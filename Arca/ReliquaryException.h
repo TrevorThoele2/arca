@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Exception.h"
+#include "VesselID.h"
 
 namespace Arca
 {
@@ -19,7 +20,7 @@ namespace Arca
     class NotRegistered final : public Exception
     {
     public:
-        NotRegistered();
+        explicit NotRegistered(const std::string& type, const std::string& name);
     };
 
     class CannotRegister final : public Exception
@@ -49,12 +50,18 @@ namespace Arca
     class CannotFindVessel final : public Exception
     {
     public:
-        CannotFindVessel();
+        explicit CannotFindVessel(VesselID id);
     };
 
     class VesselAlreadyParented final : public Exception
     {
     public:
-        VesselAlreadyParented();
+        explicit VesselAlreadyParented(VesselID id);
+    };
+
+    class CannotParentVesselToSelf final : public Exception
+    {
+    public:
+        explicit CannotParentVesselToSelf(VesselID id);
     };
 }

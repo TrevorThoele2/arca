@@ -84,6 +84,8 @@ namespace Arca
             list.begin(),
             list.end(),
             [destroy](const Entry& entry) { return entry.id == destroy; });
+        if (itr == list.end())
+            return list.end();
         return list.erase(itr);
     }
 

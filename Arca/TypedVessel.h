@@ -4,7 +4,6 @@
 #include "Reliquary.h"
 
 #include <Chroma/VariadicTemplate.h>
-#include <Chroma/Iterate.h>
 
 #include "Serialization.h"
 
@@ -42,30 +41,44 @@ namespace Arca
                 return VesselStructure{ typeHandles... };
             }
         };
+    private:
+        template<class T>
+        struct RelicTransformer
+        {
+            using Type = T*&;
+        };
+    protected:
+        using RelicTuple = typename VariadicTemplate::template Transform<RelicTransformer>::Type::TupleT;
     public:
-        static inline const VesselStructure structure = RelicTypeHandle<VariadicTemplate::count>::Do();
+        static const VesselStructure structure;
     protected:
         TypedVessel(VesselID id, Reliquary& owner);
         explicit TypedVessel(const ::Inscription::BinaryTableData<TypedVessel>& data);
+
+        void ExtractRelics(const RelicTuple& relics) const;
     private:
         Reliquary* owner;
         VesselID id;
     private:
         template<::Chroma::VariadicTemplateSize i>
-        struct RelicCreator
+        struct RelicExtraction
         {
             using RelicT = typename VariadicTemplate::template Parameter<i - 1>::Type;
 
-            static void Do(TypedVessel& vessel)
+            template<class... Args>
+            static void Do(Reliquary& reliquary, VesselID id, const RelicTuple& relics)
             {
-                vessel.owner->template CreateRelic<RelicT>(vessel.id);
+                auto retrieved = reliquary.FindRelic<RelicT>(id);
+                std::get<i - 1>(relics) = retrieved;
+                RelicExtraction<i - 1>::Do(reliquary, id, relics);
             }
         };
 
         template<>
-        struct RelicCreator<0>
+        struct RelicExtraction<0>
         {
-            static void Do(TypedVessel& vessel)
+            template<class... Args>
+            static void Do(Reliquary&, VesselID, const RelicTuple&)
             {}
         };
     private:
@@ -96,16 +109,23 @@ namespace Arca
     }
 
     template<class... Relics>
+    const VesselStructure TypedVessel<Relics...>::structure = RelicTypeHandle<VariadicTemplate::count>::Do();
+
+    template<class... Relics>
     TypedVessel<Relics...>::TypedVessel(VesselID id, Reliquary& owner)
         : owner(&owner), id(id)
-    {
-        ::Chroma::IterateRange<::Chroma::VariadicTemplateSize, RelicCreator, VariadicTemplate::count>(*this);
-    }
+    {}
 
     template<class... Relics>
     TypedVessel<Relics...>::TypedVessel(const ::Inscription::BinaryTableData<TypedVessel>& data) :
         owner(data.owner), id(data.id)
     {}
+
+    template<class... Relics>
+    void TypedVessel<Relics...>::ExtractRelics(const RelicTuple& relics) const
+    {
+        RelicExtraction<VariadicTemplate::count>::Do(*owner, id, relics);
+    }
 }
 
 namespace Inscription

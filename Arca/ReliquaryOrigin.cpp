@@ -6,18 +6,18 @@ namespace Arca
     {
         Reliquary reliquary;
 
-        for (auto& initializer : staticVesselList)
+        for (auto& initializer : signalList)
             initializer.factory(reliquary);
 
         for (auto& initializer : relicList)
             initializer.factory(reliquary);
 
-        reliquary.curatorLayouts = curatorLayoutList;
+        for (auto& initializer : staticVesselList)
+            initializer.factory(reliquary);
 
         PushAllCuratorsTo(reliquary);
 
-        for (auto& initializer : signalList)
-            initializer.factory(reliquary);
+        reliquary.curatorLayouts = curatorLayoutList;
 
         reliquary.Initialize();
 

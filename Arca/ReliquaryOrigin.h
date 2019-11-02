@@ -81,9 +81,10 @@ namespace Arca
         const auto typeHandle = VesselTraits<VesselT>::typeHandle;
         const auto factory = [](Reliquary& reliquary)
         {
-            const auto id = reliquary.SetupNewVesselInternals(VesselDynamism::Fixed);
+            const auto typeHandle = VesselTraits<VesselT>::typeHandle;
+            const auto id = reliquary.SetupNewVesselInternals(VesselDynamism::Fixed, true, typeHandle);
             reliquary.SatisfyVesselStructure(VesselT::structure, id);
-            reliquary.staticVesselIDMap.emplace(VesselTraits<VesselT>::typeHandle, id);
+            reliquary.staticVesselIDMap.emplace(typeHandle, id);
         };
         staticVesselList.push_back({ typeHandle, factory });
 

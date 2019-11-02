@@ -40,7 +40,7 @@ namespace Arca
         ~Reliquary() = default;
         Reliquary& operator=(const Reliquary& arg) = delete;
         Reliquary& operator=(Reliquary&& arg) noexcept;
-
+    public:
         void Work();
     public:
         Vessel CreateVessel();
@@ -87,12 +87,17 @@ namespace Arca
         {
             VesselID id;
             VesselDynamism dynamism;
+            bool isStatic;
             std::optional<TypeHandle> typeHandle;
 
             std::optional<VesselID> parent;
             std::vector<VesselID> children;
 
-            VesselMetadata(VesselID id, VesselDynamism dynamism, std::optional<TypeHandle> typeHandle = {});
+            VesselMetadata(
+                VesselID id,
+                VesselDynamism dynamism,
+                bool isStatic,
+                std::optional<TypeHandle> typeHandle = {});
         };
 
         using VesselMetadataList = std::vector<VesselMetadata>;
@@ -100,8 +105,7 @@ namespace Arca
 
         IntervalList<VesselID> occupiedVesselIDs;
 
-        VesselID SetupNewVesselInternals(VesselDynamism dynamism);
-        VesselID SetupNewVesselInternals(VesselDynamism dynamism, const TypeHandle& typeHandle);
+        VesselID SetupNewVesselInternals(VesselDynamism dynamism, bool isStatic, std::optional<TypeHandle> typeHandle = {});
         void DestroyVesselMetadata(VesselID id);
         [[nodiscard]] VesselMetadata* VesselMetadataFor(VesselID id);
 
@@ -189,8 +193,8 @@ namespace Arca
     template<class VesselT>
     VesselT Reliquary::CreateVessel()
     {
-        const auto id = SetupNewVesselInternals(VesselDynamism::Fixed, VesselTraits<VesselT>::typeHandle);
-        SatisfyVesselStructure(VesselT::structure);
+        const auto id = SetupNewVesselInternals(VesselDynamism::Fixed, false, VesselTraits<VesselT>::typeHandle);
+        SatisfyVesselStructure(VesselT::structure, id);
         return VesselT(id, *this);
     }
 
@@ -213,9 +217,10 @@ namespace Arca
     template<class VesselT>
     VesselT Reliquary::StaticVessel()
     {
-        auto found = staticVesselIDMap.find(VesselTraits<VesselT>::typeHandle);
+        const auto typeHandle = VesselTraits<VesselT>::typeHandle;
+        const auto found = staticVesselIDMap.find(typeHandle);
         if (found == staticVesselIDMap.end())
-            throw NotRegistered();
+            throw NotRegistered("static vessel", typeHandle);
 
         return *FindVessel<VesselT>(found->second);
     }
@@ -230,9 +235,10 @@ namespace Arca
     template<class RelicT>
     RelicBatch<RelicT> Reliquary::StartRelicBatch()
     {
+        const auto typeHandle = RelicTraits<RelicT>::typeHandle;
         auto batchSource = FindRelicBatchSource<RelicT>();
         if (!batchSource)
-            throw NotRegistered();
+            throw NotRegistered("relic", typeHandle);
 
         return RelicBatch<RelicT>(*batchSource);
     }
@@ -272,7 +278,7 @@ namespace Arca
     {
         auto signalBatchSource = FindSignalBatchSource<SignalT>();
         if (!signalBatchSource)
-            throw NotRegistered();
+            throw NotRegistered("signal", typeid(SignalT).name());
 
         signalBatchSource->Raise(signal);
     }
@@ -282,7 +288,7 @@ namespace Arca
     {
         auto signalBatchSource = FindSignalBatchSource<SignalT>();
         if (!signalBatchSource)
-            throw NotRegistered();
+            throw NotRegistered("signal", typeid(SignalT).name());
 
         return SignalBatch<SignalT>(*signalBatchSource);
     }
@@ -361,9 +367,10 @@ namespace Arca
     template<class T>
     RelicBatchSource<T>& Reliquary::RequiredRelicBatchSource()
     {
+        const auto typeHandle = RelicTraits<T>::typeHandle;
         auto found = FindRelicBatchSource<T>();
         if (!found)
-            throw NotRegistered();
+            throw NotRegistered("relic", typeHandle);
 
         return *found;
     }

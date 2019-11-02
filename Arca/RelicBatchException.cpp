@@ -2,6 +2,6 @@
 
 namespace Arca
 {
-    RelicBatchInvalidated::RelicBatchInvalidated() : runtime_error("This batch has been invalidated")
+    RelicBatchNotSetup::RelicBatchNotSetup() : runtime_error("This batch has not been setup. It was probably default constructed.")
     {}
 }

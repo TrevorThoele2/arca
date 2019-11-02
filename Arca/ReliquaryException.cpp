@@ -1,5 +1,7 @@
 #include "ReliquaryException.h"
 
+#include <Chroma/StringUtility.h>
+
 namespace Arca
 {
     AttemptedLoadWhileInitialized::AttemptedLoadWhileInitialized() :
@@ -10,8 +12,8 @@ namespace Arca
         Exception("The type given does not match the runtime type.")
     {}
 
-    NotRegistered::NotRegistered() :
-        Exception("This relic type was not registered.")
+    NotRegistered::NotRegistered(const std::string& type, const std::string& name) :
+        Exception("The " + type + " (" + name + ") was not registered.")
     {}
 
     CannotRegister::CannotRegister() :
@@ -30,11 +32,15 @@ namespace Arca
         Exception("A relic cannot be destroyed.")
     {}
 
-    CannotFindVessel::CannotFindVessel() :
-        Exception("A vessel cannot be found.")
+    CannotFindVessel::CannotFindVessel(VesselID id) :
+        Exception("The vessel with id (" + ::Chroma::ToString(id) + ") cannot be found.")
     {}
 
-    VesselAlreadyParented::VesselAlreadyParented() :
-        Exception("This vessel has already been parented. Reparenting is not supported.")
+    VesselAlreadyParented::VesselAlreadyParented(VesselID id) :
+        Exception("The vessel with id (" + ::Chroma::ToString(id) + ") has already been parented.")
+    {}
+
+    CannotParentVesselToSelf::CannotParentVesselToSelf(VesselID id) :
+        Exception("The vessel with id (" + ::Chroma::ToString(id) + ") was attempted to be parented to itself.")
     {}
 }
