@@ -12,17 +12,7 @@ RelicBatchFixture::Relic::Relic(int value) :
     value(value)
 {}
 
-RelicBatchFixture::Relic::Relic(const ::Inscription::BinaryTableData<Relic>& data) :
-    value(data.value)
-{}
-
 RelicBatchFixture::StaticVessel::StaticVessel(VesselID id, Reliquary& owner) : TypedVessel(id, owner)
-{
-    Setup();
-}
-
-RelicBatchFixture::StaticVessel::StaticVessel(const ::Inscription::BinaryTableData<StaticVessel>& data) :
-    TypedVessel(data.base)
 {
     Setup();
 }
@@ -39,26 +29,67 @@ namespace Arca
     const TypeHandle VesselTraits<RelicBatchFixture::StaticVessel>::typeHandle = "RelicBatchTestsStaticVessel";
 }
 
-namespace Inscription
+SCENARIO_METHOD(RelicBatchFixture, "default relic batch", "[RelicBatch]")
 {
-    Scribe<::RelicBatchFixture::Relic, BinaryArchive>::Table::Table()
+    GIVEN("default relic batch")
     {
-        MergeDataLinks
-        ({
-            DataLink::Auto(&ObjectT::value, &DataT::value) }
-        );
-    }
+        RelicBatch<Relic> batch;
 
-    Scribe<::RelicBatchFixture::StaticVessel, BinaryArchive>::Table::Table()
-    {
-        MergeDataLinks
-        ({
-            DataLink::Base(Type<TypedVessel<::RelicBatchFixture::Relic>>{}) }
-        );
+        WHEN("querying size")
+        {
+            THEN("throws error")
+            {
+                REQUIRE_THROWS_AS(batch.Size(), RelicBatchNotSetup);
+            }
+        }
+
+        WHEN("querying empty")
+        {
+            THEN("throws error")
+            {
+                REQUIRE_THROWS_AS(batch.IsEmpty(), RelicBatchNotSetup);
+            }
+        }
+
+        WHEN("querying begin")
+        {
+            THEN("throws error")
+            {
+                REQUIRE_THROWS_AS(batch.begin(), RelicBatchNotSetup);
+            }
+        }
+
+        WHEN("querying begin const")
+        {
+            auto& constBatch = batch;
+
+            THEN("throws error")
+            {
+                REQUIRE_THROWS_AS(constBatch.begin(), RelicBatchNotSetup);
+            }
+        }
+
+        WHEN("querying end")
+        {
+            THEN("throws error")
+            {
+                REQUIRE_THROWS_AS(batch.end(), RelicBatchNotSetup);
+            }
+        }
+
+        WHEN("querying begin const")
+        {
+            auto& constBatch = batch;
+
+            THEN("throws error")
+            {
+                REQUIRE_THROWS_AS(constBatch.end(), RelicBatchNotSetup);
+            }
+        }
     }
 }
 
-SCENARIO_METHOD(RelicBatchFixture, "RelicBatch")
+SCENARIO_METHOD(RelicBatchFixture, "relic batch", "[RelicBatch]")
 {
     GIVEN("registered reliquary and vessel")
     {
@@ -182,60 +213,41 @@ SCENARIO_METHOD(RelicBatchFixture, "RelicBatch")
             }
         }
     }
+}
 
-    GIVEN("default relic batch")
+SCENARIO_METHOD(RelicBatchFixture, "relic batch serialization", "[RelicBatch][serialization]")
+{
+    GIVEN("saved reliquary ")
     {
-        RelicBatch<Relic> batch;
+        auto savedReliquary = ReliquaryOrigin()
+            .Relic<Relic>()
+            .Actualize();
 
-        WHEN("querying size")
+        auto savedVessel = savedReliquary.CreateVessel();
+        savedVessel.CreateRelic<Relic>();
+
         {
-            THEN("throws error")
-            {
-                REQUIRE_THROWS_AS(batch.Size(), RelicBatchNotSetup);
-            }
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.exe", "Testing", 1);
+            outputArchive(savedReliquary);
         }
 
-        WHEN("querying empty")
+        WHEN("loading reliquary")
         {
-            THEN("throws error")
+            auto loadedReliquary = ReliquaryOrigin()
+                .Relic<Relic>()
+                .Actualize();
+
             {
-                REQUIRE_THROWS_AS(batch.IsEmpty(), RelicBatchNotSetup);
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.exe", "Testing");
+                inputArchive(loadedReliquary);
             }
-        }
 
-        WHEN("querying begin")
-        {
-            THEN("throws error")
+            auto batch = loadedReliquary.StartRelicBatch<Relic>();
+
+            THEN("batch is occupied")
             {
-                REQUIRE_THROWS_AS(batch.begin(), RelicBatchNotSetup);
-            }
-        }
-
-        WHEN("querying begin const")
-        {
-            auto& constBatch = batch;
-
-            THEN("throws error")
-            {
-                REQUIRE_THROWS_AS(constBatch.begin(), RelicBatchNotSetup);
-            }
-        }
-
-        WHEN("querying end")
-        {
-            THEN("throws error")
-            {
-                REQUIRE_THROWS_AS(batch.end(), RelicBatchNotSetup);
-            }
-        }
-
-        WHEN("querying begin const")
-        {
-            auto& constBatch = batch;
-
-            THEN("throws error")
-            {
-                REQUIRE_THROWS_AS(constBatch.end(), RelicBatchNotSetup);
+                REQUIRE(batch.Size() == 1);
+                REQUIRE(!batch.IsEmpty());
             }
         }
     }

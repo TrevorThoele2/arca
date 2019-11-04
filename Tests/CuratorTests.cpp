@@ -11,6 +11,9 @@ CuratorTestsFixture::CuratorTestsFixture()
 CuratorTestsFixture::BasicCurator::BasicCurator(Reliquary& owner) : Curator(owner)
 {}
 
+CuratorTestsFixture::OtherBasicCurator::OtherBasicCurator(Reliquary& owner) : Curator(owner)
+{}
+
 namespace Arca
 {
     template<>
@@ -20,9 +23,17 @@ namespace Arca
     };
 
     const TypeHandle CuratorTraits<CuratorTestsFixture::BasicCurator>::typeHandle = "BasicCurator";
+
+    template<>
+    struct CuratorTraits<CuratorTestsFixture::OtherBasicCurator>
+    {
+        static const TypeHandle typeHandle;
+    };
+
+    const TypeHandle CuratorTraits<CuratorTestsFixture::OtherBasicCurator>::typeHandle = "OtherBasicCurator";
 }
 
-SCENARIO_METHOD(CuratorTestsFixture, "Curator")
+SCENARIO_METHOD(CuratorTestsFixture, "curator", "[curator]")
 {
     GIVEN("reliquary registered and initialized with curator")
     {
@@ -40,46 +51,89 @@ SCENARIO_METHOD(CuratorTestsFixture, "Curator")
             }
         }
     }
+}
 
-    GIVEN("type registration pushed to reliquary")
+SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][serialization]")
+{
+    GIVEN("saved reliquary")
     {
-        ReliquaryOrigin origin;
-        typeRegistration.PushAllTo(origin);
-        auto reliquary = origin.Actualize();
+        auto savedReliquary = ReliquaryOrigin()
+            .Curator<BasicCurator>()
+            .Actualize();
 
-        /*
-        WHEN("saving and loading reliquary")
+        auto savedCurator = savedReliquary.FindCurator<BasicCurator>();
+        savedCurator->value = dataGeneration.Random<int>();
+
         {
-            auto curator = reliquary.FindCurator<BasicCurator>();
-            curator->value = dataGeneration.Random<int>();
+            auto outputArchive = CreateRegistered<::Inscription::OutputBinaryArchive>();
+            outputArchive(savedReliquary);
+        }
 
-            {
-                auto outputArchive = CreateRegistered<::Inscription::OutputBinaryArchive>();
-                outputArchive(reliquary);
-            }
-
-            ReliquaryOrigin loadedOrigin;
-            typeRegistration.PushAllTo(loadedOrigin);
-            auto loadedReliquary = loadedOrigin.Actualize();
+        WHEN("loading reliquary")
+        {
+            auto loadedReliquary = ReliquaryOrigin()
+                .Curator<BasicCurator>()
+                .Actualize();
 
             {
                 auto inputArchive = CreateRegistered<::Inscription::InputBinaryArchive>();
                 inputArchive(loadedReliquary);
             }
 
-            auto found = loadedReliquary.FindCurator<BasicCurator>();
+            auto loadedCurator = loadedReliquary.FindCurator<BasicCurator>();
 
             THEN("loaded curator is not null")
             {
-                REQUIRE(found != nullptr);
+                REQUIRE(loadedCurator != nullptr);
             }
 
             THEN("value is loaded")
             {
-                REQUIRE(found->value == curator->value);
+                REQUIRE(loadedCurator->value == savedCurator->value);
             }
         }
-        */
+
+        WHEN("loading reliquary without curator registered")
+        {
+            auto loadedReliquary = ReliquaryOrigin()
+                .Actualize();
+
+            {
+                auto inputArchive = CreateRegistered<::Inscription::InputBinaryArchive>();
+                inputArchive(loadedReliquary);
+            }
+
+            auto loadedCurator = loadedReliquary.FindCurator<BasicCurator>();
+
+            THEN("loaded curator is null")
+            {
+                REQUIRE(loadedCurator == nullptr);
+            }
+        }
+
+        WHEN("loading reliquary with different curator with same input type handle")
+        {
+            auto loadedReliquary = ReliquaryOrigin()
+                .Curator<OtherBasicCurator>()
+                .Actualize();
+
+            {
+                auto inputArchive = CreateRegistered<::Inscription::InputBinaryArchive>();
+                inputArchive(loadedReliquary);
+            }
+
+            auto loadedCurator = loadedReliquary.FindCurator<OtherBasicCurator>();
+
+            THEN("loaded curator is not null")
+            {
+                REQUIRE(loadedCurator != nullptr);
+            }
+
+            THEN("value is loaded")
+            {
+                REQUIRE(loadedCurator->value == savedCurator->value);
+            }
+        }
     }
 }
 
@@ -91,8 +145,14 @@ namespace Inscription
         archive(object.value);
     }
 
-    TypeHandle Scribe<CuratorTestsFixture::BasicCurator, BinaryArchive>::PrincipleTypeHandle(const ArchiveT& archive)
+    void Scribe<CuratorTestsFixture::OtherBasicCurator, BinaryArchive>::ScrivenImplementation(
+        ObjectT& object, ArchiveT& archive)
     {
-        return "BasicCurator";
+        archive(object.value);
+    }
+
+    std::vector<TypeHandle> Scribe<CuratorTestsFixture::OtherBasicCurator, BinaryArchive>::InputTypeHandles(const ArchiveT& archive)
+    {
+        return { "BasicCurator" };
     }
 }

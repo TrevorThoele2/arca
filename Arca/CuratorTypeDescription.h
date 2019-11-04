@@ -19,7 +19,7 @@ namespace Arca
         bool operator==(const CuratorTypeDescription& arg) const;
         bool operator!=(const CuratorTypeDescription& arg) const;
 
-        SerializationTypeHandles AllSerializationRepresentedTypeHandles(::Inscription::BinaryArchive& archive) const;
+        SerializationTypeHandles AllSerializationInputTypeHandles(::Inscription::BinaryArchive& archive) const;
     private:
         std::function<SerializationTypeHandles(::Inscription::BinaryArchive&)> serializationTypeHandles;
     };

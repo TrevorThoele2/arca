@@ -8,6 +8,7 @@
 #include "Vessel.h"
 #include "VesselStructure.h"
 #include "VesselTraits.h"
+#include "VesselMetadata.h"
 
 #include "RelicBatch.h"
 #include "RelicBatchSource.h"
@@ -26,6 +27,8 @@
 #include "IntervalList.h"
 
 #include "Serialization.h"
+#include <Inscription/OutputJumpTable.h>
+#include <Inscription/InputJumpTable.h>
 
 namespace Arca
 {
@@ -68,6 +71,7 @@ namespace Arca
         template<class RelicT>
         [[nodiscard]] RelicBatch<RelicT> StartRelicBatch();
     public:
+        Curator* FindCurator(const TypeHandle& typeHandle);
         template<class CuratorT>
         [[nodiscard]] CuratorT* FindCurator();
         template<class CuratorT>
@@ -83,29 +87,12 @@ namespace Arca
     private:
         void Initialize();
     private:
-        struct VesselMetadata
-        {
-            VesselID id;
-            VesselDynamism dynamism;
-            bool isStatic;
-            std::optional<TypeHandle> typeHandle;
-
-            std::optional<VesselID> parent;
-            std::vector<VesselID> children;
-
-            VesselMetadata(
-                VesselID id,
-                VesselDynamism dynamism,
-                bool isStatic,
-                std::optional<TypeHandle> typeHandle = {});
-        };
-
         using VesselMetadataList = std::vector<VesselMetadata>;
         VesselMetadataList vesselMetadataList;
 
         IntervalList<VesselID> occupiedVesselIDs;
 
-        VesselID SetupNewVesselInternals(VesselDynamism dynamism, bool isStatic, std::optional<TypeHandle> typeHandle = {});
+        VesselID SetupNewVesselInternals(VesselDynamism dynamism, std::optional<TypeHandle> typeHandle = {});
         void DestroyVesselMetadata(VesselID id);
         [[nodiscard]] VesselMetadata* VesselMetadataFor(VesselID id);
 
@@ -139,9 +126,27 @@ namespace Arca
         template<class RelicT>
         static TypeHandle TypeHandleForRelic();
     private:
+        struct KnownPolymorphicSerializer
+        {
+            using Serializer = std::function<void(void*, ::Inscription::BinaryArchive&)>;
+            const Serializer serializer;
+
+            using InscriptionTypeHandles = std::vector<::Inscription::TypeHandle>;
+            using InscriptionTypeHandleProvider =
+                std::function<InscriptionTypeHandles(::Inscription::BinaryArchive&)>;
+            InscriptionTypeHandleProvider inscriptionTypeProvider;
+
+            KnownPolymorphicSerializer(
+                Serializer&& serializer,
+                InscriptionTypeHandleProvider&& inscriptionTypeProvider);
+        };
+        using KnownPolymorphicSerializerMap = std::unordered_map<TypeHandle, KnownPolymorphicSerializer>;
+    private:
         using RelicBatchSourcePtr = std::unique_ptr<RelicBatchSourceBase>;
-        using RelicBatchSourceList = std::unordered_map<TypeHandle, RelicBatchSourcePtr>;
-        RelicBatchSourceList relicBatchSources;
+        using RelicBatchSourceMap = std::unordered_map<TypeHandle, RelicBatchSourcePtr>;
+        RelicBatchSourceMap relicBatchSources;
+
+        KnownPolymorphicSerializerMap relicSerializerMap;
 
         [[nodiscard]] RelicBatchSourceBase* FindRelicBatchSource(const TypeHandle& typeHandle);
         template<class T>
@@ -150,11 +155,13 @@ namespace Arca
         [[nodiscard]] RelicBatchSource<T>& RequiredRelicBatchSource();
     private:
         using CuratorHandlePtr = std::unique_ptr<CuratorHandle>;
-        using CuratorList = std::vector<CuratorHandlePtr>;
-        CuratorList curators;
+        using CuratorMap = std::unordered_map<TypeHandle, CuratorHandlePtr>;
+        CuratorMap curators;
 
         using CuratorLayoutList = std::vector<CuratorLayout>;
         CuratorLayoutList curatorLayouts;
+
+        KnownPolymorphicSerializerMap curatorSerializerMap;
 
         template<class Curator>
         [[nodiscard]] bool HasCurator() const;
@@ -193,7 +200,7 @@ namespace Arca
     template<class VesselT>
     VesselT Reliquary::CreateVessel()
     {
-        const auto id = SetupNewVesselInternals(VesselDynamism::Fixed, false, VesselTraits<VesselT>::typeHandle);
+        const auto id = SetupNewVesselInternals(VesselDynamism::Fixed, VesselTraits<VesselT>::typeHandle);
         SatisfyVesselStructure(VesselT::structure, id);
         return VesselT(id, *this);
     }
@@ -250,7 +257,7 @@ namespace Arca
 
         for (auto& loop : curators)
         {
-            auto casted = dynamic_cast<CuratorT*>(loop->Get());
+            auto casted = dynamic_cast<CuratorT*>(loop.second->Get());
             if (casted)
                 return casted;
         }
@@ -265,7 +272,7 @@ namespace Arca
 
         for (auto& loop : curators)
         {
-            auto casted = dynamic_cast<const CuratorT*>(loop->Get());
+            auto casted = dynamic_cast<const CuratorT*>(loop.second->Get());
             if (casted)
                 return casted;
         }
@@ -416,6 +423,27 @@ namespace Arca
 
 namespace Inscription
 {
+    class KnownPolymorphic
+    {
+    public:
+        using Serializer = std::function<void(void*, BinaryArchive&)>;
+    public:
+        explicit KnownPolymorphic(void* underlying, Serializer serializer);
+    private:
+        void* underlying;
+        Serializer serializer;
+    private:
+        INSCRIPTION_ACCESS;
+    };
+
+    template<>
+    class Scribe<KnownPolymorphic, BinaryArchive> final :
+        public CompositeScribe<KnownPolymorphic, BinaryArchive>
+    {
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+    };
+
     template<>
     class Scribe<::Arca::Reliquary, BinaryArchive> final :
         public CompositeScribe<::Arca::Reliquary, BinaryArchive>
@@ -426,24 +454,83 @@ namespace Inscription
         static void Save(ObjectT& object, ArchiveT& archive);
         static void Load(ObjectT& object, ArchiveT& archive);
 
-        template<class Descriptions>
-        static bool ShouldLoadRelic(const TypeHandle& typeHandle, const Descriptions& descriptions, ArchiveT& archive);
-    };
+        template<class ObjectContainer, class ValueToPiece, class ValueToID>
+        static void JumpSaveAll(
+            ObjectT& object,
+            ArchiveT& archive,
+            ObjectT::KnownPolymorphicSerializerMap& fromObject,
+            ObjectContainer& container,
+            ValueToPiece valueToPiece,
+            ValueToID valueToID);
 
-    template<class Descriptions>
-    bool Scribe<::Arca::Reliquary, BinaryArchive>::ShouldLoadRelic(const TypeHandle& typeHandle, const Descriptions& descriptions, ArchiveT& archive)
-    {
-        const auto anyRepresentedIsLoaded = [typeHandle, &archive](const ::Arca::RelicTypeDescription& relicDescription)
+        template<class FindObject>
+        static void JumpLoadAll(
+            ObjectT& object,
+            ArchiveT& archive,
+            ObjectT::KnownPolymorphicSerializerMap& fromObject,
+            FindObject findSerializedObject);
+    private:
+        struct TypeHandlePair
         {
-            auto representedTypeHandles = relicDescription.AllSerializationRepresentedTypeHandles(archive);
-            const auto anyRepresentedIsLoaded = [typeHandle](const TypeHandle& representedTypeHandle)
-            {
-                return representedTypeHandle == typeHandle;
-            };
-            return std::any_of(representedTypeHandles.begin(), representedTypeHandles.end(), anyRepresentedIsLoaded);
+            ::Arca::TypeHandle arca;
+            TypeHandle inscription;
         };
 
-        return std::any_of(descriptions.begin(), descriptions.end(), anyRepresentedIsLoaded);
+        static std::vector<TypeHandlePair> PruneTypesToLoad(
+            ObjectT::KnownPolymorphicSerializerMap& fromObject,
+            ArchiveT& archive,
+            const std::vector<TypeHandle>& typeHandlesFromArchive);
+
+        static std::vector<TypeHandlePair> ExtractTypeHandles(
+            ObjectT::KnownPolymorphicSerializerMap& fromObject,
+            ArchiveT& archive);
+    };
+
+    template<class ObjectContainer, class ValueToPiece, class ValueToID>
+    void Scribe<::Arca::Reliquary, BinaryArchive>::JumpSaveAll(
+        ObjectT& object,
+        ArchiveT& archive,
+        ObjectT::KnownPolymorphicSerializerMap& fromObject,
+        ObjectContainer& container,
+        ValueToPiece valueToPiece,
+        ValueToID valueToID)
+    {
+        OutputJumpTable<TypeHandle, KnownPolymorphic> jumpTable;
+        std::vector<KnownPolymorphic> knownPolymorphics;
+        for (auto& loop : container)
+        {
+            auto id = valueToID(loop);
+            void* piece = valueToPiece(loop);
+            const KnownPolymorphic::Serializer* serializer = &fromObject.find(id)->second.serializer;
+            knownPolymorphics.emplace_back(piece, *serializer);
+            jumpTable.Add(id, knownPolymorphics.back());
+        }
+
+        archive(jumpTable);
+    }
+
+    template<class FindObject>
+    void Scribe<::Arca::Reliquary, BinaryArchive>::JumpLoadAll(
+        ObjectT& object,
+        ArchiveT& archive,
+        ObjectT::KnownPolymorphicSerializerMap& fromObject,
+        FindObject findSerializedObject)
+    {
+        InputJumpTable<TypeHandle, KnownPolymorphic> jumpTable;
+        archive(jumpTable);
+
+        auto typesToLoad = PruneTypesToLoad(
+            fromObject,
+            archive,
+            jumpTable.AllIDs());
+
+        for (auto& typeToLoad : typesToLoad)
+        {
+            const auto serializedObject = findSerializedObject(object, typeToLoad.arca);
+            const auto serializer = &fromObject.find(typeToLoad.arca)->second.serializer;
+            auto adapter = KnownPolymorphic(serializedObject, *serializer);
+            jumpTable.FillObject(typeToLoad.inscription, adapter, archive);
+        }
     }
 }
 

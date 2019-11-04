@@ -5,8 +5,6 @@
 #include <Inscription/MultimapScribe.h>
 #include <Inscription/MemoryScribe.h>
 #include <Inscription/VectorScribe.h>
-#include <Inscription/OutputJumpTable.h>
-#include <Inscription/InputJumpTable.h>
 
 #include <cassert>
 #include <utility>
@@ -19,12 +17,14 @@ namespace Arca
         staticVesselIDMap(std::move(arg.staticVesselIDMap)),
         relicFactoryMap(std::move(arg.relicFactoryMap)),
         relicBatchSources(std::move(arg.relicBatchSources)),
+        relicSerializerMap(std::move(arg.relicSerializerMap)),
         curators(std::move(arg.curators)),
         curatorLayouts(std::move(arg.curatorLayouts)),
+        curatorSerializerMap(std::move(arg.curatorSerializerMap)),
         signalBatchSources(std::move(arg.signalBatchSources))
     {
         for (auto& loop : curators)
-            loop->Get()->owner = this;
+            loop.second->Get()->owner = this;
     }
 
     Reliquary& Reliquary::operator=(Reliquary&& arg) noexcept
@@ -34,12 +34,14 @@ namespace Arca
         staticVesselIDMap = std::move(arg.staticVesselIDMap);
         relicFactoryMap = std::move(arg.relicFactoryMap);
         relicBatchSources = std::move(arg.relicBatchSources);
+        relicSerializerMap = std::move(arg.relicSerializerMap);
         curators = std::move(arg.curators);
         curatorLayouts = std::move(arg.curatorLayouts);
+        curatorSerializerMap = std::move(arg.curatorSerializerMap);
         signalBatchSources = std::move(arg.signalBatchSources);
 
         for (auto& loop : curators)
-            loop->Get()->owner = this;
+            loop.second->Get()->owner = this;
 
         return *this;
     }
@@ -47,20 +49,20 @@ namespace Arca
     void Reliquary::Work()
     {
         for (auto& loop : curators)
-            loop->Get()->Work();
+            loop.second->Get()->Work();
     }
 
     Vessel Reliquary::CreateVessel()
     {
         const auto dynamism = VesselDynamism::Dynamic;
-        const auto id = SetupNewVesselInternals(dynamism, false);
+        const auto id = SetupNewVesselInternals(dynamism);
         return Vessel(id, dynamism, *this);
     }
 
     Vessel Reliquary::CreateVessel(const VesselStructure& structure)
     {
         const auto dynamism = VesselDynamism::Fixed;
-        const auto id = SetupNewVesselInternals(dynamism, false);
+        const auto id = SetupNewVesselInternals(dynamism);
         SatisfyVesselStructure(structure, id);
         return Vessel(id, dynamism, *this);
     }
@@ -104,34 +106,34 @@ namespace Arca
         return vesselMetadataList.size();
     }
 
+    Curator* Reliquary::FindCurator(const TypeHandle& typeHandle)
+    {
+        const auto found = curators.find(typeHandle);
+        if (found == curators.end())
+            return nullptr;
+
+        return found->second->Get();
+    }
+
     std::vector<CuratorTypeDescription> Reliquary::CuratorTypeDescriptions() const
     {
         std::vector<CuratorTypeDescription> returnValue;
         for (auto& loop : curators)
-            returnValue.push_back(loop->description);
+            returnValue.push_back(loop.second->description);
         return returnValue;
     }
 
     void Reliquary::Initialize()
     {
         for (auto& loop : curators)
-            loop->Get()->Initialize();
+            loop.second->Get()->Initialize();
     }
 
-    Reliquary::VesselMetadata::VesselMetadata(
-        VesselID id,
-        VesselDynamism dynamism,
-        bool isStatic,
-        std::optional<TypeHandle> typeHandle)
-        :
-        id(id), dynamism(dynamism), isStatic(isStatic), typeHandle(std::move(typeHandle))
-    {}
-
-    VesselID Reliquary::SetupNewVesselInternals(VesselDynamism dynamism, bool isStatic, std::optional<TypeHandle> typeHandle)
+    VesselID Reliquary::SetupNewVesselInternals(VesselDynamism dynamism, std::optional<TypeHandle> typeHandle)
     {
         const auto id = NextVesselID();
         occupiedVesselIDs.Include(id);
-        vesselMetadataList.push_back({ id, dynamism, isStatic, std::move(typeHandle) });
+        vesselMetadataList.push_back({ id, dynamism, std::move(typeHandle) });
         return id;
     }
 
@@ -168,7 +170,7 @@ namespace Arca
         if (!metadata)
             return;
 
-        if (metadata->isStatic)
+        if (metadata->dynamism == VesselDynamism::Static)
             return;
 
         for (auto& child : metadata->children)
@@ -210,6 +212,13 @@ namespace Arca
         factory->second(*this, id);
     }
 
+    Reliquary::KnownPolymorphicSerializer::KnownPolymorphicSerializer(
+        Serializer&& serializer,
+        InscriptionTypeHandleProvider&& inscriptionTypeProvider)
+        :
+        serializer(std::move(serializer)), inscriptionTypeProvider(std::move(inscriptionTypeProvider))
+    {}
+
     RelicBatchSourceBase* Reliquary::FindRelicBatchSource(const TypeHandle& typeHandle)
     {
         const auto found = relicBatchSources.find(typeHandle);
@@ -237,21 +246,25 @@ namespace Arca
                 if (used.find(currentCuratorType) != used.end())
                     continue;
 
-                auto handle = std::find_if(curators.begin(), curators.end(), [&currentCuratorType](CuratorHandlePtr& handle)
-                {
-                    return handle->Type() == currentCuratorType;
-                });
+                auto handle = std::find_if(
+                    curators.begin(),
+                    curators.end(),
+                    [&currentCuratorType](const CuratorMap::value_type& entry)
+                    {
+                        return entry.second->Type() == currentCuratorType;
+                    });
                 assert(handle != curators.end());
-                runFunction(currentCuratorType, (*handle)->Get());
+                runFunction(currentCuratorType, handle->second->Get());
             }
         }
 
         for (auto& loop : curators)
         {
-            if (used.find(loop->Type()) != used.end())
+            auto type = loop.second->Type();
+            if (used.find(type) != used.end())
                 continue;
 
-            runFunction(loop->Type(), loop->Get());
+            runFunction(type, loop.second->Get());
         }
     }
 
@@ -267,6 +280,15 @@ namespace Arca
 
 namespace Inscription
 {
+    KnownPolymorphic::KnownPolymorphic(void* underlying, Serializer serializer) :
+        underlying(underlying), serializer(std::move(serializer))
+    {}
+
+    void Scribe<KnownPolymorphic, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    {
+        object.serializer(object.underlying, archive);
+    }
+
     void Scribe<::Arca::Reliquary, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
         if (archive.IsOutput())
@@ -277,11 +299,80 @@ namespace Inscription
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::Save(ObjectT& object, ArchiveT& archive)
     {
+        archive(object.vesselMetadataList);
 
+        JumpSaveAll(
+            object,
+            archive,
+            object.relicSerializerMap,
+            object.relicBatchSources,
+            [](const ObjectT::RelicBatchSourceMap::value_type& entry) { return entry.second.get(); },
+            [](const ObjectT::RelicBatchSourceMap::value_type& entry) { return entry.first; });
+
+        JumpSaveAll(
+            object,
+            archive,
+            object.curatorSerializerMap,
+            object.curators,
+            [](const ObjectT::CuratorMap::value_type& entry) { return entry.second->Get(); },
+            [](const ObjectT::CuratorMap::value_type& entry) { return entry.first; });
     }
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::Load(ObjectT& object, ArchiveT& archive)
     {
+        archive(object.vesselMetadataList);
 
+        JumpLoadAll(
+            object,
+            archive,
+            object.relicSerializerMap,
+            [](ObjectT& object, const ::Arca::TypeHandle& typeHandle)
+            {
+                return object.FindRelicBatchSource(typeHandle);
+            });
+
+        JumpLoadAll(
+            object,
+            archive,
+            object.curatorSerializerMap,
+            [](ObjectT& object, const ::Arca::TypeHandle& typeHandle)
+            {
+                return object.FindCurator(typeHandle);
+            });
+    }
+
+    auto Scribe<::Arca::Reliquary, BinaryArchive>::PruneTypesToLoad(
+        ObjectT::KnownPolymorphicSerializerMap& fromObject,
+        ArchiveT& archive,
+        const std::vector<TypeHandle>& typeHandlesFromArchive)
+        ->
+        std::vector<TypeHandlePair>
+    {
+        auto typeHandlesFromReliquary = ExtractTypeHandles(fromObject, archive);
+
+        std::vector<TypeHandlePair> returnValue;
+        for (auto& typeHandleFromArchive : typeHandlesFromArchive)
+            for (auto& typeHandleFromReliquary : typeHandlesFromReliquary)
+                if (typeHandleFromReliquary.inscription == typeHandleFromArchive)
+                    returnValue.push_back(typeHandleFromReliquary);
+
+        return returnValue;
+    }
+
+    auto Scribe<::Arca::Reliquary, BinaryArchive>::ExtractTypeHandles(
+        ObjectT::KnownPolymorphicSerializerMap& fromObject,
+        ArchiveT& archive)
+        ->
+        std::vector<TypeHandlePair>
+    {
+        std::vector<TypeHandlePair> returnValue;
+        for(auto& loop : fromObject)
+        {
+            auto inscriptionTypes = loop.second.inscriptionTypeProvider(archive);
+
+            for(auto& inscriptionType : inscriptionTypes)
+                returnValue.push_back({ loop.first, inscriptionType });
+        }
+        return returnValue;
     }
 }

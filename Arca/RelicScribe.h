@@ -1,13 +1,12 @@
 #pragma once
 
-#include "StaticAssert.h"
-
+#include "RelicTraits.h"
 #include "Serialization.h"
 
 namespace Inscription
 {
     template<class T, class Archive>
-    class CuratorScribe : public CompositeScribe<T, Archive>
+    class RelicScribe : public CompositeScribe<T, Archive>
     {
     private:
         using BaseT = CompositeScribe<T, Archive>;
@@ -18,15 +17,11 @@ namespace Inscription
         using BaseT::Scriven;
     public:
         static TypeHandle OutputTypeHandle(const ArchiveT& archive);
-    protected:
-        using BaseT::ScrivenImplementation;
-    private:
-        STATIC_ASSERT_TYPE_DERIVED_FROM_CURATOR(T);
     };
 
     template<class T, class Archive>
-    TypeHandle CuratorScribe<T, Archive>::OutputTypeHandle(const ArchiveT& archive)
+    TypeHandle RelicScribe<T, Archive>::OutputTypeHandle(const ArchiveT& archive)
     {
-        return ::Arca::CuratorTraits<T>::typeHandle;
+        return ::Arca::RelicTraits<T>::typeHandle;
     }
 }

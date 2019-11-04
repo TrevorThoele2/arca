@@ -13,25 +13,11 @@ ReliquaryTestsFixture::ReliquaryTestsFixture()
 ReliquaryTestsFixture::BasicRelic::BasicRelic(std::string myValue) : myValue(std::move(myValue))
 {}
 
-ReliquaryTestsFixture::BasicRelic::BasicRelic(const ::Inscription::BinaryTableData<BasicRelic>& data) :
-    myValue(data.myValue)
-{}
-
 ReliquaryTestsFixture::OtherRelic::OtherRelic(int myValue) : myValue(myValue)
-{}
-
-ReliquaryTestsFixture::OtherRelic::OtherRelic(const ::Inscription::BinaryTableData<OtherRelic>& data) :
-    myValue(data.myValue)
 {}
 
 ReliquaryTestsFixture::BasicTypedVessel::BasicTypedVessel(VesselID id, Reliquary& owner) :
     TypedVessel(id, owner)
-{
-    Setup();
-}
-
-ReliquaryTestsFixture::BasicTypedVessel::BasicTypedVessel(const ::Inscription::BinaryTableData<BasicTypedVessel>& data) :
-    TypedVessel(data.base)
 {
     Setup();
 }
@@ -42,12 +28,6 @@ void ReliquaryTestsFixture::BasicTypedVessel::Setup()
 }
 
 ReliquaryTestsFixture::StaticVessel::StaticVessel(VesselID id, Reliquary& owner) : TypedVessel(id, owner)
-{
-    Setup();
-}
-
-ReliquaryTestsFixture::StaticVessel::StaticVessel(const ::Inscription::BinaryTableData<StaticVessel>& data) :
-    TypedVessel(data.base)
 {
     Setup();
 }
@@ -64,6 +44,9 @@ namespace Arca
 {
     const TypeHandle RelicTraits<::ReliquaryTestsFixture::BasicRelic>::typeHandle =
         "ReliquaryTestsBasicRelic";
+
+    const TypeHandle RelicTraits<::ReliquaryTestsFixture::OtherBasicRelic>::typeHandle =
+        "ReliquaryTestsOtherBasicRelic";
 
     const TypeHandle RelicTraits<::ReliquaryTestsFixture::OtherRelic>::typeHandle =
         "ReliquaryTestsOtherRelic";
@@ -208,11 +191,11 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "registered reliquary with every type", "
     }
 }
 
-SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary]")
+SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][serialization]")
 {
-    GIVEN("all registered")
+    GIVEN("saved empty reliquary with every type registered")
     {
-        auto reliquary = ReliquaryOrigin()
+        auto savedReliquary = ReliquaryOrigin()
             .Relic<BasicRelic>()
             .StaticVessel<StaticVessel>()
             .Curator<BasicCurator>()
@@ -220,5 +203,184 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary]")
             .Signal<BasicSignal>()
             .Actualize();
 
+        {
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.exe", "Testing", 1);
+            outputArchive(savedReliquary);
+        }
+
+        WHEN("loading reliquary")
+        {
+            auto loadedReliquary = ReliquaryOrigin()
+                .Relic<BasicRelic>()
+                .StaticVessel<StaticVessel>()
+                .Curator<BasicCurator>()
+                .CuratorLayout(CuratorLayout())
+                .Signal<BasicSignal>()
+                .Actualize();
+
+            {
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.exe", "Testing");
+                inputArchive(loadedReliquary);
+            }
+
+            THEN("has only static vessel")
+            {
+                REQUIRE(loadedReliquary.VesselCount() == 1);
+            }
+        }
+    }
+
+    GIVEN("saved reliquary with dynamic vessel")
+    {
+        auto savedReliquary = ReliquaryOrigin()
+            .Relic<BasicRelic>()
+            .Actualize();
+
+        auto savedVessel = savedReliquary.CreateVessel();
+        auto savedRelic = savedVessel.CreateRelic<BasicRelic>();
+        savedRelic->myValue = dataGeneration.Random<std::string>();
+
+        {
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.exe", "Testing", 1);
+            outputArchive(savedReliquary);
+        }
+
+        WHEN("loading reliquary")
+        {
+            auto loadedReliquary = ReliquaryOrigin()
+                .Relic<BasicRelic>()
+                .Actualize();
+
+            {
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.exe", "Testing");
+                inputArchive(loadedReliquary);
+            }
+
+            auto loadedVessel = loadedReliquary.FindVessel(savedVessel.ID());
+            auto relicFromVessel = loadedVessel->FindRelic<BasicRelic>();
+
+            THEN("has vessel")
+            {
+                REQUIRE(loadedReliquary.VesselCount() == 1);
+                REQUIRE(loadedVessel.has_value());
+            }
+
+            THEN("vessel has relic")
+            {
+                auto relicFromReliquary = loadedReliquary.FindRelic<BasicRelic>(loadedVessel->ID());
+                REQUIRE(relicFromReliquary != nullptr);
+                REQUIRE(relicFromVessel != nullptr);
+                REQUIRE(loadedVessel->HasRelic<BasicRelic>());
+            }
+
+            THEN("relic has saved value")
+            {
+                REQUIRE(relicFromVessel->myValue == savedRelic->myValue);
+            }
+
+            THEN("vessel is dynamic")
+            {
+                REQUIRE(loadedVessel->Dynamism() == VesselDynamism::Dynamic);
+            }
+
+            THEN("vessel owner is loaded reliquary")
+            {
+                REQUIRE(&loadedVessel->Owner() == &loadedReliquary);
+            }
+
+            THEN("vessel id is saved id")
+            {
+                REQUIRE(loadedVessel->ID() == savedVessel.ID());
+            }
+        }
+
+        WHEN("loading reliquary without registering relic type")
+        {
+            auto loadedReliquary = ReliquaryOrigin()
+                .Actualize();
+
+            {
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.exe", "Testing");
+                inputArchive(loadedReliquary);
+            }
+
+            auto loadedVessel = loadedReliquary.FindVessel(savedVessel.ID());
+
+            THEN("has vessel")
+            {
+                REQUIRE(loadedReliquary.VesselCount() == 1);
+                REQUIRE(loadedVessel.has_value());
+            }
+
+            THEN("vessel does not have relic")
+            {
+                REQUIRE_THROWS_AS(loadedVessel->FindRelic<BasicRelic>(), NotRegistered);
+                REQUIRE_THROWS_AS(loadedReliquary.FindRelic<BasicRelic>(loadedVessel->ID()), NotRegistered);
+            }
+
+            THEN("vessel is dynamic")
+            {
+                REQUIRE(loadedVessel->Dynamism() == VesselDynamism::Dynamic);
+            }
+
+            THEN("vessel owner is loaded reliquary")
+            {
+                REQUIRE(&loadedVessel->Owner() == &loadedReliquary);
+            }
+
+            THEN("vessel id is saved id")
+            {
+                REQUIRE(loadedVessel->ID() == savedVessel.ID());
+            }
+        }
+
+        WHEN("loading reliquary with different relic type with same input type handle")
+        {
+            auto loadedReliquary = ReliquaryOrigin()
+                .Relic<OtherBasicRelic>()
+                .Actualize();
+
+            {
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.exe", "Testing");
+                inputArchive(loadedReliquary);
+            }
+
+            auto loadedVessel = loadedReliquary.FindVessel(savedVessel.ID());
+            auto relicFromVessel = loadedVessel->FindRelic<OtherBasicRelic>();
+
+            THEN("has vessel")
+            {
+                REQUIRE(loadedReliquary.VesselCount() == 1);
+                REQUIRE(loadedVessel.has_value());
+            }
+
+            THEN("vessel has relic")
+            {
+                auto relicFromReliquary = loadedReliquary.FindRelic<OtherBasicRelic>(loadedVessel->ID());
+                REQUIRE(relicFromReliquary != nullptr);
+                REQUIRE(relicFromVessel != nullptr);
+                REQUIRE(loadedVessel->HasRelic<OtherBasicRelic>());
+            }
+
+            THEN("relic has saved value")
+            {
+                REQUIRE(relicFromVessel->myValue == savedRelic->myValue);
+            }
+
+            THEN("vessel is dynamic")
+            {
+                REQUIRE(loadedVessel->Dynamism() == VesselDynamism::Dynamic);
+            }
+
+            THEN("vessel owner is loaded reliquary")
+            {
+                REQUIRE(&loadedVessel->Owner() == &loadedReliquary);
+            }
+
+            THEN("vessel id is saved id")
+            {
+                REQUIRE(loadedVessel->ID() == savedVessel.ID());
+            }
+        }
     }
 }

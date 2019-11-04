@@ -20,6 +20,14 @@ public:
 
         explicit BasicCurator(Reliquary& owner);
     };
+
+    class OtherBasicCurator : public Curator
+    {
+    public:
+        int value = 0;
+
+        explicit OtherBasicCurator(Reliquary& owner);
+    };
 };
 
 namespace Inscription
@@ -28,8 +36,16 @@ namespace Inscription
     class Scribe<CuratorTestsFixture::BasicCurator, BinaryArchive> final :
         public CuratorScribe<CuratorTestsFixture::BasicCurator, BinaryArchive>
     {
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+    };
+
+    template<>
+    class Scribe<CuratorTestsFixture::OtherBasicCurator, BinaryArchive> final :
+        public CuratorScribe<CuratorTestsFixture::OtherBasicCurator, BinaryArchive>
+    {
     public:
-        static TypeHandle PrincipleTypeHandle(const ArchiveT& archive);
+        static std::vector<TypeHandle> InputTypeHandles(const ArchiveT& archive);
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
     };

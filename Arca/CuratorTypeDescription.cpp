@@ -18,7 +18,7 @@ namespace Arca
         return !(*this == arg);
     }
 
-    auto CuratorTypeDescription::AllSerializationRepresentedTypeHandles(::Inscription::BinaryArchive& archive) const -> SerializationTypeHandles
+    auto CuratorTypeDescription::AllSerializationInputTypeHandles(::Inscription::BinaryArchive& archive) const -> SerializationTypeHandles
     {
         return serializationTypeHandles(archive);
     }

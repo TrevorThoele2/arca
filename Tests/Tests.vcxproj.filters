@@ -7,9 +7,6 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IDManagerTests.cpp">
-      <Filter>Source Files\Test</Filter>
-    </ClCompile>
     <ClCompile Include="ReliquaryFixture.cpp">
       <Filter>Source Files\Fixture</Filter>
     </ClCompile>
