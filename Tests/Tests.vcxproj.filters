@@ -13,16 +13,16 @@
     <ClCompile Include="ReliquaryTests.cpp">
       <Filter>Source Files\Test</Filter>
     </ClCompile>
-    <ClCompile Include="RelicBatchTests.cpp">
-      <Filter>Source Files\Test</Filter>
-    </ClCompile>
     <ClCompile Include="SignalBatchTests.cpp">
       <Filter>Source Files\Test</Filter>
     </ClCompile>
     <ClCompile Include="CuratorTests.cpp">
       <Filter>Source Files\Test</Filter>
     </ClCompile>
-    <ClCompile Include="VesselTests.cpp">
+    <ClCompile Include="ShardBatchTests.cpp">
+      <Filter>Source Files\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="RelicTests.cpp">
       <Filter>Source Files\Test</Filter>
     </ClCompile>
   </ItemGroup>
@@ -36,16 +36,16 @@
     <ClInclude Include="ReliquaryTests.h">
       <Filter>Header Files\Test</Filter>
     </ClInclude>
-    <ClInclude Include="RelicBatchTests.h">
-      <Filter>Header Files\Test</Filter>
-    </ClInclude>
     <ClInclude Include="SignalBatchTests.h">
       <Filter>Header Files\Test</Filter>
     </ClInclude>
     <ClInclude Include="CuratorTests.h">
       <Filter>Header Files\Test</Filter>
     </ClInclude>
-    <ClInclude Include="VesselTests.h">
+    <ClInclude Include="ShardBatchTests.h">
+      <Filter>Header Files\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicTests.h">
       <Filter>Header Files\Test</Filter>
     </ClInclude>
   </ItemGroup>

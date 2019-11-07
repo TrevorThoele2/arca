@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Exception.h"
-#include "VesselID.h"
+#include "RelicID.h"
 
 namespace Arca
 {
@@ -35,34 +35,34 @@ namespace Arca
         AlreadyRegistered();
     };
 
-    class CannotCreateRelic final : public Exception
+    class CannotCreateShard final : public Exception
     {
     public:
-        CannotCreateRelic();
+        CannotCreateShard();
     };
 
-    class CannotDestroyRelic final : public Exception
+    class CannotDestroyShard final : public Exception
     {
     public:
-        CannotDestroyRelic();
+        CannotDestroyShard();
     };
 
-    class CannotFindVessel final : public Exception
+    class CannotFindRelic final : public Exception
     {
     public:
-        explicit CannotFindVessel(VesselID id);
+        explicit CannotFindRelic(RelicID id);
     };
 
-    class VesselAlreadyParented final : public Exception
+    class RelicAlreadyParented final : public Exception
     {
     public:
-        explicit VesselAlreadyParented(VesselID id);
+        explicit RelicAlreadyParented(RelicID id);
     };
 
-    class CannotParentVesselToSelf final : public Exception
+    class CannotParentRelicToSelf final : public Exception
     {
     public:
-        explicit CannotParentVesselToSelf(VesselID id);
+        explicit CannotParentRelicToSelf(RelicID id);
     };
 
     class InvalidCuratorPipeline final : public Exception

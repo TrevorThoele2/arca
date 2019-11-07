@@ -5,5 +5,5 @@
 
 namespace Arca
 {
-    using VesselStructure = std::vector<TypeHandle>;
+    using RelicStructure = std::vector<TypeHandle>;
 }

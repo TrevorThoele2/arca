@@ -9,7 +9,7 @@ namespace Arca
         auto infrastructure = CreateGroup();
         infrastructure->RegisterInfrastructure<Reliquary>();
         infrastructure->RegisterInfrastructure<Curator>();
-        infrastructure->RegisterInfrastructure<RelicBatchSourceBase>();
+        infrastructure->RegisterInfrastructure<ShardBatchSourceBase>();
         infrastructure->RegisterInfrastructure<SignalBatchSourceBase>();
     }
 

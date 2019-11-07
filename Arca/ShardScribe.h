@@ -1,12 +1,12 @@
 #pragma once
 
-#include "RelicTraits.h"
+#include "ShardTraits.h"
 #include "Serialization.h"
 
 namespace Inscription
 {
     template<class T, class Archive>
-    class RelicScribe : public CompositeScribe<T, Archive>
+    class ShardScribe : public CompositeScribe<T, Archive>
     {
     private:
         using BaseT = CompositeScribe<T, Archive>;
@@ -20,8 +20,8 @@ namespace Inscription
     };
 
     template<class T, class Archive>
-    TypeHandle RelicScribe<T, Archive>::OutputTypeHandle(const ArchiveT& archive)
+    TypeHandle ShardScribe<T, Archive>::OutputTypeHandle(const ArchiveT& archive)
     {
-        return ::Arca::RelicTraits<T>::typeHandle;
+        return ::Arca::ShardTraits<T>::typeHandle;
     }
 }

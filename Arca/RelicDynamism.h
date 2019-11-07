@@ -4,7 +4,7 @@
 
 namespace Arca
 {
-    enum class VesselDynamism
+    enum class RelicDynamism
     {
         Fixed,
         Dynamic,
@@ -15,7 +15,7 @@ namespace Arca
 namespace Inscription
 {
     template<>
-    class Scribe<::Arca::VesselDynamism, BinaryArchive> final :
-        public EnumScribe<::Arca::VesselDynamism, BinaryArchive>
+    class Scribe<::Arca::RelicDynamism, BinaryArchive> final :
+        public EnumScribe<::Arca::RelicDynamism, BinaryArchive>
     {};
 }

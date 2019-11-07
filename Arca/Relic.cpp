@@ -1,37 +1,37 @@
-#include "Vessel.h"
+#include "Relic.h"
 
 #include "Reliquary.h"
 
 namespace Arca
 {
-    Reliquary& Vessel::Owner()
+    Reliquary& Relic::Owner()
     {
         return *owner;
     }
 
-    const Reliquary& Vessel::Owner() const
+    const Reliquary& Relic::Owner() const
     {
         return *owner;
     }
 
-    VesselID Vessel::ID() const
+    RelicID Relic::ID() const
     {
         return id;
     }
 
-    VesselDynamism Vessel::Dynamism() const
+    RelicDynamism Relic::Dynamism() const
     {
         return dynamism;
     }
 
-    Vessel::Vessel(VesselID id, VesselDynamism dynamism, Reliquary& owner)
+    Relic::Relic(RelicID id, RelicDynamism dynamism, Reliquary& owner)
         : owner(&owner), id(id), dynamism(dynamism)
     {}
 }
 
 namespace Inscription
 {
-    void Scribe<Arca::Vessel, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    void Scribe<Arca::Relic, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
         archive(object.owner);
         archive(object.id);

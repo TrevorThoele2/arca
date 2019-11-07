@@ -50,7 +50,7 @@ namespace Arca
             Group& operator=(Group&& arg) = delete;
 
             template<class T>
-            void RegisterRelic();
+            void RegisterShard();
             template<class T>
             void RegisterSignal();
             template<class T, std::enable_if_t<std::is_base_of_v<Curator, T> && !std::is_same_v<Curator, T>, int> = 0>
@@ -86,10 +86,10 @@ namespace Arca
         Group* CreateGroup();
     private:
         template<class T>
-        class RelicEntry final : public Entry
+        class ShardEntry final : public Entry
         {
         public:
-            ~RelicEntry() = default;
+            ~ShardEntry() = default;
 
             [[nodiscard]] std::unique_ptr<Entry> Clone() const override;
 
@@ -146,9 +146,9 @@ namespace Arca
     };
 
     template<class T>
-    void TypeRegistration::Group::RegisterRelic()
+    void TypeRegistration::Group::RegisterShard()
     {
-        RegisterCommon<T, RelicEntry>();
+        RegisterCommon<T, ShardEntry>();
     }
 
     template<class T>
@@ -197,25 +197,25 @@ namespace Arca
     }
 
     template<class T>
-    auto TypeRegistration::RelicEntry<T>::Clone() const -> std::unique_ptr<Entry>
+    auto TypeRegistration::ShardEntry<T>::Clone() const -> std::unique_ptr<Entry>
     {
-        return std::make_unique<RelicEntry>(*this);
+        return std::make_unique<ShardEntry>(*this);
     }
 
     template<class T>
-    void TypeRegistration::RelicEntry<T>::PushTo(ReliquaryOrigin& reliquary)
+    void TypeRegistration::ShardEntry<T>::PushTo(ReliquaryOrigin& reliquary)
     {
-        reliquary.Relic<T>();
+        reliquary.Shard<T>();
     }
 
     template<class T>
-    void TypeRegistration::RelicEntry<T>::PushTo(::Inscription::BinaryArchive& archive)
+    void TypeRegistration::ShardEntry<T>::PushTo(::Inscription::BinaryArchive& archive)
     {
         archive.RegisterType<T>();
     }
 
     template<class T>
-    std::type_index TypeRegistration::RelicEntry<T>::Type() const
+    std::type_index TypeRegistration::ShardEntry<T>::Type() const
     {
         return std::type_index(typeid(T));
     }

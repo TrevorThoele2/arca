@@ -1,13 +1,13 @@
-#include "VesselMetadata.h"
+#include "RelicMetadata.h"
 
 #include <Inscription/OptionalScribe.h>
 #include <Inscription/VectorScribe.h>
 
 namespace Arca
 {
-    VesselMetadata::VesselMetadata(
-        VesselID id,
-        VesselDynamism dynamism,
+    RelicMetadata::RelicMetadata(
+        RelicID id,
+        RelicDynamism dynamism,
         std::optional<TypeHandle> typeHandle)
         :
         id(id), dynamism(dynamism), typeHandle(std::move(typeHandle))
@@ -16,7 +16,7 @@ namespace Arca
 
 namespace Inscription
 {
-    void Scribe<::Arca::VesselMetadata, BinaryArchive>::ScrivenImplementation(
+    void Scribe<::Arca::RelicMetadata, BinaryArchive>::ScrivenImplementation(
         ObjectT& object, ArchiveT& archive)
     {
         archive(object.id);

@@ -5,19 +5,19 @@
 
 #include "ReliquaryException.h"
 
-#include "Vessel.h"
-#include "VesselStructure.h"
-#include "VesselTraits.h"
-#include "VesselMetadata.h"
-
-#include "RelicBatch.h"
-#include "RelicBatchSource.h"
+#include "Relic.h"
+#include "RelicStructure.h"
 #include "RelicTraits.h"
+#include "RelicMetadata.h"
+
+#include "ShardBatch.h"
+#include "ShardBatchSource.h"
+#include "ShardTraits.h"
 
 #include "SignalBatch.h"
 #include "SignalBatchSource.h"
-#include "RelicCreated.h"
-#include "BeforeRelicDestroyed.h"
+#include "ShardCreated.h"
+#include "BeforeShardDestroyed.h"
 
 #include "Curator.h"
 #include "CuratorPipeline.h"
@@ -46,30 +46,30 @@ namespace Arca
     public:
         void Work();
     public:
-        Vessel CreateVessel();
-        Vessel CreateVessel(const VesselStructure& structure);
-        template<class VesselT>
-        VesselT CreateVessel();
+        Relic CreateRelic();
+        Relic CreateRelic(const RelicStructure& structure);
+        template<class RelicT>
+        RelicT CreateRelic();
 
-        void ParentVessel(VesselID parent, VesselID child);
+        void ParentRelic(RelicID parent, RelicID child);
 
-        void DestroyVessel(Vessel& vessel);
-        template<class VesselT>
-        void DestroyVessel(VesselT& vessel);
+        void DestroyRelic(Relic& relic);
+        template<class RelicT>
+        void DestroyRelic(RelicT& relic);
 
-        std::optional<Vessel> FindVessel(VesselID id);
-        template<class VesselT>
-        std::optional<VesselT> FindVessel(VesselID id);
-        template<class VesselT>
-        [[nodiscard]] VesselT StaticVessel();
+        std::optional<Relic> FindRelic(RelicID id);
+        template<class RelicT>
+        std::optional<RelicT> FindRelic(RelicID id);
+        template<class RelicT>
+        [[nodiscard]] RelicT StaticRelic();
 
-        [[nodiscard]] SizeT VesselCount() const;
+        [[nodiscard]] SizeT RelicCount() const;
     public:
-        template<class RelicT>
-        [[nodiscard]] RelicT* FindRelic(VesselID id);
+        template<class ShardT>
+        [[nodiscard]] ShardT* FindShard(RelicID id);
 
-        template<class RelicT>
-        [[nodiscard]] RelicBatch<RelicT> StartRelicBatch();
+        template<class ShardT>
+        [[nodiscard]] ShardBatch<ShardT> StartShardBatch();
     public:
         Curator* FindCurator(const TypeHandle& typeHandle);
         template<class CuratorT>
@@ -85,44 +85,44 @@ namespace Arca
         template<class SignalT>
         SignalBatch<SignalT> StartSignalBatch();
     private:
-        using VesselMetadataList = std::vector<VesselMetadata>;
-        VesselMetadataList vesselMetadataList;
+        using RelicMetadataList = std::vector<RelicMetadata>;
+        RelicMetadataList relicMetadataList;
 
-        IntervalList<VesselID> occupiedVesselIDs;
+        IntervalList<RelicID> occupiedRelicIDs;
 
-        VesselID SetupNewVesselInternals(VesselDynamism dynamism, std::optional<TypeHandle> typeHandle = {});
-        void DestroyVesselMetadata(VesselID id);
-        [[nodiscard]] VesselMetadata* VesselMetadataFor(VesselID id);
+        RelicID SetupNewRelicInternals(RelicDynamism dynamism, std::optional<TypeHandle> typeHandle = {});
+        void DestroyRelicMetadata(RelicID id);
+        [[nodiscard]] RelicMetadata* RelicMetadataFor(RelicID id);
 
-        void SatisfyVesselStructure(const VesselStructure& structure, VesselID id);
+        void SatisfyRelicStructure(const RelicStructure& structure, RelicID id);
 
-        void DestroyVessel(VesselID id);
+        void DestroyRelic(RelicID id);
 
-        [[nodiscard]] VesselID NextVesselID() const;
+        [[nodiscard]] RelicID NextRelicID() const;
     private:
-        using StaticVesselIDMap = std::unordered_map<TypeHandle, VesselID>;
-        StaticVesselIDMap staticVesselIDMap;
+        using StaticRelicIDMap = std::unordered_map<TypeHandle, RelicID>;
+        StaticRelicIDMap staticRelicIDMap;
     private:
-        using RelicFactory = void(*)(Reliquary&, VesselID);
-        using RelicFactoryMap = std::unordered_map<TypeHandle, RelicFactory>;
-        RelicFactoryMap relicFactoryMap;
+        using ShardFactory = void(*)(Reliquary&, RelicID);
+        using ShardFactoryMap = std::unordered_map<TypeHandle, ShardFactory>;
+        ShardFactoryMap shardFactoryMap;
 
-        void CreateRelic(const TypeHandle& typeHandle, VesselID id);
-        template<class RelicT>
-        RelicT* CreateRelic(VesselID id);
-        template<class RelicT>
-        void DestroyRelic(VesselID id);
+        void CreateShard(const TypeHandle& typeHandle, RelicID id);
+        template<class ShardT>
+        ShardT* CreateShard(RelicID id);
+        template<class ShardT>
+        void DestroyShard(RelicID id);
 
-        template<class RelicT>
-        void SignalCreation(RelicT& relic);
-        template<class RelicT>
-        void SignalDestruction(RelicT& relic);
+        template<class ShardT>
+        void SignalCreation(ShardT& shard);
+        template<class ShardT>
+        void SignalDestruction(ShardT& shard);
 
-        template<class RelicT>
-        RelicFactory FindRelicFactory();
+        template<class ShardT>
+        ShardFactory FindShardFactory();
 
-        template<class RelicT>
-        static TypeHandle TypeHandleForRelic();
+        template<class ShardT>
+        static TypeHandle TypeHandleForShard();
     private:
         struct KnownPolymorphicSerializer
         {
@@ -140,17 +140,17 @@ namespace Arca
         };
         using KnownPolymorphicSerializerMap = std::unordered_map<TypeHandle, KnownPolymorphicSerializer>;
     private:
-        using RelicBatchSourcePtr = std::unique_ptr<RelicBatchSourceBase>;
-        using RelicBatchSourceMap = std::unordered_map<TypeHandle, RelicBatchSourcePtr>;
-        RelicBatchSourceMap relicBatchSources;
+        using ShardBatchSourcePtr = std::unique_ptr<ShardBatchSourceBase>;
+        using ShardBatchSourceMap = std::unordered_map<TypeHandle, ShardBatchSourcePtr>;
+        ShardBatchSourceMap shardBatchSources;
 
-        KnownPolymorphicSerializerMap relicSerializerMap;
+        KnownPolymorphicSerializerMap shardSerializerMap;
 
-        [[nodiscard]] RelicBatchSourceBase* FindRelicBatchSource(const TypeHandle& typeHandle);
+        [[nodiscard]] ShardBatchSourceBase* FindShardBatchSource(const TypeHandle& typeHandle);
         template<class T>
-        [[nodiscard]] RelicBatchSource<T>* FindRelicBatchSource();
+        [[nodiscard]] ShardBatchSource<T>* FindShardBatchSource();
         template<class T>
-        [[nodiscard]] RelicBatchSource<T>& RequiredRelicBatchSource();
+        [[nodiscard]] ShardBatchSource<T>& RequiredShardBatchSource();
     private:
         using CuratorHandlePtr = std::unique_ptr<CuratorHandle>;
         using CuratorMap = std::unordered_map<TypeHandle, CuratorHandlePtr>;
@@ -185,69 +185,69 @@ namespace Arca
         static std::type_index KeyForSignalBatchSource();
     private:
         friend class ReliquaryOrigin;
-        friend class Vessel;
-        template<class... Relics>
-        friend class TypedVessel;
+        friend class Relic;
+        template<class... Shards>
+        friend class TypedRelic;
         friend class TypeRegistration;
         template<class T>
-        friend class RelicBatchSource;
+        friend class ShardBatchSource;
         template<class T>
         friend class SignalBatchSource;
     private:
         INSCRIPTION_ACCESS;
     };
 
-    template<class VesselT>
-    VesselT Reliquary::CreateVessel()
+    template<class RelicT>
+    RelicT Reliquary::CreateRelic()
     {
-        const auto id = SetupNewVesselInternals(VesselDynamism::Fixed, VesselTraits<VesselT>::typeHandle);
-        SatisfyVesselStructure(VesselT::structure, id);
-        return VesselT(id, *this);
+        const auto id = SetupNewRelicInternals(RelicDynamism::Fixed, RelicTraits<RelicT>::typeHandle);
+        SatisfyRelicStructure(RelicT::structure, id);
+        return RelicT(id, *this);
     }
 
-    template<class VesselT>
-    void Reliquary::DestroyVessel(VesselT& vessel)
+    template<class RelicT>
+    void Reliquary::DestroyRelic(RelicT& relic)
     {
-        DestroyVessel(vessel.ID());
+        DestroyRelic(relic.ID());
     }
 
-    template<class VesselT>
-    std::optional<VesselT> Reliquary::FindVessel(VesselID id)
+    template<class RelicT>
+    std::optional<RelicT> Reliquary::FindRelic(RelicID id)
     {
-        const auto metadata = VesselMetadataFor(id);
+        const auto metadata = RelicMetadataFor(id);
         if (!metadata)
             return {};
 
-        return VesselT(id, *this);
-    }
-
-    template<class VesselT>
-    VesselT Reliquary::StaticVessel()
-    {
-        const auto typeHandle = VesselTraits<VesselT>::typeHandle;
-        const auto found = staticVesselIDMap.find(typeHandle);
-        if (found == staticVesselIDMap.end())
-            throw NotRegistered("static vessel", typeHandle);
-
-        return *FindVessel<VesselT>(found->second);
+        return RelicT(id, *this);
     }
 
     template<class RelicT>
-    RelicT* Reliquary::FindRelic(VesselID id)
+    RelicT Reliquary::StaticRelic()
     {
-        auto& batch = RequiredRelicBatchSource<RelicT>();
+        const auto typeHandle = RelicTraits<RelicT>::typeHandle;
+        const auto found = staticRelicIDMap.find(typeHandle);
+        if (found == staticRelicIDMap.end())
+            throw NotRegistered("static relic", typeHandle);
+
+        return *FindRelic<RelicT>(found->second);
+    }
+
+    template<class ShardT>
+    ShardT* Reliquary::FindShard(RelicID id)
+    {
+        auto& batch = RequiredShardBatchSource<ShardT>();
         return batch.Find(id);
     }
 
-    template<class RelicT>
-    RelicBatch<RelicT> Reliquary::StartRelicBatch()
+    template<class ShardT>
+    ShardBatch<ShardT> Reliquary::StartShardBatch()
     {
-        const auto typeHandle = RelicTraits<RelicT>::typeHandle;
-        auto batchSource = FindRelicBatchSource<RelicT>();
+        const auto typeHandle = ShardTraits<ShardT>::typeHandle;
+        auto batchSource = FindShardBatchSource<ShardT>();
         if (!batchSource)
-            throw NotRegistered("relic", typeHandle);
+            throw NotRegistered("shard", typeHandle);
 
-        return RelicBatch<RelicT>(*batchSource);
+        return ShardBatch<ShardT>(*batchSource);
     }
 
     template<class CuratorT>
@@ -300,84 +300,84 @@ namespace Arca
         return SignalBatch<SignalT>(*signalBatchSource);
     }
 
-    template<class RelicT>
-    RelicT* Reliquary::CreateRelic(VesselID id)
+    template<class ShardT>
+    ShardT* Reliquary::CreateShard(RelicID id)
     {
-        const auto metadata = VesselMetadataFor(id);
+        const auto metadata = RelicMetadataFor(id);
         if (!metadata)
-            throw CannotCreateRelic();
+            throw CannotCreateShard();
 
-        if (metadata->dynamism == VesselDynamism::Fixed)
-            throw CannotCreateRelic();
+        if (metadata->dynamism == RelicDynamism::Fixed)
+            throw CannotCreateShard();
 
-        auto& batch = RequiredRelicBatchSource<RelicT>();
+        auto& batch = RequiredShardBatchSource<ShardT>();
         auto added = batch.Add(id);
         SignalCreation(*added);
         return added;
     }
 
-    template<class RelicT>
-    void Reliquary::DestroyRelic(VesselID id)
+    template<class ShardT>
+    void Reliquary::DestroyShard(RelicID id)
     {
-        const auto metadata = VesselMetadataFor(id);
+        const auto metadata = RelicMetadataFor(id);
         if (!metadata)
-            throw CannotDestroyRelic();
+            throw CannotDestroyShard();
 
-        if (metadata->dynamism == VesselDynamism::Fixed)
-            throw CannotDestroyRelic();
+        if (metadata->dynamism == RelicDynamism::Fixed)
+            throw CannotDestroyShard();
 
-        auto& batch = RequiredRelicBatchSource<RelicT>();
+        auto& batch = RequiredShardBatchSource<ShardT>();
         batch.Destroy(id);
     }
 
-    template<class RelicT>
-    void Reliquary::SignalCreation(RelicT& relic)
+    template<class ShardT>
+    void Reliquary::SignalCreation(ShardT& shard)
     {
-        RelicCreated<RelicT> signal{ relic };
+        ShardCreated<ShardT> signal{ shard };
         RaiseSignal(signal);
     }
 
-    template<class RelicT>
-    void Reliquary::SignalDestruction(RelicT& relic)
+    template<class ShardT>
+    void Reliquary::SignalDestruction(ShardT& shard)
     {
-        BeforeRelicDestroyed<RelicT> signal{ relic };
+        BeforeShardDestroyed<ShardT> signal{ shard };
         RaiseSignal(signal);
     }
 
-    template<class RelicT>
-    auto Reliquary::FindRelicFactory() -> RelicFactory
+    template<class ShardT>
+    auto Reliquary::FindShardFactory() -> ShardFactory
     {
-        auto typeHandle = RelicTraits<RelicT>::typeHandle;
-        const auto found = relicFactoryMap.find(typeHandle);
-        if (found == relicFactoryMap.end())
+        auto typeHandle = ShardTraits<ShardT>::typeHandle;
+        const auto found = shardFactoryMap.find(typeHandle);
+        if (found == shardFactoryMap.end())
             return nullptr;
 
         return found->second;
     }
 
-    template<class RelicT>
-    TypeHandle Reliquary::TypeHandleForRelic()
+    template<class ShardT>
+    TypeHandle Reliquary::TypeHandleForShard()
     {
-        return RelicTraits<RelicT>::typeHandle;
+        return ShardTraits<ShardT>::typeHandle;
     }
 
     template<class T>
-    RelicBatchSource<T>* Reliquary::FindRelicBatchSource()
+    ShardBatchSource<T>* Reliquary::FindShardBatchSource()
     {
-        auto found = relicBatchSources.find(TypeHandleForRelic<T>());
-        if (found == relicBatchSources.end())
+        auto found = shardBatchSources.find(TypeHandleForShard<T>());
+        if (found == shardBatchSources.end())
             return nullptr;
 
-        return static_cast<RelicBatchSource<T>*>(found->second.get());
+        return static_cast<ShardBatchSource<T>*>(found->second.get());
     }
 
     template<class T>
-    RelicBatchSource<T>& Reliquary::RequiredRelicBatchSource()
+    ShardBatchSource<T>& Reliquary::RequiredShardBatchSource()
     {
-        const auto typeHandle = RelicTraits<T>::typeHandle;
-        auto found = FindRelicBatchSource<T>();
+        const auto typeHandle = ShardTraits<T>::typeHandle;
+        auto found = FindShardBatchSource<T>();
         if (!found)
-            throw NotRegistered("relic", typeHandle);
+            throw NotRegistered("shard", typeHandle);
 
         return *found;
     }
@@ -550,4 +550,4 @@ namespace Inscription
     }
 }
 
-#include "VesselDefinition.h"
+#include "RelicDefinition.h"
