@@ -64,4 +64,10 @@ namespace Arca
     public:
         explicit CannotParentVesselToSelf(VesselID id);
     };
+
+    class InvalidCuratorPipeline final : public Exception
+    {
+    public:
+        explicit InvalidCuratorPipeline(const std::string& reason);
+    };
 }

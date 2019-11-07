@@ -49,6 +49,9 @@
     <ClCompile Include="VesselMetadata.cpp">
       <Filter>Source Files\Vessel</Filter>
     </ClCompile>
+    <ClCompile Include="CuratorPipeline.cpp">
+      <Filter>Source Files\Curator</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Exception.h">
@@ -72,20 +75,11 @@
     <ClInclude Include="CuratorDependencyNotFound.h">
       <Filter>Header Files\Curator</Filter>
     </ClInclude>
-    <ClInclude Include="CuratorLayout.h">
-      <Filter>Header Files\Curator</Filter>
-    </ClInclude>
     <ClInclude Include="CuratorProvider.h">
       <Filter>Header Files\Curator</Filter>
     </ClInclude>
     <ClInclude Include="CuratorScribe.h">
       <Filter>Header Files\Curator</Filter>
-    </ClInclude>
-    <ClInclude Include="RelicMap.h">
-      <Filter>Header Files\Relic\Map</Filter>
-    </ClInclude>
-    <ClInclude Include="RelicMapIterator.h">
-      <Filter>Header Files\Relic\Map</Filter>
     </ClInclude>
     <ClInclude Include="RelicBatch.h">
       <Filter>Header Files\Relic\Batch</Filter>
@@ -95,12 +89,6 @@
     </ClInclude>
     <ClInclude Include="RelicBatchSource.h">
       <Filter>Header Files\Relic\Batch</Filter>
-    </ClInclude>
-    <ClInclude Include="ProcessedCuratorTraits.h">
-      <Filter>Header Files\Curator\Traits</Filter>
-    </ClInclude>
-    <ClInclude Include="CuratorTraits.h">
-      <Filter>Header Files\Curator\Traits</Filter>
     </ClInclude>
     <ClInclude Include="Reliquary.h">
       <Filter>Header Files\Reliquary</Filter>
@@ -126,9 +114,6 @@
     <ClInclude Include="BeforeRelicDestroyed.h">
       <Filter>Header Files\Signal\Common</Filter>
     </ClInclude>
-    <ClInclude Include="RelicTraits.h">
-      <Filter>Header Files\Relic\Traits</Filter>
-    </ClInclude>
     <ClInclude Include="RelicExtension.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
@@ -137,9 +122,6 @@
     </ClInclude>
     <ClInclude Include="CuratorHandle.h">
       <Filter>Header Files\Curator</Filter>
-    </ClInclude>
-    <ClInclude Include="CuratorTypeDescription.h">
-      <Filter>Header Files\Curator\Type</Filter>
     </ClInclude>
     <ClInclude Include="TypeHandle.h">
       <Filter>Header Files\Type</Filter>
@@ -180,6 +162,18 @@
     <ClInclude Include="RelicScribe.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
+    <ClInclude Include="CuratorPipeline.h">
+      <Filter>Header Files\Curator</Filter>
+    </ClInclude>
+    <ClInclude Include="CuratorTraits.h">
+      <Filter>Header Files\Curator</Filter>
+    </ClInclude>
+    <ClInclude Include="CuratorTypeDescription.h">
+      <Filter>Header Files\Curator</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicTraits.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
@@ -197,17 +191,11 @@
     <Filter Include="Header Files\Curator">
       <UniqueIdentifier>{36834c0c-c900-4819-8422-4c3541f667f8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Curator\Traits">
-      <UniqueIdentifier>{924ad080-84c8-4984-84e7-b65aab945b9c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Relic">
       <UniqueIdentifier>{12448d81-7f9e-44ad-b44e-72566d9f0a0a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Relic\Batch">
       <UniqueIdentifier>{bcfd2ad5-69d6-4875-9249-17e48d5a7ac6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Relic\Map">
-      <UniqueIdentifier>{1b4b1fbd-1b42-4058-bc8b-bd793cfff3b9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Relic">
       <UniqueIdentifier>{38c74878-8ca6-4c08-97fd-8d3c30950bad}</UniqueIdentifier>
@@ -233,14 +221,8 @@
     <Filter Include="Header Files\Signal\Common">
       <UniqueIdentifier>{7dde23e0-1c87-454c-a219-2c243f6fe070}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Relic\Traits">
-      <UniqueIdentifier>{532a2870-c780-46f8-a354-639f39dfdf13}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Type">
       <UniqueIdentifier>{9803a3ae-e196-4124-a6c5-664a16c4cc9f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Curator\Type">
-      <UniqueIdentifier>{62b9571f-cc00-4197-9bcc-65dd8e3135bb}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Curator\Type">
       <UniqueIdentifier>{0a400a7f-fa2f-4e22-9f5d-a229e977697c}</UniqueIdentifier>

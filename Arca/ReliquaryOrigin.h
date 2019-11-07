@@ -6,12 +6,18 @@
 
 #include "Curator.h"
 #include "CuratorProvider.h"
-#include "CuratorLayout.h"
+#include "CuratorPipeline.h"
 
 namespace Arca
 {
     class ReliquaryOrigin
     {
+    public:
+        ReliquaryOrigin() = default;
+        ReliquaryOrigin(const ReliquaryOrigin& arg);
+        ReliquaryOrigin(ReliquaryOrigin&& arg) = default;
+        ReliquaryOrigin& operator=(const ReliquaryOrigin& arg);
+        ReliquaryOrigin& operator=(ReliquaryOrigin&& arg) = default;
     public:
         [[nodiscard]] Reliquary Actualize() const;
     public:
@@ -25,7 +31,7 @@ namespace Arca
         ReliquaryOrigin& Curator(Args&& ... args);
         template<class AsT, class ProvidedT, typename std::enable_if<std::is_base_of_v<ProvidedT, Arca::Curator>, int>::type = 0>
         ReliquaryOrigin& Curator(ProvidedT* use);
-        ReliquaryOrigin& CuratorLayout(const CuratorLayout& layout);
+        ReliquaryOrigin& CuratorPipeline(const CuratorPipeline& pipeline);
     public:
         template<class SignalT>
         ReliquaryOrigin& Signal();
@@ -51,8 +57,7 @@ namespace Arca
         using CuratorProviderMap = std::unordered_map<TypeHandle, CuratorProviderPtr>;
         CuratorProviderMap curatorProviders;
 
-        using CuratorLayoutList = std::vector<Arca::CuratorLayout>;
-        CuratorLayoutList curatorLayoutList;
+        Arca::CuratorPipeline curatorPipeline;
 
         using CuratorSerializationTypeHandlesFactory = void(*)(Reliquary&);
         using CuratorSerializationTypeHandlesFactoryList = std::vector<CuratorSerializationTypeHandlesFactory>;
@@ -64,6 +69,8 @@ namespace Arca
         void CuratorCommon(Args&& ... args);
         template<class Curator>
         [[nodiscard]] bool IsCuratorRegistered() const;
+
+        void PushCuratorPipeline(Reliquary& reliquary) const;
     private:
         struct SignalInitializer
         {
