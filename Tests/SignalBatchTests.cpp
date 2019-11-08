@@ -2,23 +2,17 @@
 
 #include "SignalBatchTests.h"
 
-SignalBatchFixture::SignalBatchFixture()
-{
-    auto typeGroup = typeRegistration.CreateGroup();
-    typeGroup->RegisterSignal<BasicSignal>();
-}
-
 SCENARIO_METHOD(SignalBatchFixture, "default signal batch", "[SignalBatch]")
 {
     GIVEN("registered reliquary")
     {
-        auto reliquary = CreateRegistered<Reliquary>();
+        auto reliquary = ReliquaryOrigin().Signal<BasicSignal>().Actualize();
 
         WHEN("starting batch with unregistered signal")
         {
             THEN("throws")
             {
-                REQUIRE_THROWS_AS(reliquary.StartSignalBatch<UnregisteredSignal>(), NotRegistered);
+                REQUIRE_THROWS_AS(reliquary.SignalBatch<UnregisteredSignal>(), NotRegistered);
             }
         }
     }
@@ -28,7 +22,7 @@ SCENARIO_METHOD(SignalBatchFixture, "signal batch", "[SignalBatch]")
 {
     GIVEN("registered and initialized reliquary")
     {
-        auto reliquary = CreateRegistered<Reliquary>();
+        auto reliquary = ReliquaryOrigin().Signal<BasicSignal>().Actualize();
 
         WHEN("raising signal")
         {
@@ -38,7 +32,7 @@ SCENARIO_METHOD(SignalBatchFixture, "signal batch", "[SignalBatch]")
 
             THEN("starting batch contains raised signal")
             {
-                auto batch = reliquary.StartSignalBatch<BasicSignal>();
+                auto batch = reliquary.SignalBatch<BasicSignal>();
 
                 REQUIRE(!batch.IsEmpty());
                 REQUIRE(batch.Size() == 1);
@@ -48,7 +42,7 @@ SCENARIO_METHOD(SignalBatchFixture, "signal batch", "[SignalBatch]")
 
         WHEN("starting batch")
         {
-            auto batch = reliquary.StartSignalBatch<BasicSignal>();
+            auto batch = reliquary.SignalBatch<BasicSignal>();
 
             THEN("raising signal causes batch to contain signal")
             {

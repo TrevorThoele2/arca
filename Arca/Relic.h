@@ -3,6 +3,7 @@
 #include "RelicID.h"
 #include "RelicDynamism.h"
 
+#include "RelicScribe.h"
 #include "Serialization.h"
 
 namespace Arca

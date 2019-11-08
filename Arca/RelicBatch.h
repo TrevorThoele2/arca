@@ -1,32 +1,32 @@
 #pragma once
 
-#include "ShardBatchSource.h"
-#include "ShardBatchIterator.h"
+#include "RelicBatchSource.h"
+#include "RelicBatchIterator.h"
 #include "BatchException.h"
 
 namespace Arca
 {
-    using ShardBatchSizeT = size_t;
+    using RelicBatchSizeT = size_t;
 
     template<class T>
-    class ShardBatch
+    class RelicBatch
     {
     private:
-        using SourceT = ShardBatchSource<T>;
+        using SourceT = RelicBatchSource<T>;
     public:
-        using ShardT = typename SourceT::ShardT;
+        using RelicT = typename SourceT::RelicT;
 
-        using SizeT = ShardBatchSizeT;
-        using iterator = ShardBatchIteratorBase<ShardT, typename SourceT::iterator>;
-        using const_iterator = ShardBatchIteratorBase<const ShardT, typename SourceT::const_iterator>;
+        using SizeT = RelicBatchSizeT;
+        using iterator = RelicBatchIteratorBase<RelicT, typename SourceT::iterator>;
+        using const_iterator = RelicBatchIteratorBase<const RelicT, typename SourceT::const_iterator>;
     public:
-        ShardBatch();
-        explicit ShardBatch(SourceT& source);
-        ShardBatch(const ShardBatch& arg);
-        ShardBatch(ShardBatch&& arg) noexcept;
+        RelicBatch();
+        explicit RelicBatch(SourceT& source);
+        RelicBatch(const RelicBatch& arg);
+        RelicBatch(RelicBatch&& arg) noexcept;
 
-        ShardBatch& operator=(const ShardBatch& arg);
-        ShardBatch& operator=(ShardBatch&& arg) noexcept;
+        RelicBatch& operator=(const RelicBatch& arg);
+        RelicBatch& operator=(RelicBatch&& arg) noexcept;
 
         [[nodiscard]] SizeT Size() const;
         [[nodiscard]] bool IsEmpty() const;
@@ -41,25 +41,25 @@ namespace Arca
     };
 
     template<class T>
-    ShardBatch<T>::ShardBatch()
+    RelicBatch<T>::RelicBatch()
     {}
 
     template<class T>
-    ShardBatch<T>::ShardBatch(SourceT& source) : source(&source)
+    RelicBatch<T>::RelicBatch(SourceT& source) : source(&source)
     {}
 
     template<class T>
-    ShardBatch<T>::ShardBatch(const ShardBatch& arg) : source(arg.source)
+    RelicBatch<T>::RelicBatch(const RelicBatch& arg) : source(arg.source)
     {}
 
     template<class T>
-    ShardBatch<T>::ShardBatch(ShardBatch&& arg) noexcept : source(std::move(arg.source))
+    RelicBatch<T>::RelicBatch(RelicBatch&& arg) noexcept : source(std::move(arg.source))
     {
         arg.source = nullptr;
     }
 
     template<class T>
-    ShardBatch<T>& ShardBatch<T>::operator=(const ShardBatch& arg)
+    RelicBatch<T>& RelicBatch<T>::operator=(const RelicBatch& arg)
     {
         source = arg.source;
 
@@ -67,7 +67,7 @@ namespace Arca
     }
 
     template<class T>
-    ShardBatch<T>& ShardBatch<T>::operator=(ShardBatch&& arg) noexcept
+    RelicBatch<T>& RelicBatch<T>::operator=(RelicBatch&& arg) noexcept
     {
         source = std::move(arg.source);
         arg.source = nullptr;
@@ -76,7 +76,7 @@ namespace Arca
     }
 
     template<class T>
-    auto ShardBatch<T>::Size() const -> SizeT
+    auto RelicBatch<T>::Size() const -> SizeT
     {
         SourceRequired();
 
@@ -84,7 +84,7 @@ namespace Arca
     }
 
     template<class T>
-    bool ShardBatch<T>::IsEmpty() const
+    bool RelicBatch<T>::IsEmpty() const
     {
         SourceRequired();
 
@@ -92,7 +92,7 @@ namespace Arca
     }
 
     template<class T>
-    auto ShardBatch<T>::begin() -> iterator
+    auto RelicBatch<T>::begin() -> iterator
     {
         SourceRequired();
 
@@ -100,7 +100,7 @@ namespace Arca
     }
 
     template<class T>
-    auto ShardBatch<T>::begin() const -> const_iterator
+    auto RelicBatch<T>::begin() const -> const_iterator
     {
         SourceRequired();
 
@@ -108,7 +108,7 @@ namespace Arca
     }
 
     template<class T>
-    auto ShardBatch<T>::end() -> iterator
+    auto RelicBatch<T>::end() -> iterator
     {
         SourceRequired();
 
@@ -116,7 +116,7 @@ namespace Arca
     }
 
     template<class T>
-    auto ShardBatch<T>::end() const -> const_iterator
+    auto RelicBatch<T>::end() const -> const_iterator
     {
         SourceRequired();
 
@@ -124,7 +124,7 @@ namespace Arca
     }
 
     template<class T>
-    void ShardBatch<T>::SourceRequired() const
+    void RelicBatch<T>::SourceRequired() const
     {
         if (!source)
             throw BatchNotSetup();

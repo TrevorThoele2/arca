@@ -1,28 +1,38 @@
 #include <catch.hpp>
 
-#include "ShardBatchTests.h"
+#include "RelicBatchTests.h"
 
-ShardBatchFixture::Shard::Shard(int value) :
+RelicBatchFixture::Relic::Relic(RelicID id, Reliquary& owner) : TypedRelic(id, owner)
+{}
+
+RelicBatchFixture::Relic::Relic(const ::Inscription::BinaryTableData<Relic>& data) :
+    TypedRelic(data.base), value(data.value)
+{}
+
+RelicBatchFixture::StaticRelic::StaticRelic(RelicID id, Reliquary& owner) : TypedRelic(id, owner)
+{}
+
+RelicBatchFixture::StaticRelic::StaticRelic(const ::Inscription::BinaryTableData<Relic>& data) :
+    TypedRelic(data.base), value(data.value)
+{}
+
+RelicBatchFixture::Shard::Shard(int value) :
     value(value)
 {}
 
-void ShardBatchFixture::StaticRelic::Setup()
-{
-    ExtractShards(ShardTuple(shard));
-}
-
 namespace Arca
 {
-    const TypeHandle ShardTraits<ShardBatchFixture::Shard>::typeHandle = "ShardBatchTestsShard";
-    const TypeHandle ShardTraits<ShardBatchFixture::UnregisteredShard>::typeHandle = "ShardBatchTestsUnregisteredShard";
-    const TypeHandle RelicTraits<ShardBatchFixture::StaticRelic>::typeHandle = "ShardBatchTestsStaticRelic";
+    const TypeHandle RelicTraits<RelicBatchFixture::Relic>::typeHandle = "RelicBatchTestsRelic";
+    const TypeHandle RelicTraits<RelicBatchFixture::StaticRelic>::typeHandle = "RelicBatchTestsStaticRelic";
+    const TypeHandle RelicTraits<RelicBatchFixture::UnregisteredRelic>::typeHandle = "RelicBatchTestsUnregisteredRelic";
+    const TypeHandle ShardTraits<RelicBatchFixture::Shard>::typeHandle = "RelicBatchTestsShard";
 }
 
-SCENARIO_METHOD(ShardBatchFixture, "default shard batch", "[ShardBatch]")
+SCENARIO_METHOD(RelicBatchFixture, "default relic batch", "[RelicBatch]")
 {
     GIVEN("default shard batch")
     {
-        ShardBatch<Shard> batch;
+        RelicBatch<Relic> batch;
 
         WHEN("querying size")
         {
@@ -78,39 +88,34 @@ SCENARIO_METHOD(ShardBatchFixture, "default shard batch", "[ShardBatch]")
     }
 }
 
-SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
+SCENARIO_METHOD(RelicBatchFixture, "relic batch", "[RelicBatch]")
 {
-    GIVEN("registered reliquary and relic")
+    GIVEN("registered reliquary")
     {
-        auto reliquary = ReliquaryOrigin().Shard<Shard>().Actualize();
-        auto relic = reliquary.CreateRelic();
+        auto reliquary = ReliquaryOrigin()
+            .Relic<Relic>()
+            .Actualize();
 
-        WHEN("starting batch with unregistered shard")
+        WHEN("starting batch with unregistered relic")
         {
             THEN("throws")
             {
-                REQUIRE_THROWS_AS(reliquary.ShardBatch<UnregisteredShard>(), NotRegistered);
+                REQUIRE_THROWS_AS(reliquary.RelicBatch<UnregisteredRelic>(), NotRegistered);
             }
         }
 
-        WHEN("creating shard")
+        WHEN("creating relic")
         {
-            auto createdShard = relic.CreateShard<Shard>();
+            auto createdRelic = reliquary.CreateRelic<Relic>();
 
             WHEN("starting batch")
             {
-                auto batch = reliquary.ShardBatch<Shard>();
+                auto batch = reliquary.RelicBatch<Relic>();
 
-                THEN("batch contains shard")
+                THEN("batch contains relic")
                 {
                     REQUIRE(!batch.IsEmpty());
                     REQUIRE(batch.Size() == 1);
-                }
-
-                THEN("returned shard is referentially equal to beginning")
-                {
-                    auto& first = *batch.begin();
-                    REQUIRE(&first == createdShard);
                 }
 
                 THEN("begin is not end")
@@ -118,9 +123,9 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
                     REQUIRE(batch.begin() != batch.end());
                 }
 
-                THEN("removing shard empties the batch")
+                THEN("destroying relic empties the batch")
                 {
-                    relic.DestroyShard<Shard>();
+                    reliquary.DestroyRelic(createdRelic);
                     REQUIRE(batch.IsEmpty());
                 }
             }
@@ -128,7 +133,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
 
         WHEN("starting batch")
         {
-            auto batch = reliquary.ShardBatch<Shard>();
+            auto batch = reliquary.RelicBatch<Relic>();
 
             THEN("batch is empty")
             {
@@ -141,20 +146,14 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
                 REQUIRE(batch.begin() == batch.end());
             }
 
-            WHEN("creating derived shard")
+            WHEN("creating relic")
             {
-                auto createdShard = relic.CreateShard<Shard>();
-                
-                THEN("batch contains derived shard")
+                auto createdRelic = reliquary.CreateRelic<Relic>();
+
+                THEN("batch contains relic")
                 {
                     REQUIRE(!batch.IsEmpty());
                     REQUIRE(batch.Size() == 1);
-                }
-
-                THEN("returned shard is referentially equal to beginning")
-                {
-                    auto& first = *batch.begin();
-                    REQUIRE(&first == createdShard);
                 }
 
                 THEN("begin is not end")
@@ -162,50 +161,25 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
                     REQUIRE(batch.begin() != batch.end());
                 }
 
-                THEN("removing shard empties the batch")
+                THEN("destroying relic empties the batch")
                 {
-                    relic.DestroyShard<Shard>();
+                    reliquary.DestroyRelic(createdRelic);
                     REQUIRE(batch.IsEmpty());
                 }
             }
         }
     }
-
-    GIVEN("registered reliquary with static relic")
-    {
-        auto reliquary = ReliquaryOrigin()
-            .Shard<Shard>()
-            .StaticRelic<StaticRelic>()
-            .Actualize();
-
-        WHEN("starting batch")
-        {
-            auto batch = reliquary.ShardBatch<Shard>();
-
-            THEN("batch contains shard")
-            {
-                REQUIRE(!batch.IsEmpty());
-                REQUIRE(batch.Size() == 1);
-            }
-
-            THEN("begin is not end")
-            {
-                REQUIRE(batch.begin() != batch.end());
-            }
-        }
-    }
 }
 
-SCENARIO_METHOD(ShardBatchFixture, "shard batch serialization", "[ShardBatch][serialization]")
+SCENARIO_METHOD(RelicBatchFixture, "relic batch serialization", "[RelicBatch][serialization]")
 {
-    GIVEN("saved reliquary ")
+    GIVEN("saved reliquary")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Shard<Shard>()
+            .Relic<Relic>()
             .Actualize();
 
-        auto savedRelic = savedReliquary.CreateRelic();
-        savedRelic.CreateShard<Shard>();
+        savedReliquary.CreateRelic<Relic>();
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.exe", "Testing", 1);
@@ -215,7 +189,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch serialization", "[ShardBatch][se
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Shard<Shard>()
+                .Relic<Relic>()
                 .Actualize();
 
             {
@@ -223,7 +197,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch serialization", "[ShardBatch][se
                 inputArchive(loadedReliquary);
             }
 
-            auto batch = loadedReliquary.ShardBatch<Shard>();
+            auto batch = loadedReliquary.RelicBatch<Relic>();
 
             THEN("batch is occupied")
             {

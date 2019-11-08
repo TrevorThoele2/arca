@@ -4,9 +4,6 @@
     <ClCompile Include="Exception.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TypeRegistration.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Curator.cpp">
       <Filter>Source Files\Curator</Filter>
     </ClCompile>
@@ -40,9 +37,6 @@
     <ClCompile Include="CuratorPipeline.cpp">
       <Filter>Source Files\Curator</Filter>
     </ClCompile>
-    <ClCompile Include="ShardBatchException.cpp">
-      <Filter>Source Files\Shard\Batch</Filter>
-    </ClCompile>
     <ClCompile Include="ShardBatchSource.cpp">
       <Filter>Source Files\Shard\Batch</Filter>
     </ClCompile>
@@ -50,6 +44,15 @@
       <Filter>Source Files\Relic</Filter>
     </ClCompile>
     <ClCompile Include="RelicMetadata.cpp">
+      <Filter>Source Files\Relic</Filter>
+    </ClCompile>
+    <ClCompile Include="BatchException.cpp">
+      <Filter>Source Files\Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="RelicBatchSource.cpp">
+      <Filter>Source Files\Relic\Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="TypedRelic.cpp">
       <Filter>Source Files\Relic</Filter>
     </ClCompile>
   </ItemGroup>
@@ -61,9 +64,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StaticAssert.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TypeRegistration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TypeValidation.h">
@@ -123,9 +123,6 @@
     <ClInclude Include="ShardBatch.h">
       <Filter>Header Files\Shard\Batch</Filter>
     </ClInclude>
-    <ClInclude Include="ShardBatchException.h">
-      <Filter>Header Files\Shard\Batch</Filter>
-    </ClInclude>
     <ClInclude Include="ShardBatchIterator.h">
       <Filter>Header Files\Shard\Batch</Filter>
     </ClInclude>
@@ -150,9 +147,6 @@
     <ClInclude Include="ShardCreated.h">
       <Filter>Header Files\Signal\Common</Filter>
     </ClInclude>
-    <ClInclude Include="TypedRelic.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="Relic.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
@@ -172,6 +166,27 @@
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
     <ClInclude Include="RelicTraits.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicBatch.h">
+      <Filter>Header Files\Relic\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="BatchException.h">
+      <Filter>Header Files\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicBatchIterator.h">
+      <Filter>Header Files\Relic\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicBatchSource.h">
+      <Filter>Header Files\Relic\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="TypedRelicWithShards.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="TypedRelic.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicScribe.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
   </ItemGroup>
@@ -235,6 +250,18 @@
     </Filter>
     <Filter Include="Header Files\Relic">
       <UniqueIdentifier>{3df72553-bb17-43bf-b78f-26e792faf1a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Relic\Batch">
+      <UniqueIdentifier>{f75fd944-c895-44d3-8c29-f481d8e440cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Batch">
+      <UniqueIdentifier>{b59fdfa4-9b9c-49eb-b790-322865ea9989}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Batch">
+      <UniqueIdentifier>{8ff32fa8-c07c-4447-9556-c788ac5178ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Relic\Batch">
+      <UniqueIdentifier>{9b182ee4-5e4d-4a4e-9aa5-e0725fe7685d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -13,7 +13,13 @@ RelicTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
 {}
 
 RelicTestsFixture::BasicTypedRelic::BasicTypedRelic(RelicID id, Reliquary& owner) :
-    TypedRelic(id, owner)
+    TypedRelicWithShards(id, owner)
+{
+    Setup();
+}
+
+RelicTestsFixture::BasicTypedRelic::BasicTypedRelic(const ::Inscription::BinaryTableData<BasicTypedRelic>& data) :
+    TypedRelicWithShards(data.base)
 {
     Setup();
 }
@@ -23,7 +29,13 @@ void RelicTestsFixture::BasicTypedRelic::Setup()
     ExtractShards(ShardTuple(basicShard));
 }
 
-RelicTestsFixture::StaticRelic::StaticRelic(RelicID id, Reliquary& owner) : TypedRelic(id, owner)
+RelicTestsFixture::StaticRelic::StaticRelic(RelicID id, Reliquary& owner) : TypedRelicWithShards(id, owner)
+{
+    Setup();
+}
+
+RelicTestsFixture::StaticRelic::StaticRelic(const ::Inscription::BinaryTableData<StaticRelic>& data) :
+    TypedRelicWithShards(data.base)
 {
     Setup();
 }

@@ -2,7 +2,7 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/TypedRelic.h>
+#include <Arca/TypedRelicWithShards.h>
 #include <Arca/Shard.h>
 
 #include <Inscription/BinaryArchive.h>
@@ -13,8 +13,6 @@ using namespace Arca;
 class ReliquaryTestsFixture : public GeneralFixture
 {
 public:
-    ReliquaryTestsFixture();
-
     class BasicShard
     {
     public:
@@ -42,22 +40,24 @@ public:
         explicit OtherShard(int myValue);
     };
 
-    class BasicTypedRelic : public TypedRelic<BasicShard>
+    class BasicTypedRelic : public TypedRelicWithShards<BasicShard>
     {
     public:
         BasicShard* basicShard = nullptr;
     public:
         BasicTypedRelic(RelicID id, Reliquary& owner);
+        explicit BasicTypedRelic(const ::Inscription::BinaryTableData<BasicTypedRelic>& data);
     private:
         void Setup();
     };
 
-    class StaticRelic : public TypedRelic<BasicShard>
+    class StaticRelic : public TypedRelicWithShards<BasicShard>
     {
     public:
         BasicShard* basicShard = nullptr;
     public:
         StaticRelic(RelicID id, Reliquary& owner);
+        explicit StaticRelic(const ::Inscription::BinaryTableData<StaticRelic>& data);
     private:
         void Setup();
     };
@@ -152,25 +152,47 @@ namespace Inscription
     };
 
     template<>
-    class Scribe<::ReliquaryTestsFixture::BasicTypedRelic, BinaryArchive> final
-        : CompositeScribe<::ReliquaryTestsFixture::BasicTypedRelic, BinaryArchive>
+    struct TableData<::ReliquaryTestsFixture::BasicTypedRelic, BinaryArchive> final
+        : TableDataBase<::ReliquaryTestsFixture::BasicTypedRelic, BinaryArchive>
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        Base<TypedRelicWithShards<ReliquaryTestsFixture::BasicShard>> base;
+    };
+
+    template<>
+    class Scribe<::ReliquaryTestsFixture::BasicTypedRelic, BinaryArchive> final
+        : RelicScribe<::ReliquaryTestsFixture::BasicTypedRelic, BinaryArchive>
+    {
+    public:
+        class Table : public TableBase
         {
-            BaseScriven<TypedRelic<::ReliquaryTestsFixture::BasicShard>>(object, archive);
-        }
+        public:
+            Table()
+            {
+                AddDataLink(DataLink::Base(data.base));
+            }
+        };
+    };
+
+    template<>
+    struct TableData<::ReliquaryTestsFixture::StaticRelic, BinaryArchive> final
+        : TableDataBase<::ReliquaryTestsFixture::StaticRelic, BinaryArchive>
+    {
+        Base<TypedRelicWithShards<ReliquaryTestsFixture::BasicShard>> base;
     };
 
     template<>
     class Scribe<::ReliquaryTestsFixture::StaticRelic, BinaryArchive> final
-        : CompositeScribe<::ReliquaryTestsFixture::StaticRelic, BinaryArchive>
+        : RelicScribe<::ReliquaryTestsFixture::StaticRelic, BinaryArchive>
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+    public:
+        class Table : public TableBase
         {
-            BaseScriven<TypedRelic<::ReliquaryTestsFixture::BasicShard>>(object, archive);
-        }
+        public:
+            Table()
+            {
+                AddDataLink(DataLink::Base(data.base));
+            }
+        };
     };
 
     template<>

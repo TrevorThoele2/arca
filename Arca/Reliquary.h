@@ -10,6 +10,9 @@
 #include "RelicTraits.h"
 #include "RelicMetadata.h"
 
+#include "RelicBatch.h"
+#include "RelicBatchSource.h"
+
 #include "ShardBatch.h"
 #include "ShardBatchSource.h"
 #include "ShardTraits.h"
@@ -63,13 +66,16 @@ namespace Arca
         template<class RelicT>
         [[nodiscard]] RelicT StaticRelic();
 
+        template<class RelicT>
+        [[nodiscard]] RelicBatch<RelicT> RelicBatch();
+
         [[nodiscard]] SizeT RelicCount() const;
     public:
         template<class ShardT>
         [[nodiscard]] ShardT* FindShard(RelicID id);
 
         template<class ShardT>
-        [[nodiscard]] ShardBatch<ShardT> StartShardBatch();
+        [[nodiscard]] ShardBatch<ShardT> ShardBatch();
     public:
         Curator* FindCurator(const TypeHandle& typeHandle);
         template<class CuratorT>
@@ -83,7 +89,23 @@ namespace Arca
         void RaiseSignal(const SignalT& signal);
 
         template<class SignalT>
-        SignalBatch<SignalT> StartSignalBatch();
+        SignalBatch<SignalT> SignalBatch();
+    private:
+        struct KnownPolymorphicSerializer
+        {
+            using Serializer = std::function<void(void*, ::Inscription::BinaryArchive&)>;
+            const Serializer serializer;
+
+            using InscriptionTypeHandles = std::vector<::Inscription::TypeHandle>;
+            using InscriptionTypeHandleProvider =
+                std::function<InscriptionTypeHandles(::Inscription::BinaryArchive&)>;
+            InscriptionTypeHandleProvider inscriptionTypeProvider;
+
+            KnownPolymorphicSerializer(
+                Serializer&& serializer,
+                InscriptionTypeHandleProvider&& inscriptionTypeProvider);
+        };
+        using KnownPolymorphicSerializerMap = std::unordered_map<TypeHandle, KnownPolymorphicSerializer>;
     private:
         using RelicMetadataList = std::vector<RelicMetadata>;
         RelicMetadataList relicMetadataList;
@@ -96,9 +118,27 @@ namespace Arca
 
         void SatisfyRelicStructure(const RelicStructure& structure, RelicID id);
 
+        template<class RelicT>
+        void SetupRelic(RelicT& relic, RelicID id);
+
         void DestroyRelic(RelicID id);
 
         [[nodiscard]] RelicID NextRelicID() const;
+
+        template<class RelicT>
+        static TypeHandle TypeHandleForRelic();
+    private:
+        using RelicBatchSourcePtr = std::unique_ptr<RelicBatchSourceBase>;
+        using RelicBatchSourceMap = std::unordered_map<TypeHandle, RelicBatchSourcePtr>;
+        RelicBatchSourceMap relicBatchSources;
+
+        KnownPolymorphicSerializerMap relicSerializerMap;
+
+        [[nodiscard]] RelicBatchSourceBase* FindRelicBatchSource(const TypeHandle& typeHandle);
+        template<class T>
+        [[nodiscard]] RelicBatchSource<T>* FindRelicBatchSource();
+        template<class T>
+        [[nodiscard]] RelicBatchSource<T>& RequiredRelicBatchSource();
     private:
         using StaticRelicIDMap = std::unordered_map<TypeHandle, RelicID>;
         StaticRelicIDMap staticRelicIDMap;
@@ -123,22 +163,6 @@ namespace Arca
 
         template<class ShardT>
         static TypeHandle TypeHandleForShard();
-    private:
-        struct KnownPolymorphicSerializer
-        {
-            using Serializer = std::function<void(void*, ::Inscription::BinaryArchive&)>;
-            const Serializer serializer;
-
-            using InscriptionTypeHandles = std::vector<::Inscription::TypeHandle>;
-            using InscriptionTypeHandleProvider =
-                std::function<InscriptionTypeHandles(::Inscription::BinaryArchive&)>;
-            InscriptionTypeHandleProvider inscriptionTypeProvider;
-
-            KnownPolymorphicSerializer(
-                Serializer&& serializer,
-                InscriptionTypeHandleProvider&& inscriptionTypeProvider);
-        };
-        using KnownPolymorphicSerializerMap = std::unordered_map<TypeHandle, KnownPolymorphicSerializer>;
     private:
         using ShardBatchSourcePtr = std::unique_ptr<ShardBatchSourceBase>;
         using ShardBatchSourceMap = std::unordered_map<TypeHandle, ShardBatchSourcePtr>;
@@ -187,7 +211,7 @@ namespace Arca
         friend class ReliquaryOrigin;
         friend class Relic;
         template<class... Shards>
-        friend class TypedRelic;
+        friend class TypedRelicWithShards;
         friend class TypeRegistration;
         template<class T>
         friend class ShardBatchSource;
@@ -202,7 +226,11 @@ namespace Arca
     {
         const auto id = SetupNewRelicInternals(RelicDynamism::Fixed, RelicTraits<RelicT>::typeHandle);
         SatisfyRelicStructure(RelicT::structure, id);
-        return RelicT(id, *this);
+        RelicT relic(id, *this);
+        SetupRelic(relic, id);
+        auto& batchSource = RequiredRelicBatchSource<RelicT>();
+        batchSource.Add(relic);
+        return relic;
     }
 
     template<class RelicT>
@@ -218,7 +246,9 @@ namespace Arca
         if (!metadata)
             return {};
 
-        return RelicT(id, *this);
+        auto relic = RelicT(id, *this);
+        SetupRelic(relic, id);
+        return relic;
     }
 
     template<class RelicT>
@@ -232,6 +262,17 @@ namespace Arca
         return *FindRelic<RelicT>(found->second);
     }
 
+    template<class RelicT>
+    RelicBatch<RelicT> Reliquary::RelicBatch()
+    {
+        const auto typeHandle = TypeHandleForRelic<RelicT>();
+        auto batchSource = FindRelicBatchSource<RelicT>();
+        if (!batchSource)
+            throw NotRegistered("relic", typeHandle);
+
+        return Arca::RelicBatch<RelicT>(*batchSource);
+    }
+
     template<class ShardT>
     ShardT* Reliquary::FindShard(RelicID id)
     {
@@ -240,14 +281,14 @@ namespace Arca
     }
 
     template<class ShardT>
-    ShardBatch<ShardT> Reliquary::StartShardBatch()
+    ShardBatch<ShardT> Reliquary::ShardBatch()
     {
-        const auto typeHandle = ShardTraits<ShardT>::typeHandle;
+        const auto typeHandle = TypeHandleForShard<ShardT>();
         auto batchSource = FindShardBatchSource<ShardT>();
         if (!batchSource)
             throw NotRegistered("shard", typeHandle);
 
-        return ShardBatch<ShardT>(*batchSource);
+        return Arca::ShardBatch<ShardT>(*batchSource);
     }
 
     template<class CuratorT>
@@ -291,13 +332,47 @@ namespace Arca
     }
 
     template<class SignalT>
-    SignalBatch<SignalT> Reliquary::StartSignalBatch()
+    SignalBatch<SignalT> Reliquary::SignalBatch()
     {
         auto signalBatchSource = FindSignalBatchSource<SignalT>();
         if (!signalBatchSource)
             throw NotRegistered("signal", typeid(SignalT).name());
 
-        return SignalBatch<SignalT>(*signalBatchSource);
+        return Arca::SignalBatch<SignalT>(*signalBatchSource);
+    }
+
+    template<class RelicT>
+    void Reliquary::SetupRelic(RelicT& relic, RelicID id)
+    {
+        relic.id = id;
+        relic.owner = this;
+    }
+
+    template<class RelicT>
+    TypeHandle Reliquary::TypeHandleForRelic()
+    {
+        return RelicTraits<RelicT>::typeHandle;
+    }
+
+    template<class T>
+    RelicBatchSource<T>* Reliquary::FindRelicBatchSource()
+    {
+        auto found = relicBatchSources.find(TypeHandleForRelic<T>());
+        if (found == relicBatchSources.end())
+            return nullptr;
+
+        return static_cast<RelicBatchSource<T>*>(found->second.get());
+    }
+
+    template<class T>
+    RelicBatchSource<T>& Reliquary::RequiredRelicBatchSource()
+    {
+        const auto typeHandle = TypeHandleForRelic<T>();
+        auto found = FindRelicBatchSource<T>();
+        if (!found)
+            throw NotRegistered("relic", typeHandle);
+
+        return *found;
     }
 
     template<class ShardT>
@@ -347,7 +422,7 @@ namespace Arca
     template<class ShardT>
     auto Reliquary::FindShardFactory() -> ShardFactory
     {
-        auto typeHandle = ShardTraits<ShardT>::typeHandle;
+        auto typeHandle = TypeHandleForShard<ShardT>();
         const auto found = shardFactoryMap.find(typeHandle);
         if (found == shardFactoryMap.end())
             return nullptr;
@@ -374,7 +449,7 @@ namespace Arca
     template<class T>
     ShardBatchSource<T>& Reliquary::RequiredShardBatchSource()
     {
-        const auto typeHandle = ShardTraits<T>::typeHandle;
+        const auto typeHandle = TypeHandleForShard<T>();
         auto found = FindShardBatchSource<T>();
         if (!found)
             throw NotRegistered("shard", typeHandle);
