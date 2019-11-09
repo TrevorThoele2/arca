@@ -20,6 +20,7 @@ namespace Arca
         Curator& operator=(const Curator& arg) = delete;
         Curator& operator=(Curator&& arg) = delete;
 
+        void Initialize();
         void StartStep();
         void Work();
         void StopStep();
@@ -31,6 +32,7 @@ namespace Arca
         [[nodiscard]] Reliquary& Owner();
         [[nodiscard]] const Reliquary& Owner() const;
     protected:
+        virtual void InitializeImplementation();
         virtual bool StartStepImplementation();
         virtual void WorkImplementation();
         virtual void StopStepImplementation();

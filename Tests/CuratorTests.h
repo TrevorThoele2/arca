@@ -30,6 +30,8 @@ public:
     class BasicCurator final : public Curator
     {
     public:
+        bool isInitialized = false;
+
         bool shouldStart = true;
         std::function<void()> onStartStep;
         std::function<void()> onWork;
@@ -42,6 +44,7 @@ public:
 
         explicit BasicCurator(Reliquary& owner);
     protected:
+        void InitializeImplementation() override;
         bool StartStepImplementation() override;
         void WorkImplementation() override;
         void StopStepImplementation() override;

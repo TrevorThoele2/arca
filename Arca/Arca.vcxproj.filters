@@ -19,9 +19,6 @@
     <ClCompile Include="ReliquaryException.cpp">
       <Filter>Source Files\Reliquary</Filter>
     </ClCompile>
-    <ClCompile Include="SignalBatchException.cpp">
-      <Filter>Source Files\Signal\Batch</Filter>
-    </ClCompile>
     <ClCompile Include="SignalBatchSource.cpp">
       <Filter>Source Files\Signal\Batch</Filter>
     </ClCompile>
@@ -88,9 +85,6 @@
       <Filter>Header Files\Reliquary</Filter>
     </ClInclude>
     <ClInclude Include="SignalBatch.h">
-      <Filter>Header Files\Signal\Batch</Filter>
-    </ClInclude>
-    <ClInclude Include="SignalBatchException.h">
       <Filter>Header Files\Signal\Batch</Filter>
     </ClInclude>
     <ClInclude Include="SignalBatchSource.h">

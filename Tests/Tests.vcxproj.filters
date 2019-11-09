@@ -28,6 +28,9 @@
     <ClCompile Include="RelicBatchTests.cpp">
       <Filter>Source Files\Test</Filter>
     </ClCompile>
+    <ClCompile Include="IntegrationTests.cpp">
+      <Filter>Source Files\Test</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneralFixture.h">
@@ -52,6 +55,9 @@
       <Filter>Header Files\Test</Filter>
     </ClInclude>
     <ClInclude Include="RelicBatchTests.h">
+      <Filter>Header Files\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="IntegrationTests.h">
       <Filter>Header Files\Test</Filter>
     </ClInclude>
   </ItemGroup>

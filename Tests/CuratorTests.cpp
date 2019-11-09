@@ -21,6 +21,11 @@ const Reliquary& CuratorTestsFixture::BasicCurator::OwnerFromOutside() const
 CuratorTestsFixture::BasicCurator::BasicCurator(Reliquary& owner) : Curator(owner)
 {}
 
+void CuratorTestsFixture::BasicCurator::InitializeImplementation()
+{
+    isInitialized = true;
+}
+
 bool CuratorTestsFixture::BasicCurator::StartStepImplementation()
 {
     onStartStep();
@@ -88,6 +93,14 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator", "[curator]")
             THEN("found is not null")
             {
                 REQUIRE(curator != nullptr);
+            }
+        }
+
+        WHEN("checking is initialized")
+        {
+            THEN("is initialized")
+            {
+                curator->isInitialized = true;
             }
         }
 

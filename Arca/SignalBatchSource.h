@@ -13,6 +13,8 @@ namespace Arca
     {
     public:
         virtual ~SignalBatchSourceBase() = 0;
+
+        virtual void Clear() = 0;
     private:
         friend Reliquary;
     };
@@ -32,7 +34,7 @@ namespace Arca
 
         void Raise(const Signal& signal);
 
-        void Clear();
+        void Clear() override;
 
         [[nodiscard]] SizeT Size() const;
         [[nodiscard]] bool IsEmpty() const;

@@ -298,6 +298,47 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
 SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
 {
+    GIVEN("static relic and dynamic relic")
+    {
+        auto reliquary = ReliquaryOrigin()
+            .StaticRelic<StaticRelic>()
+            .Shard<BasicShard>()
+            .Actualize();
+
+        auto staticRelic = reliquary.StaticRelic<StaticRelic>();
+        auto dynamicRelic = reliquary.CreateRelic();
+
+        WHEN("parenting child to static parent")
+        {
+            THEN("throws error")
+            {
+                REQUIRE_THROWS_MATCHES
+                (
+                    reliquary.ParentRelic(staticRelic.ID(), dynamicRelic.ID()),
+                    CannotParentRelic,
+                    ::Catch::Matchers::Message(
+                        "The relic with id ("s + Chroma::ToString(dynamicRelic.ID()) + ") " +
+                        "was attempted to be parented to a static relic.")
+                );
+            }
+        }
+
+        WHEN("parenting static child to parent")
+        {
+            THEN("throws error")
+            {
+                REQUIRE_THROWS_MATCHES
+                (
+                    reliquary.ParentRelic(dynamicRelic.ID(), staticRelic.ID()),
+                    CannotParentRelic,
+                    ::Catch::Matchers::Message(
+                        "The relic with id ("s + Chroma::ToString(staticRelic.ID()) + ") " +
+                        "is static and cannot be parented to anything.")
+                );
+            }
+        }
+    }
+
     GIVEN("parent and child created")
     {
         auto reliquary = ReliquaryOrigin()
@@ -347,9 +388,9 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
                     REQUIRE_THROWS_MATCHES
                     (
                         reliquary.ParentRelic(parent.ID(), child.ID()),
-                        RelicAlreadyParented,
+                        CannotParentRelic,
                         ::Catch::Matchers::Message(
-                            "The relic with id ("s + ::Chroma::ToString(child.ID()) + ") has already been parented.")
+                            "The relic with id("s + Chroma::ToString(child.ID()) + ") is already parented.")
                     );
                 }
             }
@@ -394,9 +435,9 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
                 REQUIRE_THROWS_MATCHES
                 (
                     reliquary.ParentRelic(parent.ID(), parent.ID()),
-                    CannotParentRelicToSelf,
+                    CannotParentRelic,
                     ::Catch::Matchers::Message(
-                        "The relic with id (" + ::Chroma::ToString(parent.ID()) + ") " + 
+                        "The relic with id ("s + Chroma::ToString(parent.ID()) + ") " +
                         "was attempted to be parented to itself.")
                 );
             }

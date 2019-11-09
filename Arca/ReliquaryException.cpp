@@ -36,12 +36,7 @@ namespace Arca
         Exception("The relic with id (" + ::Chroma::ToString(id) + ") cannot be found.")
     {}
 
-    RelicAlreadyParented::RelicAlreadyParented(RelicID id) :
-        Exception("The relic with id (" + ::Chroma::ToString(id) + ") has already been parented.")
-    {}
-
-    CannotParentRelicToSelf::CannotParentRelicToSelf(RelicID id) :
-        Exception("The relic with id (" + ::Chroma::ToString(id) + ") was attempted to be parented to itself.")
+    CannotParentRelic::CannotParentRelic(const std::string& message) : Exception(message)
     {}
 
     InvalidCuratorPipeline::InvalidCuratorPipeline(const std::string& reason) :

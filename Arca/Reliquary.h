@@ -51,6 +51,7 @@ namespace Arca
     public:
         Relic CreateRelic();
         Relic CreateRelic(const RelicStructure& structure);
+        Relic CreateRelic(const std::string& structureName);
         template<class RelicT>
         RelicT CreateRelic();
 
@@ -91,6 +92,8 @@ namespace Arca
         template<class SignalT>
         SignalBatch<SignalT> SignalBatch();
     private:
+        void Initialize();
+    private:
         struct KnownPolymorphicSerializer
         {
             using Serializer = std::function<void(void*, ::Inscription::BinaryArchive&)>;
@@ -127,6 +130,16 @@ namespace Arca
 
         template<class RelicT>
         static TypeHandle TypeHandleForRelic();
+    private:
+        struct NamedRelicStructure
+        {
+            std::string name;
+            RelicStructure value;
+
+            NamedRelicStructure(std::string name, Arca::RelicStructure value);
+        };
+        using NamedRelicStructureList = std::vector<NamedRelicStructure>;
+        NamedRelicStructureList namedRelicStructureList;
     private:
         using RelicBatchSourcePtr = std::unique_ptr<RelicBatchSourceBase>;
         using RelicBatchSourceMap = std::unordered_map<TypeHandle, RelicBatchSourcePtr>;
