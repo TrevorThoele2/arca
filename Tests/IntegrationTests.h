@@ -2,7 +2,7 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/TypedRelicWithShards.h>
+#include <Arca/TypedRelic.h>
 #include <Arca/Shard.h>
 
 #include <Inscription/BinaryArchive.h>

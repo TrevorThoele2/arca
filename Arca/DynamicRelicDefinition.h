@@ -1,35 +1,35 @@
 #pragma once
 
-#include "Relic.h"
+#include "DynamicRelic.h"
 
 namespace Arca
 {
     template<class ShardT>
-    ShardT* Relic::CreateShard()
+    ShardT* DynamicRelic::CreateShard()
     {
         return owner->CreateShard<ShardT>(id);
     }
 
     template<class ShardT>
-    void Relic::DestroyShard()
+    void DynamicRelic::DestroyShard()
     {
         owner->DestroyShard<ShardT>(id);
     }
 
     template<class ShardT>
-    ShardT* Relic::FindShard()
+    ShardT* DynamicRelic::FindShard()
     {
         return owner->FindShard<ShardT>(id);
     }
 
     template<class ShardT>
-    const ShardT* Relic::FindShard() const
+    const ShardT* DynamicRelic::FindShard() const
     {
         return owner->FindShard<ShardT>(id);
     }
 
     template<class ShardT>
-    bool Relic::HasShard() const
+    bool DynamicRelic::HasShard() const
     {
         return FindShard<ShardT>() != nullptr;
     }

@@ -37,9 +37,6 @@
     <ClCompile Include="ShardBatchSource.cpp">
       <Filter>Source Files\Shard\Batch</Filter>
     </ClCompile>
-    <ClCompile Include="Relic.cpp">
-      <Filter>Source Files\Relic</Filter>
-    </ClCompile>
     <ClCompile Include="RelicMetadata.cpp">
       <Filter>Source Files\Relic</Filter>
     </ClCompile>
@@ -49,8 +46,14 @@
     <ClCompile Include="RelicBatchSource.cpp">
       <Filter>Source Files\Relic\Batch</Filter>
     </ClCompile>
+    <ClCompile Include="DynamicRelic.cpp">
+      <Filter>Source Files\Relic</Filter>
+    </ClCompile>
     <ClCompile Include="TypedRelic.cpp">
       <Filter>Source Files\Relic</Filter>
+    </ClCompile>
+    <ClCompile Include="ChildRelicBatchSource.cpp">
+      <Filter>Source Files\Relic\ChildBatch</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -141,12 +144,6 @@
     <ClInclude Include="ShardCreated.h">
       <Filter>Header Files\Signal\Common</Filter>
     </ClInclude>
-    <ClInclude Include="Relic.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
-    <ClInclude Include="RelicDefinition.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="RelicDynamism.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
@@ -174,14 +171,38 @@
     <ClInclude Include="RelicBatchSource.h">
       <Filter>Header Files\Relic\Batch</Filter>
     </ClInclude>
-    <ClInclude Include="TypedRelicWithShards.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="TypedRelic.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
     <ClInclude Include="RelicScribe.h">
       <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicRelic.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="StructureFrom.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicCreated.h">
+      <Filter>Header Files\Signal\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="BeforeRelicDestroyed.h">
+      <Filter>Header Files\Signal\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicRelicDefinition.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="ExtractShards.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="ChildRelicBatch.h">
+      <Filter>Header Files\Relic\ChildBatch</Filter>
+    </ClInclude>
+    <ClInclude Include="ChildRelicBatchSource.h">
+      <Filter>Header Files\Relic\ChildBatch</Filter>
+    </ClInclude>
+    <ClInclude Include="ChildRelicBatchIterator.h">
+      <Filter>Header Files\Relic\ChildBatch</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -256,6 +277,12 @@
     </Filter>
     <Filter Include="Source Files\Relic\Batch">
       <UniqueIdentifier>{9b182ee4-5e4d-4a4e-9aa5-e0725fe7685d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Relic\ChildBatch">
+      <UniqueIdentifier>{48ada9bf-fc58-47c3-9bb2-e35e5e390551}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Relic\ChildBatch">
+      <UniqueIdentifier>{2204847b-25e7-4a66-b284-61f73c251c9a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

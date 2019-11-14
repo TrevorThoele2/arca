@@ -45,16 +45,22 @@ namespace Arca
         for (auto& initializer : relicList)
             initializer.factory(reliquary);
 
-        for (auto& initializer : staticRelicList)
-            initializer.factory(reliquary);
-
         reliquary.namedRelicStructureList = namedRelicStructureList;
 
         PushAllCuratorsTo(reliquary);
 
         PushCuratorPipeline(reliquary);
 
-        reliquary.Initialize();
+        for (auto& initializer : staticRelicList)
+            initializer.factory(reliquary);
+
+        {
+            for (auto& loop : reliquary.curators)
+                loop.second->Get()->Initialize();
+
+            for (auto& loop : typedRelicInitializerList)
+                loop(reliquary);
+        }
 
         return reliquary;
     }

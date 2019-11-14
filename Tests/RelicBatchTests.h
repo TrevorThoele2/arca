@@ -23,8 +23,11 @@ class RelicBatchFixture::Relic : public TypedRelic
 public:
     int value = 0;
 public:
-    Relic(RelicID id, Reliquary& owner);
+    Relic() = default;
     Relic(const ::Inscription::BinaryTableData<Relic>& data);
+
+    void Initialize(Reliquary& reliquary) override;
+    [[nodiscard]] RelicStructure Structure() const override;
 };
 
 class RelicBatchFixture::StaticRelic : public TypedRelic
@@ -32,12 +35,19 @@ class RelicBatchFixture::StaticRelic : public TypedRelic
 public:
     int value = 0;
 public:
-    StaticRelic(RelicID id, Reliquary& owner);
+    StaticRelic() = default;
     StaticRelic(const ::Inscription::BinaryTableData<Relic>& data);
+
+    void Initialize(Reliquary& reliquary) override;
+    [[nodiscard]] RelicStructure Structure() const override;
 };
 
 class RelicBatchFixture::UnregisteredRelic : public TypedRelic
-{};
+{
+public:
+    void Initialize(Reliquary& reliquary) override {}
+    [[nodiscard]] RelicStructure Structure() const override { return {}; }
+};
 
 class RelicBatchFixture::Shard
 {

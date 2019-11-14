@@ -1,5 +1,7 @@
 #pragma once
 
+#include <list>
+
 #include "RelicID.h"
 
 #include "Serialization.h"
@@ -32,7 +34,7 @@ namespace Arca
             ShardT shard;
         };
 
-        using List = std::vector<Entry>;
+        using List = std::list<Entry>;
     public:
         using iterator = typename List::iterator;
         using const_iterator = typename List::const_iterator;

@@ -19,7 +19,8 @@ namespace Arca
         namedRelicStructureList(std::move(arg.namedRelicStructureList)),
         relicBatchSources(std::move(arg.relicBatchSources)),
         relicSerializerMap(std::move(arg.relicSerializerMap)),
-        staticRelicIDMap(std::move(arg.staticRelicIDMap)),
+        staticRelicMap(std::move(arg.staticRelicMap)),
+        staticRelicSerializerMap(std::move(arg.staticRelicSerializerMap)),
         shardFactoryMap(std::move(arg.shardFactoryMap)),
         shardBatchSources(std::move(arg.shardBatchSources)),
         shardSerializerMap(std::move(arg.shardSerializerMap)),
@@ -39,7 +40,8 @@ namespace Arca
         namedRelicStructureList = std::move(arg.namedRelicStructureList);
         relicBatchSources = std::move(arg.relicBatchSources);
         relicSerializerMap = std::move(arg.relicSerializerMap);
-        staticRelicIDMap = std::move(arg.staticRelicIDMap);
+        staticRelicMap = std::move(arg.staticRelicMap);
+        staticRelicSerializerMap = std::move(arg.staticRelicSerializerMap);
         shardFactoryMap = std::move(arg.shardFactoryMap);
         shardBatchSources = std::move(arg.shardBatchSources);
         shardSerializerMap = std::move(arg.shardSerializerMap);
@@ -64,22 +66,24 @@ namespace Arca
             signalBatchSource.second->Clear();
     }
 
-    Relic Reliquary::CreateRelic()
+    DynamicRelic Reliquary::CreateRelic()
     {
         const auto dynamism = RelicDynamism::Dynamic;
-        const auto id = SetupNewRelicInternals(dynamism);
-        return Relic(id, dynamism, *this);
+        const auto id = NextRelicID();
+        SetupNewRelicInternals(id, dynamism);
+        return DynamicRelic(id, dynamism, *this);
     }
 
-    Relic Reliquary::CreateRelic(const RelicStructure& structure)
+    DynamicRelic Reliquary::CreateRelic(const RelicStructure& structure)
     {
         const auto dynamism = RelicDynamism::Fixed;
-        const auto id = SetupNewRelicInternals(dynamism);
+        const auto id = NextRelicID();
+        SetupNewRelicInternals(id, dynamism);
         SatisfyRelicStructure(structure, id);
-        return Relic(id, dynamism, *this);
+        return DynamicRelic(id, dynamism, *this);
     }
 
-    Relic Reliquary::CreateRelic(const std::string& structureName)
+    DynamicRelic Reliquary::CreateRelic(const std::string& structureName)
     {
         for (auto& loop : namedRelicStructureList)
             if (loop.name == structureName)
@@ -116,20 +120,36 @@ namespace Arca
 
         parentMetadata->children.push_back(child);
         childMetadata->parent = parent;
+
+        if(childMetadata->typeHandle.has_value())
+            NotifyChildRelicBatchSourcesAdd(parent, childMetadata->storage, *childMetadata->typeHandle);
     }
 
-    void Reliquary::DestroyRelic(Relic& relic)
+    void Reliquary::DestroyRelic(RelicID id)
     {
-        DestroyRelic(relic.ID());
+        const auto metadata = RelicMetadataFor(id);
+        if (!WillDestroyRelic(metadata))
+            return;
+
+        DestroyRelic(*metadata);
     }
 
-    std::optional<Relic> Reliquary::FindRelic(RelicID id)
+    void Reliquary::DestroyRelic(DynamicRelic& relic)
+    {
+        const auto metadata = RelicMetadataFor(relic.ID());
+        if (!WillDestroyRelic(metadata))
+            return;
+
+        DestroyRelic(*metadata);
+    }
+
+    std::optional<DynamicRelic> Reliquary::FindRelic(RelicID id)
     {
         const auto metadata = RelicMetadataFor(id);
         if (!metadata)
             return {};
 
-        return Relic(id, metadata->dynamism, *this);
+        return DynamicRelic(id, metadata->dynamism, *this);
     }
 
     Reliquary::SizeT Reliquary::RelicCount() const
@@ -154,12 +174,6 @@ namespace Arca
         return returnValue;
     }
 
-    void Reliquary::Initialize()
-    {
-        for (auto& loop : curators)
-            loop.second->Get()->Initialize();
-    }
-
     Reliquary::KnownPolymorphicSerializer::KnownPolymorphicSerializer(
         Serializer&& serializer,
         InscriptionTypeHandleProvider&& inscriptionTypeProvider)
@@ -167,12 +181,14 @@ namespace Arca
         serializer(std::move(serializer)), inscriptionTypeProvider(std::move(inscriptionTypeProvider))
     {}
 
-    RelicID Reliquary::SetupNewRelicInternals(RelicDynamism dynamism, std::optional<TypeHandle> typeHandle)
+    void Reliquary::SetupNewRelicInternals(
+        RelicID id,
+        RelicDynamism dynamism,
+        std::optional<TypeHandle> typeHandle,
+        void* storage)
     {
-        const auto id = NextRelicID();
         occupiedRelicIDs.Include(id);
-        relicMetadataList.push_back({ id, dynamism, std::move(typeHandle) });
-        return id;
+        relicMetadataList.push_back({ id, dynamism, std::move(typeHandle), storage });
     }
 
     void Reliquary::DestroyRelicMetadata(RelicID id)
@@ -196,30 +212,39 @@ namespace Arca
         return found != relicMetadataList.end() ? &*found : nullptr;
     }
 
+    auto Reliquary::RelicMetadataFor(RelicID id) const -> const RelicMetadata*
+    {
+        const auto found = std::find_if(
+            relicMetadataList.begin(),
+            relicMetadataList.end(),
+            [id](const RelicMetadata& metadata) { return metadata.id == id; });
+        return found != relicMetadataList.end() ? &*found : nullptr;
+    }
+
     void Reliquary::SatisfyRelicStructure(const RelicStructure& structure, RelicID id)
     {
         for(auto& typeHandle : structure)
             CreateShard(typeHandle, id);
     }
 
-    void Reliquary::DestroyRelic(RelicID id)
+    bool Reliquary::WillDestroyRelic(RelicMetadata* metadata) const
     {
-        const auto metadata = RelicMetadataFor(id);
-        if (!metadata)
-            return;
+        return metadata && metadata->dynamism != RelicDynamism::Static;
+    }
 
-        if (metadata->dynamism == RelicDynamism::Static)
-            return;
+    void Reliquary::DestroyRelic(RelicMetadata& metadata)
+    {
+        auto& id = metadata.id;
 
-        for (auto& child : metadata->children)
+        for (auto& child : metadata.children)
             DestroyRelic(child);
 
         for (auto& shardBatchSource : shardBatchSources)
             shardBatchSource.second->DestroyFromBase(id);
 
-        if (metadata->parent)
+        if (metadata.parent)
         {
-            const auto parent = *metadata->parent;
+            const auto parent = *metadata.parent;
             auto parentMetadata = RelicMetadataFor(parent);
             const auto eraseChildrenItr =
                 std::remove_if(
@@ -230,11 +255,14 @@ namespace Arca
                 parentMetadata->children.erase(eraseChildrenItr);
         }
 
-        if (metadata->typeHandle)
+        if (metadata.typeHandle)
         {
-            auto batchSource = FindRelicBatchSource(*metadata->typeHandle);
+            auto batchSource = FindRelicBatchSource(*metadata.typeHandle);
             batchSource->DestroyFromBase(id);
         }
+
+        if (metadata.parent.has_value() && metadata.typeHandle.has_value())
+            NotifyChildRelicBatchSourcesDestroy(*metadata.parent, metadata.id, *metadata.typeHandle);
 
         DestroyRelicMetadata(id);
     }
@@ -244,7 +272,7 @@ namespace Arca
         const auto itr = occupiedRelicIDs.begin();
         return itr == occupiedRelicIDs.end() || itr->Start() > 1
             ? 1
-            : itr->Start() + 1;
+            : (--occupiedRelicIDs.end())->End() + 1;
     }
 
     Reliquary::NamedRelicStructure::NamedRelicStructure(std::string name, Arca::RelicStructure value) :
@@ -258,6 +286,46 @@ namespace Arca
             return nullptr;
 
         return found->second.get();
+    }
+
+    void Reliquary::NotifyChildRelicBatchSourcesAdd(RelicID parentID, void* childStorage, const TypeHandle& childTypeHandle)
+    {
+        const auto found = FindChildRelicBatchSourceList(childTypeHandle);
+        if (!found)
+            return;
+
+        for (auto& loop : *found)
+            if (loop->Parent() == parentID)
+                loop->AddFromBase(childStorage);
+    }
+
+    void Reliquary::NotifyChildRelicBatchSourcesDestroy(RelicID parentID, RelicID childID, const TypeHandle& childTypeHandle)
+    {
+        const auto found = FindChildRelicBatchSourceList(childTypeHandle);
+        if (!found)
+            return;
+
+        for (auto& loop : *found)
+            if (loop->Parent() == parentID)
+                loop->DestroyFromBase(childID);
+    }
+
+    auto Reliquary::FindChildRelicBatchSourceList(const TypeHandle& typeHandle) -> ChildRelicBatchSourceList*
+    {
+        auto found = childRelicBatchSources.find(typeHandle);
+        if (found == childRelicBatchSources.end())
+            return nullptr;
+
+        return &found->second;
+    }
+
+    auto Reliquary::RequiredChildRelicBatchSourceList(const TypeHandle& typeHandle) -> ChildRelicBatchSourceList&
+    {
+        const auto found = FindChildRelicBatchSourceList(typeHandle);
+        if (!found)
+            throw NotRegistered("relic", typeHandle);
+
+        return *found;
     }
 
     void Reliquary::CreateShard(const TypeHandle& typeHandle, RelicID id)
@@ -290,13 +358,13 @@ namespace Arca
 
 namespace Inscription
 {
-    KnownPolymorphic::KnownPolymorphic(void* underlying, Serializer serializer) :
-        underlying(underlying), serializer(std::move(serializer))
+    KnownPolymorphic::KnownPolymorphic(void* underlying, Arca::Reliquary& reliquary, Serializer serializer) :
+        underlying(underlying), reliquary(&reliquary), serializer(std::move(serializer))
     {}
 
     void Scribe<KnownPolymorphic, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
-        object.serializer(object.underlying, archive);
+        object.serializer(object.underlying, *object.reliquary, archive);
     }
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
@@ -316,24 +384,32 @@ namespace Inscription
             archive,
             object.shardSerializerMap,
             object.shardBatchSources,
-            [](const ObjectT::ShardBatchSourceMap::value_type& entry) { return entry.second.get(); },
-            [](const ObjectT::ShardBatchSourceMap::value_type& entry) { return entry.first; });
+            [](ObjectT::ShardBatchSourceMap::value_type& entry) -> void* { return entry.second.get(); },
+            [](ObjectT::ShardBatchSourceMap::value_type& entry) { return entry.first; });
 
         JumpSaveAll(
             object,
             archive,
             object.relicSerializerMap,
             object.relicBatchSources,
-            [](const ObjectT::RelicBatchSourceMap::value_type& entry) { return entry.second.get(); },
-            [](const ObjectT::RelicBatchSourceMap::value_type& entry) { return entry.first; });
+            [](ObjectT::RelicBatchSourceMap::value_type& entry) -> void* { return entry.second.get(); },
+            [](ObjectT::RelicBatchSourceMap::value_type& entry) { return entry.first; });
+
+        JumpSaveAll(
+            object,
+            archive,
+            object.staticRelicSerializerMap,
+            object.staticRelicMap,
+            [](ObjectT::StaticRelicMap::value_type& entry) -> void* { return &entry.second; },
+            [](ObjectT::StaticRelicMap::value_type& entry) { return entry.first; });
 
         JumpSaveAll(
             object,
             archive,
             object.curatorSerializerMap,
             object.curators,
-            [](const ObjectT::CuratorMap::value_type& entry) { return entry.second->Get(); },
-            [](const ObjectT::CuratorMap::value_type& entry) { return entry.first; });
+            [](ObjectT::CuratorMap::value_type& entry) -> void* { return entry.second->Get(); },
+            [](ObjectT::CuratorMap::value_type& entry) { return entry.first; });
     }
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::Load(ObjectT& object, ArchiveT& archive)
@@ -356,6 +432,15 @@ namespace Inscription
             [](ObjectT& object, const ::Arca::TypeHandle& typeHandle)
             {
                 return object.FindRelicBatchSource(typeHandle);
+            });
+
+        JumpLoadAll(
+            object,
+            archive,
+            object.staticRelicSerializerMap,
+            [](ObjectT& object, const ::Arca::TypeHandle& typeHandle)
+            {
+                return &object.staticRelicMap.find(typeHandle)->second;
             });
 
         JumpLoadAll(

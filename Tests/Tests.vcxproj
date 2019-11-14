@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ChildRelicBatchTests.h" />
     <ClInclude Include="CuratorTests.h" />
     <ClInclude Include="GeneralFixture.h" />
     <ClInclude Include="IntegrationTests.h" />
@@ -30,6 +31,7 @@
     <ClInclude Include="RelicTests.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ChildRelicBatchTests.cpp" />
     <ClCompile Include="CuratorTests.cpp" />
     <ClCompile Include="GeneralFixture.cpp" />
     <ClCompile Include="IntegrationTests.cpp" />

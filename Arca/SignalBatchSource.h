@@ -39,9 +39,7 @@ namespace Arca
         [[nodiscard]] SizeT Size() const;
         [[nodiscard]] bool IsEmpty() const;
 
-        [[nodiscard]] iterator begin();
         [[nodiscard]] const_iterator begin() const;
-        [[nodiscard]] iterator end();
         [[nodiscard]] const_iterator end() const;
     private:
         List list;
@@ -79,21 +77,9 @@ namespace Arca
     }
 
     template<class Signal>
-    auto SignalBatchSource<Signal>::begin() -> iterator
-    {
-        return list.begin();
-    }
-
-    template<class Signal>
     auto SignalBatchSource<Signal>::begin() const -> const_iterator
     {
         return list.begin();
-    }
-
-    template<class Signal>
-    auto SignalBatchSource<Signal>::end() -> iterator
-    {
-        return list.end();
     }
 
     template<class Signal>

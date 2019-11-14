@@ -23,8 +23,8 @@ namespace Arca
     public:
         template<class RelicT>
         ReliquaryOrigin& Relic();
-        template<class RelicT>
-        ReliquaryOrigin& StaticRelic();
+        template<class RelicT, class... CreationArgs>
+        ReliquaryOrigin& StaticRelic(CreationArgs&& ... creationArgs);
         ReliquaryOrigin& RelicStructure(const std::string& name, const RelicStructure& structure);
     public:
         template<class ShardT>
@@ -39,28 +39,32 @@ namespace Arca
         template<class SignalT>
         ReliquaryOrigin& Signal();
     private:
-        struct TypedInitializer
+        struct TypeConstructor
         {
             TypeHandle typeHandle;
-            void(*factory)(Reliquary&);
+            std::function<void(Reliquary&)> factory;
         };
-        using TypedInitializerList = std::vector<TypedInitializer>;
+        using TypeConstructorList = std::vector<TypeConstructor>;
     private:
-        TypedInitializerList relicList;
+        TypeConstructorList relicList;
 
         template<class RelicT>
         [[nodiscard]] bool IsRelicRegistered() const;
     private:
-        TypedInitializerList staticRelicList;
+        TypeConstructorList staticRelicList;
 
         template<class RelicT>
         [[nodiscard]] bool IsStaticRelicRegistered() const;
+    private:
+        using TypedRelicInitializer = void(*)(Reliquary&);
+        using TypedRelicInitializerList = std::vector<TypedRelicInitializer>;
+        TypedRelicInitializerList typedRelicInitializerList;
     private:
         using NamedRelicStructure = Reliquary::NamedRelicStructure;
         using NamedRelicStructureList = std::vector<NamedRelicStructure>;
         NamedRelicStructureList namedRelicStructureList;
     private:
-        TypedInitializerList shardList;
+        TypeConstructorList shardList;
 
         template<class ShardT>
         [[nodiscard]] bool IsShardRegistered() const;
@@ -84,12 +88,12 @@ namespace Arca
 
         void PushCuratorPipeline(Reliquary& reliquary) const;
     private:
-        struct SignalInitializer
+        struct SignalConstructor
         {
             std::type_index type;
             void(*factory)(Reliquary&);
         };
-        std::vector<SignalInitializer> signalList;
+        std::vector<SignalConstructor> signalList;
 
         template<class SignalT>
         [[nodiscard]] bool IsSignalRegistered() const;
@@ -110,10 +114,19 @@ namespace Arca
                 typeHandle,
                 Reliquary::KnownPolymorphicSerializer
                 {
-                    [](void* relicBatchSource, ::Inscription::BinaryArchive& archive)
+                    [](void* relicBatchSource, Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
                     {
                         auto castedRelicBatchSource = static_cast<RelicBatchSource<RelicT>*>(relicBatchSource);
                         archive(*castedRelicBatchSource);
+
+                        if (archive.IsInput())
+                        {
+                            for(auto& loop : *castedRelicBatchSource)
+                            {
+                                auto metadata = reliquary.RelicMetadataFor(loop.ID());
+                                metadata->storage = &loop;
+                            }
+                        }
                     },
                     [](::Inscription::BinaryArchive& archive)
                     {
@@ -123,24 +136,63 @@ namespace Arca
         };
         relicList.push_back({ typeHandle, factory });
 
+        typedRelicInitializerList.push_back([](Reliquary& reliquary)
+            {
+                auto& relicBatchSource = reliquary.RequiredRelicBatchSource<RelicT>();
+                for (auto& loop : relicBatchSource)
+                    loop.Initialize(reliquary);
+            });
+
+        Signal<RelicCreated<RelicT>>();
+        Signal<BeforeRelicDestroyed<RelicT>>();
+
         return *this;
     }
 
-    template<class RelicT>
-    ReliquaryOrigin& ReliquaryOrigin::StaticRelic()
+    template<class RelicT, class... CreationArgs>
+    ReliquaryOrigin& ReliquaryOrigin::StaticRelic(CreationArgs&& ... creationArgs)
     {
         if (IsStaticRelicRegistered<RelicT>())
             throw AlreadyRegistered();
 
         const auto typeHandle = RelicTraits<RelicT>::typeHandle;
-        const auto factory = [](Reliquary& reliquary)
+        const auto factory = [args = std::make_tuple(std::forward<CreationArgs>(creationArgs) ...)](Reliquary& reliquary)
         {
-            const auto typeHandle = RelicTraits<RelicT>::typeHandle;
-            const auto id = reliquary.SetupNewRelicInternals(RelicDynamism::Static, typeHandle);
-            reliquary.SatisfyRelicStructure(RelicT::structure, id);
-            reliquary.staticRelicIDMap.emplace(typeHandle, id);
+            return std::apply([&reliquary](auto&& ... creationArgs)
+                {
+                    const auto typeHandle = RelicTraits<RelicT>::typeHandle;
+                    const auto id = reliquary.NextRelicID();
+                    auto relic = RelicT(std::forward<CreationArgs>(creationArgs)...);
+                    relic.id = id;
+                    auto emplaced = reliquary.staticRelicMap.emplace(typeHandle, std::move(relic)).first->second;
+                    auto castedEmplaced = std::any_cast<RelicT>(&emplaced);
+                    reliquary.SetupNewRelicInternals(id, RelicDynamism::Static, typeHandle, castedEmplaced);
+                    reliquary.SatisfyRelicStructure(relic.Structure(), id);
+
+                    reliquary.staticRelicSerializerMap.emplace(
+                        typeHandle,
+                        Reliquary::KnownPolymorphicSerializer
+                        {
+                            [](void* staticRelicStorage, Reliquary&, ::Inscription::BinaryArchive& archive)
+                            {
+                                auto& staticRelicAsAny = *static_cast<std::any*>(staticRelicStorage);
+                                auto staticRelic = std::any_cast<RelicT>(staticRelicAsAny);
+                                archive(staticRelic);
+                            },
+                            [](::Inscription::BinaryArchive& archive)
+                            {
+                                return ::Inscription::InputTypeHandlesFor<RelicT>(archive);
+                            }
+                        });
+                }, std::move(args));
         };
         staticRelicList.push_back({ typeHandle, factory });
+
+        typedRelicInitializerList.push_back([](Reliquary& reliquary)
+            {
+                auto relic = reliquary.StaticRelic<RelicT>();
+                relic->Initialize(reliquary);
+            });
 
         return *this;
     }
@@ -161,13 +213,13 @@ namespace Arca
                 {
                     auto found = reliquary.FindShardBatchSource<ShardT>();
                     auto added = found->Add(id);
-                    reliquary.SignalCreation(*added);
+                    reliquary.SignalShardCreation(*added);
                 });
             reliquary.shardSerializerMap.emplace(
                 typeHandle,
                 Reliquary::KnownPolymorphicSerializer
                 {
-                    [](void* shardBatchSource, ::Inscription::BinaryArchive& archive)
+                    [](void* shardBatchSource, Reliquary&, ::Inscription::BinaryArchive& archive)
                     {
                         auto castedShardBatchSource = static_cast<ShardBatchSource<ShardT>*>(shardBatchSource);
                         archive(*castedShardBatchSource);
@@ -232,9 +284,9 @@ namespace Arca
         const auto found = std::find_if(
             relicList.begin(),
             relicList.end(),
-            [typeHandle](const TypedInitializer& initializer)
+            [typeHandle](const TypeConstructor& constructor)
             {
-                return initializer.typeHandle == typeHandle;
+                return constructor.typeHandle == typeHandle;
             });
         return found != relicList.end();
     }
@@ -246,9 +298,9 @@ namespace Arca
         const auto found = std::find_if(
             staticRelicList.begin(),
             staticRelicList.end(),
-            [typeHandle](const TypedInitializer& initializer)
+            [typeHandle](const TypeConstructor& constructor)
             {
-                return initializer.typeHandle == typeHandle;
+                return constructor.typeHandle == typeHandle;
             });
         return found != staticRelicList.end();
     }
@@ -260,9 +312,9 @@ namespace Arca
         const auto found = std::find_if(
             shardList.begin(),
             shardList.end(),
-            [typeHandle](const TypedInitializer& initializer)
+            [typeHandle](const TypeConstructor& constructor)
             {
-                return initializer.typeHandle == typeHandle;
+                return constructor.typeHandle == typeHandle;
             });
         return found != shardList.end();
     }
@@ -284,7 +336,7 @@ namespace Arca
                 typeHandle,
                 Reliquary::KnownPolymorphicSerializer
                 {
-                    [](void* curator, ::Inscription::BinaryArchive& archive)
+                    [](void* curator, Reliquary&, ::Inscription::BinaryArchive& archive)
                     {
                         auto castedCurator = static_cast<CuratorT*>(curator);
                         archive(*castedCurator);
@@ -312,9 +364,9 @@ namespace Arca
         const auto found = std::find_if(
             signalList.begin(),
             signalList.end(),
-            [](const SignalInitializer& initializer)
+            [](const SignalConstructor& constructor)
             {
-                return initializer.type == typeid(SignalT);
+                return constructor.type == typeid(SignalT);
             });
         return found != signalList.end();
     }

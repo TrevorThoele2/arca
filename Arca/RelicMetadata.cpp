@@ -8,9 +8,10 @@ namespace Arca
     RelicMetadata::RelicMetadata(
         RelicID id,
         RelicDynamism dynamism,
-        std::optional<TypeHandle> typeHandle)
+        std::optional<TypeHandle> typeHandle,
+        void* storage)
         :
-        id(id), dynamism(dynamism), typeHandle(std::move(typeHandle))
+        id(id), dynamism(dynamism), typeHandle(std::move(typeHandle)), storage(storage)
     {}
 }
 

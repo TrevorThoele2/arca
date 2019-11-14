@@ -4,6 +4,8 @@ using namespace std::string_literals;
 
 #include "RelicTests.h"
 
+#include <Arca/ExtractShards.h>
+
 #include <Chroma/StringUtility.h>
 
 RelicTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std::move(myValue))
@@ -12,37 +14,34 @@ RelicTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std::mo
 RelicTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
 {}
 
-RelicTestsFixture::BasicTypedRelic::BasicTypedRelic(RelicID id, Reliquary& owner) :
-    TypedRelicWithShards(id, owner)
-{
-    Setup();
-}
-
 RelicTestsFixture::BasicTypedRelic::BasicTypedRelic(const ::Inscription::BinaryTableData<BasicTypedRelic>& data) :
-    TypedRelicWithShards(data.base)
+    TypedRelic(data.base)
+{}
+
+void RelicTestsFixture::BasicTypedRelic::Initialize(Reliquary& reliquary)
 {
-    Setup();
+    auto tuple = ExtractShards<Shards>(ID(), reliquary);
+    basicShard = std::get<0>(tuple);
 }
 
-void RelicTestsFixture::BasicTypedRelic::Setup()
+RelicStructure RelicTestsFixture::BasicTypedRelic::Structure() const
 {
-    ExtractShards(ShardTuple(basicShard));
-}
-
-RelicTestsFixture::StaticRelic::StaticRelic(RelicID id, Reliquary& owner) : TypedRelicWithShards(id, owner)
-{
-    Setup();
+    return StructureFrom<Shards>();
 }
 
 RelicTestsFixture::StaticRelic::StaticRelic(const ::Inscription::BinaryTableData<StaticRelic>& data) :
-    TypedRelicWithShards(data.base)
+    TypedRelic(data.base)
+{}
+
+void RelicTestsFixture::StaticRelic::Initialize(Reliquary& reliquary)
 {
-    Setup();
+    auto tuple = ExtractShards<Shards>(ID(), reliquary);
+    basicShard = std::get<0>(tuple);
 }
 
-void RelicTestsFixture::StaticRelic::Setup()
+RelicStructure RelicTestsFixture::StaticRelic::Structure() const
 {
-    ExtractShards(ShardTuple(basicShard));
+    return StructureFrom<Shards>();
 }
 
 namespace Arca
@@ -179,28 +178,23 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             THEN("structure has been satisfied")
             {
-                auto shardFromReliquary = reliquary.FindShard<BasicShard>(staticRelic.ID());
+                auto shardFromReliquary = reliquary.FindShard<BasicShard>(staticRelic->ID());
                 REQUIRE(shardFromReliquary != nullptr);
 
-                auto shardFromRelic = staticRelic.basicShard;
+                auto shardFromRelic = staticRelic->basicShard;
                 REQUIRE(shardFromRelic != nullptr);
-            }
-
-            THEN("owner is correct")
-            {
-                REQUIRE(&staticRelic.Owner() == &reliquary);
             }
 
             THEN("cannot destroy relic")
             {
                 auto preDestroyRelicCount = reliquary.RelicCount();
 
-                reliquary.DestroyRelic(staticRelic);
+                reliquary.DestroyRelic(*staticRelic);
 
                 auto foundAgain = reliquary.StaticRelic<StaticRelic>();
 
-                REQUIRE(foundAgain.ID() == staticRelic.ID());
-                REQUIRE(foundAgain.basicShard == staticRelic.basicShard);
+                REQUIRE(foundAgain->ID() == staticRelic->ID());
+                REQUIRE(foundAgain->basicShard == staticRelic->basicShard);
                 REQUIRE(preDestroyRelicCount == reliquary.RelicCount());
             }
         }
@@ -208,7 +202,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
         WHEN("retrieving static relic by id")
         {
             const auto idProvider = reliquary.StaticRelic<StaticRelic>();
-            const auto staticRelic = reliquary.FindRelic(idProvider.ID());
+            const auto staticRelic = reliquary.FindRelic(idProvider->ID());
 
             THEN("returns value")
             {
@@ -237,46 +231,8 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
                 auto foundAgain = reliquary.StaticRelic<StaticRelic>();
 
-                REQUIRE(foundAgain.ID() == staticRelic->ID());
-                REQUIRE(foundAgain.basicShard == staticRelic->FindShard<BasicShard>());
-                REQUIRE(preDestroyRelicCount == reliquary.RelicCount());
-            }
-        }
-
-        WHEN("retrieving static relic by typed finder")
-        {
-            const auto idProvider = reliquary.StaticRelic<StaticRelic>();
-            const auto staticRelic = reliquary.FindRelic<StaticRelic>(idProvider.ID());
-
-            THEN("returns value")
-            {
-                REQUIRE(staticRelic.has_value());
-            }
-
-            THEN("structure has been satisfied")
-            {
-                auto shardFromReliquary = reliquary.FindShard<BasicShard>(staticRelic->ID());
-                REQUIRE(shardFromReliquary != nullptr);
-
-                auto shardFromRelic = staticRelic->basicShard;
-                REQUIRE(shardFromRelic != nullptr);
-            }
-
-            THEN("owner is correct")
-            {
-                REQUIRE(&staticRelic->Owner() == &reliquary);
-            }
-
-            THEN("cannot destroy relic")
-            {
-                auto preDestroyRelicCount = reliquary.RelicCount();
-
-                reliquary.DestroyRelic(*staticRelic);
-
-                auto foundAgain = reliquary.StaticRelic<StaticRelic>();
-
-                REQUIRE(foundAgain.ID() == staticRelic->ID());
-                REQUIRE(foundAgain.basicShard == staticRelic->basicShard);
+                REQUIRE(foundAgain->ID() == staticRelic->ID());
+                REQUIRE(foundAgain->basicShard == staticRelic->FindShard<BasicShard>());
                 REQUIRE(preDestroyRelicCount == reliquary.RelicCount());
             }
         }
@@ -291,6 +247,80 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
                     NotRegistered,
                     ::Catch::Matchers::Message("The static relic (ReliquaryTestsBasicTypedRelic) was not registered.")
                 );
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(RelicTestsFixture, "many relics", "[relic]")
+{
+    GIVEN("many dynamic relics")
+    {
+        auto reliquary = ReliquaryOrigin()
+            .Shard<BasicShard>()
+            .Shard<OtherShard>()
+            .StaticRelic<StaticRelic>()
+            .Actualize();
+
+        std::vector<DynamicRelic> relics;
+        for (size_t i = 0; i < 100; ++i)
+        {
+            relics.push_back(reliquary.CreateRelic());
+            relics.back().CreateShard<BasicShard>()->myValue = ::Chroma::ToString(i);
+        }
+
+        WHEN("deleting all but the last")
+        {
+            auto loop = relics.begin();
+            while (loop != --relics.end())
+            {
+                reliquary.DestroyRelic(*loop);
+                loop = relics.erase(loop);
+            }
+
+            THEN("last relic still valid")
+            {
+                auto relic = relics[0];
+
+                REQUIRE(relic.HasShard<BasicShard>() == true);
+
+                auto shard = relic.FindShard<BasicShard>();
+                REQUIRE(shard != nullptr);
+                REQUIRE(shard->myValue == ::Chroma::ToString(99));
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
+{
+    GIVEN("registered reliquary")
+    {
+        auto reliquary = ReliquaryOrigin()
+            .Relic<BasicTypedRelic>()
+            .Shard<BasicShard>()
+            .Actualize();
+
+        auto createdSignals = reliquary.SignalBatch<RelicCreated<BasicTypedRelic>>();
+        auto destroyedSignals = reliquary.SignalBatch<BeforeRelicDestroyed<BasicTypedRelic>>();
+
+        WHEN("creating relic")
+        {
+            auto created = reliquary.CreateRelic<BasicTypedRelic>();
+
+            THEN("signal is emitted")
+            {
+                REQUIRE(createdSignals.Size() == 1);
+            }
+
+            WHEN("destroying relic")
+            {
+                reliquary.DestroyRelic(*created);
+
+                THEN("signal is emitted")
+                {
+                    REQUIRE(destroyedSignals.Size() == 1);
+                }
             }
         }
     }
@@ -314,7 +344,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary.ParentRelic(staticRelic.ID(), dynamicRelic.ID()),
+                    reliquary.ParentRelic(staticRelic->ID(), dynamicRelic.ID()),
                     CannotParentRelic,
                     ::Catch::Matchers::Message(
                         "The relic with id ("s + Chroma::ToString(dynamicRelic.ID()) + ") " +
@@ -329,10 +359,10 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary.ParentRelic(dynamicRelic.ID(), staticRelic.ID()),
+                    reliquary.ParentRelic(dynamicRelic.ID(), staticRelic->ID()),
                     CannotParentRelic,
                     ::Catch::Matchers::Message(
-                        "The relic with id ("s + Chroma::ToString(staticRelic.ID()) + ") " +
+                        "The relic with id ("s + Chroma::ToString(staticRelic->ID()) + ") " +
                         "is static and cannot be parented to anything.")
                 );
             }

@@ -2,19 +2,29 @@
 
 #include "RelicBatchTests.h"
 
-RelicBatchFixture::Relic::Relic(RelicID id, Reliquary& owner) : TypedRelic(id, owner)
-{}
-
 RelicBatchFixture::Relic::Relic(const ::Inscription::BinaryTableData<Relic>& data) :
     TypedRelic(data.base), value(data.value)
 {}
 
-RelicBatchFixture::StaticRelic::StaticRelic(RelicID id, Reliquary& owner) : TypedRelic(id, owner)
+void RelicBatchFixture::Relic::Initialize(Reliquary& reliquary)
 {}
+
+RelicStructure RelicBatchFixture::Relic::Structure() const
+{
+    return {};
+}
 
 RelicBatchFixture::StaticRelic::StaticRelic(const ::Inscription::BinaryTableData<Relic>& data) :
     TypedRelic(data.base), value(data.value)
 {}
+
+void RelicBatchFixture::StaticRelic::Initialize(Reliquary& reliquary)
+{}
+
+RelicStructure RelicBatchFixture::StaticRelic::Structure() const
+{
+    return {};
+}
 
 RelicBatchFixture::Shard::Shard(int value) :
     value(value)
@@ -60,7 +70,7 @@ SCENARIO_METHOD(RelicBatchFixture, "default relic batch", "[RelicBatch]")
 
         WHEN("querying begin const")
         {
-            auto& constBatch = batch;
+            const auto& constBatch = batch;
 
             THEN("throws error")
             {
@@ -78,7 +88,7 @@ SCENARIO_METHOD(RelicBatchFixture, "default relic batch", "[RelicBatch]")
 
         WHEN("querying begin const")
         {
-            auto& constBatch = batch;
+            const auto& constBatch = batch;
 
             THEN("throws error")
             {
@@ -125,7 +135,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch", "[RelicBatch]")
 
                 THEN("destroying relic empties the batch")
                 {
-                    reliquary.DestroyRelic(createdRelic);
+                    reliquary.DestroyRelic(*createdRelic);
                     REQUIRE(batch.IsEmpty());
                 }
             }
@@ -163,7 +173,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch", "[RelicBatch]")
 
                 THEN("destroying relic empties the batch")
                 {
-                    reliquary.DestroyRelic(createdRelic);
+                    reliquary.DestroyRelic(*createdRelic);
                     REQUIRE(batch.IsEmpty());
                 }
             }

@@ -2,13 +2,21 @@
 
 #include "ShardBatchTests.h"
 
+#include <Arca/ExtractShards.h>
+
 ShardBatchFixture::Shard::Shard(int value) :
     value(value)
 {}
 
-void ShardBatchFixture::StaticRelic::Setup()
+void ShardBatchFixture::StaticRelic::Initialize(Reliquary& reliquary)
 {
-    ExtractShards(ShardTuple(shard));
+    auto tuple = ExtractShards<Shards>(ID(), reliquary);
+    shard = std::get<0>(tuple);
+}
+
+RelicStructure ShardBatchFixture::StaticRelic::Structure() const
+{
+    return StructureFrom<Shards>();
 }
 
 namespace Arca
@@ -50,7 +58,7 @@ SCENARIO_METHOD(ShardBatchFixture, "default shard batch", "[ShardBatch]")
 
         WHEN("querying begin const")
         {
-            auto& constBatch = batch;
+            const auto& constBatch = batch;
 
             THEN("throws error")
             {
@@ -68,7 +76,7 @@ SCENARIO_METHOD(ShardBatchFixture, "default shard batch", "[ShardBatch]")
 
         WHEN("querying begin const")
         {
-            auto& constBatch = batch;
+            const auto& constBatch = batch;
 
             THEN("throws error")
             {

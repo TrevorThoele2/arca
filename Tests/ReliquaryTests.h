@@ -2,7 +2,7 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/TypedRelicWithShards.h>
+#include <Arca/TypedRelic.h>
 #include <Arca/Shard.h>
 
 #include <Inscription/BinaryArchive.h>
@@ -40,26 +40,32 @@ public:
         explicit OtherShard(int myValue);
     };
 
-    class BasicTypedRelic : public TypedRelicWithShards<BasicShard>
+    class BasicTypedRelic : public TypedRelic
     {
     public:
         BasicShard* basicShard = nullptr;
     public:
-        BasicTypedRelic(RelicID id, Reliquary& owner);
+        BasicTypedRelic() = default;
         explicit BasicTypedRelic(const ::Inscription::BinaryTableData<BasicTypedRelic>& data);
+
+        void Initialize(Reliquary& reliquary) override;
+        [[nodiscard]] RelicStructure Structure() const override;
     private:
-        void Setup();
+        using Shards = ::Chroma::VariadicTemplate<BasicShard>;
     };
 
-    class StaticRelic : public TypedRelicWithShards<BasicShard>
+    class StaticRelic : public TypedRelic
     {
     public:
         BasicShard* basicShard = nullptr;
     public:
-        StaticRelic(RelicID id, Reliquary& owner);
+        StaticRelic() = default;
         explicit StaticRelic(const ::Inscription::BinaryTableData<StaticRelic>& data);
+
+        void Initialize(Reliquary& reliquary) override;
+        [[nodiscard]] RelicStructure Structure() const override;
     private:
-        void Setup();
+        using Shards = ::Chroma::VariadicTemplate<BasicShard>;
     };
 
     class BasicCurator final : public Curator
@@ -155,7 +161,7 @@ namespace Inscription
     struct TableData<::ReliquaryTestsFixture::BasicTypedRelic, BinaryArchive> final
         : TableDataBase<::ReliquaryTestsFixture::BasicTypedRelic, BinaryArchive>
     {
-        Base<TypedRelicWithShards<ReliquaryTestsFixture::BasicShard>> base;
+        Base<TypedRelic> base;
     };
 
     template<>
@@ -177,12 +183,12 @@ namespace Inscription
     struct TableData<::ReliquaryTestsFixture::StaticRelic, BinaryArchive> final
         : TableDataBase<::ReliquaryTestsFixture::StaticRelic, BinaryArchive>
     {
-        Base<TypedRelicWithShards<ReliquaryTestsFixture::BasicShard>> base;
+        Base<TypedRelic> base;
     };
 
     template<>
     class Scribe<::ReliquaryTestsFixture::StaticRelic, BinaryArchive> final
-        : RelicScribe<::ReliquaryTestsFixture::StaticRelic, BinaryArchive>
+        : public RelicScribe<::ReliquaryTestsFixture::StaticRelic, BinaryArchive>
     {
     public:
         class Table : public TableBase

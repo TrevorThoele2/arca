@@ -1,28 +1,32 @@
 #pragma once
 
 #include "RelicID.h"
-#include "Reliquary.h"
+#include "RelicStructure.h"
+#include "StructureFrom.h"
 
 #include "Serialization.h"
 
 namespace Arca
 {
+    class Reliquary;
+
     class TypedRelic
     {
     public:
-        [[nodiscard]] Reliquary& Owner();
-        [[nodiscard]] const Reliquary& Owner() const;
         [[nodiscard]] RelicID ID() const;
     public:
-        static const RelicStructure structure;
+        virtual ~TypedRelic() = 0;
+
+        virtual void Initialize(Reliquary& reliquary) = 0;
+        [[nodiscard]] virtual RelicStructure Structure() const = 0;
     protected:
-        TypedRelic(RelicID id, Reliquary& owner);
+        TypedRelic() = default;
         explicit TypedRelic(const ::Inscription::BinaryTableData<TypedRelic>& data);
     private:
         RelicID id = 0;
-        Reliquary* owner = nullptr;
     private:
-        friend Reliquary;
+        friend class Reliquary;
+        friend class ReliquaryOrigin;
     private:
         INSCRIPTION_ACCESS;
     };
@@ -35,7 +39,6 @@ namespace Inscription
         TableDataBase<::Arca::TypedRelic, BinaryArchive>
     {
         ::Arca::RelicID id;
-        ::Arca::Reliquary* owner;
     };
 
     template<>
@@ -49,8 +52,7 @@ namespace Inscription
             Table()
             {
                 MergeDataLinks({
-                    DataLink::Auto(&ObjectT::id, &DataT::id),
-                    DataLink::Auto(&ObjectT::owner, &DataT::owner) }
+                    DataLink::Auto(&ObjectT::id, &DataT::id) }
                 );
             }
         };
