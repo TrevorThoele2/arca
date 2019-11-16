@@ -4,16 +4,16 @@
 #include <memory>
 
 #include "Curator.h"
-#include "CuratorTypeDescription.h"
+#include "TypeHandle.h"
 
 namespace Arca
 {
     class CuratorHandle
     {
     public:
-        const CuratorTypeDescription description;
+        const TypeHandle typeHandle;
     public:
-        explicit CuratorHandle(CuratorTypeDescription description);
+        explicit CuratorHandle(TypeHandle typeHandle);
         CuratorHandle(const CuratorHandle& arg) = default;
         CuratorHandle(CuratorHandle&& arg) = default;
 
@@ -30,7 +30,7 @@ namespace Arca
     class OwnedCuratorHandle final : public CuratorHandle
     {
     public:
-        explicit OwnedCuratorHandle(std::unique_ptr<Curator>&& ptr, CuratorTypeDescription description);
+        explicit OwnedCuratorHandle(std::unique_ptr<Curator>&& ptr, TypeHandle typeHandle);
         [[nodiscard]] Curator* Get() override;
         [[nodiscard]] std::type_index Type() override;
         [[nodiscard]] bool IsOwning() const override;
@@ -44,7 +44,7 @@ namespace Arca
     class UnownedCuratorHandle final : public CuratorHandle
     {
     public:
-        explicit UnownedCuratorHandle(Curator* ptr, CuratorTypeDescription description);
+        explicit UnownedCuratorHandle(Curator* ptr, TypeHandle typeHandle);
         [[nodiscard]] Curator* Get() override;
         [[nodiscard]] std::type_index Type() override;
         [[nodiscard]] bool IsOwning() const override;

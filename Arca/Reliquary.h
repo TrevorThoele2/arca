@@ -10,6 +10,7 @@
 #include "TypedRelic.h"
 #include "RelicStructure.h"
 #include "RelicTraits.h"
+#include "HasFactoryMethod.h"
 #include "RelicMetadata.h"
 #include "RelicCreated.h"
 #include "BeforeRelicDestroyed.h"
@@ -58,7 +59,9 @@ namespace Arca
         DynamicRelic CreateRelic();
         DynamicRelic CreateRelic(const RelicStructure& structure);
         DynamicRelic CreateRelic(const std::string& structureName);
-        template<class RelicT, class... CreationArgs>
+        template<class RelicT, class... CreationArgs, std::enable_if_t<has_factory_method_v<RelicT>, int> = 0>
+        RelicT* CreateRelic(CreationArgs&& ... creationArgs);
+        template<class RelicT, class... CreationArgs, std::enable_if_t<!has_factory_method_v<RelicT>, int> = 0>
         RelicT* CreateRelic(CreationArgs&& ... creationArgs);
 
         void ParentRelic(RelicID parent, RelicID child);
@@ -92,8 +95,6 @@ namespace Arca
         [[nodiscard]] CuratorT* FindCurator();
         template<class CuratorT>
         [[nodiscard]] const CuratorT* FindCurator() const;
-
-        [[nodiscard]] std::vector<CuratorTypeDescription> CuratorTypeDescriptions() const;
     public:
         template<class SignalT>
         void RaiseSignal(const SignalT& signal);
@@ -175,6 +176,7 @@ namespace Arca
         void NotifyChildRelicBatchSourcesAdd(RelicID parentID, void* childStorage, const TypeHandle& childTypeHandle);
         void NotifyChildRelicBatchSourcesDestroy(RelicID parentID, RelicID childID, const TypeHandle& childTypeHandle);
 
+        [[nodiscard]] ChildRelicBatchSourceBase* FindChildRelicBatchSource(const TypeHandle& typeHandle, RelicID parentID);
         [[nodiscard]] ChildRelicBatchSourceList* FindChildRelicBatchSourceList(const TypeHandle& typeHandle);
         [[nodiscard]] ChildRelicBatchSourceList& RequiredChildRelicBatchSourceList(const TypeHandle& typeHandle);
     private:
@@ -261,7 +263,28 @@ namespace Arca
         INSCRIPTION_ACCESS;
     };
 
-    template<class RelicT, class... CreationArgs>
+    template<class RelicT, class... CreationArgs, std::enable_if_t<has_factory_method_v<RelicT>, int>>
+    RelicT* Reliquary::CreateRelic(CreationArgs&& ... creationArgs)
+    {
+        const auto id = NextRelicID();
+        std::optional<RelicT> relic = RelicTraits<RelicT>::Factory(*this, std::forward<CreationArgs>(creationArgs)...);
+        if (!relic)
+            return nullptr;
+        relic->id = id;
+
+        auto& batchSource = RequiredRelicBatchSource<RelicT>();
+        auto added = batchSource.Add(*relic);
+
+        SetupNewRelicInternals(id, RelicDynamism::Fixed, RelicTraits<RelicT>::typeHandle, added);
+        SatisfyRelicStructure(relic->Structure(), id);
+        SignalRelicCreation(*added);
+
+        added->Initialize(*this);
+
+        return added;
+    }
+
+    template<class RelicT, class... CreationArgs, std::enable_if_t<!has_factory_method_v<RelicT>, int>>
     RelicT* Reliquary::CreateRelic(CreationArgs&& ... creationArgs)
     {
         const auto id = NextRelicID();
@@ -274,6 +297,9 @@ namespace Arca
         SetupNewRelicInternals(id, RelicDynamism::Fixed, RelicTraits<RelicT>::typeHandle, added);
         SatisfyRelicStructure(relic.Structure(), id);
         SignalRelicCreation(*added);
+
+        added->Initialize(*this);
+
         return added;
     }
 
@@ -323,13 +349,19 @@ namespace Arca
     {
         using SourceT = ChildRelicBatchSource<RelicT>;
 
+        auto& _ = RequiredRelicBatchSource<RelicT>();
+
         const auto typeHandle = TypeHandleForRelic<RelicT>();
         auto& batchSourceList = RequiredChildRelicBatchSourceList(typeHandle);
         for (auto& loop : batchSourceList)
             if (loop->Parent() == parentID)
                 return Arca::ChildRelicBatch<RelicT>(*static_cast<SourceT*>(loop.get()));
         batchSourceList.push_back(std::make_unique<SourceT>(parentID));
-        return Arca::ChildRelicBatch<RelicT>(*static_cast<SourceT*>(batchSourceList.back().get()));
+        auto& batchSource = *static_cast<SourceT*>(batchSourceList.back().get());
+        for(auto& metadata : relicMetadataList)
+            if (batchSource.Parent() == metadata.parent)
+                batchSource.Add(reinterpret_cast<RelicT*>(metadata.storage));
+        return Arca::ChildRelicBatch<RelicT>(batchSource);
     }
 
     template<class ShardT>

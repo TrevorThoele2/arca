@@ -8,12 +8,16 @@
 
 namespace Arca
 {
+    class Reliquary;
+
     class RelicBatchSourceBase
     {
     public:
         using SizeT = size_t;
     public:
         virtual ~RelicBatchSourceBase() = 0;
+
+        virtual void ChangeOwner(Reliquary& owner) = 0;
 
         virtual void DestroyFromBase(RelicID id) = 0;
 
@@ -50,6 +54,8 @@ namespace Arca
         [[nodiscard]] const_iterator begin() const;
         [[nodiscard]] iterator end();
         [[nodiscard]] const_iterator end() const;
+
+        void ChangeOwner(Reliquary& owner) override;
     private:
         List list;
     private:
@@ -146,6 +152,13 @@ namespace Arca
     auto RelicBatchSource<T>::end() const -> const_iterator
     {
         return list.end();
+    }
+
+    template<class T>
+    void RelicBatchSource<T>::ChangeOwner(Reliquary& owner)
+    {
+        for (auto& loop : list)
+            loop.owner = &owner;
     }
 }
 

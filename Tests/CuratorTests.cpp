@@ -100,7 +100,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator", "[curator]")
         {
             THEN("is initialized")
             {
-                curator->isInitialized = true;
+                REQUIRE(curator->isInitialized == true);
             }
         }
 
@@ -123,6 +123,16 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator", "[curator]")
             }
         }
 
+        WHEN("starting curator")
+        {
+            curator->StartStep();
+
+            THEN("starting curator again does not throw")
+            {
+                REQUIRE_NOTHROW(curator->StartStep());
+            }
+        }
+
         WHEN("working reliquary")
         {
             reliquary.Work();
@@ -133,6 +143,11 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator", "[curator]")
                 REQUIRE(states[0] == CuratorState::Started);
                 REQUIRE(states[1] == CuratorState::Worked);
                 REQUIRE(states[2] == CuratorState::Stopped);
+            }
+
+            THEN("curator is not started")
+            {
+                REQUIRE(!curator->IsStarted());
             }
         }
 

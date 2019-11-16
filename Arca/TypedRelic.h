@@ -14,19 +14,26 @@ namespace Arca
     {
     public:
         [[nodiscard]] RelicID ID() const;
+        [[nodiscard]] Reliquary& Owner();
+        [[nodiscard]] const Reliquary& Owner() const;
     public:
         virtual ~TypedRelic() = 0;
 
-        virtual void Initialize(Reliquary& reliquary) = 0;
+        void Initialize(Reliquary& owner);
         [[nodiscard]] virtual RelicStructure Structure() const = 0;
     protected:
         TypedRelic() = default;
         explicit TypedRelic(const ::Inscription::BinaryTableData<TypedRelic>& data);
+
+        virtual void DoInitialize() = 0;
     private:
         RelicID id = 0;
+        Reliquary* owner = nullptr;
     private:
         friend class Reliquary;
         friend class ReliquaryOrigin;
+        template<class T>
+        friend class RelicBatchSource;
     private:
         INSCRIPTION_ACCESS;
     };

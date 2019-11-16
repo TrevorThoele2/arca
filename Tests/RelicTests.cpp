@@ -18,30 +18,30 @@ RelicTestsFixture::BasicTypedRelic::BasicTypedRelic(const ::Inscription::BinaryT
     TypedRelic(data.base)
 {}
 
-void RelicTestsFixture::BasicTypedRelic::Initialize(Reliquary& reliquary)
-{
-    auto tuple = ExtractShards<Shards>(ID(), reliquary);
-    basicShard = std::get<0>(tuple);
-}
-
 RelicStructure RelicTestsFixture::BasicTypedRelic::Structure() const
 {
     return StructureFrom<Shards>();
+}
+
+void RelicTestsFixture::BasicTypedRelic::DoInitialize()
+{
+    auto tuple = ExtractShards<Shards>(ID(), Owner());
+    basicShard = std::get<0>(tuple);
 }
 
 RelicTestsFixture::StaticRelic::StaticRelic(const ::Inscription::BinaryTableData<StaticRelic>& data) :
     TypedRelic(data.base)
 {}
 
-void RelicTestsFixture::StaticRelic::Initialize(Reliquary& reliquary)
-{
-    auto tuple = ExtractShards<Shards>(ID(), reliquary);
-    basicShard = std::get<0>(tuple);
-}
-
 RelicStructure RelicTestsFixture::StaticRelic::Structure() const
 {
     return StructureFrom<Shards>();
+}
+
+void RelicTestsFixture::StaticRelic::DoInitialize()
+{
+    auto tuple = ExtractShards<Shards>(ID(), Owner());
+    basicShard = std::get<0>(tuple);
 }
 
 namespace Arca
@@ -57,6 +57,31 @@ namespace Arca
 
     const TypeHandle RelicTraits<RelicTestsFixture::StaticRelic>::typeHandle =
         "ReliquaryTestsStaticRelic";
+
+    const TypeHandle RelicTraits<RelicTestsFixture::MostBasicCustomFactoryRelic>::typeHandle =
+        "ReliquaryTestsMostBasicCustomFactoryRelic";
+
+    std::optional<RelicTestsFixture::MostBasicCustomFactoryRelic>
+        RelicTraits<RelicTestsFixture::MostBasicCustomFactoryRelic>::Factory(Reliquary& reliquary)
+    {
+        RelicTestsFixture::MostBasicCustomFactoryRelic relic;
+        relic.value = 999;
+        return relic;
+    }
+
+    const TypeHandle RelicTraits<RelicTestsFixture::GuardedCustomFactoryRelic>::typeHandle =
+        "ReliquaryTestsGuardedCustomFactoryRelic";
+
+    std::optional<RelicTestsFixture::GuardedCustomFactoryRelic>
+        RelicTraits<RelicTestsFixture::GuardedCustomFactoryRelic>::Factory(Reliquary& reliquary, int value)
+    {
+        if (value < 100)
+            return {};
+
+        RelicTestsFixture::GuardedCustomFactoryRelic relic;
+        relic.value = value;
+        return relic;
+    }
 }
 
 SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
@@ -292,6 +317,55 @@ SCENARIO_METHOD(RelicTestsFixture, "many relics", "[relic]")
     }
 }
 
+SCENARIO_METHOD(RelicTestsFixture, "custom factory relic", "[relic][factory]")
+{
+    GIVEN("most basic custom factory relic registered")
+    {
+        auto reliquary = ReliquaryOrigin()
+            .Relic<MostBasicCustomFactoryRelic>()
+            .Actualize();
+
+        WHEN("creating relic")
+        {
+            const auto relic = reliquary.CreateRelic<MostBasicCustomFactoryRelic>();
+
+            THEN("has value set from factory")
+            {
+                REQUIRE(relic->value == 999);
+            }
+        }
+    }
+
+    GIVEN("guarded custom factory relic registered")
+    {
+        auto reliquary = ReliquaryOrigin()
+            .Relic<GuardedCustomFactoryRelic>()
+            .Actualize();
+
+        WHEN("creating relic with 100 value")
+        {
+            const auto relic = reliquary.CreateRelic<GuardedCustomFactoryRelic>(100);
+
+            THEN("relic was created")
+            {
+                REQUIRE(relic != nullptr);
+                REQUIRE(reliquary.FindRelic<GuardedCustomFactoryRelic>(relic->ID()) != nullptr);
+            }
+        }
+
+        WHEN("creating relic with 99 value")
+        {
+            const auto relic = reliquary.CreateRelic<GuardedCustomFactoryRelic>(99);
+
+            THEN("relic was not created")
+            {
+                REQUIRE(relic == nullptr);
+                REQUIRE(reliquary.RelicBatch<GuardedCustomFactoryRelic>().IsEmpty());
+            }
+        }
+    }
+}
+
 SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 {
     GIVEN("registered reliquary")
@@ -306,7 +380,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
         WHEN("creating relic")
         {
-            auto created = reliquary.CreateRelic<BasicTypedRelic>();
+            const auto created = reliquary.CreateRelic<BasicTypedRelic>();
 
             THEN("signal is emitted")
             {

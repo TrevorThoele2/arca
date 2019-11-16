@@ -123,6 +123,8 @@ namespace Arca
                         {
                             for(auto& loop : *castedRelicBatchSource)
                             {
+                                loop.Initialize(reliquary);
+
                                 auto metadata = reliquary.RelicMetadataFor(loop.ID());
                                 metadata->storage = &loop;
                             }

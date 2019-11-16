@@ -16,30 +16,30 @@ ReliquaryTestsFixture::BasicTypedRelic::BasicTypedRelic(const ::Inscription::Bin
     TypedRelic(data.base)
 {}
 
-void ReliquaryTestsFixture::BasicTypedRelic::Initialize(Reliquary& reliquary)
-{
-    auto tuple = ExtractShards<Shards>(ID(), reliquary);
-    basicShard = std::get<0>(tuple);
-}
-
 RelicStructure ReliquaryTestsFixture::BasicTypedRelic::Structure() const
 {
     return StructureFrom<Shards>();
+}
+
+void ReliquaryTestsFixture::BasicTypedRelic::DoInitialize()
+{
+    auto tuple = ExtractShards<Shards>(ID(), Owner());
+    basicShard = std::get<0>(tuple);
 }
 
 ReliquaryTestsFixture::StaticRelic::StaticRelic(const ::Inscription::BinaryTableData<StaticRelic>& data) :
     TypedRelic(data.base)
 {}
 
-void ReliquaryTestsFixture::StaticRelic::Initialize(Reliquary& reliquary)
-{
-    auto tuple = ExtractShards<Shards>(ID(), reliquary);
-    basicShard = std::get<0>(tuple);
-}
-
 RelicStructure ReliquaryTestsFixture::StaticRelic::Structure() const
 {
     return StructureFrom<Shards>();
+}
+
+void ReliquaryTestsFixture::StaticRelic::DoInitialize()
+{
+    auto tuple = ExtractShards<Shards>(ID(), Owner());
+    basicShard = std::get<0>(tuple);
 }
 
 ReliquaryTestsFixture::BasicCurator::BasicCurator(Reliquary& owner) : Curator(owner)
@@ -113,7 +113,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
             }
         }
 
-        WHEN("creating typed relic with unregistered shard")
+        WHEN("creating typed relic")
         {
             THEN("throws error")
             {
@@ -122,7 +122,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
                     reliquary.CreateRelic<BasicTypedRelic>(),
                     NotRegistered,
                     Catch::Matchers::Message(
-                        "The shard ("s + ShardTraits<BasicShard>::typeHandle + ") was not registered.")
+                        "The relic ("s + RelicTraits<BasicTypedRelic>::typeHandle + ") was not registered.")
                 );
             }
         }
@@ -168,6 +168,25 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
                     reliquary.RaiseSignal(BasicSignal()),
                     NotRegistered,
                     Catch::Matchers::Message("The signal ("s + typeid(BasicSignal).name() + ") was not registered.")
+                );
+            }
+        }
+    }
+
+    GIVEN("reliquary with typed relic registered")
+    {
+        auto reliquary = ReliquaryOrigin().Relic<BasicTypedRelic>().Actualize();
+
+        WHEN("creating typed relic without shard being registered")
+        {
+            THEN("throws error")
+            {
+                REQUIRE_THROWS_MATCHES
+                (
+                    reliquary.CreateRelic<BasicTypedRelic>(),
+                    NotRegistered,
+                    Catch::Matchers::Message(
+                        "The shard ("s + ShardTraits<BasicShard>::typeHandle + ") was not registered.")
                 );
             }
         }

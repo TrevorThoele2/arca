@@ -7,11 +7,30 @@ using namespace std::string_literals;
 IntegrationTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std::move(myValue))
 {}
 
+IntegrationTestsFixture::ParentRelic::ParentRelic(int value) : value(value)
+{}
+
+void IntegrationTestsFixture::ParentRelic::CreateChild()
+{
+    const auto child = Owner().CreateRelic<ChildRelic>();
+    Owner().ParentRelic(ID(), child->ID());
+}
+
+void IntegrationTestsFixture::ParentRelic::DoInitialize()
+{
+    children = Owner().ChildRelicBatch<ChildRelic>(ID());
+}
+
+Reliquary& IntegrationTestsFixture::BasicCuratorBase::Owner()
+{
+    return Curator::Owner();
+}
+
 IntegrationTestsFixture::BasicCuratorBase::BasicCuratorBase(Reliquary& owner) : Curator(owner)
 {
-    onStartStep = []() {};
-    onWork = []() {};
-    onStopStep = []() {};
+    onStartStep = [](BasicCuratorBase&) {};
+    onWork = [](BasicCuratorBase&) {};
+    onStopStep = [](BasicCuratorBase&) {};
 }
 
 void IntegrationTestsFixture::BasicCuratorBase::InitializeImplementation()
@@ -21,24 +40,39 @@ void IntegrationTestsFixture::BasicCuratorBase::InitializeImplementation()
 
 bool IntegrationTestsFixture::BasicCuratorBase::StartStepImplementation()
 {
-    onStartStep();
+    onStartStep(*this);
     return shouldStart;
 }
 
 void IntegrationTestsFixture::BasicCuratorBase::WorkImplementation()
 {
-    onWork();
+    onWork(*this);
 }
 
 void IntegrationTestsFixture::BasicCuratorBase::StopStepImplementation()
 {
-    onStopStep();
+    onStopStep(*this);
 }
 
 namespace Arca
 {
     const TypeHandle ShardTraits<::IntegrationTestsFixture::BasicShard>::typeHandle =
         "IntegrationTestsBasicShard";
+
+    const TypeHandle RelicTraits<::IntegrationTestsFixture::ChildRelic>::typeHandle =
+        "IntegrationTestsChildRelic";
+
+    const TypeHandle RelicTraits<::IntegrationTestsFixture::ParentRelic>::typeHandle =
+        "IntegrationTestsParentRelic";
+
+    std::optional<::IntegrationTestsFixture::ParentRelic>
+        RelicTraits<::IntegrationTestsFixture::ParentRelic>::Factory(Reliquary& reliquary, int value)
+    {
+        if (value < 100)
+            return {};
+
+        return ::IntegrationTestsFixture::ParentRelic(value);
+    }
 }
 
 SCENARIO_METHOD(IntegrationTestsFixture, "working with signals through curators", "[integration][curator][signal]")
@@ -87,10 +121,10 @@ SCENARIO_METHOD(IntegrationTestsFixture, "working with signals through curators"
 
             for(auto& curator : curatorsInOrder)
             {
-                curator->onWork = [curator, &encounteredSignals]()
+                curator->onWork = [&encounteredSignals](BasicCuratorBase& self)
                 {
-                    for (auto& signal : curator->basicSignals)
-                        encounteredSignals.emplace_back(curator, signal);
+                    for (auto& signal : self.basicSignals)
+                        encounteredSignals.emplace_back(&self, signal);
                 };
             }
 
@@ -110,6 +144,56 @@ SCENARIO_METHOD(IntegrationTestsFixture, "working with signals through curators"
             {
                 const auto signalBatch = reliquary.SignalBatch<BasicSignal>();
                 REQUIRE(signalBatch.IsEmpty());
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(IntegrationTestsFixture, "working with parent-child relics through curators", "[integration][relic]")
+{
+    GIVEN("registered reliquary")
+    {
+        using ParentChildCurator = BasicCurator<0>;
+
+        auto reliquary = ReliquaryOrigin()
+            .Relic<ChildRelic>()
+            .Relic<ParentRelic>()
+            .Signal<BasicSignal>()
+            .Curator<ParentChildCurator>()
+            .Actualize();
+
+        std::unordered_map<int, ParentRelic*> mappedParents;
+
+        auto curator = reliquary.FindCurator<ParentChildCurator>();
+        curator->onStartStep = [&mappedParents](BasicCuratorBase& self)
+        {
+            auto value = 100;
+            auto parent = self.Owner().CreateRelic<ParentRelic>(value);
+            parent->CreateChild();
+            mappedParents.emplace(value, parent);
+        };
+
+        WHEN("working reliquary")
+        {
+            reliquary.Work();
+
+            THEN("has created parent and child")
+            {
+                auto parents = reliquary.RelicBatch<ParentRelic>();
+                auto children = reliquary.RelicBatch<ChildRelic>();
+
+                REQUIRE(parents.begin() != parents.end());
+                REQUIRE(children.begin() != children.end());
+
+                auto parent = &*parents.begin();
+                auto child = &*children.begin();
+
+                REQUIRE(parent != nullptr);
+                REQUIRE(child != nullptr);
+                REQUIRE(&*parent->children.begin() == child);
+
+                REQUIRE(!mappedParents.empty());
+                REQUIRE(mappedParents[100] == parent);
             }
         }
     }

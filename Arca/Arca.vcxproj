@@ -23,9 +23,8 @@
     <ClInclude Include="ChildRelicBatch.h" />
     <ClInclude Include="ChildRelicBatchSource.h" />
     <ClInclude Include="ChildRelicBatchIterator.h" />
-    <ClInclude Include="CuratorDependencyList.h" />
     <ClInclude Include="CuratorHandle.h" />
-    <ClInclude Include="CuratorTypeDescription.h" />
+    <ClInclude Include="HasFactoryMethod.h" />
     <ClInclude Include="RelicBatch.h" />
     <ClInclude Include="RelicBatchIterator.h" />
     <ClInclude Include="RelicBatchSource.h" />
@@ -36,7 +35,6 @@
     <ClInclude Include="ShardBatchIterator.h" />
     <ClInclude Include="ShardCreated.h" />
     <ClInclude Include="Exception.h" />
-    <ClInclude Include="ShardExtension.h" />
     <ClInclude Include="StructureFrom.h" />
     <ClInclude Include="ShardScribe.h" />
     <ClInclude Include="ReliquaryOrigin.h" />
@@ -52,7 +50,6 @@
     <ClInclude Include="SignalBatch.h" />
     <ClInclude Include="SignalBatchSource.h" />
     <ClInclude Include="Curator.h" />
-    <ClInclude Include="CuratorDependencyNotFound.h" />
     <ClInclude Include="CuratorPipeline.h" />
     <ClInclude Include="CuratorProvider.h" />
     <ClInclude Include="CuratorScribe.h" />
@@ -72,7 +69,6 @@
   <ItemGroup>
     <ClCompile Include="CuratorHandle.cpp" />
     <ClCompile Include="CuratorPipeline.cpp" />
-    <ClCompile Include="CuratorTypeDescription.cpp" />
     <ClCompile Include="BatchException.cpp" />
     <ClCompile Include="ChildRelicBatchSource.cpp" />
     <ClCompile Include="RelicBatchSource.cpp" />
@@ -83,7 +79,6 @@
     <ClCompile Include="ReliquaryException.cpp" />
     <ClCompile Include="SignalBatchSource.cpp" />
     <ClCompile Include="Curator.cpp" />
-    <ClCompile Include="CuratorDependencyNotFound.cpp" />
     <ClCompile Include="CuratorProvider.cpp" />
     <ClCompile Include="DynamicRelic.cpp" />
     <ClCompile Include="RelicMetadata.cpp" />

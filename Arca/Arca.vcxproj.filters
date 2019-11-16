@@ -7,9 +7,6 @@
     <ClCompile Include="Curator.cpp">
       <Filter>Source Files\Curator</Filter>
     </ClCompile>
-    <ClCompile Include="CuratorDependencyNotFound.cpp">
-      <Filter>Source Files\Curator</Filter>
-    </ClCompile>
     <ClCompile Include="CuratorProvider.cpp">
       <Filter>Source Files\Curator</Filter>
     </ClCompile>
@@ -24,9 +21,6 @@
     </ClCompile>
     <ClCompile Include="CuratorHandle.cpp">
       <Filter>Source Files\Curator</Filter>
-    </ClCompile>
-    <ClCompile Include="CuratorTypeDescription.cpp">
-      <Filter>Source Files\Curator\Type</Filter>
     </ClCompile>
     <ClCompile Include="ReliquaryOrigin.cpp">
       <Filter>Source Files\Reliquary</Filter>
@@ -72,9 +66,6 @@
     <ClInclude Include="Curator.h">
       <Filter>Header Files\Curator</Filter>
     </ClInclude>
-    <ClInclude Include="CuratorDependencyNotFound.h">
-      <Filter>Header Files\Curator</Filter>
-    </ClInclude>
     <ClInclude Include="CuratorProvider.h">
       <Filter>Header Files\Curator</Filter>
     </ClInclude>
@@ -92,9 +83,6 @@
     </ClInclude>
     <ClInclude Include="SignalBatchSource.h">
       <Filter>Header Files\Signal\Batch</Filter>
-    </ClInclude>
-    <ClInclude Include="CuratorDependencyList.h">
-      <Filter>Header Files\Curator</Filter>
     </ClInclude>
     <ClInclude Include="CuratorHandle.h">
       <Filter>Header Files\Curator</Filter>
@@ -114,9 +102,6 @@
     <ClInclude Include="CuratorTraits.h">
       <Filter>Header Files\Curator</Filter>
     </ClInclude>
-    <ClInclude Include="CuratorTypeDescription.h">
-      <Filter>Header Files\Curator</Filter>
-    </ClInclude>
     <ClInclude Include="ShardBatch.h">
       <Filter>Header Files\Shard\Batch</Filter>
     </ClInclude>
@@ -127,9 +112,6 @@
       <Filter>Header Files\Shard\Batch</Filter>
     </ClInclude>
     <ClInclude Include="Shard.h">
-      <Filter>Header Files\Shard</Filter>
-    </ClInclude>
-    <ClInclude Include="ShardExtension.h">
       <Filter>Header Files\Shard</Filter>
     </ClInclude>
     <ClInclude Include="ShardScribe.h">
@@ -204,6 +186,9 @@
     <ClInclude Include="ChildRelicBatchIterator.h">
       <Filter>Header Files\Relic\ChildBatch</Filter>
     </ClInclude>
+    <ClInclude Include="HasFactoryMethod.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
@@ -241,9 +226,6 @@
     </Filter>
     <Filter Include="Header Files\Type">
       <UniqueIdentifier>{9803a3ae-e196-4124-a6c5-664a16c4cc9f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Curator\Type">
-      <UniqueIdentifier>{0a400a7f-fa2f-4e22-9f5d-a229e977697c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Serialization">
       <UniqueIdentifier>{fc740c7f-fc42-4913-9767-1b9cc1444ab7}</UniqueIdentifier>

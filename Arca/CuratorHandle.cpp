@@ -5,7 +5,7 @@
 
 namespace Arca
 {
-    CuratorHandle::CuratorHandle(CuratorTypeDescription description) : description(std::move(description))
+    CuratorHandle::CuratorHandle(TypeHandle typeHandle) : typeHandle(std::move(typeHandle))
     {}
 
     CuratorHandle::~CuratorHandle() = default;
@@ -20,8 +20,8 @@ namespace Arca
         return *this;
     }
 
-    OwnedCuratorHandle::OwnedCuratorHandle(std::unique_ptr<Curator>&& ptr, CuratorTypeDescription description) :
-        CuratorHandle(std::move(description)), ptr(std::move(ptr)), type(typeid(ptr.get()))
+    OwnedCuratorHandle::OwnedCuratorHandle(std::unique_ptr<Curator>&& ptr, TypeHandle typeHandle) :
+        CuratorHandle(std::move(typeHandle)), ptr(std::move(ptr)), type(typeid(ptr.get()))
     {}
 
     Curator* OwnedCuratorHandle::Get()
@@ -39,8 +39,8 @@ namespace Arca
         return true;
     }
 
-    UnownedCuratorHandle::UnownedCuratorHandle(Curator* ptr, CuratorTypeDescription description) :
-        CuratorHandle(std::move(description)), ptr(ptr), type(typeid(ptr))
+    UnownedCuratorHandle::UnownedCuratorHandle(Curator* ptr, TypeHandle typeHandle) :
+        CuratorHandle(std::move(typeHandle)), ptr(ptr), type(typeid(ptr))
     {}
 
     Curator* UnownedCuratorHandle::Get()

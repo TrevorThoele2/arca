@@ -6,25 +6,25 @@ RelicBatchFixture::Relic::Relic(const ::Inscription::BinaryTableData<Relic>& dat
     TypedRelic(data.base), value(data.value)
 {}
 
-void RelicBatchFixture::Relic::Initialize(Reliquary& reliquary)
-{}
-
 RelicStructure RelicBatchFixture::Relic::Structure() const
 {
     return {};
 }
 
-RelicBatchFixture::StaticRelic::StaticRelic(const ::Inscription::BinaryTableData<Relic>& data) :
-    TypedRelic(data.base), value(data.value)
+void RelicBatchFixture::Relic::DoInitialize()
 {}
 
-void RelicBatchFixture::StaticRelic::Initialize(Reliquary& reliquary)
+RelicBatchFixture::StaticRelic::StaticRelic(const ::Inscription::BinaryTableData<Relic>& data) :
+    TypedRelic(data.base), value(data.value)
 {}
 
 RelicStructure RelicBatchFixture::StaticRelic::Structure() const
 {
     return {};
 }
+
+void RelicBatchFixture::StaticRelic::DoInitialize()
+{}
 
 RelicBatchFixture::Shard::Shard(int value) :
     value(value)
