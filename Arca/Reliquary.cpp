@@ -2,6 +2,8 @@
 
 #include <unordered_set>
 
+#include "RelicParented.h"
+
 #include <Inscription/MultimapScribe.h>
 #include <Inscription/MemoryScribe.h>
 #include <Inscription/VectorScribe.h>
@@ -27,6 +29,7 @@ namespace Arca
         curators(std::move(arg.curators)),
         curatorPipeline(std::move(arg.curatorPipeline)),
         curatorSerializerMap(std::move(arg.curatorSerializerMap)),
+        signalExecutionMap(std::move(arg.signalExecutionMap)),
         signalBatchSources(std::move(arg.signalBatchSources))
     {
         for (auto& loop : relicBatchSources)
@@ -51,6 +54,7 @@ namespace Arca
         curators = std::move(arg.curators);
         curatorPipeline = std::move(arg.curatorPipeline);
         curatorSerializerMap = std::move(arg.curatorSerializerMap);
+        signalExecutionMap = std::move(arg.signalExecutionMap);
         signalBatchSources = std::move(arg.signalBatchSources);
 
         for (auto& loop : relicBatchSources)
@@ -126,6 +130,8 @@ namespace Arca
 
         parentMetadata->children.push_back(child);
         childMetadata->parent = parent;
+
+        SignalRelicParented(*parentMetadata, *childMetadata);
 
         if(childMetadata->typeHandle.has_value())
             NotifyChildRelicBatchSourcesAdd(parent, childMetadata->storage, *childMetadata->typeHandle);
@@ -271,6 +277,12 @@ namespace Arca
         return itr == occupiedRelicIDs.end() || itr->Start() > 1
             ? 1
             : (--occupiedRelicIDs.end())->End() + 1;
+    }
+
+    void Reliquary::SignalRelicParented(RelicMetadata parent, RelicMetadata child)
+    {
+        const RelicParented signal{ parent, child };
+        RaiseSignal(signal);
     }
 
     Reliquary::NamedRelicStructure::NamedRelicStructure(std::string name, Arca::RelicStructure value) :

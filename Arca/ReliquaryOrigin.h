@@ -13,7 +13,7 @@ namespace Arca
     class ReliquaryOrigin
     {
     public:
-        ReliquaryOrigin() = default;
+        ReliquaryOrigin();
         ReliquaryOrigin(const ReliquaryOrigin& arg);
         ReliquaryOrigin(ReliquaryOrigin&& arg) = default;
         ReliquaryOrigin& operator=(const ReliquaryOrigin& arg);

@@ -2,8 +2,15 @@
 
 #include <unordered_set>
 
+#include "RelicParented.h"
+
 namespace Arca
 {
+    ReliquaryOrigin::ReliquaryOrigin()
+    {
+        Signal<RelicParented>();
+    }
+
     ReliquaryOrigin::ReliquaryOrigin(const ReliquaryOrigin& arg) :
         relicList(arg.relicList),
         staticRelicList(arg.staticRelicList),

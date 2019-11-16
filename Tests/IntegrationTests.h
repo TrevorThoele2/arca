@@ -61,6 +61,7 @@ public:
     {
     public:
         bool shouldStart = true;
+        static std::function<void(BasicCuratorBase&)> onInitialize;
         std::function<void(BasicCuratorBase&)> onStartStep;
         std::function<void(BasicCuratorBase&)> onWork;
         std::function<void(BasicCuratorBase&)> onStopStep;

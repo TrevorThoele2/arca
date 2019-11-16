@@ -26,6 +26,9 @@ Reliquary& IntegrationTestsFixture::BasicCuratorBase::Owner()
     return Curator::Owner();
 }
 
+std::function<void(IntegrationTestsFixture::BasicCuratorBase&)>
+    IntegrationTestsFixture::BasicCuratorBase::onInitialize = [](BasicCuratorBase&){};
+
 IntegrationTestsFixture::BasicCuratorBase::BasicCuratorBase(Reliquary& owner) : Curator(owner)
 {
     onStartStep = [](BasicCuratorBase&) {};
@@ -36,6 +39,8 @@ IntegrationTestsFixture::BasicCuratorBase::BasicCuratorBase(Reliquary& owner) : 
 void IntegrationTestsFixture::BasicCuratorBase::InitializeImplementation()
 {
     basicSignals = Owner().SignalBatch<BasicSignal>();
+    onInitialize(*this);
+    onInitialize = [](BasicCuratorBase&) {};
 }
 
 bool IntegrationTestsFixture::BasicCuratorBase::StartStepImplementation()
@@ -149,7 +154,10 @@ SCENARIO_METHOD(IntegrationTestsFixture, "working with signals through curators"
     }
 }
 
-SCENARIO_METHOD(IntegrationTestsFixture, "working with parent-child relics through curators", "[integration][relic]")
+SCENARIO_METHOD(
+    IntegrationTestsFixture,
+    "working with parent-child relics through curators",
+    "[integration][relic][curator]")
 {
     GIVEN("registered reliquary")
     {
@@ -194,6 +202,52 @@ SCENARIO_METHOD(IntegrationTestsFixture, "working with parent-child relics throu
 
                 REQUIRE(!mappedParents.empty());
                 REQUIRE(mappedParents[100] == parent);
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(IntegrationTestsFixture, "curators with custom signal execution", "[integration][curator][signal]")
+{
+    GIVEN("registered reliquary")
+    {
+        using FocusedCurator = BasicCurator<0>;
+
+        std::vector<BasicSignal> executedSignals;
+
+        FocusedCurator::onInitialize = [&executedSignals](BasicCuratorBase& curator)
+        {
+            curator.Owner().ExecuteOnSignal<BasicSignal>([&executedSignals](const BasicSignal& signal)
+                {
+                    executedSignals.push_back(signal);
+                });
+        };
+
+        auto reliquary = ReliquaryOrigin()
+            .Signal<BasicSignal>()
+            .Curator<FocusedCurator>()
+            .Actualize();
+
+        std::unordered_map<int, ParentRelic*> mappedParents;
+
+        WHEN("raising signal many times")
+        {
+            for (auto loop = 0; loop < 1000; ++loop)
+                reliquary.RaiseSignal(BasicSignal{ loop });
+
+            THEN("executed signals contains all signals raised")
+            {
+                REQUIRE(executedSignals.size() == 1000);
+                int i = 0;
+                REQUIRE(std::all_of(
+                    executedSignals.begin(),
+                    executedSignals.end(),
+                    [&i](const BasicSignal& signal)
+                    {
+                        const auto returnValue = signal.value == i;
+                        ++i;
+                        return returnValue;
+                    }));
             }
         }
     }

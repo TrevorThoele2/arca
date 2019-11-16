@@ -4,6 +4,7 @@ using namespace std::string_literals;
 
 #include "RelicTests.h"
 
+#include <Arca/RelicParented.h>
 #include <Arca/ExtractShards.h>
 
 #include <Chroma/StringUtility.h>
@@ -412,6 +413,8 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
         auto staticRelic = reliquary.StaticRelic<StaticRelic>();
         auto dynamicRelic = reliquary.CreateRelic();
 
+        auto onParented = reliquary.SignalBatch<RelicParented>();
+
         WHEN("parenting child to static parent")
         {
             THEN("throws error")
@@ -424,6 +427,11 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
                         "The relic with id ("s + Chroma::ToString(dynamicRelic.ID()) + ") " +
                         "was attempted to be parented to a static relic.")
                 );
+            }
+
+            THEN("does not send signal")
+            {
+                REQUIRE(onParented.IsEmpty());
             }
         }
 
@@ -440,6 +448,11 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
                         "is static and cannot be parented to anything.")
                 );
             }
+
+            THEN("does not send signal")
+            {
+                REQUIRE(onParented.IsEmpty());
+            }
         }
     }
 
@@ -453,6 +466,8 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
         parent.CreateShard<BasicShard>();
         auto child = reliquary.CreateRelic();
         child.CreateShard<BasicShard>();
+
+        auto onParented = reliquary.SignalBatch<RelicParented>();
 
         WHEN("parenting child to parent")
         {
@@ -498,6 +513,18 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
                     );
                 }
             }
+
+            THEN("sends signal")
+            {
+                REQUIRE(!onParented.IsEmpty());
+
+                auto signal = onParented.begin();
+
+                REQUIRE(signal->parent.id == parent.ID());
+                REQUIRE(!signal->parent.typeHandle);
+                REQUIRE(signal->child.id == child.ID());
+                REQUIRE(!signal->child.typeHandle);
+            }
         }
 
         WHEN("parenting child to nonexistent relic")
@@ -513,6 +540,11 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
                     ::Catch::Matchers::Message(
                         "The relic with id ("s + ::Chroma::ToString(invalidId) + ") cannot be found.")
                 );
+            }
+
+            THEN("does not send signal")
+            {
+                REQUIRE(onParented.IsEmpty());
             }
         }
 
@@ -530,6 +562,11 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
                         "The relic with id ("s + ::Chroma::ToString(invalidId) + ") cannot be found.")
                 );
             }
+
+            THEN("does not send signal")
+            {
+                REQUIRE(onParented.IsEmpty());
+            }
         }
 
         WHEN("parenting relic to itself")
@@ -544,6 +581,11 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
                         "The relic with id ("s + Chroma::ToString(parent.ID()) + ") " +
                         "was attempted to be parented to itself.")
                 );
+            }
+
+            THEN("does not send signal")
+            {
+                REQUIRE(onParented.IsEmpty());
             }
         }
     }

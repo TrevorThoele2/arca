@@ -29,6 +29,7 @@
     <ClInclude Include="ReliquaryTests.h" />
     <ClInclude Include="SignalBatchTests.h" />
     <ClInclude Include="RelicTests.h" />
+    <ClInclude Include="SignalTests.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChildRelicBatchTests.cpp" />
@@ -42,6 +43,7 @@
     <ClCompile Include="ReliquaryTests.cpp" />
     <ClCompile Include="SignalBatchTests.cpp" />
     <ClCompile Include="RelicTests.cpp" />
+    <ClCompile Include="SignalTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Chroma\Chroma\Chroma.vcxproj">
