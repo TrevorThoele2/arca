@@ -29,11 +29,11 @@ namespace Arca
         CuratorProviderBase& operator=(const CuratorProviderBase& arg) = delete;
         CuratorProviderBase& operator=(CuratorProviderBase&& arg) = delete;
 
-        Provided Provide(Reliquary& reliquary);
+        Provided Provide();
     protected:
         explicit CuratorProviderBase(TypeHandle typeHandle);
     protected:
-        virtual ProvidedCurator ProvideImpl(Reliquary& reliquary) = 0;
+        virtual ProvidedCurator ProvideImpl() = 0;
     private:
         TypeHandle typeHandle;
     };
@@ -49,7 +49,7 @@ namespace Arca
 
         [[nodiscard]] std::unique_ptr<CuratorProviderBase> Clone() const override;
     protected:
-        ProvidedCurator ProvideImpl(Reliquary& reliquary) override;
+        ProvidedCurator ProvideImpl() override;
     };
 
     template<class Curator, class... Args>
@@ -64,9 +64,9 @@ namespace Arca
     }
 
     template<class Curator, class... Args>
-    auto CuratorProvider<Curator, Args...>::ProvideImpl(Reliquary& reliquary) -> ProvidedCurator
+    auto CuratorProvider<Curator, Args...>::ProvideImpl() -> ProvidedCurator
     {
-        return std::make_unique<Curator>(reliquary);
+        return std::make_unique<Curator>();
     }
 
     class ExternalCuratorProvider final : public CuratorProviderBase
@@ -78,6 +78,6 @@ namespace Arca
 
         [[nodiscard]] std::unique_ptr<CuratorProviderBase> Clone() const override;
     protected:
-        ProvidedCurator ProvideImpl(Reliquary& reliquary) override;
+        ProvidedCurator ProvideImpl() override;
     };
 }

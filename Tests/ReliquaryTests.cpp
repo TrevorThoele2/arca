@@ -42,9 +42,6 @@ void ReliquaryTestsFixture::StaticRelic::DoInitialize()
     basicShard = std::get<0>(tuple);
 }
 
-ReliquaryTestsFixture::BasicCurator::BasicCurator(Reliquary& owner) : Curator(owner)
-{}
-
 namespace Arca
 {
     const TypeHandle ShardTraits<::ReliquaryTestsFixture::BasicShard>::typeHandle =

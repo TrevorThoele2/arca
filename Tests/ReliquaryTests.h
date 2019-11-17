@@ -71,10 +71,7 @@ public:
     };
 
     class BasicCurator final : public Curator
-    {
-    public:
-        explicit BasicCurator(Reliquary& owner);
-    };
+    {};
 
     struct BasicSignal
     {};
