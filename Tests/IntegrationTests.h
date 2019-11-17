@@ -94,14 +94,12 @@ namespace Arca
     struct RelicTraits<::IntegrationTestsFixture::ChildRelic>
     {
         static const TypeHandle typeHandle;
-        using Shards = ShardList<>;
     };
 
     template<>
     struct RelicTraits<::IntegrationTestsFixture::ParentRelic>
     {
         static const TypeHandle typeHandle;
-        using Shards = ShardList<>;
         static std::optional<IntegrationTestsFixture::ParentRelic> Factory(Reliquary& reliquary, int value);
     };
 

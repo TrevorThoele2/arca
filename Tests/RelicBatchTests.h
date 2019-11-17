@@ -61,21 +61,18 @@ namespace Arca
     struct RelicTraits<::RelicBatchFixture::Relic>
     {
         static const TypeHandle typeHandle;
-        using Shards = ShardList<>;
     };
 
     template<>
     struct RelicTraits<::RelicBatchFixture::StaticRelic>
     {
         static const TypeHandle typeHandle;
-        using Shards = ShardList<>;
     };
 
     template<>
     struct RelicTraits<::RelicBatchFixture::UnregisteredRelic>
     {
         static const TypeHandle typeHandle;
-        using Shards = ShardList<>;
     };
 
     template<>

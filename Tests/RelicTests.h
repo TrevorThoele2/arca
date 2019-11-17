@@ -105,7 +105,6 @@ namespace Arca
     struct RelicTraits<::RelicTestsFixture::MostBasicCustomFactoryRelic>
     {
         static const TypeHandle typeHandle;
-        using Shards = ShardList<>;
         static std::optional<RelicTestsFixture::MostBasicCustomFactoryRelic> Factory(Reliquary& reliquary);
     };
 
@@ -113,7 +112,6 @@ namespace Arca
     struct RelicTraits<::RelicTestsFixture::GuardedCustomFactoryRelic>
     {
         static const TypeHandle typeHandle;
-        using Shards = ShardList<>;
         static std::optional<RelicTestsFixture::GuardedCustomFactoryRelic> Factory(Reliquary& reliquary, int value);
     };
 }
