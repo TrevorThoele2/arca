@@ -37,12 +37,8 @@ public:
     public:
         BasicTypedRelic() = default;
         explicit BasicTypedRelic(const ::Inscription::BinaryTableData<BasicTypedRelic>& data);
-
-        [[nodiscard]] RelicStructure Structure() const override;
     protected:
-        void DoInitialize() override;
-    private:
-        using Shards = ::Chroma::VariadicTemplate<BasicShard>;
+        void InitializeImplementation() override;
     };
 
     class StaticRelic : public TypedRelic
@@ -52,12 +48,8 @@ public:
     public:
         StaticRelic() = default;
         explicit StaticRelic(const ::Inscription::BinaryTableData<StaticRelic>& data);
-
-        [[nodiscard]] RelicStructure Structure() const override;
     protected:
-        void DoInitialize() override;
-    private:
-        using Shards = ::Chroma::VariadicTemplate<BasicShard>;
+        void InitializeImplementation() override;
     };
 
     class MostBasicCustomFactoryRelic : public TypedRelic
@@ -66,10 +58,8 @@ public:
         int value = 0;
     public:
         MostBasicCustomFactoryRelic() = default;
-
-        [[nodiscard]] RelicStructure Structure() const override { return {}; }
     protected:
-        void DoInitialize() override {}
+        void InitializeImplementation() override {}
     };
 
     class GuardedCustomFactoryRelic : public TypedRelic
@@ -78,10 +68,8 @@ public:
         int value = 0;
     public:
         GuardedCustomFactoryRelic() = default;
-
-        [[nodiscard]] RelicStructure Structure() const override { return {}; }
     protected:
-        void DoInitialize() override {}
+        void InitializeImplementation() override {}
     };
 };
 
@@ -103,18 +91,21 @@ namespace Arca
     struct RelicTraits<::RelicTestsFixture::BasicTypedRelic>
     {
         static const TypeHandle typeHandle;
+        using Shards = ShardList<::RelicTestsFixture::BasicShard>;
     };
 
     template<>
     struct RelicTraits<::RelicTestsFixture::StaticRelic>
     {
         static const TypeHandle typeHandle;
+        using Shards = ShardList<::RelicTestsFixture::BasicShard>;
     };
 
     template<>
     struct RelicTraits<::RelicTestsFixture::MostBasicCustomFactoryRelic>
     {
         static const TypeHandle typeHandle;
+        using Shards = ShardList<>;
         static std::optional<RelicTestsFixture::MostBasicCustomFactoryRelic> Factory(Reliquary& reliquary);
     };
 
@@ -122,6 +113,7 @@ namespace Arca
     struct RelicTraits<::RelicTestsFixture::GuardedCustomFactoryRelic>
     {
         static const TypeHandle typeHandle;
+        using Shards = ShardList<>;
         static std::optional<RelicTestsFixture::GuardedCustomFactoryRelic> Factory(Reliquary& reliquary, int value);
     };
 }

@@ -54,7 +54,7 @@ namespace Arca
 
     template<class Curator, class... Args>
     CuratorProvider<Curator, Args...>::CuratorProvider(ArgumentTuple&& arguments) :
-        CuratorProviderBase(CuratorTraits<Curator>::typeHandle), arguments(std::move(arguments))
+        CuratorProviderBase(TypeHandleFor<Curator>()), arguments(std::move(arguments))
     {}
 
     template<class Curator, class... Args>

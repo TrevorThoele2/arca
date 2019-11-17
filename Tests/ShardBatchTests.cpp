@@ -8,13 +8,9 @@ ShardBatchFixture::Shard::Shard(int value) :
     value(value)
 {}
 
-RelicStructure ShardBatchFixture::StaticRelic::Structure() const
+void ShardBatchFixture::StaticRelic::InitializeImplementation()
 {
-    return StructureFrom<Shards>();
-}
-
-void ShardBatchFixture::StaticRelic::DoInitialize()
-{
+    using Shards = ShardsFor<StaticRelic>;
     auto tuple = ExtractShards<Shards>(ID(), Owner());
     shard = std::get<0>(tuple);
 }
@@ -97,7 +93,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
         {
             THEN("throws")
             {
-                REQUIRE_THROWS_AS(reliquary.ShardBatch<UnregisteredShard>(), NotRegistered);
+                REQUIRE_THROWS_AS(reliquary.Batch<UnregisteredShard>(), NotRegistered);
             }
         }
 
@@ -107,7 +103,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
 
             WHEN("starting batch")
             {
-                auto batch = reliquary.ShardBatch<Shard>();
+                auto batch = reliquary.Batch<Shard>();
 
                 THEN("batch contains shard")
                 {
@@ -136,7 +132,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
 
         WHEN("starting batch")
         {
-            auto batch = reliquary.ShardBatch<Shard>();
+            auto batch = reliquary.Batch<Shard>();
 
             THEN("batch is empty")
             {
@@ -188,7 +184,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
 
         WHEN("starting batch")
         {
-            auto batch = reliquary.ShardBatch<Shard>();
+            auto batch = reliquary.Batch<Shard>();
 
             THEN("batch contains shard")
             {
@@ -231,7 +227,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch serialization", "[ShardBatch][se
                 inputArchive(loadedReliquary);
             }
 
-            auto batch = loadedReliquary.ShardBatch<Shard>();
+            auto batch = loadedReliquary.Batch<Shard>();
 
             THEN("batch is occupied")
             {

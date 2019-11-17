@@ -31,12 +31,8 @@ class ShardBatchFixture::StaticRelic : public TypedRelic
 {
 public:
     Shard* shard = nullptr;
-public:
-    [[nodiscard]] RelicStructure Structure() const override;
 protected:
-    void DoInitialize() override;
-private:
-    using Shards = ::Chroma::VariadicTemplate<Shard>;
+    void InitializeImplementation() override;
 };
 
 namespace Arca
@@ -57,6 +53,7 @@ namespace Arca
     struct RelicTraits<::ShardBatchFixture::StaticRelic>
     {
         static const TypeHandle typeHandle;
+        using Shards = ShardList<::ShardBatchFixture::Shard>;
     };
 }
 

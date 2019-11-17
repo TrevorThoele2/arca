@@ -16,13 +16,9 @@ ReliquaryTestsFixture::BasicTypedRelic::BasicTypedRelic(const ::Inscription::Bin
     TypedRelic(data.base)
 {}
 
-RelicStructure ReliquaryTestsFixture::BasicTypedRelic::Structure() const
+void ReliquaryTestsFixture::BasicTypedRelic::InitializeImplementation()
 {
-    return StructureFrom<Shards>();
-}
-
-void ReliquaryTestsFixture::BasicTypedRelic::DoInitialize()
-{
+    using Shards = ShardsFor<BasicTypedRelic>;
     auto tuple = ExtractShards<Shards>(ID(), Owner());
     basicShard = std::get<0>(tuple);
 }
@@ -31,13 +27,9 @@ ReliquaryTestsFixture::StaticRelic::StaticRelic(const ::Inscription::BinaryTable
     TypedRelic(data.base)
 {}
 
-RelicStructure ReliquaryTestsFixture::StaticRelic::Structure() const
+void ReliquaryTestsFixture::StaticRelic::InitializeImplementation()
 {
-    return StructureFrom<Shards>();
-}
-
-void ReliquaryTestsFixture::StaticRelic::DoInitialize()
-{
+    using Shards = ShardsFor<StaticRelic>;
     auto tuple = ExtractShards<Shards>(ID(), Owner());
     basicShard = std::get<0>(tuple);
 }
@@ -73,7 +65,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
         {
             THEN("has relic count of zero")
             {
-                REQUIRE(reliquary.RelicCount() == 0);
+                REQUIRE(reliquary.RelicSize() == 0);
             }
         }
 
@@ -93,7 +85,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary.FindShard<BasicShard>(1),
+                    reliquary.Find<BasicShard>(1),
                     NotRegistered,
                     Catch::Matchers::Message("The shard (ReliquaryTestsBasicShard) was not registered.")
                 );
@@ -106,7 +98,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
 
             THEN("reliquary has relic count of one")
             {
-                REQUIRE(reliquary.RelicCount() == 1);
+                REQUIRE(reliquary.RelicSize() == 1);
             }
         }
 
@@ -116,7 +108,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary.CreateRelic<BasicTypedRelic>(),
+                    reliquary.Create<BasicTypedRelic>(),
                     NotRegistered,
                     Catch::Matchers::Message(
                         "The relic ("s + RelicTraits<BasicTypedRelic>::typeHandle + ") was not registered.")
@@ -130,7 +122,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary.StaticRelic<StaticRelic>(),
+                    reliquary.Static<StaticRelic>(),
                     NotRegistered,
                     Catch::Matchers::Message(
                         "The static relic ("s + RelicTraits<StaticRelic>::typeHandle + ") was not registered.")
@@ -142,7 +134,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
         {
             THEN("returns nullptr")
             {
-                REQUIRE(reliquary.FindCurator<BasicCurator>() == nullptr);
+                REQUIRE(reliquary.Find<BasicCurator>() == nullptr);
             }
         }
 
@@ -152,7 +144,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
 
             THEN("returns nullptr")
             {
-                REQUIRE(constReliquary.FindCurator<BasicCurator>() == nullptr);
+                REQUIRE(constReliquary.Find<BasicCurator>() == nullptr);
             }
         }
 
@@ -180,7 +172,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary.CreateRelic<BasicTypedRelic>(),
+                    reliquary.Create<BasicTypedRelic>(),
                     NotRegistered,
                     Catch::Matchers::Message(
                         "The shard ("s + ShardTraits<BasicShard>::typeHandle + ") was not registered.")
@@ -278,7 +270,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "registered reliquary with every type", "
         {
             THEN("has count of one for static shard")
             {
-                REQUIRE(reliquary.RelicCount() == 1);
+                REQUIRE(reliquary.RelicSize() == 1);
             }
         }
     }
@@ -318,7 +310,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
 
             THEN("has only static relic")
             {
-                REQUIRE(loadedReliquary.RelicCount() == 1);
+                REQUIRE(loadedReliquary.RelicSize() == 1);
             }
         }
     }
@@ -354,13 +346,13 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
 
             THEN("has relic")
             {
-                REQUIRE(loadedReliquary.RelicCount() == 1);
+                REQUIRE(loadedReliquary.RelicSize() == 1);
                 REQUIRE(loadedRelic.has_value());
             }
 
             THEN("relic has shard")
             {
-                auto shardFromReliquary = loadedReliquary.FindShard<BasicShard>(loadedRelic->ID());
+                auto shardFromReliquary = loadedReliquary.Find<BasicShard>(loadedRelic->ID());
                 REQUIRE(shardFromReliquary != nullptr);
                 REQUIRE(shardFromRelic != nullptr);
                 REQUIRE(loadedRelic->HasShard<BasicShard>());
@@ -401,14 +393,14 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
 
             THEN("has relic")
             {
-                REQUIRE(loadedReliquary.RelicCount() == 1);
+                REQUIRE(loadedReliquary.RelicSize() == 1);
                 REQUIRE(loadedRelic.has_value());
             }
 
             THEN("relic does not have shard")
             {
                 REQUIRE_THROWS_AS(loadedRelic->FindShard<BasicShard>(), NotRegistered);
-                REQUIRE_THROWS_AS(loadedReliquary.FindShard<BasicShard>(loadedRelic->ID()), NotRegistered);
+                REQUIRE_THROWS_AS(loadedReliquary.Find<BasicShard>(loadedRelic->ID()), NotRegistered);
             }
 
             THEN("relic is dynamic")
@@ -443,13 +435,13 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
 
             THEN("has relic")
             {
-                REQUIRE(loadedReliquary.RelicCount() == 1);
+                REQUIRE(loadedReliquary.RelicSize() == 1);
                 REQUIRE(loadedRelic.has_value());
             }
 
             THEN("relic has shard")
             {
-                auto shardFromReliquary = loadedReliquary.FindShard<OtherBasicShard>(loadedRelic->ID());
+                auto shardFromReliquary = loadedReliquary.Find<OtherBasicShard>(loadedRelic->ID());
                 REQUIRE(shardFromReliquary != nullptr);
                 REQUIRE(shardFromRelic != nullptr);
                 REQUIRE(loadedRelic->HasShard<OtherBasicShard>());

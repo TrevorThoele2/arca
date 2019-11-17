@@ -2,7 +2,8 @@
 
 #include "RelicID.h"
 #include "RelicStructure.h"
-#include "StructureFrom.h"
+#include "RelicScribe.h"
+#include "RelicTraits.h"
 
 #include "Serialization.h"
 
@@ -20,12 +21,11 @@ namespace Arca
         virtual ~TypedRelic() = 0;
 
         void Initialize(Reliquary& owner);
-        [[nodiscard]] virtual RelicStructure Structure() const = 0;
     protected:
         TypedRelic() = default;
         explicit TypedRelic(const ::Inscription::BinaryTableData<TypedRelic>& data);
 
-        virtual void DoInitialize() = 0;
+        virtual void InitializeImplementation() {}
     private:
         RelicID id = 0;
         Reliquary* owner = nullptr;

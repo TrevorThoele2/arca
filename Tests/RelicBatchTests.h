@@ -25,10 +25,8 @@ public:
 public:
     Relic() = default;
     Relic(const ::Inscription::BinaryTableData<Relic>& data);
-
-    [[nodiscard]] RelicStructure Structure() const override;
 protected:
-    void DoInitialize() override;
+    void InitializeImplementation() override;
 };
 
 class RelicBatchFixture::StaticRelic : public TypedRelic
@@ -38,18 +36,14 @@ public:
 public:
     StaticRelic() = default;
     StaticRelic(const ::Inscription::BinaryTableData<Relic>& data);
-
-    [[nodiscard]] RelicStructure Structure() const override;
 protected:
-    void DoInitialize() override;
+    void InitializeImplementation() override;
 };
 
 class RelicBatchFixture::UnregisteredRelic : public TypedRelic
 {
-public:
-    [[nodiscard]] RelicStructure Structure() const override { return {}; }
 protected:
-    void DoInitialize() override {}
+    void InitializeImplementation() override {}
 };
 
 class RelicBatchFixture::Shard
@@ -67,18 +61,21 @@ namespace Arca
     struct RelicTraits<::RelicBatchFixture::Relic>
     {
         static const TypeHandle typeHandle;
+        using Shards = ShardList<>;
     };
 
     template<>
     struct RelicTraits<::RelicBatchFixture::StaticRelic>
     {
         static const TypeHandle typeHandle;
+        using Shards = ShardList<>;
     };
 
     template<>
     struct RelicTraits<::RelicBatchFixture::UnregisteredRelic>
     {
         static const TypeHandle typeHandle;
+        using Shards = ShardList<>;
     };
 
     template<>

@@ -23,12 +23,8 @@ public:
     public:
         BasicTypedRelic() = default;
         explicit BasicTypedRelic(const ::Inscription::BinaryTableData<BasicTypedRelic>& data);
-
-        [[nodiscard]] RelicStructure Structure() const override;
     protected:
-        void DoInitialize() override;
-    private:
-        using Shards = ::Chroma::VariadicTemplate<BasicShard>;
+        void InitializeImplementation() override;
     };
 };
 
@@ -44,6 +40,7 @@ namespace Arca
     struct RelicTraits<::ChildRelicBatchTestsFixture::BasicTypedRelic>
     {
         static const TypeHandle typeHandle;
+        using Shards = ShardList<::ChildRelicBatchTestsFixture::BasicShard>;
     };
 }
 

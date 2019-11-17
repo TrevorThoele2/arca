@@ -105,10 +105,10 @@ namespace Arca
         if (IsRelicRegistered<RelicT>())
             throw AlreadyRegistered();
 
-        const auto typeHandle = RelicTraits<RelicT>::typeHandle;
+        const auto typeHandle = TypeHandleFor<RelicT>();
         const auto factory = [](Reliquary& reliquary)
         {
-            const auto typeHandle = RelicTraits<RelicT>::typeHandle;
+            const auto typeHandle = TypeHandleFor<RelicT>();
             reliquary.relicBatchSources.emplace(typeHandle, std::make_unique<RelicBatchSource<RelicT>>());
             reliquary.relicSerializerMap.emplace(
                 typeHandle,
@@ -157,19 +157,19 @@ namespace Arca
         if (IsStaticRelicRegistered<RelicT>())
             throw AlreadyRegistered();
 
-        const auto typeHandle = RelicTraits<RelicT>::typeHandle;
+        const auto typeHandle = TypeHandleFor<RelicT>();
         const auto factory = [args = std::make_tuple(std::forward<CreationArgs>(creationArgs) ...)](Reliquary& reliquary)
         {
             return std::apply([&reliquary](auto&& ... creationArgs)
                 {
-                    const auto typeHandle = RelicTraits<RelicT>::typeHandle;
+                    const auto typeHandle = TypeHandleFor<RelicT>();
                     const auto id = reliquary.NextRelicID();
                     auto relic = RelicT(std::forward<CreationArgs>(creationArgs)...);
                     relic.id = id;
                     auto emplaced = reliquary.staticRelicMap.emplace(typeHandle, std::move(relic)).first->second;
                     auto castedEmplaced = std::any_cast<RelicT>(&emplaced);
                     reliquary.SetupNewRelicInternals(id, RelicDynamism::Static, typeHandle, castedEmplaced);
-                    reliquary.SatisfyRelicStructure(relic.Structure(), id);
+                    reliquary.SatisfyRelicStructure(StructureFrom<ShardsFor<RelicT>>(), id);
 
                     reliquary.staticRelicSerializerMap.emplace(
                         typeHandle,
@@ -192,7 +192,7 @@ namespace Arca
 
         typedRelicInitializerList.push_back([](Reliquary& reliquary)
             {
-                auto relic = reliquary.StaticRelic<RelicT>();
+                auto relic = reliquary.Static<RelicT>();
                 relic->Initialize(reliquary);
             });
 
@@ -207,7 +207,7 @@ namespace Arca
 
         const auto factory = [](Reliquary& reliquary)
         {
-            const auto typeHandle = ShardTraits<ShardT>::typeHandle;
+            const auto typeHandle = TypeHandleFor<ShardT>();
             reliquary.shardBatchSources.emplace(typeHandle, std::make_unique<ShardBatchSource<ShardT>>());
             reliquary.shardFactoryMap.emplace(
                 typeHandle,
@@ -233,7 +233,7 @@ namespace Arca
                 });
         };
 
-        const auto typeHandle = ShardTraits<ShardT>::typeHandle;
+        const auto typeHandle = TypeHandleFor<ShardT>();
         shardList.push_back({ typeHandle, factory });
 
         Signal<ShardCreated<ShardT>>();
@@ -256,7 +256,7 @@ namespace Arca
         if (!dynamic_cast<AsT>(use))
             throw IncorrectRegisteredCuratorType();
 
-        CuratorCommon<AsT, ExternalCuratorProvider>(use, CuratorTraits<ProvidedT>::typeHandle);
+        CuratorCommon<AsT, ExternalCuratorProvider>(use, TypeHandleFor<ProvidedT>());
 
         return *this;
     }
@@ -282,7 +282,7 @@ namespace Arca
     template<class RelicT>
     [[nodiscard]] bool ReliquaryOrigin::IsRelicRegistered() const
     {
-        const auto typeHandle = RelicTraits<RelicT>::typeHandle;
+        const auto typeHandle = TypeHandleFor<RelicT>();
         const auto found = std::find_if(
             relicList.begin(),
             relicList.end(),
@@ -296,7 +296,7 @@ namespace Arca
     template<class RelicT>
     bool ReliquaryOrigin::IsStaticRelicRegistered() const
     {
-        const auto typeHandle = RelicTraits<RelicT>::typeHandle;
+        const auto typeHandle = TypeHandleFor<RelicT>();
         const auto found = std::find_if(
             staticRelicList.begin(),
             staticRelicList.end(),
@@ -310,7 +310,7 @@ namespace Arca
     template<class ShardT>
     bool ReliquaryOrigin::IsShardRegistered() const
     {
-        const auto typeHandle = ShardTraits<ShardT>::typeHandle;
+        const auto typeHandle = TypeHandleFor<ShardT>();
         const auto found = std::find_if(
             shardList.begin(),
             shardList.end(),
@@ -329,11 +329,11 @@ namespace Arca
         if (IsCuratorRegistered<CuratorT>())
             throw AlreadyRegistered();
 
-        auto typeHandle = CuratorTraits<CuratorT>::typeHandle;
+        auto typeHandle = TypeHandleFor<CuratorT>();
         curatorProviders.emplace(typeHandle, std::make_unique<CuratorProvider>(std::forward<Args>(args)...));
         const auto curatorSerializationTypeHandlesFactory = [](Reliquary& reliquary)
         {
-            auto typeHandle = CuratorTraits<CuratorT>::typeHandle;
+            auto typeHandle = TypeHandleFor<CuratorT>();
             reliquary.curatorSerializerMap.emplace(
                 typeHandle,
                 Reliquary::KnownPolymorphicSerializer
@@ -356,7 +356,7 @@ namespace Arca
     template<class CuratorT>
     bool ReliquaryOrigin::IsCuratorRegistered() const
     {
-        auto typeHandle = CuratorTraits<CuratorT>::typeHandle;
+        auto typeHandle = TypeHandleFor<CuratorT>();
         return curatorProviders.find(typeHandle) != curatorProviders.end();
     }
 

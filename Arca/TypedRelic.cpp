@@ -20,7 +20,7 @@ namespace Arca
     void TypedRelic::Initialize(Reliquary& owner)
     {
         this->owner = &owner;
-        DoInitialize();
+        InitializeImplementation();
     }
 
     TypedRelic::~TypedRelic() = default;

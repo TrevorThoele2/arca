@@ -6,24 +6,14 @@ RelicBatchFixture::Relic::Relic(const ::Inscription::BinaryTableData<Relic>& dat
     TypedRelic(data.base), value(data.value)
 {}
 
-RelicStructure RelicBatchFixture::Relic::Structure() const
-{
-    return {};
-}
-
-void RelicBatchFixture::Relic::DoInitialize()
+void RelicBatchFixture::Relic::InitializeImplementation()
 {}
 
 RelicBatchFixture::StaticRelic::StaticRelic(const ::Inscription::BinaryTableData<Relic>& data) :
     TypedRelic(data.base), value(data.value)
 {}
 
-RelicStructure RelicBatchFixture::StaticRelic::Structure() const
-{
-    return {};
-}
-
-void RelicBatchFixture::StaticRelic::DoInitialize()
+void RelicBatchFixture::StaticRelic::InitializeImplementation()
 {}
 
 RelicBatchFixture::Shard::Shard(int value) :
@@ -110,17 +100,17 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch", "[RelicBatch]")
         {
             THEN("throws")
             {
-                REQUIRE_THROWS_AS(reliquary.RelicBatch<UnregisteredRelic>(), NotRegistered);
+                REQUIRE_THROWS_AS(reliquary.Batch<UnregisteredRelic>(), NotRegistered);
             }
         }
 
         WHEN("creating relic")
         {
-            auto createdRelic = reliquary.CreateRelic<Relic>();
+            auto createdRelic = reliquary.Create<Relic>();
 
             WHEN("starting batch")
             {
-                auto batch = reliquary.RelicBatch<Relic>();
+                auto batch = reliquary.Batch<Relic>();
 
                 THEN("batch contains relic")
                 {
@@ -135,7 +125,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch", "[RelicBatch]")
 
                 THEN("destroying relic empties the batch")
                 {
-                    reliquary.DestroyRelic(*createdRelic);
+                    reliquary.Destroy(*createdRelic);
                     REQUIRE(batch.IsEmpty());
                 }
             }
@@ -143,7 +133,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch", "[RelicBatch]")
 
         WHEN("starting batch")
         {
-            auto batch = reliquary.RelicBatch<Relic>();
+            auto batch = reliquary.Batch<Relic>();
 
             THEN("batch is empty")
             {
@@ -158,7 +148,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch", "[RelicBatch]")
 
             WHEN("creating relic")
             {
-                auto createdRelic = reliquary.CreateRelic<Relic>();
+                auto createdRelic = reliquary.Create<Relic>();
 
                 THEN("batch contains relic")
                 {
@@ -173,7 +163,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch", "[RelicBatch]")
 
                 THEN("destroying relic empties the batch")
                 {
-                    reliquary.DestroyRelic(*createdRelic);
+                    reliquary.Destroy(*createdRelic);
                     REQUIRE(batch.IsEmpty());
                 }
             }
@@ -189,7 +179,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch serialization", "[RelicBatch][se
             .Relic<Relic>()
             .Actualize();
 
-        savedReliquary.CreateRelic<Relic>();
+        savedReliquary.Create<Relic>();
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.exe", "Testing", 1);
@@ -207,7 +197,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch serialization", "[RelicBatch][se
                 inputArchive(loadedReliquary);
             }
 
-            auto batch = loadedReliquary.RelicBatch<Relic>();
+            auto batch = loadedReliquary.Batch<Relic>();
 
             THEN("batch is occupied")
             {

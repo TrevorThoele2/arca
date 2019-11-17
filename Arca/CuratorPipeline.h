@@ -46,7 +46,7 @@ namespace Arca
         {
             STATIC_ASSERT_TYPE_DERIVED_FROM_CURATOR(CuratorT);
 
-            typeHandles.push_back(CuratorTraits<CuratorT>::typeHandle);
+            typeHandles.push_back(TypeHandleFor<CuratorT>());
         }
 
         [[nodiscard]] std::vector<TypeHandle> TypeHandleList() const;
