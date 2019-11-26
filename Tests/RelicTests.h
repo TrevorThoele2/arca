@@ -76,41 +76,47 @@ public:
 namespace Arca
 {
     template<>
-    struct ShardTraits<::RelicTestsFixture::BasicShard>
+    struct Traits<::RelicTestsFixture::BasicShard>
     {
+        static const ObjectType objectType = ObjectType::Shard;
         static const TypeHandle typeHandle;
     };
 
     template<>
-    struct ShardTraits<::RelicTestsFixture::OtherShard>
+    struct Traits<::RelicTestsFixture::OtherShard>
     {
+        static const ObjectType objectType = ObjectType::Shard;
         static const TypeHandle typeHandle;
     };
 
     template<>
-    struct RelicTraits<::RelicTestsFixture::BasicTypedRelic>
+    struct Traits<::RelicTestsFixture::BasicTypedRelic>
     {
-        static const TypeHandle typeHandle;
-        using Shards = ShardList<::RelicTestsFixture::BasicShard>;
-    };
-
-    template<>
-    struct RelicTraits<::RelicTestsFixture::StaticRelic>
-    {
+        static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandle typeHandle;
         using Shards = ShardList<::RelicTestsFixture::BasicShard>;
     };
 
     template<>
-    struct RelicTraits<::RelicTestsFixture::MostBasicCustomFactoryRelic>
+    struct Traits<::RelicTestsFixture::StaticRelic>
     {
+        static const ObjectType objectType = ObjectType::Relic;
+        static const TypeHandle typeHandle;
+        using Shards = ShardList<::RelicTestsFixture::BasicShard>;
+    };
+
+    template<>
+    struct Traits<::RelicTestsFixture::MostBasicCustomFactoryRelic>
+    {
+        static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandle typeHandle;
         static std::optional<RelicTestsFixture::MostBasicCustomFactoryRelic> Factory(Reliquary& reliquary);
     };
 
     template<>
-    struct RelicTraits<::RelicTestsFixture::GuardedCustomFactoryRelic>
+    struct Traits<::RelicTestsFixture::GuardedCustomFactoryRelic>
     {
+        static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandle typeHandle;
         static std::optional<RelicTestsFixture::GuardedCustomFactoryRelic> Factory(Reliquary& reliquary, int value);
     };

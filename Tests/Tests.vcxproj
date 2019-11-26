@@ -20,10 +20,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChildRelicBatchTests.h" />
+    <ClInclude Include="ConstShardTests.h" />
     <ClInclude Include="CuratorTests.h" />
     <ClInclude Include="GeneralFixture.h" />
     <ClInclude Include="IntegrationTests.h" />
     <ClInclude Include="RelicBatchTests.h" />
+    <ClInclude Include="ReliquaryOriginRegistrationTests.h" />
+    <ClInclude Include="ReliquaryRegistrationTests.h" />
     <ClInclude Include="ShardBatchTests.h" />
     <ClInclude Include="ReliquaryFixture.h" />
     <ClInclude Include="ReliquaryTests.h" />
@@ -33,11 +36,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChildRelicBatchTests.cpp" />
+    <ClCompile Include="ConstShardTests.cpp" />
     <ClCompile Include="CuratorTests.cpp" />
     <ClCompile Include="GeneralFixture.cpp" />
     <ClCompile Include="IntegrationTests.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="RelicBatchTests.cpp" />
+    <ClCompile Include="ReliquaryOriginRegistrationTests.cpp" />
+    <ClCompile Include="ReliquaryRegistrationTests.cpp" />
     <ClCompile Include="ShardBatchTests.cpp" />
     <ClCompile Include="ReliquaryFixture.cpp" />
     <ClCompile Include="ReliquaryTests.cpp" />

@@ -11,41 +11,22 @@ ChildRelicBatchTestsFixture::BasicTypedRelic::BasicTypedRelic(
 
 void ChildRelicBatchTestsFixture::BasicTypedRelic::InitializeImplementation()
 {
-    using Shards = ShardsFor<BasicTypedRelic>;
+    using Shards = shards_for_t<BasicTypedRelic>;
     auto tuple = ExtractShards<Shards>(ID(), Owner());
     basicShard = std::get<0>(tuple);
 }
 
 namespace Arca
 {
-    const TypeHandle ShardTraits<ChildRelicBatchTestsFixture::BasicShard>::typeHandle =
+    const TypeHandle Traits<ChildRelicBatchTestsFixture::BasicShard>::typeHandle =
         "ChildRelicTestsBasicShard";
 
-    const TypeHandle RelicTraits<ChildRelicBatchTestsFixture::BasicTypedRelic>::typeHandle =
+    const TypeHandle Traits<ChildRelicBatchTestsFixture::BasicTypedRelic>::typeHandle =
         "ChildRelicTestsBasicTypedRelic";
 }
 
 SCENARIO_METHOD(ChildRelicBatchTestsFixture, "default child relic batch")
 {
-    GIVEN("no types registered to reliquary")
-    {
-        auto reliquary = ReliquaryOrigin()
-            .Actualize();
-
-        WHEN("retrieving child relic batch")
-        {
-            THEN("throws error")
-            {
-                REQUIRE_THROWS_MATCHES
-                (
-                    reliquary.ChildBatch<BasicTypedRelic>(0),
-                    NotRegistered,
-                    Catch::Matchers::Message("The relic (ChildRelicTestsBasicTypedRelic) was not registered.")
-                );
-            }
-        }
-    }
-
     GIVEN("relic registered to reliquary")
     {
         auto reliquary = ReliquaryOrigin()

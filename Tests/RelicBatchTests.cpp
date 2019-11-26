@@ -22,17 +22,17 @@ RelicBatchFixture::Shard::Shard(int value) :
 
 namespace Arca
 {
-    const TypeHandle RelicTraits<RelicBatchFixture::Relic>::typeHandle = "RelicBatchTestsRelic";
-    const TypeHandle RelicTraits<RelicBatchFixture::StaticRelic>::typeHandle = "RelicBatchTestsStaticRelic";
-    const TypeHandle RelicTraits<RelicBatchFixture::UnregisteredRelic>::typeHandle = "RelicBatchTestsUnregisteredRelic";
-    const TypeHandle ShardTraits<RelicBatchFixture::Shard>::typeHandle = "RelicBatchTestsShard";
+    const TypeHandle Traits<RelicBatchFixture::Relic>::typeHandle = "RelicBatchTestsRelic";
+    const TypeHandle Traits<RelicBatchFixture::StaticRelic>::typeHandle = "RelicBatchTestsStaticRelic";
+    const TypeHandle Traits<RelicBatchFixture::UnregisteredRelic>::typeHandle = "RelicBatchTestsUnregisteredRelic";
+    const TypeHandle Traits<RelicBatchFixture::Shard>::typeHandle = "RelicBatchTestsShard";
 }
 
 SCENARIO_METHOD(RelicBatchFixture, "default relic batch", "[RelicBatch]")
 {
     GIVEN("default relic batch")
     {
-        RelicBatch<Relic> batch;
+        Batch<Relic> batch;
 
         WHEN("querying size")
         {
@@ -95,14 +95,6 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch", "[RelicBatch]")
         auto reliquary = ReliquaryOrigin()
             .Relic<Relic>()
             .Actualize();
-
-        WHEN("starting batch with unregistered relic")
-        {
-            THEN("throws")
-            {
-                REQUIRE_THROWS_AS(reliquary.Batch<UnregisteredRelic>(), NotRegistered);
-            }
-        }
 
         WHEN("creating relic")
         {

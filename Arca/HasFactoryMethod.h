@@ -12,7 +12,7 @@ namespace Arca
     {};
 
     template <class T>
-    struct has_factory_method<T, std::void_t<decltype(RelicTraits<T>::Factory)>> : std::true_type
+    struct has_factory_method<T, std::void_t<decltype(Traits<T>::Factory)>> : std::true_type
     {};
 
     template<class T>

@@ -25,9 +25,6 @@
     <ClCompile Include="ReliquaryOrigin.cpp">
       <Filter>Source Files\Reliquary</Filter>
     </ClCompile>
-    <ClCompile Include="CuratorPipeline.cpp">
-      <Filter>Source Files\Curator</Filter>
-    </ClCompile>
     <ClCompile Include="ShardBatchSource.cpp">
       <Filter>Source Files\Shard\Batch</Filter>
     </ClCompile>
@@ -48,6 +45,15 @@
     </ClCompile>
     <ClCompile Include="ChildRelicBatchSource.cpp">
       <Filter>Source Files\Relic\ChildBatch</Filter>
+    </ClCompile>
+    <ClCompile Include="Pipeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PipelineException.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RelicStructure.cpp">
+      <Filter>Source Files\Relic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -96,9 +102,6 @@
     <ClInclude Include="ReliquaryOrigin.h">
       <Filter>Header Files\Reliquary</Filter>
     </ClInclude>
-    <ClInclude Include="CuratorPipeline.h">
-      <Filter>Header Files\Curator</Filter>
-    </ClInclude>
     <ClInclude Include="CuratorTraits.h">
       <Filter>Header Files\Curator</Filter>
     </ClInclude>
@@ -119,12 +122,6 @@
     </ClInclude>
     <ClInclude Include="ShardTraits.h">
       <Filter>Header Files\Shard</Filter>
-    </ClInclude>
-    <ClInclude Include="BeforeShardDestroyed.h">
-      <Filter>Header Files\Signal\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="ShardCreated.h">
-      <Filter>Header Files\Signal\Common</Filter>
     </ClInclude>
     <ClInclude Include="RelicDynamism.h">
       <Filter>Header Files\Relic</Filter>
@@ -165,12 +162,6 @@
     <ClInclude Include="StructureFrom.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
-    <ClInclude Include="RelicCreated.h">
-      <Filter>Header Files\Signal\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="BeforeRelicDestroyed.h">
-      <Filter>Header Files\Signal\Common</Filter>
-    </ClInclude>
     <ClInclude Include="DynamicRelicDefinition.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
@@ -190,6 +181,36 @@
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
     <ClInclude Include="RelicParented.h">
+      <Filter>Header Files\Signal\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Pipeline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PipelineException.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ptr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Traits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Batch.h">
+      <Filter>Header Files\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="BatchSource.h">
+      <Filter>Header Files\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="SignalTraits.h">
+      <Filter>Header Files\Signal</Filter>
+    </ClInclude>
+    <ClInclude Include="Destroying.h">
+      <Filter>Header Files\Signal\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Created.h">
       <Filter>Header Files\Signal\Common</Filter>
     </ClInclude>
   </ItemGroup>

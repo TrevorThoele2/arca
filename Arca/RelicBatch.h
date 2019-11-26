@@ -1,34 +1,32 @@
 #pragma once
 
+#include "Batch.h"
 #include "RelicBatchSource.h"
 #include "RelicBatchIterator.h"
 #include "BatchException.h"
 
 namespace Arca
 {
-    using RelicBatchSizeT = size_t;
-
     template<class T>
-    class RelicBatch
+    class Batch<T, std::enable_if_t<is_relic_v<T>>>
     {
     private:
-        using SourceT = RelicBatchSource<T>;
+        using SourceT = BatchSource<T>;
     public:
         using RelicT = typename SourceT::RelicT;
 
-        using SizeT = RelicBatchSizeT;
         using iterator = RelicBatchIteratorBase<RelicT, typename SourceT::iterator>;
         using const_iterator = RelicBatchIteratorBase<const RelicT, typename SourceT::const_iterator>;
     public:
-        RelicBatch();
-        explicit RelicBatch(SourceT& source);
-        RelicBatch(const RelicBatch& arg);
-        RelicBatch(RelicBatch&& arg) noexcept;
+        Batch();
+        explicit Batch(SourceT& source);
+        Batch(const Batch& arg);
+        Batch(Batch&& arg) noexcept;
 
-        RelicBatch& operator=(const RelicBatch& arg);
-        RelicBatch& operator=(RelicBatch&& arg) noexcept;
+        Batch& operator=(const Batch& arg);
+        Batch& operator=(Batch&& arg) noexcept;
 
-        [[nodiscard]] SizeT Size() const;
+        [[nodiscard]] size_t Size() const;
         [[nodiscard]] bool IsEmpty() const;
 
         [[nodiscard]] iterator begin();
@@ -41,25 +39,25 @@ namespace Arca
     };
 
     template<class T>
-    RelicBatch<T>::RelicBatch()
+    Batch<T, std::enable_if_t<is_relic_v<T>>>::Batch()
     {}
 
     template<class T>
-    RelicBatch<T>::RelicBatch(SourceT& source) : source(&source)
+    Batch<T, std::enable_if_t<is_relic_v<T>>>::Batch(SourceT& source) : source(&source)
     {}
 
     template<class T>
-    RelicBatch<T>::RelicBatch(const RelicBatch& arg) : source(arg.source)
+    Batch<T, std::enable_if_t<is_relic_v<T>>>::Batch(const Batch& arg) : source(arg.source)
     {}
 
     template<class T>
-    RelicBatch<T>::RelicBatch(RelicBatch&& arg) noexcept : source(std::move(arg.source))
+    Batch<T, std::enable_if_t<is_relic_v<T>>>::Batch(Batch&& arg) noexcept : source(std::move(arg.source))
     {
         arg.source = nullptr;
     }
 
     template<class T>
-    RelicBatch<T>& RelicBatch<T>::operator=(const RelicBatch& arg)
+    auto Batch<T, std::enable_if_t<is_relic_v<T>>>::operator=(const Batch& arg) -> Batch&
     {
         source = arg.source;
 
@@ -67,7 +65,7 @@ namespace Arca
     }
 
     template<class T>
-    RelicBatch<T>& RelicBatch<T>::operator=(RelicBatch&& arg) noexcept
+    auto Batch<T, std::enable_if_t<is_relic_v<T>>>::operator=(Batch&& arg) noexcept -> Batch&
     {
         source = std::move(arg.source);
         arg.source = nullptr;
@@ -76,7 +74,7 @@ namespace Arca
     }
 
     template<class T>
-    auto RelicBatch<T>::Size() const -> SizeT
+    auto Batch<T, std::enable_if_t<is_relic_v<T>>>::Size() const -> size_t
     {
         SourceRequired();
 
@@ -84,7 +82,7 @@ namespace Arca
     }
 
     template<class T>
-    bool RelicBatch<T>::IsEmpty() const
+    bool Batch<T, std::enable_if_t<is_relic_v<T>>>::IsEmpty() const
     {
         SourceRequired();
 
@@ -92,7 +90,7 @@ namespace Arca
     }
 
     template<class T>
-    auto RelicBatch<T>::begin() -> iterator
+    auto Batch<T, std::enable_if_t<is_relic_v<T>>>::begin() -> iterator
     {
         SourceRequired();
 
@@ -100,7 +98,7 @@ namespace Arca
     }
 
     template<class T>
-    auto RelicBatch<T>::begin() const -> const_iterator
+    auto Batch<T, std::enable_if_t<is_relic_v<T>>>::begin() const -> const_iterator
     {
         SourceRequired();
 
@@ -108,7 +106,7 @@ namespace Arca
     }
 
     template<class T>
-    auto RelicBatch<T>::end() -> iterator
+    auto Batch<T, std::enable_if_t<is_relic_v<T>>>::end() -> iterator
     {
         SourceRequired();
 
@@ -116,7 +114,7 @@ namespace Arca
     }
 
     template<class T>
-    auto RelicBatch<T>::end() const -> const_iterator
+    auto Batch<T, std::enable_if_t<is_relic_v<T>>>::end() const -> const_iterator
     {
         SourceRequired();
 
@@ -124,7 +122,7 @@ namespace Arca
     }
 
     template<class T>
-    void RelicBatch<T>::SourceRequired() const
+    void Batch<T, std::enable_if_t<is_relic_v<T>>>::SourceRequired() const
     {
         if (!source)
             throw BatchNotSetup();

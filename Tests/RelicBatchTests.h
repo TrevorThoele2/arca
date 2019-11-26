@@ -58,26 +58,30 @@ public:
 namespace Arca
 {
     template<>
-    struct RelicTraits<::RelicBatchFixture::Relic>
+    struct Traits<::RelicBatchFixture::Relic>
     {
+        static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandle typeHandle;
     };
 
     template<>
-    struct RelicTraits<::RelicBatchFixture::StaticRelic>
+    struct Traits<::RelicBatchFixture::StaticRelic>
     {
+        static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandle typeHandle;
     };
 
     template<>
-    struct RelicTraits<::RelicBatchFixture::UnregisteredRelic>
+    struct Traits<::RelicBatchFixture::UnregisteredRelic>
     {
+        static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandle typeHandle;
     };
 
     template<>
-    struct ShardTraits<::RelicBatchFixture::Shard>
+    struct Traits<::RelicBatchFixture::Shard>
     {
+        static const ObjectType objectType = ObjectType::Shard;
         static const TypeHandle typeHandle;
     };
 }

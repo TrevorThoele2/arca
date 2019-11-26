@@ -5,5 +5,13 @@
 
 namespace Arca
 {
-    using RelicStructure = std::vector<TypeHandle>;
+    struct RelicStructureEntry
+    {
+        TypeHandle typeHandle;
+        bool isConst;
+
+        RelicStructureEntry(TypeHandle typeHandle, bool isConst = false);
+    };
+
+    using RelicStructure = std::vector<RelicStructureEntry>;
 }

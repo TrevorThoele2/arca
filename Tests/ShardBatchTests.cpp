@@ -10,23 +10,23 @@ ShardBatchFixture::Shard::Shard(int value) :
 
 void ShardBatchFixture::StaticRelic::InitializeImplementation()
 {
-    using Shards = ShardsFor<StaticRelic>;
+    using Shards = shards_for_t<StaticRelic>;
     auto tuple = ExtractShards<Shards>(ID(), Owner());
     shard = std::get<0>(tuple);
 }
 
 namespace Arca
 {
-    const TypeHandle ShardTraits<ShardBatchFixture::Shard>::typeHandle = "ShardBatchTestsShard";
-    const TypeHandle ShardTraits<ShardBatchFixture::UnregisteredShard>::typeHandle = "ShardBatchTestsUnregisteredShard";
-    const TypeHandle RelicTraits<ShardBatchFixture::StaticRelic>::typeHandle = "ShardBatchTestsStaticRelic";
+    const TypeHandle Traits<ShardBatchFixture::Shard>::typeHandle = "ShardBatchTestsShard";
+    const TypeHandle Traits<ShardBatchFixture::UnregisteredShard>::typeHandle = "ShardBatchTestsUnregisteredShard";
+    const TypeHandle Traits<ShardBatchFixture::StaticRelic>::typeHandle = "ShardBatchTestsStaticRelic";
 }
 
 SCENARIO_METHOD(ShardBatchFixture, "default shard batch", "[ShardBatch]")
 {
     GIVEN("default shard batch")
     {
-        ShardBatch<Shard> batch;
+        Batch<Shard> batch;
 
         WHEN("querying size")
         {
@@ -88,14 +88,6 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
     {
         auto reliquary = ReliquaryOrigin().Shard<Shard>().Actualize();
         auto relic = reliquary.CreateRelic();
-
-        WHEN("starting batch with unregistered shard")
-        {
-            THEN("throws")
-            {
-                REQUIRE_THROWS_AS(reliquary.Batch<UnregisteredShard>(), NotRegistered);
-            }
-        }
 
         WHEN("creating shard")
         {
@@ -202,7 +194,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
 
 SCENARIO_METHOD(ShardBatchFixture, "shard batch serialization", "[ShardBatch][serialization]")
 {
-    GIVEN("saved reliquary ")
+    GIVEN("saved reliquary")
     {
         auto savedReliquary = ReliquaryOrigin()
             .Shard<Shard>()

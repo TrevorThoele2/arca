@@ -38,7 +38,7 @@ IntegrationTestsFixture::BasicCuratorBase::BasicCuratorBase()
 
 void IntegrationTestsFixture::BasicCuratorBase::InitializeImplementation()
 {
-    basicSignals = Owner().SignalBatch<BasicSignal>();
+    basicSignals = Owner().Batch<BasicSignal>();
     onInitialize(*this);
     onInitialize = [](BasicCuratorBase&) {};
 }
@@ -61,17 +61,17 @@ void IntegrationTestsFixture::BasicCuratorBase::StopStepImplementation()
 
 namespace Arca
 {
-    const TypeHandle ShardTraits<::IntegrationTestsFixture::BasicShard>::typeHandle =
+    const TypeHandle Traits<::IntegrationTestsFixture::BasicShard>::typeHandle =
         "IntegrationTestsBasicShard";
 
-    const TypeHandle RelicTraits<::IntegrationTestsFixture::ChildRelic>::typeHandle =
+    const TypeHandle Traits<::IntegrationTestsFixture::ChildRelic>::typeHandle =
         "IntegrationTestsChildRelic";
 
-    const TypeHandle RelicTraits<::IntegrationTestsFixture::ParentRelic>::typeHandle =
+    const TypeHandle Traits<::IntegrationTestsFixture::ParentRelic>::typeHandle =
         "IntegrationTestsParentRelic";
 
     std::optional<::IntegrationTestsFixture::ParentRelic>
-        RelicTraits<::IntegrationTestsFixture::ParentRelic>::Factory(Reliquary& reliquary, int value)
+        Traits<::IntegrationTestsFixture::ParentRelic>::Factory(Reliquary& reliquary, int value)
     {
         if (value < 100)
             return {};
@@ -84,11 +84,11 @@ SCENARIO_METHOD(IntegrationTestsFixture, "working with signals through curators"
 {
     GIVEN("registered reliquary")
     {
-        const auto curatorPipeline = CuratorPipeline
+        const auto curatorPipeline = Pipeline
         {
-            CuratorStage::All<BasicCurator<1>>(),
-            CuratorStage::All<BasicCurator<4>, BasicCurator<3>>(),
-            CuratorStage::All<BasicCurator<2>, BasicCurator<0>>()
+            Stage::All<BasicCurator<1>>(),
+            Stage::All<BasicCurator<4>, BasicCurator<3>>(),
+            Stage::All<BasicCurator<2>, BasicCurator<0>>()
         };
 
         auto reliquary = ReliquaryOrigin()
@@ -134,7 +134,7 @@ SCENARIO_METHOD(IntegrationTestsFixture, "working with signals through curators"
             }
 
             const auto value = dataGeneration.Random<int>();
-            reliquary.RaiseSignal(BasicSignal{ value });
+            reliquary.Raise(BasicSignal{ value });
 
             reliquary.Work();
 
@@ -147,7 +147,7 @@ SCENARIO_METHOD(IntegrationTestsFixture, "working with signals through curators"
 
             THEN("signals are cleared")
             {
-                const auto signalBatch = reliquary.SignalBatch<BasicSignal>();
+                const auto signalBatch = reliquary.Batch<BasicSignal>();
                 REQUIRE(signalBatch.IsEmpty());
             }
         }
@@ -217,7 +217,7 @@ SCENARIO_METHOD(IntegrationTestsFixture, "curators with custom signal execution"
 
         FocusedCurator::onInitialize = [&executedSignals](BasicCuratorBase& curator)
         {
-            curator.Owner().ExecuteOnSignal<BasicSignal>([&executedSignals](const BasicSignal& signal)
+            curator.Owner().ExecuteOn<BasicSignal>([&executedSignals](const BasicSignal& signal)
                 {
                     executedSignals.push_back(signal);
                 });
@@ -233,7 +233,7 @@ SCENARIO_METHOD(IntegrationTestsFixture, "curators with custom signal execution"
         WHEN("raising signal many times")
         {
             for (auto loop = 0; loop < 1000; ++loop)
-                reliquary.RaiseSignal(BasicSignal{ loop });
+                reliquary.Raise(BasicSignal{ loop });
 
             THEN("executed signals contains all signals raised")
             {

@@ -12,16 +12,40 @@ namespace Arca
         Exception("The type given does not match the runtime type.")
     {}
 
-    NotRegistered::NotRegistered(const std::string& type, const std::string& name) :
-        Exception("The " + type + " (" + name + ") was not registered.")
+    NotRegistered::NotRegistered(
+        const std::string& type,
+        const std::string& name)
+        :
+        Exception(
+            "The " + type + " (" + name + ") was not registered.")
     {}
 
-    CannotRegister::CannotRegister() :
-        Exception("Cannot register types after the Reliquary has been initialized.")
+    NotRegistered::NotRegistered(
+        const std::string& type,
+        const std::string& name,
+        const std::type_index& classType)
+        :
+        Exception(
+            "The " + type + " (" + name + ") was not registered. " +
+            "The class name is: \"" + classType.name() + "\".")
     {}
 
-    AlreadyRegistered::AlreadyRegistered() :
-        Exception("A shard has already been registered with that type name.")
+    AlreadyRegistered::AlreadyRegistered(
+        const std::string& type,
+        const std::string& name)
+        :
+        Exception(
+            "The " + type + " (" + name + ") was already registered.")
+    {}
+
+    AlreadyRegistered::AlreadyRegistered(
+        const std::string& type,
+        const std::string& name,
+        const std::type_index& classType)
+        :
+        Exception(
+            "The " + type + " (" + name + ") was already registered. " +
+            "The class name is: \"" + classType.name() + "\".")
     {}
 
     CannotCreateShard::CannotCreateShard() :
@@ -37,9 +61,5 @@ namespace Arca
     {}
 
     CannotParentRelic::CannotParentRelic(const std::string& message) : Exception(message)
-    {}
-
-    InvalidCuratorPipeline::InvalidCuratorPipeline(const std::string& reason) :
-        Exception(reason)
     {}
 }

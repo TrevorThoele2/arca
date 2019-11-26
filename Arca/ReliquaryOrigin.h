@@ -4,9 +4,10 @@
 
 #include "Reliquary.h"
 
+#include "Pipeline.h"
+
 #include "Curator.h"
 #include "CuratorProvider.h"
-#include "CuratorPipeline.h"
 
 namespace Arca
 {
@@ -21,22 +22,23 @@ namespace Arca
     public:
         [[nodiscard]] Reliquary Actualize() const;
     public:
-        template<class RelicT>
+        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         ReliquaryOrigin& Relic();
-        template<class RelicT, class... CreationArgs>
+        template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         ReliquaryOrigin& StaticRelic(CreationArgs&& ... creationArgs);
         ReliquaryOrigin& RelicStructure(const std::string& name, const RelicStructure& structure);
     public:
-        template<class ShardT>
+        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         ReliquaryOrigin& Shard();
     public:
         template<class CuratorT, class... Args>
         ReliquaryOrigin& Curator(Args&& ... args);
         template<class AsT, class ProvidedT, typename std::enable_if<std::is_base_of_v<ProvidedT, Arca::Curator>, int>::type = 0>
         ReliquaryOrigin& Curator(ProvidedT* use);
-        ReliquaryOrigin& CuratorPipeline(const CuratorPipeline& pipeline);
+        ReliquaryOrigin& CuratorPipeline(const Pipeline& pipeline);
+        ReliquaryOrigin& CuratorPipeline(const Pipeline& initialization, const Pipeline& work);
     public:
-        template<class SignalT>
+        template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
         ReliquaryOrigin& Signal();
     private:
         struct TypeConstructor
@@ -73,20 +75,24 @@ namespace Arca
         using CuratorProviderMap = std::unordered_map<TypeHandle, CuratorProviderPtr>;
         CuratorProviderMap curatorProviders;
 
-        Arca::CuratorPipeline curatorPipeline;
+        Pipeline curatorInitializationPipeline;
+        Pipeline curatorWorkPipeline;
 
         using CuratorSerializationTypeHandlesFactory = void(*)(Reliquary&);
         using CuratorSerializationTypeHandlesFactoryList = std::vector<CuratorSerializationTypeHandlesFactory>;
         CuratorSerializationTypeHandlesFactoryList curatorSerializationTypeHandlesFactoryList;
 
-        void PushAllCuratorsTo(Reliquary& reliquary) const;
+        std::vector<Arca::Curator*> PushAllCuratorsTo(Reliquary& reliquary) const;
 
         template<class Curator, class CuratorProvider, class... Args>
         void CuratorCommon(Args&& ... args);
         template<class Curator>
         [[nodiscard]] bool IsCuratorRegistered() const;
 
-        void PushCuratorPipeline(Reliquary& reliquary) const;
+        static Reliquary::CuratorPipeline TransformCuratorPipeline(
+            Reliquary& reliquary,
+            const Pipeline& toTransform,
+            const std::vector<Arca::Curator*>& allCurators);
     private:
         struct SignalConstructor
         {
@@ -99,29 +105,30 @@ namespace Arca
         [[nodiscard]] bool IsSignalRegistered() const;
     };
 
-    template<class RelicT>
+    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
     ReliquaryOrigin& ReliquaryOrigin::Relic()
     {
-        if (IsRelicRegistered<RelicT>())
-            throw AlreadyRegistered();
-
         const auto typeHandle = TypeHandleFor<RelicT>();
+
+        if (IsRelicRegistered<RelicT>())
+            throw AlreadyRegistered("relic", typeHandle, typeid(RelicT));
+
         const auto factory = [](Reliquary& reliquary)
         {
             const auto typeHandle = TypeHandleFor<RelicT>();
-            reliquary.relicBatchSources.emplace(typeHandle, std::make_unique<RelicBatchSource<RelicT>>());
-            reliquary.relicSerializerMap.emplace(
-                typeHandle,
+            reliquary.relicBatchSources.emplace(typeHandle, std::make_unique<BatchSource<RelicT>>());
+            reliquary.relicSerializers.push_back(
                 Reliquary::KnownPolymorphicSerializer
                 {
+                    typeHandle,
                     [](void* relicBatchSource, Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
                     {
-                        auto castedRelicBatchSource = static_cast<RelicBatchSource<RelicT>*>(relicBatchSource);
-                        archive(*castedRelicBatchSource);
+                        auto castedBatchSource = static_cast<BatchSource<RelicT>*>(relicBatchSource);
+                        archive(*castedBatchSource);
 
                         if (archive.IsInput())
                         {
-                            for(auto& loop : *castedRelicBatchSource)
+                            for(auto& loop : *castedBatchSource)
                             {
                                 loop.Initialize(reliquary);
 
@@ -140,24 +147,25 @@ namespace Arca
 
         typedRelicInitializerList.push_back([](Reliquary& reliquary)
             {
-                auto& relicBatchSource = reliquary.RequiredRelicBatchSource<RelicT>();
+                auto& relicBatchSource = reliquary.RequiredBatchSource<RelicT>();
                 for (auto& loop : relicBatchSource)
                     loop.Initialize(reliquary);
             });
 
-        Signal<RelicCreated<RelicT>>();
-        Signal<BeforeRelicDestroyed<RelicT>>();
+        Signal<Created<RelicT>>();
+        Signal<Destroying<RelicT>>();
 
         return *this;
     }
 
-    template<class RelicT, class... CreationArgs>
+    template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
     ReliquaryOrigin& ReliquaryOrigin::StaticRelic(CreationArgs&& ... creationArgs)
     {
-        if (IsStaticRelicRegistered<RelicT>())
-            throw AlreadyRegistered();
-
         const auto typeHandle = TypeHandleFor<RelicT>();
+
+        if (IsStaticRelicRegistered<RelicT>())
+            throw AlreadyRegistered("static relic", typeHandle, typeid(RelicT));
+
         const auto factory = [args = std::make_tuple(std::forward<CreationArgs>(creationArgs) ...)](Reliquary& reliquary)
         {
             return std::apply([&reliquary](auto&& ... creationArgs)
@@ -169,12 +177,12 @@ namespace Arca
                     auto emplaced = reliquary.staticRelicMap.emplace(typeHandle, std::move(relic)).first->second;
                     auto castedEmplaced = std::any_cast<RelicT>(&emplaced);
                     reliquary.SetupNewRelicInternals(id, RelicDynamism::Static, typeHandle, castedEmplaced);
-                    reliquary.SatisfyRelicStructure(StructureFrom<ShardsFor<RelicT>>(), id);
+                    reliquary.SatisfyRelicStructure(StructureFrom<shards_for_t<RelicT>>(), id);
 
-                    reliquary.staticRelicSerializerMap.emplace(
-                        typeHandle,
+                    reliquary.staticRelicSerializers.push_back(
                         Reliquary::KnownPolymorphicSerializer
                         {
+                            typeHandle,
                             [](void* staticRelicStorage, Reliquary&, ::Inscription::BinaryArchive& archive)
                             {
                                 auto& staticRelicAsAny = *static_cast<std::any*>(staticRelicStorage);
@@ -186,7 +194,7 @@ namespace Arca
                                 return ::Inscription::InputTypeHandlesFor<RelicT>(archive);
                             }
                         });
-                }, std::move(args));
+                }, args);
         };
         staticRelicList.push_back({ typeHandle, factory });
 
@@ -199,32 +207,33 @@ namespace Arca
         return *this;
     }
 
-    template<class ShardT>
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     ReliquaryOrigin& ReliquaryOrigin::Shard()
     {
-        if (IsShardRegistered<ShardT>())
-            throw AlreadyRegistered();
+        const auto typeHandle = TypeHandleFor<ShardT>();
 
-        const auto factory = [](Reliquary& reliquary)
+        if (IsShardRegistered<ShardT>())
+            throw AlreadyRegistered("shard", typeHandle, typeid(ShardT));
+
+        const auto factory = [typeHandle](Reliquary& reliquary)
         {
-            const auto typeHandle = TypeHandleFor<ShardT>();
-            reliquary.shardBatchSources.emplace(typeHandle, std::make_unique<ShardBatchSource<ShardT>>());
+            reliquary.shardBatchSources.emplace(typeHandle, std::make_unique<BatchSource<ShardT>>());
             reliquary.shardFactoryMap.emplace(
                 typeHandle,
-                [](Reliquary& reliquary, RelicID id)
+                [](Reliquary& reliquary, RelicID id, bool isConst)
                 {
-                    auto found = reliquary.FindShardBatchSource<ShardT>();
-                    auto added = found->Add(id);
+                    auto found = reliquary.FindBatchSource<ShardT>();
+                    auto added = found->Add(id, isConst);
                     reliquary.SignalShardCreation(*added);
                 });
-            reliquary.shardSerializerMap.emplace(
-                typeHandle,
+            reliquary.shardSerializers.push_back(
                 Reliquary::KnownPolymorphicSerializer
                 {
+                    typeHandle,
                     [](void* shardBatchSource, Reliquary&, ::Inscription::BinaryArchive& archive)
                     {
-                        auto castedShardBatchSource = static_cast<ShardBatchSource<ShardT>*>(shardBatchSource);
-                        archive(*castedShardBatchSource);
+                        auto castedBatchSource = static_cast<BatchSource<ShardT>*>(shardBatchSource);
+                        archive(*castedBatchSource);
                     },
                     [](::Inscription::BinaryArchive& archive)
                     {
@@ -233,11 +242,10 @@ namespace Arca
                 });
         };
 
-        const auto typeHandle = TypeHandleFor<ShardT>();
         shardList.push_back({ typeHandle, factory });
 
-        Signal<ShardCreated<ShardT>>();
-        Signal<BeforeShardDestroyed<ShardT>>();
+        Signal<Created<ShardT>>();
+        Signal<Destroying<ShardT>>();
 
         return *this;
     }
@@ -261,18 +269,19 @@ namespace Arca
         return *this;
     }
 
-    template<class SignalT>
+    template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int>>
     ReliquaryOrigin& ReliquaryOrigin::Signal()
     {
-        if (IsSignalRegistered<SignalT>())
-            throw AlreadyRegistered();
-
         const auto type = std::type_index(typeid(SignalT));
+
+        if (IsSignalRegistered<SignalT>())
+            throw AlreadyRegistered("signal", type.name());
+
         const auto factory = [](Reliquary& reliquary)
         {
             reliquary.signalBatchSources.emplace(
                 reliquary.KeyForSignalBatchSource<SignalT>(),
-                std::make_unique<SignalBatchSource<SignalT>>());
+                std::make_unique<BatchSource<SignalT>>());
         };
         signalList.push_back({ type, factory });
 
@@ -326,18 +335,19 @@ namespace Arca
     {
         STATIC_ASSERT_TYPE_DERIVED_FROM_CURATOR(CuratorT);
 
-        if (IsCuratorRegistered<CuratorT>())
-            throw AlreadyRegistered();
+        const auto typeHandle = TypeHandleFor<CuratorT>();
 
-        auto typeHandle = TypeHandleFor<CuratorT>();
+        if (IsCuratorRegistered<CuratorT>())
+            throw AlreadyRegistered("curator", typeHandle, typeid(CuratorT));
+
         curatorProviders.emplace(typeHandle, std::make_unique<CuratorProvider>(std::forward<Args>(args)...));
         const auto curatorSerializationTypeHandlesFactory = [](Reliquary& reliquary)
         {
-            auto typeHandle = TypeHandleFor<CuratorT>();
-            reliquary.curatorSerializerMap.emplace(
-                typeHandle,
+            const auto typeHandle = TypeHandleFor<CuratorT>();
+            reliquary.curatorSerializers.push_back(
                 Reliquary::KnownPolymorphicSerializer
                 {
+                    typeHandle,
                     [](void* curator, Reliquary&, ::Inscription::BinaryArchive& archive)
                     {
                         auto castedCurator = static_cast<CuratorT*>(curator);

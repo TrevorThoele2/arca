@@ -21,7 +21,7 @@ RelicTestsFixture::BasicTypedRelic::BasicTypedRelic(const ::Inscription::BinaryT
 
 void RelicTestsFixture::BasicTypedRelic::InitializeImplementation()
 {
-    using Shards = ShardsFor<BasicTypedRelic>;
+    using Shards = shards_for_t<BasicTypedRelic>;
     auto tuple = ExtractShards<Shards>(ID(), Owner());
     basicShard = std::get<0>(tuple);
 }
@@ -32,41 +32,41 @@ RelicTestsFixture::StaticRelic::StaticRelic(const ::Inscription::BinaryTableData
 
 void RelicTestsFixture::StaticRelic::InitializeImplementation()
 {
-    using Shards = ShardsFor<StaticRelic>;
+    using Shards = shards_for_t<StaticRelic>;
     auto tuple = ExtractShards<Shards>(ID(), Owner());
     basicShard = std::get<0>(tuple);
 }
 
 namespace Arca
 {
-    const TypeHandle ShardTraits<RelicTestsFixture::BasicShard>::typeHandle =
+    const TypeHandle Traits<RelicTestsFixture::BasicShard>::typeHandle =
         "RelicTestsBasicShard";
 
-    const TypeHandle ShardTraits<RelicTestsFixture::OtherShard>::typeHandle =
+    const TypeHandle Traits<RelicTestsFixture::OtherShard>::typeHandle =
         "ReliquaryTestsOtherShard";
 
-    const TypeHandle RelicTraits<RelicTestsFixture::BasicTypedRelic>::typeHandle =
+    const TypeHandle Traits<RelicTestsFixture::BasicTypedRelic>::typeHandle =
         "ReliquaryTestsBasicTypedRelic";
 
-    const TypeHandle RelicTraits<RelicTestsFixture::StaticRelic>::typeHandle =
+    const TypeHandle Traits<RelicTestsFixture::StaticRelic>::typeHandle =
         "ReliquaryTestsStaticRelic";
 
-    const TypeHandle RelicTraits<RelicTestsFixture::MostBasicCustomFactoryRelic>::typeHandle =
+    const TypeHandle Traits<RelicTestsFixture::MostBasicCustomFactoryRelic>::typeHandle =
         "ReliquaryTestsMostBasicCustomFactoryRelic";
 
     std::optional<RelicTestsFixture::MostBasicCustomFactoryRelic>
-        RelicTraits<RelicTestsFixture::MostBasicCustomFactoryRelic>::Factory(Reliquary& reliquary)
+        Traits<RelicTestsFixture::MostBasicCustomFactoryRelic>::Factory(Reliquary& reliquary)
     {
         RelicTestsFixture::MostBasicCustomFactoryRelic relic;
         relic.value = 999;
         return relic;
     }
 
-    const TypeHandle RelicTraits<RelicTestsFixture::GuardedCustomFactoryRelic>::typeHandle =
+    const TypeHandle Traits<RelicTestsFixture::GuardedCustomFactoryRelic>::typeHandle =
         "ReliquaryTestsGuardedCustomFactoryRelic";
 
     std::optional<RelicTestsFixture::GuardedCustomFactoryRelic>
-        RelicTraits<RelicTestsFixture::GuardedCustomFactoryRelic>::Factory(Reliquary& reliquary, int value)
+        Traits<RelicTestsFixture::GuardedCustomFactoryRelic>::Factory(Reliquary& reliquary, int value)
     {
         if (value < 100)
             return {};
@@ -133,7 +133,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
         WHEN("creating fixed relic with valid structure")
         {
             auto preCreateRelicCount = reliquary.RelicSize();
-            auto relic = reliquary.CreateRelic(RelicStructure{ ShardTraits<BasicShard>::typeHandle });
+            auto relic = reliquary.CreateRelic(RelicStructure{ TypeHandleFor<BasicShard>() });
 
             THEN("structure has been satisfied")
             {
@@ -254,20 +254,6 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
                 REQUIRE(preDestroyRelicCount == reliquary.RelicSize());
             }
         }
-
-        WHEN("retrieving unregistered static relic")
-        {
-            THEN("throws error")
-            {
-                REQUIRE_THROWS_MATCHES
-                (
-                    reliquary.Static<BasicTypedRelic>(),
-                    NotRegistered,
-                    ::Catch::Matchers::Message(
-                        "The static relic (ReliquaryTestsBasicTypedRelic) was not registered.")
-                );
-            }
-        }
     }
 }
 
@@ -369,8 +355,8 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
             .Shard<BasicShard>()
             .Actualize();
 
-        auto createdSignals = reliquary.SignalBatch<RelicCreated<BasicTypedRelic>>();
-        auto destroyedSignals = reliquary.SignalBatch<BeforeRelicDestroyed<BasicTypedRelic>>();
+        auto createdSignals = reliquary.Batch<Created<BasicTypedRelic>>();
+        auto destroyingSignals = reliquary.Batch<Destroying<BasicTypedRelic>>();
 
         WHEN("creating relic")
         {
@@ -387,7 +373,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
                 THEN("signal is emitted")
                 {
-                    REQUIRE(destroyedSignals.Size() == 1);
+                    REQUIRE(destroyingSignals.Size() == 1);
                 }
             }
         }
@@ -406,7 +392,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
         auto staticRelic = reliquary.Static<StaticRelic>();
         auto dynamicRelic = reliquary.CreateRelic();
 
-        auto onParented = reliquary.SignalBatch<RelicParented>();
+        auto onParented = reliquary.Batch<RelicParented>();
 
         WHEN("parenting child to static parent")
         {
@@ -460,7 +446,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
         auto child = reliquary.CreateRelic();
         child.CreateShard<BasicShard>();
 
-        auto onParented = reliquary.SignalBatch<RelicParented>();
+        auto onParented = reliquary.Batch<RelicParented>();
 
         WHEN("parenting child to parent")
         {

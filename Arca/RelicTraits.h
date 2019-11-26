@@ -1,44 +1,35 @@
 #pragma once
 
-#include "TypeHandle.h"
+#include "Traits.h"
 
-#include "Chroma/VariadicTemplate.h"
+#include <Chroma/VariadicTemplate.h>
 
 namespace Arca
 {
-    template<class T>
-    struct RelicTraits;
-
     template <class T, class = void>
     struct is_relic : std::false_type
     {};
 
     template <class T>
-    struct is_relic<T, std::void_t<decltype(&RelicTraits<std::decay_t<T>>::typeHandle)>> : std::true_type
+    struct is_relic<T, std::enable_if_t<Traits<std::decay_t<T>>::objectType == ObjectType::Relic>> : std::true_type
     {};
 
     template<class T>
     static constexpr bool is_relic_v = is_relic<T>::value;
 
-    template<class T, std::enable_if_t<is_relic_v<T>, int> = 0>
-    static constexpr TypeHandle TypeHandleFor()
-    {
-        return RelicTraits<T>::typeHandle;
-    }
-
     template<class... Args>
     using ShardList = Chroma::VariadicTemplate<Args...>;
 
     template <class T, class = void>
-    struct relic_has_shards : std::false_type
+    struct has_shards : std::false_type
     {};
 
     template <class T>
-    struct relic_has_shards<T, std::void_t<typename RelicTraits<T>::Shards>> : std::true_type
+    struct has_shards<T, std::void_t<typename Traits<T>::Shards>> : std::true_type
     {};
 
     template<class T>
-    static constexpr bool relic_has_shards_v = relic_has_shards<T>::value;
+    static constexpr bool has_shards_v = has_shards<T>::value;
 
     template<class T, bool>
     class DiscoverShards;
@@ -47,7 +38,7 @@ namespace Arca
     class DiscoverShards<T, true>
     {
     public:
-        using Type = typename RelicTraits<T>::Shards;
+        using Type = typename Traits<T>::Shards;
     };
 
     template<class T>
@@ -58,5 +49,8 @@ namespace Arca
     };
 
     template<class T>
-    using ShardsFor = typename DiscoverShards<T, relic_has_shards_v<T>>::Type;
+    using shards_for = DiscoverShards<T, has_shards_v<T>>;
+
+    template<class T>
+    using shards_for_t = typename shards_for<T>::Type;
 }
