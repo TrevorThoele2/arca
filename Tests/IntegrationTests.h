@@ -94,14 +94,10 @@ class IntegrationTestsFixture::ParentRelic : public TypedRelic
 {
 public:
     int value = 0;
-
-    ChildRelicBatch<ChildRelic> children;
 public:
     ParentRelic(int value);
 
     void CreateChild();
-protected:
-    void InitializeImplementation() override;
 };
 
 class IntegrationTestsFixture::BasicCuratorBase : public Curator

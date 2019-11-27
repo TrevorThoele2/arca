@@ -30,7 +30,7 @@ class ShardBatchFixture::UnregisteredShard
 class ShardBatchFixture::StaticRelic : public TypedRelic
 {
 public:
-    Shard* shard = nullptr;
+    Ptr<Shard> shard;
 protected:
     void InitializeImplementation() override;
 };

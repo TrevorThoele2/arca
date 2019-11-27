@@ -32,7 +32,7 @@ namespace Arca
     public:
         using RelicT = T;
     private:
-        using List = std::list<RelicT>;
+        using List = std::vector<RelicT>;
     public:
         using iterator = typename List::iterator;
         using const_iterator = typename List::const_iterator;

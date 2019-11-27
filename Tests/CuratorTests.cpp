@@ -71,7 +71,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator", "[curator]")
             .Curator<BasicCurator>()
             .Actualize();
 
-        auto curator = reliquary.Find<BasicCurator>();
+        auto curator = reliquary->Find<BasicCurator>();
         curator->onStartStep = [&states]()
         {
             states.push_back(CuratorState::Started);
@@ -110,13 +110,13 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator", "[curator]")
 
             THEN("owner is reliquary")
             {
-                REQUIRE(&curator->OwnerFromOutside() == &reliquary);
+                REQUIRE(&curator->OwnerFromOutside() == reliquary.get());
             }
 
             THEN("owner is reliquary const")
             {
                 const auto constCurator = curator;
-                REQUIRE(&constCurator->OwnerFromOutside() == &reliquary);
+                REQUIRE(&constCurator->OwnerFromOutside() == reliquary.get());
             }
         }
 
@@ -132,7 +132,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator", "[curator]")
 
         WHEN("working reliquary")
         {
-            reliquary.Work();
+            reliquary->Work();
 
             THEN("curator ran through states in order")
             {
@@ -152,7 +152,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator", "[curator]")
         {
             curator->shouldStart = false;
 
-            reliquary.Work();
+            reliquary->Work();
 
             THEN("worked reliquary does not work curator")
             {
@@ -224,7 +224,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
 
         WHEN("working reliquary")
         {
-            reliquary.Work();
+            reliquary->Work();
 
             THEN("executes all in order")
             {
@@ -237,7 +237,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
                     99,
                     0
                 >
-                    (checkpoints.begin(), reliquary, output);
+                    (checkpoints.begin(), *reliquary, output);
 
                 REQUIRE(output.size() == 100);
                 REQUIRE(std::all_of(
@@ -257,7 +257,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
                     99,
                     0
                 >
-                    (checkpoints.begin() + 100, reliquary, output);
+                    (checkpoints.begin() + 100, *reliquary, output);
 
                 REQUIRE(output.size() == 100);
                 REQUIRE(std::all_of(
@@ -277,7 +277,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
                     99,
                     0
                 >
-                    (checkpoints.begin() + 200, reliquary, output);
+                    (checkpoints.begin() + 200, *reliquary, output);
 
                 REQUIRE(output.size() == 100);
                 REQUIRE(std::all_of(
@@ -369,12 +369,12 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
             .Curator<BasicCurator>()
             .Actualize();
 
-        auto savedCurator = savedReliquary.Find<BasicCurator>();
+        auto savedCurator = savedReliquary->Find<BasicCurator>();
         savedCurator->value = dataGeneration.Random<int>();
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
-            outputArchive(savedReliquary);
+            outputArchive(*savedReliquary);
         }
 
         WHEN("loading reliquary")
@@ -385,10 +385,10 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
 
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
-                inputArchive(loadedReliquary);
+                inputArchive(*loadedReliquary);
             }
 
-            auto loadedCurator = loadedReliquary.Find<BasicCurator>();
+            auto loadedCurator = loadedReliquary->Find<BasicCurator>();
 
             THEN("loaded curator is not null")
             {
@@ -408,10 +408,10 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
 
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
-                inputArchive(loadedReliquary);
+                inputArchive(*loadedReliquary);
             }
 
-            auto loadedCurator = loadedReliquary.Find<BasicCurator>();
+            auto loadedCurator = loadedReliquary->Find<BasicCurator>();
 
             THEN("loaded curator is null")
             {
@@ -427,10 +427,10 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
 
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");;
-                inputArchive(loadedReliquary);
+                inputArchive(*loadedReliquary);
             }
 
-            auto loadedCurator = loadedReliquary.Find<OtherBasicCurator>();
+            auto loadedCurator = loadedReliquary->Find<OtherBasicCurator>();
 
             THEN("loaded curator is not null")
             {

@@ -65,27 +65,27 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
         {
             THEN("has relic count of zero")
             {
-                REQUIRE(reliquary.RelicSize() == 0);
+                REQUIRE(reliquary->RelicSize() == 0);
             }
         }
 
         WHEN("finding relic")
         {
-            auto found = reliquary.FindRelic(1);
+            auto found = reliquary->Find<DynamicRelic>(1);
 
             THEN("is empty")
             {
-                REQUIRE(!found.has_value());
+                REQUIRE(!found);
             }
         }
 
         WHEN("creating relic")
         {
-            reliquary.CreateRelic();
+            reliquary->Create<DynamicRelic>();
 
             THEN("reliquary has relic count of one")
             {
-                REQUIRE(reliquary.RelicSize() == 1);
+                REQUIRE(reliquary->RelicSize() == 1);
             }
         }
 
@@ -93,7 +93,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
         {
             THEN("returns nullptr")
             {
-                REQUIRE(reliquary.Find<BasicCurator>() == nullptr);
+                REQUIRE(reliquary->Find<BasicCurator>() == nullptr);
             }
         }
 
@@ -103,7 +103,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
 
             THEN("returns nullptr")
             {
-                REQUIRE(constReliquary.Find<BasicCurator>() == nullptr);
+                REQUIRE(constReliquary->Find<BasicCurator>() == nullptr);
             }
         }
     }
@@ -125,17 +125,12 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "creating relic from registered relic str
                 .Shard<BasicShard>()
                 .Actualize();
 
-            auto relic = reliquary.CreateRelic(structureName);
+            auto relic = reliquary->Create<FixedRelic>(structureName);
 
             THEN("relic has shard")
             {
-                REQUIRE(relic.FindShard<BasicShard>() != nullptr);
-                REQUIRE(relic.HasShard<BasicShard>());
-            }
-
-            THEN("relic is fixed")
-            {
-                REQUIRE(relic.Dynamism() == RelicDynamism::Fixed);
+                REQUIRE(relic.Find<BasicShard>());
+                REQUIRE(relic.Has<BasicShard>());
             }
         }
 
@@ -148,7 +143,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "creating relic from registered relic str
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary.CreateRelic(structureName),
+                    reliquary->Create<FixedRelic>(structureName),
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The shard ("s + Traits<BasicShard>::typeHandle + ") was not registered.")
@@ -176,7 +171,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "registered reliquary with every type", "
         {
             THEN("has count of one for static shard")
             {
-                REQUIRE(reliquary.RelicSize() == 1);
+                REQUIRE(reliquary->RelicSize() == 1);
             }
         }
     }
@@ -196,7 +191,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.exe", "Testing", 1);
-            outputArchive(savedReliquary);
+            outputArchive(*savedReliquary);
         }
 
         WHEN("loading reliquary")
@@ -211,12 +206,12 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
 
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.exe", "Testing");
-                inputArchive(loadedReliquary);
+                inputArchive(*loadedReliquary);
             }
 
             THEN("has only static relic")
             {
-                REQUIRE(loadedReliquary.RelicSize() == 1);
+                REQUIRE(loadedReliquary->RelicSize() == 1);
             }
         }
     }
@@ -227,13 +222,13 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
             .Shard<BasicShard>()
             .Actualize();
 
-        auto savedRelic = savedReliquary.CreateRelic();
-        auto savedShard = savedRelic.CreateShard<BasicShard>();
+        auto savedRelic = savedReliquary->Create<DynamicRelic>();
+        auto savedShard = savedRelic.Create<BasicShard>();
         savedShard->myValue = dataGeneration.Random<std::string>();
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.exe", "Testing", 1);
-            outputArchive(savedReliquary);
+            outputArchive(*savedReliquary);
         }
 
         WHEN("loading reliquary")
@@ -244,24 +239,24 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
 
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.exe", "Testing");
-                inputArchive(loadedReliquary);
+                inputArchive(*loadedReliquary);
             }
 
-            auto loadedRelic = loadedReliquary.FindRelic(savedRelic.ID());
-            auto shardFromRelic = loadedRelic->FindShard<BasicShard>();
+            auto loadedRelic = loadedReliquary->Find<DynamicRelic>(savedRelic.ID());
+            auto shardFromRelic = loadedRelic->Find<BasicShard>();
 
             THEN("has relic")
             {
-                REQUIRE(loadedReliquary.RelicSize() == 1);
-                REQUIRE(loadedRelic.has_value());
+                REQUIRE(loadedReliquary->RelicSize() == 1);
+                REQUIRE(loadedRelic);
             }
 
             THEN("relic has shard")
             {
-                auto shardFromReliquary = loadedReliquary.Find<BasicShard>(loadedRelic->ID());
-                REQUIRE(shardFromReliquary != nullptr);
-                REQUIRE(shardFromRelic != nullptr);
-                REQUIRE(loadedRelic->HasShard<BasicShard>());
+                auto shardFromReliquary = loadedReliquary->Find<BasicShard>(loadedRelic->ID());
+                REQUIRE(shardFromReliquary);
+                REQUIRE(shardFromRelic);
+                REQUIRE(loadedRelic->Has<BasicShard>());
             }
 
             THEN("shard has saved value")
@@ -269,14 +264,9 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
                 REQUIRE(shardFromRelic->myValue == savedShard->myValue);
             }
 
-            THEN("relic is dynamic")
-            {
-                REQUIRE(loadedRelic->Dynamism() == RelicDynamism::Dynamic);
-            }
-
             THEN("relic owner is loaded reliquary")
             {
-                REQUIRE(&loadedRelic->Owner() == &loadedReliquary);
+                REQUIRE(&loadedRelic->Owner() == loadedReliquary.get());
             }
 
             THEN("relic id is saved id")
@@ -292,31 +282,26 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
 
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.exe", "Testing");
-                inputArchive(loadedReliquary);
+                inputArchive(*loadedReliquary);
             }
 
-            auto loadedRelic = loadedReliquary.FindRelic(savedRelic.ID());
+            auto loadedRelic = loadedReliquary->Find<DynamicRelic>(savedRelic.ID());
 
             THEN("has relic")
             {
-                REQUIRE(loadedReliquary.RelicSize() == 1);
-                REQUIRE(loadedRelic.has_value());
+                REQUIRE(loadedReliquary->RelicSize() == 1);
+                REQUIRE(loadedRelic);
             }
 
             THEN("relic does not have shard")
             {
-                REQUIRE_THROWS_AS(loadedRelic->FindShard<BasicShard>(), NotRegistered);
-                REQUIRE_THROWS_AS(loadedReliquary.Find<BasicShard>(loadedRelic->ID()), NotRegistered);
-            }
-
-            THEN("relic is dynamic")
-            {
-                REQUIRE(loadedRelic->Dynamism() == RelicDynamism::Dynamic);
+                REQUIRE_THROWS_AS(loadedRelic->Find<BasicShard>(), NotRegistered);
+                REQUIRE_THROWS_AS(loadedReliquary->Find<BasicShard>(loadedRelic->ID()), NotRegistered);
             }
 
             THEN("relic owner is loaded reliquary")
             {
-                REQUIRE(&loadedRelic->Owner() == &loadedReliquary);
+                REQUIRE(&loadedRelic->Owner() == loadedReliquary.get());
             }
 
             THEN("relic id is saved id")
@@ -333,24 +318,24 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
 
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.exe", "Testing");
-                inputArchive(loadedReliquary);
+                inputArchive(*loadedReliquary);
             }
 
-            auto loadedRelic = loadedReliquary.FindRelic(savedRelic.ID());
-            auto shardFromRelic = loadedRelic->FindShard<OtherBasicShard>();
+            auto loadedRelic = loadedReliquary->Find<DynamicRelic>(savedRelic.ID());
+            auto shardFromRelic = loadedRelic->Find<OtherBasicShard>();
 
             THEN("has relic")
             {
-                REQUIRE(loadedReliquary.RelicSize() == 1);
-                REQUIRE(loadedRelic.has_value());
+                REQUIRE(loadedReliquary->RelicSize() == 1);
+                REQUIRE(loadedRelic);
             }
 
             THEN("relic has shard")
             {
-                auto shardFromReliquary = loadedReliquary.Find<OtherBasicShard>(loadedRelic->ID());
-                REQUIRE(shardFromReliquary != nullptr);
-                REQUIRE(shardFromRelic != nullptr);
-                REQUIRE(loadedRelic->HasShard<OtherBasicShard>());
+                auto shardFromReliquary = loadedReliquary->Find<OtherBasicShard>(loadedRelic->ID());
+                REQUIRE(shardFromReliquary);
+                REQUIRE(shardFromRelic);
+                REQUIRE(loadedRelic->Has<OtherBasicShard>());
             }
 
             THEN("shard has saved value")
@@ -358,14 +343,9 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
                 REQUIRE(shardFromRelic->myValue == savedShard->myValue);
             }
 
-            THEN("relic is dynamic")
-            {
-                REQUIRE(loadedRelic->Dynamism() == RelicDynamism::Dynamic);
-            }
-
             THEN("relic owner is loaded reliquary")
             {
-                REQUIRE(&loadedRelic->Owner() == &loadedReliquary);
+                REQUIRE(&loadedRelic->Owner() == loadedReliquary.get());
             }
 
             THEN("relic id is saved id")

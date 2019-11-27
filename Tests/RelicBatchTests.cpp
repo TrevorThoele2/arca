@@ -98,11 +98,11 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch", "[RelicBatch]")
 
         WHEN("creating relic")
         {
-            auto createdRelic = reliquary.Create<Relic>();
+            auto createdRelic = reliquary->Create<Relic>();
 
             WHEN("starting batch")
             {
-                auto batch = reliquary.Batch<Relic>();
+                auto batch = reliquary->Batch<Relic>();
 
                 THEN("batch contains relic")
                 {
@@ -117,7 +117,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch", "[RelicBatch]")
 
                 THEN("destroying relic empties the batch")
                 {
-                    reliquary.Destroy(*createdRelic);
+                    reliquary->Destroy(*createdRelic);
                     REQUIRE(batch.IsEmpty());
                 }
             }
@@ -125,7 +125,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch", "[RelicBatch]")
 
         WHEN("starting batch")
         {
-            auto batch = reliquary.Batch<Relic>();
+            auto batch = reliquary->Batch<Relic>();
 
             THEN("batch is empty")
             {
@@ -140,7 +140,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch", "[RelicBatch]")
 
             WHEN("creating relic")
             {
-                auto createdRelic = reliquary.Create<Relic>();
+                auto createdRelic = reliquary->Create<Relic>();
 
                 THEN("batch contains relic")
                 {
@@ -155,7 +155,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch", "[RelicBatch]")
 
                 THEN("destroying relic empties the batch")
                 {
-                    reliquary.Destroy(*createdRelic);
+                    reliquary->Destroy(*createdRelic);
                     REQUIRE(batch.IsEmpty());
                 }
             }
@@ -171,11 +171,11 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch serialization", "[RelicBatch][se
             .Relic<Relic>()
             .Actualize();
 
-        savedReliquary.Create<Relic>();
+        savedReliquary->Create<Relic>();
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.exe", "Testing", 1);
-            outputArchive(savedReliquary);
+            outputArchive(*savedReliquary);
         }
 
         WHEN("loading reliquary")
@@ -186,10 +186,10 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch serialization", "[RelicBatch][se
 
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.exe", "Testing");
-                inputArchive(loadedReliquary);
+                inputArchive(*loadedReliquary);
             }
 
-            auto batch = loadedReliquary.Batch<Relic>();
+            auto batch = loadedReliquary->Batch<Relic>();
 
             THEN("batch is occupied")
             {

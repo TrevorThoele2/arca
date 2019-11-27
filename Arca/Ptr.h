@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RelicID.h"
+#include "RelicHandle.h"
 
 #include "Serialization.h"
 
@@ -12,63 +13,97 @@ namespace Arca
     class Ptr
     {
     public:
-        Ptr();
+        using WrappedT = T;
+    public:
+        Ptr() = default;
         Ptr(RelicID id, Reliquary& owner);
 
-        T* operator*();
-        const T* operator*() const;
-        T& operator->();
-        const T& operator->() const;
+        bool operator==(const Ptr& arg) const;
+        bool operator!=(const Ptr& arg) const;
 
-        T* Get();
-        const T* Get() const;
+        explicit operator bool() const;
+
+        operator RelicHandle() const;
+
+        explicit operator T* () const;
+
+        [[nodiscard]] T& operator*() const;
+        [[nodiscard]] T* operator->() const;
+
+        [[nodiscard]] T* Get() const;
+
+        [[nodiscard]] RelicID ID() const;
+        [[nodiscard]] Reliquary& Owner() const;
     private:
-        RelicID id;
-        Reliquary* owner;
+        RelicID id = 0;
+        Reliquary* owner = nullptr;
     };
-
-    template<class T>
-    Ptr<T>::Ptr() : id(0), owner(nullptr)
-    {}
 
     template<class T>
     Ptr<T>::Ptr(RelicID id, Reliquary& owner) : id(id), owner(&owner)
     {}
 
     template<class T>
-    T* Ptr<T>::operator*()
+    bool Ptr<T>::operator==(const Ptr& arg) const
+    {
+        return id == arg.id && owner == arg.owner;
+    }
+
+    template<class T>
+    bool Ptr<T>::operator!=(const Ptr& arg) const
+    {
+        return !(*this == arg);
+    }
+
+    template<class T>
+    Ptr<T>::operator bool() const
+    {
+        if (id == 0)
+            return false;
+
+        return Get() != nullptr;
+    }
+
+    template<class T>
+    Ptr<T>::operator RelicHandle() const
+    {
+        return RelicHandle(ID(), Owner());
+    }
+
+    template<class T>
+    Ptr<T>::operator T* () const
     {
         return Get();
     }
 
     template<class T>
-    const T* Ptr<T>::operator*() const
+    T& Ptr<T>::operator*() const
+    {
+        return *Get();
+    }
+
+    template<class T>
+    T* Ptr<T>::operator->() const
     {
         return Get();
     }
 
     template<class T>
-    T& Ptr<T>::operator->()
+    T* Ptr<T>::Get() const
     {
-        return *Get();
+        return Owner().FindStorage<T>(id);
     }
 
     template<class T>
-    const T& Ptr<T>::operator->() const
+    RelicID Ptr<T>::ID() const
     {
-        return *Get();
+        return id;
     }
 
     template<class T>
-    T* Ptr<T>::Get()
+    Reliquary& Ptr<T>::Owner() const
     {
-
-    }
-
-    template<class T>
-    const T* Ptr<T>::Get() const
-    {
-        
+        return *owner;
     }
 }
 

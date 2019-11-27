@@ -31,9 +31,6 @@
     <ClCompile Include="IntegrationTests.cpp">
       <Filter>Source Files\Test</Filter>
     </ClCompile>
-    <ClCompile Include="ChildRelicBatchTests.cpp">
-      <Filter>Source Files\Test</Filter>
-    </ClCompile>
     <ClCompile Include="SignalTests.cpp">
       <Filter>Source Files\Test</Filter>
     </ClCompile>
@@ -73,9 +70,6 @@
       <Filter>Header Files\Test</Filter>
     </ClInclude>
     <ClInclude Include="IntegrationTests.h">
-      <Filter>Header Files\Test</Filter>
-    </ClInclude>
-    <ClInclude Include="ChildRelicBatchTests.h">
       <Filter>Header Files\Test</Filter>
     </ClInclude>
     <ClInclude Include="SignalTests.h">

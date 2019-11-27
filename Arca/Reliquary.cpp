@@ -15,57 +15,6 @@ using namespace std::string_literals;
 
 namespace Arca
 {
-    Reliquary::Reliquary(Reliquary&& arg) noexcept :
-        relicMetadataList(std::move(arg.relicMetadataList)),
-        occupiedRelicIDs(std::move(arg.occupiedRelicIDs)),
-        namedRelicStructureList(std::move(arg.namedRelicStructureList)),
-        relicBatchSources(std::move(arg.relicBatchSources)),
-        relicSerializers(std::move(arg.relicSerializers)),
-        staticRelicMap(std::move(arg.staticRelicMap)),
-        staticRelicSerializers(std::move(arg.staticRelicSerializers)),
-        shardFactoryMap(std::move(arg.shardFactoryMap)),
-        shardBatchSources(std::move(arg.shardBatchSources)),
-        shardSerializers(std::move(arg.shardSerializers)),
-        curators(std::move(arg.curators)),
-        curatorWorkPipeline(std::move(arg.curatorWorkPipeline)),
-        curatorSerializers(std::move(arg.curatorSerializers)),
-        signalExecutionMap(std::move(arg.signalExecutionMap)),
-        signalBatchSources(std::move(arg.signalBatchSources))
-    {
-        for (auto& loop : relicBatchSources)
-            loop.second->ChangeOwner(*this);
-
-        for (auto& loop : curators)
-            loop.second->Get()->owner = this;
-    }
-
-    Reliquary& Reliquary::operator=(Reliquary&& arg) noexcept
-    {
-        relicMetadataList = std::move(arg.relicMetadataList);
-        occupiedRelicIDs = std::move(arg.occupiedRelicIDs);
-        namedRelicStructureList = std::move(arg.namedRelicStructureList);
-        relicBatchSources = std::move(arg.relicBatchSources);
-        relicSerializers = std::move(arg.relicSerializers);
-        staticRelicMap = std::move(arg.staticRelicMap);
-        staticRelicSerializers = std::move(arg.staticRelicSerializers);
-        shardFactoryMap = std::move(arg.shardFactoryMap);
-        shardBatchSources = std::move(arg.shardBatchSources);
-        shardSerializers = std::move(arg.shardSerializers);
-        curators = std::move(arg.curators);
-        curatorWorkPipeline = std::move(arg.curatorWorkPipeline);
-        curatorSerializers = std::move(arg.curatorSerializers);
-        signalExecutionMap = std::move(arg.signalExecutionMap);
-        signalBatchSources = std::move(arg.signalBatchSources);
-
-        for (auto& loop : relicBatchSources)
-            loop.second->ChangeOwner(*this);
-
-        for (auto& loop : curators)
-            loop.second->Get()->owner = this;
-
-        return *this;
-    }
-
     void Reliquary::Work()
     {
         WorkCurators([](Curator& curator) { curator.StartStep(); });
@@ -76,106 +25,64 @@ namespace Arca
             signalBatchSource.second->Clear();
     }
 
-    DynamicRelic Reliquary::CreateRelic()
+    void Reliquary::Destroy(const RelicHandle& handle)
     {
-        const auto dynamism = RelicDynamism::Dynamic;
-        const auto id = NextRelicID();
-        SetupNewRelicInternals(id, dynamism);
-        return DynamicRelic(id, dynamism, *this);
+        if (&handle.Owner() != this)
+            return;
+
+        const auto metadata = RelicMetadataFor(handle.ID());
+        if (!WillDestroyRelic(metadata))
+            return;
+
+        DestroyRelic(*metadata);
     }
 
-    DynamicRelic Reliquary::CreateRelic(const RelicStructure& structure)
+    void Reliquary::ParentRelic(const RelicHandle& parent, const RelicHandle& child)
     {
-        const auto dynamism = RelicDynamism::Fixed;
-        const auto id = NextRelicID();
-        SetupNewRelicInternals(id, dynamism);
-        SatisfyRelicStructure(structure, id);
-        return DynamicRelic(id, dynamism, *this);
-    }
+        const auto parentID = parent.ID();
+        const auto childID = child.ID();
 
-    DynamicRelic Reliquary::CreateRelic(const std::string& structureName)
-    {
-        for (auto& loop : namedRelicStructureList)
-            if (loop.name == structureName)
-                return CreateRelic(loop.value);
-
-        throw NotRegistered("relic structure", structureName);
-    }
-
-    void Reliquary::ParentRelic(RelicID parent, RelicID child)
-    {
         if (parent == child)
             throw CannotParentRelic(
-                "The relic with id ("s + Chroma::ToString(parent) + ") was attempted to be parented to itself.");
+                "The relic with id ("s + Chroma::ToString(parentID) + ") was attempted to be parented to itself.");
 
-        auto parentMetadata = RelicMetadataFor(parent);
+        if (&parent.Owner() != this)
+            throw CannotParentRelic(
+                "The relic with id ("s + Chroma::ToString(parentID) + ") is from a different Reliquary.");
+
+        if (&child.Owner() != this)
+            throw CannotParentRelic(
+                "The relic with id ("s + Chroma::ToString(childID) + ") is from a different Reliquary.");
+
+        auto parentMetadata = RelicMetadataFor(parentID);
         if (!parentMetadata)
-            throw CannotFindRelic(parent);
+            throw CannotFindRelic(parentID);
 
         if (parentMetadata->dynamism == RelicDynamism::Static)
             throw CannotParentRelic(
-                "The relic with id ("s + Chroma::ToString(child) + ") was attempted to be parented to a static relic.");
+                "The relic with id ("s + Chroma::ToString(childID) + ") was attempted to be parented to a static relic.");
 
-        auto childMetadata = RelicMetadataFor(child);
+        auto childMetadata = RelicMetadataFor(childID);
         if (!childMetadata)
-            throw CannotFindRelic(child);
+            throw CannotFindRelic(childID);
 
         if (childMetadata->dynamism == RelicDynamism::Static)
             throw CannotParentRelic(
-                "The relic with id ("s + Chroma::ToString(child) + ") is static and cannot be parented to anything.");
+                "The relic with id ("s + Chroma::ToString(childID) + ") is static and cannot be parented to anything.");
 
         if (childMetadata->parent.has_value())
             throw CannotParentRelic(
-                "The relic with id("s + Chroma::ToString(child) + ") is already parented.");;
+                "The relic with id("s + Chroma::ToString(childID) + ") is already parented.");;
 
-        parentMetadata->children.push_back(child);
-        childMetadata->parent = parent;
+        parentMetadata->children.push_back(childID);
+        childMetadata->parent = parentID;
 
-        SignalRelicParented(*parentMetadata, *childMetadata);
-
-        if(childMetadata->typeHandle.has_value())
-            NotifyChildRelicBatchSourcesAdd(parent, childMetadata->storage, *childMetadata->typeHandle);
-    }
-
-    void Reliquary::DestroyRelic(RelicID id)
-    {
-        const auto metadata = RelicMetadataFor(id);
-        if (!WillDestroyRelic(metadata))
-            return;
-
-        DestroyRelic(*metadata);
-    }
-
-    void Reliquary::Destroy(const DynamicRelic& relic)
-    {
-        const auto metadata = RelicMetadataFor(relic.ID());
-        if (!WillDestroyRelic(metadata))
-            return;
-
-        DestroyRelic(*metadata);
-    }
-
-    std::optional<DynamicRelic> Reliquary::FindRelic(RelicID id)
-    {
-        const auto metadata = RelicMetadataFor(id);
-        if (!metadata)
-            return {};
-
-        return DynamicRelic(id, metadata->dynamism, *this);
+        SignalRelicParented(parent, child);
     }
 
     Reliquary::SizeT Reliquary::RelicSize() const
     {
         return relicMetadataList.size();
-    }
-
-    Curator* Reliquary::FindCurator(const TypeHandle& typeHandle)
-    {
-        const auto found = curators.find(typeHandle);
-        if (found == curators.end())
-            return nullptr;
-
-        return found->second->Get();
     }
 
     Reliquary::KnownPolymorphicSerializer::KnownPolymorphicSerializer(
@@ -244,7 +151,7 @@ namespace Arca
         auto& id = metadata.id;
 
         for (auto& child : metadata.children)
-            DestroyRelic(child);
+            DestroyRelic(*RelicMetadataFor(child));
 
         for (auto& shardBatchSource : shardBatchSources)
             shardBatchSource.second->DestroyFromBase(id);
@@ -261,9 +168,6 @@ namespace Arca
             if (eraseChildrenItr != parentMetadata->children.end())
                 parentMetadata->children.erase(eraseChildrenItr);
         }
-
-        if (metadata.parent.has_value() && metadata.typeHandle.has_value())
-            NotifyChildRelicBatchSourcesDestroy(*metadata.parent, metadata.id, *metadata.typeHandle);
 
         if (metadata.typeHandle)
         {
@@ -282,7 +186,7 @@ namespace Arca
             : (--occupiedRelicIDs.end())->End() + 1;
     }
 
-    void Reliquary::SignalRelicParented(RelicMetadata parent, RelicMetadata child)
+    void Reliquary::SignalRelicParented(const RelicHandle& parent, const RelicHandle& child)
     {
         const RelicParented signal{ parent, child };
         Raise(signal);
@@ -299,57 +203,6 @@ namespace Arca
             return nullptr;
 
         return found->second.get();
-    }
-
-    void Reliquary::NotifyChildRelicBatchSourcesAdd(RelicID parentID, void* childStorage, const TypeHandle& childTypeHandle)
-    {
-        const auto found = FindChildRelicBatchSourceList(childTypeHandle);
-        if (!found)
-            return;
-
-        for (auto& loop : *found)
-            if (loop->Parent() == parentID)
-                loop->AddFromBase(childStorage);
-    }
-
-    void Reliquary::NotifyChildRelicBatchSourcesDestroy(RelicID parentID, RelicID childID, const TypeHandle& childTypeHandle)
-    {
-        const auto found = FindChildRelicBatchSourceList(childTypeHandle);
-        if (!found)
-            return;
-
-        for (auto& loop : *found)
-            if (loop->Parent() == parentID)
-                loop->DestroyFromBase(childID);
-    }
-
-    auto Reliquary::FindChildRelicBatchSource(const TypeHandle& typeHandle, RelicID parentID)
-        -> ChildRelicBatchSourceBase*
-    {
-        auto& sourceList = RequiredChildRelicBatchSourceList(typeHandle);
-        for (auto& loop : sourceList)
-            if (loop->Parent() == parentID)
-                return loop.get();
-
-        return nullptr;
-    }
-
-    auto Reliquary::FindChildRelicBatchSourceList(const TypeHandle& typeHandle) -> ChildRelicBatchSourceList*
-    {
-        auto found = childRelicBatchSources.find(typeHandle);
-        if (found == childRelicBatchSources.end())
-            return nullptr;
-
-        return &found->second;
-    }
-
-    auto Reliquary::RequiredChildRelicBatchSourceList(const TypeHandle& typeHandle) -> ChildRelicBatchSourceList&
-    {
-        const auto found = FindChildRelicBatchSourceList(typeHandle);
-        if (found != nullptr)
-            return *found;
-
-        return childRelicBatchSources.emplace(typeHandle, ChildRelicBatchSourceList()).first->second;
     }
 
     void Reliquary::CreateShard(const TypeHandle& typeHandle, RelicID id, bool isConst)
@@ -473,7 +326,7 @@ namespace Inscription
             object.curatorSerializers,
             [](ObjectT& object, const ::Arca::TypeHandle& typeHandle)
             {
-                return object.FindCurator(typeHandle);
+                return object.Find<Arca::Curator>(typeHandle);
             });
     }
 

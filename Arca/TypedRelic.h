@@ -4,19 +4,24 @@
 #include "RelicStructure.h"
 #include "RelicScribe.h"
 #include "RelicTraits.h"
+#include "RelicHandle.h"
 
 #include "Serialization.h"
 
 namespace Arca
 {
     class Reliquary;
+    class DynamicRelic;
 
     class TypedRelic
     {
     public:
+        operator RelicHandle() const;
+
+        void ParentTo(const RelicHandle& parent) const;
+
         [[nodiscard]] RelicID ID() const;
-        [[nodiscard]] Reliquary& Owner();
-        [[nodiscard]] const Reliquary& Owner() const;
+        [[nodiscard]] Reliquary& Owner() const;
     public:
         virtual ~TypedRelic() = 0;
 
