@@ -43,6 +43,9 @@
     <ClCompile Include="ConstShardTests.cpp">
       <Filter>Source Files\Test</Filter>
     </ClCompile>
+    <ClCompile Include="IsTypeTests.cpp">
+      <Filter>Source Files\Test</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneralFixture.h">
@@ -82,6 +85,9 @@
       <Filter>Header Files\Test</Filter>
     </ClInclude>
     <ClInclude Include="ConstShardTests.h">
+      <Filter>Header Files\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="IsTypeTests.h">
       <Filter>Header Files\Test</Filter>
     </ClInclude>
   </ItemGroup>

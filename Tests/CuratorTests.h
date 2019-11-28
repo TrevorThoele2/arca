@@ -58,8 +58,15 @@ public:
     class DifferentiableCurator final : public Curator
     {
     public:
+        static std::vector<Curator*>* initializationCheckpoints;
         static std::vector<CuratorCheckpoint>* checkpoints;
     public:
+        void InitializeImplementation() override
+        {
+            if (initializationCheckpoints)
+                initializationCheckpoints->push_back(this);
+        }
+
         bool StartStepImplementation() override
         {
             checkpoints->emplace_back(this, CuratorState::Started);
@@ -77,6 +84,9 @@ public:
         }
     };
 };
+
+template<size_t id>
+std::vector<Curator*>* CuratorTestsFixture::DifferentiableCurator<id>::initializationCheckpoints;
 
 template<size_t id>
 std::vector<CuratorTestsFixture::CuratorCheckpoint>* CuratorTestsFixture::DifferentiableCurator<id>::checkpoints;

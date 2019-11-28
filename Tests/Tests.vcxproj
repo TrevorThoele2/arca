@@ -23,6 +23,7 @@
     <ClInclude Include="CuratorTests.h" />
     <ClInclude Include="GeneralFixture.h" />
     <ClInclude Include="IntegrationTests.h" />
+    <ClInclude Include="IsTypeTests.h" />
     <ClInclude Include="RelicBatchTests.h" />
     <ClInclude Include="ReliquaryOriginRegistrationTests.h" />
     <ClInclude Include="ReliquaryRegistrationTests.h" />
@@ -38,6 +39,7 @@
     <ClCompile Include="CuratorTests.cpp" />
     <ClCompile Include="GeneralFixture.cpp" />
     <ClCompile Include="IntegrationTests.cpp" />
+    <ClCompile Include="IsTypeTests.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="RelicBatchTests.cpp" />
     <ClCompile Include="ReliquaryOriginRegistrationTests.cpp" />

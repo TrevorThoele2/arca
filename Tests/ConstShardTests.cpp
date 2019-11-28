@@ -67,11 +67,6 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
                 {
                     REQUIRE(!foundShard);
                 }
-
-                THEN("found is not same as created")
-                {
-                    //REQUIRE(foundShard != createdShard);
-                }
             }
 
             WHEN("retrieving const batch")
@@ -85,7 +80,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
 
                 THEN("begin is same as created")
                 {
-                    //REQUIRE(&*batch.begin() == createdShard);
+                    REQUIRE(&*batch.begin() == static_cast<const Shard*>(createdShard));
                 }
             }
 
@@ -379,7 +374,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shard serialization", "[shard][co
 
                 THEN("begin is same as loaded")
                 {
-                    //REQUIRE(&*batch.begin() == loadedRelic->Find<const Shard>());
+                    REQUIRE(&*batch.begin() == static_cast<const Shard*>(loadedRelic->Find<const Shard>()));
                 }
             }
 

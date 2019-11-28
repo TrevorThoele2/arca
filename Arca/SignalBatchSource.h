@@ -15,9 +15,13 @@ namespace Arca
     class SignalBatchSourceBase
     {
     public:
+        using SizeT = size_t;
+    public:
         virtual ~SignalBatchSourceBase() = 0;
 
         virtual void Clear() = 0;
+
+        [[nodiscard]] virtual SizeT Size() const = 0;
     private:
         friend Reliquary;
     };
@@ -30,7 +34,6 @@ namespace Arca
     public:
         using SignalT = T;
     public:
-        using SizeT = typename List::size_type;
         using iterator = typename List::iterator;
         using const_iterator = typename List::const_iterator;
     public:
@@ -41,7 +44,7 @@ namespace Arca
 
         void Clear() override;
 
-        [[nodiscard]] SizeT Size() const;
+        [[nodiscard]] SizeT Size() const override;
         [[nodiscard]] bool IsEmpty() const;
 
         [[nodiscard]] const_iterator begin() const;

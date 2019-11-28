@@ -85,6 +85,27 @@ namespace Arca
         return relicMetadataList.size();
     }
 
+    Reliquary::SizeT Reliquary::ShardSize() const
+    {
+        SizeT totalSize = 0;
+        for (auto& loop : shardBatchSources)
+            totalSize += loop.second->Size();
+        return totalSize;
+    }
+
+    Reliquary::SizeT Reliquary::CuratorSize() const
+    {
+        return curators.size();
+    }
+
+    Reliquary::SizeT Reliquary::SignalSize() const
+    {
+        SizeT totalSize = 0;
+        for (auto& loop : signalBatchSources)
+            totalSize += loop.second->Size();
+        return totalSize;
+    }
+
     Reliquary::KnownPolymorphicSerializer::KnownPolymorphicSerializer(
         TypeHandleName mainTypeHandle,
         Serializer&& serializer,
