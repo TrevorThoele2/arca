@@ -13,7 +13,7 @@ IntegrationTestsFixture::ParentRelic::ParentRelic(int value) : value(value)
 void IntegrationTestsFixture::ParentRelic::CreateChild()
 {
     const auto child = Owner().Create<ChildRelic>();
-    Owner().ParentRelic(*this, child);
+    Owner().ParentRelicTo(*this, child);
 }
 
 Reliquary& IntegrationTestsFixture::BasicCuratorBase::Owner()

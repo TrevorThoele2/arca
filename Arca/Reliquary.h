@@ -90,7 +90,8 @@ namespace Arca
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         [[nodiscard]] Arca::Batch<RelicT> Batch();
 
-        void ParentRelic(const RelicHandle& parent, const RelicHandle& child);
+        void ParentRelicTo(const RelicHandle& parent, const RelicHandle& child);
+        std::optional<RelicHandle> ParentOf(const RelicHandle& child);
 
         [[nodiscard]] SizeT RelicSize() const;
     public:

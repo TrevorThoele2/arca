@@ -20,6 +20,7 @@ namespace Arca
         [[nodiscard]] bool Has() const;
 
         void ParentTo(const RelicHandle& parent) const;
+        std::optional<RelicHandle> Parent() const;
 
         [[nodiscard]] RelicID ID() const;
         [[nodiscard]] Reliquary& Owner() const;

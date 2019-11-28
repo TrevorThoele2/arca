@@ -11,7 +11,12 @@ namespace Arca
 
     void TypedRelic::ParentTo(const RelicHandle& parent) const
     {
-        owner->ParentRelic(parent, *this);
+        owner->ParentRelicTo(parent, *this);
+    }
+
+    std::optional<RelicHandle> TypedRelic::Parent() const
+    {
+        return owner->ParentOf(*this);
     }
 
     RelicID TypedRelic::ID() const

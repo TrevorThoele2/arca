@@ -11,7 +11,12 @@ namespace Arca
 
     void FixedRelic::ParentTo(const RelicHandle& parent) const
     {
-        owner->ParentRelic(parent, *this);
+        owner->ParentRelicTo(parent, *this);
+    }
+
+    std::optional<RelicHandle> FixedRelic::Parent() const
+    {
+        return owner->ParentOf(*this);
     }
 
     RelicID FixedRelic::ID() const
