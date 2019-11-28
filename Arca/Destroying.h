@@ -17,4 +17,15 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Signal;
     };
+
+    struct DestroyingRelic
+    {
+        RelicHandle handle;
+    };
+
+    template<>
+    struct Traits<DestroyingRelic>
+    {
+        static const ObjectType objectType = ObjectType::Signal;
+    };
 }

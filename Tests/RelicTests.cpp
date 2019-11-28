@@ -349,25 +349,97 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
             .Shard<BasicShard>()
             .Actualize();
 
-        auto createdSignals = reliquary->Batch<Created<BasicTypedRelic>>();
-        auto destroyingSignals = reliquary->Batch<Destroying<BasicTypedRelic>>();
+        auto createdRelicSignals = reliquary->Batch<CreatedRelic>();
+        auto destroyingRelicSignals = reliquary->Batch<DestroyingRelic>();
+        auto typedCreatedSignals = reliquary->Batch<Created<BasicTypedRelic>>();
+        auto typedDestroyingSignals = reliquary->Batch<Destroying<BasicTypedRelic>>();
 
-        WHEN("creating relic")
+        WHEN("creating dynamic relic")
+        {
+            const auto created = reliquary->Create<DynamicRelic>();
+
+            THEN("basic signal is emitted")
+            {
+                REQUIRE(createdRelicSignals.Size() == 1);
+            }
+
+            THEN("typed signal is not emitted")
+            {
+                REQUIRE(typedCreatedSignals.IsEmpty());
+            }
+
+            WHEN("destroying relic")
+            {
+                reliquary->Destroy(created);
+
+                THEN("basic signal is emitted")
+                {
+                    REQUIRE(destroyingRelicSignals.Size() == 1);
+                }
+
+                THEN("typed signal is not emitted")
+                {
+                    REQUIRE(typedDestroyingSignals.IsEmpty());
+                }
+            }
+        }
+
+        WHEN("creating fixed relic")
+        {
+            const auto created = reliquary->Create<FixedRelic>(RelicStructure { TypeHandleFor<BasicShard>() });
+
+            THEN("basic signal is emitted")
+            {
+                REQUIRE(createdRelicSignals.Size() == 1);
+            }
+
+            THEN("typed signal is not emitted")
+            {
+                REQUIRE(typedCreatedSignals.IsEmpty());
+            }
+
+            WHEN("destroying relic")
+            {
+                reliquary->Destroy(created);
+
+                THEN("basic signal is emitted")
+                {
+                    REQUIRE(destroyingRelicSignals.Size() == 1);
+                }
+
+                THEN("typed signal is not emitted")
+                {
+                    REQUIRE(typedDestroyingSignals.IsEmpty());
+                }
+            }
+        }
+
+        WHEN("creating typed relic")
         {
             const auto created = reliquary->Create<BasicTypedRelic>();
 
-            THEN("signal is emitted")
+            THEN("basic signal is emitted")
             {
-                REQUIRE(createdSignals.Size() == 1);
+                REQUIRE(createdRelicSignals.Size() == 1);
+            }
+
+            THEN("typed signal is emitted")
+            {
+                REQUIRE(typedCreatedSignals.Size() == 1);
             }
 
             WHEN("destroying relic")
             {
                 reliquary->Destroy(*created);
 
-                THEN("signal is emitted")
+                THEN("basic signal is emitted")
                 {
-                    REQUIRE(destroyingSignals.Size() == 1);
+                    REQUIRE(destroyingRelicSignals.Size() == 1);
+                }
+
+                THEN("typed signal is emitted")
+                {
+                    REQUIRE(typedDestroyingSignals.Size() == 1);
                 }
             }
         }

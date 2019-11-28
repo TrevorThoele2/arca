@@ -290,6 +290,7 @@ namespace Arca
         const auto dynamism = RelicDynamism::Dynamic;
         const auto id = NextRelicID();
         SetupNewRelicInternals(id, dynamism);
+        Raise<CreatedRelic>(RelicHandle(id, *this));
         return DynamicRelic(id, *this);
     }
 
@@ -300,6 +301,7 @@ namespace Arca
         const auto id = NextRelicID();
         SetupNewRelicInternals(id, dynamism);
         SatisfyRelicStructure(structure, id);
+        Raise<CreatedRelic>(RelicHandle(id, *this));
         return FixedRelic(id, *this);
     }
 
@@ -353,6 +355,7 @@ namespace Arca
         SetupNewRelicInternals(id, RelicDynamism::Fixed, TypeHandleFor<RelicT>(), added);
         SatisfyRelicStructure(StructureFrom<shards_for_t<RelicT>>(), id);
         Raise<Created<RelicT>>(Ptr<RelicT>(id, *this));
+        Raise<CreatedRelic>(RelicHandle(id, *this));
 
         added->Initialize(*this);
 

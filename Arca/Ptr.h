@@ -37,6 +37,7 @@ namespace Arca
     private:
         RelicID id = 0;
         Reliquary* owner = nullptr;
+        mutable T* previousValue = nullptr;
     };
 
     template<class T>
@@ -91,7 +92,9 @@ namespace Arca
     template<class T>
     T* Ptr<T>::Get() const
     {
-        return Owner().FindStorage<T>(id);
+        auto retrieved = Owner().FindStorage<T>(id);
+        previousValue = retrieved;
+        return retrieved;
     }
 
     template<class T>

@@ -9,6 +9,6 @@ namespace Arca
     template<class T>
     Ptr<T> Actualize(const RelicHandle& handle)
     {
-        return handle.Owner().Find<T>();
+        return handle.Owner().Find<T>(handle.ID());
     }
 }

@@ -182,6 +182,8 @@ namespace Arca
 
     void Reliquary::DestroyRelic(RelicMetadata& metadata)
     {
+        Raise<DestroyingRelic>(RelicHandle(metadata.id, *this));
+
         auto& id = metadata.id;
 
         for (auto& child : metadata.children)
