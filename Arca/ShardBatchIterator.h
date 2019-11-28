@@ -29,15 +29,6 @@ namespace Arca
         WrapT wrapped;
         WrapT end;
     private:
-        template<class U, std::enable_if_t<std::is_const_v<U>, int> = 0>
-        void ForwardWrapped();
-        template<class U, std::enable_if_t<!std::is_const_v<U>, int> = 0>
-        void ForwardWrapped();
-        template<class U, std::enable_if_t<std::is_const_v<U>, int> = 0>
-        void BackwardWrapped();
-        template<class U, std::enable_if_t<!std::is_const_v<U>, int> = 0>
-        void BackwardWrapped();
-    private:
         template<class U>
         friend class ShardBatch;
     };
@@ -48,10 +39,7 @@ namespace Arca
         :
         wrapped(wrap),
         end(end)
-    {
-        if (wrapped != end && !std::is_const_v<ReturnT> && wrapped->isConst)
-            ForwardWrapped<ReturnT>();
-    }
+    {}
 
     template<class ReturnT, class WrapT>
     ShardBatchIteratorBase<ReturnT, WrapT>::ShardBatchIteratorBase(const ShardBatchIteratorBase& arg) :
@@ -94,7 +82,7 @@ namespace Arca
     ShardBatchIteratorBase<ReturnT, WrapT>&
         ShardBatchIteratorBase<ReturnT, WrapT>::operator++()
     {
-        ForwardWrapped<ReturnT>();
+        ++wrapped;
         return *this;
     }
 
@@ -103,7 +91,7 @@ namespace Arca
         ShardBatchIteratorBase<ReturnT, WrapT>::operator++(int) const
     {
         auto copy = *this;
-        ForwardWrapped<ReturnT>();
+        ++wrapped;
         return copy;
     }
 
@@ -111,7 +99,7 @@ namespace Arca
     ShardBatchIteratorBase<ReturnT, WrapT>&
         ShardBatchIteratorBase<ReturnT, WrapT>::operator--()
     {
-        BackwardWrapped<ReturnT>();
+        --wrapped;
         return *this;
     }
 
@@ -120,7 +108,7 @@ namespace Arca
         ShardBatchIteratorBase<ReturnT, WrapT>::operator--(int) const
     {
         auto copy = *this;
-        BackwardWrapped<ReturnT>();
+        --wrapped;
         return copy;
     }
 
@@ -128,37 +116,5 @@ namespace Arca
     RelicID ShardBatchIteratorBase<ReturnT, WrapT>::ID() const
     {
         return wrapped->id;
-    }
-
-    template<class ReturnT, class WrapT>
-    template<class U, std::enable_if_t<std::is_const_v<U>, int>>
-    void ShardBatchIteratorBase<ReturnT, WrapT>::ForwardWrapped()
-    {
-        ++wrapped;
-        while (wrapped != end && !wrapped->isConst)
-            ++wrapped;
-    }
-
-    template<class ReturnT, class WrapT>
-    template<class U, std::enable_if_t<!std::is_const_v<U>, int>>
-    void ShardBatchIteratorBase<ReturnT, WrapT>::ForwardWrapped()
-    {
-        ++wrapped;
-    }
-    
-    template<class ReturnT, class WrapT>
-    template<class U, std::enable_if_t<std::is_const_v<U>, int>>
-    void ShardBatchIteratorBase<ReturnT, WrapT>::BackwardWrapped()
-    {
-        --wrapped;
-        while (wrapped != end && !wrapped->isConst)
-            --wrapped;
-    }
-
-    template<class ReturnT, class WrapT>
-    template<class U, std::enable_if_t<!std::is_const_v<U>, int>>
-    void ShardBatchIteratorBase<ReturnT, WrapT>::BackwardWrapped()
-    {
-        --wrapped;
     }
 }

@@ -43,14 +43,14 @@ namespace Arca
         template<class T>
         void Add()
         {
-            typeHandles.push_back(TypeHandleFor<T>());
+            typeHandleNames.push_back(TypeHandleFor<T>().name);
         }
 
-        [[nodiscard]] std::vector<TypeHandle> TypeHandleList() const;
+        [[nodiscard]] std::vector<TypeHandleName> TypeHandleNameList() const;
 
         [[nodiscard]] bool Empty() const;
     private:
-        std::vector<TypeHandle> typeHandles;
+        std::vector<TypeHandleName> typeHandleNames;
     };
 
     using Pipeline = std::vector<Stage>;

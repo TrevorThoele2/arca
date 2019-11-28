@@ -13,38 +13,38 @@ namespace Arca
     {}
 
     NotRegistered::NotRegistered(
-        const std::string& type,
-        const std::string& name)
+        const std::string& objectType,
+        const TypeHandle& type)
         :
         Exception(
-            "The " + type + " (" + name + ") was not registered.")
+            "The " + objectType + " (" + ::Chroma::ToString(type) + ") was not registered.")
     {}
 
     NotRegistered::NotRegistered(
-        const std::string& type,
-        const std::string& name,
+        const std::string& objectType,
+        const TypeHandle& type,
         const std::type_index& classType)
         :
         Exception(
-            "The " + type + " (" + name + ") was not registered. " +
+            "The " + objectType + " (" + ::Chroma::ToString(type) + ") was not registered. " +
             "The class name is: \"" + classType.name() + "\".")
     {}
 
     AlreadyRegistered::AlreadyRegistered(
-        const std::string& type,
-        const std::string& name)
+        const std::string& objectType,
+        const TypeHandle& type)
         :
         Exception(
-            "The " + type + " (" + name + ") was already registered.")
+            "The " + objectType + " (" + ::Chroma::ToString(type) + ") was already registered.")
     {}
 
     AlreadyRegistered::AlreadyRegistered(
-        const std::string& type,
-        const std::string& name,
+        const std::string& objectType,
+        const TypeHandle& type,
         const std::type_index& classType)
         :
         Exception(
-            "The " + type + " (" + name + ") was already registered. " +
+            "The " + objectType + " (" + ::Chroma::ToString(type) + ") was already registered. " +
             "The class name is: \"" + classType.name() + "\".")
     {}
 

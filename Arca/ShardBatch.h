@@ -11,7 +11,7 @@ namespace Arca
     class Batch<T, std::enable_if_t<is_shard_v<T>>>
     {
     private:
-        using SourceT = BatchSource<std::decay_t<T>>;
+        using SourceT = BatchSource<T>;
     public:
         using ShardT = T;
 
@@ -78,9 +78,7 @@ namespace Arca
     {
         SourceRequired();
 
-        return !std::is_const_v<T>
-            ? source->NonConstSize()
-            : source->TotalSize();
+        return source->Size();
     }
 
     template<class T>
@@ -88,9 +86,7 @@ namespace Arca
     {
         SourceRequired();
 
-        return !std::is_const_v<T>
-            ? source->IsNonConstEmpty()
-            : source->IsEmpty();
+        return source->IsEmpty();
     }
 
     template<class T>

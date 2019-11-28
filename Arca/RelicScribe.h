@@ -24,6 +24,6 @@ namespace Inscription
     template<class T, class Archive>
     TypeHandle RelicScribe<T, Archive>::OutputTypeHandle(const ArchiveT& archive)
     {
-        return ::Arca::TypeHandleFor<T>();
+        return ::Arca::TypeHandleFor<T>().name;
     }
 }

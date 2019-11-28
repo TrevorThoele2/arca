@@ -15,7 +15,7 @@ namespace Arca
         {
             using ShardT = typename ShardList::template Parameter<i - 1>::Type;
 
-            structure.emplace_back(TypeHandleFor<ShardT>(), std::is_const_v<ShardT>);
+            structure.push_back(TypeHandleFor<ShardT>());
             ShardListToStructure<i - 1>::Do(structure, shardList);
         }
     };

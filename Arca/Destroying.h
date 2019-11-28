@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SignalTraits.h"
+#include "Ptr.h"
 
 namespace Arca
 {
@@ -8,7 +9,7 @@ namespace Arca
     struct Destroying
     {
         using Type = T;
-        Type& object;
+        Ptr<T> object;
     };
 
     template<class T>
