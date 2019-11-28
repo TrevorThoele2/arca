@@ -52,14 +52,14 @@
     <ClCompile Include="FixedRelic.cpp">
       <Filter>Source Files\Relic</Filter>
     </ClCompile>
-    <ClCompile Include="RelicHandle.cpp">
-      <Filter>Source Files\Relic</Filter>
-    </ClCompile>
     <ClCompile Include="TypeHandle.cpp">
       <Filter>Source Files\Type</Filter>
     </ClCompile>
     <ClCompile Include="ObjectType.cpp">
       <Filter>Source Files\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="Handle.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -219,14 +219,14 @@
     <ClInclude Include="RelicHandleActualization.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
-    <ClInclude Include="RelicHandle.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="Static.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
     <ClInclude Include="ObjectType.h">
       <Filter>Header Files\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="Handle.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

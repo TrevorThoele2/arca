@@ -156,9 +156,6 @@ namespace Arca
                     loop.Initialize(reliquary);
             });
 
-        Signal<Created<RelicT>>();
-        Signal<Destroying<RelicT>>();
-
         return *this;
     }
 
@@ -230,13 +227,13 @@ namespace Arca
                     {
                         auto found = reliquary.FindBatchSource<const ShardT>();
                         auto added = found->Add(id);
-                        reliquary.Raise<Created<const ShardT>>(Ptr<const ShardT>(id, reliquary));
+                        reliquary.Raise<Created>(Handle(id, reliquary));
                     }
                     else
                     {
                         auto found = reliquary.FindBatchSource<ShardT>();
                         auto added = found->Add(id);
-                        reliquary.Raise<Created<ShardT>>(Ptr<ShardT>(id, reliquary));
+                        reliquary.Raise<Created>(Handle(id, reliquary));
                     }
                 });
             reliquary.shardSerializers.push_back(
@@ -259,11 +256,6 @@ namespace Arca
         };
 
         shardList.emplace_back(typeHandle.name, std::move(factory));
-
-        Signal<Created<ShardT>>();
-        Signal<Created<const ShardT>>();
-        Signal<Destroying<ShardT>>();
-        Signal<Destroying<const ShardT>>();
 
         return *this;
     }

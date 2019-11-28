@@ -349,37 +349,25 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
             .Shard<BasicShard>()
             .Actualize();
 
-        auto createdRelicSignals = reliquary->Batch<CreatedRelic>();
-        auto destroyingRelicSignals = reliquary->Batch<DestroyingRelic>();
-        auto typedCreatedSignals = reliquary->Batch<Created<BasicTypedRelic>>();
-        auto typedDestroyingSignals = reliquary->Batch<Destroying<BasicTypedRelic>>();
+        auto createdRelicSignals = reliquary->Batch<Created>();
+        auto destroyingRelicSignals = reliquary->Batch<Destroying>();
 
         WHEN("creating dynamic relic")
         {
             const auto created = reliquary->Create<DynamicRelic>();
 
-            THEN("basic signal is emitted")
+            THEN("signal is emitted for relic")
             {
                 REQUIRE(createdRelicSignals.Size() == 1);
-            }
-
-            THEN("typed signal is not emitted")
-            {
-                REQUIRE(typedCreatedSignals.IsEmpty());
             }
 
             WHEN("destroying relic")
             {
                 reliquary->Destroy(created);
 
-                THEN("basic signal is emitted")
+                THEN("signal is emitted for relic")
                 {
                     REQUIRE(destroyingRelicSignals.Size() == 1);
-                }
-
-                THEN("typed signal is not emitted")
-                {
-                    REQUIRE(typedDestroyingSignals.IsEmpty());
                 }
             }
         }
@@ -388,28 +376,18 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
         {
             const auto created = reliquary->Create<FixedRelic>(RelicStructure { TypeHandleFor<BasicShard>() });
 
-            THEN("basic signal is emitted")
+            THEN("signal is emitted for relic")
             {
-                REQUIRE(createdRelicSignals.Size() == 1);
-            }
-
-            THEN("typed signal is not emitted")
-            {
-                REQUIRE(typedCreatedSignals.IsEmpty());
+                REQUIRE(createdRelicSignals.Size() == 2);
             }
 
             WHEN("destroying relic")
             {
                 reliquary->Destroy(created);
 
-                THEN("basic signal is emitted")
+                THEN("signal is emitted for relic")
                 {
-                    REQUIRE(destroyingRelicSignals.Size() == 1);
-                }
-
-                THEN("typed signal is not emitted")
-                {
-                    REQUIRE(typedDestroyingSignals.IsEmpty());
+                    REQUIRE(destroyingRelicSignals.Size() == 2);
                 }
             }
         }
@@ -418,28 +396,18 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
         {
             const auto created = reliquary->Create<BasicTypedRelic>();
 
-            THEN("basic signal is emitted")
+            THEN("signal is emitted for relic and shard")
             {
-                REQUIRE(createdRelicSignals.Size() == 1);
-            }
-
-            THEN("typed signal is emitted")
-            {
-                REQUIRE(typedCreatedSignals.Size() == 1);
+                REQUIRE(createdRelicSignals.Size() == 2);
             }
 
             WHEN("destroying relic")
             {
                 reliquary->Destroy(*created);
 
-                THEN("basic signal is emitted")
+                THEN("signal is emitted for relic and shard")
                 {
-                    REQUIRE(destroyingRelicSignals.Size() == 1);
-                }
-
-                THEN("typed signal is emitted")
-                {
-                    REQUIRE(typedDestroyingSignals.Size() == 1);
+                    REQUIRE(destroyingRelicSignals.Size() == 2);
                 }
             }
         }
@@ -588,7 +556,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
 
         WHEN("parenting child to nonexistent relic")
         {
-            auto nonExistentRelic = RelicHandle();
+            auto nonExistentRelic = Handle();
 
             THEN("throws error")
             {
@@ -614,7 +582,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
 
         WHEN("parenting nonexistent relic to parent")
         {
-            auto nonExistentRelic = RelicHandle();
+            auto nonExistentRelic = Handle();
 
             THEN("throws error")
             {

@@ -1,14 +1,14 @@
 #pragma once
 
 #include "SignalTraits.h"
-#include "RelicHandle.h"
+#include "Handle.h"
 
 namespace Arca
 {
     struct RelicParented
     {
-        RelicHandle parent;
-        RelicHandle child;
+        Handle parent;
+        Handle child;
     };
 
     template<>

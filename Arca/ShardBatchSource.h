@@ -17,7 +17,7 @@ namespace Arca
     public:
         virtual ~ShardBatchSourceBase() = 0;
 
-        virtual void DestroyFromBase(RelicID id) = 0;
+        virtual bool DestroyFromBase(RelicID id) = 0;
 
         [[nodiscard]] virtual SizeT Size() const = 0;
     protected:
@@ -53,7 +53,7 @@ namespace Arca
         iterator Destroy(iterator destroy);
         iterator Destroy(const_iterator destroy);
 
-        void DestroyFromBase(RelicID id) override;
+        bool DestroyFromBase(RelicID id) override;
 
         ShardT* Find(RelicID id);
 
@@ -114,9 +114,11 @@ namespace Arca
     }
 
     template<class T>
-    void BatchSource<T, std::enable_if_t<is_shard_v<T>>>::DestroyFromBase(RelicID id)
+    bool BatchSource<T, std::enable_if_t<is_shard_v<T>>>::DestroyFromBase(RelicID id)
     {
+        const auto size = Size();
         Destroy(id);
+        return size != Size();
     }
 
     template<class T>

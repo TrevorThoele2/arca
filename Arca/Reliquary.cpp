@@ -25,7 +25,7 @@ namespace Arca
             signalBatchSource.second->Clear();
     }
 
-    void Reliquary::Destroy(const RelicHandle& handle)
+    void Reliquary::Destroy(const Handle& handle)
     {
         if (&handle.Owner() != this)
             return;
@@ -37,7 +37,7 @@ namespace Arca
         DestroyRelic(*metadata);
     }
 
-    void Reliquary::ParentRelicTo(const RelicHandle& parent, const RelicHandle& child)
+    void Reliquary::ParentRelicTo(const Handle& parent, const Handle& child)
     {
         const auto parentID = parent.ID();
         const auto childID = child.ID();
@@ -80,7 +80,7 @@ namespace Arca
         SignalRelicParented(parent, child);
     }
 
-    std::optional<RelicHandle> Reliquary::ParentOf(const RelicHandle& child)
+    std::optional<Handle> Reliquary::ParentOf(const Handle& child)
     {
         const auto childID = child.ID();
         const auto metadata = RelicMetadataFor(childID);
@@ -90,7 +90,7 @@ namespace Arca
         if (!metadata->parent)
             return {};
 
-        return RelicHandle(*metadata->parent, *this);
+        return Handle(*metadata->parent, *this);
     }
 
     Reliquary::SizeT Reliquary::RelicSize() const
@@ -182,7 +182,7 @@ namespace Arca
 
     void Reliquary::DestroyRelic(RelicMetadata& metadata)
     {
-        Raise<DestroyingRelic>(RelicHandle(metadata.id, *this));
+        Raise<Destroying>(Handle(metadata.id, *this));
 
         auto& id = metadata.id;
 
@@ -190,7 +190,10 @@ namespace Arca
             DestroyRelic(*RelicMetadataFor(child));
 
         for (auto& shardBatchSource : shardBatchSources)
-            shardBatchSource.second->DestroyFromBase(id);
+        {
+            if (shardBatchSource.second->DestroyFromBase(id))
+                Raise<Destroying>(Handle(id, *this));
+        }
 
         if (metadata.parent)
         {
@@ -222,7 +225,7 @@ namespace Arca
             : (--occupiedRelicIDs.end())->End() + 1;
     }
 
-    void Reliquary::SignalRelicParented(const RelicHandle& parent, const RelicHandle& child)
+    void Reliquary::SignalRelicParented(const Handle& parent, const Handle& child)
     {
         const RelicParented signal{ parent, child };
         Raise(signal);

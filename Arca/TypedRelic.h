@@ -4,7 +4,7 @@
 #include "RelicStructure.h"
 #include "RelicScribe.h"
 #include "RelicTraits.h"
-#include "RelicHandle.h"
+#include "Handle.h"
 
 #include "Serialization.h"
 
@@ -16,10 +16,10 @@ namespace Arca
     class TypedRelic
     {
     public:
-        operator RelicHandle() const;
+        operator Handle() const;
 
-        void ParentTo(const RelicHandle& parent) const;
-        std::optional<RelicHandle> Parent() const;
+        void ParentTo(const Handle& parent) const;
+        std::optional<Handle> Parent() const;
 
         [[nodiscard]] RelicID ID() const;
         [[nodiscard]] Reliquary& Owner() const;

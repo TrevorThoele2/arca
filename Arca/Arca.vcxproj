@@ -35,7 +35,7 @@
     <ClInclude Include="RelicBatchSource.h" />
     <ClInclude Include="Created.h" />
     <ClInclude Include="ExtractShards.h" />
-    <ClInclude Include="RelicHandle.h" />
+    <ClInclude Include="Handle.h" />
     <ClInclude Include="RelicHandleActualization.h" />
     <ClInclude Include="RelicParented.h" />
     <ClInclude Include="RelicScribe.h" />
@@ -83,7 +83,7 @@
     <ClCompile Include="BatchException.cpp" />
     <ClCompile Include="PipelineException.cpp" />
     <ClCompile Include="RelicBatchSource.cpp" />
-    <ClCompile Include="RelicHandle.cpp" />
+    <ClCompile Include="Handle.cpp" />
     <ClCompile Include="ShardBatchSource.cpp" />
     <ClCompile Include="Exception.cpp" />
     <ClCompile Include="Reliquary.cpp" />

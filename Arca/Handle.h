@@ -5,16 +5,15 @@
 namespace Arca
 {
     class Reliquary;
-    class DynamicRelic;
 
-    class RelicHandle
+    class Handle
     {
     public:
-        RelicHandle() = default;
-        RelicHandle(RelicID id, Reliquary& owner);
+        Handle() = default;
+        Handle(RelicID id, Reliquary& owner);
 
-        bool operator==(const RelicHandle& arg) const;
-        bool operator!=(const RelicHandle& arg) const;
+        bool operator==(const Handle& arg) const;
+        bool operator!=(const Handle& arg) const;
 
         [[nodiscard]] Reliquary& Owner() const;
         [[nodiscard]] RelicID ID() const;

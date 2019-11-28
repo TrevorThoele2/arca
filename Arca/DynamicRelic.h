@@ -1,7 +1,7 @@
 #pragma once
 
 #include "RelicID.h"
-#include "RelicHandle.h"
+#include "Handle.h"
 #include "ShardTraits.h"
 #include "Ptr.h"
 
@@ -14,7 +14,7 @@ namespace Arca
     class DynamicRelic
     {
     public:
-        operator RelicHandle() const;
+        operator Handle() const;
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         Ptr<ShardT> Create();
@@ -25,8 +25,8 @@ namespace Arca
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] bool Has() const;
 
-        void ParentTo(const RelicHandle& parent) const;
-        std::optional<RelicHandle> Parent() const;
+        void ParentTo(const Handle& parent) const;
+        std::optional<Handle> Parent() const;
 
         [[nodiscard]] RelicID ID() const;
         [[nodiscard]] Reliquary& Owner() const;
