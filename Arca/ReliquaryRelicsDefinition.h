@@ -12,32 +12,14 @@ namespace Arca
         if (!metadata)
             return {};
 
-        auto& batchSource = RequiredBatchSource<RelicT>();
+        auto& batchSource = batchSources.Required<RelicT>();
         return batchSource.Find(id);
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
-    BatchSource<RelicT>* ReliquaryRelics::FindBatchSource()
+    auto ReliquaryRelics::BatchSources::MapFor() -> Map&
     {
-        const auto typeHandleName = TypeHandleFor<RelicT>().name;
-        auto found = batchSources.find(typeHandleName);
-        if (found == batchSources.end())
-            return nullptr;
-
-        return static_cast<BatchSource<RelicT>*>(found->second.get());
-    }
-
-    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
-    BatchSource<RelicT>& ReliquaryRelics::RequiredBatchSource()
-    {
-        auto found = FindBatchSource<RelicT>();
-        if (!found)
-        {
-            const auto typeHandle = TypeHandleFor<RelicT>();
-            throw NotRegistered(typeHandle, typeid(RelicT));
-        }
-
-        return *found;
+        return map;
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>

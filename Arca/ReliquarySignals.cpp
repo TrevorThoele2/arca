@@ -2,15 +2,9 @@
 
 namespace Arca
 {
-    ReliquarySignals::ReliquarySignals(Reliquary& owner) : ReliquaryComponent(owner, "signal")
+    ReliquarySignals::BatchSources::BatchSources(ReliquarySignals& owner) : BatchSourcesBase(owner)
     {}
 
-    SignalBatchSourceBase* ReliquarySignals::FindBatchSource(const std::type_index& type)
-    {
-        const auto found = batchSources.find(type);
-        if (found == batchSources.end())
-            return nullptr;
-
-        return found->second.get();
-    }
+    ReliquarySignals::ReliquarySignals(Reliquary& owner) : ReliquaryComponent(owner, "signal")
+    {}
 }

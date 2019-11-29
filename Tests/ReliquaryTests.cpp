@@ -53,6 +53,9 @@ namespace Arca
 
     const TypeHandleName Traits<::ReliquaryTestsFixture::BasicCurator>::typeName =
         "ReliquaryTestsBasicCurator";
+
+    const TypeHandleName Traits<::ReliquaryTestsFixture::BasicSignal>::typeName =
+        "ReliquaryTestsBasicSignal";
 }
 
 SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")

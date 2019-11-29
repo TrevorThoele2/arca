@@ -21,7 +21,7 @@ namespace Arca
         curators.Work([](Curator& curator) { curator.Work(); });
         curators.Work([](Curator& curator) { curator.StopStep(); });
 
-        for(auto& batchSource : signals.batchSources)
+        for(auto& batchSource : signals.batchSources.map)
             batchSource.second->Clear();
     }
 
@@ -101,7 +101,9 @@ namespace Arca
     Reliquary::SizeT Reliquary::ShardSize() const
     {
         SizeT totalSize = 0;
-        for (auto& loop : shards.batchSources)
+        for (auto& loop : shards.batchSources.map)
+            totalSize += loop.second->Size();
+        for (auto& loop : shards.batchSources.constMap)
             totalSize += loop.second->Size();
         return totalSize;
     }
@@ -114,7 +116,7 @@ namespace Arca
     Reliquary::SizeT Reliquary::SignalSize() const
     {
         SizeT totalSize = 0;
-        for (auto& loop : signals.batchSources)
+        for (auto& loop : signals.batchSources.map)
             totalSize += loop.second->Size();
         return totalSize;
     }
@@ -158,15 +160,15 @@ namespace Inscription
             object,
             archive,
             object.shards.serializers,
-            object.shards.batchSources,
-            [](Arca::ReliquaryShards::BatchSourceMap::value_type& entry) { return entry.first; });
+            object.shards.batchSources.map,
+            [](Arca::ReliquaryShards::BatchSources::Map::value_type& entry) { return entry.first; });
 
         JumpSaveAll(
             object,
             archive,
             object.relics.serializers,
-            object.relics.batchSources,
-            [](Arca::ReliquaryRelics::BatchSourceMap::value_type& entry) { return entry.first; });
+            object.relics.batchSources.map,
+            [](Arca::ReliquaryRelics::BatchSources::Map::value_type& entry) { return entry.first; });
 
         JumpSaveAll(
             object,

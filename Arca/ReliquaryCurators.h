@@ -14,8 +14,6 @@ namespace Arca
     class ReliquaryCurators : public ReliquaryComponent
     {
     public:
-        explicit ReliquaryCurators(Reliquary& owner);
-    public:
         using HandlePtr = std::unique_ptr<CuratorHandle>;
         using Map = std::unordered_map<TypeHandleName, HandlePtr>;
         Map map;
@@ -31,5 +29,8 @@ namespace Arca
 
         template<class Function>
         void Work(Function function);
+    private:
+        explicit ReliquaryCurators(Reliquary& owner);
+        friend Reliquary;
     };
 }

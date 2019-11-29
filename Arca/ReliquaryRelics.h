@@ -6,7 +6,6 @@
 #include <any>
 
 #include "DynamicRelic.h"
-#include "TypedRelic.h"
 #include "RelicStructure.h"
 #include "RelicTraits.h"
 #include "RelicMetadata.h"
@@ -20,8 +19,6 @@ namespace Arca
 {
     class ReliquaryRelics : public ReliquaryComponent
     {
-    public:
-        explicit ReliquaryRelics(Reliquary& owner);
     public:
         using RelicMetadataList = std::vector<RelicMetadata>;
         RelicMetadataList metadataList;
@@ -50,17 +47,21 @@ namespace Arca
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         RelicT* FindStorage(RelicID id);
     public:
-        using BatchSourcePtr = std::unique_ptr<RelicBatchSourceBase>;
-        using BatchSourceMap = std::unordered_map<TypeHandleName, BatchSourcePtr>;
-        BatchSourceMap batchSources;
+        class BatchSources : public BatchSourcesBase<RelicBatchSourceBase, ReliquaryRelics, BatchSources>
+        {
+        private:
+            template<class RelicT>
+            constexpr static bool is_object_v = is_relic_v<RelicT>;
+            friend BatchSourcesBase<RelicBatchSourceBase, ReliquaryRelics, BatchSources>;
+        public:
+            template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+            [[nodiscard]] Map& MapFor();
+        private:
+            explicit BatchSources(ReliquaryRelics& owner);
+            friend ReliquaryRelics;
+        } batchSources = BatchSources(*this);
 
         KnownPolymorphicSerializerList serializers;
-
-        [[nodiscard]] RelicBatchSourceBase* FindBatchSource(const TypeHandleName& typeHandle);
-        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        [[nodiscard]] BatchSource<RelicT>* FindBatchSource();
-        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        [[nodiscard]] BatchSource<RelicT>& RequiredBatchSource();
     public:
         using StaticMap = std::unordered_map<TypeHandleName, std::any>;
         StaticMap staticMap;
@@ -69,5 +70,8 @@ namespace Arca
 
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         RelicT* FindStaticStorage(RelicID id);
+    private:
+        explicit ReliquaryRelics(Reliquary& owner);
+        friend Reliquary;
     };
 }

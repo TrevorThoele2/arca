@@ -10,7 +10,7 @@ namespace Arca
     {
         Relics().ModificationRequired(id);
 
-        auto& batch = RequiredBatchSource<ShardT>();
+        auto& batch = batchSources.Required<ShardT>();
         auto added = batch.Add(id);
         Owner().Raise<Created>(HandleFrom(id));
         return PtrFrom<ShardT>(id);
@@ -21,7 +21,7 @@ namespace Arca
     {
         Relics().ModificationRequired(id);
 
-        auto& batch = RequiredBatchSource<ShardT>();
+        auto& batch = batchSources.Required<ShardT>();
         batch.Destroy(id);
     }
 
@@ -39,41 +39,19 @@ namespace Arca
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     ShardT* ReliquaryShards::FindStorage(RelicID id)
     {
-        auto& batch = RequiredBatchSource<ShardT>();
+        auto& batch = batchSources.Required<ShardT>();
         return batch.Find(id);
     }
 
-    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    BatchSource<ShardT>* ReliquaryShards::FindBatchSource()
-    {
-        auto& sources = ShardSourceMapFor<ShardT>();
-        auto found = sources.find(TypeHandleFor<ShardT>().name);
-        if (found == sources.end())
-            return nullptr;
-
-        return static_cast<BatchSource<ShardT>*>(found->second.get());
-    }
-
-    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    BatchSource<ShardT>& ReliquaryShards::RequiredBatchSource()
-    {
-        const auto typeHandle = TypeHandleFor<ShardT>();
-        auto found = FindBatchSource<ShardT>();
-        if (!found)
-            throw NotRegistered(typeHandle, typeid(ShardT));
-
-        return *found;
-    }
-
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && !std::is_const_v<ShardT>, int>>
-    auto ReliquaryShards::ShardSourceMapFor() -> BatchSourceMap&
+    auto ReliquaryShards::BatchSources::MapFor() -> Map&
     {
-        return batchSources;
+        return map;
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && std::is_const_v<ShardT>, int>>
-    auto ReliquaryShards::ShardSourceMapFor() -> BatchSourceMap&
+    auto ReliquaryShards::BatchSources::MapFor() -> Map&
     {
-        return constBatchSources;
+        return constMap;
     }
 }

@@ -8,6 +8,10 @@
 #include "Handle.h"
 #include "Ptr.h"
 #include "ReliquaryException.h"
+#include "Traits.h"
+
+#include "Batch.h"
+#include "BatchSource.h"
 
 namespace Arca
 {
@@ -49,6 +53,74 @@ namespace Arca
         Ptr<T> PtrFrom(RelicID id);
         template<class T>
         Ptr<T> PtrFrom(const RelicMetadata& metadata);
+    protected:
+        template<class BatchSourceBaseT, class Owner, class Derived>
+        class BatchSourcesBase
+        {
+        private:
+            template<class RelicT>
+            constexpr static bool is_object_v = Derived::template is_object_v<RelicT>;
+        public:
+            using Ptr = std::unique_ptr<BatchSourceBaseT>;
+            using Map = std::unordered_map<TypeHandleName, Ptr>;
+
+            Map map;
+
+            [[nodiscard]] BatchSourceBaseT* Find(const TypeHandleName& typeHandle)
+            {
+                const auto found = map.find(typeHandle);
+                if (found == map.end())
+                    return nullptr;
+
+                return found->second.get();
+            }
+            template<class ObjectT, std::enable_if_t<is_object_v<ObjectT>, int> = 0>
+            [[nodiscard]] BatchSource<ObjectT>* Find()
+            {
+                auto& map = AsDerived().template MapFor<ObjectT>();
+                const auto typeHandleName = TypeHandleFor<ObjectT>().name;
+                auto found = map.find(typeHandleName);
+                if (found == map.end())
+                    return nullptr;
+
+                return static_cast<BatchSource<ObjectT>*>(found->second.get());
+            }
+            template<class ObjectT, std::enable_if_t<is_object_v<ObjectT>, int> = 0>
+            BatchSource<ObjectT>& Required()
+            {
+                auto found = Find<ObjectT>();
+                if (!found)
+                {
+                    const auto typeHandle = TypeHandleFor<ObjectT>();
+                    throw owner->NotRegistered(typeHandle, typeid(ObjectT));
+                }
+
+                return *found;
+            }
+
+            template<class ObjectT, std::enable_if_t<is_object_v<ObjectT>, int> = 0>
+            Batch<ObjectT> Batch()
+            {
+                auto& batchSource = Required<ObjectT>();
+                return Arca::Batch<ObjectT>(batchSource);
+            }
+        protected:
+            explicit BatchSourcesBase(Owner& owner) : owner(&owner)
+            {}
+        private:
+            Owner* owner;
+        private:
+            [[nodiscard]] Derived& AsDerived()
+            {
+                return static_cast<Derived&>(*this);
+            }
+
+            [[nodiscard]] const Derived& AsDerived() const
+            {
+
+                return static_cast<Derived&>(*this);
+            }
+        };
     private:
         Reliquary* owner;
     private:

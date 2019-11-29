@@ -59,6 +59,9 @@ namespace Arca
     const TypeHandleName Traits<::IntegrationTestsFixture::BasicShard>::typeName =
         "IntegrationTestsBasicShard";
 
+    const TypeHandleName Traits<::IntegrationTestsFixture::BasicSignal>::typeName =
+        "IntegrationTestsBasicSignal";
+
     const TypeHandleName Traits<::IntegrationTestsFixture::ChildRelic>::typeName =
         "IntegrationTestsChildRelic";
 
