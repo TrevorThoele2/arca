@@ -64,7 +64,7 @@ namespace Arca
         using TypedRelicInitializerList = std::vector<TypedRelicInitializer>;
         TypedRelicInitializerList typedRelicInitializerList;
     private:
-        using NamedRelicStructure = Reliquary::NamedRelicStructure;
+        using NamedRelicStructure = ReliquaryRelicStructures::Named;
         using NamedRelicStructureList = std::vector<NamedRelicStructure>;
         NamedRelicStructureList namedRelicStructureList;
     private:
@@ -91,7 +91,7 @@ namespace Arca
         template<class Curator>
         [[nodiscard]] bool IsCuratorRegistered() const;
 
-        static Reliquary::CuratorPipeline TransformCuratorPipeline(
+        static ReliquaryCurators::Pipeline TransformCuratorPipeline(
             Reliquary& reliquary,
             const Pipeline& toTransform,
             const std::vector<Arca::Curator*>& allCurators);
@@ -120,14 +120,14 @@ namespace Arca
         const auto factory = [](Reliquary& reliquary)
         {
             const auto typeHandle = TypeHandleFor<RelicT>();
-            reliquary.relicBatchSources.emplace(typeHandle.name, std::make_unique<BatchSource<RelicT>>());
-            reliquary.relicSerializers.push_back(
-                Reliquary::KnownPolymorphicSerializer
+            reliquary.relics.batchSources.emplace(typeHandle.name, std::make_unique<BatchSource<RelicT>>());
+            reliquary.relics.serializers.push_back(
+                KnownPolymorphicSerializer
                 {
                     typeHandle.name,
                     [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
                     {
-                        auto batchSource = reliquary.FindBatchSource<RelicT>();
+                        auto batchSource = reliquary.relics.FindBatchSource<RelicT>();
                         archive(*batchSource);
 
                         if (archive.IsInput())
@@ -136,7 +136,7 @@ namespace Arca
                             {
                                 loop.Initialize(reliquary);
 
-                                auto metadata = reliquary.RelicMetadataFor(loop.ID());
+                                auto metadata = reliquary.relics.MetadataFor(loop.ID());
                                 metadata->storage = &loop;
                             }
                         }
@@ -151,7 +151,7 @@ namespace Arca
 
         typedRelicInitializerList.push_back([](Reliquary& reliquary)
             {
-                auto& relicBatchSource = reliquary.RequiredBatchSource<RelicT>();
+                auto& relicBatchSource = reliquary.relics.RequiredBatchSource<RelicT>();
                 for (auto& loop : relicBatchSource)
                     loop.Initialize(reliquary);
             });
@@ -172,16 +172,20 @@ namespace Arca
             return std::apply([&reliquary](auto&& ... creationArgs)
                 {
                     const auto typeHandle = TypeHandleFor<RelicT>();
-                    const auto id = reliquary.NextRelicID();
+                    const auto id = reliquary.relics.NextID();
                     auto relic = RelicT(std::forward<CreationArgs>(creationArgs)...);
                     relic.id = id;
-                    auto emplaced = reliquary.staticRelicMap.emplace(typeHandle.name, std::move(relic)).first->second;
+                    auto emplaced = reliquary.relics.staticMap.emplace(
+                        typeHandle.name,
+                        std::move(relic)
+                    )
+                        .first->second;
                     auto castedEmplaced = std::any_cast<RelicT>(&emplaced);
-                    reliquary.SetupNewRelicInternals(id, RelicDynamism::Static, typeHandle.name, castedEmplaced);
-                    reliquary.SatisfyRelicStructure(StructureFrom<shards_for_t<RelicT>>(), id);
+                    reliquary.relics.SetupNewInternals(id, RelicDynamism::Static, typeHandle.name, castedEmplaced);
+                    reliquary.relics.SatisfyStructure(id, StructureFrom<shards_for_t<RelicT>>());
 
-                    reliquary.staticRelicSerializers.push_back(
-                        Reliquary::KnownPolymorphicSerializer
+                    reliquary.relics.staticSerializers.push_back(
+                        KnownPolymorphicSerializer
                         {
                             typeHandle.name,
                             [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
@@ -217,35 +221,40 @@ namespace Arca
 
         const auto factory = [typeHandle](Reliquary& reliquary)
         {
-            reliquary.shardBatchSources.emplace(typeHandle.name, std::make_unique<BatchSource<ShardT>>());
-            reliquary.constShardBatchSources.emplace(typeHandle.name, std::make_unique<BatchSource<const ShardT>>());
-            reliquary.shardFactoryMap.emplace(
+            reliquary.shards.batchSources.emplace(
+                typeHandle.name,
+                std::make_unique<BatchSource<ShardT>>());
+            reliquary.shards.constBatchSources.emplace(
+                typeHandle.name,
+                std::make_unique<BatchSource<const ShardT>>());
+
+            reliquary.shards.factoryMap.emplace(
                 typeHandle.name,
                 [](Reliquary& reliquary, RelicID id, bool isConst)
                 {
                     if (isConst)
                     {
-                        auto found = reliquary.FindBatchSource<const ShardT>();
+                        auto found = reliquary.shards.FindBatchSource<const ShardT>();
                         auto added = found->Add(id);
                         reliquary.Raise<Created>(Handle(id, reliquary));
                     }
                     else
                     {
-                        auto found = reliquary.FindBatchSource<ShardT>();
+                        auto found = reliquary.shards.FindBatchSource<ShardT>();
                         auto added = found->Add(id);
                         reliquary.Raise<Created>(Handle(id, reliquary));
                     }
                 });
-            reliquary.shardSerializers.push_back(
-                Reliquary::KnownPolymorphicSerializer
+            reliquary.shards.serializers.push_back(
+                KnownPolymorphicSerializer
                 {
                     typeHandle.name,
                     [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
                     {
-                        auto batchSource = reliquary.FindBatchSource<ShardT>();
+                        auto batchSource = reliquary.shards.FindBatchSource<ShardT>();
                         archive(*batchSource);
 
-                        auto constBatchSource = reliquary.FindBatchSource<const ShardT>();
+                        auto constBatchSource = reliquary.shards.FindBatchSource<const ShardT>();
                         archive(*constBatchSource);
                     },
                     [](::Inscription::BinaryArchive& archive)
@@ -289,8 +298,8 @@ namespace Arca
 
         const auto factory = [](Reliquary& reliquary)
         {
-            reliquary.signalBatchSources.emplace(
-                reliquary.KeyForSignalBatchSource<SignalT>(),
+            reliquary.signals.batchSources.emplace(
+                reliquary.signals.KeyForBatchSource<SignalT>(),
                 std::make_unique<BatchSource<SignalT>>());
         };
         signalList.emplace_back(type, factory);
@@ -354,8 +363,8 @@ namespace Arca
         const auto curatorSerializationTypeHandlesFactory = [](Reliquary& reliquary)
         {
             const auto typeHandle = TypeHandleFor<CuratorT>();
-            reliquary.curatorSerializers.push_back(
-                Reliquary::KnownPolymorphicSerializer
+            reliquary.curators.serializers.push_back(
+                KnownPolymorphicSerializer
                 {
                     typeHandle.name,
                     [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)

@@ -4,14 +4,6 @@
 
 namespace Arca
 {
-    AttemptedLoadWhileInitialized::AttemptedLoadWhileInitialized() :
-        Exception("Loading an already initialized reliquary is not possible.")
-    {}
-
-    IncorrectRegisteredCuratorType::IncorrectRegisteredCuratorType() :
-        Exception("The type given does not match the runtime type.")
-    {}
-
     NotRegistered::NotRegistered(
         const std::string& objectType,
         const TypeHandle& type)
@@ -48,6 +40,13 @@ namespace Arca
             "The class name is: \"" + classType.name() + "\".")
     {}
 
+    CannotModify::CannotModify(
+        const std::string& objectType,
+        const RelicID id)
+        :
+        Exception("The " + objectType + " with ID (" + ::Chroma::ToString(id) + ") needs to be modified but cannot.")
+    {}
+
     CannotCreateShard::CannotCreateShard() :
         Exception("A shard cannot be created.")
     {}
@@ -61,5 +60,9 @@ namespace Arca
     {}
 
     CannotParentRelic::CannotParentRelic(const std::string& message) : Exception(message)
+    {}
+
+    IncorrectRegisteredCuratorType::IncorrectRegisteredCuratorType() :
+        Exception("The type given does not match the runtime type.")
     {}
 }

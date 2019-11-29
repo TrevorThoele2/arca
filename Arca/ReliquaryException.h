@@ -5,23 +5,10 @@
 #include "Exception.h"
 
 #include "RelicID.h"
-#include "ObjectType.h"
 #include "TypeHandle.h"
 
 namespace Arca
 {
-    class AttemptedLoadWhileInitialized final : public Exception
-    {
-    public:
-        AttemptedLoadWhileInitialized();
-    };
-
-    class IncorrectRegisteredCuratorType final : public Exception
-    {
-    public:
-        IncorrectRegisteredCuratorType();
-    };
-
     class NotRegistered final : public Exception
     {
     public:
@@ -46,6 +33,14 @@ namespace Arca
             const std::type_index& classType);
     };
 
+    class CannotModify final : public Exception
+    {
+    public:
+        CannotModify(
+            const std::string& objectType,
+            const RelicID id);
+    };
+
     class CannotCreateShard final : public Exception
     {
     public:
@@ -68,5 +63,11 @@ namespace Arca
     {
     public:
         explicit CannotParentRelic(const std::string& message);
+    };
+
+    class IncorrectRegisteredCuratorType final : public Exception
+    {
+    public:
+        IncorrectRegisteredCuratorType();
     };
 }

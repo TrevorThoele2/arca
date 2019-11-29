@@ -61,6 +61,27 @@
     <ClCompile Include="Handle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="KnownPolymorphicSerializer.cpp">
+      <Filter>Source Files\Reliquary\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ReliquaryShards.cpp">
+      <Filter>Source Files\Reliquary\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ReliquaryRelics.cpp">
+      <Filter>Source Files\Reliquary\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ReliquaryCurators.cpp">
+      <Filter>Source Files\Reliquary\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ReliquarySignals.cpp">
+      <Filter>Source Files\Reliquary\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ReliquaryComponent.cpp">
+      <Filter>Source Files\Reliquary\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ReliquaryRelicStructures.cpp">
+      <Filter>Source Files\Reliquary\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Exception.h">
@@ -228,6 +249,39 @@
     <ClInclude Include="Handle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ReliquaryShards.h">
+      <Filter>Header Files\Reliquary\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquaryRelics.h">
+      <Filter>Header Files\Reliquary\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="KnownPolymorphicSerializer.h">
+      <Filter>Header Files\Reliquary\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquaryCurators.h">
+      <Filter>Header Files\Reliquary\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquarySignals.h">
+      <Filter>Header Files\Reliquary\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquaryComponent.h">
+      <Filter>Header Files\Reliquary\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquaryCuratorsDefinition.h">
+      <Filter>Header Files\Reliquary\Components\Definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquaryRelicsDefinition.h">
+      <Filter>Header Files\Reliquary\Components\Definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquaryShardsDefinition.h">
+      <Filter>Header Files\Reliquary\Components\Definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquarySignalsDefinition.h">
+      <Filter>Header Files\Reliquary\Components\Definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquaryRelicStructures.h">
+      <Filter>Header Files\Reliquary\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
@@ -301,6 +355,15 @@
     </Filter>
     <Filter Include="Source Files\Type">
       <UniqueIdentifier>{e64f272b-71ae-4647-bfcf-a89367385ff9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Reliquary\Components">
+      <UniqueIdentifier>{c5a3ce6b-599b-4848-9222-05feaf5126c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Reliquary\Components">
+      <UniqueIdentifier>{a6acee23-7cb3-4c9f-9549-5540cd370a28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Reliquary\Components\Definitions">
+      <UniqueIdentifier>{6ef96acf-a18d-423e-86b9-391775f0d4e7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
