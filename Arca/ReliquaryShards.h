@@ -45,8 +45,12 @@ namespace Arca
 
             template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && !std::is_const_v<ShardT>, int> = 0>
             [[nodiscard]] Map& MapFor();
+            template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && !std::is_const_v<ShardT>, int> = 0>
+            [[nodiscard]] const Map& MapFor() const;
             template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && std::is_const_v<ShardT>, int> = 0>
             [[nodiscard]] Map& MapFor();
+            template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && std::is_const_v<ShardT>, int> = 0>
+            [[nodiscard]] const Map& MapFor() const;
         private:
             explicit BatchSources(ReliquaryShards& owner);
             friend ReliquaryShards;

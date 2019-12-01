@@ -3,7 +3,7 @@
 #include "ReliquaryFixture.h"
 
 #include <Arca/Shard.h>
-#include <Arca/TypedRelic.h>
+#include <Arca/TypedRelicAutomation.h>
 
 #include <Inscription/BaseScriven.h>
 
@@ -13,12 +13,12 @@ class RelicBatchFixture : public ReliquaryFixture
 {
 public:
     class Relic;
-    class StaticRelic;
+    class GlobalRelic;
     class UnregisteredRelic;
     class Shard;
 };
 
-class RelicBatchFixture::Relic : public TypedRelic
+class RelicBatchFixture::Relic : public TypedRelicAutomation<Relic>
 {
 public:
     int value = 0;
@@ -29,18 +29,18 @@ protected:
     void InitializeImplementation() override;
 };
 
-class RelicBatchFixture::StaticRelic : public TypedRelic
+class RelicBatchFixture::GlobalRelic : public TypedRelicAutomation<GlobalRelic>
 {
 public:
     int value = 0;
 public:
-    StaticRelic() = default;
-    StaticRelic(const ::Inscription::BinaryTableData<Relic>& data);
+    GlobalRelic() = default;
+    GlobalRelic(const ::Inscription::BinaryTableData<Relic>& data);
 protected:
     void InitializeImplementation() override;
 };
 
-class RelicBatchFixture::UnregisteredRelic : public TypedRelic
+class RelicBatchFixture::UnregisteredRelic : public TypedRelicAutomation<UnregisteredRelic>
 {
 protected:
     void InitializeImplementation() override {}
@@ -65,7 +65,7 @@ namespace Arca
     };
 
     template<>
-    struct Traits<::RelicBatchFixture::StaticRelic>
+    struct Traits<::RelicBatchFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandleName typeName;
@@ -115,15 +115,15 @@ namespace Inscription
     };
 
     template<>
-    struct TableData<::RelicBatchFixture::StaticRelic, BinaryArchive> final
-        : TableDataBase<::RelicBatchFixture::StaticRelic, BinaryArchive>
+    struct TableData<::RelicBatchFixture::GlobalRelic, BinaryArchive> final
+        : TableDataBase<::RelicBatchFixture::GlobalRelic, BinaryArchive>
     {
         Base<::Arca::TypedRelic> base;
         int value;
     };
 
     template<>
-    class Scribe<::RelicBatchFixture::StaticRelic, BinaryArchive> final
+    class Scribe<::RelicBatchFixture::GlobalRelic, BinaryArchive> final
         : public RelicScribe<::RelicBatchFixture::Relic, BinaryArchive>
     {
     public:

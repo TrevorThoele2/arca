@@ -10,16 +10,16 @@ namespace Arca
     class Reliquary;
 
     template<class T>
-    class Static
+    class Global
     {
     public:
         using WrappedT = T;
     public:
-        Static() = default;
-        Static(RelicID id, Reliquary& owner);
+        Global() = default;
+        Global(RelicID id, Reliquary& owner);
 
-        bool operator==(const Static& arg) const;
-        bool operator!=(const Static& arg) const;
+        bool operator==(const Global& arg) const;
+        bool operator!=(const Global& arg) const;
 
         explicit operator bool() const;
 
@@ -44,23 +44,23 @@ namespace Arca
     };
 
     template<class T>
-    Static<T>::Static(RelicID id, Reliquary& owner) : id(id), owner(&owner)
+    Global<T>::Global(RelicID id, Reliquary& owner) : id(id), owner(&owner)
     {}
 
     template<class T>
-    bool Static<T>::operator==(const Static& arg) const
+    bool Global<T>::operator==(const Global& arg) const
     {
         return id == arg.id && owner == arg.owner;
     }
 
     template<class T>
-    bool Static<T>::operator!=(const Static& arg) const
+    bool Global<T>::operator!=(const Global& arg) const
     {
         return !(*this == arg);
     }
 
     template<class T>
-    Static<T>::operator bool() const
+    Global<T>::operator bool() const
     {
         if (id == 0)
             return false;
@@ -69,67 +69,67 @@ namespace Arca
     }
 
     template<class T>
-    Static<T>::operator Handle() const
+    Global<T>::operator Handle() const
     {
         return Handle(ID(), Owner());
     }
 
     template<class T>
-    Static<T>::operator T* ()
+    Global<T>::operator T* ()
     {
         return Get();
     }
 
     template<class T>
-    Static<T>::operator const T* () const
+    Global<T>::operator const T* () const
     {
         return Get();
     }
 
     template<class T>
-    T& Static<T>::operator*()
+    T& Global<T>::operator*()
     {
         return *Get();
     }
 
     template<class T>
-    const T& Static<T>::operator*() const
+    const T& Global<T>::operator*() const
     {
         return *Get();
     }
 
     template<class T>
-    T* Static<T>::operator->()
+    T* Global<T>::operator->()
     {
         return Get();
     }
 
     template<class T>
-    const T* Static<T>::operator->() const
+    const T* Global<T>::operator->() const
     {
         return Get();
     }
 
     template<class T>
-    T* Static<T>::Get()
+    T* Global<T>::Get()
     {
-        return Owner().FindStaticStorage<T>(id);
+        return Owner().FindGlobalStorage<T>(id);
     }
 
     template<class T>
-    const T* Static<T>::Get() const
+    const T* Global<T>::Get() const
     {
-        return Owner().FindStaticStorage<T>(id);
+        return Owner().FindGlobalStorage<T>(id);
     }
 
     template<class T>
-    RelicID Static<T>::ID() const
+    RelicID Global<T>::ID() const
     {
         return id;
     }
 
     template<class T>
-    Reliquary& Static<T>::Owner() const
+    Reliquary& Global<T>::Owner() const
     {
         return *owner;
     }
@@ -138,11 +138,11 @@ namespace Arca
 namespace Inscription
 {
     template<class T>
-    class Scribe<Arca::Static<T>, BinaryArchive>
-        : public CompositeScribe<Arca::Static<T>, BinaryArchive>
+    class Scribe<Arca::Global<T>, BinaryArchive>
+        : public CompositeScribe<Arca::Global<T>, BinaryArchive>
     {
     private:
-        using BaseT = CompositeScribe<Arca::Static<T>, BinaryArchive>;
+        using BaseT = CompositeScribe<Arca::Global<T>, BinaryArchive>;
     public:
         using ObjectT = typename BaseT::ObjectT;
         using ArchiveT = typename BaseT::ArchiveT;

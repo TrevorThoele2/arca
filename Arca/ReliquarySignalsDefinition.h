@@ -23,4 +23,10 @@ namespace Arca
     {
         return map;
     }
+
+    template<class RelicT, std::enable_if_t<is_signal_v<RelicT>, int>>
+    auto ReliquarySignals::BatchSources::MapFor() const -> const Map&
+    {
+        return map;
+    }
 }

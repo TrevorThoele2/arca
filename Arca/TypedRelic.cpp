@@ -9,9 +9,12 @@ namespace Arca
         return Handle(id, *owner);
     }
 
-    void TypedRelic::ParentTo(const Handle& parent) const
+    TypedRelic::operator bool() const
     {
-        owner->ParentRelicTo(parent, *this);
+        if (!owner)
+            return false;
+
+        return ReliquaryContainsSelf();
     }
 
     std::optional<Handle> TypedRelic::Parent() const

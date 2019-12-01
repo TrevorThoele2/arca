@@ -2,14 +2,9 @@
 
 #include <unordered_set>
 
-#include "RelicParented.h"
-
 #include <Inscription/MultimapScribe.h>
 #include <Inscription/MemoryScribe.h>
 #include <Inscription/VectorScribe.h>
-
-#include <utility>
-#include "Chroma/StringUtility.h"
 
 using namespace std::string_literals;
 
@@ -21,7 +16,7 @@ namespace Arca
         curators.Work([](Curator& curator) { curator.Work(); });
         curators.Work([](Curator& curator) { curator.StopStep(); });
 
-        for(auto& batchSource : signals.batchSources.map)
+        for (auto& batchSource : signals.batchSources.map)
             batchSource.second->Clear();
     }
 
@@ -37,50 +32,7 @@ namespace Arca
         relics.Destroy(*metadata);
     }
 
-    void Reliquary::ParentRelicTo(const Handle& parent, const Handle& child)
-    {
-        const auto parentID = parent.ID();
-        const auto childID = child.ID();
-
-        if (parent == child)
-            throw CannotParentRelic(
-                "The relic with id ("s + Chroma::ToString(parentID) + ") was attempted to be parented to itself.");
-
-        if (&parent.Owner() != this)
-            throw CannotParentRelic(
-                "The relic with id ("s + Chroma::ToString(parentID) + ") is from a different Reliquary.");
-
-        if (&child.Owner() != this)
-            throw CannotParentRelic(
-                "The relic with id ("s + Chroma::ToString(childID) + ") is from a different Reliquary.");
-
-        auto parentMetadata = relics.MetadataFor(parentID);
-        if (!parentMetadata)
-            throw CannotFindRelic(parentID);
-
-        if (parentMetadata->dynamism == RelicDynamism::Static)
-            throw CannotParentRelic(
-                "The relic with id ("s + Chroma::ToString(childID) + ") was attempted to be parented to a static relic.");
-
-        auto childMetadata = relics.MetadataFor(childID);
-        if (!childMetadata)
-            throw CannotFindRelic(childID);
-
-        if (childMetadata->dynamism == RelicDynamism::Static)
-            throw CannotParentRelic(
-                "The relic with id ("s + Chroma::ToString(childID) + ") is static and cannot be parented to anything.");
-
-        if (childMetadata->parent.has_value())
-            throw CannotParentRelic(
-                "The relic with id("s + Chroma::ToString(childID) + ") is already parented.");;
-
-        parentMetadata->children.push_back(childID);
-        childMetadata->parent = parentID;
-
-        Raise<RelicParented>({ parent, child });
-    }
-
-    std::optional<Handle> Reliquary::ParentOf(const Handle& child)
+    std::optional<Handle> Reliquary::ParentOf(const Handle& child) const
     {
         const auto childID = child.ID();
         const auto metadata = relics.MetadataFor(childID);
@@ -90,7 +42,7 @@ namespace Arca
         if (!metadata->parent)
             return {};
 
-        return Handle(*metadata->parent, *this);
+        return Handle(*metadata->parent, const_cast<Reliquary&>(*this));
     }
 
     Reliquary::SizeT Reliquary::RelicSize() const
@@ -129,7 +81,6 @@ namespace Arca
     Handle Reliquary::HandleFrom(const RelicMetadata& metadata)
     {
         return HandleFrom(metadata.id);
-        
     }
 }
 
@@ -173,9 +124,9 @@ namespace Inscription
         JumpSaveAll(
             object,
             archive,
-            object.relics.staticSerializers,
-            object.relics.staticMap,
-            [](Arca::ReliquaryRelics::StaticMap::value_type& entry) { return entry.first; });
+            object.relics.globalSerializers,
+            object.relics.globalMap,
+            [](Arca::ReliquaryRelics::GlobalMap::value_type& entry) { return entry.first; });
 
         JumpSaveAll(
             object,
@@ -200,7 +151,7 @@ namespace Inscription
         JumpLoadAll(
             object,
             archive,
-            object.relics.staticSerializers);
+            object.relics.globalSerializers);
 
         JumpLoadAll(
             object,

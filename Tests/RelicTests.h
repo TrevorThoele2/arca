@@ -2,7 +2,7 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/TypedRelic.h>
+#include <Arca/TypedRelicAutomation.h>
 #include <Arca/Shard.h>
 
 #include <Arca/Serialization.h>
@@ -30,7 +30,7 @@ public:
         explicit OtherShard(int myValue);
     };
 
-    class BasicTypedRelic : public TypedRelic
+    class BasicTypedRelic : public TypedRelicAutomation<BasicTypedRelic, BasicShard>
     {
     public:
         Ptr<BasicShard> basicShard;
@@ -41,18 +41,18 @@ public:
         void InitializeImplementation() override;
     };
 
-    class StaticRelic : public TypedRelic
+    class GlobalRelic : public TypedRelicAutomation<GlobalRelic, BasicShard>
     {
     public:
         Ptr<BasicShard> basicShard;
     public:
-        StaticRelic() = default;
-        explicit StaticRelic(const ::Inscription::BinaryTableData<StaticRelic>& data);
+        GlobalRelic() = default;
+        explicit GlobalRelic(const ::Inscription::BinaryTableData<GlobalRelic>& data);
     protected:
         void InitializeImplementation() override;
     };
 
-    class MostBasicCustomFactoryRelic : public TypedRelic
+    class MostBasicCustomFactoryRelic : public TypedRelicAutomation<MostBasicCustomFactoryRelic>
     {
     public:
         int value = 0;
@@ -62,7 +62,7 @@ public:
         void InitializeImplementation() override {}
     };
 
-    class GuardedCustomFactoryRelic : public TypedRelic
+    class GuardedCustomFactoryRelic : public TypedRelicAutomation<GuardedCustomFactoryRelic>
     {
     public:
         int value = 0;
@@ -94,15 +94,13 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandleName typeName;
-        using Shards = ShardList<::RelicTestsFixture::BasicShard>;
     };
 
     template<>
-    struct Traits<::RelicTestsFixture::StaticRelic>
+    struct Traits<::RelicTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandleName typeName;
-        using Shards = ShardList<::RelicTestsFixture::BasicShard>;
     };
 
     template<>
@@ -171,15 +169,15 @@ namespace Inscription
     };
 
     template<>
-    struct TableData<::RelicTestsFixture::StaticRelic, BinaryArchive> final
-        : TableDataBase<::RelicTestsFixture::StaticRelic, BinaryArchive>
+    struct TableData<::RelicTestsFixture::GlobalRelic, BinaryArchive> final
+        : TableDataBase<::RelicTestsFixture::GlobalRelic, BinaryArchive>
     {
         Base<TypedRelic> base;
     };
 
     template<>
-    class Scribe<::RelicTestsFixture::StaticRelic, BinaryArchive> final
-        : public RelicScribe<::RelicTestsFixture::StaticRelic, BinaryArchive>
+    class Scribe<::RelicTestsFixture::GlobalRelic, BinaryArchive> final
+        : public RelicScribe<::RelicTestsFixture::GlobalRelic, BinaryArchive>
     {
     public:
         class Table : public TableBase

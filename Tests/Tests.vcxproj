@@ -33,6 +33,7 @@
     <ClInclude Include="SignalBatchTests.h" />
     <ClInclude Include="RelicTests.h" />
     <ClInclude Include="SignalTests.h" />
+    <ClInclude Include="GlobalRelicTests.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConstShardTests.cpp" />
@@ -50,6 +51,7 @@
     <ClCompile Include="SignalBatchTests.cpp" />
     <ClCompile Include="RelicTests.cpp" />
     <ClCompile Include="SignalTests.cpp" />
+    <ClCompile Include="GlobalRelicTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Chroma\Chroma\Chroma.vcxproj">

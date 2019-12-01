@@ -49,8 +49,20 @@ namespace Arca
         return map;
     }
 
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && !std::is_const_v<ShardT>, int>>
+    auto ReliquaryShards::BatchSources::MapFor() const -> const Map&
+    {
+        return map;
+    }
+
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && std::is_const_v<ShardT>, int>>
     auto ReliquaryShards::BatchSources::MapFor() -> Map&
+    {
+        return constMap;
+    }
+
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && std::is_const_v<ShardT>, int>>
+    auto ReliquaryShards::BatchSources::MapFor() const -> const Map&
     {
         return constMap;
     }

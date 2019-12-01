@@ -25,7 +25,7 @@ namespace Arca
     {};
 
     template <class T>
-    struct has_shards<T, std::void_t<typename Traits<T>::Shards>> : std::true_type
+    struct has_shards<T, std::void_t<typename T::Shards>> : std::true_type
     {};
 
     template<class T>
@@ -38,7 +38,7 @@ namespace Arca
     class DiscoverShards<T, true>
     {
     public:
-        using Type = typename Traits<T>::Shards;
+        using Type = typename T::Shards;
     };
 
     template<class T>

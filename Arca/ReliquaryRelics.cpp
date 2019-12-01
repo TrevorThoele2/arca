@@ -1,19 +1,21 @@
 #include "ReliquaryRelics.h"
 
+#include <cassert>
+
 #include "Reliquary.h"
 
 #include "Destroying.h"
+#include "RelicParented.h"
 
 namespace Arca
 {
     void ReliquaryRelics::SetupNewInternals(
         RelicID id,
-        RelicDynamism dynamism,
+        RelicOpenness openness,
         std::optional<TypeHandle> typeHandle,
         void* storage)
     {
-        metadataList.emplace_back(id, dynamism, std::move(typeHandle), storage);
-        occupiedIDs.Include(id);
+        metadataList.emplace_back(id, openness, std::move(typeHandle), storage);
     }
 
     void ReliquaryRelics::DestroyMetadata(RelicID id)
@@ -28,7 +30,6 @@ namespace Arca
         if (itr == metadataList.end())
             return;
         metadataList.erase(itr);
-        occupiedIDs.Remove(id);
     }
 
     auto ReliquaryRelics::MetadataFor(RelicID id) -> RelicMetadata*
@@ -58,7 +59,7 @@ namespace Arca
 
     bool ReliquaryRelics::WillDestroy(RelicMetadata* metadata) const
     {
-        return metadata && metadata->dynamism != RelicDynamism::Static;
+        return metadata && metadata->openness != RelicOpenness::Global;
     }
 
     void ReliquaryRelics::Destroy(RelicMetadata& metadata)
@@ -103,16 +104,20 @@ namespace Arca
 
     RelicID ReliquaryRelics::NextID() const
     {
-        const auto itr = occupiedIDs.begin();
-        return itr == occupiedIDs.end() || itr->Start() > 1
-            ? 1
-            : (--occupiedIDs.end())->End() + 1;
+        return nextRelicID;
+    }
+
+    RelicID ReliquaryRelics::AdvanceID()
+    {
+        const auto returnValue = nextRelicID;
+        ++nextRelicID;
+        return returnValue;
     }
 
     bool ReliquaryRelics::CanModify(RelicID id) const
     {
         const auto metadata = MetadataFor(id);
-        return metadata && metadata->dynamism != RelicDynamism::Fixed;
+        return metadata && metadata->openness == RelicOpenness::Open;
     }
 
     void ReliquaryRelics::ModificationRequired(RelicID id) const
@@ -121,8 +126,50 @@ namespace Arca
             throw CannotModify(id);
     }
 
+    void ReliquaryRelics::ThrowIfCannotParent(const Handle& parent, RelicPrototype child)
+    {
+        ValidateParentForParenting(parent);
+
+        assert(parent.ID() != child.id);
+        assert(child.openness != RelicOpenness::Global);
+    }
+
+    void ReliquaryRelics::Parent(const Handle& parent, const Handle& child)
+    {
+        auto& parentMetadata = ValidateParentForParenting(parent);
+
+        assert(&child.Owner() == &Owner());
+
+        const auto childMetadata = MetadataFor(child.ID());
+        assert(childMetadata != nullptr);
+        assert(childMetadata->openness != RelicOpenness::Global);
+        assert(!childMetadata->parent.has_value());
+
+        parentMetadata.children.push_back(child.ID());
+        childMetadata->parent = parent.ID();
+
+        Owner().Raise<RelicParented>({ parent, child });
+    }
+
     ReliquaryRelics::BatchSources::BatchSources(ReliquaryRelics& owner) : BatchSourcesBase(owner)
     {}
+
+    RelicMetadata& ReliquaryRelics::ValidateParentForParenting(const Handle& parent)
+    {
+        if (&parent.Owner() != &Owner())
+            throw CannotParentRelic(
+                "The parent relic is from a different Reliquary.");
+
+        const auto parentMetadata = MetadataFor(parent.ID());
+        if (!parentMetadata)
+            throw CannotFindRelic(parent.ID());
+
+        if (parentMetadata->openness == RelicOpenness::Global)
+            throw CannotParentRelic(
+                "Attempted to parent to a global relic.");
+
+        return *parentMetadata;
+    }
 
     ReliquaryRelics::ReliquaryRelics(Reliquary& owner) : ReliquaryComponent(owner, "relic")
     {}

@@ -2,7 +2,7 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/TypedRelic.h>
+#include <Arca/TypedRelicAutomation.h>
 #include <Arca/Shard.h>
 
 #include <Inscription/BinaryArchive.h>
@@ -40,7 +40,7 @@ public:
         explicit OtherShard(int myValue);
     };
 
-    class BasicTypedRelic : public TypedRelic
+    class BasicTypedRelic : public TypedRelicAutomation<BasicTypedRelic, BasicShard>
     {
     public:
         Ptr<BasicShard> basicShard;
@@ -51,13 +51,13 @@ public:
         void InitializeImplementation() override;
     };
 
-    class StaticRelic : public TypedRelic
+    class GlobalRelic : public TypedRelicAutomation<GlobalRelic, BasicShard>
     {
     public:
         Ptr<BasicShard> basicShard;
     public:
-        StaticRelic() = default;
-        explicit StaticRelic(const ::Inscription::BinaryTableData<StaticRelic>& data);
+        GlobalRelic() = default;
+        explicit GlobalRelic(const ::Inscription::BinaryTableData<GlobalRelic>& data);
     protected:
         void InitializeImplementation() override;
     };
@@ -97,15 +97,13 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandleName typeName;
-        using Shards = ShardList<::ReliquaryTestsFixture::BasicShard>;
     };
 
     template<>
-    struct Traits<::ReliquaryTestsFixture::StaticRelic>
+    struct Traits<::ReliquaryTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandleName typeName;
-        using Shards = ShardList<::ReliquaryTestsFixture::BasicShard>;
     };
 
     template<>
@@ -186,15 +184,15 @@ namespace Inscription
     };
 
     template<>
-    struct TableData<::ReliquaryTestsFixture::StaticRelic, BinaryArchive> final
-        : TableDataBase<::ReliquaryTestsFixture::StaticRelic, BinaryArchive>
+    struct TableData<::ReliquaryTestsFixture::GlobalRelic, BinaryArchive> final
+        : TableDataBase<::ReliquaryTestsFixture::GlobalRelic, BinaryArchive>
     {
         Base<TypedRelic> base;
     };
 
     template<>
-    class Scribe<::ReliquaryTestsFixture::StaticRelic, BinaryArchive> final
-        : public RelicScribe<::ReliquaryTestsFixture::StaticRelic, BinaryArchive>
+    class Scribe<::ReliquaryTestsFixture::GlobalRelic, BinaryArchive> final
+        : public RelicScribe<::ReliquaryTestsFixture::GlobalRelic, BinaryArchive>
     {
     public:
         class Table : public TableBase

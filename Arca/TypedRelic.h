@@ -11,15 +11,15 @@
 namespace Arca
 {
     class Reliquary;
-    class DynamicRelic;
+    class OpenRelic;
 
     class TypedRelic
     {
     public:
         operator Handle() const;
+        explicit operator bool() const;
 
-        void ParentTo(const Handle& parent) const;
-        std::optional<Handle> Parent() const;
+        [[nodiscard]] std::optional<Handle> Parent() const;
 
         [[nodiscard]] RelicID ID() const;
         [[nodiscard]] Reliquary& Owner() const;
@@ -32,6 +32,7 @@ namespace Arca
         explicit TypedRelic(const ::Inscription::BinaryTableData<TypedRelic>& data);
 
         virtual void InitializeImplementation() {}
+        [[nodiscard]] virtual bool ReliquaryContainsSelf() const = 0;
     private:
         RelicID id = 0;
         Reliquary* owner = nullptr;
@@ -59,7 +60,7 @@ namespace Inscription
         public TableScribe<::Arca::TypedRelic, BinaryArchive>
     {
     public:
-        class Table : public TableBase
+        class Table final : public TableBase
         {
         public:
             Table()

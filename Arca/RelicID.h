@@ -4,7 +4,5 @@
 
 namespace Arca
 {
-    using RelicID = std::int32_t;
-
-    static const RelicID invalidRelicID = 0;
+    using RelicID = std::int64_t;
 }
