@@ -14,19 +14,11 @@ RelicTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std::mo
 RelicTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
 {}
 
-RelicTestsFixture::BasicTypedRelic::BasicTypedRelic(const ::Inscription::BinaryTableData<BasicTypedRelic>& data) :
-    TypedRelicAutomation(data.base)
-{}
-
 void RelicTestsFixture::BasicTypedRelic::InitializeImplementation()
 {
     auto shards = ExtractShards();
     basicShard = std::get<0>(shards);
 }
-
-RelicTestsFixture::GlobalRelic::GlobalRelic(const ::Inscription::BinaryTableData<GlobalRelic>& data) :
-    TypedRelicAutomation(data.base)
-{}
 
 void RelicTestsFixture::GlobalRelic::InitializeImplementation()
 {
@@ -131,6 +123,12 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
                     REQUIRE(shard);
                 }
 
+                THEN("reliquary has shard")
+                {
+                    REQUIRE(reliquary->Find<BasicShard>(openRelic.ID()));
+                    REQUIRE(reliquary->Contains<BasicShard>(openRelic.ID()));
+                }
+
                 THEN("relic has shard")
                 {
                     REQUIRE(openRelic.Find<BasicShard>());
@@ -144,6 +142,12 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
                     THEN("reliquary loses a shard")
                     {
                         REQUIRE(reliquary->ShardSize() == preCreateRelicSize);
+                    }
+
+                    THEN("reliquary does not have shard")
+                    {
+                        REQUIRE(!reliquary->Find<BasicShard>(openRelic.ID()));
+                        REQUIRE(!reliquary->Contains<BasicShard>(openRelic.ID()));
                     }
 
                     THEN("relic does not have shard")
@@ -185,7 +189,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
                 REQUIRE(reliquary->Find<BasicShard>(fixedRelic.ID()));
 
                 REQUIRE(fixedRelic.Find<BasicShard>());
-                REQUIRE(fixedRelic.Has<BasicShard>());
+                REQUIRE(fixedRelic.Contains<BasicShard>());
             }
 
             THEN("reliquary relic count increments by one")

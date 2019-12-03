@@ -39,8 +39,4 @@ namespace Arca
     }
 
     TypedRelic::~TypedRelic() = default;
-
-    TypedRelic::TypedRelic(const ::Inscription::BinaryTableData<TypedRelic>& data) :
-        id(data.id)
-    {}
 }

@@ -55,7 +55,7 @@ namespace Arca
         Ptr<T> PtrFrom(const RelicMetadata& metadata);
     protected:
         template<class BatchSourceBaseT, class Owner, class Derived>
-        class BatchSourcesBase
+        class StorageBatchSources
         {
         private:
             template<class RelicT>
@@ -105,7 +105,7 @@ namespace Arca
                 return Arca::Batch<ObjectT>(batchSource);
             }
         protected:
-            explicit BatchSourcesBase(Owner& owner) : owner(&owner)
+            explicit StorageBatchSources(Owner& owner) : owner(&owner)
             {}
         private:
             Owner* owner;
@@ -117,8 +117,80 @@ namespace Arca
 
             [[nodiscard]] const Derived& AsDerived() const
             {
-
                 return static_cast<const Derived&>(*this);
+            }
+        };
+
+        template<class BatchSourceBaseT, class Owner, class Derived>
+        class MetaBatchSources
+        {
+        private:
+            template<class RelicT>
+            constexpr static bool is_object_v = Derived::template is_object_v<RelicT>;
+        public:
+            using Ptr = std::unique_ptr<BatchSourceBaseT>;
+            using Map = std::unordered_map<TypeHandleName, Ptr>;
+
+            Map map;
+
+            [[nodiscard]] BatchSourceBaseT* Find(const TypeHandleName& typeHandle) const
+            {
+                const auto found = map.find(typeHandle);
+                if (found == map.end())
+                    return nullptr;
+
+                return found->second.get();
+            }
+            template<class ObjectT, std::enable_if_t<is_object_v<ObjectT>, int> = 0>
+            [[nodiscard]] BatchSource<ObjectT>* Find() const
+            {
+                auto& map = AsDerived().template MapFor<ObjectT>();
+                const auto typeHandleName = TypeHandleFor<ObjectT>().name;
+                auto found = map.find(typeHandleName);
+                if (found == map.end())
+                    return nullptr;
+
+                return static_cast<BatchSource<ObjectT>*>(found->second.get());
+            }
+            template<class ObjectT, std::enable_if_t<is_object_v<ObjectT>, int> = 0>
+            BatchSource<ObjectT>& Required()
+            {
+                auto found = Find<ObjectT>();
+                if (found)
+                    return *found;
+
+                auto typeName = TypeHandleFor<ObjectT>().name;
+                auto batchSource = AsDerived().template Create<ObjectT>();
+                auto emplaced = map.emplace(typeName, std::move(batchSource)).first->second.get();
+                return static_cast<BatchSource<ObjectT>&>(*emplaced);
+            }
+
+            template<class ObjectT, std::enable_if_t<is_object_v<ObjectT>, int> = 0>
+            Batch<ObjectT> Batch()
+            {
+                auto& batchSource = Required<ObjectT>();
+                return Arca::Batch<ObjectT>(batchSource);
+            }
+        protected:
+            explicit MetaBatchSources(Owner& owner) : owner(&owner)
+            {}
+        protected:
+            Owner* owner;
+        private:
+            [[nodiscard]] Derived& AsDerived()
+            {
+                return static_cast<Derived&>(*this);
+            }
+
+            [[nodiscard]] const Derived& AsDerived() const
+            {
+                return static_cast<const Derived&>(*this);
+            }
+
+            template<class T>
+            [[nodiscard]] static TypeHandle TypeHandleFor()
+            {
+                return Derived::template TypeHandleFor<T>();
             }
         };
     private:

@@ -19,6 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Either.h" />
+    <ClInclude Include="EitherShardBatch.h" />
+    <ClInclude Include="EitherShardBatchIterator.h" />
+    <ClInclude Include="EitherShardBatchSource.h" />
+    <ClInclude Include="EitherShardBatchSourceDefinition.h" />
     <ClInclude Include="FixedRelic.h" />
     <ClInclude Include="FixedRelicDefinition.h" />
     <ClInclude Include="Batch.h" />
@@ -90,6 +95,7 @@
     <ClCompile Include="Created.cpp" />
     <ClCompile Include="CuratorHandle.cpp" />
     <ClCompile Include="Destroying.cpp" />
+    <ClCompile Include="EitherShardBatchSource.cpp" />
     <ClCompile Include="FixedRelic.cpp" />
     <ClCompile Include="KnownPolymorphicSerializer.cpp" />
     <ClCompile Include="ObjectType.cpp" />

@@ -60,25 +60,12 @@ namespace Inscription
     };
 
     template<>
-    struct TableData<::IsTypeTestsFixture::Relic, BinaryArchive> final
-        : TableDataBase<::IsTypeTestsFixture::Relic, BinaryArchive>
-    {
-        Base<TypedRelic> base;
-    };
-
-    template<>
     class Scribe<::IsTypeTestsFixture::Relic, BinaryArchive> final
-        : public RelicScribe<::IsTypeTestsFixture::Relic, BinaryArchive>
+        : public CompositeRelicScribe<::IsTypeTestsFixture::Relic, BinaryArchive>
     {
-    public:
-        class Table : public TableBase
-        {
-        public:
-            Table()
-            {
-                AddDataLink(DataLink::Base(data.base));
-            }
-        };
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        {}
     };
 
     template<>

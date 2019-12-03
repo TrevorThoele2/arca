@@ -13,9 +13,6 @@ namespace Arca
         using Shards = ShardList<AllShards...>;
     protected:
         TypedRelicAutomation() = default;
-        explicit TypedRelicAutomation(const ::Inscription::BinaryTableData<TypedRelic>& data)
-            : TypedRelic(data)
-        {}
     protected:
         [[nodiscard]] auto ExtractShards() const
         {

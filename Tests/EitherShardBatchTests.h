@@ -7,41 +7,36 @@
 
 using namespace Arca;
 
-class ConstShardTestsFixture : public ReliquaryFixture
+class EitherShardBatchFixture : public ReliquaryFixture
 {
 public:
     class Shard;
     class Relic;
 };
 
-class ConstShardTestsFixture::Shard
+class EitherShardBatchFixture::Shard
 {
 public:
-    int value = 100;
+    int value = 0;
 public:
     Shard() = default;
     explicit Shard(int value);
 };
 
-class ConstShardTestsFixture::Relic : public TypedRelicAutomation<Relic, const Shard>
-{
-public:
-    Ptr<const Shard> shard;
-protected:
-    void InitializeImplementation() override;
-};
+class EitherShardBatchFixture::Relic : public TypedRelicAutomation<Relic, Shard>
+{};
 
 namespace Arca
 {
     template<>
-    struct Traits<::ConstShardTestsFixture::Shard>
+    struct Traits<::EitherShardBatchFixture::Shard>
     {
         static const ObjectType objectType = ObjectType::Shard;
         static const TypeHandleName typeName;
     };
 
     template<>
-    struct Traits<::ConstShardTestsFixture::Relic>
+    struct Traits<::EitherShardBatchFixture::Relic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandleName typeName;
@@ -51,8 +46,8 @@ namespace Arca
 namespace Inscription
 {
     template<>
-    class Scribe<::ConstShardTestsFixture::Shard, BinaryArchive> final
-        : public ShardScribe<::ConstShardTestsFixture::Shard, BinaryArchive>
+    class Scribe<::EitherShardBatchFixture::Shard, BinaryArchive> final
+        : public ShardScribe<::EitherShardBatchFixture::Shard, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
@@ -62,8 +57,8 @@ namespace Inscription
     };
 
     template<>
-    class Scribe<::ConstShardTestsFixture::Relic, BinaryArchive> final
-        : public CompositeRelicScribe<::ConstShardTestsFixture::Relic, BinaryArchive>
+    class Scribe<::EitherShardBatchFixture::Relic, BinaryArchive> final
+        : public CompositeRelicScribe<::EitherShardBatchFixture::Relic, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override

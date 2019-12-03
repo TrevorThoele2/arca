@@ -79,10 +79,10 @@ namespace Inscription
 
     template<>
     class Scribe<::ShardBatchFixture::GlobalRelic, BinaryArchive> final
-        : public RelicScribe<::ShardBatchFixture::GlobalRelic, BinaryArchive>
+        : public CompositeRelicScribe<::ShardBatchFixture::GlobalRelic, BinaryArchive>
     {
-    public:
-        class Table : public TableBase
-        {};
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        {}
     };
 }

@@ -12,6 +12,9 @@ namespace Arca
 
         auto& batch = batchSources.Required<ShardT>();
         auto added = batch.Add(id);
+
+        AttemptAddToEitherBatches(id, *added);
+
         Owner().Raise<Created>(HandleFrom(id));
         return PtrFrom<ShardT>(id);
     }
@@ -21,8 +24,22 @@ namespace Arca
     {
         Relics().ModificationRequired(id);
 
+        {
+            auto eitherBatchSource = eitherBatchSources.Find<Either<std::decay_t<ShardT>>>();
+            if (eitherBatchSource)
+                eitherBatchSource->DestroyFromBase(id, std::is_const_v<ShardT>);
+        }
+
         auto& batch = batchSources.Required<ShardT>();
         batch.Destroy(id);
+    }
+
+    template<class ShardT>
+    void ReliquaryShards::AttemptAddToEitherBatches(RelicID id, ShardT& shard)
+    {
+        auto found = eitherBatchSources.Find<Either<ShardT>>();
+        if (found)
+            found->Add(id, shard, std::is_const_v<ShardT>);
     }
 
     template<class ShardT>
@@ -65,5 +82,17 @@ namespace Arca
     auto ReliquaryShards::BatchSources::MapFor() const -> const Map&
     {
         return constMap;
+    }
+
+    template<class T, std::enable_if_t<is_either_v<T>, int>>
+    auto ReliquaryShards::EitherBatchSources::MapFor() -> Map&
+    {
+        return map;
+    }
+
+    template<class T, std::enable_if_t<is_either_v<T>, int>>
+    auto ReliquaryShards::EitherBatchSources::MapFor() const -> const Map&
+    {
+        return map;
     }
 }

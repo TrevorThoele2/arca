@@ -28,4 +28,10 @@ namespace Arca
     {
         return static_cast<bool>(Find<ShardT>());
     }
+
+    template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int>>
+    bool OpenRelic::Contains() const
+    {
+        return owner->Contains<EitherT>(id);
+    }
 }

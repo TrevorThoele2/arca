@@ -6,7 +6,6 @@
 #include <Arca/Shard.h>
 
 #include <Inscription/BinaryArchive.h>
-#include "Inscription/BaseScriven.h"
 
 #include <Chroma/StringUtility.h>
 
@@ -143,46 +142,29 @@ namespace Inscription
     };
 
     template<>
-    struct TableData<::IntegrationTestsFixture::ChildRelic, BinaryArchive> final
-        : TableDataBase<::IntegrationTestsFixture::ChildRelic, BinaryArchive>
-    {
-        Base<TypedRelic> base;
-    };
-
-    template<>
     class Scribe<::IntegrationTestsFixture::ChildRelic, BinaryArchive> final
-        : public RelicScribe<::IntegrationTestsFixture::ChildRelic, BinaryArchive>
+        : public CompositeRelicScribe<::IntegrationTestsFixture::ChildRelic, BinaryArchive>
     {
-    public:
-        class Table : public TableBase
-        {
-        public:
-            Table()
-            {
-                AddDataLink(DataLink::Base(data.base));
-            }
-        };
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        {}
     };
 
     template<>
     struct TableData<::IntegrationTestsFixture::ParentRelic, BinaryArchive> final
         : TableDataBase<::IntegrationTestsFixture::ParentRelic, BinaryArchive>
-    {
-        Base<TypedRelic> base;
-    };
+    {};
 
     template<>
     class Scribe<::IntegrationTestsFixture::ParentRelic, BinaryArchive> final
-        : public RelicScribe<::IntegrationTestsFixture::ParentRelic, BinaryArchive>
+        : public TableRelicScribe<::IntegrationTestsFixture::ParentRelic, BinaryArchive>
     {
     public:
-        class Table : public TableBase
+        class Table final : public TableBase
         {
         public:
             Table()
-            {
-                AddDataLink(DataLink::Base(data.base));
-            }
+            {}
         };
     };
 

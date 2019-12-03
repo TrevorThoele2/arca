@@ -27,7 +27,6 @@ public:
         Ptr<BasicShard> basicShard;
     public:
         BasicTypedRelic() = default;
-        explicit BasicTypedRelic(const ::Inscription::BinaryTableData<BasicTypedRelic>& data);
     protected:
         void InitializeImplementation() override;
     };
@@ -38,7 +37,6 @@ public:
         Ptr<BasicShard> basicShard;
     public:
         GlobalRelic() = default;
-        explicit GlobalRelic(const ::Inscription::BinaryTableData<GlobalRelic>& data);
     protected:
         void InitializeImplementation() override;
     };
@@ -82,46 +80,20 @@ namespace Inscription
     };
 
     template<>
-    struct TableData<::GlobalRelicTestsFixture::BasicTypedRelic, BinaryArchive> final
-        : TableDataBase<::GlobalRelicTestsFixture::BasicTypedRelic, BinaryArchive>
-    {
-        Base<TypedRelic> base;
-    };
-
-    template<>
     class Scribe<::GlobalRelicTestsFixture::BasicTypedRelic, BinaryArchive> final
-        : public RelicScribe<::GlobalRelicTestsFixture::BasicTypedRelic, BinaryArchive>
+        : public CompositeRelicScribe<::GlobalRelicTestsFixture::BasicTypedRelic, BinaryArchive>
     {
-    public:
-        class Table : public TableBase
-        {
-        public:
-            Table()
-            {
-                AddDataLink(DataLink::Base(data.base));
-            }
-        };
-    };
-
-    template<>
-    struct TableData<::GlobalRelicTestsFixture::GlobalRelic, BinaryArchive> final
-        : TableDataBase<::GlobalRelicTestsFixture::GlobalRelic, BinaryArchive>
-    {
-        Base<TypedRelic> base;
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        {}
     };
 
     template<>
     class Scribe<::GlobalRelicTestsFixture::GlobalRelic, BinaryArchive> final
-        : public RelicScribe<::GlobalRelicTestsFixture::GlobalRelic, BinaryArchive>
+        : public CompositeRelicScribe<::GlobalRelicTestsFixture::GlobalRelic, BinaryArchive>
     {
-    public:
-        class Table : public TableBase
-        {
-        public:
-            Table()
-            {
-                AddDataLink(DataLink::Base(data.base));
-            }
-        };
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        {}
     };
 }

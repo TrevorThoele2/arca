@@ -10,19 +10,11 @@ ReliquaryTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std
 ReliquaryTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
 {}
 
-ReliquaryTestsFixture::BasicTypedRelic::BasicTypedRelic(const ::Inscription::BinaryTableData<BasicTypedRelic>& data) :
-    TypedRelicAutomation(data.base)
-{}
-
 void ReliquaryTestsFixture::BasicTypedRelic::InitializeImplementation()
 {
     auto shards = ExtractShards();
     basicShard = std::get<0>(shards);
 }
-
-ReliquaryTestsFixture::GlobalRelic::GlobalRelic(const ::Inscription::BinaryTableData<GlobalRelic>& data) :
-    TypedRelicAutomation(data.base)
-{}
 
 void ReliquaryTestsFixture::GlobalRelic::InitializeImplementation()
 {
@@ -185,7 +177,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "creating relic from registered relic str
             THEN("relic has shard")
             {
                 REQUIRE(relic.Find<BasicShard>());
-                REQUIRE(relic.Has<BasicShard>());
+                REQUIRE(relic.Contains<BasicShard>());
             }
         }
 

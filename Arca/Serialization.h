@@ -8,6 +8,7 @@
 #include <Inscription/EnumScribe.h>
 #include <Inscription/BufferScribe.h>
 #include <Inscription/ContainerSize.h>
+#include <Inscription/BaseScriven.h>
 
 #include <Inscription/Access.h>
 #include <Inscription/OutputBinaryArchive.h>
