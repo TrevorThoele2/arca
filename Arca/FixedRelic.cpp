@@ -35,3 +35,12 @@ namespace Arca
     FixedRelic::FixedRelic(RelicID id, Reliquary& owner) : id(id), owner(&owner)
     {}
 }
+
+namespace Inscription
+{
+    void Scribe<Arca::FixedRelic, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    {
+        archive(object.id);
+        archive(object.owner);
+    }
+}

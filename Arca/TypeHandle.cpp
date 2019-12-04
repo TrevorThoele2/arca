@@ -8,6 +8,16 @@ namespace Arca
     TypeHandle::TypeHandle(TypeHandleName name, bool isConst)
         : name(std::move(name)), isConst(isConst)
     {}
+
+    bool TypeHandle::operator==(const TypeHandle& arg) const
+    {
+        return name == arg.name && isConst == arg.isConst;
+    }
+
+    bool TypeHandle::operator!=(const TypeHandle& arg) const
+    {
+        return name == arg.name && isConst == arg.isConst;
+    }
 }
 
 namespace Chroma

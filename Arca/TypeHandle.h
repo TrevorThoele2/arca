@@ -20,6 +20,9 @@ namespace Arca
 
         TypeHandle& operator=(const TypeHandle& arg) = default;
         TypeHandle& operator=(TypeHandle&& arg) = default;
+
+        bool operator==(const TypeHandle& arg) const;
+        bool operator!=(const TypeHandle& arg) const;
     };
 }
 

@@ -29,6 +29,7 @@ namespace Arca
         if (!relics.WillDestroy(metadata))
             return;
 
+        shards.NotifyCompositesRelicDestroy(metadata->id);
         relics.Destroy(*metadata);
     }
 
@@ -43,6 +44,11 @@ namespace Arca
             return {};
 
         return Handle(*metadata->parent, const_cast<Reliquary&>(*this));
+    }
+
+    std::vector<RelicID> Reliquary::AllIDs() const
+    {
+        return relics.AllIDs();
     }
 
     Reliquary::SizeT Reliquary::RelicSize() const

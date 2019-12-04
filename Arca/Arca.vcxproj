@@ -19,6 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="All.h" />
+    <ClInclude Include="CompositeShardBatch.h" />
+    <ClInclude Include="CompositeShardBatchIterator.h" />
+    <ClInclude Include="CompositeShardBatchSource.h" />
+    <ClInclude Include="CompositeShardBatchSourceDefinition.h" />
+    <ClInclude Include="AreAllShards.h" />
     <ClInclude Include="Either.h" />
     <ClInclude Include="EitherShardBatch.h" />
     <ClInclude Include="EitherShardBatchIterator.h" />
@@ -92,6 +98,7 @@
     <ClInclude Include="RelicTraits.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CompositeShardBatchSource.cpp" />
     <ClCompile Include="Created.cpp" />
     <ClCompile Include="CuratorHandle.cpp" />
     <ClCompile Include="Destroying.cpp" />

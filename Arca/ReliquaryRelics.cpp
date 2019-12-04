@@ -105,6 +105,14 @@ namespace Arca
         DestroyMetadata(id);
     }
 
+    std::vector<RelicID> ReliquaryRelics::AllIDs() const
+    {
+        std::vector<RelicID> returnValue;
+        for (auto& loop : metadataList)
+            returnValue.push_back(loop.id);
+        return returnValue;
+    }
+
     RelicID ReliquaryRelics::NextID() const
     {
         return nextRelicID;
