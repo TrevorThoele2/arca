@@ -82,7 +82,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary->Global<GlobalRelic>(),
+                    reliquary->Find<Global<GlobalRelic>>(),
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The relic ("s + ::Chroma::ToString(TypeHandleFor<GlobalRelic>()) + ") was not registered. " +
@@ -120,7 +120,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary->Create<FixedRelic>(relicStructureName),
+                    reliquary->Create<ClosedRelic>(relicStructureName),
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The relic structure ("s + relicStructureName + ") was not registered.")

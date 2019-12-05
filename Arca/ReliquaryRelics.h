@@ -81,7 +81,7 @@ namespace Arca
         KnownPolymorphicSerializerList globalSerializers;
 
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicT* FindGlobalStorage(RelicID id);
+        RelicT* FindGlobalStorage();
     private:
         RelicMetadata& ValidateParentForParenting(const Handle& parent);
     private:

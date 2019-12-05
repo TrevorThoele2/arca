@@ -167,7 +167,7 @@ SCENARIO_METHOD(
             .Curator<ParentChildCurator>()
             .Actualize();
 
-        std::unordered_map<int, Ptr<ParentRelic>> mappedParents;
+        std::unordered_map<int, LocalPtr<ParentRelic>> mappedParents;
 
         auto curator = reliquary->Find<ParentChildCurator>();
         curator->onStartStep = [&mappedParents](BasicCuratorBase& self)

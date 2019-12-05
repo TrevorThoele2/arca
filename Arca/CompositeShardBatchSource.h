@@ -52,7 +52,7 @@ namespace Arca
         template<class U>
         struct ToPtr
         {
-            using Type = Ptr<U>;
+            using Type = LocalPtr<U>;
         };
     public:
         using TupleT = typename Pack::template Transform<ToPtr>::Type::TupleT;
@@ -93,10 +93,11 @@ namespace Arca
         size_t referenceCount = 0;
     private:
         RelicStructure structure;
+        bool StructureContains(TypeHandle typeHandle) const;
     private:
         void CreateEntry(RelicID id);
         void DestroyEntry(RelicID id);
-        [[nodiscard]] bool HasEntry(RelicID id) const;
+        [[nodiscard]] bool ContainsEntry(RelicID id) const;
         [[nodiscard]] TupleT CreateTuple(RelicID id);
 
         template<::Chroma::VariadicTemplateSize i>

@@ -29,7 +29,7 @@ namespace Arca
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
-    RelicT* ReliquaryRelics::FindGlobalStorage(RelicID id)
+    RelicT* ReliquaryRelics::FindGlobalStorage()
     {
         const auto typeHandle = TypeHandleFor<RelicT>();
         const auto found = globalMap.find(typeHandle.name);

@@ -192,7 +192,7 @@ namespace Arca
                             typeHandle.name,
                             [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
                             {
-                                auto relic = reliquary.Global<RelicT>();
+                                auto relic = reliquary.Find<Global<RelicT>>();
                                 archive(*relic);
                             },
                             [](::Inscription::BinaryArchive& archive)
@@ -206,7 +206,7 @@ namespace Arca
 
         typedRelicInitializerList.push_back([](Reliquary& reliquary)
             {
-                auto relic = reliquary.Global<RelicT>();
+                auto relic = reliquary.Find<Global<RelicT>>();
                 relic->Initialize(reliquary);
             });
 

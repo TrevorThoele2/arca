@@ -7,7 +7,7 @@ namespace Arca
     enum class RelicOpenness
     {
         Open,
-        Fixed,
+        Closed,
         Typed,
         Global
     };

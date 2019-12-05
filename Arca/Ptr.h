@@ -10,16 +10,16 @@ namespace Arca
     class Reliquary;
 
     template<class T>
-    class Ptr
+    class LocalPtr
     {
     public:
         using WrappedT = T;
     public:
-        Ptr() = default;
-        Ptr(RelicID id, Reliquary& owner);
+        LocalPtr() = default;
+        LocalPtr(RelicID id, Reliquary& owner);
 
-        bool operator==(const Ptr& arg) const;
-        bool operator!=(const Ptr& arg) const;
+        bool operator==(const LocalPtr& arg) const;
+        bool operator!=(const LocalPtr& arg) const;
 
         explicit operator bool() const;
 
@@ -41,23 +41,23 @@ namespace Arca
     };
 
     template<class T>
-    Ptr<T>::Ptr(RelicID id, Reliquary& owner) : id(id), owner(&owner)
+    LocalPtr<T>::LocalPtr(RelicID id, Reliquary& owner) : id(id), owner(&owner)
     {}
 
     template<class T>
-    bool Ptr<T>::operator==(const Ptr& arg) const
+    bool LocalPtr<T>::operator==(const LocalPtr& arg) const
     {
         return id == arg.id && owner == arg.owner;
     }
 
     template<class T>
-    bool Ptr<T>::operator!=(const Ptr& arg) const
+    bool LocalPtr<T>::operator!=(const LocalPtr& arg) const
     {
         return !(*this == arg);
     }
 
     template<class T>
-    Ptr<T>::operator bool() const
+    LocalPtr<T>::operator bool() const
     {
         if (id == 0)
             return false;
@@ -66,31 +66,31 @@ namespace Arca
     }
 
     template<class T>
-    Ptr<T>::operator Handle() const
+    LocalPtr<T>::operator Handle() const
     {
         return Handle(ID(), Owner());
     }
 
     template<class T>
-    Ptr<T>::operator T* () const
+    LocalPtr<T>::operator T* () const
     {
         return Get();
     }
 
     template<class T>
-    T& Ptr<T>::operator*() const
+    T& LocalPtr<T>::operator*() const
     {
         return *Get();
     }
 
     template<class T>
-    T* Ptr<T>::operator->() const
+    T* LocalPtr<T>::operator->() const
     {
         return Get();
     }
 
     template<class T>
-    T* Ptr<T>::Get() const
+    T* LocalPtr<T>::Get() const
     {
         auto retrieved = Owner().FindStorage<T>(id);
         previousValue = retrieved;
@@ -98,13 +98,13 @@ namespace Arca
     }
 
     template<class T>
-    RelicID Ptr<T>::ID() const
+    RelicID LocalPtr<T>::ID() const
     {
         return id;
     }
 
     template<class T>
-    Reliquary& Ptr<T>::Owner() const
+    Reliquary& LocalPtr<T>::Owner() const
     {
         return *owner;
     }
@@ -113,11 +113,11 @@ namespace Arca
 namespace Inscription
 {
     template<class T>
-    class Scribe<Arca::Ptr<T>, BinaryArchive>
-        : public CompositeScribe<Arca::Ptr<T>, BinaryArchive>
+    class Scribe<Arca::LocalPtr<T>, BinaryArchive>
+        : public CompositeScribe<Arca::LocalPtr<T>, BinaryArchive>
     {
     private:
-        using BaseT = CompositeScribe<Arca::Ptr<T>, BinaryArchive>;
+        using BaseT = CompositeScribe<Arca::LocalPtr<T>, BinaryArchive>;
     public:
         using ObjectT = typename BaseT::ObjectT;
         using ArchiveT = typename BaseT::ArchiveT;
@@ -125,6 +125,127 @@ namespace Inscription
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive)
         {
             
+        }
+    };
+}
+
+namespace Arca
+{
+    class Reliquary;
+
+    template<class T>
+    class GlobalPtr
+    {
+    public:
+        using WrappedT = T;
+    public:
+        GlobalPtr() = default;
+        GlobalPtr(RelicID id, Reliquary& owner);
+
+        bool operator==(const GlobalPtr& arg) const;
+        bool operator!=(const GlobalPtr& arg) const;
+
+        explicit operator bool() const;
+
+        operator Handle() const;
+
+        explicit operator T* () const;
+
+        [[nodiscard]] T& operator*() const;
+        [[nodiscard]] T* operator->() const;
+
+        [[nodiscard]] T* Get() const;
+
+        [[nodiscard]] RelicID ID() const;
+        [[nodiscard]] Reliquary& Owner() const;
+    private:
+        RelicID id;
+        Reliquary* owner = nullptr;
+        mutable T* previousValue = nullptr;
+    };
+
+    template<class T>
+    GlobalPtr<T>::GlobalPtr(RelicID id, Reliquary& owner) : id(id), owner(&owner)
+    {}
+
+    template<class T>
+    bool GlobalPtr<T>::operator==(const GlobalPtr& arg) const
+    {
+        return owner == arg.owner;
+    }
+
+    template<class T>
+    bool GlobalPtr<T>::operator!=(const GlobalPtr& arg) const
+    {
+        return !(*this == arg);
+    }
+
+    template<class T>
+    GlobalPtr<T>::operator bool() const
+    {
+        return Get() != nullptr;
+    }
+
+    template<class T>
+    GlobalPtr<T>::operator Handle() const
+    {
+        return Handle(id, Owner());
+    }
+
+    template<class T>
+    GlobalPtr<T>::operator T* () const
+    {
+        return Get();
+    }
+
+    template<class T>
+    T& GlobalPtr<T>::operator*() const
+    {
+        return *Get();
+    }
+
+    template<class T>
+    T* GlobalPtr<T>::operator->() const
+    {
+        return Get();
+    }
+
+    template<class T>
+    T* GlobalPtr<T>::Get() const
+    {
+        auto retrieved = Owner().template FindGlobalStorage<T>();
+        previousValue = retrieved;
+        return retrieved;
+    }
+
+    template<class T>
+    RelicID GlobalPtr<T>::ID() const
+    {
+        return id;
+    }
+
+    template<class T>
+    Reliquary& GlobalPtr<T>::Owner() const
+    {
+        return *owner;
+    }
+}
+
+namespace Inscription
+{
+    template<class T>
+    class Scribe<Arca::GlobalPtr<T>, BinaryArchive>
+        : public CompositeScribe<Arca::GlobalPtr<T>, BinaryArchive>
+    {
+    private:
+        using BaseT = CompositeScribe<Arca::GlobalPtr<T>, BinaryArchive>;
+    public:
+        using ObjectT = typename BaseT::ObjectT;
+        using ArchiveT = typename BaseT::ArchiveT;
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+        {
+
         }
     };
 }

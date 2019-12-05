@@ -6,7 +6,7 @@
 namespace Arca
 {
     template<class ShardT>
-    Ptr<ShardT> ReliquaryShards::Create(RelicID id)
+    LocalPtr<ShardT> ReliquaryShards::Create(RelicID id)
     {
         Relics().ModificationRequired(id);
 
@@ -17,7 +17,7 @@ namespace Arca
         NotifyCompositesShardCreate(id);
 
         Owner().Raise<Created>(HandleFrom(id));
-        return PtrFrom<ShardT>(id);
+        return LocalPtrFrom<ShardT>(id);
     }
 
     template<class ShardT>
@@ -31,20 +31,21 @@ namespace Arca
                 eitherBatchSource->DestroyFromBase(id, std::is_const_v<ShardT>);
         }
 
-        NotifyCompositesShardDestroy(id);
         auto& batch = batchSources.Required<ShardT>();
         batch.Destroy(id);
+
+        NotifyCompositesShardDestroy(id);
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    Ptr<ShardT> ReliquaryShards::Find(RelicID id) const
+    LocalPtr<ShardT> ReliquaryShards::Find(RelicID id) const
     {
         auto& batchSource = batchSources.Required<ShardT>();
         auto found = batchSource.Find(id);
         if (!found)
             return {};
 
-        return Ptr<ShardT>(id, const_cast<Reliquary&>(Owner()));
+        return LocalPtrFrom<ShardT>(id);
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>

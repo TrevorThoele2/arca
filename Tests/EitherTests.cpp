@@ -153,7 +153,7 @@ SCENARIO_METHOD(EitherTestsFixture, "FixedRelic either", "[FixedRelic][either][s
 
         WHEN("creating const shard")
         {
-            auto relic = reliquary->Create<FixedRelic>(RelicStructure { TypeHandleFor<const BasicShard>() });
+            auto relic = reliquary->Create<ClosedRelic>(RelicStructure { TypeHandleFor<const BasicShard>() });
 
             THEN("contains either")
             {
@@ -163,7 +163,7 @@ SCENARIO_METHOD(EitherTestsFixture, "FixedRelic either", "[FixedRelic][either][s
 
         WHEN("creating non-const shard")
         {
-            auto relic = reliquary->Create<FixedRelic>(RelicStructure{ TypeHandleFor<BasicShard>() });
+            auto relic = reliquary->Create<ClosedRelic>(RelicStructure{ TypeHandleFor<BasicShard>() });
 
             THEN("contains either")
             {
@@ -173,7 +173,7 @@ SCENARIO_METHOD(EitherTestsFixture, "FixedRelic either", "[FixedRelic][either][s
 
         WHEN("creating const and non-const shard")
         {
-            auto relic = reliquary->Create<FixedRelic>(
+            auto relic = reliquary->Create<ClosedRelic>(
                 RelicStructure
                 {
                     TypeHandleFor<const BasicShard>(),
@@ -189,11 +189,11 @@ SCENARIO_METHOD(EitherTestsFixture, "FixedRelic either", "[FixedRelic][either][s
 
         WHEN("creating separate relic with shard")
         {
-            reliquary->Create<FixedRelic>(RelicStructure{ TypeHandleFor<BasicShard>() });
+            reliquary->Create<ClosedRelic>(RelicStructure{ TypeHandleFor<BasicShard>() });
 
             THEN("irrelevant relic does not contain either")
             {
-                auto irrelevant = reliquary->Create<FixedRelic>(RelicStructure{});
+                auto irrelevant = reliquary->Create<ClosedRelic>(RelicStructure{});
                 REQUIRE(!irrelevant.Contains<Either<BasicShard>>());
             }
         }
