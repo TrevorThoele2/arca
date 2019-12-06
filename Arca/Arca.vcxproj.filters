@@ -97,6 +97,9 @@
     <ClCompile Include="ClosedRelic.cpp">
       <Filter>Source Files\Relic</Filter>
     </ClCompile>
+    <ClCompile Include="HandleSlim.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Exception.h">
@@ -327,8 +330,8 @@
     <ClInclude Include="ClosedRelicDefinition.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
-    <ClInclude Include="Global.h">
-      <Filter>Header Files\Relic</Filter>
+    <ClInclude Include="HandleSlim.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

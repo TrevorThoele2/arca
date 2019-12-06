@@ -12,6 +12,7 @@ class EitherShardBatchFixture : public ReliquaryFixture
 public:
     class Shard;
     class Relic;
+    class GlobalRelic;
 };
 
 class EitherShardBatchFixture::Shard
@@ -24,6 +25,9 @@ public:
 };
 
 class EitherShardBatchFixture::Relic : public TypedRelicAutomation<Relic, Shard>
+{};
+
+class EitherShardBatchFixture::GlobalRelic : public TypedRelicAutomation<GlobalRelic, Shard>
 {};
 
 namespace Arca
@@ -40,6 +44,14 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandleName typeName;
+    };
+
+    template<>
+    struct Traits<::EitherShardBatchFixture::GlobalRelic>
+    {
+        static const ObjectType objectType = ObjectType::Relic;
+        static const TypeHandleName typeName;
+        static const bool isGlobal = true;
     };
 }
 
@@ -59,6 +71,15 @@ namespace Inscription
     template<>
     class Scribe<::EitherShardBatchFixture::Relic, BinaryArchive> final
         : public CompositeRelicScribe<::EitherShardBatchFixture::Relic, BinaryArchive>
+    {
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        {}
+    };
+
+    template<>
+    class Scribe<::EitherShardBatchFixture::GlobalRelic, BinaryArchive> final
+        : public CompositeRelicScribe<::EitherShardBatchFixture::GlobalRelic, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override

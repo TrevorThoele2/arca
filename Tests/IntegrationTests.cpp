@@ -89,14 +89,14 @@ SCENARIO_METHOD(IntegrationTestsFixture, "working with signals through curators"
         };
 
         auto reliquary = ReliquaryOrigin()
-            .Shard<BasicShard>()
-            .Curator<BasicCurator<0>>()
-            .Curator<BasicCurator<1>>()
-            .Curator<BasicCurator<2>>()
-            .Curator<BasicCurator<3>>()
-            .Curator<BasicCurator<4>>()
+            .Type<BasicShard>()
+            .Type<BasicCurator<0>>()
+            .Type<BasicCurator<1>>()
+            .Type<BasicCurator<2>>()
+            .Type<BasicCurator<3>>()
+            .Type<BasicCurator<4>>()
             .CuratorPipeline(curatorPipeline)
-            .Signal<BasicSignal>()
+            .Type<BasicSignal>()
             .Actualize();
 
         std::vector<BasicCuratorBase*> curatorsInOrder
@@ -161,13 +161,13 @@ SCENARIO_METHOD(
         using ParentChildCurator = BasicCurator<0>;
 
         auto reliquary = ReliquaryOrigin()
-            .Relic<ChildRelic>()
-            .Relic<ParentRelic>()
-            .Signal<BasicSignal>()
-            .Curator<ParentChildCurator>()
+            .Type<ChildRelic>()
+            .Type<ParentRelic>()
+            .Type<BasicSignal>()
+            .Type<ParentChildCurator>()
             .Actualize();
 
-        std::unordered_map<int, LocalPtr<ParentRelic>> mappedParents;
+        std::unordered_map<int, Ptr<ParentRelic>> mappedParents;
 
         auto curator = reliquary->Find<ParentChildCurator>();
         curator->onStartStep = [&mappedParents](BasicCuratorBase& self)
@@ -220,8 +220,8 @@ SCENARIO_METHOD(IntegrationTestsFixture, "curators with custom signal execution"
         };
 
         auto reliquary = ReliquaryOrigin()
-            .Signal<BasicSignal>()
-            .Curator<FocusedCurator>()
+            .Type<BasicSignal>()
+            .Type<FocusedCurator>()
             .Actualize();
 
         std::unordered_map<int, ParentRelic*> mappedParents;

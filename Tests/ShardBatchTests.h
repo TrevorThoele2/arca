@@ -30,7 +30,7 @@ class ShardBatchFixture::UnregisteredShard
 class ShardBatchFixture::GlobalRelic : public TypedRelicAutomation<GlobalRelic, Shard>
 {
 public:
-    LocalPtr<Shard> shard;
+    Ptr<Shard> shard;
 protected:
     void InitializeImplementation() override;
 };
@@ -56,6 +56,7 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandleName typeName;
+        static const bool isGlobal = true;
     };
 }
 

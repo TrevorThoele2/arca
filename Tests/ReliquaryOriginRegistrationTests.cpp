@@ -28,11 +28,11 @@ SCENARIO_METHOD(ReliquaryOriginRegistrationTestsFixture, "registering types mult
         const auto relicStructureName = dataGeneration.Random<std::string>();
 
         auto reliquaryOrigin = ReliquaryOrigin()
-            .Shard<Shard>()
-            .Relic<Relic>()
-            .GlobalRelic<GlobalRelic>()
-            .Signal<Signal>()
-            .Curator<Curator>()
+            .Type<Shard>()
+            .Type<Relic>()
+            .Type<GlobalRelic>()
+            .Type<Signal>()
+            .Type<Curator>()
             .RelicStructure(relicStructureName, RelicStructure{});
 
         WHEN("registering shard again")
@@ -41,7 +41,7 @@ SCENARIO_METHOD(ReliquaryOriginRegistrationTestsFixture, "registering types mult
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquaryOrigin.Shard<Shard>(),
+                    reliquaryOrigin.Type<Shard>(),
                     AlreadyRegistered,
                     Catch::Matchers::Message(
                         "The shard (" + TypeHandleFor<Shard>().name + ") was already registered. " +
@@ -56,7 +56,7 @@ SCENARIO_METHOD(ReliquaryOriginRegistrationTestsFixture, "registering types mult
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquaryOrigin.Relic<Relic>(),
+                    reliquaryOrigin.Type<Relic>(),
                     AlreadyRegistered,
                     Catch::Matchers::Message(
                         "The relic (" + TypeHandleFor<Relic>().name + ") was already registered. " +
@@ -71,7 +71,7 @@ SCENARIO_METHOD(ReliquaryOriginRegistrationTestsFixture, "registering types mult
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquaryOrigin.GlobalRelic<GlobalRelic>(),
+                    reliquaryOrigin.Type<GlobalRelic>(),
                     AlreadyRegistered,
                     Catch::Matchers::Message(
                         "The global relic (" + TypeHandleFor<GlobalRelic>().name + ") was already registered. " +
@@ -86,7 +86,7 @@ SCENARIO_METHOD(ReliquaryOriginRegistrationTestsFixture, "registering types mult
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquaryOrigin.Curator<Curator>(),
+                    reliquaryOrigin.Type<Curator>(),
                     AlreadyRegistered,
                     Catch::Matchers::Message(
                         "The curator (" + TypeHandleFor<Curator>().name + ") was already registered. " +
@@ -101,7 +101,7 @@ SCENARIO_METHOD(ReliquaryOriginRegistrationTestsFixture, "registering types mult
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquaryOrigin.Signal<Signal>(),
+                    reliquaryOrigin.Type<Signal>(),
                     AlreadyRegistered,
                     Catch::Matchers::Message(
                         "The signal ("s + typeid(Signal).name() + ") was already registered.")

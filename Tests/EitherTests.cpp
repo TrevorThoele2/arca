@@ -25,8 +25,8 @@ SCENARIO_METHOD(EitherTestsFixture, "reliquary either", "[reliquary][either][sha
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
-            .Shard<BasicShard>()
-            .Relic<BasicTypedRelic>()
+            .Type<BasicShard>()
+            .Type<BasicTypedRelic>()
             .Actualize();
 
         WHEN("not creating anything")
@@ -90,8 +90,8 @@ SCENARIO_METHOD(EitherTestsFixture, "OpenRelic either", "[OpenRelic][either][sha
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
-            .Shard<BasicShard>()
-            .Relic<BasicTypedRelic>()
+            .Type<BasicShard>()
+            .Type<BasicTypedRelic>()
             .Actualize();
 
         WHEN("creating const shard")
@@ -142,13 +142,13 @@ SCENARIO_METHOD(EitherTestsFixture, "OpenRelic either", "[OpenRelic][either][sha
     }
 }
 
-SCENARIO_METHOD(EitherTestsFixture, "FixedRelic either", "[FixedRelic][either][shard]")
+SCENARIO_METHOD(EitherTestsFixture, "ClosedRelic either", "[ClosedRelic][either][shard]")
 {
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
-            .Shard<BasicShard>()
-            .Relic<BasicTypedRelic>()
+            .Type<BasicShard>()
+            .Type<BasicTypedRelic>()
             .Actualize();
 
         WHEN("creating const shard")

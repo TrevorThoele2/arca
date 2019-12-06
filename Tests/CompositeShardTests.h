@@ -25,9 +25,9 @@ public:
     class BasicTypedRelic : public TypedRelicAutomation<BasicTypedRelic, Shard<0>, Shard<1>, Shard<2>>
     {
     public:
-        LocalPtr<Shard<0>> shard0;
-        LocalPtr<Shard<1>> shard1;
-        LocalPtr<Shard<2>> shard2;
+        Ptr<Shard<0>> shard0;
+        Ptr<Shard<1>> shard1;
+        Ptr<Shard<2>> shard2;
     public:
         BasicTypedRelic() = default;
     protected:

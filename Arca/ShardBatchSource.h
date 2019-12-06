@@ -21,6 +21,8 @@ namespace Arca
         virtual bool DestroyFromBase(RelicID id) = 0;
 
         [[nodiscard]] virtual SizeT Size() const = 0;
+
+        [[nodiscard]] virtual TypeHandle TypeHandle() const = 0;
     };
 
     template<class T>
@@ -63,6 +65,8 @@ namespace Arca
         [[nodiscard]] const_iterator begin() const;
         [[nodiscard]] iterator end();
         [[nodiscard]] const_iterator end() const;
+
+        [[nodiscard]] Arca::TypeHandle TypeHandle() const override;
     private:
         List list;
     private:
@@ -170,6 +174,12 @@ namespace Arca
     auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::end() const -> const_iterator
     {
         return list.end();
+    }
+
+    template<class T>
+    Arca::TypeHandle BatchSource<T, std::enable_if_t<is_shard_v<T>>>::TypeHandle() const
+    {
+        return TypeHandleFor<T>();
     }
 }
 

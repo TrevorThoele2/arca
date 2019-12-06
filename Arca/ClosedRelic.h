@@ -18,7 +18,7 @@ namespace Arca
         explicit operator bool() const;
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] LocalPtr<ShardT> Find() const;
+        [[nodiscard]] Ptr<ShardT> Find() const;
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] bool Contains() const;
         template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
@@ -39,6 +39,12 @@ namespace Arca
         friend Reliquary;
     private:
         INSCRIPTION_ACCESS;
+    };
+
+    template<>
+    struct Traits<ClosedRelic>
+    {
+        static const TypeHandleName typeName;
     };
 }
 

@@ -71,10 +71,10 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
     GIVEN("all types registered")
     {
         auto reliquary = ReliquaryOrigin()
-            .Shard<BasicShard>()
-            .Shard<OtherShard>()
-            .Relic<BasicTypedRelic>()
-            .GlobalRelic<GlobalRelic>()
+            .Type<BasicShard>()
+            .Type<OtherShard>()
+            .Type<BasicTypedRelic>()
+            .Type<GlobalRelic>()
             .Actualize();
 
         WHEN("creating open relic")
@@ -158,13 +158,13 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
                 }
             }
 
-            WHEN("retrieving as fixed")
+            WHEN("retrieving as closed")
             {
-                auto fixedRelic = reliquary->Find<ClosedRelic>(openRelic.ID());
+                auto closedRelic = reliquary->Find<ClosedRelic>(openRelic.ID());
 
-                THEN("fixed relic is not found")
+                THEN("closed relic is not found")
                 {
-                    REQUIRE(!fixedRelic);
+                    REQUIRE(!closedRelic);
                 }
             }
 
@@ -179,17 +179,17 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
             }
         }
 
-        WHEN("creating fixed relic with valid structure")
+        WHEN("creating closed relic with valid structure")
         {
             auto preCreateRelicCount = reliquary->RelicSize();
-            auto fixedRelic = reliquary->Create<ClosedRelic>(RelicStructure{ TypeHandleFor<BasicShard>() });
+            auto closedRelic = reliquary->Create<ClosedRelic>(RelicStructure{ TypeHandleFor<BasicShard>() });
 
             THEN("structure has been satisfied")
             {
-                REQUIRE(reliquary->Find<BasicShard>(fixedRelic.ID()));
+                REQUIRE(reliquary->Find<BasicShard>(closedRelic.ID()));
 
-                REQUIRE(fixedRelic.Find<BasicShard>());
-                REQUIRE(fixedRelic.Contains<BasicShard>());
+                REQUIRE(closedRelic.Find<BasicShard>());
+                REQUIRE(closedRelic.Contains<BasicShard>());
             }
 
             THEN("reliquary relic count increments by one")
@@ -199,17 +199,17 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             THEN("reliquary contains relic")
             {
-                REQUIRE(reliquary->Contains<ClosedRelic>(fixedRelic.ID()));
+                REQUIRE(reliquary->Contains<ClosedRelic>(closedRelic.ID()));
             }
 
             WHEN("finding open relic")
             {
-                auto found = reliquary->Find<ClosedRelic>(fixedRelic.ID());
+                auto found = reliquary->Find<ClosedRelic>(closedRelic.ID());
 
                 THEN("found is same as created")
                 {
-                    REQUIRE(found->ID() == fixedRelic.ID());
-                    REQUIRE(&found->Owner() == &fixedRelic.Owner());
+                    REQUIRE(found->ID() == closedRelic.ID());
+                    REQUIRE(&found->Owner() == &closedRelic.Owner());
                 }
             }
 
@@ -217,8 +217,8 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
             {
                 auto preDestroyRelicCount = reliquary->RelicSize();
 
-                auto id = fixedRelic.ID();
-                reliquary->Destroy(fixedRelic);
+                auto id = closedRelic.ID();
+                reliquary->Destroy(closedRelic);
 
                 THEN("finding relic returns empty")
                 {
@@ -227,7 +227,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
                 THEN("destroying again does not throw")
                 {
-                    REQUIRE_NOTHROW(reliquary->Destroy(fixedRelic));
+                    REQUIRE_NOTHROW(reliquary->Destroy(closedRelic));
                 }
 
                 THEN("reliquary relic count decrements by one")
@@ -238,7 +238,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("retrieving as open")
             {
-                const auto asOpen = reliquary->Find<OpenRelic>(fixedRelic.ID());
+                const auto asOpen = reliquary->Find<OpenRelic>(closedRelic.ID());
 
                 THEN("open is empty")
                 {
@@ -248,7 +248,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("retrieving as typed")
             {
-                const auto asTyped = reliquary->Find<BasicTypedRelic>(fixedRelic.ID());
+                const auto asTyped = reliquary->Find<BasicTypedRelic>(closedRelic.ID());
 
                 THEN("typed is empty")
                 {
@@ -303,13 +303,13 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
                 }
             }
 
-            WHEN("retrieving as fixed")
+            WHEN("retrieving as closed")
             {
-                auto fixedRelic = reliquary->Find<ClosedRelic>(typedRelic.ID());
+                auto closedRelic = reliquary->Find<ClosedRelic>(typedRelic.ID());
 
-                THEN("fixed relic is not found")
+                THEN("closed relic is not found")
                 {
-                    REQUIRE(!fixedRelic);
+                    REQUIRE(!closedRelic);
                 }
             }
         }
@@ -321,8 +321,8 @@ SCENARIO_METHOD(RelicTestsFixture, "many relics", "[relic]")
     GIVEN("many open relics")
     {
         auto reliquary = ReliquaryOrigin()
-            .Shard<BasicShard>()
-            .Shard<OtherShard>()
+            .Type<BasicShard>()
+            .Type<OtherShard>()
             .Actualize();
 
         std::vector<OpenRelic> relics;
@@ -360,7 +360,7 @@ SCENARIO_METHOD(RelicTestsFixture, "custom factory relic", "[relic][factory]")
     GIVEN("most basic custom factory relic registered")
     {
         auto reliquary = ReliquaryOrigin()
-            .Relic<MostBasicCustomFactoryRelic>()
+            .Type<MostBasicCustomFactoryRelic>()
             .Actualize();
 
         WHEN("creating relic")
@@ -377,7 +377,7 @@ SCENARIO_METHOD(RelicTestsFixture, "custom factory relic", "[relic][factory]")
     GIVEN("guarded custom factory relic registered")
     {
         auto reliquary = ReliquaryOrigin()
-            .Relic<GuardedCustomFactoryRelic>()
+            .Type<GuardedCustomFactoryRelic>()
             .Actualize();
 
         WHEN("creating relic with 100 value")
@@ -409,8 +409,8 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
-            .Relic<BasicTypedRelic>()
-            .Shard<BasicShard>()
+            .Type<BasicTypedRelic>()
+            .Type<BasicShard>()
             .Actualize();
 
         auto createdRelicSignals = reliquary->Batch<Created>();
@@ -436,7 +436,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
             }
         }
 
-        WHEN("creating fixed relic")
+        WHEN("creating closed relic")
         {
             const auto created = reliquary->Create<ClosedRelic>(RelicStructure { TypeHandleFor<BasicShard>() });
 
@@ -483,11 +483,11 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
     GIVEN("global relic and open relic")
     {
         auto reliquary = ReliquaryOrigin()
-            .GlobalRelic<GlobalRelic>()
-            .Shard<BasicShard>()
+            .Type<GlobalRelic>()
+            .Type<BasicShard>()
             .Actualize();
 
-        auto globalRelic = reliquary->Find<Global<GlobalRelic>>();
+        auto globalRelic = reliquary->Find<GlobalRelic>();
 
         auto onParented = reliquary->Batch<RelicParented>();
 
@@ -513,7 +513,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
     GIVEN("parent and child created")
     {
         auto reliquary = ReliquaryOrigin()
-            .Shard<BasicShard>()
+            .Type<BasicShard>()
             .Actualize();
 
         auto parent = reliquary->Create<OpenRelic>();
@@ -595,7 +595,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
     GIVEN("parent from one reliquary and child from another")
     {
         auto origin = ReliquaryOrigin()
-            .Shard<BasicShard>();
+            .Type<BasicShard>();
 
         auto parentReliquary = origin.Actualize();
         auto childReliquary = origin.Actualize();
@@ -640,7 +640,7 @@ SCENARIO_METHOD(RelicTestsFixture, "references to relics stay empty when relic p
     GIVEN("all registered")
     {
         auto reliquary = ReliquaryOrigin()
-            .Relic<BasicTypedRelic>()
+            .Type<BasicTypedRelic>()
             .Actualize();
 
         WHEN("generating relic list, deleting half then recreating half of list")

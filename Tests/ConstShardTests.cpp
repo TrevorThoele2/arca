@@ -26,7 +26,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
     GIVEN("open relic created")
     {
         auto reliquary = ReliquaryOrigin()
-            .Shard<Shard>()
+            .Type<Shard>()
             .Actualize();
 
         auto relic = reliquary->Create<OpenRelic>();
@@ -202,7 +202,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
     GIVEN("relic created from relic structure")
     {
         auto reliquary = ReliquaryOrigin()
-            .Shard<Shard>()
+            .Type<Shard>()
             .Actualize();
 
         auto relicStructure = RelicStructure{};
@@ -259,8 +259,8 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
     GIVEN("relic created from typed relic")
     {
         auto reliquary = ReliquaryOrigin()
-            .Shard<Shard>()
-            .Relic<Relic>()
+            .Type<Shard>()
+            .Type<Relic>()
             .Actualize();
 
         auto relic = reliquary->Create<Relic>();
@@ -311,7 +311,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shard serialization", "[shard][co
     GIVEN("saved reliquary with shard")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Shard<Shard>()
+            .Type<Shard>()
             .Actualize();
 
         auto savedRelic = savedReliquary->Create<OpenRelic>();
@@ -325,7 +325,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shard serialization", "[shard][co
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Shard<Shard>()
+                .Type<Shard>()
                 .Actualize();
 
             {

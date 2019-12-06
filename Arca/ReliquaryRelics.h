@@ -32,7 +32,7 @@ namespace Arca
         void SetupNewInternals(
             RelicID id,
             RelicOpenness openness,
-            std::optional<TypeHandle> typeHandle = {},
+            TypeHandle typeHandle = {},
             void* storage = nullptr);
         void DestroyMetadata(RelicID id);
         [[nodiscard]] RelicMetadata* MetadataFor(RelicID id);
@@ -56,6 +56,10 @@ namespace Arca
 
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         RelicT* FindStorage(RelicID id);
+    public:
+        using Initializer = void(*)(Reliquary&);
+        using InitializerList = std::vector<Initializer>;
+        InitializerList initializers;
     public:
         class BatchSources : public StorageBatchSources<RelicBatchSourceBase, ReliquaryRelics, BatchSources>
         { 

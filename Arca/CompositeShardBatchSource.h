@@ -52,7 +52,7 @@ namespace Arca
         template<class U>
         struct ToPtr
         {
-            using Type = LocalPtr<U>;
+            using Type = Ptr<U>;
         };
     public:
         using TupleT = typename Pack::template Transform<ToPtr>::Type::TupleT;

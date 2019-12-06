@@ -6,7 +6,7 @@ namespace Arca
 {
     OpenRelic::operator Handle() const
     {
-        return Handle(id, *owner);
+        return Handle(id, *owner, TypeHandle(Traits<OpenRelic>::typeName, false));
     }
 
     OpenRelic::operator bool() const
@@ -35,6 +35,8 @@ namespace Arca
     OpenRelic::OpenRelic(RelicID id, Reliquary& owner)
         : id(id), owner(&owner)
     {}
+
+    const TypeHandleName Traits<OpenRelic>::typeName = "OpenRelic";
 }
 
 namespace Inscription

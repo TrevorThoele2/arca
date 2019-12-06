@@ -36,14 +36,14 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
     GIVEN("all types registered")
     {
         auto reliquary = ReliquaryOrigin()
-            .Shard<BasicShard>()
-            .Relic<BasicTypedRelic>()
-            .GlobalRelic<GlobalRelic>()
+            .Type<BasicShard>()
+            .Type<BasicTypedRelic>()
+            .Type<GlobalRelic>()
             .Actualize();
 
         WHEN("retrieving global relic")
         {
-            const auto globalRelic = reliquary->Find<Global<GlobalRelic>>();
+            const auto globalRelic = reliquary->Find<GlobalRelic>();
 
             THEN("structure has been satisfied")
             {
@@ -57,7 +57,7 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
 
                 reliquary->Destroy(globalRelic);
 
-                auto foundAgain = reliquary->Find<Global<GlobalRelic>>();
+                auto foundAgain = reliquary->Find<GlobalRelic>();
 
                 REQUIRE(foundAgain->ID() == globalRelic->ID());
                 REQUIRE(foundAgain->basicShard == globalRelic->basicShard);
@@ -74,13 +74,13 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
                 }
             }
 
-            WHEN("retrieving as fixed")
+            WHEN("retrieving as closed")
             {
-                const auto asFixed = reliquary->Find<ClosedRelic>(globalRelic->ID());
+                const auto asClosed = reliquary->Find<ClosedRelic>(globalRelic->ID());
 
-                THEN("fixed is empty")
+                THEN("closed is empty")
                 {
-                    REQUIRE(!asFixed);
+                    REQUIRE(!asClosed);
                 }
             }
 
@@ -99,8 +99,8 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
     GIVEN("global relic registered")
     {
         auto reliquary = ReliquaryOrigin()
-            .Shard<BasicShard>()
-            .GlobalRelic<GlobalRelic>()
+            .Type<BasicShard>()
+            .Type<GlobalRelic>()
             .Actualize();
 
         WHEN("creating typed relic with type from global relic")

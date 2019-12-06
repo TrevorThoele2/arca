@@ -86,7 +86,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
 {
     GIVEN("registered reliquary and relic")
     {
-        auto reliquary = ReliquaryOrigin().Shard<Shard>().Actualize();
+        auto reliquary = ReliquaryOrigin().Type<Shard>().Actualize();
         auto relic = reliquary->Create<OpenRelic>();
 
         WHEN("creating shard")
@@ -170,8 +170,8 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
     GIVEN("registered reliquary with global relic")
     {
         auto reliquary = ReliquaryOrigin()
-            .Shard<Shard>()
-            .GlobalRelic<GlobalRelic>()
+            .Type<Shard>()
+            .Type<GlobalRelic>()
             .Actualize();
 
         WHEN("starting batch")
@@ -197,7 +197,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch serialization", "[ShardBatch][se
     GIVEN("saved reliquary")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Shard<Shard>()
+            .Type<Shard>()
             .Actualize();
 
         auto savedRelic = savedReliquary->Create<OpenRelic>();
@@ -211,7 +211,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch serialization", "[ShardBatch][se
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Shard<Shard>()
+                .Type<Shard>()
                 .Actualize();
 
             {

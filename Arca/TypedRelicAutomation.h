@@ -23,5 +23,10 @@ namespace Arca
         {
             return Owner().Contains<Derived>(ID());
         }
+
+        [[nodiscard]] Arca::TypeHandle TypeHandle() const override
+        {
+            return TypeHandleFor<Derived>();
+        }
     };
 }

@@ -36,7 +36,7 @@
     <ClInclude Include="BatchSource.h" />
     <ClInclude Include="Destroying.h" />
     <ClInclude Include="CuratorHandle.h" />
-    <ClInclude Include="Global.h" />
+    <ClInclude Include="HandleSlim.h" />
     <ClInclude Include="HasFactoryMethod.h" />
     <ClInclude Include="IsType.h" />
     <ClInclude Include="KnownPolymorphicSerializer.h" />
@@ -104,6 +104,7 @@
     <ClCompile Include="Destroying.cpp" />
     <ClCompile Include="EitherShardBatchSource.cpp" />
     <ClCompile Include="ClosedRelic.cpp" />
+    <ClCompile Include="HandleSlim.cpp" />
     <ClCompile Include="KnownPolymorphicSerializer.cpp" />
     <ClCompile Include="ObjectType.cpp" />
     <ClCompile Include="Pipeline.cpp" />

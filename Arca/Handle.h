@@ -1,6 +1,8 @@
 #pragma once
 
 #include "RelicID.h"
+#include "TypeHandle.h"
+#include "HandleSlim.h"
 
 namespace Arca
 {
@@ -10,15 +12,19 @@ namespace Arca
     {
     public:
         Handle() = default;
-        Handle(RelicID id, Reliquary& owner);
+        Handle(RelicID id, Reliquary& owner, TypeHandle type);
 
         bool operator==(const Handle& arg) const;
         bool operator!=(const Handle& arg) const;
 
+        operator HandleSlim() const;
+
         [[nodiscard]] Reliquary& Owner() const;
         [[nodiscard]] RelicID ID() const;
+        [[nodiscard]] TypeHandle Type() const;
     private:
         RelicID id = 0;
         Reliquary* owner = nullptr;
+        Arca::TypeHandle type;
     };
 }

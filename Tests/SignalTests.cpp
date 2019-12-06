@@ -13,7 +13,7 @@ SCENARIO_METHOD(SignalTestsFixture, "signal", "[signal]")
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
-            .Signal<BasicSignal>()
+            .Type<BasicSignal>()
             .Actualize();
 
         WHEN("raising signal")

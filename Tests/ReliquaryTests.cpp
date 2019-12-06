@@ -139,7 +139,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary wih single shard")
     GIVEN("reliquary registered with single shard")
     {
         auto reliquary = ReliquaryOrigin()
-            .Shard<BasicShard>()
+            .Type<BasicShard>()
             .Actualize();
 
         WHEN("creating open relic with non-const and const shards")
@@ -169,7 +169,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "creating relic from registered relic str
         WHEN("constructing relic from registered structure")
         {
             auto reliquary = reliquaryOrigin
-                .Shard<BasicShard>()
+                .Type<BasicShard>()
                 .Actualize();
 
             auto relic = reliquary->Create<ClosedRelic>(structureName);
@@ -205,13 +205,13 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "registered reliquary with every type", "
     GIVEN("all registered")
     {
         auto reliquary = ReliquaryOrigin()
-            .Relic<BasicTypedRelic>()
-            .GlobalRelic<GlobalRelic>()
+            .Type<BasicTypedRelic>()
+            .Type<GlobalRelic>()
             .RelicStructure(dataGeneration.Random<std::string>(), RelicStructure())
-            .Shard<BasicShard>()
-            .Curator<BasicCurator>()
+            .Type<BasicShard>()
+            .Type<BasicCurator>()
             .CuratorPipeline(Pipeline())
-            .Signal<BasicSignal>()
+            .Type<BasicSignal>()
             .Actualize();
 
         WHEN("checking relic size")
@@ -234,11 +234,11 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
     GIVEN("saved empty reliquary with every type registered")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Shard<BasicShard>()
-            .GlobalRelic<GlobalRelic>()
-            .Curator<BasicCurator>()
+            .Type<BasicShard>()
+            .Type<GlobalRelic>()
+            .Type<BasicCurator>()
             .CuratorPipeline(Pipeline())
-            .Signal<BasicSignal>()
+            .Type<BasicSignal>()
             .Actualize();
 
         {
@@ -249,11 +249,11 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Shard<BasicShard>()
-                .GlobalRelic<GlobalRelic>()
-                .Curator<BasicCurator>()
+                .Type<BasicShard>()
+                .Type<GlobalRelic>()
+                .Type<BasicCurator>()
                 .CuratorPipeline(Pipeline())
-                .Signal<BasicSignal>()
+                .Type<BasicSignal>()
                 .Actualize();
 
             {
@@ -271,7 +271,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
     GIVEN("saved reliquary with open relic")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Shard<BasicShard>()
+            .Type<BasicShard>()
             .Actualize();
 
         auto savedRelic = savedReliquary->Create<OpenRelic>();
@@ -286,7 +286,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Shard<BasicShard>()
+                .Type<BasicShard>()
                 .Actualize();
 
             {
@@ -367,7 +367,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
         WHEN("loading reliquary with different shard type with same input type handle")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Shard<OtherBasicShard>()
+                .Type<OtherBasicShard>()
                 .Actualize();
 
             {

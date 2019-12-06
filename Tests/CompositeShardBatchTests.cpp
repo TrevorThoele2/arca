@@ -8,6 +8,9 @@ namespace Arca
 {
     const TypeHandleName Traits<CompositeShardBatchFixture::Relic>::typeName
         = "EitherShardBatchTestsRelic";
+
+    const TypeHandleName Traits<CompositeShardBatchFixture::GlobalRelic>::typeName
+        = "EitherShardBatchTestsGlobalRelic";
 }
 
 SCENARIO_METHOD(CompositeShardBatchFixture, "default composite shards batch", "[CompositeShardBatch]")
@@ -75,10 +78,10 @@ SCENARIO_METHOD(CompositeShardBatchFixture, "composite shard batch", "[Composite
     GIVEN("registered reliquary and relic")
     {
         auto reliquary = ReliquaryOrigin()
-            .Shard<Shard<0>>()
-            .Shard<Shard<1>>()
-            .Shard<Shard<2>>()
-            .Shard<Shard<3>>()
+            .Type<Shard<0>>()
+            .Type<Shard<1>>()
+            .Type<Shard<2>>()
+            .Type<Shard<3>>()
             .Actualize();
         auto relic = reliquary->Create<OpenRelic>();
 
@@ -231,10 +234,10 @@ SCENARIO_METHOD(CompositeShardBatchFixture, "composite shard batch", "[Composite
     GIVEN("registered reliquary with global relic")
     {
         auto reliquary = ReliquaryOrigin()
-            .Shard<Shard<0>>()
-            .Shard<Shard<1>>()
-            .Shard<Shard<2>>()
-            .GlobalRelic<Relic>()
+            .Type<Shard<0>>()
+            .Type<Shard<1>>()
+            .Type<Shard<2>>()
+            .Type<GlobalRelic>()
             .Actualize();
 
         WHEN("starting batch")

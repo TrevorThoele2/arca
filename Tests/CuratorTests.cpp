@@ -68,7 +68,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator", "[curator]")
         std::vector<CuratorState> states;
 
         auto reliquary = ReliquaryOrigin()
-            .Curator<BasicCurator>()
+            .Type<BasicCurator>()
             .Actualize();
 
         auto curator = reliquary->Find<BasicCurator>();
@@ -186,7 +186,7 @@ struct ReliquaryOriginIterator
 {
     static void Do(ReliquaryOrigin& reliquaryOrigin)
     {
-        reliquaryOrigin.Curator<CuratorTestsFixture::DifferentiableCurator<id>>();
+        reliquaryOrigin.Type<CuratorTestsFixture::DifferentiableCurator<id>>();
     }
 };
 
@@ -353,7 +353,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
 
         const auto reliquaryOrigin = ReliquaryOrigin()
             .CuratorPipeline(pipeline)
-            .Curator<BasicCurator>();
+            .Type<BasicCurator>();
 
         WHEN("actualized")
         {
@@ -523,7 +523,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator split pipeline", "[curator][pipeli
 
         const auto reliquaryOrigin = ReliquaryOrigin()
             .CuratorPipeline(pipeline)
-            .Curator<BasicCurator>();
+            .Type<BasicCurator>();
 
         WHEN("actualized")
         {
@@ -563,7 +563,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
     GIVEN("saved reliquary")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Curator<BasicCurator>()
+            .Type<BasicCurator>()
             .Actualize();
 
         auto savedCurator = savedReliquary->Find<BasicCurator>();
@@ -577,7 +577,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Curator<BasicCurator>()
+                .Type<BasicCurator>()
                 .Actualize();
 
             {
@@ -619,7 +619,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
         WHEN("loading reliquary with different curator with same input type handle")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Curator<OtherBasicCurator>()
+                .Type<OtherBasicCurator>()
                 .Actualize();
 
             {
