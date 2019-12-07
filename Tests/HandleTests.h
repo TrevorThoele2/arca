@@ -2,7 +2,7 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/TypedRelicAutomation.h>
+#include <Arca/ClosedTypedRelicAutomation.h>
 #include <Arca/Shard.h>
 
 #include <Inscription/BinaryArchive.h>
@@ -30,7 +30,7 @@ public:
         explicit OtherShard(std::string myValue);
     };
 
-    class TypedRelic : public TypedRelicAutomation<TypedRelic, Shard>
+    class TypedRelic : public ClosedTypedRelicAutomation<TypedRelic, Shard>
     {
     public:
         Ptr<Shard> basicShard;
@@ -40,7 +40,7 @@ public:
         void InitializeImplementation() override;
     };
 
-    class GlobalRelic : public TypedRelicAutomation<GlobalRelic, Shard>
+    class GlobalRelic : public ClosedTypedRelicAutomation<GlobalRelic, Shard>
     {
     public:
         Ptr<Shard> basicShard;

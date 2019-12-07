@@ -1,18 +1,18 @@
 #pragma once
 
-#include "TypedRelic.h"
+#include "ClosedTypedRelic.h"
 #include "Reliquary.h"
 #include "ExtractShards.h"
 
 namespace Arca
 {
     template<class Derived, class... AllShards>
-    class TypedRelicAutomation : public TypedRelic
+    class ClosedTypedRelicAutomation : public ClosedTypedRelic
     {
     public:
         using Shards = ShardList<AllShards...>;
     protected:
-        TypedRelicAutomation() = default;
+        ClosedTypedRelicAutomation() = default;
     protected:
         [[nodiscard]] auto ExtractShards() const
         {

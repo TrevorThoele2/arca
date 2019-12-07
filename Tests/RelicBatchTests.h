@@ -3,7 +3,7 @@
 #include "ReliquaryFixture.h"
 
 #include <Arca/Shard.h>
-#include <Arca/TypedRelicAutomation.h>
+#include <Arca/ClosedTypedRelicAutomation.h>
 
 using namespace Arca;
 
@@ -16,7 +16,7 @@ public:
     class Shard;
 };
 
-class RelicBatchFixture::Relic : public TypedRelicAutomation<Relic>
+class RelicBatchFixture::Relic : public ClosedTypedRelicAutomation<Relic>
 {
 public:
     int value = 0;
@@ -26,7 +26,7 @@ protected:
     void InitializeImplementation() override;
 };
 
-class RelicBatchFixture::GlobalRelic : public TypedRelicAutomation<GlobalRelic>
+class RelicBatchFixture::GlobalRelic : public ClosedTypedRelicAutomation<GlobalRelic>
 {
 public:
     int value = 0;
@@ -36,7 +36,7 @@ protected:
     void InitializeImplementation() override;
 };
 
-class RelicBatchFixture::UnregisteredRelic : public TypedRelicAutomation<UnregisteredRelic>
+class RelicBatchFixture::UnregisteredRelic : public ClosedTypedRelicAutomation<UnregisteredRelic>
 {
 protected:
     void InitializeImplementation() override {}

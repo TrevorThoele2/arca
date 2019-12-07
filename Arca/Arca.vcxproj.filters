@@ -37,9 +37,6 @@
     <ClCompile Include="RelicBatchSource.cpp">
       <Filter>Source Files\Relic\Batch</Filter>
     </ClCompile>
-    <ClCompile Include="TypedRelic.cpp">
-      <Filter>Source Files\Relic</Filter>
-    </ClCompile>
     <ClCompile Include="Pipeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -99,6 +96,12 @@
     </ClCompile>
     <ClCompile Include="HandleSlim.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ClosedTypedRelic.cpp">
+      <Filter>Source Files\Relic</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenTypedRelic.cpp">
+      <Filter>Source Files\Relic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -189,9 +192,6 @@
     <ClInclude Include="RelicBatchSource.h">
       <Filter>Header Files\Relic\Batch</Filter>
     </ClInclude>
-    <ClInclude Include="TypedRelic.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="RelicScribe.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
@@ -276,9 +276,6 @@
     <ClInclude Include="ReliquaryRelicStructures.h">
       <Filter>Header Files\Reliquary\Components</Filter>
     </ClInclude>
-    <ClInclude Include="TypedRelicAutomation.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="OpenRelic.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
@@ -333,11 +330,23 @@
     <ClInclude Include="Openness.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
-    <ClInclude Include="Genericity.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="Actualization.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClosedTypedRelic.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="ClosedTypedRelicAutomation.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenTypedRelic.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenTypedRelicAutomation.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenTypedRelicDefinition.h">
+      <Filter>Header Files\Relic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

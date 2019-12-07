@@ -3,7 +3,7 @@
 #include "ReliquaryFixture.h"
 
 #include <Arca/Shard.h>
-#include <Arca/TypedRelicAutomation.h>
+#include <Arca/ClosedTypedRelicAutomation.h>
 
 using namespace Arca;
 
@@ -23,7 +23,7 @@ public:
     explicit Shard(int value);
 };
 
-class ConstShardTestsFixture::Relic : public TypedRelicAutomation<Relic, const Shard>
+class ConstShardTestsFixture::Relic : public ClosedTypedRelicAutomation<Relic, const Shard>
 {
 public:
     Ptr<const Shard> shard;

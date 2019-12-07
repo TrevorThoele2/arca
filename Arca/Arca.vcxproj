@@ -36,13 +36,15 @@
     <ClInclude Include="BatchSource.h" />
     <ClInclude Include="Destroying.h" />
     <ClInclude Include="CuratorHandle.h" />
-    <ClInclude Include="Genericity.h" />
     <ClInclude Include="HandleSlim.h" />
     <ClInclude Include="HasFactoryMethod.h" />
     <ClInclude Include="IsType.h" />
     <ClInclude Include="KnownPolymorphicSerializer.h" />
     <ClInclude Include="Locality.h" />
     <ClInclude Include="ObjectType.h" />
+    <ClInclude Include="OpenTypedRelic.h" />
+    <ClInclude Include="OpenTypedRelicAutomation.h" />
+    <ClInclude Include="OpenTypedRelicDefinition.h" />
     <ClInclude Include="PipelineException.h" />
     <ClInclude Include="Ptr.h" />
     <ClInclude Include="RelicBatch.h" />
@@ -72,7 +74,7 @@
     <ClInclude Include="ShardScribe.h" />
     <ClInclude Include="ReliquaryOrigin.h" />
     <ClInclude Include="Traits.h" />
-    <ClInclude Include="TypedRelic.h" />
+    <ClInclude Include="ClosedTypedRelic.h" />
     <ClInclude Include="OpenRelicDefinition.h" />
     <ClInclude Include="Openness.h" />
     <ClInclude Include="RelicID.h" />
@@ -87,7 +89,7 @@
     <ClInclude Include="CuratorScribe.h" />
     <ClInclude Include="CuratorTraits.h" />
     <ClInclude Include="ShardTraits.h" />
-    <ClInclude Include="TypedRelicAutomation.h" />
+    <ClInclude Include="ClosedTypedRelicAutomation.h" />
     <ClInclude Include="TypeHandle.h" />
     <ClInclude Include="TypeValidation.h" />
     <ClInclude Include="ShardBatch.h" />
@@ -109,6 +111,7 @@
     <ClCompile Include="HandleSlim.cpp" />
     <ClCompile Include="KnownPolymorphicSerializer.cpp" />
     <ClCompile Include="ObjectType.cpp" />
+    <ClCompile Include="OpenTypedRelic.cpp" />
     <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="BatchException.cpp" />
     <ClCompile Include="PipelineException.cpp" />
@@ -131,7 +134,7 @@
     <ClCompile Include="CuratorProvider.cpp" />
     <ClCompile Include="OpenRelic.cpp" />
     <ClCompile Include="RelicMetadata.cpp" />
-    <ClCompile Include="TypedRelic.cpp" />
+    <ClCompile Include="ClosedTypedRelic.cpp" />
     <ClCompile Include="TypeHandle.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

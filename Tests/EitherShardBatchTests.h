@@ -3,7 +3,7 @@
 #include "ReliquaryFixture.h"
 
 #include <Arca/Shard.h>
-#include <Arca/TypedRelicAutomation.h>
+#include <Arca/ClosedTypedRelicAutomation.h>
 
 using namespace Arca;
 
@@ -24,10 +24,10 @@ public:
     explicit Shard(int value);
 };
 
-class EitherShardBatchFixture::Relic : public TypedRelicAutomation<Relic, Shard>
+class EitherShardBatchFixture::Relic : public ClosedTypedRelicAutomation<Relic, Shard>
 {};
 
-class EitherShardBatchFixture::GlobalRelic : public TypedRelicAutomation<GlobalRelic, Shard>
+class EitherShardBatchFixture::GlobalRelic : public ClosedTypedRelicAutomation<GlobalRelic, Shard>
 {};
 
 namespace Arca

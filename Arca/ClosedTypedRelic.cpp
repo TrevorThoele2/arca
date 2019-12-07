@@ -1,15 +1,15 @@
-#include "TypedRelic.h"
+#include "ClosedTypedRelic.h"
 
 #include "Reliquary.h"
 
 namespace Arca
 {
-    TypedRelic::operator Handle() const
+    ClosedTypedRelic::operator Handle() const
     {
         return Handle(id, *owner, TypeHandle());
     }
 
-    TypedRelic::operator bool() const
+    ClosedTypedRelic::operator bool() const
     {
         if (!owner)
             return false;
@@ -17,26 +17,26 @@ namespace Arca
         return ReliquaryContainsSelf();
     }
 
-    std::optional<Handle> TypedRelic::Parent() const
+    std::optional<Handle> ClosedTypedRelic::Parent() const
     {
         return owner->ParentOf(*this);
     }
 
-    RelicID TypedRelic::ID() const
+    RelicID ClosedTypedRelic::ID() const
     {
         return id;
     }
 
-    Reliquary& TypedRelic::Owner() const
+    Reliquary& ClosedTypedRelic::Owner() const
     {
         return *owner;
     }
 
-    void TypedRelic::Initialize(Reliquary& owner)
+    void ClosedTypedRelic::Initialize(Reliquary& owner)
     {
         this->owner = &owner;
         InitializeImplementation();
     }
 
-    TypedRelic::~TypedRelic() = default;
+    ClosedTypedRelic::~ClosedTypedRelic() = default;
 }
