@@ -1,7 +1,7 @@
 #pragma once
 
 #include "RelicID.h"
-#include "TypeHandle.h"
+#include "Type.h"
 
 #include "Serialization.h"
 
@@ -11,16 +11,16 @@ namespace Arca
     {
     public:
         HandleSlim() = default;
-        HandleSlim(RelicID id, TypeHandle type);
+        HandleSlim(RelicID id, Type type);
 
         bool operator==(const HandleSlim& arg) const;
         bool operator!=(const HandleSlim& arg) const;
 
         [[nodiscard]] RelicID ID() const;
-        [[nodiscard]] TypeHandle Type() const;
+        [[nodiscard]] Type Type() const;
     private:
         RelicID id = 0;
-        Arca::TypeHandle type;
+        Arca::Type type;
     private:
         INSCRIPTION_ACCESS;
     };

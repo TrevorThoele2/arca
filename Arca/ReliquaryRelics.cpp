@@ -13,10 +13,10 @@ namespace Arca
         RelicID id,
         Openness openness,
         Locality locality,
-        TypeHandle typeHandle,
+        Type type,
         void* storage)
     {
-        metadataList.emplace_back(id, openness, locality, std::move(typeHandle), storage);
+        metadataList.emplace_back(id, openness, locality, std::move(type), storage);
     }
 
     void ReliquaryRelics::DestroyMetadata(RelicID id)
@@ -78,7 +78,7 @@ namespace Arca
         for (auto& shardBatchSource : Shards().batchSources.map)
         {
             if (shardBatchSource.second->DestroyFromBase(id))
-                Owner().Raise<Destroying>(HandleFrom(id, shardBatchSource.second->TypeHandle()));
+                Owner().Raise<Destroying>(HandleFrom(id, shardBatchSource.second->Type()));
         }
 
         if (metadata.parent)
@@ -97,7 +97,7 @@ namespace Arca
                 parentMetadata->children.erase(eraseChildrenItr);
         }
 
-        auto batchSource = batchSources.Find(metadata.typeHandle.name);
+        auto batchSource = batchSources.Find(metadata.type.name);
         batchSource->DestroyFromBase(id);
 
         DestroyMetadata(id);

@@ -46,19 +46,19 @@ namespace Arca
     struct Traits<CuratorTestsFixture::BasicCurator>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 
-    const TypeHandleName Traits<CuratorTestsFixture::BasicCurator>::typeName = "BasicCurator";
+    const TypeName Traits<CuratorTestsFixture::BasicCurator>::typeName = "BasicCurator";
 
     template<>
     struct Traits<CuratorTestsFixture::OtherBasicCurator>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 
-    const TypeHandleName Traits<CuratorTestsFixture::OtherBasicCurator>::typeName = "OtherBasicCurator";
+    const TypeName Traits<CuratorTestsFixture::OtherBasicCurator>::typeName = "OtherBasicCurator";
 }
 
 SCENARIO_METHOD(CuratorTestsFixture, "curator", "[curator]")

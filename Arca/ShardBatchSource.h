@@ -22,7 +22,7 @@ namespace Arca
 
         [[nodiscard]] virtual SizeT Size() const = 0;
 
-        [[nodiscard]] virtual TypeHandle TypeHandle() const = 0;
+        [[nodiscard]] virtual Type Type() const = 0;
     };
 
     template<class T>
@@ -66,7 +66,7 @@ namespace Arca
         [[nodiscard]] iterator end();
         [[nodiscard]] const_iterator end() const;
 
-        [[nodiscard]] Arca::TypeHandle TypeHandle() const override;
+        [[nodiscard]] Arca::Type Type() const override;
     private:
         List list;
     private:
@@ -177,9 +177,9 @@ namespace Arca
     }
 
     template<class T>
-    Arca::TypeHandle BatchSource<T, std::enable_if_t<is_shard_v<T>>>::TypeHandle() const
+    Arca::Type BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Type() const
     {
-        return TypeHandleFor<T>();
+        return TypeFor<T>();
     }
 }
 

@@ -34,21 +34,21 @@ namespace Arca
     struct Traits<::ReliquaryOriginRegistrationTestsFixture::Shard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 
     template<>
     struct Traits<::ReliquaryOriginRegistrationTestsFixture::Relic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 
     template<>
     struct Traits<::ReliquaryOriginRegistrationTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
         static const bool isGlobal = true;
     };
 
@@ -56,14 +56,14 @@ namespace Arca
     struct Traits<::ReliquaryOriginRegistrationTestsFixture::Curator>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 
     template<>
     struct Traits<::ReliquaryOriginRegistrationTestsFixture::Signal>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 }
 

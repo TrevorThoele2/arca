@@ -89,7 +89,7 @@
     <ClInclude Include="CuratorTraits.h" />
     <ClInclude Include="ShardTraits.h" />
     <ClInclude Include="ClosedTypedRelicAutomation.h" />
-    <ClInclude Include="TypeHandle.h" />
+    <ClInclude Include="Type.h" />
     <ClInclude Include="ShardBatch.h" />
     <ClInclude Include="BatchException.h" />
     <ClInclude Include="ShardBatchSource.h" />
@@ -97,7 +97,7 @@
     <ClInclude Include="RelicMetadata.h" />
     <ClInclude Include="RelicStructure.h" />
     <ClInclude Include="RelicTraits.h" />
-    <ClInclude Include="TypeHandleSerialization.h" />
+    <ClInclude Include="TypeScribe.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CompositeShardBatchSource.cpp" />
@@ -133,8 +133,8 @@
     <ClCompile Include="OpenRelic.cpp" />
     <ClCompile Include="RelicMetadata.cpp" />
     <ClCompile Include="ClosedTypedRelic.cpp" />
-    <ClCompile Include="TypeHandle.cpp" />
-    <ClCompile Include="TypeHandleSerialization.cpp" />
+    <ClCompile Include="Type.cpp" />
+    <ClCompile Include="TypeScribe.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

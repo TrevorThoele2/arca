@@ -5,19 +5,19 @@ using namespace std::string_literals;
 
 namespace Arca
 {
-    const TypeHandleName Traits<::ReliquaryRegistrationTestsFixture::Shard>::typeName =
+    const TypeName Traits<::ReliquaryRegistrationTestsFixture::Shard>::typeName =
         "ReliquaryTestsShard";
 
-    const TypeHandleName Traits<::ReliquaryRegistrationTestsFixture::Relic>::typeName =
+    const TypeName Traits<::ReliquaryRegistrationTestsFixture::Relic>::typeName =
         "ReliquaryTestsRelic";
 
-    const TypeHandleName Traits<::ReliquaryRegistrationTestsFixture::GlobalRelic>::typeName =
+    const TypeName Traits<::ReliquaryRegistrationTestsFixture::GlobalRelic>::typeName =
         "ReliquaryTestsGlobalRelic";
 
-    const TypeHandleName Traits<::ReliquaryRegistrationTestsFixture::Curator>::typeName =
+    const TypeName Traits<::ReliquaryRegistrationTestsFixture::Curator>::typeName =
         "ReliquaryTestsCurator";
 
-    const TypeHandleName Traits<::ReliquaryRegistrationTestsFixture::Signal>::typeName =
+    const TypeName Traits<::ReliquaryRegistrationTestsFixture::Signal>::typeName =
         "ReliquaryTestsSignal";
 }
 
@@ -40,7 +40,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
                     openRelic->Create<Shard>(),
                     NotRegistered,
                     ::Catch::Matchers::Message(
-                        "The shard ("s + ::Chroma::ToString(TypeHandleFor<Shard>()) + ") was not registered. " +
+                        "The shard ("s + ::Chroma::ToString(TypeFor<Shard>()) + ") was not registered. " +
                         "The class name is: \"" + typeid(Shard).name() + "\".")
                 );
             }
@@ -55,7 +55,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
                     openRelic->Create<const Shard>(),
                     NotRegistered,
                     ::Catch::Matchers::Message(
-                        "The shard ("s + ::Chroma::ToString(TypeHandleFor<const Shard>()) + ") was not registered. " +
+                        "The shard ("s + ::Chroma::ToString(TypeFor<const Shard>()) + ") was not registered. " +
                         "The class name is: \"" + typeid(const Shard).name() + "\".")
                 );
             }
@@ -70,7 +70,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
                     reliquary->Create<Relic>(),
                     NotRegistered,
                     ::Catch::Matchers::Message(
-                        "The relic ("s + ::Chroma::ToString(TypeHandleFor<Relic>()) + ") was not registered. " +
+                        "The relic ("s + ::Chroma::ToString(TypeFor<Relic>()) + ") was not registered. " +
                         "The class name is: \"" + typeid(Relic).name() + "\".")
                 );
             }
@@ -85,7 +85,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
                     reliquary->Find<GlobalRelic>(),
                     NotRegistered,
                     ::Catch::Matchers::Message(
-                        "The relic ("s + ::Chroma::ToString(TypeHandleFor<GlobalRelic>()) + ") was not registered. " +
+                        "The relic ("s + ::Chroma::ToString(TypeFor<GlobalRelic>()) + ") was not registered. " +
                         "The class name is: \"" + typeid(GlobalRelic).name() + "\".")
                 );
             }
@@ -100,7 +100,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
                     reliquary->Raise(Signal{}),
                     NotRegistered,
                     ::Catch::Matchers::Message(
-                        "The signal ("s + ::Chroma::ToString(TypeHandleFor<Signal>()) + ") was not registered. " +
+                        "The signal ("s + ::Chroma::ToString(TypeFor<Signal>()) + ") was not registered. " +
                         "The class name is: \"" + typeid(Signal).name() + "\".")
                 );
             }
@@ -137,7 +137,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
                     reliquary->Batch<Shard>(),
                     NotRegistered,
                     Catch::Matchers::Message(
-                        "The shard (" + ::Chroma::ToString(TypeHandleFor<Shard>()) + ") was not registered. " +
+                        "The shard (" + ::Chroma::ToString(TypeFor<Shard>()) + ") was not registered. " +
                         "The class name is: \"" + typeid(Shard).name() + "\".")
                 );
             }
@@ -152,7 +152,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
                     reliquary->Batch<const Shard>(),
                     NotRegistered,
                     Catch::Matchers::Message(
-                        "The shard (" + ::Chroma::ToString(TypeHandleFor<const Shard>()) + ") was not registered. " +
+                        "The shard (" + ::Chroma::ToString(TypeFor<const Shard>()) + ") was not registered. " +
                         "The class name is: \"" + typeid(const Shard).name() + "\".")
                 );
             }
@@ -167,7 +167,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
                     reliquary->Batch<Relic>(),
                     NotRegistered,
                     Catch::Matchers::Message(
-                        "The relic (" + ::Chroma::ToString(TypeHandleFor<Relic>()) + ") was not registered. " +
+                        "The relic (" + ::Chroma::ToString(TypeFor<Relic>()) + ") was not registered. " +
                         "The class name is: \"" + typeid(Relic).name() + "\".")
                 );
             }
@@ -182,7 +182,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
                     reliquary->Batch<Signal>(),
                     NotRegistered,
                     Catch::Matchers::Message(
-                        "The signal ("s + ::Chroma::ToString(TypeHandleFor<Signal>()) + ") was not registered. " +
+                        "The signal ("s + ::Chroma::ToString(TypeFor<Signal>()) + ") was not registered. " +
                         "The class name is: \"" + typeid(Signal).name() + "\".")
                 );
             }
@@ -204,7 +204,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
                     reliquary->Create<Relic>(),
                     NotRegistered,
                     ::Catch::Matchers::Message(
-                        "The shard ("s + ::Chroma::ToString(TypeHandleFor<Shard>()) + ") was not registered.")
+                        "The shard ("s + ::Chroma::ToString(TypeFor<Shard>()) + ") was not registered.")
                 );
             }
         }

@@ -34,9 +34,6 @@
     <ClCompile Include="RelicBatchSource.cpp">
       <Filter>Source Files\Relic\Batch</Filter>
     </ClCompile>
-    <ClCompile Include="TypeHandle.cpp">
-      <Filter>Source Files\Type</Filter>
-    </ClCompile>
     <ClCompile Include="ObjectType.cpp">
       <Filter>Source Files\Type</Filter>
     </ClCompile>
@@ -103,7 +100,10 @@
     <ClCompile Include="Exception.cpp">
       <Filter>Source Files\Exception</Filter>
     </ClCompile>
-    <ClCompile Include="TypeHandleSerialization.cpp">
+    <ClCompile Include="Type.cpp">
+      <Filter>Source Files\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="TypeScribe.cpp">
       <Filter>Source Files\Type</Filter>
     </ClCompile>
   </ItemGroup>
@@ -128,9 +128,6 @@
     </ClInclude>
     <ClInclude Include="CuratorHandle.h">
       <Filter>Header Files\Curator</Filter>
-    </ClInclude>
-    <ClInclude Include="TypeHandle.h">
-      <Filter>Header Files\Type</Filter>
     </ClInclude>
     <ClInclude Include="Serialization.h">
       <Filter>Header Files\Serialization</Filter>
@@ -342,7 +339,10 @@
     <ClInclude Include="NullScribe.h">
       <Filter>Header Files\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="TypeHandleSerialization.h">
+    <ClInclude Include="Type.h">
+      <Filter>Header Files\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeScribe.h">
       <Filter>Header Files\Type</Filter>
     </ClInclude>
   </ItemGroup>

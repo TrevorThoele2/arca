@@ -23,6 +23,6 @@ namespace Inscription
     template<class T, class Archive>
     TypeHandle ArcaCompositeScribe<T, Archive>::OutputTypeHandle(const ArchiveT& archive)
     {
-        return ::Arca::TypeHandleFor<T>().name;
+        return ::Arca::TypeFor<T>().name;
     }
 }

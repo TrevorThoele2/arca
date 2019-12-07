@@ -2,5 +2,5 @@
 
 namespace Arca
 {
-    const TypeHandleName Traits<Destroying>::typeName = "Destroying";
+    const TypeName Traits<Destroying>::typeName = "Destroying";
 }

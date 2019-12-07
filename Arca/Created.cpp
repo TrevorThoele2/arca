@@ -2,5 +2,5 @@
 
 namespace Arca
 {
-    const TypeHandleName Traits<Created>::typeName = "Created";
+    const TypeName Traits<Created>::typeName = "Created";
 }

@@ -14,6 +14,6 @@ namespace Arca
     struct Traits<Created>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 }

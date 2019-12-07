@@ -6,9 +6,9 @@ namespace Arca
         RelicID id,
         Openness openness,
         Locality locality,
-        TypeHandle typeHandle,
+        Type type,
         void* storage)
         :
-        id(id), openness(openness), locality(locality), typeHandle(std::move(typeHandle)), storage(storage)
+        id(id), openness(openness), locality(locality), type(std::move(type)), storage(storage)
     {}
 }

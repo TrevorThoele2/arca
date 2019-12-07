@@ -53,7 +53,7 @@ namespace Arca
             RelicID id,
             Openness openness,
             Locality locality,
-            TypeHandle typeHandle = {},
+            Type type = {},
             void* storage = nullptr);
         void DestroyMetadata(RelicID id);
         [[nodiscard]] RelicMetadata* MetadataFor(RelicID id);
@@ -106,7 +106,7 @@ namespace Arca
             RelicID id;
         };
 
-        using GlobalMap = std::unordered_map<TypeHandleName, StoredGlobal>;
+        using GlobalMap = std::unordered_map<TypeName, StoredGlobal>;
         GlobalMap globalMap;
 
         KnownPolymorphicSerializerList globalSerializers;

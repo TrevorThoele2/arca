@@ -4,7 +4,7 @@
 
 namespace Arca
 {
-    const TypeHandleName Traits<::SignalTestsFixture::BasicSignal>::typeName =
+    const TypeName Traits<::SignalTestsFixture::BasicSignal>::typeName =
         "SignalTestsBasicSignal";
 }
 

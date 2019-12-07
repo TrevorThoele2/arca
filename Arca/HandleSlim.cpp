@@ -2,7 +2,7 @@
 
 namespace Arca
 {
-    HandleSlim::HandleSlim(RelicID id, TypeHandle type)
+    HandleSlim::HandleSlim(RelicID id, Arca::Type type)
         : id(id), type(std::move(type))
     {}
 
@@ -21,7 +21,7 @@ namespace Arca
         return id;
     }
 
-    TypeHandle HandleSlim::Type() const
+    Type HandleSlim::Type() const
     {
         return type;
     }

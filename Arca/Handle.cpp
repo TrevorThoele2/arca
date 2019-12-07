@@ -2,7 +2,7 @@
 
 namespace Arca
 {
-    Handle::Handle(RelicID id, Reliquary& owner, TypeHandle type)
+    Handle::Handle(RelicID id, Reliquary& owner, Arca::Type type)
         : id(id), owner(&owner), type(std::move(type))
     {}
 
@@ -31,7 +31,7 @@ namespace Arca
         return id;
     }
 
-    TypeHandle Handle::Type() const
+    Type Handle::Type() const
     {
         return type;
     }

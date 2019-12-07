@@ -5,7 +5,7 @@
 #include "Exception.h"
 
 #include "RelicID.h"
-#include "TypeHandle.h"
+#include "Type.h"
 
 namespace Arca
 {
@@ -14,10 +14,10 @@ namespace Arca
     public:
         explicit NotRegistered(
             const std::string& objectType,
-            const TypeHandle& type);
+            const Type& type);
         explicit NotRegistered(
             const std::string& objectType,
-            const TypeHandle& type,
+            const Type& type,
             const std::type_index& classType);
     };
 
@@ -26,10 +26,10 @@ namespace Arca
     public:
         AlreadyRegistered(
             const std::string& objectType,
-            const TypeHandle& type);
+            const Type& type);
         AlreadyRegistered(
             const std::string& objectType,
-            const TypeHandle& type,
+            const Type& type,
             const std::type_index& classType);
     };
 

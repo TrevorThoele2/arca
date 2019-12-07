@@ -88,35 +88,35 @@ namespace Arca
     struct Traits<::RelicTestsFixture::Shard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 
     template<>
     struct Traits<::RelicTestsFixture::OtherShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 
     template<>
     struct Traits<::RelicTestsFixture::TypedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 
     template<>
     struct Traits<::RelicTestsFixture::OpenTypedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 
     template<>
     struct Traits<::RelicTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
         static const Locality locality = Locality::Global;
     };
 
@@ -124,7 +124,7 @@ namespace Arca
     struct Traits<::RelicTestsFixture::MostBasicCustomFactoryRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
         static std::optional<RelicTestsFixture::MostBasicCustomFactoryRelic>
             Factory(Reliquary& reliquary);
     };
@@ -133,7 +133,7 @@ namespace Arca
     struct Traits<::RelicTestsFixture::GuardedCustomFactoryRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
         static std::optional<RelicTestsFixture::GuardedCustomFactoryRelic>
             Factory(Reliquary& reliquary, int value);
     };

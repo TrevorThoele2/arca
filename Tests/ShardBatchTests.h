@@ -2,7 +2,7 @@
 
 #include "ReliquaryFixture.h"
 
-#include <Arca/Shard.h>
+#include <Arca/ShardTraits.h>
 #include <Arca/ClosedTypedRelicAutomation.h>
 
 using namespace Arca;
@@ -41,21 +41,21 @@ namespace Arca
     struct Traits<::ShardBatchFixture::Shard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 
     template<>
     struct Traits<::ShardBatchFixture::UnregisteredShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 
     template<>
     struct Traits<::ShardBatchFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
         static const Locality locality = Locality::Global;
     };
 }

@@ -2,7 +2,7 @@
 
 #include <type_traits>
 
-#include "TypeHandle.h"
+#include "Type.h"
 #include "ObjectType.h"
 
 namespace Arca
@@ -11,13 +11,13 @@ namespace Arca
     struct Traits;
 
     template<class T, std::enable_if_t<!std::is_const_v<T>, int> = 0>
-    TypeHandle TypeHandleFor()
+    Type TypeFor()
     {
         return { Traits<std::decay_t<T>>::typeName, false };
     }
 
     template<class T, std::enable_if_t<std::is_const_v<T>, int> = 0>
-    TypeHandle TypeHandleFor()
+    Type TypeFor()
     {
         return { Traits<std::decay_t<T>>::typeName, true };
     }

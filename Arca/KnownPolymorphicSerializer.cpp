@@ -3,11 +3,11 @@
 namespace Arca
 {
     KnownPolymorphicSerializer::KnownPolymorphicSerializer(
-        TypeHandleName mainTypeHandle,
+        TypeName mainType,
         Serializer&& serializer,
         InscriptionTypeHandleProvider&& inscriptionTypeProvider)
         :
-        mainTypeHandle(std::move(mainTypeHandle)),
+        mainType(std::move(mainType)),
         serializer(std::move(serializer)),
         inscriptionTypeProvider(std::move(inscriptionTypeProvider))
     {}

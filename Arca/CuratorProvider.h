@@ -5,7 +5,7 @@
 
 #include "Curator.h"
 #include "CuratorTraits.h"
-#include "TypeHandle.h"
+#include "Type.h"
 
 namespace Arca
 {
@@ -16,7 +16,7 @@ namespace Arca
         struct Provided
         {
             ProvidedCurator curator;
-            TypeHandle typeHandle;
+            Type type;
         };
     public:
         CuratorProviderBase(const CuratorProviderBase& arg) = default;
@@ -31,11 +31,11 @@ namespace Arca
 
         Provided Provide();
     protected:
-        explicit CuratorProviderBase(TypeHandle typeHandle);
+        explicit CuratorProviderBase(Type type);
     protected:
         virtual ProvidedCurator ProvideImpl() = 0;
     private:
-        TypeHandle typeHandle;
+        Type type;
     };
 
     template<class Curator, class... Args>
@@ -54,7 +54,7 @@ namespace Arca
 
     template<class Curator, class... Args>
     CuratorProvider<Curator, Args...>::CuratorProvider(ArgumentTuple&& arguments) :
-        CuratorProviderBase(TypeHandleFor<Curator>()), arguments(std::move(arguments))
+        CuratorProviderBase(TypeFor<Curator>()), arguments(std::move(arguments))
     {}
 
     template<class Curator, class... Args>
@@ -74,7 +74,7 @@ namespace Arca
     public:
         Curator* external;
     public:
-        ExternalCuratorProvider(Curator* external, TypeHandle typeHandle);
+        ExternalCuratorProvider(Curator* external, Type type);
 
         [[nodiscard]] std::unique_ptr<CuratorProviderBase> Clone() const override;
     protected:

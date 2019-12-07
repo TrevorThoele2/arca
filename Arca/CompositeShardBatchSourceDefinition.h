@@ -20,8 +20,8 @@ namespace Arca
         ToStructure<i>::Do(RelicStructure& structure)
     {
         using T = typename Pack::template Parameter<i>::Type;
-        auto typeHandle = TypeHandleFor<T>();
-        structure.push_back(std::move(typeHandle));
+        auto type = TypeFor<T>();
+        structure.push_back(std::move(type));
     }
 
     template<class T>
@@ -125,14 +125,14 @@ namespace Arca
     }
 
     template<class T>
-    bool BatchSource<T, std::enable_if_t<is_composite_v<T>>>::StructureContains(TypeHandle typeHandle) const
+    bool BatchSource<T, std::enable_if_t<is_composite_v<T>>>::StructureContains(Type type) const
     {
         return std::any_of(
             this->structure.begin(),
             this->structure.end(),
-            [typeHandle](const TypeHandle& checkTypeHandle)
+            [type](const Type& checkType)
             {
-                return typeHandle == checkTypeHandle;
+                return type == checkType;
             });
     }
 

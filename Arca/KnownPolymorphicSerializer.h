@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TypeHandle.h"
+#include "Type.h"
 
 #include "Serialization.h"
 
@@ -10,7 +10,7 @@ namespace Arca
 
     struct KnownPolymorphicSerializer
     {
-        const TypeHandleName mainTypeHandle;
+        const TypeName mainType;
 
         using Serializer = std::function<void(Reliquary&, ::Inscription::BinaryArchive&)>;
         const Serializer serializer;
@@ -21,7 +21,7 @@ namespace Arca
         InscriptionTypeHandleProvider inscriptionTypeProvider;
 
         KnownPolymorphicSerializer(
-            TypeHandleName mainTypeHandle,
+            TypeName mainType,
             Serializer&& serializer,
             InscriptionTypeHandleProvider&& inscriptionTypeProvider);
     };

@@ -8,8 +8,8 @@ namespace Arca
     template<class SignalT>
     void ReliquarySignals::ExecuteAllFor(const SignalT& signal)
     {
-        const auto typeHandleName = TypeHandleFor<SignalT>().name;
-        auto found = executionMap.find(typeHandleName);
+        const auto typeName = TypeFor<SignalT>().name;
+        auto found = executionMap.find(typeName);
         if (found == executionMap.end())
             return;
 

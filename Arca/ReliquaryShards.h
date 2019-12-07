@@ -10,7 +10,7 @@
 #include "CompositeShardBatchSource.h"
 
 #include "RelicID.h"
-#include "TypeHandle.h"
+#include "Type.h"
 #include "Ptr.h"
 
 namespace Arca
@@ -21,10 +21,10 @@ namespace Arca
     {
     public:
         using Factory = void(*)(Reliquary&, RelicID, bool);
-        using FactoryMap = std::unordered_map<TypeHandleName, Factory>;
+        using FactoryMap = std::unordered_map<TypeName, Factory>;
         FactoryMap factoryMap;
 
-        void Create(const TypeHandle& typeHandle, RelicID id);
+        void Create(const Type& type, RelicID id);
         template<class ShardT>
         Ptr<ShardT> Create(RelicID id);
         template<class ShardT>
@@ -61,7 +61,7 @@ namespace Arca
         public:
             Map constMap;
 
-            [[nodiscard]] ShardBatchSourceBase* FindConst(const TypeHandleName& typeHandle);
+            [[nodiscard]] ShardBatchSourceBase* FindConst(const TypeName& typeName);
 
             template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && !std::is_const_v<ShardT>, int> = 0>
             [[nodiscard]] Map& MapFor();
@@ -81,7 +81,7 @@ namespace Arca
         } batchSources = BatchSources(*this);
 
         class EitherBatchSources
-            : public MetaBatchSources<TypeHandleName, EitherShardBatchSourceBase, ReliquaryShards, EitherBatchSources>
+            : public MetaBatchSources<TypeName, EitherShardBatchSourceBase, ReliquaryShards, EitherBatchSources>
         {
         public:
             template<class T, std::enable_if_t<is_either_v<T>, int> = 0>
@@ -99,11 +99,11 @@ namespace Arca
             std::unique_ptr<EitherShardBatchSourceBase> Create();
 
             template<class T>
-            [[nodiscard]] static TypeHandleName KeyFor();
+            [[nodiscard]] static TypeName KeyFor();
 
             template<class T>
             constexpr static bool should_accept = is_either_v<T>;
-            friend MetaBatchSources<TypeHandleName, EitherShardBatchSourceBase, ReliquaryShards, EitherBatchSources>;
+            friend MetaBatchSources<TypeName, EitherShardBatchSourceBase, ReliquaryShards, EitherBatchSources>;
         } eitherBatchSources = EitherBatchSources(*this);
 
         class CompositeBatchSources

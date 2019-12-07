@@ -4,16 +4,16 @@
 #include <memory>
 
 #include "Curator.h"
-#include "TypeHandle.h"
+#include "Type.h"
 
 namespace Arca
 {
     class CuratorHandle
     {
     public:
-        const TypeHandle typeHandle;
+        const Type type;
     public:
-        explicit CuratorHandle(TypeHandle typeHandle);
+        explicit CuratorHandle(Type type);
         CuratorHandle(const CuratorHandle& arg) = default;
         CuratorHandle(CuratorHandle&& arg) = default;
 
@@ -23,16 +23,16 @@ namespace Arca
         CuratorHandle& operator=(CuratorHandle&& arg) noexcept;
 
         [[nodiscard]] virtual Curator* Get() = 0;
-        [[nodiscard]] virtual std::type_index Type() = 0;
+        [[nodiscard]] virtual std::type_index TypeIndex() = 0;
         [[nodiscard]] virtual bool IsOwning() const = 0;
     };
 
     class OwnedCuratorHandle final : public CuratorHandle
     {
     public:
-        explicit OwnedCuratorHandle(std::unique_ptr<Curator>&& ptr, TypeHandle typeHandle);
+        explicit OwnedCuratorHandle(std::unique_ptr<Curator>&& ptr, Arca::Type type);
         [[nodiscard]] Curator* Get() override;
-        [[nodiscard]] std::type_index Type() override;
+        [[nodiscard]] std::type_index TypeIndex() override;
         [[nodiscard]] bool IsOwning() const override;
     private:
         const std::unique_ptr<Curator> ptr;
@@ -44,9 +44,9 @@ namespace Arca
     class UnownedCuratorHandle final : public CuratorHandle
     {
     public:
-        explicit UnownedCuratorHandle(Curator* ptr, TypeHandle typeHandle);
+        explicit UnownedCuratorHandle(Curator* ptr, Type type);
         [[nodiscard]] Curator* Get() override;
-        [[nodiscard]] std::type_index Type() override;
+        [[nodiscard]] std::type_index TypeIndex() override;
         [[nodiscard]] bool IsOwning() const override;
     private:
         Curator* ptr;

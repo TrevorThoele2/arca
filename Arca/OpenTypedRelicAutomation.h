@@ -24,9 +24,9 @@ namespace Arca
             return ReliquaryContainsSelfImpl<Derived>();
         }
 
-        [[nodiscard]] Arca::TypeHandle TypeHandle() const override
+        [[nodiscard]] Arca::Type Type() const override
         {
-            return TypeHandleFor<Derived>();
+            return TypeFor<Derived>();
         }
     private:
         template<class U, std::enable_if_t<!is_global_relic_v<U>, int> = 0>

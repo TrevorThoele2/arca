@@ -14,10 +14,10 @@ RelicBatchFixture::Shard::Shard(int value) :
 
 namespace Arca
 {
-    const TypeHandleName Traits<RelicBatchFixture::Relic>::typeName = "RelicBatchTestsRelic";
-    const TypeHandleName Traits<RelicBatchFixture::GlobalRelic>::typeName = "RelicBatchTestsGlobalRelic";
-    const TypeHandleName Traits<RelicBatchFixture::UnregisteredRelic>::typeName = "RelicBatchTestsUnregisteredRelic";
-    const TypeHandleName Traits<RelicBatchFixture::Shard>::typeName = "RelicBatchTestsShard";
+    const TypeName Traits<RelicBatchFixture::Relic>::typeName = "RelicBatchTestsRelic";
+    const TypeName Traits<RelicBatchFixture::GlobalRelic>::typeName = "RelicBatchTestsGlobalRelic";
+    const TypeName Traits<RelicBatchFixture::UnregisteredRelic>::typeName = "RelicBatchTestsUnregisteredRelic";
+    const TypeName Traits<RelicBatchFixture::Shard>::typeName = "RelicBatchTestsShard";
 }
 
 SCENARIO_METHOD(RelicBatchFixture, "default relic batch", "[RelicBatch]")

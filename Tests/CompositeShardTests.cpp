@@ -12,7 +12,7 @@ void CompositeShardTestsFixture::BasicTypedRelic::InitializeImplementation()
 
 namespace Arca
 {
-    const TypeHandleName Traits<CompositeShardTestsFixture::BasicTypedRelic>::typeName =
+    const TypeName Traits<CompositeShardTestsFixture::BasicTypedRelic>::typeName =
         "ReliquaryTestsBasicTypedRelic";
 }
 
@@ -182,9 +182,9 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "ClosedRelic composite shards", "[Cl
             auto relic = reliquary->CreateWith<ClosedRelic>(
                 RelicStructure
                 {
-                    TypeHandleFor<Shard<0>>(),
-                    TypeHandleFor<Shard<1>>(),
-                    TypeHandleFor<Shard<2>>()
+                    TypeFor<Shard<0>>(),
+                    TypeFor<Shard<1>>(),
+                    TypeFor<Shard<2>>()
                 });
 
             THEN("contains composite")
@@ -198,9 +198,9 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "ClosedRelic composite shards", "[Cl
             reliquary->CreateWith<ClosedRelic>(
                 RelicStructure
                 {
-                    TypeHandleFor<Shard<0>>(),
-                    TypeHandleFor<Shard<1>>(),
-                    TypeHandleFor<Shard<2>>()
+                    TypeFor<Shard<0>>(),
+                    TypeFor<Shard<1>>(),
+                    TypeFor<Shard<2>>()
                 });
 
             THEN("irrelevant relic does not contain either")

@@ -12,7 +12,7 @@ namespace Arca
             if (loop.name == name)
                 return loop.value;
 
-        throw NotRegistered(name);
+        throw NotRegistered(Type(name));
     }
 
     ReliquaryRelicStructures::Named::Named(std::string name, RelicStructure value) :

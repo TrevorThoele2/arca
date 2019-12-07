@@ -29,28 +29,28 @@ namespace Arca
     struct Traits<::IntegrationTestsFixture::BasicShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 
     template<>
     struct Traits<::IntegrationTestsFixture::BasicSignal>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 
     template<>
     struct Traits<::IntegrationTestsFixture::ChildRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 
     template<>
     struct Traits<::IntegrationTestsFixture::ParentRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
         static std::optional<IntegrationTestsFixture::ParentRelic> Factory(Reliquary& reliquary, int value);
     };
 
@@ -58,11 +58,11 @@ namespace Arca
     struct Traits<::IntegrationTestsFixture::BasicCurator<differentiator>>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 
     template<size_t differentiator>
-    const TypeHandleName Traits<::IntegrationTestsFixture::BasicCurator<differentiator>>::typeName =
+    const TypeName Traits<::IntegrationTestsFixture::BasicCurator<differentiator>>::typeName =
         "IntegrationTestsBasicCurator" + ::Chroma::ToString(differentiator);
 }
 

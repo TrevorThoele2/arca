@@ -5,7 +5,7 @@
 
 namespace Arca
 {
-    CuratorHandle::CuratorHandle(TypeHandle typeHandle) : typeHandle(std::move(typeHandle))
+    CuratorHandle::CuratorHandle(Type type) : type(std::move(type))
     {}
 
     CuratorHandle::~CuratorHandle() = default;
@@ -20,8 +20,8 @@ namespace Arca
         return *this;
     }
 
-    OwnedCuratorHandle::OwnedCuratorHandle(std::unique_ptr<Curator>&& ptr, TypeHandle typeHandle) :
-        CuratorHandle(std::move(typeHandle)), ptr(std::move(ptr)), type(typeid(ptr.get()))
+    OwnedCuratorHandle::OwnedCuratorHandle(std::unique_ptr<Curator>&& ptr, Type type) :
+        CuratorHandle(std::move(type)), ptr(std::move(ptr)), type(typeid(ptr.get()))
     {}
 
     Curator* OwnedCuratorHandle::Get()
@@ -29,7 +29,7 @@ namespace Arca
         return ptr.get();
     }
 
-    std::type_index OwnedCuratorHandle::Type()
+    std::type_index OwnedCuratorHandle::TypeIndex()
     {
         return type;
     }
@@ -39,8 +39,8 @@ namespace Arca
         return true;
     }
 
-    UnownedCuratorHandle::UnownedCuratorHandle(Curator* ptr, TypeHandle typeHandle) :
-        CuratorHandle(std::move(typeHandle)), ptr(ptr), type(typeid(ptr))
+    UnownedCuratorHandle::UnownedCuratorHandle(Curator* ptr, Type type) :
+        CuratorHandle(std::move(type)), ptr(ptr), type(typeid(ptr))
     {}
 
     Curator* UnownedCuratorHandle::Get()
@@ -48,7 +48,7 @@ namespace Arca
         return ptr;
     }
 
-    std::type_index UnownedCuratorHandle::Type()
+    std::type_index UnownedCuratorHandle::TypeIndex()
     {
         return type;
     }

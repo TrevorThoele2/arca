@@ -24,25 +24,25 @@ void ReliquaryTestsFixture::GlobalRelic::InitializeImplementation()
 
 namespace Arca
 {
-    const TypeHandleName Traits<::ReliquaryTestsFixture::BasicShard>::typeName =
+    const TypeName Traits<::ReliquaryTestsFixture::BasicShard>::typeName =
         "ReliquaryTestsBasicShard";
 
-    const TypeHandleName Traits<::ReliquaryTestsFixture::OtherBasicShard>::typeName =
+    const TypeName Traits<::ReliquaryTestsFixture::OtherBasicShard>::typeName =
         "ReliquaryTestsOtherBasicShard";
 
-    const TypeHandleName Traits<::ReliquaryTestsFixture::OtherShard>::typeName =
+    const TypeName Traits<::ReliquaryTestsFixture::OtherShard>::typeName =
         "ReliquaryTestsOtherShard";
 
-    const TypeHandleName Traits<::ReliquaryTestsFixture::BasicTypedRelic>::typeName =
+    const TypeName Traits<::ReliquaryTestsFixture::BasicTypedRelic>::typeName =
         "ReliquaryTestsBasicTypedRelic";
 
-    const TypeHandleName Traits<::ReliquaryTestsFixture::GlobalRelic>::typeName =
+    const TypeName Traits<::ReliquaryTestsFixture::GlobalRelic>::typeName =
         "ReliquaryTestsGlobalRelic";
 
-    const TypeHandleName Traits<::ReliquaryTestsFixture::BasicCurator>::typeName =
+    const TypeName Traits<::ReliquaryTestsFixture::BasicCurator>::typeName =
         "ReliquaryTestsBasicCurator";
 
-    const TypeHandleName Traits<::ReliquaryTestsFixture::BasicSignal>::typeName =
+    const TypeName Traits<::ReliquaryTestsFixture::BasicSignal>::typeName =
         "ReliquaryTestsBasicSignal";
 }
 
@@ -161,7 +161,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "creating relic from registered relic str
     GIVEN("reliquary registered with structure")
     {
         const auto structureName = dataGeneration.Random<std::string>();
-        const auto relicStructure = RelicStructure{ TypeHandleFor<BasicShard>() };
+        const auto relicStructure = RelicStructure{ TypeFor<BasicShard>() };
 
         auto reliquaryOrigin = ReliquaryOrigin()
             .RelicStructure(structureName, relicStructure);

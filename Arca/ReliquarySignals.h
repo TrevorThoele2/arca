@@ -16,7 +16,7 @@ namespace Arca
         using Execution = std::function<void(const SignalT&)>;
         template<class SignalT>
         using ExecutionList = std::vector<Execution<SignalT>>;
-        using ExecutionMap = std::unordered_map<TypeHandleName, std::any>;
+        using ExecutionMap = std::unordered_map<TypeName, std::any>;
         ExecutionMap executionMap;
 
         template<class SignalT>

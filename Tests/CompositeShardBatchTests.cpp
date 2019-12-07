@@ -6,10 +6,10 @@
 
 namespace Arca
 {
-    const TypeHandleName Traits<CompositeShardBatchFixture::Relic>::typeName
+    const TypeName Traits<CompositeShardBatchFixture::Relic>::typeName
         = "EitherShardBatchTestsRelic";
 
-    const TypeHandleName Traits<CompositeShardBatchFixture::GlobalRelic>::typeName
+    const TypeName Traits<CompositeShardBatchFixture::GlobalRelic>::typeName
         = "EitherShardBatchTestsGlobalRelic";
 }
 

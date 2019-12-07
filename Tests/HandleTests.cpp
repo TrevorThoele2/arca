@@ -26,22 +26,22 @@ void HandleTestsFixture::GlobalRelic::InitializeImplementation()
 
 namespace Arca
 {
-    const TypeHandleName Traits<::HandleTestsFixture::Shard>::typeName =
+    const TypeName Traits<::HandleTestsFixture::Shard>::typeName =
         "HandleTestsShard";
 
-    const TypeHandleName Traits<::HandleTestsFixture::OtherShard>::typeName =
+    const TypeName Traits<::HandleTestsFixture::OtherShard>::typeName =
         "HandleTestsOtherShard";
 
-    const TypeHandleName Traits<::HandleTestsFixture::TypedRelic>::typeName =
+    const TypeName Traits<::HandleTestsFixture::TypedRelic>::typeName =
         "HandleTestsTypedRelic";
 
-    const TypeHandleName Traits<::HandleTestsFixture::GlobalRelic>::typeName =
+    const TypeName Traits<::HandleTestsFixture::GlobalRelic>::typeName =
         "HandleTestsGlobalRelic";
 
-    const TypeHandleName Traits<::HandleTestsFixture::Curator>::typeName =
+    const TypeName Traits<::HandleTestsFixture::Curator>::typeName =
         "HandleTestsBasicCurator";
 
-    const TypeHandleName Traits<::HandleTestsFixture::Signal>::typeName =
+    const TypeName Traits<::HandleTestsFixture::Signal>::typeName =
         "HandleTestsBasicSignal";
 }
 
@@ -106,7 +106,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle comparison combinations", "[handle]"
         auto globalRelic1 = reliquary->Find<GlobalRelic>();
         auto globalRelicHandle1 = static_cast<Handle>(globalRelic1);
 
-        auto closedRelic1 = reliquary->CreateWith<ClosedRelic>(RelicStructure { TypeHandleFor<Shard>() });
+        auto closedRelic1 = reliquary->CreateWith<ClosedRelic>(RelicStructure { TypeFor<Shard>() });
         auto closedRelicHandle1 = static_cast<Handle>(closedRelic1);
         auto closedRelicShardHandle1 = static_cast<Handle>(closedRelic1->Find<Shard>());
 
@@ -121,7 +121,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle comparison combinations", "[handle]"
         auto globalRelic2 = reliquary->Find<GlobalRelic>();
         auto globalRelicHandle2 = static_cast<Handle>(globalRelic2);
 
-        auto closedRelic2 = reliquary->CreateWith<ClosedRelic>(RelicStructure{ TypeHandleFor<Shard>() });
+        auto closedRelic2 = reliquary->CreateWith<ClosedRelic>(RelicStructure{ TypeFor<Shard>() });
         auto closedRelicHandle2 = static_cast<Handle>(closedRelic2);
         auto closedRelicShardHandle2 = static_cast<Handle>(closedRelic2->Find<Shard>());
 
@@ -391,7 +391,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle actualizations combinations", "[hand
         auto globalRelic = reliquary->Find<GlobalRelic>();
         auto globalRelicHandle = static_cast<Handle>(globalRelic);
 
-        auto closedRelic = reliquary->CreateWith<ClosedRelic>(RelicStructure{ TypeHandleFor<Shard>() });
+        auto closedRelic = reliquary->CreateWith<ClosedRelic>(RelicStructure{ TypeFor<Shard>() });
         auto closedRelicHandle = static_cast<Handle>(closedRelic);
         auto closedRelicShardHandle = static_cast<Handle>(closedRelic->Find<Shard>());
 

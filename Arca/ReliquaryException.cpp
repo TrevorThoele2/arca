@@ -6,7 +6,7 @@ namespace Arca
 {
     NotRegistered::NotRegistered(
         const std::string& objectType,
-        const TypeHandle& type)
+        const Type& type)
         :
         Exception(
             "The " + objectType + " (" + ::Chroma::ToString(type) + ") was not registered.")
@@ -14,7 +14,7 @@ namespace Arca
 
     NotRegistered::NotRegistered(
         const std::string& objectType,
-        const TypeHandle& type,
+        const Type& type,
         const std::type_index& classType)
         :
         Exception(
@@ -24,7 +24,7 @@ namespace Arca
 
     AlreadyRegistered::AlreadyRegistered(
         const std::string& objectType,
-        const TypeHandle& type)
+        const Type& type)
         :
         Exception(
             "The " + objectType + " (" + ::Chroma::ToString(type) + ") was already registered.")
@@ -32,7 +32,7 @@ namespace Arca
 
     AlreadyRegistered::AlreadyRegistered(
         const std::string& objectType,
-        const TypeHandle& type,
+        const Type& type,
         const std::type_index& classType)
         :
         Exception(

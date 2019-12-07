@@ -10,13 +10,13 @@ EitherShardBatchFixture::Shard::Shard(int value) :
 
 namespace Arca
 {
-    const TypeHandleName Traits<EitherShardBatchFixture::Shard>::typeName
+    const TypeName Traits<EitherShardBatchFixture::Shard>::typeName
         = "EitherShardBatchTestsShard";
 
-    const TypeHandleName Traits<EitherShardBatchFixture::Relic>::typeName
+    const TypeName Traits<EitherShardBatchFixture::Relic>::typeName
         = "EitherShardBatchTestsRelic";
 
-    const TypeHandleName Traits<EitherShardBatchFixture::GlobalRelic>::typeName
+    const TypeName Traits<EitherShardBatchFixture::GlobalRelic>::typeName
         = "EitherShardBatchTestsGlobalRelic";
 }
 
