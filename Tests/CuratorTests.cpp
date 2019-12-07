@@ -656,7 +656,8 @@ namespace Inscription
         archive(object.value);
     }
 
-    std::vector<TypeHandle> Scribe<CuratorTestsFixture::OtherBasicCurator, BinaryArchive>::InputTypeHandles(const ArchiveT& archive)
+    std::vector<Type> Scribe<CuratorTestsFixture::OtherBasicCurator, BinaryArchive>::InputTypes(
+        const ArchiveT&)
     {
         return { "BasicCurator" };
     }

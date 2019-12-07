@@ -476,7 +476,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
             WHEN("destroying relic")
             {
-                reliquary->Destroy(*created);
+                reliquary->Destroy(AsHandle(*created));
 
                 THEN("signal is emitted for relic and shard")
                 {
@@ -525,6 +525,22 @@ SCENARIO_METHOD(RelicTestsFixture, "open typed relic", "[relic][open]")
             WHEN("destroying dynamic shard")
             {
                 relic->Destroy<OtherShard>();
+
+                THEN("returned is now invalid")
+                {
+                    REQUIRE(!shard);
+                }
+
+                THEN("reliquary has destroyed shard")
+                {
+                    REQUIRE(reliquary->ShardSize() == 1);
+                    REQUIRE(!reliquary->Find<OtherShard>(relic->ID()));
+                }
+            }
+
+            WHEN("destroying shard via handle")
+            {
+                reliquary->Destroy(AsHandle<OtherShard>(relic->ID(), relic->Owner()));
 
                 THEN("returned is now invalid")
                 {

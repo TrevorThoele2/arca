@@ -33,10 +33,14 @@ namespace Arca
         template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         Ptr<RelicT> CreateChildWith(const Handle& parent, const std::string& structureName, CreationArgs&& ... creationArgs);
 
+        void Destroy(const Handle& handle);
+
         template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int> = 0>
         [[nodiscard]] Ptr<RelicT> Find(RelicID id) const;
         template<class RelicT, std::enable_if_t<is_global_relic_v<RelicT>, int> = 0>
         [[nodiscard]] Ptr<RelicT> Find() const;
+
+        [[nodiscard]] std::optional<Handle> ParentOf(const Handle& child) const;
     public:
         struct RelicPrototype
         {

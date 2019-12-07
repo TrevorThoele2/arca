@@ -137,7 +137,7 @@ namespace Inscription
         : public ArcaCompositeScribe<::ReliquaryTestsFixture::OtherBasicShard, BinaryArchive>
     {
     public:
-        static std::vector<TypeHandle> InputTypeHandles(const ArchiveT& archive)
+        static std::vector<Type> InputTypes(const ArchiveT& archive)
         {
             return { "ReliquaryTestsBasicShard" };
         }

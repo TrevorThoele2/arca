@@ -19,11 +19,11 @@ namespace Inscription
 
         using BaseT::TableBase;
     public:
-        static TypeHandle OutputTypeHandle(const ArchiveT& archive);
+        static Type OutputType(const ArchiveT& archive);
     };
 
     template<class T, class Archive>
-    TypeHandle ArcaTableScribe<T, Archive>::OutputTypeHandle(const ArchiveT& archive)
+    Type ArcaTableScribe<T, Archive>::OutputType(const ArchiveT& archive)
     {
         return ::Arca::TypeFor<T>().name;
     }

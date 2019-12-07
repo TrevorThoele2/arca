@@ -4,6 +4,8 @@
 
 #include "Locality.h"
 #include "Openness.h"
+#include "ObjectType.h"
+#include "Handle.h"
 
 #include <Chroma/VariadicTemplate.h>
 
@@ -150,4 +152,22 @@ namespace Arca
 
     template<class T>
     using shards_for_t = typename shards_for<T>::Type;
+
+    template<class T, std::enable_if_t<is_relic_v<T>, int> = 0>
+    ObjectType ObjectTypeFor()
+    {
+        return ObjectType::Relic;
+    }
+
+    template<class T, std::enable_if_t<is_relic_v<T>, int> = 0>
+    HandleObjectType HandleObjectTypeFor()
+    {
+        return HandleObjectType::Relic;
+    }
+
+    template<class T, std::enable_if_t<is_relic_v<T>, int> = 0>
+    Handle AsHandle(const T& object)
+    {
+        return Handle(object.ID(), object.Owner(), TypeFor<T>(), HandleObjectType::Relic);
+    }
 }

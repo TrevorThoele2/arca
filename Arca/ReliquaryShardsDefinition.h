@@ -16,25 +16,8 @@ namespace Arca
         AttemptAddToEitherBatches(id, *added);
         NotifyCompositesShardCreate(id);
 
-        Owner().Raise<Created>(HandleFrom(id, TypeFor<ShardT>()));
+        Owner().Raise<Created>(HandleFrom(id, TypeFor<ShardT>(), HandleObjectType::Shard));
         return PtrFrom<ShardT>(id);
-    }
-
-    template<class ShardT>
-    void ReliquaryShards::Destroy(RelicID id)
-    {
-        Relics().ShardModificationRequired(id);
-
-        {
-            auto eitherBatchSource = eitherBatchSources.Find<Either<std::decay_t<ShardT>>>();
-            if (eitherBatchSource)
-                eitherBatchSource->DestroyFromBase(id, std::is_const_v<ShardT>);
-        }
-
-        auto& batch = batchSources.Required<ShardT>();
-        batch.Destroy(id);
-
-        NotifyCompositesShardDestroy(id);
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>

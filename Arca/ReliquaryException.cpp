@@ -1,15 +1,20 @@
 #include "ReliquaryException.h"
 
 #include <Chroma/StringUtility.h>
+using namespace std::string_literals;
 
 namespace Arca
 {
+    std::string ClassNameMessage(const std::type_index& classType)
+    {
+        return "The class name is: \""s + classType.name() + "\".";
+    }
+
     NotRegistered::NotRegistered(
         const std::string& objectType,
         const Type& type)
         :
-        Exception(
-            "The " + objectType + " (" + ::Chroma::ToString(type) + ") was not registered.")
+        Exception(BaseMessage(objectType, type))
     {}
 
     NotRegistered::NotRegistered(
@@ -17,17 +22,19 @@ namespace Arca
         const Type& type,
         const std::type_index& classType)
         :
-        Exception(
-            "The " + objectType + " (" + ::Chroma::ToString(type) + ") was not registered. " +
-            "The class name is: \"" + classType.name() + "\".")
+        Exception(BaseMessage(objectType, type) + " " + ClassNameMessage(classType))
     {}
+
+    std::string NotRegistered::BaseMessage(const std::string & objectType, const Type & type) const
+    {
+        return "The " + objectType + " (" + ::Chroma::ToString(type) + ") was not registered.";
+    }
 
     AlreadyRegistered::AlreadyRegistered(
         const std::string& objectType,
         const Type& type)
         :
-        Exception(
-            "The " + objectType + " (" + ::Chroma::ToString(type) + ") was already registered.")
+        Exception(BaseMessage(objectType, type))
     {}
 
     AlreadyRegistered::AlreadyRegistered(
@@ -35,28 +42,81 @@ namespace Arca
         const Type& type,
         const std::type_index& classType)
         :
-        Exception(
-            "The " + objectType + " (" + ::Chroma::ToString(type) + ") was already registered. " +
-            "The class name is: \"" + classType.name() + "\".")
+        Exception(BaseMessage(objectType, type) + " " + ClassNameMessage(classType))
     {}
 
-    CannotModify::CannotModify(
+    std::string AlreadyRegistered::BaseMessage(const std::string& objectType, const Type& type) const
+    {
+        return "The " + objectType + " (" + ::Chroma::ToString(type) + ") was already registered.";
+    }
+
+    CannotCreate::CannotCreate(
         const std::string& objectType,
-        const RelicID id)
+        const Type& type)
         :
-        Exception("The " + objectType + " with ID (" + ::Chroma::ToString(id) + ") needs to be modified but cannot.")
+        Exception(BaseMessage(objectType, type))
     {}
 
-    CannotCreateShard::CannotCreateShard() :
-        Exception("A shard cannot be created.")
+    CannotCreate::CannotCreate(
+        const std::string& objectType,
+        const Type& type,
+        const std::type_index& classType)
+        :
+        Exception(BaseMessage(objectType, type) + " " + ClassNameMessage(classType))
     {}
 
-    CannotDestroyShard::CannotDestroyShard() :
-        Exception("A shard cannot be destroyed.")
+    std::string CannotCreate::BaseMessage(const std::string& objectType, const Type& type) const
+    {
+        return "The " + objectType + " (" + ::Chroma::ToString(type) + ") cannot be created.";
+    }
+
+    CannotDestroy::CannotDestroy(
+        const std::string& objectType,
+        const Type& type)
+        :
+        Exception(BaseMessage(objectType, type))
     {}
 
-    CannotFindRelic::CannotFindRelic(RelicID id) :
-        Exception("The relic with id (" + ::Chroma::ToString(id) + ") cannot be found.")
+    CannotDestroy::CannotDestroy(
+        const std::string& objectType,
+        const Type& type,
+        const std::type_index& classType)
+        :
+        Exception(BaseMessage(objectType, type) + " " + ClassNameMessage(classType))
+    {}
+
+    std::string CannotDestroy::BaseMessage(const std::string& objectType, const Type& type) const
+    {
+        return "The " + objectType + " (" + ::Chroma::ToString(type) + ") cannot be destroyed.";
+    }
+
+    CannotFind::CannotFind(
+        const std::string& objectType,
+        const Type& type)
+        :
+        Exception(BaseMessage(objectType, type))
+    {}
+
+    CannotFind::CannotFind(
+        const std::string& objectType,
+        const Type& type,
+        const std::type_index& classType)
+        :
+        Exception(BaseMessage(objectType, type) + " " + ClassNameMessage(classType))
+    {}
+
+    std::string CannotFind::BaseMessage(const std::string& objectType, const Type& type) const
+    {
+        return "The " + objectType + " (" + ::Chroma::ToString(type) + ") cannot be found.";
+    }
+
+    CannotModifyShards::CannotModifyShards(
+        const std::string& objectType,
+        RelicID id)
+        :
+        Exception(
+            "The " + objectType + " with ID (" + ::Chroma::ToString(id) + ") " +
+            "needs to be able to have its shards modified but cannot. Is the object closed?")
     {}
 
     CannotParentRelic::CannotParentRelic(const std::string& message) : Exception(message)

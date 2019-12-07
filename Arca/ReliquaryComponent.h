@@ -33,7 +33,22 @@ namespace Arca
         [[nodiscard]] Arca::NotRegistered NotRegistered(
             const Type& type,
             const std::type_index& classType) const;
-        [[nodiscard]] CannotModify CannotModify(RelicID id) const;
+        [[nodiscard]] Arca::CannotCreate CannotCreate(
+            const Type& type) const;
+        [[nodiscard]] Arca::CannotCreate CannotCreate(
+            const Type& type,
+            const std::type_index& classType) const;
+        [[nodiscard]] Arca::CannotDestroy CannotDestroy(
+            const Type& type) const;
+        [[nodiscard]] Arca::CannotDestroy CannotDestroy(
+            const Type& type,
+            const std::type_index& classType) const;
+        [[nodiscard]] Arca::CannotFind CannotFind(
+            const Type& type) const;
+        [[nodiscard]] Arca::CannotFind CannotFind(
+            const Type& type,
+            const std::type_index& classType) const;
+        [[nodiscard]] CannotModifyShards CannotModify(RelicID id) const;
     protected:
         explicit ReliquaryComponent(Reliquary& owner, std::string objectTypeName);
     protected:
@@ -50,7 +65,7 @@ namespace Arca
         [[nodiscard]] ReliquarySignals& Signals();
         [[nodiscard]] const ReliquarySignals& Signals() const;
     protected:
-        Handle HandleFrom(RelicID id, Type type);
+        Handle HandleFrom(RelicID id, Type type, HandleObjectType objectType);
         Handle HandleFrom(const RelicMetadata& metadata);
         template<class T>
         Ptr<T> PtrFrom(RelicID id) const;
@@ -200,6 +215,9 @@ namespace Arca
         Reliquary* owner;
     private:
         const std::string objectTypeName;
+
+        template<class ExceptionT, class... Args>
+        ExceptionT CreateException(Args&& ... args) const;
     private:
         friend Reliquary;
     };
@@ -214,5 +232,11 @@ namespace Arca
     Ptr<T> ReliquaryComponent::PtrFrom(const RelicMetadata& metadata) const
     {
         return Ptr<T>(metadata.id, const_cast<Reliquary&>(Owner()));
+    }
+
+    template<class ExceptionT, class... Args>
+    ExceptionT ReliquaryComponent::CreateException(Args&& ... args) const
+    {
+        return ExceptionT(objectTypeName, std::forward<Args>(args)...);
     }
 }

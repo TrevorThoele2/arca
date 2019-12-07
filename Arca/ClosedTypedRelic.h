@@ -14,7 +14,6 @@ namespace Arca
     class ClosedTypedRelic
     {
     public:
-        operator Handle() const;
         explicit operator bool() const;
 
         [[nodiscard]] std::optional<Handle> Parent() const;

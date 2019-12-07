@@ -15,14 +15,14 @@ namespace Arca
         using Serializer = std::function<void(Reliquary&, ::Inscription::BinaryArchive&)>;
         const Serializer serializer;
 
-        using InscriptionTypeHandles = std::vector<::Inscription::TypeHandle>;
-        using InscriptionTypeHandleProvider =
-            std::function<InscriptionTypeHandles(::Inscription::BinaryArchive&)>;
-        InscriptionTypeHandleProvider inscriptionTypeProvider;
+        using InscriptionTypes = std::vector<::Inscription::Type>;
+        using InscriptionTypeProvider =
+            std::function<InscriptionTypes(::Inscription::BinaryArchive&)>;
+        InscriptionTypeProvider inscriptionTypeProvider;
 
         KnownPolymorphicSerializer(
             TypeName mainType,
             Serializer&& serializer,
-            InscriptionTypeHandleProvider&& inscriptionTypeProvider);
+            InscriptionTypeProvider&& inscriptionTypeProvider);
     };
 }

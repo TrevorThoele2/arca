@@ -14,7 +14,7 @@ namespace Arca
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     void OpenTypedRelic::Destroy()
     {
-        owner->shards.Destroy<ShardT>(id);
+        owner->shards.Destroy(AsHandle<ShardT>(ID(), Owner()));
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>

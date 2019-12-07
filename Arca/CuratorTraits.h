@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Traits.h"
+#include "Handle.h"
 
 namespace Arca
 {
@@ -14,4 +15,10 @@ namespace Arca
 
     template<class T>
     static constexpr bool is_curator_v = is_curator<T>::value;
+
+    template<class T, std::enable_if_t<is_curator_v<T>, int> = 0>
+    ObjectType ObjectTypeFor()
+    {
+        return ObjectType::Curator;
+    }
 }

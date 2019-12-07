@@ -3,6 +3,7 @@
 #include "RelicID.h"
 #include "Handle.h"
 #include "RelicTraits.h"
+#include "ShardTraits.h"
 #include "Either.h"
 
 #include "Serialization.h"
@@ -75,7 +76,7 @@ namespace Arca
     template<class T>
     Ptr<T, std::enable_if_t<!is_global_relic_v<T> && !is_either_v<T>>>::operator Handle() const
     {
-        return Handle(ID(), Owner(), TypeFor<T>());
+        return Handle(ID(), Owner(), TypeFor<T>(), HandleObjectTypeFor<T>());
     }
 
     template<class T>
@@ -342,7 +343,7 @@ namespace Arca
     template<class T>
     Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::operator Handle() const
     {
-        return Handle(id, Owner(), TypeFor<T>());
+        return Handle(id, Owner(), TypeFor<T>(), HandleObjectType::Relic);
     }
 
     template<class T>

@@ -12,6 +12,14 @@ namespace Arca
     class ReliquarySignals : public ReliquaryComponent
     {
     public:
+        template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
+        void Raise(const SignalT& signal);
+        template<class SignalT, class... Args, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
+        void Raise(Args&& ... args);
+
+        template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
+        void ExecuteOn(const std::function<void(const SignalT&)>& function);
+    public:
         template<class SignalT>
         using Execution = std::function<void(const SignalT&)>;
         template<class SignalT>

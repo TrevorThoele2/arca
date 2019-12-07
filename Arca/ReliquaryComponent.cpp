@@ -1,4 +1,5 @@
 #include "ReliquaryComponent.h"
+#include <utility>
 
 #include "Reliquary.h"
 
@@ -7,19 +8,58 @@ namespace Arca
     NotRegistered ReliquaryComponent::NotRegistered(
         const Type& type) const
     {
-        return Arca::NotRegistered(objectTypeName, type);
+        return CreateException<Arca::NotRegistered>(type);
     }
 
     NotRegistered ReliquaryComponent::NotRegistered(
         const Type& type,
         const std::type_index& classType) const
     {
-        return Arca::NotRegistered(objectTypeName, type, classType);
+        return CreateException<Arca::NotRegistered>(type, classType);
     }
 
-    CannotModify ReliquaryComponent::CannotModify(RelicID id) const
+    Arca::CannotCreate ReliquaryComponent::CannotCreate(
+        const Type& type) const
     {
-        return Arca::CannotModify(objectTypeName, id);
+        return CreateException<Arca::CannotCreate>(type);
+    }
+
+    Arca::CannotCreate ReliquaryComponent::CannotCreate(
+        const Type& type,
+        const std::type_index& classType) const
+    {
+        return CreateException<Arca::CannotCreate>(type, classType);
+    }
+
+    Arca::CannotDestroy ReliquaryComponent::CannotDestroy(
+        const Type& type) const
+    {
+        return CreateException<Arca::CannotDestroy>(type);
+    }
+
+    Arca::CannotDestroy ReliquaryComponent::CannotDestroy(
+        const Type& type,
+        const std::type_index& classType) const
+    {
+        return CreateException<Arca::CannotDestroy>(type, classType);
+    }
+
+    Arca::CannotFind ReliquaryComponent::CannotFind(
+        const Type& type) const
+    {
+        return CreateException<Arca::CannotFind>(type);
+    }
+
+    Arca::CannotFind ReliquaryComponent::CannotFind(
+        const Type& type,
+        const std::type_index& classType) const
+    {
+        return CreateException<Arca::CannotFind>(type, classType);
+    }
+
+    CannotModifyShards ReliquaryComponent::CannotModify(RelicID id) const
+    {
+        return Arca::CannotModifyShards(objectTypeName, id);
     }
 
     ReliquaryComponent::ReliquaryComponent(Reliquary& owner, std::string objectTypeName)
@@ -86,13 +126,13 @@ namespace Arca
         return owner->signals;
     }
 
-    Handle ReliquaryComponent::HandleFrom(RelicID id, Type type)
+    Handle ReliquaryComponent::HandleFrom(RelicID id, Type type, HandleObjectType objectType)
     {
-        return Handle{ id, Owner(), type };
+        return Handle{ id, Owner(), std::move(type), objectType };
     }
 
     Handle ReliquaryComponent::HandleFrom(const RelicMetadata& metadata)
     {
-        return HandleFrom(metadata.id, metadata.type);
+        return HandleFrom(metadata.id, metadata.type, HandleObjectType::Relic);
     }
 }

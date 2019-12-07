@@ -1,6 +1,8 @@
 #include "Reliquary.h"
 
 #include <unordered_set>
+#include <cassert>
+#include <utility>
 
 #include <Inscription/MultimapScribe.h>
 #include <Inscription/MemoryScribe.h>
@@ -22,28 +24,22 @@ namespace Arca
 
     void Reliquary::Destroy(const Handle& handle)
     {
-        if (&handle.Owner() != this)
-            return;
-
-        const auto metadata = relics.MetadataFor(handle.ID());
-        if (!relics.WillDestroy(metadata))
-            return;
-
-        shards.NotifyCompositesRelicDestroy(metadata->id);
-        relics.Destroy(*metadata);
+        switch (handle.ObjectType())
+        {
+        case HandleObjectType::Relic:
+            relics.Destroy(handle);
+            break;
+        case HandleObjectType::Shard:
+            shards.Destroy(handle);
+            break;
+        default:
+            assert(false);
+        }
     }
 
     std::optional<Handle> Reliquary::ParentOf(const Handle& child) const
     {
-        const auto childID = child.ID();
-        const auto metadata = relics.MetadataFor(childID);
-        if (!metadata)
-            throw CannotFindRelic(childID);
-
-        if (!metadata->parent)
-            return {};
-
-        return Handle(metadata->parent->ID(), const_cast<Reliquary&>(*this), metadata->parent->Type());
+        return relics.ParentOf(child);
     }
 
     std::vector<RelicID> Reliquary::AllIDs() const
@@ -79,14 +75,14 @@ namespace Arca
         return totalSize;
     }
 
-    Handle Reliquary::HandleFrom(RelicID id, Type type)
+    Handle Reliquary::HandleFrom(RelicID id, Type type, HandleObjectType objectType)
     {
-        return Handle{ id, *this, type };
+        return Handle{ id, *this, std::move(type), objectType };
     }
 
     Handle Reliquary::HandleFrom(const RelicMetadata& metadata)
     {
-        return HandleFrom(metadata.id, metadata.type);
+        return HandleFrom(metadata.id, metadata.type, HandleObjectType::Relic);
     }
 }
 
@@ -189,13 +185,13 @@ namespace Inscription
             {
                 const auto parentID = *metadata.parent;
                 const auto parentType = std::get<0>(FindExtensionForLoadedMetadata(parentID, object));
-                createdMetadata.parent = Arca::HandleSlim(parentID, parentType);
+                createdMetadata.parent = Arca::HandleSlim(parentID, parentType, Arca::HandleObjectType::Relic);
             }
             for(auto& child : metadata.children)
             {
                 const auto childID = child;
                 const auto childType = std::get<0>(FindExtensionForLoadedMetadata(childID, object));
-                createdMetadata.parent = Arca::HandleSlim(childID, childType);
+                createdMetadata.parent = Arca::HandleSlim(childID, childType, Arca::HandleObjectType::Relic);
             }
 
             object.relics.metadataList.push_back(createdMetadata);
@@ -210,7 +206,7 @@ namespace Inscription
         ArchiveT& archive,
         KnownPolymorphicSerializerList& fromObject)
     {
-        InputJumpTable<TypeHandle, KnownPolymorphic> jumpTable;
+        InputJumpTable<Type, KnownPolymorphic> jumpTable;
         archive(jumpTable);
 
         auto typesToLoad = PruneTypesToLoad(
@@ -227,16 +223,16 @@ namespace Inscription
     }
 
     auto Scribe<::Arca::Reliquary, BinaryArchive>::FindFrom(
-        TypeHandle mainTypeHandle,
+        Type mainType,
         KnownPolymorphicSerializerList& list)
         -> Arca::KnownPolymorphicSerializer*
     {
         const auto found = std::find_if(
             list.begin(),
             list.end(),
-            [&mainTypeHandle](const Arca::KnownPolymorphicSerializer& entry)
+            [&mainType](const Arca::KnownPolymorphicSerializer& entry)
             {
-                return entry.mainType == mainTypeHandle;
+                return entry.mainType == mainType;
             });
         return found != list.end()
             ? &*found
@@ -320,14 +316,14 @@ namespace Inscription
     auto Scribe<::Arca::Reliquary, BinaryArchive>::PruneTypesToLoad(
         KnownPolymorphicSerializerList& fromObject,
         ArchiveT& archive,
-        const std::vector<TypeHandle>& typeHandlesFromArchive)
+        const std::vector<Type>& typesFromArchive)
         ->
         std::vector<TypePair>
     {
-        auto typesFromReliquary = ExtractTypeHandles(fromObject, archive);
+        auto typesFromReliquary = ExtractTypes(fromObject, archive);
 
         std::vector<TypePair> returnValue;
-        for (auto& typeFromArchive : typeHandlesFromArchive)
+        for (auto& typeFromArchive : typesFromArchive)
             for (auto& typeFromReliquary : typesFromReliquary)
                 if (typeFromReliquary.inscription == typeFromArchive)
                     returnValue.push_back(typeFromReliquary);
@@ -335,7 +331,7 @@ namespace Inscription
         return returnValue;
     }
 
-    auto Scribe<::Arca::Reliquary, BinaryArchive>::ExtractTypeHandles(
+    auto Scribe<::Arca::Reliquary, BinaryArchive>::ExtractTypes(
         KnownPolymorphicSerializerList& fromObject,
         ArchiveT& archive)
         ->

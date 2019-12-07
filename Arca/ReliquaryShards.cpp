@@ -1,5 +1,10 @@
 #include "ReliquaryShards.h"
 
+#include "Reliquary.h"
+#include "ReliquaryRelics.h"
+#include "Destroying.h"
+#include <cassert>
+
 namespace Arca
 {
     void ReliquaryShards::Create(const Type& type, RelicID id)
@@ -10,6 +15,33 @@ namespace Arca
 
         factory->second(Owner(), id, type.isConst);
         NotifyCompositesShardCreate(id);
+    }
+
+    void ReliquaryShards::Destroy(const Handle& handle)
+    {
+        assert(handle.ObjectType() == HandleObjectType::Shard);
+
+        const auto id = handle.ID();
+
+        Relics().ShardModificationRequired(id);
+
+        {
+            for (auto& eitherShardBatchSource : Shards().eitherBatchSources.map)
+                eitherShardBatchSource.second->DestroyFromBase(id);
+        }
+
+        for (auto& shardBatchSource : Shards().batchSources.map)
+        {
+            if (shardBatchSource.first != handle.Type().name)
+                continue;
+
+            if (shardBatchSource.second->DestroyFromBase(id))
+            {
+                Owner().Raise<Destroying>(HandleFrom(id, shardBatchSource.second->Type(), HandleObjectType::Shard));
+                NotifyCompositesShardDestroy(id);
+                break;
+            }
+        }
     }
 
     void ReliquaryShards::NotifyCompositesRelicCreate(RelicID id, const RelicStructure& structure)

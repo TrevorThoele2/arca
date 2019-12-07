@@ -5,7 +5,7 @@ namespace Arca
     KnownPolymorphicSerializer::KnownPolymorphicSerializer(
         TypeName mainType,
         Serializer&& serializer,
-        InscriptionTypeHandleProvider&& inscriptionTypeProvider)
+        InscriptionTypeProvider&& inscriptionTypeProvider)
         :
         mainType(std::move(mainType)),
         serializer(std::move(serializer)),
