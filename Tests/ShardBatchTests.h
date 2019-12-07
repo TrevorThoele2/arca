@@ -64,7 +64,7 @@ namespace Inscription
 {
     template<>
     class Scribe<::ShardBatchFixture::Shard, BinaryArchive> final
-        : public ShardScribe<::ShardBatchFixture::Shard, BinaryArchive>
+        : public ArcaCompositeScribe<::ShardBatchFixture::Shard, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
@@ -74,16 +74,7 @@ namespace Inscription
     };
 
     template<>
-    struct TableData<::ShardBatchFixture::GlobalRelic, BinaryArchive> final
-        : TableDataBase<::ShardBatchFixture::GlobalRelic, BinaryArchive>
-    {};
-
-    template<>
     class Scribe<::ShardBatchFixture::GlobalRelic, BinaryArchive> final
-        : public CompositeRelicScribe<::ShardBatchFixture::GlobalRelic, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        : public ArcaNullScribe<::ShardBatchFixture::GlobalRelic, BinaryArchive>
+    {};
 }

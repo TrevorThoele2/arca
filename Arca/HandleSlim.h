@@ -3,6 +3,8 @@
 #include "RelicID.h"
 #include "TypeHandle.h"
 
+#include "Serialization.h"
+
 namespace Arca
 {
     class HandleSlim

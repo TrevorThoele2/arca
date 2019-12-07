@@ -356,8 +356,6 @@ namespace Arca
     template<class CuratorT, class CuratorProvider, class... Args>
     void ReliquaryOrigin::CuratorCommon(Args&& ... args)
     {
-        STATIC_ASSERT_TYPE_DERIVED_FROM_CURATOR(CuratorT);
-
         const auto typeHandle = TypeHandleFor<CuratorT>();
 
         if (IsCuratorRegistered<CuratorT>())

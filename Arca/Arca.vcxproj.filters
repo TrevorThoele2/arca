@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Exception.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Curator.cpp">
       <Filter>Source Files\Curator</Filter>
     </ClCompile>
@@ -37,20 +34,11 @@
     <ClCompile Include="RelicBatchSource.cpp">
       <Filter>Source Files\Relic\Batch</Filter>
     </ClCompile>
-    <ClCompile Include="Pipeline.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PipelineException.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TypeHandle.cpp">
       <Filter>Source Files\Type</Filter>
     </ClCompile>
     <ClCompile Include="ObjectType.cpp">
       <Filter>Source Files\Type</Filter>
-    </ClCompile>
-    <ClCompile Include="Handle.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="KnownPolymorphicSerializer.cpp">
       <Filter>Source Files\Reliquary\Components</Filter>
@@ -94,33 +82,36 @@
     <ClCompile Include="ClosedRelic.cpp">
       <Filter>Source Files\Relic</Filter>
     </ClCompile>
-    <ClCompile Include="HandleSlim.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ClosedTypedRelic.cpp">
       <Filter>Source Files\Relic</Filter>
     </ClCompile>
     <ClCompile Include="OpenTypedRelic.cpp">
       <Filter>Source Files\Relic</Filter>
     </ClCompile>
+    <ClCompile Include="Handle.cpp">
+      <Filter>Source Files\Handle</Filter>
+    </ClCompile>
+    <ClCompile Include="HandleSlim.cpp">
+      <Filter>Source Files\Handle</Filter>
+    </ClCompile>
+    <ClCompile Include="PipelineException.cpp">
+      <Filter>Source Files\Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Pipeline.cpp">
+      <Filter>Source Files\Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Exception.cpp">
+      <Filter>Source Files\Exception</Filter>
+    </ClCompile>
+    <ClCompile Include="TypeHandleSerialization.cpp">
+      <Filter>Source Files\Type</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Exception.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StaticAssert.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TypeValidation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Curator.h">
       <Filter>Header Files\Curator</Filter>
     </ClInclude>
     <ClInclude Include="CuratorProvider.h">
-      <Filter>Header Files\Curator</Filter>
-    </ClInclude>
-    <ClInclude Include="CuratorScribe.h">
       <Filter>Header Files\Curator</Filter>
     </ClInclude>
     <ClInclude Include="Reliquary.h">
@@ -159,12 +150,6 @@
     <ClInclude Include="ShardBatchSource.h">
       <Filter>Header Files\Shard\Batch</Filter>
     </ClInclude>
-    <ClInclude Include="Shard.h">
-      <Filter>Header Files\Shard</Filter>
-    </ClInclude>
-    <ClInclude Include="ShardScribe.h">
-      <Filter>Header Files\Shard</Filter>
-    </ClInclude>
     <ClInclude Include="ShardTraits.h">
       <Filter>Header Files\Shard</Filter>
     </ClInclude>
@@ -192,9 +177,6 @@
     <ClInclude Include="RelicBatchSource.h">
       <Filter>Header Files\Relic\Batch</Filter>
     </ClInclude>
-    <ClInclude Include="RelicScribe.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="StructureFrom.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
@@ -206,18 +188,6 @@
     </ClInclude>
     <ClInclude Include="RelicParented.h">
       <Filter>Header Files\Signal\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Pipeline.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PipelineException.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Ptr.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Traits.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Batch.h">
       <Filter>Header Files\Batch</Filter>
@@ -239,9 +209,6 @@
     </ClInclude>
     <ClInclude Include="ObjectType.h">
       <Filter>Header Files\Type</Filter>
-    </ClInclude>
-    <ClInclude Include="Handle.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ReliquaryShards.h">
       <Filter>Header Files\Reliquary\Components</Filter>
@@ -321,17 +288,11 @@
     <ClInclude Include="ClosedRelicDefinition.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
-    <ClInclude Include="HandleSlim.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Locality.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
     <ClInclude Include="Openness.h">
       <Filter>Header Files\Relic</Filter>
-    </ClInclude>
-    <ClInclude Include="Actualization.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ClosedTypedRelic.h">
       <Filter>Header Files\Relic</Filter>
@@ -347,6 +308,42 @@
     </ClInclude>
     <ClInclude Include="OpenTypedRelicDefinition.h">
       <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="Actualization.h">
+      <Filter>Header Files\Handle</Filter>
+    </ClInclude>
+    <ClInclude Include="HandleSlim.h">
+      <Filter>Header Files\Handle</Filter>
+    </ClInclude>
+    <ClInclude Include="Handle.h">
+      <Filter>Header Files\Handle</Filter>
+    </ClInclude>
+    <ClInclude Include="Pipeline.h">
+      <Filter>Header Files\Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="PipelineException.h">
+      <Filter>Header Files\Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Exception.h">
+      <Filter>Header Files\Exception</Filter>
+    </ClInclude>
+    <ClInclude Include="Ptr.h">
+      <Filter>Header Files\Ptr</Filter>
+    </ClInclude>
+    <ClInclude Include="Traits.h">
+      <Filter>Header Files\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="CompositeScribe.h">
+      <Filter>Header Files\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="TableScribe.h">
+      <Filter>Header Files\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="NullScribe.h">
+      <Filter>Header Files\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeHandleSerialization.h">
+      <Filter>Header Files\Type</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -445,6 +442,30 @@
     </Filter>
     <Filter Include="Header Files\Shard\Batch\Composite">
       <UniqueIdentifier>{e08ae1bc-fb86-4a8e-bf9c-82e1a92c7325}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Handle">
+      <UniqueIdentifier>{83504bd3-278d-4458-899f-4fa22a50779d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Handle">
+      <UniqueIdentifier>{5484011c-a548-4bbd-b351-c470164f4144}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Pipeline">
+      <UniqueIdentifier>{9819f474-861b-4b92-910b-2805194a55f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Pipeline">
+      <UniqueIdentifier>{438ef36e-9bf6-4115-a80f-18986cee96bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Exception">
+      <UniqueIdentifier>{bccf0ad1-ff35-4b0f-8c75-6deca6729601}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Exception">
+      <UniqueIdentifier>{99080f8b-def6-4880-ab99-3c40e63d52d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Ptr">
+      <UniqueIdentifier>{265a1d98-8599-457b-beaf-9d35022b08e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Traits">
+      <UniqueIdentifier>{a358dbd0-8c99-4de9-9ff9-27db7776d056}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

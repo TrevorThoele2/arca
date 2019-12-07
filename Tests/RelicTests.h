@@ -4,7 +4,7 @@
 
 #include <Arca/ClosedTypedRelicAutomation.h>
 #include <Arca/OpenTypedRelicAutomation.h>
-#include <Arca/Shard.h>
+#include <Arca/ShardTraits.h>
 
 #include <Arca/Serialization.h>
 
@@ -143,7 +143,7 @@ namespace Inscription
 {
     template<>
     class Scribe<::RelicTestsFixture::Shard, BinaryArchive> final
-        : public ShardScribe<::RelicTestsFixture::Shard, BinaryArchive>
+        : public ArcaCompositeScribe<::RelicTestsFixture::Shard, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
@@ -154,7 +154,7 @@ namespace Inscription
 
     template<>
     class Scribe<::RelicTestsFixture::OtherShard, BinaryArchive> final
-        : public ShardScribe<::RelicTestsFixture::OtherShard, BinaryArchive>
+        : public ArcaCompositeScribe<::RelicTestsFixture::OtherShard, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
@@ -165,46 +165,26 @@ namespace Inscription
 
     template<>
     class Scribe<::RelicTestsFixture::TypedRelic, BinaryArchive> final
-        : public CompositeRelicScribe<::RelicTestsFixture::TypedRelic, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        : public ArcaNullScribe<::RelicTestsFixture::TypedRelic, BinaryArchive>
+    {};
 
     template<>
     class Scribe<::RelicTestsFixture::OpenTypedRelic, BinaryArchive> final
-        : public CompositeRelicScribe<::RelicTestsFixture::OpenTypedRelic, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        : public ArcaNullScribe<::RelicTestsFixture::OpenTypedRelic, BinaryArchive>
+    {};
 
     template<>
     class Scribe<::RelicTestsFixture::GlobalRelic, BinaryArchive> final
-        : public CompositeRelicScribe<::RelicTestsFixture::GlobalRelic, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        : public ArcaNullScribe<::RelicTestsFixture::GlobalRelic, BinaryArchive>
+    {};
 
     template<>
     class Scribe<::RelicTestsFixture::MostBasicCustomFactoryRelic, BinaryArchive> final
-        : public CompositeRelicScribe<::RelicTestsFixture::MostBasicCustomFactoryRelic, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        : public ArcaNullScribe<::RelicTestsFixture::MostBasicCustomFactoryRelic, BinaryArchive>
+    {};
 
     template<>
     class Scribe<::RelicTestsFixture::GuardedCustomFactoryRelic, BinaryArchive> final
-        : public CompositeRelicScribe<::RelicTestsFixture::GuardedCustomFactoryRelic, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        : public ArcaNullScribe<::RelicTestsFixture::GuardedCustomFactoryRelic, BinaryArchive>
+    {};
 }

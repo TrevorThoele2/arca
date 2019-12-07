@@ -2,6 +2,8 @@
 
 #include "TypeHandle.h"
 
+#include "Serialization.h"
+
 namespace Arca
 {
     class Reliquary;

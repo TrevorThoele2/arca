@@ -3,10 +3,9 @@
 #include "GeneralFixture.h"
 
 #include <Arca/ClosedTypedRelicAutomation.h>
-#include <Arca/Shard.h>
+#include <Arca/ShardTraits.h>
 
 #include <Inscription/BinaryArchive.h>
-#include "Inscription/BaseScriven.h"
 
 using namespace Arca;
 
@@ -72,37 +71,21 @@ namespace Inscription
 {
     template<>
     class Scribe<::ReliquaryOriginRegistrationTestsFixture::Shard, BinaryArchive> final
-        : public ShardScribe<::ReliquaryOriginRegistrationTestsFixture::Shard, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        : public ArcaNullScribe<::ReliquaryOriginRegistrationTestsFixture::Shard, BinaryArchive>
+    {};
 
     template<>
     class Scribe<::ReliquaryOriginRegistrationTestsFixture::Relic, BinaryArchive> final
-        : public CompositeRelicScribe<::ReliquaryOriginRegistrationTestsFixture::Relic, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        : public ArcaNullScribe<::ReliquaryOriginRegistrationTestsFixture::Relic, BinaryArchive>
+    {};
 
     template<>
     class Scribe<::ReliquaryOriginRegistrationTestsFixture::GlobalRelic, BinaryArchive> final
-        : public CompositeRelicScribe<::ReliquaryOriginRegistrationTestsFixture::GlobalRelic, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        : public ArcaNullScribe<::ReliquaryOriginRegistrationTestsFixture::GlobalRelic, BinaryArchive>
+    {};
 
     template<>
     class Scribe<::ReliquaryOriginRegistrationTestsFixture::Curator, BinaryArchive> final :
-        public CuratorScribe<::ReliquaryOriginRegistrationTestsFixture::Curator, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        public ArcaNullScribe<::ReliquaryOriginRegistrationTestsFixture::Curator, BinaryArchive>
+    {};
 }

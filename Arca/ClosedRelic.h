@@ -7,8 +7,6 @@
 #include "Either.h"
 #include "AreAllShards.h"
 
-#include "RelicScribe.h"
-
 namespace Arca
 {
     class ClosedRelic
@@ -57,9 +55,6 @@ namespace Inscription
 {
     template<>
     class Scribe<::Arca::ClosedRelic, BinaryArchive> final :
-        public CompositeRelicScribe<::Arca::ClosedRelic, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-    };
+        public ArcaNullScribe<::Arca::ClosedRelic, BinaryArchive>
+    {};
 }

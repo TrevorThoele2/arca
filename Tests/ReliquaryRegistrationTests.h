@@ -71,37 +71,21 @@ namespace Inscription
 {
     template<>
     class Scribe<::ReliquaryRegistrationTestsFixture::Shard, BinaryArchive> final
-        : public ShardScribe<::ReliquaryRegistrationTestsFixture::Shard, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        : public ArcaNullScribe<::ReliquaryRegistrationTestsFixture::Shard, BinaryArchive>
+    {};
 
     template<>
     class Scribe<::ReliquaryRegistrationTestsFixture::Relic, BinaryArchive> final
-        : public CompositeRelicScribe<::ReliquaryRegistrationTestsFixture::Relic, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        : public ArcaNullScribe<::ReliquaryRegistrationTestsFixture::Relic, BinaryArchive>
+    {};
 
     template<>
     class Scribe<::ReliquaryRegistrationTestsFixture::GlobalRelic, BinaryArchive> final
-        : public CompositeRelicScribe<::ReliquaryRegistrationTestsFixture::GlobalRelic, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        : public ArcaNullScribe<::ReliquaryRegistrationTestsFixture::GlobalRelic, BinaryArchive>
+    {};
 
     template<>
     class Scribe<::ReliquaryRegistrationTestsFixture::Curator, BinaryArchive> final :
-        public CuratorScribe<::ReliquaryRegistrationTestsFixture::Curator, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        public ArcaNullScribe<::ReliquaryRegistrationTestsFixture::Curator, BinaryArchive>
+    {};
 }

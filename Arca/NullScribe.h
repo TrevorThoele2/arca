@@ -1,15 +1,16 @@
 #pragma once
 
-#include "ShardTraits.h"
-#include "Serialization.h"
+#include <Inscription/NullScribe.h>
+
+#include "Traits.h"
 
 namespace Inscription
 {
     template<class T, class Archive>
-    class ShardScribe : public CompositeScribe<T, Archive>
+    class ArcaNullScribe : public NullScribe<T, Archive>
     {
     private:
-        using BaseT = CompositeScribe<T, Archive>;
+        using BaseT = NullScribe<T, Archive>;
     public:
         using ObjectT = typename BaseT::ObjectT;
         using ArchiveT = typename BaseT::ArchiveT;
@@ -20,7 +21,7 @@ namespace Inscription
     };
 
     template<class T, class Archive>
-    TypeHandle ShardScribe<T, Archive>::OutputTypeHandle(const ArchiveT& archive)
+    TypeHandle ArcaNullScribe<T, Archive>::OutputTypeHandle(const ArchiveT& archive)
     {
         return ::Arca::TypeHandleFor<T>().name;
     }

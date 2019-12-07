@@ -39,9 +39,3 @@ namespace Arca
 
     const TypeHandleName Traits<ClosedRelic>::typeName = "ClosedRelic";
 }
-
-namespace Inscription
-{
-    void Scribe<Arca::ClosedRelic, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
-    {}
-}

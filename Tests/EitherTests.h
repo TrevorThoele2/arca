@@ -3,7 +3,7 @@
 #include "GeneralFixture.h"
 
 #include <Arca/ClosedTypedRelicAutomation.h>
-#include <Arca/Shard.h>
+#include <Arca/ShardTraits.h>
 
 #include <Arca/Serialization.h>
 
@@ -53,7 +53,7 @@ namespace Inscription
 {
     template<>
     class Scribe<::EitherTestsFixture::BasicShard, BinaryArchive> final
-        : public ShardScribe<::EitherTestsFixture::BasicShard, BinaryArchive>
+        : public ArcaCompositeScribe<::EitherTestsFixture::BasicShard, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
@@ -64,10 +64,6 @@ namespace Inscription
 
     template<>
     class Scribe<::EitherTestsFixture::BasicTypedRelic, BinaryArchive> final
-        : public CompositeRelicScribe<::EitherTestsFixture::BasicTypedRelic, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        : public ArcaNullScribe<::EitherTestsFixture::BasicTypedRelic, BinaryArchive>
+    {};
 }

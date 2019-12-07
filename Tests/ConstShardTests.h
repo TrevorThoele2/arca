@@ -2,7 +2,7 @@
 
 #include "ReliquaryFixture.h"
 
-#include <Arca/Shard.h>
+#include <Arca/ShardTraits.h>
 #include <Arca/ClosedTypedRelicAutomation.h>
 
 using namespace Arca;
@@ -52,7 +52,7 @@ namespace Inscription
 {
     template<>
     class Scribe<::ConstShardTestsFixture::Shard, BinaryArchive> final
-        : public ShardScribe<::ConstShardTestsFixture::Shard, BinaryArchive>
+        : public ArcaCompositeScribe<::ConstShardTestsFixture::Shard, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
@@ -63,10 +63,6 @@ namespace Inscription
 
     template<>
     class Scribe<::ConstShardTestsFixture::Relic, BinaryArchive> final
-        : public CompositeRelicScribe<::ConstShardTestsFixture::Relic, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        : public ArcaNullScribe<::ConstShardTestsFixture::Relic, BinaryArchive>
+    {};
 }
