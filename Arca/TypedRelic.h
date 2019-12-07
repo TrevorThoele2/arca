@@ -11,6 +11,7 @@
 namespace Arca
 {
     class Reliquary;
+    class ReliquaryRelics;
     class OpenRelic;
 
     class TypedRelic
@@ -37,9 +38,9 @@ namespace Arca
         RelicID id = 0;
         Reliquary* owner = nullptr;
     private:
-        friend class Reliquary;
+        friend class ReliquaryRelics;
         friend class ReliquaryOrigin;
-        template<class T, class>
+        template<class, class>
         friend class BatchSource;
     private:
         INSCRIPTION_ACCESS;

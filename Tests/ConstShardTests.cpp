@@ -33,7 +33,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
 
         WHEN("creating const shard on relic")
         {
-            auto createdShard = relic.Create<const Shard>();
+            auto createdShard = relic->Create<const Shard>();
 
             THEN("is occupied")
             {
@@ -43,7 +43,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
 
             WHEN("finding const shard")
             {
-                auto foundShard = relic.Find<const Shard>();
+                auto foundShard = relic->Find<const Shard>();
 
                 THEN("is occupied")
                 {
@@ -59,7 +59,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
 
             WHEN("finding non-const shard")
             {
-                auto foundShard = relic.Find<Shard>();
+                auto foundShard = relic->Find<Shard>();
 
                 THEN("is not occupied")
                 {
@@ -104,9 +104,9 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
             auto createdRelic2 = reliquary->Create<OpenRelic>();
             auto createdRelic3 = reliquary->Create<OpenRelic>();
 
-            createdRelic1.Create<Shard>();
-            createdRelic2.Create<Shard>();
-            createdRelic3.Create<Shard>();
+            createdRelic1->Create<Shard>();
+            createdRelic2->Create<Shard>();
+            createdRelic3->Create<Shard>();
 
             WHEN("retrieving const shard batch")
             {
@@ -135,9 +135,9 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
             auto createdRelic2 = reliquary->Create<OpenRelic>();
             auto createdRelic3 = reliquary->Create<OpenRelic>();
 
-            createdRelic1.Create<const Shard>();
-            createdRelic2.Create<const Shard>();
-            createdRelic3.Create<const Shard>();
+            createdRelic1->Create<const Shard>();
+            createdRelic2->Create<const Shard>();
+            createdRelic3->Create<const Shard>();
 
             WHEN("retrieving const shard batch")
             {
@@ -170,12 +170,12 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
             auto createdRelic5 = reliquary->Create<OpenRelic>();
             auto createdRelic6 = reliquary->Create<OpenRelic>();
 
-            createdRelic1.Create<Shard>();
-            createdRelic2.Create<const Shard>();
-            createdRelic3.Create<Shard>();
-            createdRelic4.Create<const Shard>();
-            createdRelic5.Create<Shard>();
-            createdRelic6.Create<const Shard>();
+            createdRelic1->Create<Shard>();
+            createdRelic2->Create<const Shard>();
+            createdRelic3->Create<Shard>();
+            createdRelic4->Create<const Shard>();
+            createdRelic5->Create<Shard>();
+            createdRelic6->Create<const Shard>();
 
             WHEN("retrieving const shard batch")
             {
@@ -207,11 +207,11 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
 
         auto relicStructure = RelicStructure{};
         relicStructure.emplace_back(TypeHandleFor<const Shard>());
-        auto relic = reliquary->Create<ClosedRelic>(relicStructure);
+        auto relic = reliquary->CreateWith<ClosedRelic>(relicStructure);
 
         WHEN("finding const shard")
         {
-            auto foundShard = relic.Find<const Shard>();
+            auto foundShard = relic->Find<const Shard>();
 
             THEN("is occupied")
             {
@@ -222,7 +222,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
 
         WHEN("finding non-const shard")
         {
-            auto foundShard = relic.Find<Shard>();
+            auto foundShard = relic->Find<Shard>();
 
             THEN("is not occupied")
             {
@@ -315,7 +315,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shard serialization", "[shard][co
             .Actualize();
 
         auto savedRelic = savedReliquary->Create<OpenRelic>();
-        savedRelic.Create<const Shard>();
+        savedRelic->Create<const Shard>();
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);

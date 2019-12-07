@@ -91,7 +91,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
 
         WHEN("creating shard")
         {
-            auto createdShard = relic.Create<Shard>();
+            auto createdShard = relic->Create<Shard>();
 
             WHEN("starting batch")
             {
@@ -116,7 +116,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
 
                 THEN("removing shard empties the batch")
                 {
-                    relic.Destroy<Shard>();
+                    relic->Destroy<Shard>();
                     REQUIRE(batch.IsEmpty());
                 }
             }
@@ -139,7 +139,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
 
             WHEN("creating derived shard")
             {
-                auto createdShard = relic.Create<Shard>();
+                auto createdShard = relic->Create<Shard>();
                 
                 THEN("batch contains derived shard")
                 {
@@ -160,7 +160,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
 
                 THEN("removing shard empties the batch")
                 {
-                    relic.Destroy<Shard>();
+                    relic->Destroy<Shard>();
                     REQUIRE(batch.IsEmpty());
                 }
             }
@@ -201,7 +201,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch serialization", "[ShardBatch][se
             .Actualize();
 
         auto savedRelic = savedReliquary->Create<OpenRelic>();
-        savedRelic.Create<Shard>();
+        savedRelic->Create<Shard>();
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.exe", "Testing", 1);

@@ -18,6 +18,7 @@ namespace Arca
     struct RelicMetadata;
     class Reliquary;
     class ReliquaryRelics;
+    class ReliquaryRelicStructures;
     class ReliquaryShards;
     class ReliquaryCurators;
     class ReliquarySignals;
@@ -40,6 +41,8 @@ namespace Arca
         [[nodiscard]] const Reliquary& Owner() const;
         [[nodiscard]] ReliquaryRelics& Relics();
         [[nodiscard]] const ReliquaryRelics& Relics() const;
+        [[nodiscard]] ReliquaryRelicStructures& RelicStructures();
+        [[nodiscard]] const ReliquaryRelicStructures& RelicStructures() const;
         [[nodiscard]] ReliquaryShards& Shards();
         [[nodiscard]] const ReliquaryShards& Shards() const;
         [[nodiscard]] ReliquaryCurators& Curators();

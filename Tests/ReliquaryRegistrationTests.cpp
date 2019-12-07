@@ -37,7 +37,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    openRelic.Create<Shard>(),
+                    openRelic->Create<Shard>(),
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The shard ("s + ::Chroma::ToString(TypeHandleFor<Shard>()) + ") was not registered. " +
@@ -52,7 +52,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    openRelic.Create<const Shard>(),
+                    openRelic->Create<const Shard>(),
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The shard ("s + ::Chroma::ToString(TypeHandleFor<const Shard>()) + ") was not registered. " +
@@ -120,7 +120,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary->Create<ClosedRelic>(relicStructureName),
+                    reliquary->CreateWith<ClosedRelic>(relicStructureName),
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The relic structure ("s + relicStructureName + ") was not registered.")

@@ -145,8 +145,8 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary wih single shard")
         WHEN("creating open relic with non-const and const shards")
         {
             auto relic = reliquary->Create<OpenRelic>();
-            relic.Create<BasicShard>();
-            relic.Create<const BasicShard>();
+            relic->Create<BasicShard>();
+            relic->Create<const BasicShard>();
 
             THEN("reliquary has shard size of two")
             {
@@ -172,12 +172,12 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "creating relic from registered relic str
                 .Type<BasicShard>()
                 .Actualize();
 
-            auto relic = reliquary->Create<ClosedRelic>(structureName);
+            auto relic = reliquary->CreateWith<ClosedRelic>(structureName);
 
             THEN("relic has shard")
             {
-                REQUIRE(relic.Find<BasicShard>());
-                REQUIRE(relic.Contains<BasicShard>());
+                REQUIRE(relic->Find<BasicShard>());
+                REQUIRE(relic->Contains<BasicShard>());
             }
         }
 
@@ -190,7 +190,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "creating relic from registered relic str
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary->Create<ClosedRelic>(structureName),
+                    reliquary->CreateWith<ClosedRelic>(structureName),
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The shard ("s + Traits<BasicShard>::typeName + ") was not registered.")
@@ -275,7 +275,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
             .Actualize();
 
         auto savedRelic = savedReliquary->Create<OpenRelic>();
-        auto savedShard = savedRelic.Create<BasicShard>();
+        auto savedShard = savedRelic->Create<BasicShard>();
         savedShard->myValue = dataGeneration.Random<std::string>();
 
         {

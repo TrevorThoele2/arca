@@ -74,7 +74,7 @@ SCENARIO_METHOD(ReliquaryOriginRegistrationTestsFixture, "registering types mult
                     reliquaryOrigin.Type<GlobalRelic>(),
                     AlreadyRegistered,
                     Catch::Matchers::Message(
-                        "The global relic (" + TypeHandleFor<GlobalRelic>().name + ") was already registered. " +
+                        "The relic (" + TypeHandleFor<GlobalRelic>().name + ") was already registered. " +
                         "The class name is: \"" + typeid(GlobalRelic).name() + "\".")
                 );
             }

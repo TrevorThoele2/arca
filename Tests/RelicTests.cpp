@@ -84,7 +84,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             THEN("does not have parent")
             {
-                REQUIRE(!openRelic.Parent());
+                REQUIRE(!openRelic->Parent());
             }
 
             THEN("reliquary has one more relic")
@@ -111,7 +111,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
             WHEN("creating shard")
             {
                 auto preCreateShardSize = reliquary->ShardSize();
-                auto shard = openRelic.Create<BasicShard>();
+                auto shard = openRelic->Create<BasicShard>();
 
                 THEN("reliquary has one more shard")
                 {
@@ -131,13 +131,13 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
                 THEN("relic has shard")
                 {
-                    REQUIRE(openRelic.Find<BasicShard>());
-                    REQUIRE(openRelic.Contains<BasicShard>());
+                    REQUIRE(openRelic->Find<BasicShard>());
+                    REQUIRE(openRelic->Contains<BasicShard>());
                 }
 
                 WHEN("destroying shard")
                 {
-                    openRelic.Destroy<BasicShard>();
+                    openRelic->Destroy<BasicShard>();
 
                     THEN("reliquary loses a shard")
                     {
@@ -152,8 +152,8 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
                     THEN("relic does not have shard")
                     {
-                        REQUIRE(!openRelic.Find<BasicShard>());
-                        REQUIRE(!openRelic.Contains<BasicShard>());
+                        REQUIRE(!openRelic->Find<BasicShard>());
+                        REQUIRE(!openRelic->Contains<BasicShard>());
                     }
                 }
             }
@@ -182,14 +182,14 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
         WHEN("creating closed relic with valid structure")
         {
             auto preCreateRelicCount = reliquary->RelicSize();
-            auto closedRelic = reliquary->Create<ClosedRelic>(RelicStructure{ TypeHandleFor<BasicShard>() });
+            auto closedRelic = reliquary->CreateWith<ClosedRelic>(RelicStructure{ TypeHandleFor<BasicShard>() });
 
             THEN("structure has been satisfied")
             {
                 REQUIRE(reliquary->Find<BasicShard>(closedRelic.ID()));
 
-                REQUIRE(closedRelic.Find<BasicShard>());
-                REQUIRE(closedRelic.Contains<BasicShard>());
+                REQUIRE(closedRelic->Find<BasicShard>());
+                REQUIRE(closedRelic->Contains<BasicShard>());
             }
 
             THEN("reliquary relic count increments by one")
@@ -325,11 +325,11 @@ SCENARIO_METHOD(RelicTestsFixture, "many relics", "[relic]")
             .Type<OtherShard>()
             .Actualize();
 
-        std::vector<OpenRelic> relics;
+        std::vector<Ptr<OpenRelic>> relics;
         for (size_t i = 0; i < 100; ++i)
         {
             relics.push_back(reliquary->Create<OpenRelic>());
-            relics.back().Create<BasicShard>()->myValue = ::Chroma::ToString(i);
+            relics.back()->Create<BasicShard>()->myValue = ::Chroma::ToString(i);
         }
 
         WHEN("deleting all but the last")
@@ -345,9 +345,9 @@ SCENARIO_METHOD(RelicTestsFixture, "many relics", "[relic]")
             {
                 auto relic = relics[0];
 
-                REQUIRE(relic.Contains<BasicShard>() == true);
+                REQUIRE(relic->Contains<BasicShard>() == true);
 
-                auto shard = relic.Find<BasicShard>();
+                auto shard = relic->Find<BasicShard>();
                 REQUIRE(shard);
                 REQUIRE(shard->myValue == ::Chroma::ToString(99));
             }
@@ -438,7 +438,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
         WHEN("creating closed relic")
         {
-            const auto created = reliquary->Create<ClosedRelic>(RelicStructure { TypeHandleFor<BasicShard>() });
+            const auto created = reliquary->CreateWith<ClosedRelic>(RelicStructure { TypeHandleFor<BasicShard>() });
 
             THEN("signal is emitted for relic")
             {
@@ -517,19 +517,19 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             .Actualize();
 
         auto parent = reliquary->Create<OpenRelic>();
-        parent.Create<BasicShard>();
+        parent->Create<BasicShard>();
 
         auto onParented = reliquary->Batch<RelicParented>();
 
         WHEN("created child")
         {
             auto child = reliquary->CreateChild<OpenRelic>(parent);
-            child.Create<BasicShard>();
+            child->Create<BasicShard>();
 
             THEN("child has parent")
             {
-                REQUIRE(child.Parent());
-                REQUIRE(child.Parent()->ID() == parent.ID());
+                REQUIRE(child->Parent());
+                REQUIRE(child->Parent()->ID() == parent.ID());
             }
 
             THEN("destroying parent also destroys child")
@@ -601,7 +601,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
         auto childReliquary = origin.Actualize();
 
         auto parent = parentReliquary->Create<OpenRelic>();
-        parent.Create<BasicShard>();
+        parent->Create<BasicShard>();
 
         WHEN("parenting child inside child reliquary")
         {
@@ -645,7 +645,7 @@ SCENARIO_METHOD(RelicTestsFixture, "references to relics stay empty when relic p
 
         WHEN("generating relic list, deleting half then recreating half of list")
         {
-            std::vector<OpenRelic> everyOtherRelic;
+            std::vector<Ptr<OpenRelic>> everyOtherRelic;
             auto pickRelic = false;
             for (auto i = 0; i < 100; ++i)
             {
@@ -666,7 +666,7 @@ SCENARIO_METHOD(RelicTestsFixture, "references to relics stay empty when relic p
                 REQUIRE(std::all_of(
                     everyOtherRelic.begin(),
                     everyOtherRelic.end(),
-                    [](const OpenRelic& entry)
+                    [](const Ptr<OpenRelic>& entry)
                     {
                         return !static_cast<bool>(entry);
                     }));

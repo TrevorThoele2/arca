@@ -6,13 +6,22 @@
 
 namespace Arca
 {
-    template<class T, std::enable_if_t<!is_either_v<T>, int> = 0>
+    template<class T, std::enable_if_t<!is_either_v<T> && !is_global_relic_v<T>, int> = 0>
     Ptr<T> Actualize(const Handle& handle)
     {
         if (handle.Type() != TypeHandleFor<T>())
             return {};
 
         return handle.Owner().Find<T>(handle.ID());
+    }
+
+    template<class T, std::enable_if_t<is_global_relic_v<T>, int> = 0>
+    Ptr<T> Actualize(const Handle& handle)
+    {
+        if (handle.Type() != TypeHandleFor<T>())
+            return {};
+
+        return handle.Owner().Find<T>();
     }
 
     template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>

@@ -32,8 +32,10 @@ namespace Arca
         return *owner;
     }
 
-    ClosedRelic::ClosedRelic(RelicID id, Reliquary& owner) : id(id), owner(&owner)
-    {}
+    void ClosedRelic::Initialize(Reliquary& owner)
+    {
+        this->owner = &owner;
+    }
 
     const TypeHandleName Traits<ClosedRelic>::typeName = "ClosedRelic";
 }
@@ -41,8 +43,5 @@ namespace Arca
 namespace Inscription
 {
     void Scribe<Arca::ClosedRelic, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
-    {
-        archive(object.id);
-        archive(object.owner);
-    }
+    {}
 }

@@ -63,7 +63,7 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandleName typeName;
-        static const bool isGlobal = true;
+        static const Locality locality = Locality::Global;
     };
 }
 

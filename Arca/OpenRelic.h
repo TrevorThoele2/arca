@@ -7,7 +7,7 @@
 #include "Either.h"
 #include "AreAllShards.h"
 
-#include "Serialization.h"
+#include "RelicScribe.h"
 
 namespace Arca
 {
@@ -37,12 +37,15 @@ namespace Arca
         [[nodiscard]] RelicID ID() const;
         [[nodiscard]] Reliquary& Owner() const;
     private:
-        RelicID id;
-        Reliquary* owner;
+        RelicID id = 0;
+        Reliquary* owner = nullptr;
     private:
-        OpenRelic(RelicID id, Reliquary& owner);
+        OpenRelic() = default;
+        void Initialize(Reliquary& owner);
     private:
         friend Reliquary;
+        friend class ReliquaryRelics;
+        friend class ReliquaryOrigin;
     private:
         INSCRIPTION_ACCESS;
     };
@@ -50,6 +53,8 @@ namespace Arca
     template<>
     struct Traits<OpenRelic>
     {
+        static const ObjectType objectType = ObjectType::Relic;
+        static const Openness openness = Openness::Open;
         static const TypeHandleName typeName;
     };
 }
@@ -58,7 +63,7 @@ namespace Inscription
 {
     template<>
     class Scribe<::Arca::OpenRelic, BinaryArchive> final :
-        public CompositeScribe<::Arca::OpenRelic, BinaryArchive>
+        public CompositeRelicScribe<::Arca::OpenRelic, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;

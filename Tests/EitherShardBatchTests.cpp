@@ -89,7 +89,7 @@ SCENARIO_METHOD(EitherShardBatchFixture, "either shard batch", "[EitherShardBatc
 
         WHEN("creating shard")
         {
-            auto createdShard = relic.Create<Shard>();
+            auto createdShard = relic->Create<Shard>();
 
             WHEN("starting batch")
             {
@@ -114,7 +114,7 @@ SCENARIO_METHOD(EitherShardBatchFixture, "either shard batch", "[EitherShardBatc
 
                 THEN("removing shard empties the batch")
                 {
-                    relic.Destroy<Shard>();
+                    relic->Destroy<Shard>();
                     REQUIRE(batch.IsEmpty());
                 }
             }
@@ -122,7 +122,7 @@ SCENARIO_METHOD(EitherShardBatchFixture, "either shard batch", "[EitherShardBatc
 
         WHEN("creating const shard")
         {
-            auto createdShard = relic.Create<const Shard>();
+            auto createdShard = relic->Create<const Shard>();
 
             WHEN("starting batch")
             {
@@ -147,7 +147,7 @@ SCENARIO_METHOD(EitherShardBatchFixture, "either shard batch", "[EitherShardBatc
 
                 THEN("removing shard empties the batch")
                 {
-                    relic.Destroy<Shard>();
+                    relic->Destroy<Shard>();
                     REQUIRE(batch.IsEmpty());
                 }
             }
@@ -155,8 +155,8 @@ SCENARIO_METHOD(EitherShardBatchFixture, "either shard batch", "[EitherShardBatc
 
         WHEN("creating non-const and const shard")
         {
-            auto createdShard1 = relic.Create<Shard>();
-            auto createdShard2 = relic.Create<const Shard>();
+            auto createdShard1 = relic->Create<Shard>();
+            auto createdShard2 = relic->Create<const Shard>();
 
             WHEN("starting batch")
             {
@@ -197,14 +197,14 @@ SCENARIO_METHOD(EitherShardBatchFixture, "either shard batch", "[EitherShardBatc
 
                 THEN("removing one shard does not empty the batch")
                 {
-                    relic.Destroy<Shard>();
+                    relic->Destroy<Shard>();
                     REQUIRE(!batch.IsEmpty());
                 }
 
                 THEN("removing both shards empties the batch")
                 {
-                    relic.Destroy<Shard>();
-                    relic.Destroy<const Shard>();
+                    relic->Destroy<Shard>();
+                    relic->Destroy<const Shard>();
                     REQUIRE(batch.IsEmpty());
                 }
             }
@@ -227,7 +227,7 @@ SCENARIO_METHOD(EitherShardBatchFixture, "either shard batch", "[EitherShardBatc
 
             WHEN("creating non-const shard")
             {
-                auto createdShard = relic.Create<Shard>();
+                auto createdShard = relic->Create<Shard>();
 
                 THEN("batch contains derived shard")
                 {
@@ -248,14 +248,14 @@ SCENARIO_METHOD(EitherShardBatchFixture, "either shard batch", "[EitherShardBatc
 
                 THEN("removing shard empties the batch")
                 {
-                    relic.Destroy<Shard>();
+                    relic->Destroy<Shard>();
                     REQUIRE(batch.IsEmpty());
                 }
             }
 
             WHEN("creating const shard")
             {
-                auto createdShard = relic.Create<const Shard>();
+                auto createdShard = relic->Create<const Shard>();
 
                 THEN("batch contains derived shard")
                 {
@@ -276,15 +276,15 @@ SCENARIO_METHOD(EitherShardBatchFixture, "either shard batch", "[EitherShardBatc
 
                 THEN("removing shard empties the batch")
                 {
-                    relic.Destroy<Shard>();
+                    relic->Destroy<Shard>();
                     REQUIRE(batch.IsEmpty());
                 }
             }
 
             WHEN("creating non-const and const shard")
             {
-                auto createdShard1 = relic.Create<Shard>();
-                auto createdShard2 = relic.Create<const Shard>();
+                auto createdShard1 = relic->Create<Shard>();
+                auto createdShard2 = relic->Create<const Shard>();
 
                 THEN("batch contains shards")
                 {
@@ -321,14 +321,14 @@ SCENARIO_METHOD(EitherShardBatchFixture, "either shard batch", "[EitherShardBatc
 
                 THEN("removing one shard does not empty the batch")
                 {
-                    relic.Destroy<Shard>();
+                    relic->Destroy<Shard>();
                     REQUIRE(!batch.IsEmpty());
                 }
 
                 THEN("removing both shards empties the batch")
                 {
-                    relic.Destroy<Shard>();
-                    relic.Destroy<const Shard>();
+                    relic->Destroy<Shard>();
+                    relic->Destroy<const Shard>();
                     REQUIRE(batch.IsEmpty());
                 }
             }

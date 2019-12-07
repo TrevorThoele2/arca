@@ -237,9 +237,6 @@
     <ClInclude Include="IsType.h">
       <Filter>Header Files\Type</Filter>
     </ClInclude>
-    <ClInclude Include="RelicHandleActualization.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="ObjectType.h">
       <Filter>Header Files\Type</Filter>
     </ClInclude>
@@ -288,9 +285,6 @@
     <ClInclude Include="OpenRelicDefinition.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
-    <ClInclude Include="RelicOpenness.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="Either.h">
       <Filter>Header Files\Shard</Filter>
     </ClInclude>
@@ -331,6 +325,18 @@
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
     <ClInclude Include="HandleSlim.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Locality.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="Openness.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="Genericity.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="Actualization.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

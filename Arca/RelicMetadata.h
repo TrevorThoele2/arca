@@ -4,18 +4,18 @@
 #include <vector>
 
 #include "RelicID.h"
-#include "RelicOpenness.h"
+#include "Openness.h"
+#include "Locality.h"
 #include "TypeHandle.h"
 #include "HandleSlim.h"
-
-#include "Serialization.h"
 
 namespace Arca
 {
     struct RelicMetadata
     {
         RelicID id = 0;
-        RelicOpenness openness = RelicOpenness::Open;
+        Openness openness = Openness::Open;
+        Locality locality = Locality::Local;
         TypeHandle typeHandle;
         void* storage = nullptr;
 
@@ -25,7 +25,8 @@ namespace Arca
         RelicMetadata() = default;
         RelicMetadata(
             RelicID id,
-            RelicOpenness openness,
+            Openness openness,
+            Locality locality,
             TypeHandle typeHandle,
             void* storage = nullptr);
     };

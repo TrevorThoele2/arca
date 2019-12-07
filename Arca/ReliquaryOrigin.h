@@ -171,15 +171,23 @@ namespace Arca
                 {
                     const auto typeHandle = TypeHandleFor<RelicT>();
                     const auto id = reliquary.relics.AdvanceID();
-                    auto relic = RelicT(std::forward<CreationArgs>(creationArgs)...);
-                    relic.id = id;
+                    auto relic = std::make_shared<RelicT>(std::forward<CreationArgs>(creationArgs)...);
+                    relic->id = id;
                     auto emplaced = reliquary.relics.globalMap.emplace(
                         typeHandle.name,
-                        std::move(relic)
+                        ReliquaryRelics::StoredGlobal
+                        {
+                            std::move(relic),
+                            id
+                        }
                     )
                         .first->second;
-                    auto castedEmplaced = std::any_cast<RelicT>(&emplaced);
-                    reliquary.relics.SetupNewInternals(id, RelicOpenness::Global, typeHandle.name, castedEmplaced);
+                    reliquary.relics.SetupNewInternals(
+                        id,
+                        OpennessFor<RelicT>(),
+                        LocalityFor<RelicT>(),
+                        typeHandle.name,
+                        relic.get());
                     reliquary.relics.SatisfyStructure(id, StructureFrom<shards_for_t<RelicT>>());
 
                     reliquary.relics.globalSerializers.push_back(

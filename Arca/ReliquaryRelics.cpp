@@ -11,11 +11,12 @@ namespace Arca
 {
     void ReliquaryRelics::SetupNewInternals(
         RelicID id,
-        RelicOpenness openness,
+        Openness openness,
+        Locality locality,
         TypeHandle typeHandle,
         void* storage)
     {
-        metadataList.emplace_back(id, openness, std::move(typeHandle), storage);
+        metadataList.emplace_back(id, openness, locality, std::move(typeHandle), storage);
     }
 
     void ReliquaryRelics::DestroyMetadata(RelicID id)
@@ -59,7 +60,7 @@ namespace Arca
 
     bool ReliquaryRelics::WillDestroy(RelicMetadata* metadata) const
     {
-        return metadata && metadata->openness != RelicOpenness::Global;
+        return metadata && metadata->locality != Locality::Global;
     }
 
     void ReliquaryRelics::Destroy(RelicMetadata& metadata)
@@ -96,11 +97,8 @@ namespace Arca
                 parentMetadata->children.erase(eraseChildrenItr);
         }
 
-        if (metadata.openness == RelicOpenness::Typed)
-        {
-            auto batchSource = batchSources.Find(metadata.typeHandle.name);
-            batchSource->DestroyFromBase(id);
-        }
+        auto batchSource = batchSources.Find(metadata.typeHandle.name);
+        batchSource->DestroyFromBase(id);
 
         DestroyMetadata(id);
     }
@@ -125,15 +123,15 @@ namespace Arca
         return returnValue;
     }
 
-    bool ReliquaryRelics::CanModify(RelicID id) const
+    bool ReliquaryRelics::CanModifyShards(RelicID id) const
     {
         const auto metadata = MetadataFor(id);
-        return metadata && metadata->openness == RelicOpenness::Open;
+        return metadata && metadata->openness == Openness::Open;
     }
 
-    void ReliquaryRelics::ModificationRequired(RelicID id) const
+    void ReliquaryRelics::ShardModificationRequired(RelicID id) const
     {
-        if (!CanModify(id))
+        if (!CanModifyShards(id))
             throw CannotModify(id);
     }
 
@@ -142,7 +140,6 @@ namespace Arca
         ValidateParentForParenting(parent);
 
         assert(parent.ID() != child.id);
-        assert(child.openness != RelicOpenness::Global);
     }
 
     void ReliquaryRelics::Parent(const Handle& parent, const Handle& child)
@@ -153,7 +150,7 @@ namespace Arca
 
         const auto childMetadata = MetadataFor(child.ID());
         assert(childMetadata != nullptr);
-        assert(childMetadata->openness != RelicOpenness::Global);
+        assert(childMetadata->locality != Locality::Global);
         assert(!childMetadata->parent.has_value());
 
         parentMetadata.children.push_back(child);
@@ -175,7 +172,7 @@ namespace Arca
         if (!parentMetadata)
             throw CannotFindRelic(parent.ID());
 
-        if (parentMetadata->openness == RelicOpenness::Global)
+        if (parentMetadata->locality == Locality::Global)
             throw CannotParentRelic(
                 "Attempted to parent to a global relic.");
 

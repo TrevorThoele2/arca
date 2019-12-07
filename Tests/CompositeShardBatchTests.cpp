@@ -87,9 +87,9 @@ SCENARIO_METHOD(CompositeShardBatchFixture, "composite shard batch", "[Composite
 
         WHEN("creating shards")
         {
-            auto createdShard0 = relic.Create<Shard<0>>();
-            auto createdShard1 = relic.Create<Shard<1>>();
-            auto createdShard2 = relic.Create<Shard<2>>();
+            auto createdShard0 = relic->Create<Shard<0>>();
+            auto createdShard1 = relic->Create<Shard<1>>();
+            auto createdShard2 = relic->Create<Shard<2>>();
 
             WHEN("starting batch")
             {
@@ -116,13 +116,13 @@ SCENARIO_METHOD(CompositeShardBatchFixture, "composite shard batch", "[Composite
 
                 THEN("removing one shard empties the batch")
                 {
-                    relic.Destroy<Shard<0>>();
+                    relic->Destroy<Shard<0>>();
                     REQUIRE(batch.IsEmpty());
                 }
 
                 WHEN("adding a new relic")
                 {
-                    relic.Create<Shard<3>>();
+                    relic->Create<Shard<3>>();
 
                     THEN("batch is not empty")
                     {
@@ -145,7 +145,7 @@ SCENARIO_METHOD(CompositeShardBatchFixture, "composite shard batch", "[Composite
 
                     THEN("removing fourth shard does not empty batch")
                     {
-                        relic.Destroy<Shard<3>>();
+                        relic->Destroy<Shard<3>>();
                         REQUIRE(!batch.IsEmpty());
                     }
                 }
@@ -169,9 +169,9 @@ SCENARIO_METHOD(CompositeShardBatchFixture, "composite shard batch", "[Composite
 
             WHEN("creating shards")
             {
-                auto createdShard0 = relic.Create<Shard<0>>();
-                auto createdShard1 = relic.Create<Shard<1>>();
-                auto createdShard2 = relic.Create<Shard<2>>();
+                auto createdShard0 = relic->Create<Shard<0>>();
+                auto createdShard1 = relic->Create<Shard<1>>();
+                auto createdShard2 = relic->Create<Shard<2>>();
 
                 THEN("batch is not empty")
                 {
@@ -194,13 +194,13 @@ SCENARIO_METHOD(CompositeShardBatchFixture, "composite shard batch", "[Composite
 
                 THEN("removing one shard empties the batch")
                 {
-                    relic.Destroy<Shard<0>>();
+                    relic->Destroy<Shard<0>>();
                     REQUIRE(batch.IsEmpty());
                 }
 
                 WHEN("adding a new relic")
                 {
-                    relic.Create<Shard<3>>();
+                    relic->Create<Shard<3>>();
 
                     THEN("batch is not empty")
                     {
@@ -223,7 +223,7 @@ SCENARIO_METHOD(CompositeShardBatchFixture, "composite shard batch", "[Composite
 
                     THEN("removing fourth shard does not empty batch")
                     {
-                        relic.Destroy<Shard<3>>();
+                        relic->Destroy<Shard<3>>();
                         REQUIRE(!batch.IsEmpty());
                     }
                 }
