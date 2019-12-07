@@ -4,6 +4,7 @@
 #include "ReliquaryRelics.h"
 #include "Destroying.h"
 #include <cassert>
+#include <utility>
 
 namespace Arca
 {
@@ -12,6 +13,9 @@ namespace Arca
         const auto factory = factoryMap.find(type.name);
         if (factory == factoryMap.end())
             throw NotRegistered(Type(type.name));
+
+        if (HasEitherType(type, id))
+            throw CannotCreate(type);
 
         factory->second(Owner(), id, type.isConst);
         NotifyCompositesShardCreate(id);
@@ -26,22 +30,32 @@ namespace Arca
         Relics().ShardModificationRequired(id);
 
         {
-            for (auto& eitherShardBatchSource : Shards().eitherBatchSources.map)
+            for (auto& eitherShardBatchSource : eitherBatchSources.map)
                 eitherShardBatchSource.second->DestroyFromBase(id);
         }
 
-        for (auto& shardBatchSource : Shards().batchSources.map)
+        auto shardBatchSource = batchSources.map.find(handle.Type().name);
+        if (shardBatchSource != batchSources.map.end())
         {
-            if (shardBatchSource.first != handle.Type().name)
-                continue;
-
-            if (shardBatchSource.second->DestroyFromBase(id))
+            if (shardBatchSource->second->DestroyFromBase(id))
             {
-                Owner().Raise<Destroying>(HandleFrom(id, shardBatchSource.second->Type(), HandleObjectType::Shard));
+                Owner().Raise<Destroying>(HandleFrom(id, shardBatchSource->second->Type(), HandleObjectType::Shard));
                 NotifyCompositesShardDestroy(id);
-                break;
             }
         }
+    }
+
+    bool ReliquaryShards::Contains(const Handle& handle) const
+    {
+        assert(handle.ObjectType() == HandleObjectType::Shard);
+
+        const auto id = handle.ID();
+
+        const auto shardBatchSource = batchSources.map.find(handle.Type().name);
+        if (shardBatchSource != batchSources.map.end())
+            return shardBatchSource->second->ContainsFromBase(id);
+
+        return false;
     }
 
     void ReliquaryShards::NotifyCompositesRelicCreate(RelicID id, const RelicStructure& structure)
@@ -73,6 +87,13 @@ namespace Arca
 
     ReliquaryShards::CompositeBatchSources::CompositeBatchSources(ReliquaryShards& owner) : MetaBatchSources(owner)
     {}
+
+    bool ReliquaryShards::HasEitherType(Type type, RelicID id) const
+    {
+        auto otherType = std::move(type);
+        otherType.isConst = !otherType.isConst;
+        return Contains(HandleFrom(id, otherType, HandleObjectType::Shard));
+    }
 
     void ReliquaryShards::NotifyCompositesShardCreate(RelicID id)
     {

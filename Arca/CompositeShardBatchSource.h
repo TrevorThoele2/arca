@@ -34,8 +34,8 @@ namespace Arca
     template<class ShardsT>
     struct is_composite<ShardsT, std::enable_if_t<
         is_all_v<ShardsT>
-        && ShardsT::Pack::template ForwardArguments<are_all_shards>::Type::value
-        && (ShardsT::Pack::count > 1)>>
+        && (ShardsT::Pack::count > 1)
+        && ShardsT::Pack::template ForwardArguments<are_all_shards>::Type::value>>
         : std::true_type
     {};
 

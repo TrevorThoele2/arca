@@ -142,15 +142,14 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary wih single shard")
             .Type<BasicShard>()
             .Actualize();
 
-        WHEN("creating open relic with non-const and const shards")
+        WHEN("creating open relic with non-const shard")
         {
             auto relic = reliquary->Create<OpenRelic>();
             relic->Create<BasicShard>();
-            relic->Create<const BasicShard>();
 
-            THEN("reliquary has shard size of two")
+            THEN("creating const shard of same type throws")
             {
-                REQUIRE(reliquary->ShardSize() == 2);
+                REQUIRE_THROWS_AS(relic->Create<const BasicShard>(), CannotCreate);
             }
         }
     }

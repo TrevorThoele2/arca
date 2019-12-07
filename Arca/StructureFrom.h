@@ -14,30 +14,24 @@ namespace Arca
         template<class ShardList>
         constexpr static void Do(RelicStructure& structure, ShardList shardList)
         {
-            using ShardT = typename ShardList::template Parameter<i - 1>::Type;
+            using ShardT = typename ShardList::template Parameter<i>::Type;
 
             structure.push_back(TypeFor<ShardT>());
-            ShardListToStructure<i - 1>::Do(structure, shardList);
         }
     };
 
-    template<>
-    struct ShardListToStructure<0>
-    {
-        template<class ShardList>
-        constexpr static void Do(RelicStructure&, ShardList)
-        {}
-    };
-
-    template<class Shards>
+    template<class Shards, std::enable_if_t<(Shards::count > 0), int> = 0>
     static constexpr RelicStructure StructureFrom()
     {
         RelicStructure structure;
-        ::Chroma::IterateRange<
-            ::Chroma::VariadicTemplateSize,
-            ShardListToStructure,
-            Shards::count
-        >(structure, Shards{});
+        ::Chroma::IterateRange<::Chroma::VariadicTemplateSize, ShardListToStructure, Shards::count - 1>
+            (structure, Shards{});
         return structure;
+    }
+
+    template<class Shards, std::enable_if_t<(Shards::count == 0), int> = 0>
+    static constexpr RelicStructure StructureFrom()
+    {
+        return RelicStructure{};
     }
 }

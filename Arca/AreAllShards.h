@@ -11,7 +11,7 @@ namespace Arca
         template<class ShardPack>
         static constexpr bool Do(ShardPack pack)
         {
-            using T = typename ShardPack::template Parameter<i>::Type;
+            using T = typename ShardPack::template Parameter<i - 1>::Type;
             const auto value = is_shard_v<T>;
             return value ? AreAllShardsIterator<i - 1>::Do(pack) : false;
         }
@@ -30,7 +30,8 @@ namespace Arca
 
     template<class... Shards>
     struct are_all_shards : std::bool_constant<
-        AreAllShardsIterator<sizeof...(Shards) - 1>::Do(::Chroma::VariadicTemplate<Shards...>{})>
+        sizeof...(Shards) == 0
+        || AreAllShardsIterator<sizeof...(Shards) - 1>::Do(::Chroma::VariadicTemplate<Shards...>{})>
     {};
 
     template<class... Shards>

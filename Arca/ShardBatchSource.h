@@ -20,6 +20,8 @@ namespace Arca
 
         virtual bool DestroyFromBase(RelicID id) = 0;
 
+        virtual bool ContainsFromBase(RelicID id) const = 0;
+
         [[nodiscard]] virtual SizeT Size() const = 0;
 
         [[nodiscard]] virtual Type Type() const = 0;
@@ -56,7 +58,10 @@ namespace Arca
 
         bool DestroyFromBase(RelicID id) override;
 
-        ShardT* Find(RelicID id);
+        [[nodiscard]] ShardT* Find(RelicID id);
+        [[nodiscard]] const ShardT* Find(RelicID id) const;
+
+        [[nodiscard]] bool ContainsFromBase(RelicID id) const;
 
         [[nodiscard]] SizeT Size() const override;
         [[nodiscard]] bool IsEmpty() const;
@@ -138,6 +143,18 @@ namespace Arca
             return {};
 
         return &found->shard;
+    }
+
+    template<class T>
+    auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Find(RelicID id) const -> const ShardT*
+    {
+        return const_cast<BatchSource&>(*this).Find(id);
+    }
+
+    template<class T>
+    bool BatchSource<T, std::enable_if_t<is_shard_v<T>>>::ContainsFromBase(RelicID id) const
+    {
+        return Find(id) != nullptr;
     }
 
     template<class T>

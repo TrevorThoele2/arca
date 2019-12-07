@@ -35,6 +35,7 @@ namespace Arca
         template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
         [[nodiscard]] Ptr<EitherT> Find(RelicID id) const;
 
+        [[nodiscard]] bool Contains(const Handle& handle) const;
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
         template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
@@ -134,6 +135,8 @@ namespace Arca
         } compositeBatchSources = CompositeBatchSources(*this);
 
         KnownPolymorphicSerializerList serializers;
+    private:
+        [[nodiscard]] bool HasEitherType(Type type, RelicID id) const;
     private:
         void NotifyCompositesShardCreate(RelicID id);
         void NotifyCompositesShardDestroy(RelicID id);

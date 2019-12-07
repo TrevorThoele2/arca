@@ -65,12 +65,12 @@ namespace Arca
         [[nodiscard]] ReliquarySignals& Signals();
         [[nodiscard]] const ReliquarySignals& Signals() const;
     protected:
-        Handle HandleFrom(RelicID id, Type type, HandleObjectType objectType);
-        Handle HandleFrom(const RelicMetadata& metadata);
+        [[nodiscard]] Handle HandleFrom(RelicID id, Type type, HandleObjectType objectType) const;
+        [[nodiscard]] Handle HandleFrom(const RelicMetadata& metadata) const;
         template<class T>
-        Ptr<T> PtrFrom(RelicID id) const;
+        [[nodiscard]] Ptr<T> PtrFrom(RelicID id) const;
         template<class T>
-        Ptr<T> PtrFrom(const RelicMetadata& metadata) const;
+        [[nodiscard]] Ptr<T> PtrFrom(const RelicMetadata& metadata) const;
     protected:
         template<class BatchSourceBaseT, class Owner, class Derived>
         class StorageBatchSources

@@ -10,13 +10,17 @@ namespace Arca
     {
         Relics().ShardModificationRequired(id);
 
+        const auto type = TypeFor<ShardT>();
+        if (HasEitherType(type, id))
+            throw CannotCreate(type);
+
         auto& batch = batchSources.Required<ShardT>();
         auto added = batch.Add(id);
 
         AttemptAddToEitherBatches(id, *added);
         NotifyCompositesShardCreate(id);
 
-        Owner().Raise<Created>(HandleFrom(id, TypeFor<ShardT>(), HandleObjectType::Shard));
+        Owner().Raise<Created>(HandleFrom(id, type, HandleObjectType::Shard));
         return PtrFrom<ShardT>(id);
     }
 

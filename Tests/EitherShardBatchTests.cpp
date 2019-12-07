@@ -153,63 +153,6 @@ SCENARIO_METHOD(EitherShardBatchFixture, "either shard batch", "[EitherShardBatc
             }
         }
 
-        WHEN("creating non-const and const shard")
-        {
-            auto createdShard1 = relic->Create<Shard>();
-            auto createdShard2 = relic->Create<const Shard>();
-
-            WHEN("starting batch")
-            {
-                auto batch = reliquary->Batch<Either<Shard>>();
-
-                THEN("batch contains shards")
-                {
-                    REQUIRE(!batch.IsEmpty());
-                    REQUIRE(batch.Size() == 2);
-                }
-
-                THEN("batch contains entry referentially equal to non-const")
-                {
-                    REQUIRE(std::any_of(
-                        batch.begin(),
-                        batch.end(),
-                        [&createdShard1](const Shard& shard)
-                        {
-                            return static_cast<const Shard*>(createdShard1) == &shard;
-                        }));
-                }
-
-                THEN("batch contains entry referentially equal to const")
-                {
-                    REQUIRE(std::any_of(
-                        batch.begin(),
-                        batch.end(),
-                        [&createdShard2](const Shard& shard)
-                        {
-                            return static_cast<const Shard*>(createdShard2) == &shard;
-                        }));
-                }
-
-                THEN("begin is not end")
-                {
-                    REQUIRE(batch.begin() != batch.end());
-                }
-
-                THEN("removing one shard does not empty the batch")
-                {
-                    relic->Destroy<Shard>();
-                    REQUIRE(!batch.IsEmpty());
-                }
-
-                THEN("removing both shards empties the batch")
-                {
-                    relic->Destroy<Shard>();
-                    relic->Destroy<const Shard>();
-                    REQUIRE(batch.IsEmpty());
-                }
-            }
-        }
-
         WHEN("starting batch")
         {
             auto batch = reliquary->Batch<Either<Shard>>();
@@ -277,58 +220,6 @@ SCENARIO_METHOD(EitherShardBatchFixture, "either shard batch", "[EitherShardBatc
                 THEN("removing shard empties the batch")
                 {
                     relic->Destroy<Shard>();
-                    REQUIRE(batch.IsEmpty());
-                }
-            }
-
-            WHEN("creating non-const and const shard")
-            {
-                auto createdShard1 = relic->Create<Shard>();
-                auto createdShard2 = relic->Create<const Shard>();
-
-                THEN("batch contains shards")
-                {
-                    REQUIRE(!batch.IsEmpty());
-                    REQUIRE(batch.Size() == 2);
-                }
-
-                THEN("batch contains entry referentially equal to non-const")
-                {
-                    REQUIRE(std::any_of(
-                        batch.begin(),
-                        batch.end(),
-                        [&createdShard1](const Shard& shard)
-                        {
-                            return static_cast<const Shard*>(createdShard1) == &shard;
-                        }));
-                }
-
-                THEN("batch contains entry referentially equal to const")
-                {
-                    REQUIRE(std::any_of(
-                        batch.begin(),
-                        batch.end(),
-                        [&createdShard2](const Shard& shard)
-                        {
-                            return static_cast<const Shard*>(createdShard2) == &shard;
-                        }));
-                }
-
-                THEN("begin is not end")
-                {
-                    REQUIRE(batch.begin() != batch.end());
-                }
-
-                THEN("removing one shard does not empty the batch")
-                {
-                    relic->Destroy<Shard>();
-                    REQUIRE(!batch.IsEmpty());
-                }
-
-                THEN("removing both shards empties the batch")
-                {
-                    relic->Destroy<Shard>();
-                    relic->Destroy<const Shard>();
                     REQUIRE(batch.IsEmpty());
                 }
             }

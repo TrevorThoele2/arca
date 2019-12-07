@@ -553,6 +553,14 @@ SCENARIO_METHOD(RelicTestsFixture, "open typed relic", "[relic][open]")
                     REQUIRE(!reliquary->Find<OtherShard>(relic->ID()));
                 }
             }
+
+            WHEN("creating same shard type with const")
+            {
+                THEN("throws error")
+                {
+                    REQUIRE_THROWS_AS(relic->Create<const OtherShard>(), CannotCreate);
+                }
+            }
         }
     }
 }
