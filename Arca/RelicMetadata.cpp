@@ -7,8 +7,10 @@ namespace Arca
         Openness openness,
         Locality locality,
         Type type,
-        void* storage)
+        void* storage,
+        bool shouldSerialize)
         :
-        id(id), openness(openness), locality(locality), type(std::move(type)), storage(storage)
+        id(id), openness(openness), locality(locality),
+        type(std::move(type)), storage(storage), shouldSerialize(shouldSerialize)
     {}
 }

@@ -1,150 +1,152 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <ClCompile Include="ReliquaryFixture.cpp" />
+    <ClCompile Include="CompositeShardBatchTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="CompositeShardTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstShardTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="CuratorTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="EitherShardBatchTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="EitherTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="GlobalRelicTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="HandleTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="IntegrationTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="IsTypeTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="RelicBatchTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="RelicTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="SignalTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="ShardBatchTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="SignalBatchTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="ReliquaryTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="ReliquaryRegistrationTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="ReliquaryOriginRegistrationTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
     <ClCompile Include="GeneralFixture.cpp">
-      <Filter>Source Files\Fixture</Filter>
+      <Filter>Source Files\Fixtures</Filter>
     </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ReliquaryFixture.cpp">
-      <Filter>Source Files\Fixture</Filter>
-    </ClCompile>
-    <ClCompile Include="ReliquaryTests.cpp">
-      <Filter>Source Files\Test</Filter>
-    </ClCompile>
-    <ClCompile Include="SignalBatchTests.cpp">
-      <Filter>Source Files\Test</Filter>
-    </ClCompile>
-    <ClCompile Include="CuratorTests.cpp">
-      <Filter>Source Files\Test</Filter>
-    </ClCompile>
-    <ClCompile Include="ShardBatchTests.cpp">
-      <Filter>Source Files\Test</Filter>
-    </ClCompile>
-    <ClCompile Include="RelicTests.cpp">
-      <Filter>Source Files\Test</Filter>
-    </ClCompile>
-    <ClCompile Include="RelicBatchTests.cpp">
-      <Filter>Source Files\Test</Filter>
-    </ClCompile>
-    <ClCompile Include="IntegrationTests.cpp">
-      <Filter>Source Files\Test</Filter>
-    </ClCompile>
-    <ClCompile Include="SignalTests.cpp">
-      <Filter>Source Files\Test</Filter>
-    </ClCompile>
-    <ClCompile Include="ReliquaryOriginRegistrationTests.cpp">
-      <Filter>Source Files\Test</Filter>
-    </ClCompile>
-    <ClCompile Include="ReliquaryRegistrationTests.cpp">
-      <Filter>Source Files\Test</Filter>
-    </ClCompile>
-    <ClCompile Include="ConstShardTests.cpp">
-      <Filter>Source Files\Test</Filter>
-    </ClCompile>
-    <ClCompile Include="IsTypeTests.cpp">
-      <Filter>Source Files\Test</Filter>
-    </ClCompile>
-    <ClCompile Include="GlobalRelicTests.cpp">
-      <Filter>Source Files\Test</Filter>
-    </ClCompile>
-    <ClCompile Include="EitherTests.cpp">
-      <Filter>Source Files\Test</Filter>
-    </ClCompile>
-    <ClCompile Include="EitherShardBatchTests.cpp">
-      <Filter>Source Files\Test</Filter>
-    </ClCompile>
-    <ClCompile Include="CompositeShardTests.cpp">
-      <Filter>Source Files\Test</Filter>
-    </ClCompile>
-    <ClCompile Include="CompositeShardBatchTests.cpp">
-      <Filter>Source Files\Test</Filter>
-    </ClCompile>
-    <ClCompile Include="HandleTests.cpp">
-      <Filter>Source Files\Test</Filter>
+    <ClCompile Include="ReliquarySerializationTests.cpp">
+      <Filter>Source Files\Tests</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GeneralFixture.h">
-      <Filter>Header Files\Fixture</Filter>
-    </ClInclude>
-    <ClInclude Include="ReliquaryFixture.h">
-      <Filter>Header Files\Fixture</Filter>
-    </ClInclude>
-    <ClInclude Include="ReliquaryTests.h">
-      <Filter>Header Files\Test</Filter>
-    </ClInclude>
-    <ClInclude Include="SignalBatchTests.h">
-      <Filter>Header Files\Test</Filter>
-    </ClInclude>
-    <ClInclude Include="CuratorTests.h">
-      <Filter>Header Files\Test</Filter>
-    </ClInclude>
-    <ClInclude Include="ShardBatchTests.h">
-      <Filter>Header Files\Test</Filter>
-    </ClInclude>
-    <ClInclude Include="RelicTests.h">
-      <Filter>Header Files\Test</Filter>
-    </ClInclude>
-    <ClInclude Include="RelicBatchTests.h">
-      <Filter>Header Files\Test</Filter>
-    </ClInclude>
-    <ClInclude Include="IntegrationTests.h">
-      <Filter>Header Files\Test</Filter>
-    </ClInclude>
-    <ClInclude Include="SignalTests.h">
-      <Filter>Header Files\Test</Filter>
-    </ClInclude>
-    <ClInclude Include="ReliquaryOriginRegistrationTests.h">
-      <Filter>Header Files\Test</Filter>
-    </ClInclude>
-    <ClInclude Include="ReliquaryRegistrationTests.h">
-      <Filter>Header Files\Test</Filter>
-    </ClInclude>
-    <ClInclude Include="ConstShardTests.h">
-      <Filter>Header Files\Test</Filter>
-    </ClInclude>
-    <ClInclude Include="IsTypeTests.h">
-      <Filter>Header Files\Test</Filter>
-    </ClInclude>
-    <ClInclude Include="GlobalRelicTests.h">
-      <Filter>Header Files\Test</Filter>
-    </ClInclude>
-    <ClInclude Include="EitherTests.h">
-      <Filter>Header Files\Test</Filter>
-    </ClInclude>
-    <ClInclude Include="EitherShardBatchTests.h">
-      <Filter>Header Files\Test</Filter>
+    <ClInclude Include="ReliquaryFixture.h" />
+    <ClInclude Include="CompositeShardBatchTests.h">
+      <Filter>Header Files\Tests</Filter>
     </ClInclude>
     <ClInclude Include="CompositeShardTests.h">
-      <Filter>Header Files\Test</Filter>
+      <Filter>Header Files\Tests</Filter>
     </ClInclude>
-    <ClInclude Include="CompositeShardBatchTests.h">
-      <Filter>Header Files\Test</Filter>
+    <ClInclude Include="ConstShardTests.h">
+      <Filter>Header Files\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="CuratorTests.h">
+      <Filter>Header Files\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="EitherShardBatchTests.h">
+      <Filter>Header Files\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="EitherTests.h">
+      <Filter>Header Files\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalRelicTests.h">
+      <Filter>Header Files\Tests</Filter>
     </ClInclude>
     <ClInclude Include="HandleTests.h">
-      <Filter>Header Files\Test</Filter>
+      <Filter>Header Files\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="IntegrationTests.h">
+      <Filter>Header Files\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="IsTypeTests.h">
+      <Filter>Header Files\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicBatchTests.h">
+      <Filter>Header Files\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicTests.h">
+      <Filter>Header Files\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquaryOriginRegistrationTests.h">
+      <Filter>Header Files\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquaryRegistrationTests.h">
+      <Filter>Header Files\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquaryTests.h">
+      <Filter>Header Files\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="ShardBatchTests.h">
+      <Filter>Header Files\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="SignalBatchTests.h">
+      <Filter>Header Files\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="SignalTests.h">
+      <Filter>Header Files\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneralFixture.h">
+      <Filter>Header Files\Fixtures</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquarySerializationTests.h">
+      <Filter>Header Files\Tests</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{ba26b678-7b3e-4203-be0d-2846cc54878b}</UniqueIdentifier>
+      <UniqueIdentifier>{bfbed047-2d12-429b-a873-9bc9a665576f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{40040d9f-8d24-42f4-beb8-abd3f16da566}</UniqueIdentifier>
+      <UniqueIdentifier>{49473d9f-f4f2-45fe-bbc1-0e5a7e4e7c96}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Test">
-      <UniqueIdentifier>{30051e84-1c2c-4acf-845a-5bca72ee8943}</UniqueIdentifier>
+    <Filter Include="Source Files\Tests">
+      <UniqueIdentifier>{b847e736-dbe5-4c23-a0a9-4a085b5fbb69}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Fixture">
-      <UniqueIdentifier>{0e267d4e-dbbb-4b4f-99e2-112766defdcd}</UniqueIdentifier>
+    <Filter Include="Header Files\Tests">
+      <UniqueIdentifier>{b86fbef8-087c-4796-934a-cf9945afd4fe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Test">
-      <UniqueIdentifier>{2b5ce7c9-fbf2-4a59-bed5-780bbb2bac1d}</UniqueIdentifier>
+    <Filter Include="Header Files\Fixtures">
+      <UniqueIdentifier>{21a353bf-5900-46e1-a19c-cfd824aa9c66}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Fixture">
-      <UniqueIdentifier>{9425d770-40f1-4b0a-b7b5-6e120cd4df50}</UniqueIdentifier>
+    <Filter Include="Source Files\Fixtures">
+      <UniqueIdentifier>{8d1fce1c-d196-4be9-97d5-2d46a1fa693a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

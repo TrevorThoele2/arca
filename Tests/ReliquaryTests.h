@@ -42,7 +42,7 @@ public:
     class BasicTypedRelic : public ClosedTypedRelicAutomation<BasicTypedRelic, BasicShard>
     {
     public:
-        Ptr<BasicShard> basicShard;
+        BasicShard* basicShard;
     public:
         BasicTypedRelic() = default;
     protected:
@@ -52,7 +52,7 @@ public:
     class GlobalRelic : public ClosedTypedRelicAutomation<GlobalRelic, BasicShard>
     {
     public:
-        Ptr<BasicShard> basicShard;
+        BasicShard* basicShard;
     public:
         GlobalRelic() = default;
     protected:

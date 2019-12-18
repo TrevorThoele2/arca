@@ -43,23 +43,23 @@ namespace Arca
         void Destroy(const Handle& handle);
     public:
         template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> Create(CreationArgs&& ... creationArgs);
+        RelicT* Create(CreationArgs&& ... creationArgs);
         template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateWith(const RelicStructure& structure, CreationArgs&& ... creationArgs);
+        RelicT* CreateWith(const RelicStructure& structure, CreationArgs&& ... creationArgs);
         template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateWith(const std::string& structureName, CreationArgs&& ... creationArgs);
+        RelicT* CreateWith(const std::string& structureName, CreationArgs&& ... creationArgs);
 
         template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateChild(const Handle& parent, CreationArgs&& ... creationArgs);
+        RelicT* CreateChild(const Handle& parent, CreationArgs&& ... creationArgs);
         template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateChildWith(const Handle& parent, const RelicStructure& structure, CreationArgs&& ... creationArgs);
+        RelicT* CreateChildWith(const Handle& parent, const RelicStructure& structure, CreationArgs&& ... creationArgs);
         template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateChildWith(const Handle& parent, const std::string& structureName, CreationArgs&& ... creationArgs);
+        RelicT* CreateChildWith(const Handle& parent, const std::string& structureName, CreationArgs&& ... creationArgs);
 
         template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int> = 0>
-        [[nodiscard]] Ptr<RelicT> Find(RelicID id) const;
+        [[nodiscard]] RelicT* Find(RelicID id) const;
         template<class RelicT, std::enable_if_t<is_global_relic_v<RelicT>, int> = 0>
-        [[nodiscard]] Ptr<RelicT> Find() const;
+        [[nodiscard]] RelicT* Find() const;
 
         template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
@@ -76,9 +76,9 @@ namespace Arca
         [[nodiscard]] SizeT RelicSize() const;
     public:
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] Ptr<ShardT> Find(RelicID id) const;
+        [[nodiscard]] ShardT* Find(RelicID id) const;
         template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
-        [[nodiscard]] Ptr<EitherT> Find(RelicID id) const;
+        [[nodiscard]] typename EitherT::ShardT* Find(RelicID id) const;
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
@@ -147,10 +147,6 @@ namespace Arca
     private:
         Handle HandleFrom(RelicID id, Type type, HandleObjectType objectType);
         Handle HandleFrom(const RelicMetadata& metadata);
-        template<class T>
-        Ptr<T> PtrFrom(RelicID id) const;
-        template<class T>
-        Ptr<T> PtrFrom(const RelicMetadata& metadata) const;
     private:
         friend class ReliquaryOrigin;
         friend class ReliquaryComponent;
@@ -170,51 +166,51 @@ namespace Arca
     };
 
     template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    Ptr<RelicT> Reliquary::Create(CreationArgs&& ... creationArgs)
+    RelicT* Reliquary::Create(CreationArgs&& ... creationArgs)
     {
         return relics.Create<RelicT>(std::forward<CreationArgs>(creationArgs)...);
     }
 
     template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    Ptr<RelicT> Reliquary::CreateWith(const RelicStructure& structure, CreationArgs&& ... creationArgs)
+    RelicT* Reliquary::CreateWith(const RelicStructure& structure, CreationArgs&& ... creationArgs)
     {
         return relics.CreateWith<RelicT>(structure, std::forward<CreationArgs>(creationArgs)...);
     }
 
     template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    Ptr<RelicT> Reliquary::CreateWith(const std::string& structureName, CreationArgs&& ... creationArgs)
+    RelicT* Reliquary::CreateWith(const std::string& structureName, CreationArgs&& ... creationArgs)
     {
         return relics.CreateWith<RelicT>(structureName, std::forward<CreationArgs>(creationArgs)...);
     }
 
     template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    Ptr<RelicT> Reliquary::CreateChild(const Handle& parent, CreationArgs&& ... creationArgs)
+    RelicT* Reliquary::CreateChild(const Handle& parent, CreationArgs&& ... creationArgs)
     {
         return relics.CreateChild<RelicT>(parent, std::forward<CreationArgs>(creationArgs)...);
     }
 
     template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    Ptr<RelicT> Reliquary::CreateChildWith(
+    RelicT* Reliquary::CreateChildWith(
         const Handle& parent, const RelicStructure& structure, CreationArgs&& ... creationArgs)
     {
         return relics.CreateChildWith<RelicT>(parent, structure, std::forward<CreationArgs>(creationArgs)...);
     }
 
     template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    Ptr<RelicT> Reliquary::CreateChildWith(
+    RelicT* Reliquary::CreateChildWith(
         const Handle& parent, const std::string& structureName, CreationArgs&& ... creationArgs)
     {
         return relics.CreateChildWith<RelicT>(parent, structureName, std::forward<CreationArgs>(creationArgs)...);
     }
 
     template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int>>
-    Ptr<RelicT> Reliquary::Find(RelicID id) const
+    RelicT* Reliquary::Find(RelicID id) const
     {
         return relics.Find<RelicT>(id);
     }
 
     template<class RelicT, std::enable_if_t<is_global_relic_v<RelicT>, int>>
-    Ptr<RelicT> Reliquary::Find() const
+    RelicT* Reliquary::Find() const
     {
         return relics.Find<RelicT>();
     }
@@ -238,13 +234,13 @@ namespace Arca
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    Ptr<ShardT> Reliquary::Find(RelicID id) const
+    ShardT* Reliquary::Find(RelicID id) const
     {
         return shards.Find<ShardT>(id);
     }
 
     template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int>>
-    Ptr<EitherT> Reliquary::Find(RelicID id) const
+    typename EitherT::ShardT* Reliquary::Find(RelicID id) const
     {
         return shards.Find<EitherT>(id);
     }
@@ -368,18 +364,6 @@ namespace Arca
     {
         return shards.FindStorage<ShardT>(id);
     }
-
-    template<class T>
-    Ptr<T> Reliquary::PtrFrom(RelicID id) const
-    {
-        return Ptr<T>(id, const_cast<Reliquary&>(*this));
-    }
-
-    template<class T>
-    Ptr<T> Reliquary::PtrFrom(const RelicMetadata& metadata) const
-    {
-        return Ptr<T>(metadata.id, const_cast<Reliquary&>(*this));
-    }
 }
 
 namespace Inscription
@@ -420,18 +404,15 @@ namespace Inscription
         void Save(ObjectT& object, ArchiveT& archive);
         void Load(ObjectT& object, ArchiveT& archive);
 
-        template<class ObjectContainer, class ValueToID>
         static void JumpSaveAll(
             ObjectT& object,
             ArchiveT& archive,
-            KnownPolymorphicSerializerList& fromObject,
-            ObjectContainer& container,
-            ValueToID valueToID);
+            KnownPolymorphicSerializerList& polymorphicsFromObject);
 
         static void JumpLoadAll(
             ObjectT& object,
             ArchiveT& archive,
-            KnownPolymorphicSerializerList& fromObject);
+            KnownPolymorphicSerializerList& polymorphicsFromObject);
 
         static Arca::KnownPolymorphicSerializer* FindFrom(
             Type mainType,
@@ -468,28 +449,6 @@ namespace Inscription
             KnownPolymorphicSerializerList& fromObject,
             ArchiveT& archive);
     };
-
-    template<class ObjectContainer, class ValueToID>
-    void Scribe<::Arca::Reliquary, BinaryArchive>::JumpSaveAll(
-        ObjectT& object,
-        ArchiveT& archive,
-        KnownPolymorphicSerializerList& fromObject,
-        ObjectContainer& container,
-        ValueToID valueToID)
-    {
-        OutputJumpTable<Type, KnownPolymorphic> jumpTable;
-        std::vector<KnownPolymorphic> knownPolymorphics;
-        knownPolymorphics.reserve(container.size());
-        for (auto& loop : container)
-        {
-            const auto id = valueToID(loop);
-            const auto& serializer = FindFrom(id, fromObject)->serializer;
-            knownPolymorphics.emplace_back(object, serializer);
-            jumpTable.Add(id, knownPolymorphics.back());
-        }
-
-        archive(jumpTable);
-    }
 }
 
 #include "OpenRelicDefinition.h"

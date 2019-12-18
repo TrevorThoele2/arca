@@ -5,24 +5,24 @@
 namespace Arca
 {
     template<class ReturnT, class WrapT>
-    class AllShardBatchIteratorBase
+    class CompositeShardBatchIteratorBase
     {
     public:
-        explicit AllShardBatchIteratorBase(const WrapT& wrap, const WrapT& end);
-        AllShardBatchIteratorBase(const AllShardBatchIteratorBase& arg);
+        explicit CompositeShardBatchIteratorBase(const WrapT& wrap, const WrapT& end);
+        CompositeShardBatchIteratorBase(const CompositeShardBatchIteratorBase& arg);
 
-        AllShardBatchIteratorBase& operator=(const AllShardBatchIteratorBase& arg);
+        CompositeShardBatchIteratorBase& operator=(const CompositeShardBatchIteratorBase& arg);
 
-        bool operator==(const AllShardBatchIteratorBase& arg) const;
-        bool operator!=(const AllShardBatchIteratorBase& arg) const;
+        bool operator==(const CompositeShardBatchIteratorBase& arg) const;
+        bool operator!=(const CompositeShardBatchIteratorBase& arg) const;
 
         ReturnT& operator*();
         ReturnT* operator->();
 
-        AllShardBatchIteratorBase& operator++();
-        AllShardBatchIteratorBase operator++(int) const;
-        AllShardBatchIteratorBase& operator--();
-        AllShardBatchIteratorBase operator--(int) const;
+        CompositeShardBatchIteratorBase& operator++();
+        CompositeShardBatchIteratorBase operator++(int) const;
+        CompositeShardBatchIteratorBase& operator--();
+        CompositeShardBatchIteratorBase operator--(int) const;
 
         [[nodiscard]] RelicID ID() const;
     private:
@@ -34,7 +34,7 @@ namespace Arca
     };
 
     template<class ReturnT, class WrapT>
-    AllShardBatchIteratorBase<ReturnT, WrapT>::AllShardBatchIteratorBase(
+    CompositeShardBatchIteratorBase<ReturnT, WrapT>::CompositeShardBatchIteratorBase(
         const WrapT& wrap, const WrapT& end)
         :
         wrapped(wrap),
@@ -42,53 +42,53 @@ namespace Arca
     {}
 
     template<class ReturnT, class WrapT>
-    AllShardBatchIteratorBase<ReturnT, WrapT>::AllShardBatchIteratorBase(const AllShardBatchIteratorBase& arg) :
+    CompositeShardBatchIteratorBase<ReturnT, WrapT>::CompositeShardBatchIteratorBase(const CompositeShardBatchIteratorBase& arg) :
         wrapped(arg.wrapped)
     {}
 
     template<class ReturnT, class WrapT>
-    AllShardBatchIteratorBase<ReturnT, WrapT>&
-        AllShardBatchIteratorBase<ReturnT, WrapT>::operator=(const AllShardBatchIteratorBase& arg)
+    CompositeShardBatchIteratorBase<ReturnT, WrapT>&
+        CompositeShardBatchIteratorBase<ReturnT, WrapT>::operator=(const CompositeShardBatchIteratorBase& arg)
     {
         wrapped = arg.wrapped;
         return *this;
     }
 
     template<class ReturnT, class WrapT>
-    bool AllShardBatchIteratorBase<ReturnT, WrapT>::operator==(const AllShardBatchIteratorBase& arg) const
+    bool CompositeShardBatchIteratorBase<ReturnT, WrapT>::operator==(const CompositeShardBatchIteratorBase& arg) const
     {
         return wrapped == arg.wrapped;
     }
 
     template<class ReturnT, class WrapT>
-    bool AllShardBatchIteratorBase<ReturnT, WrapT>::operator!=(const AllShardBatchIteratorBase& arg) const
+    bool CompositeShardBatchIteratorBase<ReturnT, WrapT>::operator!=(const CompositeShardBatchIteratorBase& arg) const
     {
         return !(*this == arg);
     }
 
     template<class ReturnT, class WrapT>
-    ReturnT& AllShardBatchIteratorBase<ReturnT, WrapT>::operator*()
+    ReturnT& CompositeShardBatchIteratorBase<ReturnT, WrapT>::operator*()
     {
         return wrapped->tuple;
     }
 
     template<class ReturnT, class WrapT>
-    ReturnT* AllShardBatchIteratorBase<ReturnT, WrapT>::operator->()
+    ReturnT* CompositeShardBatchIteratorBase<ReturnT, WrapT>::operator->()
     {
         return &wrapped->tuple;
     }
 
     template<class ReturnT, class WrapT>
-    AllShardBatchIteratorBase<ReturnT, WrapT>&
-        AllShardBatchIteratorBase<ReturnT, WrapT>::operator++()
+    CompositeShardBatchIteratorBase<ReturnT, WrapT>&
+        CompositeShardBatchIteratorBase<ReturnT, WrapT>::operator++()
     {
         ++wrapped;
         return *this;
     }
 
     template<class ReturnT, class WrapT>
-    AllShardBatchIteratorBase<ReturnT, WrapT>
-        AllShardBatchIteratorBase<ReturnT, WrapT>::operator++(int) const
+    CompositeShardBatchIteratorBase<ReturnT, WrapT>
+        CompositeShardBatchIteratorBase<ReturnT, WrapT>::operator++(int) const
     {
         auto copy = *this;
         ++wrapped;
@@ -96,16 +96,16 @@ namespace Arca
     }
 
     template<class ReturnT, class WrapT>
-    AllShardBatchIteratorBase<ReturnT, WrapT>&
-        AllShardBatchIteratorBase<ReturnT, WrapT>::operator--()
+    CompositeShardBatchIteratorBase<ReturnT, WrapT>&
+        CompositeShardBatchIteratorBase<ReturnT, WrapT>::operator--()
     {
         --wrapped;
         return *this;
     }
 
     template<class ReturnT, class WrapT>
-    AllShardBatchIteratorBase<ReturnT, WrapT>
-        AllShardBatchIteratorBase<ReturnT, WrapT>::operator--(int) const
+    CompositeShardBatchIteratorBase<ReturnT, WrapT>
+        CompositeShardBatchIteratorBase<ReturnT, WrapT>::operator--(int) const
     {
         auto copy = *this;
         --wrapped;
@@ -113,7 +113,7 @@ namespace Arca
     }
 
     template<class ReturnT, class WrapT>
-    RelicID AllShardBatchIteratorBase<ReturnT, WrapT>::ID() const
+    RelicID CompositeShardBatchIteratorBase<ReturnT, WrapT>::ID() const
     {
         return wrapped->id;
     }

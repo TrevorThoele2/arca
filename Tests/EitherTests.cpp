@@ -44,7 +44,7 @@ SCENARIO_METHOD(EitherTestsFixture, "reliquary either", "[reliquary][either][sha
 
             THEN("contains either")
             {
-                REQUIRE(reliquary->Contains<Either<BasicShard>>(relic.ID()));
+                REQUIRE(reliquary->Contains<Either<BasicShard>>(relic->ID()));
             }
         }
 
@@ -55,7 +55,7 @@ SCENARIO_METHOD(EitherTestsFixture, "reliquary either", "[reliquary][either][sha
 
             THEN("contains either")
             {
-                REQUIRE(reliquary->Contains<Either<BasicShard>>(relic.ID()));
+                REQUIRE(reliquary->Contains<Either<BasicShard>>(relic->ID()));
             }
         }
 
@@ -67,7 +67,7 @@ SCENARIO_METHOD(EitherTestsFixture, "reliquary either", "[reliquary][either][sha
 
             THEN("contains either")
             {
-                REQUIRE(reliquary->Contains<Either<BasicShard>>(relic.ID()));
+                REQUIRE(reliquary->Contains<Either<BasicShard>>(relic->ID()));
             }
         }
 
@@ -79,7 +79,7 @@ SCENARIO_METHOD(EitherTestsFixture, "reliquary either", "[reliquary][either][sha
             THEN("irrelevant relic does not contain either")
             {
                 auto irrelevant = reliquary->Create<OpenRelic>();
-                REQUIRE(!reliquary->Contains<Either<BasicShard>>(irrelevant.ID()));
+                REQUIRE(!reliquary->Contains<Either<BasicShard>>(irrelevant->ID()));
             }
         }
     }

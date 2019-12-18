@@ -55,7 +55,7 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
             {
                 auto preDestroyRelicCount = reliquary->RelicSize();
 
-                reliquary->Destroy(globalRelic);
+                reliquary->Destroy(AsHandle(*globalRelic));
 
                 auto foundAgain = reliquary->Find<GlobalRelic>();
 

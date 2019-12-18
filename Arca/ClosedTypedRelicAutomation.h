@@ -32,13 +32,13 @@ namespace Arca
         template<class U, std::enable_if_t<!is_global_relic_v<U>, int> = 0>
         [[nodiscard]] bool ReliquaryContainsSelfImpl() const
         {
-            return Owner().Contains<Derived>(ID());
+            return Owner().template Contains<Derived>(ID());
         }
 
         template<class U, std::enable_if_t<is_global_relic_v<U>, int> = 0>
         [[nodiscard]] bool ReliquaryContainsSelfImpl() const
         {
-            return Owner().Contains<Derived>();
+            return Owner().template Contains<Derived>();
         }
     };
 }

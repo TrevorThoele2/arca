@@ -22,12 +22,15 @@ namespace Arca
         std::optional<HandleSlim> parent;
         std::vector<HandleSlim> children;
 
+        bool shouldSerialize = true;
+
         RelicMetadata() = default;
         RelicMetadata(
             RelicID id,
             Openness openness,
             Locality locality,
             Type type,
-            void* storage = nullptr);
+            void* storage,
+            bool shouldSerialize);
     };
 }

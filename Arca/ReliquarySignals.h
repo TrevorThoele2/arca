@@ -6,6 +6,7 @@
 #include <any>
 
 #include "SignalBatchSource.h"
+#include "SignalBatch.h"
 
 namespace Arca
 {
@@ -30,7 +31,8 @@ namespace Arca
         template<class SignalT>
         void ExecuteAllFor(const SignalT& signal);
     public:
-        class BatchSources : public StorageBatchSources<SignalBatchSourceBase, ReliquarySignals, BatchSources>
+        class BatchSources
+            : public StorageBatchSources<SignalBatchSourceBase, ReliquarySignals, BatchSources, is_signal>
         {
         public:
             template<class RelicT, std::enable_if_t<is_signal_v<RelicT>, int> = 0>
@@ -40,10 +42,6 @@ namespace Arca
         private:
             explicit BatchSources(ReliquarySignals& owner);
             friend ReliquarySignals;
-        private:
-            template<class RelicT>
-            constexpr static bool is_object_v = is_signal_v<RelicT>;
-            friend StorageBatchSources<SignalBatchSourceBase, ReliquarySignals, BatchSources>;
         } batchSources = BatchSources(*this);
     private:
         explicit ReliquarySignals(Reliquary& owner);

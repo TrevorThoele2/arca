@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <list>
 
 #include "BatchSource.h"
 #include "SignalTraits.h"
@@ -28,7 +28,7 @@ namespace Arca
     class BatchSource<T, std::enable_if_t<is_signal_v<T>>> : public SignalBatchSourceBase
     {
     private:
-        using List = std::vector<T>;
+        using List = std::list<T>;
     public:
         using SignalT = T;
     public:
