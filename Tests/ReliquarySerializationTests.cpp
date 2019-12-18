@@ -102,6 +102,8 @@ namespace Arca
         "ReliquarySerializationTestsBasicSignalNullInscription";
 }
 
+const Inscription::BinaryArchive::StreamPosition defaultOutputArchiveSize = 127;
+
 SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "[reliquary][serialization]")
 {
     GIVEN("saved empty reliquary with every type registered")
@@ -133,14 +135,22 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 .Type<BasicSignal>()
                 .Actualize();
 
+            ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
+
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
                 inputArchive(*loadedReliquary);
+                inputArchiveSize = inputArchive.TellStream();
             }
 
             THEN("has only global relic")
             {
                 REQUIRE(loadedReliquary->RelicSize() == 1);
+            }
+
+            THEN("input size is more than default output size")
+            {
+                REQUIRE(inputArchiveSize > defaultOutputArchiveSize);
             }
         }
     }
@@ -166,9 +176,12 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 .Type<BasicShard>()
                 .Actualize();
 
+            ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
+
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
                 inputArchive(*loadedReliquary);
+                inputArchiveSize = inputArchive.TellStream();
             }
 
             auto loadedRelic = loadedReliquary->Find<OpenRelic>(savedRelic->ID());
@@ -202,6 +215,11 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             THEN("relic id is saved id")
             {
                 REQUIRE(loadedRelic->ID() == savedRelic->ID());
+            }
+
+            THEN("input size is more than default output size")
+            {
+                REQUIRE(inputArchiveSize > defaultOutputArchiveSize);
             }
         }
 
@@ -310,9 +328,12 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 .Type<GlobalRelic>()
                 .Actualize();
 
+            ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
+
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
                 inputArchive(*loadedReliquary);
+                inputArchiveSize = inputArchive.TellStream();
             }
 
             auto loadedRelic = loadedReliquary->Find<GlobalRelic>();
@@ -325,6 +346,11 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             THEN("loaded relic has shard of saved")
             {
                 REQUIRE(loadedRelic->basicShard->myValue == savedRelic->basicShard->myValue);
+            }
+
+            THEN("input size is more than default output size")
+            {
+                REQUIRE(inputArchiveSize > defaultOutputArchiveSize);
             }
         }
     }
@@ -350,9 +376,12 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 .Type<TypedClosedRelic>()
                 .Actualize();
 
+            ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
+
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
                 inputArchive(*loadedReliquary);
+                inputArchiveSize = inputArchive.TellStream();
             }
 
             auto loadedRelic = loadedReliquary->Find<TypedClosedRelic>(savedRelic->ID());
@@ -365,6 +394,11 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             THEN("loaded relic has shard of saved")
             {
                 REQUIRE(loadedRelic->basicShard->myValue == savedRelic->basicShard->myValue);
+            }
+
+            THEN("input size is more than default output size")
+            {
+                REQUIRE(inputArchiveSize > defaultOutputArchiveSize);
             }
         }
     }
@@ -394,9 +428,12 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 .Type<TypedOpenRelic>()
                 .Actualize();
 
+            ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
+
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
                 inputArchive(*loadedReliquary);
+                inputArchiveSize = inputArchive.TellStream();
             }
 
             auto loadedRelic = loadedReliquary->Find<TypedOpenRelic>(savedRelic->ID());
@@ -415,6 +452,11 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             THEN("loaded relic has other shard of saved")
             {
                 REQUIRE(savedOtherShard->myValue == loadedOtherShard->myValue);
+            }
+
+            THEN("input size is more than default output size")
+            {
+                REQUIRE(inputArchiveSize > defaultOutputArchiveSize);
             }
         }
     }
@@ -439,9 +481,12 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 .Type<BasicCurator>()
                 .Actualize();
 
+            ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
+
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
                 inputArchive(*loadedReliquary);
+                inputArchiveSize = inputArchive.TellStream();
             }
 
             auto loadedCurator = loadedReliquary->Find<BasicCurator>();
@@ -449,6 +494,11 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             THEN("loaded curator has value of saved")
             {
                 REQUIRE(loadedCurator->myInt == savedCurator->myInt);
+            }
+
+            THEN("input size is more than default output size")
+            {
+                REQUIRE(inputArchiveSize > defaultOutputArchiveSize);
             }
         }
     }
@@ -472,9 +522,12 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 .Type<BasicSignal>()
                 .Actualize();
 
+            ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
+
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
                 inputArchive(*loadedReliquary);
+                inputArchiveSize = inputArchive.TellStream();
             }
 
             auto loadedSignals = loadedReliquary->Batch<BasicSignal>();
@@ -482,6 +535,11 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             THEN("has no signals")
             {
                 REQUIRE(loadedSignals.IsEmpty());
+            }
+
+            THEN("input size is default output size")
+            {
+                REQUIRE(inputArchiveSize == defaultOutputArchiveSize);
             }
         }
     }
@@ -505,10 +563,6 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
             outputArchive(*savedReliquary);
         }
 
-        {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Empty.dat", "Empty", 1);
-        }
-
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
@@ -516,24 +570,15 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
                 .Type<GlobalRelicNullInscription>()
                 .Actualize();
 
+            ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
+
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
                 inputArchive(*loadedReliquary);
-            }
-
-            Inscription::BinaryArchive::StreamPosition emptyArchiveSize = 0;
-
-            {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Empty.dat", "Empty");
-                emptyArchiveSize = inputArchive.TellStream();
+                inputArchiveSize = inputArchive.TellStream();
             }
 
             auto loadedRelic = loadedReliquary->Find<GlobalRelicNullInscription>();
-
-            THEN("reliquary has empty size")
-            {
-                REQUIRE(emptyArchiveSize + sizeof(::Inscription::ContainerSize));
-            }
 
             THEN("loaded relic does not have saved value")
             {
@@ -545,6 +590,11 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
                 REQUIRE(loadedReliquary->RelicSize() == 1);
                 REQUIRE(loadedReliquary->ShardSize() == 1);
                 REQUIRE(loadedReliquary->SignalSize() == 1);
+            }
+
+            THEN("input size is default output size")
+            {
+                REQUIRE(inputArchiveSize == defaultOutputArchiveSize);
             }
         }
     }
@@ -563,10 +613,6 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
             outputArchive(*savedReliquary);
         }
 
-        {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Empty.dat", "Empty", 1);
-        }
-
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
@@ -574,24 +620,15 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
                 .Type<TypedClosedRelicNullInscription>()
                 .Actualize();
 
+            ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
+
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
                 inputArchive(*loadedReliquary);
-            }
-
-            Inscription::BinaryArchive::StreamPosition emptyArchiveSize = 0;
-
-            {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Empty.dat", "Empty");
-                emptyArchiveSize = inputArchive.TellStream();
+                inputArchiveSize = inputArchive.TellStream();
             }
 
             auto loadedRelic = loadedReliquary->Find<TypedClosedRelicNullInscription>(savedRelic->ID());
-
-            THEN("reliquary has empty size")
-            {
-                REQUIRE(emptyArchiveSize + sizeof(::Inscription::ContainerSize));
-            }
 
             THEN("loaded relic does not exist")
             {
@@ -603,6 +640,11 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
                 REQUIRE(loadedReliquary->RelicSize() == 0);
                 REQUIRE(loadedReliquary->ShardSize() == 0);
                 REQUIRE(loadedReliquary->SignalSize() == 0);
+            }
+
+            THEN("input size is default output size")
+            {
+                REQUIRE(inputArchiveSize == defaultOutputArchiveSize);
             }
         }
     }
@@ -624,10 +666,6 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
             outputArchive(*savedReliquary);
         }
 
-        {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Empty.dat", "Empty", 1);
-        }
-
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
@@ -636,24 +674,15 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
                 .Type<TypedOpenRelicNullInscription>()
                 .Actualize();
 
+            ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
+
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
                 inputArchive(*loadedReliquary);
-            }
-
-            Inscription::BinaryArchive::StreamPosition emptyArchiveSize = 0;
-
-            {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Empty.dat", "Empty");
-                emptyArchiveSize = inputArchive.TellStream();
+                inputArchiveSize = inputArchive.TellStream();
             }
 
             auto loadedRelic = loadedReliquary->Find<TypedOpenRelicNullInscription>(savedRelic->ID());
-
-            THEN("reliquary has empty size")
-            {
-                REQUIRE(emptyArchiveSize + sizeof(::Inscription::ContainerSize));
-            }
 
             THEN("loaded relic does not exist")
             {
@@ -665,6 +694,11 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
                 REQUIRE(loadedReliquary->RelicSize() == 0);
                 REQUIRE(loadedReliquary->ShardSize() == 0);
                 REQUIRE(loadedReliquary->SignalSize() == 0);
+            }
+
+            THEN("input size is default output size")
+            {
+                REQUIRE(inputArchiveSize == defaultOutputArchiveSize);
             }
         }
     }
@@ -683,34 +717,21 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
             outputArchive(*savedReliquary);
         }
 
-        {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Empty.dat", "Empty", 1);
-        }
-
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
                 .Type<BasicCuratorNullInscription>()
                 .Actualize();
 
+            ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
+
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
                 inputArchive(*loadedReliquary);
-            }
-
-            Inscription::BinaryArchive::StreamPosition emptyArchiveSize = 0;
-
-            {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Empty.dat", "Empty");
-                emptyArchiveSize = inputArchive.TellStream();
+                inputArchiveSize = inputArchive.TellStream();
             }
 
             auto loadedCurator = loadedReliquary->Find<BasicCuratorNullInscription>();
-
-            THEN("reliquary has empty size")
-            {
-                REQUIRE(emptyArchiveSize + sizeof(::Inscription::ContainerSize));
-            }
 
             THEN("loaded curator does not have value of saved")
             {
@@ -722,6 +743,11 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
                 REQUIRE(loadedReliquary->RelicSize() == 0);
                 REQUIRE(loadedReliquary->ShardSize() == 0);
                 REQUIRE(loadedReliquary->SignalSize() == 0);
+            }
+
+            THEN("input size is default output size")
+            {
+                REQUIRE(inputArchiveSize == defaultOutputArchiveSize);
             }
         }
     }
@@ -739,34 +765,21 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
             outputArchive(*savedReliquary);
         }
 
-        {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Empty.dat", "Empty", 1);
-        }
-
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
                 .Type<BasicSignalNullInscription>()
                 .Actualize();
 
+            ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
+
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
                 inputArchive(*loadedReliquary);
-            }
-
-            Inscription::BinaryArchive::StreamPosition emptyArchiveSize = 0;
-
-            {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Empty.dat", "Empty");
-                emptyArchiveSize = inputArchive.TellStream();
+                inputArchiveSize = inputArchive.TellStream();
             }
 
             auto loadedSignals = loadedReliquary->Batch<BasicSignalNullInscription>();
-
-            THEN("reliquary has empty size")
-            {
-                REQUIRE(emptyArchiveSize + sizeof(::Inscription::ContainerSize));
-            }
 
             THEN("has no signals")
             {
@@ -778,6 +791,11 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
                 REQUIRE(loadedReliquary->RelicSize() == 0);
                 REQUIRE(loadedReliquary->ShardSize() == 0);
                 REQUIRE(loadedReliquary->SignalSize() == 0);
+            }
+
+            THEN("input size is default output size")
+            {
+                REQUIRE(inputArchiveSize == defaultOutputArchiveSize);
             }
         }
     }
