@@ -342,6 +342,9 @@
     <ClInclude Include="TypeScribe.h">
       <Filter>Header Files\Type</Filter>
     </ClInclude>
+    <ClInclude Include="Ptr.h">
+      <Filter>Header Files\Ptr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
@@ -460,6 +463,9 @@
     </Filter>
     <Filter Include="Header Files\Traits">
       <UniqueIdentifier>{a358dbd0-8c99-4de9-9ff9-27db7776d056}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Ptr">
+      <UniqueIdentifier>{0af7c992-c8d6-4968-b66c-32a0a88b551e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

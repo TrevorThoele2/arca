@@ -2,7 +2,6 @@
 
 #include <Inscription/Scribe.h>
 #include <Inscription/NumericScribe.h>
-#include <Inscription/PointerScribe.h>
 #include <Inscription/EnumScribe.h>
 #include <Inscription/BufferScribe.h>
 #include <Inscription/ContainerSize.h>

@@ -6,7 +6,7 @@
 namespace Arca
 {
     template<class ShardT>
-    ShardT* ReliquaryShards::Create(RelicID id)
+    Ptr<ShardT> ReliquaryShards::Create(RelicID id)
     {
         Relics().ShardModificationRequired(id);
 
@@ -21,25 +21,27 @@ namespace Arca
         NotifyCompositesShardCreate(id);
 
         Owner().Raise<Created>(HandleFrom(id, type, HandleObjectType::Shard));
-        return added;
+        return CreatePtr<ShardT>(id);
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    ShardT* ReliquaryShards::Find(RelicID id) const
+    Ptr<ShardT> ReliquaryShards::Find(RelicID id) const
     {
         auto& batchSource = batchSources.Required<ShardT>();
         auto found = batchSource.Find(id);
-        return found;
+        if (!found)
+            return {};
+        return CreatePtr<ShardT>(id);
     }
 
     template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int>>
-    typename EitherT::ShardT* ReliquaryShards::Find(RelicID id) const
+    Ptr<EitherT> ReliquaryShards::Find(RelicID id) const
     {
         using ShardT = typename EitherT::BareT;
-        auto found = Find<ShardT>(id);
-        if (found)
-            return found;
-        return Find<const ShardT>(id);
+        if (Find<ShardT>(id) || Find<const ShardT>(id))
+            return CreatePtr<EitherT>(id);
+
+        return {};
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
@@ -72,6 +74,17 @@ namespace Arca
             (false, typename ShardsT::Pack{}, id, *this);
     }
 
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
+    RelicID ReliquaryShards::IDFor(const ShardT& shard) const
+    {
+        auto batchSource = batchSources.Required<ShardT>();
+        for (auto loop = batchSource.begin(); loop != batchSource.end(); ++loop)
+            if (&loop->shard == &shard)
+                return loop->id;
+
+        return 0;
+    }
+
     template<class ShardT>
     void ReliquaryShards::AttemptAddToEitherBatches(RelicID id, ShardT& shard)
     {
@@ -95,6 +108,13 @@ namespace Arca
     ShardT* ReliquaryShards::FindStorage(RelicID id)
     {
         auto& batch = batchSources.Required<ShardT>();
+        return batch.Find(id);
+    }
+
+    template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int>>
+    typename EitherT::ShardT* ReliquaryShards::FindStorage(RelicID id)
+    {
+        auto& batch = eitherBatchSources.Required<EitherT>();
         return batch.Find(id);
     }
 
@@ -178,5 +198,11 @@ namespace Arca
     [[nodiscard]] std::type_index ReliquaryShards::CompositeBatchSources::KeyFor()
     {
         return std::type_index(typeid(T));
+    }
+
+    template<class ShardT>
+    Ptr<ShardT> ReliquaryShards::CreatePtr(RelicID id) const
+    {
+        return { id, const_cast<Reliquary&>(Owner()) };
     }
 }

@@ -26,7 +26,7 @@ public:
 class ConstShardTestsFixture::Relic : public ClosedTypedRelicAutomation<Relic, const Shard>
 {
 public:
-    const Shard* shard;
+    Ptr<const Shard> shard;
 protected:
     void InitializeImplementation() override;
 };

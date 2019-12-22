@@ -24,7 +24,7 @@ public:
     class BasicTypedRelic : public ClosedTypedRelicAutomation<BasicTypedRelic, BasicShard>
     {
     public:
-        BasicShard* basicShard;
+        Ptr<BasicShard> basicShard;
     public:
         BasicTypedRelic() = default;
     protected:

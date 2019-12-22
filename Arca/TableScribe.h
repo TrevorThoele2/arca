@@ -1,16 +1,20 @@
 #pragma once
 
 #include <Inscription/TableScribe.h>
+#include <Inscription/BinaryArchive.h>
 
 #include "Traits.h"
 
 namespace Inscription
 {
     template<class T, class Archive>
-    class ArcaTableScribe : public TableScribe<T, Archive>
+    class ArcaTableScribe;
+
+    template<class T>
+    class ArcaTableScribe<T, BinaryArchive> : public TableScribe<T, BinaryArchive>
     {
     private:
-        using BaseT = TableScribe<T, Archive>;
+        using BaseT = TableScribe<T, BinaryArchive>;
     public:
         using ObjectT = typename BaseT::ObjectT;
         using ArchiveT = typename BaseT::ArchiveT;
@@ -22,8 +26,8 @@ namespace Inscription
         static Type OutputType(const ArchiveT& archive);
     };
 
-    template<class T, class Archive>
-    Type ArcaTableScribe<T, Archive>::OutputType(const ArchiveT& archive)
+    template<class T>
+    Type ArcaTableScribe<T, BinaryArchive>::OutputType(const ArchiveT& archive)
     {
         return ::Arca::TypeFor<T>().name;
     }

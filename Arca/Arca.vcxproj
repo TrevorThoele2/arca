@@ -48,6 +48,7 @@
     <ClInclude Include="OpenTypedRelicAutomation.h" />
     <ClInclude Include="OpenTypedRelicDefinition.h" />
     <ClInclude Include="PipelineException.h" />
+    <ClInclude Include="Ptr.h" />
     <ClInclude Include="RelicBatch.h" />
     <ClInclude Include="RelicBatchIterator.h" />
     <ClInclude Include="RelicBatchSource.h" />

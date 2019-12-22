@@ -6,13 +6,13 @@
 namespace Arca
 {
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    ShardT* ClosedRelic::Find() const
+    Ptr<ShardT> ClosedRelic::Find() const
     {
         return owner->Find<ShardT>(id);
     }
 
     template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int>>
-    typename EitherT::ShardT* ClosedRelic::Find() const
+    Ptr<typename EitherT::ShardT> ClosedRelic::Find() const
     {
         return owner->Find<EitherT>(id);
     }

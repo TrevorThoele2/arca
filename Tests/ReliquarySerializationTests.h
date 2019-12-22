@@ -44,7 +44,7 @@ public:
     {
     public:
         int myInt = 0;
-        BasicShard* basicShard = nullptr;
+        Ptr<BasicShard> basicShard;
     public:
         TypedClosedRelic() = default;
     protected:
@@ -55,7 +55,7 @@ public:
     {
     public:
         int myInt = 0;
-        BasicShard* basicShard = nullptr;
+        Ptr<BasicShard> basicShard;
     public:
         TypedOpenRelic() = default;
     protected:
@@ -66,7 +66,7 @@ public:
     {
     public:
         int myInt = 0;
-        BasicShard* basicShard = nullptr;
+        Ptr<BasicShard> basicShard;
     public:
         GlobalRelic() = default;
     protected:
@@ -105,7 +105,7 @@ public:
     {
     public:
         int myInt = 0;
-        BasicShardNullInscription* basicShard = nullptr;
+        Ptr<BasicShardNullInscription> basicShard;
     public:
         TypedClosedRelicNullInscription() = default;
     protected:
@@ -117,7 +117,7 @@ public:
     {
     public:
         int myInt = 0;
-        BasicShardNullInscription* basicShard = nullptr;
+        Ptr<BasicShardNullInscription> basicShard;
     public:
         TypedOpenRelicNullInscription() = default;
     protected:
@@ -129,7 +129,7 @@ public:
     {
     public:
         int myInt = 0;
-        BasicShardNullInscription* basicShard = nullptr;
+        Ptr<BasicShardNullInscription> basicShard;
     public:
         GlobalRelicNullInscription() = default;
     protected:
