@@ -114,9 +114,9 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
 
         WHEN("finding curator")
         {
-            THEN("returns nullptr")
+            THEN("throws error")
             {
-                REQUIRE(reliquary->Find<BasicCurator>() == nullptr);
+                REQUIRE_THROWS_AS(reliquary->Find<BasicCurator>(), NotRegistered);
             }
         }
 
@@ -124,9 +124,9 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
         {
             const auto& constReliquary = reliquary;
 
-            THEN("returns nullptr")
+            THEN("throws error")
             {
-                REQUIRE(constReliquary->Find<BasicCurator>() == nullptr);
+                REQUIRE_THROWS_AS(constReliquary->Find<BasicCurator>(), NotRegistered);
             }
         }
     }

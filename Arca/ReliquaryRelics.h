@@ -115,6 +115,10 @@ namespace Arca
 
         KnownPolymorphicSerializerList globalSerializers;
 
+        using GlobalConstruct = std::function<void(Reliquary&)>;
+        using GlobalConstructList = std::vector<GlobalConstruct>;
+        GlobalConstructList globalConstructList;
+
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         RelicT* FindGlobalStorage();
     private:

@@ -108,9 +108,16 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
 
         WHEN("retrieving unregistered curator")
         {
-            THEN("returns nullptr")
+            THEN("throws error")
             {
-                REQUIRE(reliquary->Find<Curator>() == nullptr);
+                REQUIRE_THROWS_MATCHES
+                (
+                    reliquary->Find<Curator>(),
+                    NotRegistered,
+                    ::Catch::Matchers::Message(
+                        "The curator ("s + ::Chroma::ToString(TypeFor<Curator>()) + ") was not registered. " +
+                        "The class name is: \"" + typeid(Curator).name() + "\".")
+                );
             }
         }
 

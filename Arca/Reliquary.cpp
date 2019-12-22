@@ -201,6 +201,9 @@ namespace Inscription
             object.relics.metadataList.push_back(createdMetadata);
         }
 
+        for (auto& loop : object.relics.globalConstructList)
+            loop(object);
+
         for (auto& loop : object.relics.batchSources.map)
             loop.second->Construct(object);
     }

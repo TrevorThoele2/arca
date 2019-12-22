@@ -25,7 +25,7 @@ namespace Arca
         Exception(BaseMessage(objectType, type) + " " + ClassNameMessage(classType))
     {}
 
-    std::string NotRegistered::BaseMessage(const std::string & objectType, const Type & type) const
+    std::string NotRegistered::BaseMessage(const std::string & objectType, const Type& type) const
     {
         return "The " + objectType + " (" + ::Chroma::ToString(type) + ") was not registered.";
     }

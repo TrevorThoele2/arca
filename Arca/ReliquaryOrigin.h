@@ -197,6 +197,14 @@ namespace Arca
                             return ::Inscription::InputTypesFor<RelicT>(archive);
                         }
                     });
+
+                reliquary.relics.globalConstructList.push_back(
+                    [](Reliquary& reliquary)
+                    {
+                        auto relic = reliquary.Find<RelicT>();
+                        relic->owner = &reliquary;
+                        PostConstructRelic(*relic);
+                    });
             }
         };
         globalRelicList.emplace_back(type.name, factory);
@@ -375,8 +383,8 @@ namespace Arca
                         type.name,
                         [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
                         {
-                            auto curator = reliquary.Find<CuratorT>();
-                            archive(*curator);
+                            auto& curator = reliquary.Find<CuratorT>();
+                            archive(curator);
                         },
                         [](::Inscription::BinaryArchive& archive)
                         {

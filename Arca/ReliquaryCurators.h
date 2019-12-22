@@ -15,13 +15,13 @@ namespace Arca
     {
     public:
         template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int> = 0>
-        [[nodiscard]] Curator* Find(const TypeName& type);
+        [[nodiscard]] Curator& Find(const TypeName& type);
         template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int> = 0>
-        [[nodiscard]] const Curator* Find(const TypeName& type) const;
+        [[nodiscard]] const Curator& Find(const TypeName& type) const;
         template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int> = 0>
-        [[nodiscard]] CuratorT* Find();
+        [[nodiscard]] CuratorT& Find();
         template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int> = 0>
-        [[nodiscard]] const CuratorT* Find() const;
+        [[nodiscard]] const CuratorT& Find() const;
     public:
         using HandlePtr = std::unique_ptr<CuratorHandle>;
         using Map = std::unordered_map<TypeName, HandlePtr>;
