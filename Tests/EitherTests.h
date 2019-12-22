@@ -27,8 +27,8 @@ public:
         Ptr<BasicShard> basicShard;
     public:
         BasicTypedRelic() = default;
-    protected:
-        void InitializeImplementation() override;
+
+        void PostConstruct(ShardTuple shards);
     };
 };
 

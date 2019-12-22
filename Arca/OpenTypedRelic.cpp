@@ -27,11 +27,5 @@ namespace Arca
         return *owner;
     }
 
-    void OpenTypedRelic::Initialize(Reliquary& owner)
-    {
-        this->owner = &owner;
-        InitializeImplementation();
-    }
-
     OpenTypedRelic::~OpenTypedRelic() = default;
 }

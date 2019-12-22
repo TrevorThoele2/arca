@@ -10,16 +10,14 @@ ReliquaryTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std
 ReliquaryTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
 {}
 
-void ReliquaryTestsFixture::BasicTypedRelic::InitializeImplementation()
+void ReliquaryTestsFixture::BasicTypedRelic::PostConstruct(ShardTuple shards)
 {
-    auto shards = ExtractShards();
     basicShard = std::get<0>(shards);
 }
 
-void ReliquaryTestsFixture::GlobalRelic::InitializeImplementation()
+void ReliquaryTestsFixture::GlobalRelic::PostConstruct(ShardTuple shards)
 {
-    auto tuple = ExtractShards();
-    basicShard = std::get<0>(tuple);
+    basicShard = std::get<0>(shards);
 }
 
 namespace Arca

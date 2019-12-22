@@ -22,8 +22,6 @@ public:
     int value = 0;
 public:
     Relic() = default;
-protected:
-    void InitializeImplementation() override;
 };
 
 class RelicBatchFixture::GlobalRelic : public ClosedTypedRelicAutomation<GlobalRelic>
@@ -32,15 +30,10 @@ public:
     int value = 0;
 public:
     GlobalRelic() = default;
-protected:
-    void InitializeImplementation() override;
 };
 
 class RelicBatchFixture::UnregisteredRelic : public ClosedTypedRelicAutomation<UnregisteredRelic>
-{
-protected:
-    void InitializeImplementation() override {}
-};
+{};
 
 class RelicBatchFixture::Shard
 {

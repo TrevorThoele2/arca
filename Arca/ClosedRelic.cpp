@@ -27,10 +27,5 @@ namespace Arca
         return *owner;
     }
 
-    void ClosedRelic::Initialize(Reliquary& owner)
-    {
-        this->owner = &owner;
-    }
-
     const TypeName Traits<ClosedRelic>::typeName = "ClosedRelic";
 }

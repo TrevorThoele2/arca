@@ -201,8 +201,8 @@ namespace Inscription
             object.relics.metadataList.push_back(createdMetadata);
         }
 
-        for (auto& relicInitializer : object.relics.initializers)
-            relicInitializer(object);
+        for (auto& loop : object.relics.batchSources.map)
+            loop.second->Construct(object);
     }
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::JumpSaveAll(

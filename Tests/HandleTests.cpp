@@ -12,16 +12,14 @@ HandleTestsFixture::Shard::Shard(std::string myValue) : myValue(std::move(myValu
 HandleTestsFixture::OtherShard::OtherShard(std::string myValue) : myValue(std::move(myValue))
 {}
 
-void HandleTestsFixture::TypedRelic::InitializeImplementation()
+void HandleTestsFixture::TypedRelic::PostConstruct(ShardTuple shards)
 {
-    auto shards = ExtractShards();
     basicShard = std::get<0>(shards);
 }
 
-void HandleTestsFixture::GlobalRelic::InitializeImplementation()
+void HandleTestsFixture::GlobalRelic::PostConstruct(ShardTuple shards)
 {
-    auto tuple = ExtractShards();
-    basicShard = std::get<0>(tuple);
+    basicShard = std::get<0>(shards);
 }
 
 namespace Arca

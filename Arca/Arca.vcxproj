@@ -38,7 +38,11 @@
     <ClInclude Include="Destroying.h" />
     <ClInclude Include="CuratorHandle.h" />
     <ClInclude Include="HandleSlim.h" />
-    <ClInclude Include="HasFactoryMethod.h" />
+    <ClInclude Include="HasInitializeMethod.h" />
+    <ClInclude Include="HasPostConstructMethod.h" />
+    <ClInclude Include="HasRequiredShards.h" />
+    <ClInclude Include="HasShouldCreateMethod.h" />
+    <ClInclude Include="InitializeRelic.h" />
     <ClInclude Include="IsType.h" />
     <ClInclude Include="KnownPolymorphicSerializer.h" />
     <ClInclude Include="Locality.h" />
@@ -48,6 +52,7 @@
     <ClInclude Include="OpenTypedRelicAutomation.h" />
     <ClInclude Include="OpenTypedRelicDefinition.h" />
     <ClInclude Include="PipelineException.h" />
+    <ClInclude Include="PostConstructRelic.h" />
     <ClInclude Include="Ptr.h" />
     <ClInclude Include="RelicBatch.h" />
     <ClInclude Include="RelicBatchIterator.h" />
@@ -56,6 +61,7 @@
     <ClInclude Include="ExtractShards.h" />
     <ClInclude Include="Handle.h" />
     <ClInclude Include="Actualization.h" />
+    <ClInclude Include="RelicBatchSourceDefinition.h" />
     <ClInclude Include="RelicParented.h" />
     <ClInclude Include="ReliquaryComponent.h" />
     <ClInclude Include="ReliquaryCurators.h" />

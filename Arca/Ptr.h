@@ -25,7 +25,7 @@ namespace Arca
         Ptr(RelicID id, Reliquary& owner);
         Ptr(const Ptr& arg) = default;
 
-        Ptr& operator=(const Ptr& arg) = default;
+        Ptr& operator=(const Ptr& arg);
 
         bool operator==(const Ptr& arg) const;
         bool operator!=(const Ptr& arg) const;
@@ -50,7 +50,7 @@ namespace Arca
         Reliquary* owner = nullptr;
         mutable T* value = nullptr;
     private:
-        T* FindValueFromReliquary();
+        T* FindValueFromOwner();
     private:
         INSCRIPTION_ACCESS;
     };
@@ -59,7 +59,7 @@ namespace Arca
     Ptr<T, std::enable_if_t<!is_global_relic_v<T> && !is_either_v<T>>>::Ptr(RelicID id, Reliquary& owner) :
         id(id), owner(&owner)
     {
-        value = FindValueFromReliquary();
+        value = FindValueFromOwner();
     }
 
     template<class T>
@@ -72,6 +72,15 @@ namespace Arca
     bool Ptr<T, std::enable_if_t<!is_global_relic_v<T> && !is_either_v<T>>>::operator!=(const Ptr& arg) const
     {
         return !(*this == arg);
+    }
+
+    template<class T>
+    auto Ptr<T, std::enable_if_t<!is_global_relic_v<T> && !is_either_v<T>>>::operator=(const Ptr& arg) -> Ptr&
+    {
+        id = arg.id;
+        owner = arg.owner;
+        value = FindValueFromOwner();
+        return *this;
     }
 
     template<class T>
@@ -129,7 +138,7 @@ namespace Arca
     }
 
     template<class T>
-    T* Ptr<T, std::enable_if_t<!is_global_relic_v<T> && !is_either_v<T>>>::FindValueFromReliquary()
+    T* Ptr<T, std::enable_if_t<!is_global_relic_v<T> && !is_either_v<T>>>::FindValueFromOwner()
     {
         return Owner().FindStorage<T>(id);
     }
@@ -182,7 +191,7 @@ namespace Arca
         Ptr(RelicID id, Reliquary& owner);
         Ptr(const Ptr& arg) = default;
 
-        Ptr& operator=(const Ptr & arg) = default;
+        Ptr& operator=(const Ptr & arg);
 
         bool operator==(const Ptr& arg) const;
         bool operator!=(const Ptr& arg) const;
@@ -210,7 +219,7 @@ namespace Arca
         Reliquary* owner = nullptr;
         mutable ShardT* value = nullptr;
     private:
-        ShardT* FindValueFromReliquary();
+        ShardT* FindValueFromOwner();
     private:
         INSCRIPTION_ACCESS;
     };
@@ -218,7 +227,7 @@ namespace Arca
     template<class T>
     Ptr<T, std::enable_if_t<is_either_v<T>>>::Ptr(RelicID id, Reliquary& owner) : id(id), owner(&owner)
     {
-        value = FindValueFromReliquary();
+        value = FindValueFromOwner();
     }
 
     template<class T>
@@ -231,6 +240,15 @@ namespace Arca
     bool Ptr<T, std::enable_if_t<is_either_v<T>>>::operator!=(const Ptr& arg) const
     {
         return !(*this == arg);
+    }
+
+    template<class T>
+    auto Ptr<T, std::enable_if_t<is_either_v<T>>>::operator=(const Ptr& arg) -> Ptr&
+    {
+        id = arg.id;
+        owner = arg.owner;
+        value = FindValueFromOwner();
+        return *this;
     }
 
     template<class T>
@@ -282,7 +300,7 @@ namespace Arca
     }
 
     template<class T>
-    auto Ptr<T, std::enable_if_t<is_either_v<T>>>::FindValueFromReliquary() -> ShardT*
+    auto Ptr<T, std::enable_if_t<is_either_v<T>>>::FindValueFromOwner() -> ShardT*
     {
         return Owner().template FindStorage<T>(id);
     }
@@ -321,7 +339,7 @@ namespace Arca
         Ptr(RelicID id, Reliquary& owner);
         Ptr(const Ptr& arg) = default;
 
-        Ptr& operator=(const Ptr & arg) = default;
+        Ptr& operator=(const Ptr& arg);
 
         bool operator==(const Ptr& arg) const;
         bool operator!=(const Ptr& arg) const;
@@ -346,7 +364,7 @@ namespace Arca
         Reliquary* owner = nullptr;
         mutable T* value = nullptr;
     private:
-        T* FindValueFromReliquary();
+        T* FindValueFromOwner();
     private:
         INSCRIPTION_ACCESS;
     };
@@ -354,7 +372,7 @@ namespace Arca
     template<class T>
     Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::Ptr(RelicID id, Reliquary& owner) : id(id), owner(&owner)
     {
-        value = FindValueFromReliquary();
+        value = FindValueFromOwner();
     }
 
     template<class T>
@@ -367,6 +385,15 @@ namespace Arca
     bool Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::operator!=(const Ptr& arg) const
     {
         return !(*this == arg);
+    }
+
+    template<class T>
+    auto Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::operator=(const Ptr& arg) -> Ptr&
+    {
+        id = arg.id;
+        owner = arg.owner;
+        value = FindValueFromOwner();
+        return *this;
     }
 
     template<class T>
@@ -424,7 +451,7 @@ namespace Arca
     }
 
     template<class T>
-    T* Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::FindValueFromReliquary()
+    T* Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::FindValueFromOwner()
     {
         return Owner().template FindGlobalStorage<T>();
     }

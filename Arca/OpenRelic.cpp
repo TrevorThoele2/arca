@@ -27,10 +27,5 @@ namespace Arca
         return *owner;
     }
 
-    void OpenRelic::Initialize(Reliquary& owner)
-    {
-        this->owner = &owner;
-    }
-
     const TypeName Traits<OpenRelic>::typeName = "OpenRelic";
 }

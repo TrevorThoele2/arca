@@ -2,9 +2,8 @@
 
 #include "CompositeShardTests.h"
 
-void CompositeShardTestsFixture::BasicTypedRelic::InitializeImplementation()
+void CompositeShardTestsFixture::BasicTypedRelic::PostConstruct(ShardTuple shards)
 {
-    auto shards = ExtractShards();
     shard0 = std::get<0>(shards);
     shard1 = std::get<1>(shards);
     shard2 = std::get<2>(shards);

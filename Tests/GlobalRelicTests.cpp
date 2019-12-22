@@ -7,15 +7,13 @@
 GlobalRelicTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std::move(myValue))
 {}
 
-void GlobalRelicTestsFixture::BasicTypedRelic::InitializeImplementation()
+void GlobalRelicTestsFixture::BasicTypedRelic::PostConstruct(ShardTuple shards)
 {
-    auto shards = ExtractShards();
     basicShard = std::get<0>(shards);
 }
 
-void GlobalRelicTestsFixture::GlobalRelic::InitializeImplementation()
+void GlobalRelicTestsFixture::GlobalRelic::PostConstruct(ShardTuple shards)
 {
-    auto shards = ExtractShards();
     basicShard = std::get<0>(shards);
 }
 

@@ -27,8 +27,8 @@ public:
         BasicShard* basicShard;
     public:
         BasicTypedRelic() = default;
-    protected:
-        void InitializeImplementation() override;
+
+        void PostConstruct(ShardTuple shards);
     };
 
     class GlobalRelic : public ClosedTypedRelicAutomation<GlobalRelic, BasicShard>
@@ -37,8 +37,8 @@ public:
         BasicShard* basicShard;
     public:
         GlobalRelic() = default;
-    protected:
-        void InitializeImplementation() override;
+
+        void PostConstruct(ShardTuple shards);
     };
 };
 

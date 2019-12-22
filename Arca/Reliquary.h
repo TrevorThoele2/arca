@@ -43,19 +43,19 @@ namespace Arca
     public:
         void Destroy(const Handle& handle);
     public:
-        template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> Create(CreationArgs&& ... creationArgs);
-        template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateWith(const RelicStructure& structure, CreationArgs&& ... creationArgs);
-        template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateWith(const std::string& structureName, CreationArgs&& ... creationArgs);
+        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        Ptr<RelicT> Create(InitializeArgs&& ... initializeArgs);
+        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        Ptr<RelicT> CreateWith(const RelicStructure& structure, InitializeArgs&& ... initializeArgs);
+        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        Ptr<RelicT> CreateWith(const std::string& structureName, InitializeArgs&& ... initializeArgs);
 
-        template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateChild(const Handle& parent, CreationArgs&& ... creationArgs);
-        template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateChildWith(const Handle& parent, const RelicStructure& structure, CreationArgs&& ... creationArgs);
-        template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateChildWith(const Handle& parent, const std::string& structureName, CreationArgs&& ... creationArgs);
+        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        Ptr<RelicT> CreateChild(const Handle& parent, InitializeArgs&& ... initializeArgs);
+        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        Ptr<RelicT> CreateChildWith(const Handle& parent, const RelicStructure& structure, InitializeArgs&& ... initializeArgs);
+        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        Ptr<RelicT> CreateChildWith(const Handle& parent, const std::string& structureName, InitializeArgs&& ... initializeArgs);
 
         template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int> = 0>
         [[nodiscard]] Ptr<RelicT> Find(RelicID id) const;
@@ -174,42 +174,42 @@ namespace Arca
         INSCRIPTION_ACCESS;
     };
 
-    template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    Ptr<RelicT> Reliquary::Create(CreationArgs&& ... creationArgs)
+    template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
+    Ptr<RelicT> Reliquary::Create(InitializeArgs&& ... initializeArgs)
     {
-        return relics.Create<RelicT>(std::forward<CreationArgs>(creationArgs)...);
+        return relics.Create<RelicT>(std::forward<InitializeArgs>(initializeArgs)...);
     }
 
-    template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    Ptr<RelicT> Reliquary::CreateWith(const RelicStructure& structure, CreationArgs&& ... creationArgs)
+    template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
+    Ptr<RelicT> Reliquary::CreateWith(const RelicStructure& structure, InitializeArgs&& ... initializeArgs)
     {
-        return relics.CreateWith<RelicT>(structure, std::forward<CreationArgs>(creationArgs)...);
+        return relics.CreateWith<RelicT>(structure, std::forward<InitializeArgs>(initializeArgs)...);
     }
 
-    template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    Ptr<RelicT> Reliquary::CreateWith(const std::string& structureName, CreationArgs&& ... creationArgs)
+    template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
+    Ptr<RelicT> Reliquary::CreateWith(const std::string& structureName, InitializeArgs&& ... initializeArgs)
     {
-        return relics.CreateWith<RelicT>(structureName, std::forward<CreationArgs>(creationArgs)...);
+        return relics.CreateWith<RelicT>(structureName, std::forward<InitializeArgs>(initializeArgs)...);
     }
 
-    template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    Ptr<RelicT> Reliquary::CreateChild(const Handle& parent, CreationArgs&& ... creationArgs)
+    template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
+    Ptr<RelicT> Reliquary::CreateChild(const Handle& parent, InitializeArgs&& ... initializeArgs)
     {
-        return relics.CreateChild<RelicT>(parent, std::forward<CreationArgs>(creationArgs)...);
+        return relics.CreateChild<RelicT>(parent, std::forward<InitializeArgs>(initializeArgs)...);
     }
 
-    template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
+    template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
     Ptr<RelicT> Reliquary::CreateChildWith(
-        const Handle& parent, const RelicStructure& structure, CreationArgs&& ... creationArgs)
+        const Handle& parent, const RelicStructure& structure, InitializeArgs&& ... initializeArgs)
     {
-        return relics.CreateChildWith<RelicT>(parent, structure, std::forward<CreationArgs>(creationArgs)...);
+        return relics.CreateChildWith<RelicT>(parent, structure, std::forward<InitializeArgs>(initializeArgs)...);
     }
 
-    template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
+    template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
     Ptr<RelicT> Reliquary::CreateChildWith(
-        const Handle& parent, const std::string& structureName, CreationArgs&& ... creationArgs)
+        const Handle& parent, const std::string& structureName, InitializeArgs&& ... initializeArgs)
     {
-        return relics.CreateChildWith<RelicT>(parent, structureName, std::forward<CreationArgs>(creationArgs)...);
+        return relics.CreateChildWith<RelicT>(parent, structureName, std::forward<InitializeArgs>(initializeArgs)...);
     }
 
     template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int>>
@@ -486,4 +486,5 @@ namespace Inscription
 #include "ReliquaryShardsDefinition.h"
 #include "ReliquaryCuratorsDefinition.h"
 #include "ReliquarySignalsDefinition.h"
+#include "RelicBatchSourceDefinition.h"
 #include "CompositeShardBatchSourceDefinition.h"

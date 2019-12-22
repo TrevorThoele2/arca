@@ -14,22 +14,34 @@ RelicTestsFixture::Shard::Shard(std::string myValue) : myValue(std::move(myValue
 RelicTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
 {}
 
-void RelicTestsFixture::TypedRelic::InitializeImplementation()
+void RelicTestsFixture::TypedRelic::PostConstruct(ShardTuple shards)
 {
-    auto shards = ExtractShards();
     basicShard = std::get<0>(shards);
 }
 
-void RelicTestsFixture::OpenTypedRelic::InitializeImplementation()
+void RelicTestsFixture::OpenTypedRelic::PostConstruct(ShardTuple shards)
 {
-    auto shards = ExtractShards();
     basicShard = std::get<0>(shards);
 }
 
-void RelicTestsFixture::GlobalRelic::InitializeImplementation()
+void RelicTestsFixture::GlobalRelic::PostConstruct(ShardTuple shards)
 {
-    auto shards = ExtractShards();
     basicShard = std::get<0>(shards);
+}
+
+void RelicTestsFixture::ShouldCreateRelic::Initialize(int value)
+{
+    this->value = value;
+}
+
+void RelicTestsFixture::InitializedRelic::PostConstruct(ShardTuple shards)
+{
+    basicShard = std::get<0>(shards);
+}
+
+void RelicTestsFixture::InitializedRelic::Initialize(int myValue)
+{
+    this->myValue = myValue;
 }
 
 namespace Arca
@@ -49,30 +61,16 @@ namespace Arca
     const TypeName Traits<RelicTestsFixture::GlobalRelic>::typeName =
         "RelicTestsGlobalRelic";
 
-    const TypeName Traits<RelicTestsFixture::MostBasicCustomFactoryRelic>::typeName =
-        "RelicTestsMostBasicCustomFactoryRelic";
+    const TypeName Traits<RelicTestsFixture::ShouldCreateRelic>::typeName =
+        "ReliquaryTestsShouldCreateRelic";
 
-    std::optional<RelicTestsFixture::MostBasicCustomFactoryRelic>
-        Traits<RelicTestsFixture::MostBasicCustomFactoryRelic>::Factory(Reliquary& reliquary)
+    bool Traits<RelicTestsFixture::ShouldCreateRelic>::ShouldCreate(Reliquary& reliquary, int value)
     {
-        RelicTestsFixture::MostBasicCustomFactoryRelic relic;
-        relic.value = 999;
-        return relic;
+        return value >= 100;
     }
 
-    const TypeName Traits<RelicTestsFixture::GuardedCustomFactoryRelic>::typeName =
-        "ReliquaryTestsGuardedCustomFactoryRelic";
-
-    std::optional<RelicTestsFixture::GuardedCustomFactoryRelic>
-        Traits<RelicTestsFixture::GuardedCustomFactoryRelic>::Factory(Reliquary& reliquary, int value)
-    {
-        if (value < 100)
-            return {};
-
-        RelicTestsFixture::GuardedCustomFactoryRelic relic;
-        relic.value = value;
-        return relic;
-    }
+    const TypeName Traits<RelicTestsFixture::InitializedRelic>::typeName =
+        "ReliquaryTestsInitializedRelic";
 }
 
 SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
@@ -367,48 +365,31 @@ SCENARIO_METHOD(RelicTestsFixture, "many relics", "[relic]")
 
 SCENARIO_METHOD(RelicTestsFixture, "custom factory relic", "[relic][factory]")
 {
-    GIVEN("most basic custom factory relic registered")
+    GIVEN("should create relic registered")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<MostBasicCustomFactoryRelic>()
-            .Actualize();
-
-        WHEN("creating relic")
-        {
-            const auto relic = reliquary->Create<MostBasicCustomFactoryRelic>();
-
-            THEN("has value set from factory")
-            {
-                REQUIRE(relic->value == 999);
-            }
-        }
-    }
-
-    GIVEN("guarded custom factory relic registered")
-    {
-        auto reliquary = ReliquaryOrigin()
-            .Type<GuardedCustomFactoryRelic>()
+            .Type<ShouldCreateRelic>()
             .Actualize();
 
         WHEN("creating relic with 100 value")
         {
-            const auto relic = reliquary->Create<GuardedCustomFactoryRelic>(100);
+            const auto relic = reliquary->Create<ShouldCreateRelic>(100);
 
             THEN("relic was created")
             {
                 REQUIRE(relic);
-                REQUIRE(reliquary->Find<GuardedCustomFactoryRelic>(relic->ID()));
+                REQUIRE(reliquary->Find<ShouldCreateRelic>(relic->ID()));
             }
         }
 
         WHEN("creating relic with 99 value")
         {
-            const auto relic = reliquary->Create<GuardedCustomFactoryRelic>(99);
+            const auto relic = reliquary->Create<ShouldCreateRelic>(99);
 
             THEN("relic was not created")
             {
                 REQUIRE(!relic);
-                REQUIRE(reliquary->Batch<GuardedCustomFactoryRelic>().IsEmpty());
+                REQUIRE(reliquary->Batch<ShouldCreateRelic>().IsEmpty());
             }
         }
     }
@@ -718,6 +699,33 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
                     ::Catch::Matchers::Message(
                         "The parent relic is from a different Reliquary.")
                 );
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(RelicTestsFixture, "relic initialization", "[relic]")
+{
+    GIVEN("registered reliquary")
+    {
+        auto reliquary = ReliquaryOrigin()
+            .Type<InitializedRelic>()
+            .Type<Shard>()
+            .Actualize();
+
+        WHEN("creating initialized relic")
+        {
+            auto myValue = dataGeneration.Random<int>();
+            auto relic = reliquary->Create<InitializedRelic>(myValue);
+
+            THEN("has value")
+            {
+                REQUIRE(relic->myValue == myValue);
+            }
+
+            THEN("has shard")
+            {
+                REQUIRE(relic->basicShard);
             }
         }
     }

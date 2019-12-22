@@ -47,8 +47,8 @@ public:
         Ptr<BasicShard> basicShard;
     public:
         TypedClosedRelic() = default;
-    protected:
-        void InitializeImplementation() override;
+
+        void PostConstruct(ShardTuple shards);
     };
 
     class TypedOpenRelic final : public OpenTypedRelicAutomation<TypedOpenRelic, BasicShard>
@@ -58,8 +58,8 @@ public:
         Ptr<BasicShard> basicShard;
     public:
         TypedOpenRelic() = default;
-    protected:
-        void InitializeImplementation() override;
+
+        void PostConstruct(ShardTuple shards);
     };
 
     class GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic, BasicShard>
@@ -69,8 +69,8 @@ public:
         Ptr<BasicShard> basicShard;
     public:
         GlobalRelic() = default;
-    protected:
-        void InitializeImplementation() override;
+
+        void PostConstruct(ShardTuple shards);
     };
 
     class BasicCurator final : public Curator
@@ -108,8 +108,8 @@ public:
         Ptr<BasicShardNullInscription> basicShard;
     public:
         TypedClosedRelicNullInscription() = default;
-    protected:
-        void InitializeImplementation() override;
+
+        void PostConstruct(ShardTuple shards);
     };
 
     class TypedOpenRelicNullInscription final :
@@ -120,8 +120,8 @@ public:
         Ptr<BasicShardNullInscription> basicShard;
     public:
         TypedOpenRelicNullInscription() = default;
-    protected:
-        void InitializeImplementation() override;
+
+        void PostConstruct(ShardTuple shards);
     };
 
     class GlobalRelicNullInscription final :
@@ -132,8 +132,8 @@ public:
         Ptr<BasicShardNullInscription> basicShard;
     public:
         GlobalRelicNullInscription() = default;
-    protected:
-        void InitializeImplementation() override;
+
+        void PostConstruct(ShardTuple shards);
     };
 
     class BasicCuratorNullInscription final : public Curator

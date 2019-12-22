@@ -31,8 +31,8 @@ class ShardBatchFixture::GlobalRelic : public ClosedTypedRelicAutomation<GlobalR
 {
 public:
     Ptr<Shard> shard;
-protected:
-    void InitializeImplementation() override;
+
+    void PostConstruct(ShardTuple shards);
 };
 
 namespace Arca
