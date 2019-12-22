@@ -14,9 +14,7 @@ namespace Arca
 {
     void Reliquary::Work()
     {
-        curators.Work([](Curator& curator) { curator.StartStep(); });
-        curators.Work([](Curator& curator) { curator.Work(); });
-        curators.Work([](Curator& curator) { curator.StopStep(); });
+        curators.DoOn([](Curator& curator, Curator::Stage& stage) { curator.Work(stage); });
 
         for (auto& batchSource : signals.batchSources.map)
             batchSource.second->Clear();

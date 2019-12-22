@@ -4,6 +4,16 @@
 
 namespace Arca
 {
+    void Curator::Stage::Abort()
+    {
+        isAborted = true;
+    }
+
+    bool Curator::Stage::IsAborted() const
+    {
+        return isAborted;
+    }
+
     Curator::~Curator() = default;
 
     void Curator::Initialize(Reliquary& owner)
@@ -12,31 +22,9 @@ namespace Arca
         InitializeImplementation();
     }
 
-    void Curator::StartStep()
+    void Curator::Work(Stage& stage)
     {
-        isStarted = StartStepImplementation();
-    }
-
-    void Curator::Work()
-    {
-        if (!IsStarted())
-            return;
-
-        WorkImplementation();
-    }
-
-    void Curator::StopStep()
-    {
-        if (!IsStarted())
-            return;
-
-        StopStepImplementation();
-        isStarted = false;
-    }
-
-    bool Curator::IsStarted() const
-    {
-        return isStarted;
+        WorkImplementation(stage);
     }
 
     Reliquary& Curator::Owner()
@@ -52,14 +40,6 @@ namespace Arca
     void Curator::InitializeImplementation()
     {}
 
-    bool Curator::StartStepImplementation()
-    {
-        return true;
-    }
-
-    void Curator::WorkImplementation()
-    {}
-
-    void Curator::StopStepImplementation()
+    void Curator::WorkImplementation(Stage& stage)
     {}
 }

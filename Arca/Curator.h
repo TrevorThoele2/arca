@@ -10,6 +10,16 @@ namespace Arca
 
     class Curator
     {
+    protected:
+        class Stage
+        {
+        public:
+            Stage() = default;
+            void Abort();
+            [[nodiscard]] bool IsAborted() const;
+        private:
+            bool isAborted = false;
+        };
     public:
         Curator(const Curator& arg) = delete;
         Curator(Curator&& arg) = delete;
@@ -20,11 +30,8 @@ namespace Arca
         Curator& operator=(Curator&& arg) = delete;
 
         void Initialize(Reliquary& owner);
-        void StartStep();
-        void Work();
-        void StopStep();
 
-        [[nodiscard]] bool IsStarted() const;
+        void Work(Stage& stage);
     protected:
         Curator() = default;
     protected:
@@ -32,15 +39,13 @@ namespace Arca
         [[nodiscard]] const Reliquary& Owner() const;
     protected:
         virtual void InitializeImplementation();
-        virtual bool StartStepImplementation();
-        virtual void WorkImplementation();
-        virtual void StopStepImplementation();
+
+        virtual void WorkImplementation(Stage& stage);
     private:
         Reliquary* owner = nullptr;
-
-        bool isStarted = false;
     private:
         INSCRIPTION_ACCESS;
         friend Reliquary;
+        friend class ReliquaryCurators;
     };
 }

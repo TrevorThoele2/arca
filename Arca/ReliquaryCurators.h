@@ -34,10 +34,10 @@ namespace Arca
         KnownPolymorphicSerializerList serializers;
 
         template<class CuratorT>
-        [[nodiscard]] bool Has() const;
+        [[nodiscard]] bool Contains() const;
 
-        template<class Function>
-        void Work(Function function);
+        void DoOn(void(*function)(Curator& curator));
+        void DoOn(void(*function)(Curator& curator, Curator::Stage& stage));
     private:
         explicit ReliquaryCurators(Reliquary& owner);
         friend Reliquary;

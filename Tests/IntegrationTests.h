@@ -103,11 +103,9 @@ public:
 class IntegrationTestsFixture::BasicCuratorBase : public Curator
 {
 public:
-    bool shouldStart = true;
+    bool shouldAbort = false;
     static std::function<void(BasicCuratorBase&)> onInitialize;
-    std::function<void(BasicCuratorBase&)> onStartStep;
     std::function<void(BasicCuratorBase&)> onWork;
-    std::function<void(BasicCuratorBase&)> onStopStep;
 
     Batch<BasicSignal> basicSignals;
 
@@ -116,9 +114,7 @@ public:
     BasicCuratorBase();
 protected:
     void InitializeImplementation() override;
-    bool StartStepImplementation() override;
-    void WorkImplementation() override;
-    void StopStepImplementation() override;
+    void WorkImplementation(Stage& stage) override;
 };
 
 template<size_t differentiator>
