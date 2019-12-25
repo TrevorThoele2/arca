@@ -35,6 +35,11 @@ namespace Arca
         }
     }
 
+    void Reliquary::Clear(const Type& type)
+    {
+        relics.AttemptClear(type);
+    }
+
     std::optional<Handle> Reliquary::ParentOf(const Handle& child) const
     {
         return relics.ParentOf(child);

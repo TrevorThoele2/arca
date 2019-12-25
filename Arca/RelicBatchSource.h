@@ -22,6 +22,7 @@ namespace Arca
         [[nodiscard]] virtual void* FindStorage(RelicID id) = 0;
 
         virtual void DestroyFromBase(RelicID id) = 0;
+        virtual void DestroyAllFromBase(Reliquary& reliquary) = 0;
 
         virtual void Construct(Reliquary& owner) = 0;
 
@@ -50,6 +51,7 @@ namespace Arca
         iterator Destroy(const_iterator destroy);
 
         void DestroyFromBase(RelicID id) override;
+        void DestroyAllFromBase(Reliquary& reliquary) override;
 
         void Construct(Reliquary& owner) override;
 

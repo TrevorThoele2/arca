@@ -50,6 +50,12 @@ namespace Arca
     }
 
     template<class T>
+    void BatchSource<T, std::enable_if_t<is_relic_v<T>>>::DestroyAllFromBase(Reliquary& reliquary)
+    {
+        reliquary.Clear<T>();
+    }
+
+    template<class T>
     void BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Construct(Reliquary& owner)
     {
         for (auto& loop : list)

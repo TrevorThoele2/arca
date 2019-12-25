@@ -38,6 +38,7 @@ namespace Arca
 
         void Destroy(const Handle& handle);
 
+        void AttemptClear(const Type& type);
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         void Clear();
 

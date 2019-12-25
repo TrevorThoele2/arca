@@ -371,6 +371,17 @@ SCENARIO_METHOD(RelicTestsFixture, "many relics", "[relic]")
                 REQUIRE(reliquary->ShardSize() == 0);
             }
         }
+
+        WHEN("clearing by type")
+        {
+            reliquary->Clear(TypeFor<OpenRelic>());
+
+            THEN("reliquary is empty")
+            {
+                REQUIRE(reliquary->RelicSize() == 0);
+                REQUIRE(reliquary->ShardSize() == 0);
+            }
+        }
     }
 }
 
@@ -446,6 +457,16 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
                     REQUIRE(destroyingSignals.Size() == 1);
                 }
             }
+
+            WHEN("clearing by type")
+            {
+                reliquary->Clear(TypeFor<OpenRelic>());
+
+                THEN("signal is emitted for relic and shard")
+                {
+                    REQUIRE(destroyingSignals.Size() == 1);
+                }
+            }
         }
 
         WHEN("creating closed relic")
@@ -476,6 +497,16 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
                     REQUIRE(destroyingSignals.Size() == 2);
                 }
             }
+
+            WHEN("clearing by type")
+            {
+                reliquary->Clear(TypeFor<ClosedRelic>());
+
+                THEN("signal is emitted for relic and shard")
+                {
+                    REQUIRE(destroyingSignals.Size() == 2);
+                }
+            }
         }
 
         WHEN("creating typed relic")
@@ -500,6 +531,16 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
             WHEN("clearing")
             {
                 reliquary->Clear<TypedRelic>();
+
+                THEN("signal is emitted for relic and shard")
+                {
+                    REQUIRE(destroyingSignals.Size() == 2);
+                }
+            }
+
+            WHEN("clearing by type")
+            {
+                reliquary->Clear(TypeFor<TypedRelic>());
 
                 THEN("signal is emitted for relic and shard")
                 {

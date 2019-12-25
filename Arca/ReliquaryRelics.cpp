@@ -24,6 +24,15 @@ namespace Arca
         Destroy(*metadata);
     }
 
+    void ReliquaryRelics::AttemptClear(const Type& type)
+    {
+        auto batchSource = batchSources.Find(type.name);
+        if (!batchSource)
+            return;
+
+        batchSource->DestroyAllFromBase(Owner());
+    }
+
     std::optional<Handle> ReliquaryRelics::ParentOf(const Handle& child) const
     {
         const auto childID = child.ID();
