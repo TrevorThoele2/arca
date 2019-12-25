@@ -14,8 +14,8 @@ namespace Arca
         if (HasEitherType(type, id))
             throw CannotCreate(type);
 
-        auto& batch = batchSources.Required<ShardT>();
-        auto added = batch.Add(id);
+        auto& batchSource = batchSources.Required<ShardT>();
+        auto added = batchSource.Add(id);
 
         AttemptAddToEitherBatches(id, *added);
         NotifyCompositesShardCreate(id);
@@ -77,7 +77,7 @@ namespace Arca
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     RelicID ReliquaryShards::IDFor(const ShardT& shard) const
     {
-        auto batchSource = batchSources.Required<ShardT>();
+        auto& batchSource = batchSources.Required<ShardT>();
         for (auto loop = batchSource.begin(); loop != batchSource.end(); ++loop)
             if (&loop->shard == &shard)
                 return loop->id;
@@ -107,8 +107,8 @@ namespace Arca
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     ShardT* ReliquaryShards::FindStorage(RelicID id)
     {
-        auto& batch = batchSources.Required<ShardT>();
-        return batch.Find(id);
+        auto& batchSource = batchSources.Required<ShardT>();
+        return batchSource.Find(id);
     }
 
     template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int>>
@@ -158,9 +158,11 @@ namespace Arca
     std::unique_ptr<EitherShardBatchSourceBase> ReliquaryShards::EitherBatchSources::Create()
     {
         auto created = std::make_unique<BatchSource<T>>(*owner);
-        for (auto& loop : owner->batchSources.Required<ShardT<T>>())
+        auto& nonConstBatchSource = owner->batchSources.Required<ShardT<T>>();
+        for (auto& loop : nonConstBatchSource)
             created->Add(loop.id, loop.shard, false);
-        for (auto& loop : owner->batchSources.Required<const ShardT<T>>())
+        auto& constBatchSource = owner->batchSources.Required<const ShardT<T>>();
+        for (auto& loop : constBatchSource)
             created->Add(loop.id, loop.shard, true);
         return created;
     }
