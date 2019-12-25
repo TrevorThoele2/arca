@@ -23,9 +23,11 @@ namespace Arca
     public:
         Ptr() = default;
         Ptr(RelicID id, Reliquary& owner);
-        Ptr(const Ptr& arg) = default;
+        Ptr(const Ptr& arg);
+        Ptr(Ptr&& arg) noexcept;
 
         Ptr& operator=(const Ptr& arg);
+        Ptr& operator=(Ptr&& arg) noexcept;
 
         bool operator==(const Ptr& arg) const;
         bool operator!=(const Ptr& arg) const;
@@ -63,6 +65,36 @@ namespace Arca
     }
 
     template<class T>
+    Ptr<T, std::enable_if_t<!is_global_relic_v<T> && !is_either_v<T>>>::Ptr(const Ptr& arg) :
+        id(arg.id), owner(arg.owner)
+    {
+        value = FindValueFromOwner();
+    }
+
+    template<class T>
+    Ptr<T, std::enable_if_t<!is_global_relic_v<T> && !is_either_v<T>>>::Ptr(Ptr&& arg) noexcept :
+        id(arg.id), owner(arg.owner), value(arg.value)
+    {}
+
+    template<class T>
+    auto Ptr<T, std::enable_if_t<!is_global_relic_v<T> && !is_either_v<T>>>::operator=(const Ptr& arg) -> Ptr&
+    {
+        id = arg.id;
+        owner = arg.owner;
+        value = FindValueFromOwner();
+        return *this;
+    }
+
+    template<class T>
+    auto Ptr<T, std::enable_if_t<!is_global_relic_v<T> && !is_either_v<T>>>::operator=(Ptr&& arg) noexcept -> Ptr&
+    {
+        id = arg.id;
+        owner = arg.owner;
+        value = arg.value;
+        return *this;
+    }
+
+    template<class T>
     bool Ptr<T, std::enable_if_t<!is_global_relic_v<T> && !is_either_v<T>>>::operator==(const Ptr& arg) const
     {
         return id == arg.id && owner == arg.owner;
@@ -72,15 +104,6 @@ namespace Arca
     bool Ptr<T, std::enable_if_t<!is_global_relic_v<T> && !is_either_v<T>>>::operator!=(const Ptr& arg) const
     {
         return !(*this == arg);
-    }
-
-    template<class T>
-    auto Ptr<T, std::enable_if_t<!is_global_relic_v<T> && !is_either_v<T>>>::operator=(const Ptr& arg) -> Ptr&
-    {
-        id = arg.id;
-        owner = arg.owner;
-        value = FindValueFromOwner();
-        return *this;
     }
 
     template<class T>
@@ -189,9 +212,11 @@ namespace Arca
     public:
         Ptr() = default;
         Ptr(RelicID id, Reliquary& owner);
-        Ptr(const Ptr& arg) = default;
+        Ptr(const Ptr& arg);
+        Ptr(Ptr&& arg) noexcept;
 
-        Ptr& operator=(const Ptr & arg);
+        Ptr& operator=(const Ptr& arg);
+        Ptr& operator=(Ptr&& arg) noexcept;
 
         bool operator==(const Ptr& arg) const;
         bool operator!=(const Ptr& arg) const;
@@ -231,6 +256,27 @@ namespace Arca
     }
 
     template<class T>
+    Ptr<T, std::enable_if_t<is_either_v<T>>>::Ptr(const Ptr& arg) :
+        id(arg.id), owner(arg.owner)
+    {
+        value = FindValueFromOwner();
+    }
+
+    template<class T>
+    Ptr<T, std::enable_if_t<is_either_v<T>>>::Ptr(Ptr&& arg) noexcept :
+        id(arg.id), owner(arg.owner), value(arg.value)
+    {}
+
+    template<class T>
+    auto Ptr<T, std::enable_if_t<is_either_v<T>>>::operator=(const Ptr& arg) -> Ptr&
+    {
+        id = arg.id;
+        owner = arg.owner;
+        value = FindValueFromOwner();
+        return *this;
+    }
+
+    template<class T>
     bool Ptr<T, std::enable_if_t<is_either_v<T>>>::operator==(const Ptr& arg) const
     {
         return id == arg.id && owner == arg.owner;
@@ -240,15 +286,6 @@ namespace Arca
     bool Ptr<T, std::enable_if_t<is_either_v<T>>>::operator!=(const Ptr& arg) const
     {
         return !(*this == arg);
-    }
-
-    template<class T>
-    auto Ptr<T, std::enable_if_t<is_either_v<T>>>::operator=(const Ptr& arg) -> Ptr&
-    {
-        id = arg.id;
-        owner = arg.owner;
-        value = FindValueFromOwner();
-        return *this;
     }
 
     template<class T>
@@ -337,9 +374,11 @@ namespace Arca
     public:
         Ptr() = default;
         Ptr(RelicID id, Reliquary& owner);
-        Ptr(const Ptr& arg) = default;
+        Ptr(const Ptr& arg);
+        Ptr(Ptr&& arg) noexcept;
 
         Ptr& operator=(const Ptr& arg);
+        Ptr& operator=(Ptr&& arg);
 
         bool operator==(const Ptr& arg) const;
         bool operator!=(const Ptr& arg) const;
@@ -376,6 +415,36 @@ namespace Arca
     }
 
     template<class T>
+    Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::Ptr(const Ptr& arg) :
+        id(arg.id), owner(arg.owner)
+    {
+        value = FindValueFromOwner();
+    }
+
+    template<class T>
+    Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::Ptr(Ptr&& arg) noexcept :
+        id(arg.id), owner(arg.owner), value(arg.value)
+    {}
+
+    template<class T>
+    auto Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::operator=(const Ptr& arg) -> Ptr&
+    {
+        id = arg.id;
+        owner = arg.owner;
+        value = FindValueFromOwner();
+        return *this;
+    }
+
+    template<class T>
+    auto Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::operator=(Ptr&& arg) -> Ptr&
+    {
+        id = arg.id;
+        owner = arg.owner;
+        value = arg.value;
+        return *this;
+    }
+
+    template<class T>
     bool Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::operator==(const Ptr& arg) const
     {
         return owner == arg.owner;
@@ -385,15 +454,6 @@ namespace Arca
     bool Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::operator!=(const Ptr& arg) const
     {
         return !(*this == arg);
-    }
-
-    template<class T>
-    auto Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::operator=(const Ptr& arg) -> Ptr&
-    {
-        id = arg.id;
-        owner = arg.owner;
-        value = FindValueFromOwner();
-        return *this;
     }
 
     template<class T>
