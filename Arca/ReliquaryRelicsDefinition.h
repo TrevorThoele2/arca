@@ -73,9 +73,13 @@ namespace Arca
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
     void ReliquaryRelics::Clear()
     {
-        auto batchSource = batchSources.Required<RelicT>();
-        for (auto& loop : batchSource)
-            Owner().Destroy(AsHandle(loop));
+        auto& batchSource = batchSources.Required<RelicT>();
+        for (auto loop = batchSource.begin(); loop != batchSource.end();)
+        {
+            auto next = std::next(loop);
+            Owner().Destroy(AsHandle(*loop));
+            loop = next;
+        }
     }
 
     template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int>>

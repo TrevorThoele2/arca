@@ -125,6 +125,9 @@ namespace Arca
 
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         RelicT* FindGlobalStorage();
+    public:
+        ReliquaryRelics(const ReliquaryRelics& arg) = delete;
+        ReliquaryRelics& operator=(const ReliquaryRelics& arg) = delete;
     private:
         template<
             class RelicT,
@@ -146,6 +149,7 @@ namespace Arca
         Ptr<RelicT> CreatePtr(RelicID id) const;
     private:
         explicit ReliquaryRelics(Reliquary& owner);
+        ReliquaryRelics(ReliquaryRelics&& arg) noexcept = default;
         friend Reliquary;
     };
 }

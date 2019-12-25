@@ -109,5 +109,4 @@ namespace Arca
 
     ReliquaryShards::ReliquaryShards(Reliquary& owner) : ReliquaryComponent(owner, "shard")
     {}
-
 }

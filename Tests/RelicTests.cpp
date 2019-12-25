@@ -44,6 +44,11 @@ void RelicTestsFixture::InitializedRelic::Initialize(int myValue)
     this->myValue = myValue;
 }
 
+void RelicTestsFixture::MovableOnlyRelic::PostConstruct(ShardTuple shards)
+{
+    basicShard = std::get<0>(shards);
+}
+
 namespace Arca
 {
     const TypeName Traits<RelicTestsFixture::Shard>::typeName =
@@ -71,6 +76,9 @@ namespace Arca
 
     const TypeName Traits<RelicTestsFixture::InitializedRelic>::typeName =
         "ReliquaryTestsInitializedRelic";
+
+    const TypeName Traits<RelicTestsFixture::MovableOnlyRelic>::typeName =
+        "ReliquaryTestsMovableOnlyRelic";
 }
 
 SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
@@ -799,6 +807,35 @@ SCENARIO_METHOD(RelicTestsFixture, "relic initialization", "[relic]")
         {
             auto myValue = dataGeneration.Random<int>();
             auto relic = reliquary->Create<InitializedRelic>(myValue);
+
+            THEN("has value")
+            {
+                REQUIRE(relic->myValue == myValue);
+            }
+
+            THEN("has shard")
+            {
+                REQUIRE(relic->basicShard);
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(RelicTestsFixture, "relic moving only", "[relic]")
+{
+    GIVEN("registered reliquary")
+    {
+        auto reliquary = ReliquaryOrigin()
+            .Type<MovableOnlyRelic>()
+            .Type<Shard>()
+            .Actualize();
+
+        WHEN("creating movable only relic")
+        {
+            auto relic = reliquary->Create<MovableOnlyRelic>();
+
+            auto myValue = dataGeneration.Random<int>();
+            relic->myValue = myValue;
 
             THEN("has value")
             {

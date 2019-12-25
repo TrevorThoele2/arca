@@ -68,6 +68,8 @@ namespace Arca
         using const_iterator = typename List::const_iterator;
     public:
         explicit BatchSource(ReliquaryShards& owner);
+        BatchSource(const BatchSource& arg) = delete;
+        BatchSource(BatchSource&& arg) = default;
 
         void Add(RelicID id);
 

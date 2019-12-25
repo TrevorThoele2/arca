@@ -82,6 +82,22 @@ public:
 
         void Initialize(int myValue);
     };
+
+    class MovableOnlyRelic final : public ClosedTypedRelicAutomation<MovableOnlyRelic, Shard>
+    {
+    public:
+        Ptr<Shard> basicShard;
+
+        int myValue = 0;
+    public:
+        MovableOnlyRelic() = default;
+        MovableOnlyRelic(const MovableOnlyRelic& arg) = delete;
+        MovableOnlyRelic(MovableOnlyRelic&& arg) noexcept = default;
+        MovableOnlyRelic& operator=(const MovableOnlyRelic& arg) = delete;
+        MovableOnlyRelic& operator=(MovableOnlyRelic&& arg) noexcept = default;
+
+        void PostConstruct(ShardTuple shards);
+    };
 };
 
 namespace Arca
@@ -136,6 +152,13 @@ namespace Arca
         static const ObjectType objectType = ObjectType::Relic;
         static const TypeName typeName;
     };
+
+    template<>
+    struct Traits<::RelicTestsFixture::MovableOnlyRelic>
+    {
+        static const ObjectType objectType = ObjectType::Relic;
+        static const TypeName typeName;
+    };
 }
 
 namespace Inscription
@@ -185,5 +208,10 @@ namespace Inscription
     template<>
     class Scribe<::RelicTestsFixture::InitializedRelic, BinaryArchive> final
         : public ArcaNullScribe<::RelicTestsFixture::InitializedRelic, BinaryArchive>
+    {};
+
+    template<>
+    class Scribe<::RelicTestsFixture::MovableOnlyRelic, BinaryArchive> final
+        : public ArcaNullScribe<::RelicTestsFixture::MovableOnlyRelic, BinaryArchive>
     {};
 }

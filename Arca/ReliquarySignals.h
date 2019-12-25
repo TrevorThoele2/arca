@@ -43,8 +43,12 @@ namespace Arca
             explicit BatchSources(ReliquarySignals& owner);
             friend ReliquarySignals;
         } batchSources = BatchSources(*this);
+    public:
+        ReliquarySignals(const ReliquarySignals& arg) = delete;
+        ReliquarySignals& operator=(const ReliquarySignals& arg) = delete;
     private:
         explicit ReliquarySignals(Reliquary& owner);
+        ReliquarySignals(ReliquarySignals&& arg) noexcept = default;
         friend Reliquary;
     };
 }
