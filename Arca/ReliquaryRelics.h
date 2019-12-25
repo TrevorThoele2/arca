@@ -38,6 +38,9 @@ namespace Arca
 
         void Destroy(const Handle& handle);
 
+        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        void Clear();
+
         template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int> = 0>
         [[nodiscard]] Ptr<RelicT> Find(RelicID id) const;
         template<class RelicT, std::enable_if_t<is_global_relic_v<RelicT>, int> = 0>

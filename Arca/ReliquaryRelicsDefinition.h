@@ -70,6 +70,14 @@ namespace Arca
         return child;
     }
 
+    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
+    void ReliquaryRelics::Clear()
+    {
+        auto batchSource = batchSources.Required<RelicT>();
+        for (auto& loop : batchSource)
+            Owner().Destroy(AsHandle(loop));
+    }
+
     template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int>>
     Ptr<RelicT> ReliquaryRelics::Find(RelicID id) const
     {
