@@ -1,39 +1,40 @@
 #pragma once
 
 #include "ShardTraits.h"
+#include "Either.h"
 #include <Chroma/Iterate.h>
 
 namespace Arca
 {
     template<::Chroma::VariadicTemplateSize i>
-    struct AreAllShardsIterator
+    struct UsableInAllIterator
     {
         template<class ShardPack>
         static constexpr bool Do(ShardPack pack)
         {
             using T = typename ShardPack::template Parameter<i - 1>::Type;
-            const auto value = is_shard_v<T>;
-            return value ? AreAllShardsIterator<i - 1>::Do(pack) : false;
+            const auto value = is_shard_v<T> || is_either_v<T>;
+            return value ? UsableInAllIterator<i - 1>::Do(pack) : false;
         }
     };
 
     template<>
-    struct AreAllShardsIterator<0>
+    struct UsableInAllIterator<0>
     {
         template<class ShardPack>
         static constexpr bool Do(ShardPack)
         {
             using T = typename ShardPack::template Parameter<0>::Type;
-            return is_shard_v<T>;
+            return is_shard_v<T> || is_either_v<T>;
         }
     };
 
     template<class... Shards>
-    struct are_all_shards : std::bool_constant<
+    struct usable_in_all : std::bool_constant<
         sizeof...(Shards) == 0
-        || AreAllShardsIterator<sizeof...(Shards) - 1>::Do(::Chroma::VariadicTemplate<Shards...>{})>
+        || UsableInAllIterator<sizeof...(Shards) - 1>::Do(::Chroma::VariadicTemplate<Shards...>{})>
     {};
 
     template<class... Shards>
-    static constexpr bool are_all_shards_v = are_all_shards<Shards...>::value;
+    static constexpr bool usable_in_all_v = usable_in_all<Shards...>::value;
 }

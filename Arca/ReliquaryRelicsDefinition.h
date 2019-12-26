@@ -2,8 +2,9 @@
 
 #include "ReliquaryRelics.h"
 #include "Created.h"
-#include "InitializeRelic.h"
-#include "PostConstructRelic.h"
+#include "Initialize.h"
+#include "PostConstruct.h"
+#include "AsHandle.h"
 
 namespace Arca
 {
@@ -105,10 +106,20 @@ namespace Arca
         return CreatePtr<RelicT>(found->second.id);
     }
 
-    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
+    template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int>>
     RelicID ReliquaryRelics::IDFor(const RelicT& relic) const
     {
         return relic.ID();
+    }
+
+    template<class RelicT, std::enable_if_t<is_global_relic_v<RelicT>, int>>
+    RelicID ReliquaryRelics::IDFor() const
+    {
+        auto found = globalMap.find(TypeFor<RelicT>());
+        if (found == globalMap.end())
+            return 0;
+
+        return found->second->id;
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
@@ -187,9 +198,8 @@ namespace Arca
             additionalStructure.begin(),
             additionalStructure.end());
         SatisfyStructure(id, structure);
-        PostConstructRelic(*added);
-        InitializeRelic(*added, std::forward<InitializeArgs>(initializeArgs)...);
-        Shards().NotifyCompositesRelicCreate(id, structure);
+        PostConstruct(*added);
+        Initialize(*added, std::forward<InitializeArgs>(initializeArgs)...);
 
         Owner().Raise<Created>(HandleFrom(id, TypeFor<RelicT>(), HandleObjectType::Relic));
 

@@ -5,7 +5,7 @@
 #include "Handle.h"
 #include "ShardTraits.h"
 #include "Either.h"
-#include "AreAllShards.h"
+#include "CompositeTraits.h"
 
 #include "Ptr.h"
 
@@ -32,7 +32,7 @@ namespace Arca
         [[nodiscard]] bool Contains() const;
         template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
         [[nodiscard]] bool Contains() const;
-        template<class... ShardsT, std::enable_if_t<are_all_shards_v<ShardsT...> && (sizeof...(ShardsT) > 1), int> = 0>
+        template<class ShardsT, std::enable_if_t<is_composite_v<ShardsT>, int> = 0>
         [[nodiscard]] bool Contains() const;
 
         [[nodiscard]] std::optional<Handle> Parent() const;

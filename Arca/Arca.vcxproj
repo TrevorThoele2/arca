@@ -20,12 +20,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="All.h" />
+    <ClInclude Include="AsHandle.h" />
     <ClInclude Include="CompositeScribe.h" />
     <ClInclude Include="CompositeShardBatch.h" />
     <ClInclude Include="CompositeShardBatchIterator.h" />
     <ClInclude Include="CompositeShardBatchSource.h" />
     <ClInclude Include="CompositeShardBatchSourceDefinition.h" />
-    <ClInclude Include="AreAllShards.h" />
+    <ClInclude Include="CompositeTraits.h" />
+    <ClInclude Include="UsableInAll.h" />
     <ClInclude Include="Either.h" />
     <ClInclude Include="EitherShardBatch.h" />
     <ClInclude Include="EitherShardBatchIterator.h" />
@@ -42,7 +44,7 @@
     <ClInclude Include="HasPostConstructMethod.h" />
     <ClInclude Include="HasRequiredShards.h" />
     <ClInclude Include="HasShouldCreateMethod.h" />
-    <ClInclude Include="InitializeRelic.h" />
+    <ClInclude Include="Initialize.h" />
     <ClInclude Include="IsType.h" />
     <ClInclude Include="KnownPolymorphicSerializer.h" />
     <ClInclude Include="Locality.h" />
@@ -52,7 +54,7 @@
     <ClInclude Include="OpenTypedRelicAutomation.h" />
     <ClInclude Include="OpenTypedRelicDefinition.h" />
     <ClInclude Include="PipelineException.h" />
-    <ClInclude Include="PostConstructRelic.h" />
+    <ClInclude Include="PostConstruct.h" />
     <ClInclude Include="Ptr.h" />
     <ClInclude Include="RelicBatch.h" />
     <ClInclude Include="RelicBatchIterator.h" />
@@ -103,6 +105,7 @@
     <ClInclude Include="RelicMetadata.h" />
     <ClInclude Include="RelicStructure.h" />
     <ClInclude Include="RelicTraits.h" />
+    <ClInclude Include="TypeFor.h" />
     <ClInclude Include="TypeScribe.h" />
   </ItemGroup>
   <ItemGroup>

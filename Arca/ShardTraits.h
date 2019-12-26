@@ -2,6 +2,7 @@
 
 #include "Traits.h"
 #include "Handle.h"
+#include "ObjectType.h"
 
 namespace Arca
 {
@@ -26,11 +27,5 @@ namespace Arca
     HandleObjectType HandleObjectTypeFor()
     {
         return HandleObjectType::Relic;
-    }
-
-    template<class T, std::enable_if_t<is_shard_v<T>, int> = 0>
-    Handle AsHandle(RelicID id, Reliquary& owner)
-    {
-        return Handle(id, owner, TypeFor<T>(), HandleObjectType::Shard);
     }
 }

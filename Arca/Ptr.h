@@ -5,6 +5,7 @@
 #include "RelicTraits.h"
 #include "ShardTraits.h"
 #include "Either.h"
+#include "TypeFor.h"
 
 #include "Serialization.h"
 
@@ -52,7 +53,7 @@ namespace Arca
         Reliquary* owner = nullptr;
         mutable T* value = nullptr;
     private:
-        T* FindValueFromOwner();
+        T* FindValueFromOwner() const;
     private:
         INSCRIPTION_ACCESS;
     };
@@ -145,6 +146,9 @@ namespace Arca
     template<class T>
     T* Ptr<T, std::enable_if_t<!is_global_relic_v<T> && !is_either_v<T>>>::Get() const
     {
+        if (value == nullptr)
+            value = FindValueFromOwner();
+
         return value;
     }
 
@@ -161,7 +165,7 @@ namespace Arca
     }
 
     template<class T>
-    T* Ptr<T, std::enable_if_t<!is_global_relic_v<T> && !is_either_v<T>>>::FindValueFromOwner()
+    T* Ptr<T, std::enable_if_t<!is_global_relic_v<T> && !is_either_v<T>>>::FindValueFromOwner() const
     {
         if (owner == nullptr)
             return nullptr;
@@ -196,6 +200,7 @@ namespace Inscription
 
                 auto reliquary = archive.template UserContext<Arca::Reliquary>();
                 object.owner = reliquary;
+                object.value = object.FindValueFromOwner();
             }
         }
     };
@@ -246,7 +251,7 @@ namespace Arca
         Reliquary* owner = nullptr;
         mutable ShardT* value = nullptr;
     private:
-        ShardT* FindValueFromOwner();
+        ShardT* FindValueFromOwner() const;
     private:
         INSCRIPTION_ACCESS;
     };
@@ -275,6 +280,15 @@ namespace Arca
         id = arg.id;
         owner = arg.owner;
         value = FindValueFromOwner();
+        return *this;
+    }
+
+    template<class T>
+    auto Ptr<T, std::enable_if_t<is_either_v<T>>>::operator=(Ptr&& arg) noexcept -> Ptr&
+    {
+        id = arg.id;
+        owner = arg.owner;
+        value = arg.value;
         return *this;
     }
 
@@ -323,6 +337,9 @@ namespace Arca
     template<class T>
     auto Ptr<T, std::enable_if_t<is_either_v<T>>>::Get() const -> ShardT*
     {
+        if (value == nullptr)
+            value = FindValueFromOwner();
+
         return value;
     }
 
@@ -339,7 +356,7 @@ namespace Arca
     }
 
     template<class T>
-    auto Ptr<T, std::enable_if_t<is_either_v<T>>>::FindValueFromOwner() -> ShardT*
+    auto Ptr<T, std::enable_if_t<is_either_v<T>>>::FindValueFromOwner() const -> ShardT*
     {
         if (owner == nullptr)
             return nullptr;
@@ -361,7 +378,21 @@ namespace Inscription
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
         {
-            archive(object.Get());
+            if (archive.IsOutput())
+            {
+                auto id = object.ID();
+                archive(id);
+            }
+            else
+            {
+                Arca::RelicID id;
+                archive(id);
+                object.id = id;
+
+                auto reliquary = archive.template UserContext<Arca::Reliquary>();
+                object.owner = reliquary;
+                object.value = object.FindValueFromOwner();
+            }
         }
     };
 }
@@ -377,12 +408,13 @@ namespace Arca
         using WrappedT = T;
     public:
         Ptr() = default;
+        explicit Ptr(Reliquary& owner);
         Ptr(RelicID id, Reliquary& owner);
         Ptr(const Ptr& arg);
         Ptr(Ptr&& arg) noexcept;
 
         Ptr& operator=(const Ptr& arg);
-        Ptr& operator=(Ptr&& arg);
+        Ptr& operator=(Ptr&& arg) noexcept;
 
         bool operator==(const Ptr& arg) const;
         bool operator!=(const Ptr& arg) const;
@@ -403,46 +435,49 @@ namespace Arca
         [[nodiscard]] RelicID ID() const;
         [[nodiscard]] Reliquary* Owner() const;
     private:
-        RelicID id = 0;
         Reliquary* owner = nullptr;
         mutable T* value = nullptr;
     private:
-        T* FindValueFromOwner();
+        T* FindValueFromOwner() const;
     private:
         INSCRIPTION_ACCESS;
     };
 
     template<class T>
-    Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::Ptr(RelicID id, Reliquary& owner) : id(id), owner(&owner)
+    Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::Ptr(Reliquary& owner) : owner(&owner)
+    {
+        value = FindValueFromOwner();
+    }
+
+    template<class T>
+    Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::Ptr(RelicID id, Reliquary& owner) : owner(&owner)
     {
         value = FindValueFromOwner();
     }
 
     template<class T>
     Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::Ptr(const Ptr& arg) :
-        id(arg.id), owner(arg.owner)
+        owner(arg.owner)
     {
         value = FindValueFromOwner();
     }
 
     template<class T>
     Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::Ptr(Ptr&& arg) noexcept :
-        id(arg.id), owner(arg.owner), value(arg.value)
+        owner(arg.owner), value(arg.value)
     {}
 
     template<class T>
     auto Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::operator=(const Ptr& arg) -> Ptr&
     {
-        id = arg.id;
         owner = arg.owner;
         value = FindValueFromOwner();
         return *this;
     }
 
     template<class T>
-    auto Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::operator=(Ptr&& arg) -> Ptr&
+    auto Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::operator=(Ptr&& arg) noexcept -> Ptr&
     {
-        id = arg.id;
         owner = arg.owner;
         value = arg.value;
         return *this;
@@ -469,7 +504,10 @@ namespace Arca
     template<class T>
     Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::operator Handle() const
     {
-        return Handle(id, Owner(), TypeFor<T>(), HandleObjectType::Relic);
+        if (Owner() == nullptr)
+            return {};
+
+        return Handle(ID(), Owner(), TypeFor<T>(), HandleObjectType::Relic);
     }
 
     template<class T>
@@ -481,7 +519,7 @@ namespace Arca
     template<class T>
     Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::operator Ptr<const T>() const
     {
-        return Ptr<const T>(id, *owner);
+        return Ptr<const T>(*owner);
     }
 
     template<class T>
@@ -499,13 +537,19 @@ namespace Arca
     template<class T>
     T* Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::Get() const
     {
+        if (value == nullptr)
+            value = FindValueFromOwner();
+
         return value;
     }
 
     template<class T>
     RelicID Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::ID() const
     {
-        return id;
+        if (!Owner())
+            return 0;
+
+        return Owner()->template IDFor<T>();
     }
 
     template<class T>
@@ -515,7 +559,7 @@ namespace Arca
     }
 
     template<class T>
-    T* Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::FindValueFromOwner()
+    T* Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::FindValueFromOwner() const
     {
         if (owner == nullptr)
             return nullptr;
@@ -535,7 +579,7 @@ namespace Inscription
         using ObjectT = typename BaseT::ObjectT;
         using ArchiveT = typename BaseT::ArchiveT;
     protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        void ScrivenImplementation(ObjectT&, ArchiveT&) override
         {}
     };
 }

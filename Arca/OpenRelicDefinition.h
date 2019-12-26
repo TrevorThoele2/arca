@@ -2,6 +2,7 @@
 
 #include "OpenRelic.h"
 #include "Reliquary.h"
+#include "AsHandle.h"
 
 namespace Arca
 {
@@ -41,9 +42,9 @@ namespace Arca
         return owner->Contains<EitherT>(id);
     }
 
-    template<class... ShardsT, std::enable_if_t<are_all_shards_v<ShardsT...> && (sizeof...(ShardsT) > 1), int>>
+    template<class ShardsT, std::enable_if_t<is_composite_v<ShardsT>, int>>
     bool OpenRelic::Contains() const
     {
-        return owner->Contains<ShardsT...>(id);
+        return owner->Contains<ShardsT>(id);
     }
 }

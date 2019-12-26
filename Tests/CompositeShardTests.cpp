@@ -31,7 +31,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "reliquary composite shards", "[reli
         {
             THEN("does not contain")
             {
-                REQUIRE(!reliquary->Contains<Shard<0>, Shard<1>, Shard<2>>(1));
+                REQUIRE(!reliquary->Contains<All<Shard<0>, Shard<1>, Shard<2>>>(1));
             }
         }
 
@@ -44,7 +44,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "reliquary composite shards", "[reli
 
             THEN("contains composite")
             {
-                REQUIRE(reliquary->Contains<Shard<0>, Shard<1>, Shard<2>>(relic->ID()));
+                REQUIRE(reliquary->Contains<All<Shard<0>, Shard<1>, Shard<2>>>(relic->ID()));
             }
 
             WHEN("removing a shard")
@@ -53,7 +53,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "reliquary composite shards", "[reli
 
                 THEN("does not contain composite")
                 {
-                    REQUIRE(!reliquary->Contains<Shard<0>, Shard<1>, Shard<2>>(relic->ID()));
+                    REQUIRE(!reliquary->Contains<All<Shard<0>, Shard<1>, Shard<2>>>(relic->ID()));
                 }
             }
 
@@ -63,7 +63,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "reliquary composite shards", "[reli
 
                 THEN("contains composite")
                 {
-                    REQUIRE(reliquary->Contains<Shard<0>, Shard<1>, Shard<2>>(relic->ID()));
+                    REQUIRE(reliquary->Contains<All<Shard<0>, Shard<1>, Shard<2>>>(relic->ID()));
                 }
 
                 WHEN("removing that shard")
@@ -72,7 +72,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "reliquary composite shards", "[reli
 
                     THEN("contains composite")
                     {
-                        REQUIRE(reliquary->Contains<Shard<0>, Shard<1>, Shard<2>>(relic->ID()));
+                        REQUIRE(reliquary->Contains<All<Shard<0>, Shard<1>, Shard<2>>>(relic->ID()));
                     }
                 }
             }
@@ -88,7 +88,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "reliquary composite shards", "[reli
             THEN("irrelevant relic does not contain composite")
             {
                 auto irrelevant = reliquary->Create<OpenRelic>();
-                REQUIRE(!reliquary->Contains<Shard<0>, Shard<1>, Shard<2>>(irrelevant->ID()));
+                REQUIRE(!reliquary->Contains<All<Shard<0>, Shard<1>, Shard<2>>>(irrelevant->ID()));
             }
         }
     }
@@ -115,7 +115,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "OpenRelic composite shards", "[Open
 
             THEN("contains composite")
             {
-                REQUIRE(relic->Contains<Shard<0>, Shard<1>, Shard<2>>());
+                REQUIRE(relic->Contains<All<Shard<0>, Shard<1>, Shard<2>>>());
             }
 
             WHEN("removing a shard")
@@ -124,7 +124,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "OpenRelic composite shards", "[Open
 
                 THEN("does not contain composite")
                 {
-                    REQUIRE(!relic->Contains<Shard<0>, Shard<1>, Shard<2>>());
+                    REQUIRE(!relic->Contains<All<Shard<0>, Shard<1>, Shard<2>>>());
                 }
             }
 
@@ -134,7 +134,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "OpenRelic composite shards", "[Open
 
                 THEN("contains composite")
                 {
-                    REQUIRE(relic->Contains<Shard<0>, Shard<1>, Shard<2>>());
+                    REQUIRE(relic->Contains<All<Shard<0>, Shard<1>, Shard<2>>>());
                 }
 
                 WHEN("removing that shard")
@@ -143,7 +143,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "OpenRelic composite shards", "[Open
 
                     THEN("contains composite")
                     {
-                        REQUIRE(relic->Contains<Shard<0>, Shard<1>, Shard<2>>());
+                        REQUIRE(relic->Contains<All<Shard<0>, Shard<1>, Shard<2>>>());
                     }
                 }
             }
@@ -159,7 +159,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "OpenRelic composite shards", "[Open
             THEN("irrelevant relic does not contain composite")
             {
                 auto irrelevant = reliquary->Create<OpenRelic>();
-                REQUIRE(!irrelevant->Contains<Shard<0>, Shard<1>, Shard<2>>());
+                REQUIRE(!irrelevant->Contains<All<Shard<0>, Shard<1>, Shard<2>>>());
             }
         }
     }
@@ -188,7 +188,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "ClosedRelic composite shards", "[Cl
 
             THEN("contains composite")
             {
-                REQUIRE(relic->Contains<Shard<0>, Shard<1>, Shard<2>>());
+                REQUIRE(relic->Contains<All<Shard<0>, Shard<1>, Shard<2>>>());
             }
         }
 
@@ -205,7 +205,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "ClosedRelic composite shards", "[Cl
             THEN("irrelevant relic does not contain either")
             {
                 auto irrelevant = reliquary->CreateWith<ClosedRelic>(RelicStructure{});
-                REQUIRE(!irrelevant->Contains<Shard<0>, Shard<1>, Shard<2>>());
+                REQUIRE(!irrelevant->Contains<All<Shard<0>, Shard<1>, Shard<2>>>());
             }
         }
     }

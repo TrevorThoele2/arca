@@ -164,10 +164,4 @@ namespace Arca
     {
         return HandleObjectType::Relic;
     }
-
-    template<class T, std::enable_if_t<is_relic_v<T>, int> = 0>
-    Handle AsHandle(const T& object)
-    {
-        return Handle(object.ID(), object.Owner(), TypeFor<T>(), HandleObjectType::Relic);
-    }
 }

@@ -20,7 +20,6 @@ namespace Arca
         if (!WillDestroy(metadata))
             return;
 
-        Shards().NotifyCompositesRelicDestroy(metadata->id);
         Destroy(*metadata);
     }
 

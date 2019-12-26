@@ -8,6 +8,7 @@
 #include "Handle.h"
 #include "ReliquaryException.h"
 #include "Traits.h"
+#include "TypeFor.h"
 
 #include "Batch.h"
 #include "BatchSource.h"
@@ -133,12 +134,9 @@ namespace Arca
             }
         };
 
-        template<class Key, class BatchSourceBaseT, class Owner, class Derived>
+        template<class Key, class BatchSourceBaseT, class Owner, class Derived, template<class> class is_object>
         class MetaBatchSources
         {
-        private:
-            template<class T>
-            constexpr static bool should_accept = Derived::template should_accept<T>;
         public:
             using Ptr = std::unique_ptr<BatchSourceBaseT>;
             using Map = std::unordered_map<Key, Ptr>;
@@ -154,7 +152,7 @@ namespace Arca
                 return found->second.get();
             }
 
-            template<class ObjectT, std::enable_if_t<should_accept<ObjectT>, int> = 0>
+            template<class ObjectT, std::enable_if_t<is_object<ObjectT>::value, int> = 0>
             [[nodiscard]] BatchSource<ObjectT>* Find() const
             {
                 auto& map = AsDerived().template MapFor<ObjectT>();
@@ -166,7 +164,7 @@ namespace Arca
                 return static_cast<BatchSource<ObjectT>*>(found->second.get());
             }
 
-            template<class ObjectT, std::enable_if_t<should_accept<ObjectT>, int> = 0>
+            template<class ObjectT, std::enable_if_t<is_object<ObjectT>::value, int> = 0>
             [[nodiscard]] BatchSource<ObjectT>& Required()
             {
                 auto found = Find<ObjectT>();
@@ -179,8 +177,8 @@ namespace Arca
                 return static_cast<BatchSource<ObjectT>&>(*emplaced);
             }
 
-            template<class ObjectT, std::enable_if_t<should_accept<ObjectT>, int> = 0>
-            [[nodiscard]] Batch<ObjectT> Batch()
+            template<class ObjectT, std::enable_if_t<is_object<ObjectT>::value, int> = 0>
+            [[nodiscard]] Arca::Batch<ObjectT> Batch()
             {
                 auto& batchSource = Required<ObjectT>();
                 return Arca::Batch<ObjectT>(batchSource);

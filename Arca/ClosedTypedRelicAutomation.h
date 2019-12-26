@@ -3,6 +3,7 @@
 #include "ClosedTypedRelic.h"
 #include "Reliquary.h"
 #include "ExtractShards.h"
+#include "TypeFor.h"
 
 namespace Arca
 {

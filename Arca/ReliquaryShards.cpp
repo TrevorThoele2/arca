@@ -58,18 +58,6 @@ namespace Arca
         return false;
     }
 
-    void ReliquaryShards::NotifyCompositesRelicCreate(RelicID id, const RelicStructure& structure)
-    {
-        for (auto& loop : compositeBatchSources.map)
-            loop.second->NotifyRelicCreated(id, structure);
-    }
-
-    void ReliquaryShards::NotifyCompositesRelicDestroy(RelicID id)
-    {
-        for (auto& loop : compositeBatchSources.map)
-            loop.second->NotifyRelicDestroyed(id);
-    }
-
     ShardBatchSourceBase* ReliquaryShards::BatchSources::FindConst(const TypeName& typeName)
     {
         const auto found = constMap.find(typeName);

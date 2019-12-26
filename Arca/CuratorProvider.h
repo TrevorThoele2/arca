@@ -6,6 +6,7 @@
 #include "Curator.h"
 #include "CuratorTraits.h"
 #include "Type.h"
+#include "TypeFor.h"
 
 namespace Arca
 {

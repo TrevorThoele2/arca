@@ -56,12 +56,6 @@ namespace Arca
         return static_cast<bool>(Find<EitherT>(id));
     }
 
-    template<class... ShardsT, std::enable_if_t<are_all_shards_v<ShardsT...> && (sizeof...(ShardsT) > 1), int>>
-    bool ReliquaryShards::Contains(RelicID id) const
-    {
-        return Contains<All<ShardsT...>>(id);
-    }
-
     template<class ShardsT, std::enable_if_t<is_composite_v<ShardsT>, int>>
     bool ReliquaryShards::Contains(RelicID id) const
     {
@@ -114,8 +108,23 @@ namespace Arca
     template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int>>
     typename EitherT::ShardT* ReliquaryShards::FindStorage(RelicID id)
     {
-        auto& batch = eitherBatchSources.Required<EitherT>();
-        return batch.Find(id);
+        using ShardT = typename EitherT::BareT;
+
+        {
+            auto& batchSource = batchSources.Required<ShardT>();
+            auto found = batchSource.Find(id);
+            if (found)
+                return found;
+        }
+
+        {
+            auto& batchSource = batchSources.Required<const ShardT>();
+            auto found = batchSource.Find(id);
+            if (found)
+                return found;
+        }
+
+        return nullptr;
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && !std::is_const_v<ShardT>, int>>

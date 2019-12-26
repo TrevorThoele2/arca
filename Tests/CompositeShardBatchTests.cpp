@@ -257,3 +257,84 @@ SCENARIO_METHOD(CompositeShardBatchFixture, "composite shard batch", "[Composite
         }
     }
 }
+
+SCENARIO_METHOD(CompositeShardBatchFixture, "composite shard batch with either", "[CompositeShardBatch][either]")
+{
+    GIVEN("registered reliquary and relic")
+    {
+        auto reliquary = ReliquaryOrigin()
+            .Type<Shard<0>>()
+            .Type<Shard<1>>()
+            .Type<Shard<2>>()
+            .Type<Shard<3>>()
+            .Actualize();
+        auto relic = reliquary->Create<OpenRelic>();
+
+        WHEN("creating shards")
+        {
+            auto createdShard0 = relic->Create<Shard<0>>();
+            auto createdShard1 = relic->Create<Shard<1>>();
+            auto createdShard2 = relic->Create<Shard<2>>();
+
+            WHEN("starting batch")
+            {
+                auto batch = reliquary->Batch<All<Either<Shard<0>>, Either<Shard<1>>, Either<Shard<2>>>>();
+
+                THEN("batch is not empty")
+                {
+                    REQUIRE(!batch.IsEmpty());
+                    REQUIRE(batch.Size() == 1);
+                }
+
+                THEN("returned shard contains each created shard")
+                {
+                    auto& first = *batch.begin();
+                    REQUIRE(std::get<0>(first) == createdShard0);
+                    REQUIRE(std::get<1>(first) == createdShard1);
+                    REQUIRE(std::get<2>(first) == createdShard2);
+                }
+
+                THEN("begin is not end")
+                {
+                    REQUIRE(batch.begin() != batch.end());
+                }
+
+                THEN("removing one shard empties the batch")
+                {
+                    relic->Destroy<Shard<0>>();
+                    REQUIRE(batch.IsEmpty());
+                }
+
+                WHEN("adding a new relic")
+                {
+                    relic->Create<Shard<3>>();
+
+                    THEN("batch is not empty")
+                    {
+                        REQUIRE(!batch.IsEmpty());
+                        REQUIRE(batch.Size() == 1);
+                    }
+
+                    THEN("returned shard contains each created shard")
+                    {
+                        auto& first = *batch.begin();
+                        REQUIRE(std::get<0>(first) == createdShard0);
+                        REQUIRE(std::get<1>(first) == createdShard1);
+                        REQUIRE(std::get<2>(first) == createdShard2);
+                    }
+
+                    THEN("begin is not end")
+                    {
+                        REQUIRE(batch.begin() != batch.end());
+                    }
+
+                    THEN("removing fourth shard does not empty batch")
+                    {
+                        relic->Destroy<Shard<3>>();
+                        REQUIRE(!batch.IsEmpty());
+                    }
+                }
+            }
+        }
+    }
+}

@@ -6,6 +6,7 @@
 #include "RelicID.h"
 #include "ShardTraits.h"
 #include "Either.h"
+#include "TypeFor.h"
 
 #include "Serialization.h"
 

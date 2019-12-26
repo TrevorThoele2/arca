@@ -15,21 +15,9 @@ namespace Arca
     }
 
     template<class T>
-    template<::Chroma::VariadicTemplateSize i>
-    void BatchSource<T, std::enable_if_t<is_composite_v<T>>>::
-        ToStructure<i>::Do(RelicStructure& structure)
-    {
-        using T = typename Pack::template Parameter<i>::Type;
-        auto type = TypeFor<T>();
-        structure.push_back(std::move(type));
-    }
-
-    template<class T>
     BatchSource<T, std::enable_if_t<is_composite_v<T>>>::BatchSource(ReliquaryShards& owner)
         : owner(&owner)
-    {
-        ::Chroma::IterateRange<::Chroma::VariadicTemplateSize, ToStructure, Pack::count - 1>(structure);
-    }
+    {}
 
     template<class T>
     void BatchSource<T, std::enable_if_t<is_composite_v<T>>>::Add(RelicID id)
@@ -55,23 +43,6 @@ namespace Arca
 
         if (!owner->Contains<T>(id))
             DestroyEntry(id);
-    }
-
-    template<class T>
-    void BatchSource<T, std::enable_if_t<is_composite_v<T>>>::NotifyRelicCreated(
-        RelicID id, const RelicStructure& structure)
-    {
-        for (auto& type : structure)
-            if (!StructureContains(type))
-                return;
-
-        CreateEntry(id);
-    }
-
-    template<class T>
-    void BatchSource<T, std::enable_if_t<is_composite_v<T>>>::NotifyRelicDestroyed(RelicID id)
-    {
-        DestroyEntry(id);
     }
 
     template<class T>
@@ -122,18 +93,6 @@ namespace Arca
         --referenceCount;
         if (referenceCount == 0)
             owner->compositeBatchSources.map.erase(typeid(T));
-    }
-
-    template<class T>
-    bool BatchSource<T, std::enable_if_t<is_composite_v<T>>>::StructureContains(Type type) const
-    {
-        return std::any_of(
-            this->structure.begin(),
-            this->structure.end(),
-            [type](const Type& checkType)
-            {
-                return type == checkType;
-            });
     }
 
     template<class T>

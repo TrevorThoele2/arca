@@ -2,7 +2,7 @@
 
 #include "RelicBatchSource.h"
 #include "Reliquary.h"
-#include "PostConstructRelic.h"
+#include "PostConstruct.h"
 
 namespace Arca
 {
@@ -61,7 +61,7 @@ namespace Arca
         for (auto& loop : list)
         {
             loop.owner = &owner;
-            PostConstructRelic(loop);
+            PostConstruct(loop);
         }
     }
 

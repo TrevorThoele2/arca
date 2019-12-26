@@ -2,6 +2,7 @@
 
 #include "Traits.h"
 #include "Handle.h"
+#include "ObjectType.h"
 
 namespace Arca
 {
