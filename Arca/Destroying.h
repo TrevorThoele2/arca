@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SignalTraits.h"
+#include "Traits.h"
 #include "Handle.h"
 
 namespace Arca

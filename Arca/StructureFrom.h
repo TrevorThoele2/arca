@@ -1,7 +1,6 @@
 #pragma once
 
 #include "RelicStructure.h"
-#include "ShardTraits.h"
 
 #include <Chroma/VariadicTemplate.h>
 #include <Chroma/Iterate.h>

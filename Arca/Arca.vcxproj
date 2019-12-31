@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AliasPtr.h" />
     <ClInclude Include="All.h" />
     <ClInclude Include="AsHandle.h" />
     <ClInclude Include="CompositeScribe.h" />
@@ -26,7 +27,26 @@
     <ClInclude Include="CompositeShardBatchIterator.h" />
     <ClInclude Include="CompositeShardBatchSource.h" />
     <ClInclude Include="CompositeShardBatchSourceDefinition.h" />
-    <ClInclude Include="CompositeTraits.h" />
+    <ClInclude Include="HasShards.h" />
+    <ClInclude Include="IsAll.h" />
+    <ClInclude Include="IsComposite.h" />
+    <ClInclude Include="HandleObjectTypeFor.h" />
+    <ClInclude Include="IsEither.h" />
+    <ClInclude Include="GlobalPtr.h" />
+    <ClInclude Include="HasLocality.h" />
+    <ClInclude Include="IsClosed.h" />
+    <ClInclude Include="IsGlobal.h" />
+    <ClInclude Include="IsLocal.h" />
+    <ClInclude Include="IsOpen.h" />
+    <ClInclude Include="IsRelic.h" />
+    <ClInclude Include="IsShard.h" />
+    <ClInclude Include="LocalityFor.h" />
+    <ClInclude Include="LocalPtr.h" />
+    <ClInclude Include="OpennessFor.h" />
+    <ClInclude Include="PtrFor.h" />
+    <ClInclude Include="Shard.h" />
+    <ClInclude Include="ShardList.h" />
+    <ClInclude Include="ShardsFor.h" />
     <ClInclude Include="UsableInAll.h" />
     <ClInclude Include="Either.h" />
     <ClInclude Include="EitherShardBatch.h" />
@@ -38,7 +58,7 @@
     <ClInclude Include="Batch.h" />
     <ClInclude Include="BatchSource.h" />
     <ClInclude Include="Destroying.h" />
-    <ClInclude Include="CuratorHandle.h" />
+    <ClInclude Include="StoredCurator.h" />
     <ClInclude Include="HandleSlim.h" />
     <ClInclude Include="HasInitializeMethod.h" />
     <ClInclude Include="HasPostConstructMethod.h" />
@@ -55,7 +75,6 @@
     <ClInclude Include="OpenTypedRelicDefinition.h" />
     <ClInclude Include="PipelineException.h" />
     <ClInclude Include="PostConstruct.h" />
-    <ClInclude Include="Ptr.h" />
     <ClInclude Include="RelicBatch.h" />
     <ClInclude Include="RelicBatchIterator.h" />
     <ClInclude Include="RelicBatchSource.h" />
@@ -77,7 +96,7 @@
     <ClInclude Include="ReliquarySignalsDefinition.h" />
     <ClInclude Include="ShardBatchIterator.h" />
     <ClInclude Include="Exception.h" />
-    <ClInclude Include="SignalTraits.h" />
+    <ClInclude Include="IsSignal.h" />
     <ClInclude Include="StructureFrom.h" />
     <ClInclude Include="ReliquaryOrigin.h" />
     <ClInclude Include="TableScribe.h" />
@@ -94,8 +113,7 @@
     <ClInclude Include="Curator.h" />
     <ClInclude Include="Pipeline.h" />
     <ClInclude Include="CuratorProvider.h" />
-    <ClInclude Include="CuratorTraits.h" />
-    <ClInclude Include="ShardTraits.h" />
+    <ClInclude Include="IsCurator.h" />
     <ClInclude Include="ClosedTypedRelicAutomation.h" />
     <ClInclude Include="Type.h" />
     <ClInclude Include="ShardBatch.h" />
@@ -111,7 +129,7 @@
   <ItemGroup>
     <ClCompile Include="CompositeShardBatchSource.cpp" />
     <ClCompile Include="Created.cpp" />
-    <ClCompile Include="CuratorHandle.cpp" />
+    <ClCompile Include="StoredCurator.cpp" />
     <ClCompile Include="Destroying.cpp" />
     <ClCompile Include="EitherShardBatchSource.cpp" />
     <ClCompile Include="ClosedRelic.cpp" />

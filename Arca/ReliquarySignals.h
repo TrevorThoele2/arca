@@ -5,7 +5,6 @@
 #include <functional>
 #include <any>
 
-#include "SignalBatchSource.h"
 #include "SignalBatch.h"
 
 namespace Arca

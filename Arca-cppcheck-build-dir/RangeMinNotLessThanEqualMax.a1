@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<analyzerinfo checksum="3856338314">
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="RangeMinNotLessThanEqualMax"/>
+    <functioncall functionName="runtime_error"/>
+  </FileInfo>
+</analyzerinfo>

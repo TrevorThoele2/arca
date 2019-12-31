@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<analyzerinfo checksum="1565414668">
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;FilePath&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;FilePath&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Inscription\Inscription\NotOpenable.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\FilePath.h" line="16" column="9"/>
+            <symbol>FilePath</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;FilePath&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;FilePath&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Inscription\Inscription\NotOpenable.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\FilePath.h" line="18" column="9"/>
+            <symbol>FilePath</symbol>
+        </error>
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="Exception"/>
+    <functioncall functionName="FilePath"/>
+    <functioncall functionName="GetValue"/>
+    <functioncall functionName="NotOpenable"/>
+    <functioncall functionName="c_str"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="default"/>
+    <functioncall functionName="first"/>
+    <functioncall functionName="hash"/>
+    <functioncall functionName="operatorconstchar*"/>
+    <functioncall functionName="operatorstd::string"/>
+  </FileInfo>
+</analyzerinfo>

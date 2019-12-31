@@ -3,9 +3,9 @@
 #include <list>
 
 #include "BatchSource.h"
+#include "IsShard.h"
+
 #include "RelicID.h"
-#include "ShardTraits.h"
-#include "Either.h"
 #include "TypeFor.h"
 
 #include "Serialization.h"
@@ -21,7 +21,7 @@ namespace Arca
 
         virtual bool DestroyFromBase(RelicID id) = 0;
 
-        virtual bool ContainsFromBase(RelicID id) const = 0;
+        [[nodiscard]] virtual bool ContainsFromBase(RelicID id) const = 0;
 
         [[nodiscard]] virtual SizeT Size() const = 0;
 
@@ -64,7 +64,7 @@ namespace Arca
         [[nodiscard]] ShardT* Find(RelicID id);
         [[nodiscard]] const ShardT* Find(RelicID id) const;
 
-        [[nodiscard]] bool ContainsFromBase(RelicID id) const;
+        [[nodiscard]] bool ContainsFromBase(RelicID id) const override;
 
         [[nodiscard]] SizeT Size() const override;
         [[nodiscard]] bool IsEmpty() const;

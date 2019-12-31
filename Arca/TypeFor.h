@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Either.h"
+#include "IsEither.h"
 
 namespace Arca
 {

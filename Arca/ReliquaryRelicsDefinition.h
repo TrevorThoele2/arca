@@ -1,15 +1,22 @@
 #pragma once
 
 #include "ReliquaryRelics.h"
+
 #include "Created.h"
+
 #include "Initialize.h"
 #include "PostConstruct.h"
+
+#include "OpennessFor.h"
+#include "LocalityFor.h"
+#include "ShardsFor.h"
+
 #include "AsHandle.h"
 
 namespace Arca
 {
     template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    Ptr<RelicT> ReliquaryRelics::Create(InitializeArgs&& ... initializeArgs)
+    LocalPtr<RelicT> ReliquaryRelics::Create(InitializeArgs&& ... initializeArgs)
     {
         if (!ShouldCreate<RelicT>(std::forward<InitializeArgs>(initializeArgs)...))
             return {};
@@ -20,7 +27,7 @@ namespace Arca
     }
 
     template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    Ptr<RelicT> ReliquaryRelics::CreateWith(const RelicStructure& structure, InitializeArgs&& ... initializeArgs)
+    LocalPtr<RelicT> ReliquaryRelics::CreateWith(const RelicStructure& structure, InitializeArgs&& ... initializeArgs)
     {
         if (!ShouldCreate<RelicT>(std::forward<InitializeArgs>(initializeArgs)...))
             return {};
@@ -31,7 +38,7 @@ namespace Arca
     }
 
     template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    Ptr<RelicT> ReliquaryRelics::CreateWith(const std::string& structureName, InitializeArgs&& ... initializeArgs)
+    LocalPtr<RelicT> ReliquaryRelics::CreateWith(const std::string& structureName, InitializeArgs&& ... initializeArgs)
     {
         if (!ShouldCreate<RelicT>(std::forward<InitializeArgs>(initializeArgs)...))
             return {};
@@ -43,7 +50,7 @@ namespace Arca
     }
 
     template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    Ptr<RelicT> ReliquaryRelics::CreateChild(const Handle& parent, InitializeArgs&& ... initializeArgs)
+    LocalPtr<RelicT> ReliquaryRelics::CreateChild(const Handle& parent, InitializeArgs&& ... initializeArgs)
     {
         ThrowIfCannotParent(parent, RelicPrototype{ NextID(), OpennessFor<RelicT>() });
         auto child = Create<RelicT>(std::forward<InitializeArgs>(initializeArgs)...);
@@ -52,7 +59,7 @@ namespace Arca
     }
 
     template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    Ptr<RelicT> ReliquaryRelics::CreateChildWith(
+    LocalPtr<RelicT> ReliquaryRelics::CreateChildWith(
         const Handle& parent, const RelicStructure& structure, InitializeArgs&& ... initializeArgs)
     {
         ThrowIfCannotParent(parent, RelicPrototype{ NextID(), OpennessFor<RelicT>() });
@@ -62,7 +69,7 @@ namespace Arca
     }
 
     template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    Ptr<RelicT> ReliquaryRelics::CreateChildWith(
+    LocalPtr<RelicT> ReliquaryRelics::CreateChildWith(
         const Handle& parent, const std::string& structureName, InitializeArgs&& ... initializeArgs)
     {
         ThrowIfCannotParent(parent, RelicPrototype{ NextID(), OpennessFor<RelicT>() });
@@ -78,41 +85,33 @@ namespace Arca
         for (auto loop = batchSource.begin(); loop != batchSource.end();)
         {
             auto next = std::next(loop);
-            Owner().Destroy(AsHandle(*loop));
+            Owner().Destroy(*loop);
             loop = next;
         }
     }
 
-    template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int>>
-    Ptr<RelicT> ReliquaryRelics::Find(RelicID id) const
+    template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int>>
+    bool ReliquaryRelics::Contains(RelicID id) const
     {
         const auto metadata = MetadataFor(id);
-        if (!metadata || metadata->locality != Locality::Local)
-            return {};
-
-        auto& batchSource = batchSources.Required<RelicT>();
-        auto found = batchSource.Find(id);
-        return CreatePtr<RelicT>(id);
+        return metadata && metadata->locality == Locality::Local;
     }
 
-    template<class RelicT, std::enable_if_t<is_global_relic_v<RelicT>, int>>
-    Ptr<RelicT> ReliquaryRelics::Find() const
+    template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int>>
+    bool ReliquaryRelics::Contains() const
     {
         const auto type = TypeFor<RelicT>();
         const auto found = globalMap.find(type.name);
-        if (found == globalMap.end())
-            throw NotRegistered(type, typeid(RelicT));
-        
-        return CreatePtr<RelicT>(found->second.id);
+        return found != globalMap.end();
     }
 
-    template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int>>
+    template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int>>
     RelicID ReliquaryRelics::IDFor(const RelicT& relic) const
     {
         return relic.ID();
     }
 
-    template<class RelicT, std::enable_if_t<is_global_relic_v<RelicT>, int>>
+    template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int>>
     RelicID ReliquaryRelics::IDFor() const
     {
         auto found = globalMap.find(TypeFor<RelicT>());
@@ -149,11 +148,21 @@ namespace Arca
     RelicT* ReliquaryRelics::FindGlobalStorage()
     {
         const auto type = TypeFor<RelicT>();
-        const auto found = globalMap.find(type.name);
-        if (found == globalMap.end())
-            throw NotRegistered(type, typeid(RelicT));
+        const auto normalFound = globalMap.find(type.name);
+        if (normalFound != globalMap.end() && normalFound->second.externallyVisible)
+            return reinterpret_cast<RelicT*>(normalFound->second.storage.get());
 
-        return reinterpret_cast<RelicT*>(found->second.storage.get());
+        throw NotRegistered(type, typeid(RelicT));
+    }
+
+    template<class T>
+    T ReliquaryRelics::FindGlobalAliasStorage()
+    {
+        const auto aliasFound = globalRelicAliasMap.find(typeid(T));
+        if (aliasFound != globalRelicAliasMap.end())
+            return std::any_cast<T>(aliasFound->second(Owner()));
+
+        throw Arca::NotRegistered("alias", typeid(T));
     }
 
     template<
@@ -207,7 +216,7 @@ namespace Arca
     }
 
     template<class RelicT>
-    Ptr<RelicT> ReliquaryRelics::CreatePtr(RelicID id) const
+    LocalPtr<RelicT> ReliquaryRelics::CreatePtr(RelicID id) const
     {
         return { id, const_cast<Reliquary&>(Owner()) };
     }

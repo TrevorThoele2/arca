@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<results version="2">
+    <cppcheck version="1.90"/>
+    <errors>
+        <error id="preprocessorErrorDirective" severity="error" msg="failed to expand &amp;#039;REQUIRE_THROWS_AS&amp;#039;, Invalid ## usage when expanding &amp;#039;INTERNAL_CATCH_THROWS_AS&amp;#039;." verbose="failed to expand &amp;#039;REQUIRE_THROWS_AS&amp;#039;, Invalid ## usage when expanding &amp;#039;INTERNAL_CATCH_THROWS_AS&amp;#039;." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="2737"/>
+        </error>
+        <error id="preprocessorErrorDirective" severity="error" msg="failed to expand &amp;#039;REQUIRE&amp;#039;, Invalid ## usage when expanding &amp;#039;INTERNAL_CATCH_TEST&amp;#039;." verbose="failed to expand &amp;#039;REQUIRE&amp;#039;, Invalid ## usage when expanding &amp;#039;INTERNAL_CATCH_TEST&amp;#039;." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="2683"/>
+        </error>
+        <error id="operatorEq" severity="style" msg="&amp;#039;StringRef::operator=&amp;#039; should return &amp;#039;StringRef &amp;amp;&amp;#039;." verbose="The StringRef::operator= does not conform to standard C/C++ behaviour. To conform to standard C/C++ behaviour, return a reference to self (such as: &amp;#039;StringRef &amp;amp;StringRef::operator=(..) { .. return *this; }&amp;#039;. For safety reasons it might be better to not fix this message. If you think that safety is always more important than conformance then please ignore/suppress this message. For more details about this topic, see the book &amp;quot;Effective C++&amp;quot; by Scott Meyers." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="637"/>
+        </error>
+        <error id="useInitializationList" severity="performance" msg="Variable &amp;#039;m_ref&amp;#039; is assigned in constructor body. Consider performing initialization in initialization list." verbose="When an object of a class is created, the constructors of all member variables are called consecutively in the order the variables are declared, even if you don&amp;#039;t explicitly write them to the initialization list. You could avoid assigning &amp;#039;m_ref&amp;#039; a value by passing the value to the constructor in the initialization list." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="9185"/>
+        </error>
+        <error id="useInitializationList" severity="performance" msg="Variable &amp;#039;m_ref&amp;#039; is assigned in constructor body. Consider performing initialization in initialization list." verbose="When an object of a class is created, the constructors of all member variables are called consecutively in the order the variables are declared, even if you don&amp;#039;t explicitly write them to the initialization list. You could avoid assigning &amp;#039;m_ref&amp;#039; a value by passing the value to the constructor in the initialization list." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="9190"/>
+        </error>
+        <error id="virtualCallInConstructor" severity="warning" msg="Virtual function &amp;#039;next&amp;#039; is called from constructor &amp;#039;FilterGenerator(P&amp;amp;&amp;amp;pred,GeneratorWrapper&amp;lt;T&amp;gt;&amp;amp;&amp;amp;generator)&amp;#039; at line 4135. Dynamic binding is not used." verbose="Virtual function &amp;#039;next&amp;#039; is called from constructor &amp;#039;FilterGenerator(P&amp;amp;&amp;amp;pred,GeneratorWrapper&amp;lt;T&amp;gt;&amp;amp;&amp;amp;generator)&amp;#039; at line 4135. Dynamic binding is not used." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="4146" info="next is a virtual function"/>
+            <location file="..\Catch\catch.hpp" line="4135" info="Calling next"/>
+        </error>
+        <error id="virtualCallInConstructor" severity="warning" msg="Virtual function &amp;#039;next&amp;#039; is called from constructor &amp;#039;RandomFloatingGenerator(Float a,Float b)&amp;#039; at line 4582. Dynamic binding is not used." verbose="Virtual function &amp;#039;next&amp;#039; is called from constructor &amp;#039;RandomFloatingGenerator(Float a,Float b)&amp;#039; at line 4582. Dynamic binding is not used." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="4588" info="next is a virtual function"/>
+            <location file="..\Catch\catch.hpp" line="4582" info="Calling next"/>
+        </error>
+        <error id="virtualCallInConstructor" severity="warning" msg="Virtual function &amp;#039;next&amp;#039; is called from constructor &amp;#039;RandomIntegerGenerator(Integer a,Integer b)&amp;#039; at line 4604. Dynamic binding is not used." verbose="Virtual function &amp;#039;next&amp;#039; is called from constructor &amp;#039;RandomIntegerGenerator(Integer a,Integer b)&amp;#039; at line 4604. Dynamic binding is not used." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="4610" info="next is a virtual function"/>
+            <location file="..\Catch\catch.hpp" line="4604" info="Calling next"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;StringRef&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;StringRef&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="621"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;StringRef&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;StringRef&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="628"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;LazyExpression&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;LazyExpression&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="2514"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;Section&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;Section&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="2892"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;ExceptionTranslatorRegistrar&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;ExceptionTranslatorRegistrar&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="3025"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;ExceptionMessageMatcher&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;ExceptionMessageMatcher&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="3373"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &amp;#039;EqualsMatcher&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Struct &amp;#039;EqualsMatcher&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="3527"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &amp;#039;ContainsMatcher&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Struct &amp;#039;ContainsMatcher&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="3531"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &amp;#039;StartsWithMatcher&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Struct &amp;#039;StartsWithMatcher&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="3535"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &amp;#039;EndsWithMatcher&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Struct &amp;#039;EndsWithMatcher&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="3539"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &amp;#039;ContainsElementMatcher&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Struct &amp;#039;ContainsElementMatcher&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="3579"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &amp;#039;ContainsMatcher&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Struct &amp;#039;ContainsMatcher&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="3600"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &amp;#039;EqualsMatcher&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Struct &amp;#039;EqualsMatcher&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="3630"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &amp;#039;ApproxMatcher&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Struct &amp;#039;ApproxMatcher&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="3653"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &amp;#039;UnorderedEqualsMatcher&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Struct &amp;#039;UnorderedEqualsMatcher&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="3688"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;GeneratorException&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;GeneratorException&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="3895"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;SingleValueGenerator&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;SingleValueGenerator&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="3928"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;SingleValueGenerator&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;SingleValueGenerator&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="3929"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;FixedValuesGenerator&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;FixedValuesGenerator&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="3947"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;GeneratorWrapper&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;GeneratorWrapper&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="3962"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;Generators&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;Generators&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="4005"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;TestSpecParser&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;TestSpecParser&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="5187"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;Config&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;Config&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="5304"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &amp;#039;TestRunInfo&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Struct &amp;#039;TestRunInfo&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="5493"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &amp;#039;TestGroupStats&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Struct &amp;#039;TestGroupStats&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="5563"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &amp;#039;TestEventListenerBase&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Struct &amp;#039;TestEventListenerBase&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="5951"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &amp;#039;Colour&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Struct &amp;#039;Colour&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="6004"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &amp;#039;ConsoleReporter&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Struct &amp;#039;ConsoleReporter&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="6134"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;XmlEncode&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;XmlEncode&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="6206"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;ScopedElement&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;ScopedElement&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="6222"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;JunitReporter&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;JunitReporter&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="6294"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;XmlReporter&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;XmlReporter&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="6342"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;Args&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;Args&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="8708"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &amp;#039;Help&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Struct &amp;#039;Help&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="9350"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;TestInvokerAsFunction&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;TestInvokerAsFunction&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="12123"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;FileStream&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;FileStream&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="13415"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &amp;#039;MatchNotOf &amp;lt; std :: string &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Struct &amp;#039;MatchNotOf &amp;lt; std :: string &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="3328"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &amp;#039;MatchNotOf &amp;lt; std &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Struct &amp;#039;MatchNotOf &amp;lt; std &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="3328"/>
+        </error>
+        <error id="missingOverride" severity="style" msg="The function &amp;#039;isFlag&amp;#039; overrides a function in a base class but is not marked with a &amp;#039;override&amp;#039; specifier." verbose="The function &amp;#039;isFlag&amp;#039; overrides a function in a base class but is not marked with a &amp;#039;override&amp;#039; specifier." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="8997" info="Function in derived class"/>
+            <location file="..\Catch\catch.hpp" line="8990" info="Virtual function in base class"/>
+        </error>
+        <error id="missingOverride" severity="style" msg="The function &amp;#039;use&amp;#039; overrides a function in a base class but is not marked with a &amp;#039;override&amp;#039; specifier." verbose="The function &amp;#039;use&amp;#039; overrides a function in a base class but is not marked with a &amp;#039;override&amp;#039; specifier." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="9923" info="Function in derived class"/>
+            <location file="..\Catch\catch.hpp" line="9919" info="Virtual function in base class"/>
+        </error>
+        <error id="shadowFunction" severity="style" msg="Local variable &amp;#039;width&amp;#039; shadows outer function" verbose="Local variable &amp;#039;width&amp;#039; shadows outer function" sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="8403" info="Shadow variable"/>
+            <location file="..\Catch\catch.hpp" line="8495" info="Shadowed declaration"/>
+        </error>
+        <error id="shadowFunction" severity="style" msg="Local variable &amp;#039;end&amp;#039; shadows outer function" verbose="Local variable &amp;#039;end&amp;#039; shadows outer function" sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="13564" info="Shadow variable"/>
+            <location file="..\Catch\catch.hpp" line="1993" info="Shadowed declaration"/>
+        </error>
+        <error id="shadowFunction" severity="style" msg="Local variable &amp;#039;end&amp;#039; shadows outer function" verbose="Local variable &amp;#039;end&amp;#039; shadows outer function" sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="14678" info="Shadow variable"/>
+            <location file="..\Catch\catch.hpp" line="1993" info="Shadowed declaration"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;enumName&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;enumName&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="1481"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;allEnums&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;allEnums&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="1481"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;capturedExpression&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;capturedExpression&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="8097"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;op&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;op&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="10348"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;enums&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;enums&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="10438"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;enumName&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;enumName&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="10458"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;enumName&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;enumName&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="10472"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;allValueNames&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;allValueNames&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="10472"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;filename&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;filename&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="13415"/>
+        </error>
+        <error id="constParameter" severity="style" msg="Parameter &amp;#039;result&amp;#039; can be declared with const" verbose="Parameter &amp;#039;result&amp;#039; can be declared with const" sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="15322"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::transform algorithm instead of a raw loop." verbose="Consider using std::transform algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="1486"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::any_of algorithm instead of a raw loop." verbose="Consider using std::any_of algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="3583"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::any_of algorithm instead of a raw loop." verbose="Consider using std::any_of algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="3609"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::transform algorithm instead of a raw loop." verbose="Consider using std::transform algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="8561"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::transform algorithm instead of a raw loop." verbose="Consider using std::transform algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="8577"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::any_of algorithm instead of a raw loop." verbose="Consider using std::any_of algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="9287"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::accumulate algorithm instead of a raw loop." verbose="Consider using std::accumulate algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="9438"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::transform algorithm instead of a raw loop." verbose="Consider using std::transform algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="10443"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::find_if algorithm instead of a raw loop." verbose="Consider using std::find_if algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="10452"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::accumulate algorithm instead of a raw loop." verbose="Consider using std::accumulate algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="11102"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::accumulate algorithm instead of a raw loop." verbose="Consider using std::accumulate algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="11154"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::accumulate algorithm instead of a raw loop." verbose="Consider using std::accumulate algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="13900"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::copy_if algorithm instead of a raw loop." verbose="Consider using std::copy_if algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="13991"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::accumulate algorithm instead of a raw loop." verbose="Consider using std::accumulate algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="14364"/>
+        </error>
+        <error id="unreadVariable" severity="style" msg="Variable &amp;#039;e&amp;#039; is assigned a value that is never used." verbose="Variable &amp;#039;e&amp;#039; is assigned a value that is never used." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="16446"/>
+        </error>
+        <error id="unreadVariable" severity="style" msg="Variable &amp;#039;properties&amp;#039; is assigned a value that is never used." verbose="Variable &amp;#039;properties&amp;#039; is assigned a value that is never used." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="16462"/>
+        </error>
+        <error id="unreadVariable" severity="style" msg="Variable &amp;#039;e&amp;#039; is assigned a value that is never used." verbose="Variable &amp;#039;e&amp;#039; is assigned a value that is never used." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="16515"/>
+        </error>
+        <error id="unreadVariable" severity="style" msg="Variable &amp;#039;e&amp;#039; is assigned a value that is never used." verbose="Variable &amp;#039;e&amp;#039; is assigned a value that is never used." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="16575"/>
+        </error>
+        <error id="preprocessorErrorDirective" severity="error" msg="failed to expand &amp;#039;REQUIRE_THROWS_MATCHES&amp;#039;, Invalid ## usage when expanding &amp;#039;INTERNAL_CATCH_THROWS_MATCHES&amp;#039;." verbose="failed to expand &amp;#039;REQUIRE_THROWS_MATCHES&amp;#039;, Invalid ## usage when expanding &amp;#039;INTERNAL_CATCH_THROWS_MATCHES&amp;#039;." sinceDate="12/31/2019">
+            <location file="..\Catch\catch.hpp" line="3786"/>
+        </error>
+        <error id="internalAstError" severity="error" msg="Syntax Error: AST broken, binary operator &amp;#039;&amp;gt;&amp;#039; doesn&amp;#039;t have two operands." verbose="Syntax Error: AST broken, binary operator &amp;#039;&amp;gt;&amp;#039; doesn&amp;#039;t have two operands." sinceDate="12/31/2019">
+            <location file="Arca\UsableInAll.h" line="28"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;DataGenerator &amp;lt; float &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;DataGenerator &amp;lt; float &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\FloatingPointDataGenerator.h" line="11"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;DataGenerator &amp;lt; double &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;DataGenerator &amp;lt; double &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\FloatingPointDataGenerator.h" line="18"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;NumericDataGeneratorBase &amp;lt; float &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;NumericDataGeneratorBase &amp;lt; float &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\NumericDataGeneratorBase.h" line="23"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;NumericDataGeneratorBase &amp;lt; double &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;NumericDataGeneratorBase &amp;lt; double &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\NumericDataGeneratorBase.h" line="23"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;NumericDataGeneratorBase &amp;lt; unsigned int &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;NumericDataGeneratorBase &amp;lt; unsigned int &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\NumericDataGeneratorBase.h" line="23"/>
+        </error>
+        <error id="shadowArgument" severity="style" msg="Local variable &amp;#039;range&amp;#039; shadows outer argument" verbose="Local variable &amp;#039;range&amp;#039; shadows outer argument" sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\NumericDataGeneratorBase.h" line="110" info="Shadow variable"/>
+            <location file="..\TestFramework\TestFramework\NumericDataGeneratorBase.h" line="90" info="Shadowed declaration"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;NumericDataGeneratorBase &amp;lt; std :: int8_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;NumericDataGeneratorBase &amp;lt; std :: int8_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\NumericDataGeneratorBase.h" line="23"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;NumericDataGeneratorBase &amp;lt; std :: int16_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;NumericDataGeneratorBase &amp;lt; std :: int16_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\NumericDataGeneratorBase.h" line="23"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;NumericDataGeneratorBase &amp;lt; std :: int32_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;NumericDataGeneratorBase &amp;lt; std :: int32_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\NumericDataGeneratorBase.h" line="23"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;NumericDataGeneratorBase &amp;lt; std :: int64_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;NumericDataGeneratorBase &amp;lt; std :: int64_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\NumericDataGeneratorBase.h" line="23"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;NumericDataGeneratorBase &amp;lt; std :: uint8_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;NumericDataGeneratorBase &amp;lt; std :: uint8_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\NumericDataGeneratorBase.h" line="23"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;NumericDataGeneratorBase &amp;lt; std :: uint16_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;NumericDataGeneratorBase &amp;lt; std :: uint16_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\NumericDataGeneratorBase.h" line="23"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;NumericDataGeneratorBase &amp;lt; std :: uint32_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;NumericDataGeneratorBase &amp;lt; std :: uint32_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\NumericDataGeneratorBase.h" line="23"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;NumericDataGeneratorBase &amp;lt; std :: uint64_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;NumericDataGeneratorBase &amp;lt; std :: uint64_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\NumericDataGeneratorBase.h" line="23"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;DataGenerator &amp;lt; std :: int8_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;DataGenerator &amp;lt; std :: int8_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\IntegerDataGenerator.h" line="11"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;DataGenerator &amp;lt; std :: int16_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;DataGenerator &amp;lt; std :: int16_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\IntegerDataGenerator.h" line="18"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;DataGenerator &amp;lt; std :: int32_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;DataGenerator &amp;lt; std :: int32_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\IntegerDataGenerator.h" line="25"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;DataGenerator &amp;lt; std :: int64_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;DataGenerator &amp;lt; std :: int64_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\IntegerDataGenerator.h" line="32"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;DataGenerator &amp;lt; std :: uint8_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;DataGenerator &amp;lt; std :: uint8_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\IntegerDataGenerator.h" line="39"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;DataGenerator &amp;lt; std :: uint16_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;DataGenerator &amp;lt; std :: uint16_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\IntegerDataGenerator.h" line="46"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;DataGenerator &amp;lt; std :: uint32_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;DataGenerator &amp;lt; std :: uint32_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\IntegerDataGenerator.h" line="53"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;DataGenerator &amp;lt; std :: uint64_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;DataGenerator &amp;lt; std :: uint64_t &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\IntegerDataGenerator.h" line="60"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;DataGenerator &amp;lt; std :: string &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;DataGenerator &amp;lt; std :: string &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\StringDataGenerator.h" line="17"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;DataGeneratorBase &amp;lt; std :: string &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;DataGeneratorBase &amp;lt; std :: string &amp;gt;&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\DataGeneratorBase.h" line="17"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;BaseClassNotInTable&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;BaseClassNotInTable&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\BaseClassNotInTable.h" line="11"/>
+        </error>
+        <error id="unusedPrivateFunction" severity="style" msg="Unused private function: &amp;#039;Access::is_constructible_impl&amp;#039;" verbose="Unused private function: &amp;#039;Access::is_constructible_impl&amp;#039;" sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\Access.h" line="16"/>
+        </error>
+        <error id="unusedPrivateFunction" severity="style" msg="Unused private function: &amp;#039;Access::is_constructible_impl&amp;#039;" verbose="Unused private function: &amp;#039;Access::is_constructible_impl&amp;#039;" sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\Access.h" line="22"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;FilePath&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;FilePath&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\FilePath.h" line="16"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;FilePath&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;FilePath&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\FilePath.h" line="18"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::copy_if algorithm instead of a raw loop." verbose="Consider using std::copy_if algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\PolymorphicManager.h" line="165"/>
+        </error>
+        <error id="unreadVariable" severity="style" msg="Variable &amp;#039;typeID&amp;#039; is assigned a value that is never used." verbose="Variable &amp;#039;typeID&amp;#039; is assigned a value that is never used." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\PolymorphicManager.h" line="106"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::transform algorithm instead of a raw loop." verbose="Consider using std::transform algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\TypeRegistrationContext.h" line="143"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::any_of algorithm instead of a raw loop." verbose="Consider using std::any_of algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\TypeRegistrationContext.h" line="100"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;FileName&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;FileName&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\FileName.h" line="13"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;FileName&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;FileName&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\FileName.h" line="15"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;FileName&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;FileName&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\FileName.h" line="16"/>
+        </error>
+        <error id="redundantInitialization" severity="style" msg="Redundant initialization for &amp;#039;typeIndex&amp;#039;. The initialized value is overwritten before it is read." verbose="Redundant initialization for &amp;#039;typeIndex&amp;#039;. The initialized value is overwritten before it is read." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\CompositeScribe.h" line="243" info="typeIndex is overwritten"/>
+            <location file="..\Inscription\Inscription\CompositeScribe.h" line="232" info="typeIndex is initialized"/>
+        </error>
+        <error id="virtualCallInConstructor" severity="warning" msg="Virtual function &amp;#039;TellStream&amp;#039; is called from constructor &amp;#039;InputBinaryArchive(const FilePath&amp;amp;path,const Signature&amp;amp;signature)&amp;#039; at line 21. Dynamic binding is not used." verbose="Virtual function &amp;#039;TellStream&amp;#039; is called from constructor &amp;#039;InputBinaryArchive(const FilePath&amp;amp;path,const Signature&amp;amp;signature)&amp;#039; at line 21. Dynamic binding is not used." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\InputBinaryArchive.h" line="32" info="TellStream is a virtual function"/>
+            <location file="..\Inscription\Inscription\InputBinaryArchive.cpp" line="79" info="Calling TellStream"/>
+            <location file="..\Inscription\Inscription\InputBinaryArchive.cpp" line="21" info="Calling InitialSetup"/>
+        </error>
+        <error id="virtualCallInConstructor" severity="warning" msg="Virtual function &amp;#039;TellStream&amp;#039; is called from constructor &amp;#039;InputBinaryArchive(const FilePath&amp;amp;path,const Signature&amp;amp;signature,const TypeRegistrationContext&amp;amp;typeRegistrationContext)&amp;#039; at line 38. Dynamic binding is not used." verbose="Virtual function &amp;#039;TellStream&amp;#039; is called from constructor &amp;#039;InputBinaryArchive(const FilePath&amp;amp;path,const Signature&amp;amp;signature,const TypeRegistrationContext&amp;amp;typeRegistrationContext)&amp;#039; at line 38. Dynamic binding is not used." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\InputBinaryArchive.h" line="32" info="TellStream is a virtual function"/>
+            <location file="..\Inscription\Inscription\InputBinaryArchive.cpp" line="79" info="Calling TellStream"/>
+            <location file="..\Inscription\Inscription\InputBinaryArchive.cpp" line="38" info="Calling InitialSetup"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;type&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;type&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\ObjectTrackingContext.cpp" line="7"/>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &amp;#039;type&amp;#039; should be passed by const reference." verbose="Parameter &amp;#039;type&amp;#039; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\ObjectTrackingContext.cpp" line="16"/>
+        </error>
+        <error id="operatorEqToSelf" severity="warning" msg="&amp;#039;operator=&amp;#039; should check for assignment to self to avoid problems with dynamic memory." verbose="&amp;#039;operator=&amp;#039; should check for assignment to self to ensure that each block of dynamically allocated memory is owned and managed by only one instance of the class." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\Buffer.cpp" line="32"/>
+        </error>
+        <error id="virtualCallInConstructor" severity="warning" msg="Virtual function &amp;#039;TellStream&amp;#039; is called from constructor &amp;#039;OutputBinaryArchive(const FilePath&amp;amp;path,const Signature&amp;amp;clientSignature,long clientVersion)&amp;#039; at line 19. Dynamic binding is not used." verbose="Virtual function &amp;#039;TellStream&amp;#039; is called from constructor &amp;#039;OutputBinaryArchive(const FilePath&amp;amp;path,const Signature&amp;amp;clientSignature,long clientVersion)&amp;#039; at line 19. Dynamic binding is not used." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\OutputBinaryArchive.h" line="30" info="TellStream is a virtual function"/>
+            <location file="..\Inscription\Inscription\OutputBinaryArchive.cpp" line="67" info="Calling TellStream"/>
+            <location file="..\Inscription\Inscription\OutputBinaryArchive.cpp" line="19" info="Calling InitialSetup"/>
+        </error>
+        <error id="virtualCallInConstructor" severity="warning" msg="Virtual function &amp;#039;TellStream&amp;#039; is called from constructor &amp;#039;OutputBinaryArchive(const FilePath&amp;amp;path,const Signature&amp;amp;clientSignature,long clientVersion,const TypeRegistrationContext&amp;amp;typeRegistrationContext)&amp;#039; at line 36. Dynamic binding is not used." verbose="Virtual function &amp;#039;TellStream&amp;#039; is called from constructor &amp;#039;OutputBinaryArchive(const FilePath&amp;amp;path,const Signature&amp;amp;clientSignature,long clientVersion,const TypeRegistrationContext&amp;amp;typeRegistrationContext)&amp;#039; at line 36. Dynamic binding is not used." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\OutputBinaryArchive.h" line="30" info="TellStream is a virtual function"/>
+            <location file="..\Inscription\Inscription\OutputBinaryArchive.cpp" line="67" info="Calling TellStream"/>
+            <location file="..\Inscription\Inscription\OutputBinaryArchive.cpp" line="36" info="Calling InitialSetup"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;RelativeFilePath&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;RelativeFilePath&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\RelativeFilePath.h" line="16"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;RelativeFilePath&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;RelativeFilePath&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\RelativeFilePath.h" line="18"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;TableVariableNotHere&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;TableVariableNotHere&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\TableVariableNotHere.h" line="11"/>
+        </error>
+        <error id="uninitMemberVar" severity="warning" msg="Member variable &amp;#039;OutputTextFile::fillCharacter&amp;#039; is not initialized in the constructor." verbose="Member variable &amp;#039;OutputTextFile::fillCharacter&amp;#039; is not initialized in the constructor." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\OutputTextFile.cpp" line="13"/>
+        </error>
+        <error id="uninitMemberVar" severity="warning" msg="Member variable &amp;#039;OutputTextFile::width&amp;#039; is not initialized in the constructor." verbose="Member variable &amp;#039;OutputTextFile::width&amp;#039; is not initialized in the constructor." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\OutputTextFile.cpp" line="13"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;ClearFile&amp;#039; is never used." verbose="The function &amp;#039;ClearFile&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\OutputTextFile.cpp" line="38"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;SetFillCharacter&amp;#039; is never used." verbose="The function &amp;#039;SetFillCharacter&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\OutputTextFile.cpp" line="43"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;SetWidth&amp;#039; is never used." verbose="The function &amp;#039;SetWidth&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\OutputTextFile.cpp" line="53"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::find_if algorithm instead of a raw loop." verbose="Consider using std::find_if algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\TypeTracker.cpp" line="23"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::any_of algorithm instead of a raw loop." verbose="Consider using std::any_of algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\TypeTracker.cpp" line="57"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::find_if algorithm instead of a raw loop." verbose="Consider using std::find_if algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\TypeTracker.cpp" line="66"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::find_if algorithm instead of a raw loop." verbose="Consider using std::find_if algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\TypeTracker.cpp" line="75"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::find_if algorithm instead of a raw loop." verbose="Consider using std::find_if algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\TypeTracker.cpp" line="84"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::find_if algorithm instead of a raw loop." verbose="Consider using std::find_if algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\TypeTracker.cpp" line="93"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;IsIDIn&amp;#039; is never used." verbose="The function &amp;#039;IsIDIn&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\TypeTracker.cpp" line="54"/>
+        </error>
+        <error id="stlcstr" severity="error" msg="Dangerous usage of c_str(). The value returned by c_str() is invalid after this call." verbose="Dangerous usage of c_str(). The c_str() return value is only valid until its string is deleted." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\RelativeFilePath.cpp" line="96"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;Down&amp;#039; is never used." verbose="The function &amp;#039;Down&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\RelativeFilePath.cpp" line="145"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;GetWithoutExtension&amp;#039; is never used." verbose="The function &amp;#039;GetWithoutExtension&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\RelativeFilePath.cpp" line="233"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;HasDirectory&amp;#039; is never used." verbose="The function &amp;#039;HasDirectory&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\RelativeFilePath.cpp" line="161"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;RemoveExtension&amp;#039; is never used." verbose="The function &amp;#039;RemoveExtension&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\RelativeFilePath.cpp" line="131"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;SetExtension&amp;#039; is never used." verbose="The function &amp;#039;SetExtension&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\RelativeFilePath.cpp" line="115"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;SetFileName&amp;#039; is never used." verbose="The function &amp;#039;SetFileName&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\RelativeFilePath.cpp" line="99"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;Up&amp;#039; is never used." verbose="The function &amp;#039;Up&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\RelativeFilePath.cpp" line="139"/>
+        </error>
+        <error id="virtualCallInConstructor" severity="warning" msg="Virtual function &amp;#039;Sever&amp;#039; is called from destructor &amp;#039;~Derived()&amp;#039; at line 83. Dynamic binding is not used." verbose="Virtual function &amp;#039;Sever&amp;#039; is called from destructor &amp;#039;~Derived()&amp;#039; at line 83. Dynamic binding is not used." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\ScopedEventConnection.h" line="65" info="Sever is a virtual function"/>
+            <location file="..\Chroma\Chroma\ScopedEventConnection.h" line="83" info="Calling Sever"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;ScopedEventConnection&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;ScopedEventConnection&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\ScopedEventConnection.h" line="14"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;ScopedEventConnection&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;ScopedEventConnection&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\ScopedEventConnection.h" line="16"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;Derived&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;Derived&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\ScopedEventConnection.h" line="59"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &amp;#039;Derived&amp;#039; has a constructor with 1 argument that is not explicit." verbose="Class &amp;#039;Derived&amp;#039; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\ScopedEventConnection.h" line="60"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::any_of algorithm instead of a raw loop." verbose="Consider using std::any_of algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\StringUtility.cpp" line="121"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;IsAllWhitespace&amp;#039; is never used." verbose="The function &amp;#039;IsAllWhitespace&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\StringUtility.cpp" line="114"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;SpliceString&amp;#039; is never used." verbose="The function &amp;#039;SpliceString&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\StringUtility.cpp" line="74"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;StartsWith&amp;#039; is never used." verbose="The function &amp;#039;StartsWith&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\StringUtility.cpp" line="128"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;Trim&amp;#039; is never used." verbose="The function &amp;#039;Trim&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\StringUtility.cpp" line="96"/>
+        </error>
+        <error id="duplInheritedMember" severity="warning" msg="The class &amp;#039;OwnedStoredCurator&amp;#039; defines member variable with name &amp;#039;type&amp;#039; also defined in its parent class &amp;#039;StoredCurator&amp;#039;." verbose="The class &amp;#039;OwnedStoredCurator&amp;#039; defines member variable with name &amp;#039;type&amp;#039; also defined in its parent class &amp;#039;StoredCurator&amp;#039;." sinceDate="12/31/2019">
+            <location file="Arca\StoredCurator.h" line="39" info="Derived variable &amp;#039;OwnedStoredCurator::type&amp;#039;"/>
+            <location file="Arca\StoredCurator.h" line="14" info="Parent variable &amp;#039;StoredCurator::type&amp;#039;"/>
+        </error>
+        <error id="duplInheritedMember" severity="warning" msg="The class &amp;#039;UnownedStoredCurator&amp;#039; defines member variable with name &amp;#039;type&amp;#039; also defined in its parent class &amp;#039;StoredCurator&amp;#039;." verbose="The class &amp;#039;UnownedStoredCurator&amp;#039; defines member variable with name &amp;#039;type&amp;#039; also defined in its parent class &amp;#039;StoredCurator&amp;#039;." sinceDate="12/31/2019">
+            <location file="Arca\StoredCurator.h" line="53" info="Derived variable &amp;#039;UnownedStoredCurator::type&amp;#039;"/>
+            <location file="Arca\StoredCurator.h" line="14" info="Parent variable &amp;#039;StoredCurator::type&amp;#039;"/>
+        </error>
+        <error id="constParameter" severity="style" msg="Parameter &amp;#039;archive&amp;#039; can be declared with const" verbose="Parameter &amp;#039;archive&amp;#039; can be declared with const" sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\ArrayScribe.h" line="41"/>
+        </error>
+        <error id="constParameter" severity="style" msg="Parameter &amp;#039;archive&amp;#039; can be declared with const" verbose="Parameter &amp;#039;archive&amp;#039; can be declared with const" sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\MemoryScribe.h" line="39"/>
+        </error>
+        <error id="constParameter" severity="style" msg="Parameter &amp;#039;archive&amp;#039; can be declared with const" verbose="Parameter &amp;#039;archive&amp;#039; can be declared with const" sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\MemoryScribe.h" line="46"/>
+        </error>
+        <error id="accessForwarded" severity="warning" msg="Access of forwarded variable &amp;#039;args&amp;#039;." verbose="Access of forwarded variable &amp;#039;args&amp;#039;." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\Iterate.h" line="22" info="$symbol:args&#10;Access of forwarded variable &amp;#039;$symbol&amp;#039;."/>
+            <location file="..\Chroma\Chroma\Iterate.h" line="21" info="Calling std::forward(args)"/>
+        </error>
+        <error id="accessForwarded" severity="warning" msg="Access of forwarded variable &amp;#039;args&amp;#039;." verbose="Access of forwarded variable &amp;#039;args&amp;#039;." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\Iterate.h" line="31" info="$symbol:args&#10;Access of forwarded variable &amp;#039;$symbol&amp;#039;."/>
+            <location file="..\Chroma\Chroma\Iterate.h" line="30" info="Calling std::forward(args)"/>
+        </error>
+        <error id="accessForwarded" severity="warning" msg="Access of forwarded variable &amp;#039;args&amp;#039;." verbose="Access of forwarded variable &amp;#039;args&amp;#039;." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\Iterate.h" line="42" info="$symbol:args&#10;Access of forwarded variable &amp;#039;$symbol&amp;#039;."/>
+            <location file="..\Chroma\Chroma\Iterate.h" line="39" info="Calling std::forward(args)"/>
+        </error>
+        <error id="accessForwarded" severity="warning" msg="Access of forwarded variable &amp;#039;args&amp;#039;." verbose="Access of forwarded variable &amp;#039;args&amp;#039;." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\Iterate.h" line="53" info="$symbol:args&#10;Access of forwarded variable &amp;#039;$symbol&amp;#039;."/>
+            <location file="..\Chroma\Chroma\Iterate.h" line="50" info="Calling std::forward(args)"/>
+        </error>
+        <error id="accessForwarded" severity="warning" msg="Access of forwarded variable &amp;#039;args&amp;#039;." verbose="Access of forwarded variable &amp;#039;args&amp;#039;." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\Iterate.h" line="103" info="$symbol:args&#10;Access of forwarded variable &amp;#039;$symbol&amp;#039;."/>
+            <location file="..\Chroma\Chroma\Iterate.h" line="102" info="Calling std::forward(args)"/>
+        </error>
+        <error id="accessForwarded" severity="warning" msg="Access of forwarded variable &amp;#039;args&amp;#039;." verbose="Access of forwarded variable &amp;#039;args&amp;#039;." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\Iterate.h" line="115" info="$symbol:args&#10;Access of forwarded variable &amp;#039;$symbol&amp;#039;."/>
+            <location file="..\Chroma\Chroma\Iterate.h" line="114" info="Calling std::forward(args)"/>
+        </error>
+        <error id="accessForwarded" severity="warning" msg="Access of forwarded variable &amp;#039;args&amp;#039;." verbose="Access of forwarded variable &amp;#039;args&amp;#039;." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\Iterate.h" line="129" info="$symbol:args&#10;Access of forwarded variable &amp;#039;$symbol&amp;#039;."/>
+            <location file="..\Chroma\Chroma\Iterate.h" line="126" info="Calling std::forward(args)"/>
+        </error>
+        <error id="accessForwarded" severity="warning" msg="Access of forwarded variable &amp;#039;args&amp;#039;." verbose="Access of forwarded variable &amp;#039;args&amp;#039;." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\Iterate.h" line="143" info="$symbol:args&#10;Access of forwarded variable &amp;#039;$symbol&amp;#039;."/>
+            <location file="..\Chroma\Chroma\Iterate.h" line="140" info="Calling std::forward(args)"/>
+        </error>
+        <error id="shadowVariable" severity="style" msg="Local variable &amp;#039;map&amp;#039; shadows outer variable" verbose="Local variable &amp;#039;map&amp;#039; shadows outer variable" sinceDate="12/31/2019">
+            <location file="Arca\ReliquaryComponent.h" line="93" info="Shadow variable"/>
+            <location file="Arca\ReliquaryComponent.h" line="79" info="Shadowed declaration"/>
+        </error>
+        <error id="shadowVariable" severity="style" msg="Local variable &amp;#039;map&amp;#039; shadows outer variable" verbose="Local variable &amp;#039;map&amp;#039; shadows outer variable" sinceDate="12/31/2019">
+            <location file="Arca\ReliquaryComponent.h" line="159" info="Shadow variable"/>
+            <location file="Arca\ReliquaryComponent.h" line="145" info="Shadowed declaration"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::find_if algorithm instead of a raw loop." verbose="Consider using std::find_if algorithm instead of a raw loop." sinceDate="12/31/2019">
+            <location file="Arca\ReliquaryRelicStructures.cpp" line="12"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;RequiredRelicStructure&amp;#039; is never used." verbose="The function &amp;#039;RequiredRelicStructure&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="Arca\ReliquaryRelicStructures.cpp" line="9"/>
+        </error>
+        <error id="selfInitialization" severity="error" msg="Member variable &amp;#039;id&amp;#039; is initialized by itself." verbose="Member variable &amp;#039;id&amp;#039; is initialized by itself." sinceDate="12/31/2019">
+            <location file="Arca\ShardBatchSource.h" line="88"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;AppendSeparator&amp;#039; is never used." verbose="The function &amp;#039;AppendSeparator&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\FilePath.cpp" line="157"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;ReplaceAllWith&amp;#039; is never used." verbose="The function &amp;#039;ReplaceAllWith&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Chroma\Chroma\FilePath.cpp" line="163"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;ClientSignature&amp;#039; is never used." verbose="The function &amp;#039;ClientSignature&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\BinaryArchive.cpp" line="68"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;ClientVersion&amp;#039; is never used." verbose="The function &amp;#039;ClientVersion&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\BinaryArchive.cpp" line="73"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;CopyTrackersTo&amp;#039; is never used." verbose="The function &amp;#039;CopyTrackersTo&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\BinaryArchive.cpp" line="28"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;InscriptionVersion&amp;#039; is never used." verbose="The function &amp;#039;InscriptionVersion&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\BinaryArchive.cpp" line="78"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;MovePositionToStart&amp;#039; is never used." verbose="The function &amp;#039;MovePositionToStart&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\BinaryArchive.cpp" line="83"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;MoveTrackersTo&amp;#039; is never used." verbose="The function &amp;#039;MoveTrackersTo&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\BinaryArchive.cpp" line="33"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;Deactivate&amp;#039; is never used." verbose="The function &amp;#039;Deactivate&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\ObjectTracker.cpp" line="35"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;DoOn&amp;#039; is never used." verbose="The function &amp;#039;DoOn&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="Arca\ReliquaryCurators.cpp" line="15"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;Empty&amp;#039; is never used." verbose="The function &amp;#039;Empty&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="Arca\Pipeline.cpp" line="10"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;TypeNameList&amp;#039; is never used." verbose="The function &amp;#039;TypeNameList&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="Arca\Pipeline.cpp" line="5"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;FillBuffer&amp;#039; is never used." verbose="The function &amp;#039;FillBuffer&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\InputSimpleFile.cpp" line="8"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;SeekG&amp;#039; is never used." verbose="The function &amp;#039;SeekG&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\InputSimpleFile.cpp" line="13"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;IsBigEndian&amp;#039; is never used." verbose="The function &amp;#039;IsBigEndian&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\Endian.cpp" line="12"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;IsInput&amp;#039; is never used." verbose="The function &amp;#039;IsInput&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\TextArchive.cpp" line="15"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;IsOwning&amp;#039; is never used." verbose="The function &amp;#039;IsOwning&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="Arca\StoredCurator.cpp" line="56"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;TypeIndex&amp;#039; is never used." verbose="The function &amp;#039;TypeIndex&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="Arca\StoredCurator.cpp" line="51"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;Owner&amp;#039; is never used." verbose="The function &amp;#039;Owner&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="Arca\Handle.cpp" line="24"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;Provide&amp;#039; is never used." verbose="The function &amp;#039;Provide&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="Arca\CuratorProvider.cpp" line="7"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;RandomGroup&amp;#039; is never used." verbose="The function &amp;#039;RandomGroup&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\TestFramework\TestFramework\StringDataGenerator.cpp" line="31"/>
+        </error>
+        <error id="unusedFunction" severity="style" msg="The function &amp;#039;SeekP&amp;#039; is never used." verbose="The function &amp;#039;SeekP&amp;#039; is never used." sinceDate="12/31/2019">
+            <location file="..\Inscription\Inscription\OutputSimpleFile.cpp" line="9"/>
+        </error>
+    </errors>
+</results>

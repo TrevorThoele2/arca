@@ -2,6 +2,6 @@
 
 namespace Arca
 {
-    template<class T, class = void>
+    template<class T, class Enable = void>
     class BatchSource;
 }

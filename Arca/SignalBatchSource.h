@@ -3,10 +3,7 @@
 #include <list>
 
 #include "BatchSource.h"
-#include "SignalTraits.h"
-
-#include "Serialization.h"
-#include <Inscription/ListScribe.h>
+#include "IsSignal.h"
 
 namespace Arca
 {
@@ -50,8 +47,6 @@ namespace Arca
         [[nodiscard]] const_iterator end() const;
     private:
         List list;
-    private:
-        INSCRIPTION_TABLE_ACCESS;
     };
 
     template<class T>

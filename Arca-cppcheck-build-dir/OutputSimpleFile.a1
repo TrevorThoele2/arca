@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<analyzerinfo checksum="4095896228">
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;FilePath&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;FilePath&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Inscription\Inscription\OutputSimpleFile.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\FilePath.h" line="16" column="9"/>
+            <symbol>FilePath</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;FilePath&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;FilePath&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Inscription\Inscription\OutputSimpleFile.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\FilePath.h" line="18" column="9"/>
+            <symbol>FilePath</symbol>
+        </error>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="SeekP" lineNumber="9"/>
+    <functioncall functionName="Close"/>
+    <functioncall functionName="FailedStream"/>
+    <functioncall functionName="FileEncounteredError"/>
+    <functioncall functionName="FilePath"/>
+    <functioncall functionName="GetValue"/>
+    <functioncall functionName="NotOpenable"/>
+    <functioncall functionName="Open"/>
+    <functioncall functionName="OutputSimpleFile"/>
+    <functioncall functionName="SimpleFile"/>
+    <functioncall functionName="SimpleFile &lt; std :: ofstream &gt;"/>
+    <functioncall functionName="Stream &lt; std :: ofstream &gt;"/>
+    <functioncall functionName="app"/>
+    <functioncall functionName="append"/>
+    <functioncall functionName="arg"/>
+    <functioncall functionName="bad"/>
+    <functioncall functionName="binary"/>
+    <functioncall functionName="c_str"/>
+    <functioncall functionName="close"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="default"/>
+    <functioncall functionName="eof"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="first"/>
+    <functioncall functionName="hash"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="isOpen"/>
+    <functioncall functionName="mode"/>
+    <functioncall functionName="move"/>
+    <functioncall functionName="noexcept"/>
+    <functioncall functionName="open"/>
+    <functioncall functionName="operator="/>
+    <functioncall functionName="operatorconstchar*"/>
+    <functioncall functionName="operatorstd::string"/>
+    <functioncall functionName="path"/>
+    <functioncall functionName="position"/>
+    <functioncall functionName="reinterpret_cast"/>
+    <functioncall functionName="return"/>
+    <functioncall functionName="seekp"/>
+    <functioncall functionName="set"/>
+    <functioncall functionName="sizeof"/>
+    <functioncall functionName="stream"/>
+    <functioncall functionName="true"/>
+    <functioncall functionName="var"/>
+    <functioncall functionName="write"/>
+  </FileInfo>
+</analyzerinfo>

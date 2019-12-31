@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<analyzerinfo checksum="149978095">
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="ConstructValue"/>
+    <functioncall functionName="DeleteValue"/>
+    <functioncall functionName="GetValue"/>
+    <functioncall functionName="GetValueMove"/>
+    <functioncall functionName="IsValid"/>
+    <functioncall functionName="OptionalException"/>
+    <functioncall functionName="Reset"/>
+    <functioncall functionName="T"/>
+    <functioncall functionName="arg"/>
+    <functioncall functionName="args"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="forward"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="move"/>
+    <functioncall functionName="new"/>
+    <functioncall functionName="ret"/>
+    <functioncall functionName="return"/>
+    <functioncall functionName="runtime_error"/>
+    <functioncall functionName="set"/>
+    <functioncall functionName="true"/>
+    <functioncall functionName="valid"/>
+    <functioncall functionName="value"/>
+  </FileInfo>
+</analyzerinfo>

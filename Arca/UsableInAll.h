@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ShardTraits.h"
-#include "Either.h"
+#include "IsShard.h"
+#include "IsEither.h"
 #include <Chroma/Iterate.h>
 
 namespace Arca

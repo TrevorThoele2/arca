@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<analyzerinfo checksum="3928422686">
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="DefaultString" lineNumber="22"/>
+    <functioncall functionName="DefaultString"/>
+    <functioncall functionName="Exception"/>
+    <functioncall functionName="InputTypeNotFound"/>
+    <functioncall functionName="name"/>
+    <functioncall functionName="string"/>
+  </FileInfo>
+</analyzerinfo>

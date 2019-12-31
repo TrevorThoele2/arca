@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<analyzerinfo checksum="2189430694">
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="Exception"/>
+    <functioncall functionName="c_str"/>
+    <functioncall functionName="message"/>
+    <functioncall functionName="runtime_error"/>
+  </FileInfo>
+</analyzerinfo>

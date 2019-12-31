@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<analyzerinfo checksum="3298337673">
+        <error id="virtualCallInConstructor" severity="warning" msg="Virtual function &apos;Sever&apos; is called from destructor &apos;~Derived()&apos; at line 83. Dynamic binding is not used." verbose="Virtual function &apos;Sever&apos; is called from destructor &apos;~Derived()&apos; at line 83. Dynamic binding is not used.">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\ScopedEventConnection.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\ScopedEventConnection.h" line="65" column="18" info="Sever is a virtual function"/>
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\ScopedEventConnection.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\ScopedEventConnection.h" line="83" column="9" info="Calling Sever"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;ScopedEventConnection&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;ScopedEventConnection&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\ScopedEventConnection.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\ScopedEventConnection.h" line="14" column="9"/>
+            <symbol>ScopedEventConnection</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;ScopedEventConnection&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;ScopedEventConnection&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\ScopedEventConnection.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\ScopedEventConnection.h" line="16" column="9"/>
+            <symbol>ScopedEventConnection</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;Derived&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;Derived&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\ScopedEventConnection.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\ScopedEventConnection.h" line="59" column="13"/>
+            <symbol>Derived</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;Derived&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;Derived&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\ScopedEventConnection.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\ScopedEventConnection.h" line="60" column="13"/>
+            <symbol>Derived</symbol>
+        </error>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="C:/Users/Trevor/Documents/ProgrammingProjects/Chroma/Chroma/Function.h:14:34" my-argnr="2" my-argname="obj" file="C:/Users/Trevor/Documents/ProgrammingProjects/Chroma/Chroma/Function.h" line="16" col="52" value="0"/>
+    <unsafe-usage my-id="C:/Users/Trevor/Documents/ProgrammingProjects/Chroma/Chroma/Function.h:20:33" my-argnr="2" my-argname="obj" file="C:/Users/Trevor/Documents/ProgrammingProjects/Chroma/Chroma/Function.h" line="22" col="51" value="0"/>
+    <unsafe-usage my-id="C:/Users/Trevor/Documents/ProgrammingProjects/Chroma/Chroma/Function.h:38:34" my-argnr="2" my-argname="obj" file="C:/Users/Trevor/Documents/ProgrammingProjects/Chroma/Chroma/Function.h" line="40" col="52" value="0"/>
+    <unsafe-usage my-id="C:/Users/Trevor/Documents/ProgrammingProjects/Chroma/Chroma/Function.h:44:33" my-argnr="2" my-argname="obj" file="C:/Users/Trevor/Documents/ProgrammingProjects/Chroma/Chroma/Function.h" line="46" col="51" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="Reset" lineNumber="39"/>
+    <functiondecl functionName="Sever" lineNumber="44"/>
+    <functiondecl functionName="IsValid" lineNumber="53"/>
+    <functioncall functionName="Clone"/>
+    <functioncall functionName="Connection"/>
+    <functioncall functionName="CreateFunction"/>
+    <functioncall functionName="Derived"/>
+    <functioncall functionName="Event"/>
+    <functioncall functionName="EventConnection"/>
+    <functioncall functionName="Execute"/>
+    <functioncall functionName="FindNextOffset"/>
+    <functioncall functionName="FunctionT"/>
+    <functioncall functionName="IsValid"/>
+    <functioncall functionName="Remove"/>
+    <functioncall functionName="Ret"/>
+    <functioncall functionName="ScopedEventConnection"/>
+    <functioncall functionName="SetupConnectionsCopy"/>
+    <functioncall functionName="SetupConnectionsMove"/>
+    <functioncall functionName="Sever"/>
+    <functioncall functionName="SkipNext"/>
+    <functioncall functionName="Subscribe"/>
+    <functioncall functionName="arg"/>
+    <functioncall functionName="args"/>
+    <functioncall functionName="assert"/>
+    <functioncall functionName="back"/>
+    <functioncall functionName="base"/>
+    <functioncall functionName="begin"/>
+    <functioncall functionName="break"/>
+    <functioncall functionName="clear"/>
+    <functioncall functionName="connectionItr"/>
+    <functioncall functionName="connectionLoop"/>
+    <functioncall functionName="connections"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="default"/>
+    <functioncall functionName="dynamic_cast"/>
+    <functioncall functionName="empty"/>
+    <functioncall functionName="end"/>
+    <functioncall functionName="endID"/>
+    <functioncall functionName="erase"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="forward"/>
+    <functioncall functionName="func"/>
+    <functioncall functionName="function"/>
+    <functioncall functionName="get"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="int"/>
+    <functioncall functionName="iterator"/>
+    <functioncall functionName="itr"/>
+    <functioncall functionName="loop"/>
+    <functioncall functionName="move"/>
+    <functioncall functionName="next"/>
+    <functioncall functionName="noexcept"/>
+    <functioncall functionName="nullptr"/>
+    <functioncall functionName="obj"/>
+    <functioncall functionName="override"/>
+    <functioncall functionName="owner"/>
+    <functioncall functionName="push_back"/>
+    <functioncall functionName="push_front"/>
+    <functioncall functionName="reset"/>
+    <functioncall functionName="return"/>
+    <functioncall functionName="set"/>
+    <functioncall functionName="slotLoop"/>
+    <functioncall functionName="slots"/>
+    <functioncall functionName="this"/>
+    <functioncall functionName="true"/>
+    <functioncall functionName="void"/>
+    <functioncall functionName="while"/>
+    <functioncall functionName="wrapped"/>
+  </FileInfo>
+</analyzerinfo>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<analyzerinfo checksum="3238257009">
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="ID" lineNumber="19"/>
+    <functiondecl functionName="Type" lineNumber="24"/>
+    <functiondecl functionName="ObjectType" lineNumber="29"/>
+    <functioncall functionName="HandleSlim"/>
+    <functioncall functionName="Relic"/>
+    <functioncall functionName="Shard"/>
+    <functioncall functionName="Type"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="default"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="id"/>
+    <functioncall functionName="move"/>
+    <functioncall functionName="objectType"/>
+    <functioncall functionName="type"/>
+  </FileInfo>
+</analyzerinfo>

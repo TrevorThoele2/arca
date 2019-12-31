@@ -25,21 +25,6 @@ namespace Arca
             batchSource.second->Clear();
     }
 
-    void Reliquary::Destroy(const Handle& handle)
-    {
-        switch (handle.ObjectType())
-        {
-        case HandleObjectType::Relic:
-            relics.Destroy(handle);
-            break;
-        case HandleObjectType::Shard:
-            shards.Destroy(handle);
-            break;
-        default:
-            assert(false);
-        }
-    }
-
     void Reliquary::Clear(const Type& type)
     {
         relics.AttemptClear(type);
@@ -81,6 +66,21 @@ namespace Arca
         for (auto& loop : signals.batchSources.map)
             totalSize += loop.second->Size();
         return totalSize;
+    }
+
+    void Reliquary::Destroy(const Handle& handle)
+    {
+        switch (handle.ObjectType())
+        {
+        case HandleObjectType::Relic:
+            relics.Destroy(handle);
+            break;
+        case HandleObjectType::Shard:
+            shards.Destroy(handle);
+            break;
+        default:
+            assert(false);
+        }
     }
 
     Handle Reliquary::HandleFrom(RelicID id, Type type, HandleObjectType objectType)

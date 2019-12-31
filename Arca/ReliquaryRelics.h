@@ -7,13 +7,16 @@
 
 #include "OpenRelic.h"
 #include "RelicStructure.h"
-#include "RelicTraits.h"
 #include "RelicMetadata.h"
-#include "RelicBatchSource.h"
 #include "RelicBatch.h"
 #include "HasShouldCreateMethod.h"
 
-#include "Ptr.h"
+#include "IsRelic.h"
+#include "IsLocal.h"
+#include "IsGlobal.h"
+
+#include "LocalPtr.h"
+#include "AliasPtr.h"
 
 #include "KnownPolymorphicSerializer.h"
 
@@ -23,18 +26,18 @@ namespace Arca
     {
     public:
         template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> Create(InitializeArgs&& ... initializeArgs);
+        LocalPtr<RelicT> Create(InitializeArgs&& ... initializeArgs);
         template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateWith(const RelicStructure& structure, InitializeArgs&& ... initializeArgs);
+        LocalPtr<RelicT> CreateWith(const RelicStructure& structure, InitializeArgs&& ... initializeArgs);
         template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateWith(const std::string& structureName, InitializeArgs&& ... initializeArgs);
+        LocalPtr<RelicT> CreateWith(const std::string& structureName, InitializeArgs&& ... initializeArgs);
 
         template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateChild(const Handle& parent, InitializeArgs&& ... initializeArgs);
+        LocalPtr<RelicT> CreateChild(const Handle& parent, InitializeArgs&& ... initializeArgs);
         template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateChildWith(const Handle& parent, const RelicStructure& structure, InitializeArgs&& ... initializeArgs);
+        LocalPtr<RelicT> CreateChildWith(const Handle& parent, const RelicStructure& structure, InitializeArgs&& ... initializeArgs);
         template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateChildWith(const Handle& parent, const std::string& structureName, InitializeArgs&& ... initializeArgs);
+        LocalPtr<RelicT> CreateChildWith(const Handle& parent, const std::string& structureName, InitializeArgs&& ... initializeArgs);
 
         void Destroy(const Handle& handle);
 
@@ -42,16 +45,16 @@ namespace Arca
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         void Clear();
 
-        template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int> = 0>
-        [[nodiscard]] Ptr<RelicT> Find(RelicID id) const;
-        template<class RelicT, std::enable_if_t<is_global_relic_v<RelicT>, int> = 0>
-        [[nodiscard]] Ptr<RelicT> Find() const;
+        template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int> = 0>
+        [[nodiscard]] bool Contains(RelicID id) const;
+        template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
+        [[nodiscard]] bool Contains() const;
 
         [[nodiscard]] std::optional<Handle> ParentOf(const Handle& child) const;
 
-        template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int> = 0>
+        template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int> = 0>
         [[nodiscard]] RelicID IDFor(const RelicT& relic) const;
-        template<class RelicT, std::enable_if_t<is_global_relic_v<RelicT>, int> = 0>
+        template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
         [[nodiscard]] RelicID IDFor() const;
     public:
         struct RelicPrototype
@@ -114,6 +117,7 @@ namespace Arca
         {
             std::shared_ptr<void> storage;
             RelicID id;
+            bool externallyVisible;
         };
 
         using GlobalMap = std::unordered_map<TypeName, StoredGlobal>;
@@ -125,8 +129,14 @@ namespace Arca
         using GlobalConstructList = std::vector<GlobalConstruct>;
         GlobalConstructList globalConstructList;
 
+        using GlobalRelicAliasTransformation = std::function<std::any(Reliquary&)>;
+        using GlobalRelicAliasMap = std::unordered_map<std::type_index, GlobalRelicAliasTransformation>;
+        GlobalRelicAliasMap globalRelicAliasMap;
+
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         RelicT* FindGlobalStorage();
+        template<class T>
+        T FindGlobalAliasStorage();
     public:
         ReliquaryRelics(const ReliquaryRelics& arg) = delete;
         ReliquaryRelics& operator=(const ReliquaryRelics& arg) = delete;
@@ -148,7 +158,7 @@ namespace Arca
         RelicMetadata& ValidateParentForParenting(const Handle& parent);
     private:
         template<class RelicT>
-        Ptr<RelicT> CreatePtr(RelicID id) const;
+        LocalPtr<RelicT> CreatePtr(RelicID id) const;
     private:
         explicit ReliquaryRelics(Reliquary& owner);
         ReliquaryRelics(ReliquaryRelics&& arg) noexcept = default;

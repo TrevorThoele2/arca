@@ -4,7 +4,6 @@
 
 #include <Arca/ClosedTypedRelicAutomation.h>
 #include <Arca/OpenTypedRelicAutomation.h>
-#include <Arca/ShardTraits.h>
 
 #include <Arca/Serialization.h>
 
@@ -31,37 +30,37 @@ public:
         explicit OtherShard(int myValue);
     };
 
-    class TypedRelic : public ClosedTypedRelicAutomation<TypedRelic, Shard>
+    class TypedRelic final : public ClosedTypedRelicAutomation<TypedRelic, Shard>
     {
     public:
-        Shard* basicShard;
+        LocalPtr<Shard> basicShard;
     public:
         TypedRelic() = default;
 
         void PostConstruct(ShardTuple shards);
     };
 
-    class OpenTypedRelic : public OpenTypedRelicAutomation<OpenTypedRelic, Shard>
+    class OpenTypedRelic final : public OpenTypedRelicAutomation<OpenTypedRelic, Shard>
     {
     public:
-        Shard* basicShard;
+        LocalPtr<Shard> basicShard;
     public:
         OpenTypedRelic() = default;
 
         void PostConstruct(ShardTuple shards);
     };
 
-    class GlobalRelic : public ClosedTypedRelicAutomation<GlobalRelic, Shard>
+    class GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic, Shard>
     {
     public:
-        Shard* basicShard;
+        LocalPtr<Shard> basicShard;
     public:
         GlobalRelic() = default;
 
         void PostConstruct(ShardTuple shards);
     };
 
-    class ShouldCreateRelic : public ClosedTypedRelicAutomation<ShouldCreateRelic>
+    class ShouldCreateRelic final : public ClosedTypedRelicAutomation<ShouldCreateRelic>
     {
     public:
         int value = 0;
@@ -71,10 +70,10 @@ public:
         void Initialize(int value);
     };
 
-    class InitializedRelic : public ClosedTypedRelicAutomation<InitializedRelic, Shard>
+    class InitializedRelic final : public ClosedTypedRelicAutomation<InitializedRelic, Shard>
     {
     public:
-        Shard* basicShard;
+        LocalPtr<Shard> basicShard;
 
         int myValue = 0;
     public:
@@ -86,7 +85,7 @@ public:
     class MovableOnlyRelic final : public ClosedTypedRelicAutomation<MovableOnlyRelic, Shard>
     {
     public:
-        Ptr<Shard> basicShard;
+        LocalPtr<Shard> basicShard;
 
         int myValue = 0;
     public:

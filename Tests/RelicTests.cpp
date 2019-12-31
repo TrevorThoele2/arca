@@ -114,7 +114,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("finding open relic")
             {
-                auto found = reliquary->Find<OpenRelic>(openRelic->ID());
+                auto found = Arca::LocalPtr<OpenRelic>(openRelic->ID(), *reliquary);
 
                 THEN("found is same as created")
                 {
@@ -140,7 +140,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
                 THEN("reliquary has shard")
                 {
-                    REQUIRE(reliquary->Find<Shard>(openRelic->ID()));
+                    REQUIRE(Arca::LocalPtr<Shard>(openRelic->ID(), *reliquary));
                     REQUIRE(reliquary->Contains<Shard>(openRelic->ID()));
                 }
 
@@ -162,7 +162,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
                     THEN("reliquary does not have shard")
                     {
-                        REQUIRE(!reliquary->Find<Shard>(openRelic->ID()));
+                        REQUIRE(!Arca::LocalPtr<Shard>(openRelic->ID(), *reliquary));
                         REQUIRE(!reliquary->Contains<Shard>(openRelic->ID()));
                     }
 
@@ -176,7 +176,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("retrieving as closed")
             {
-                auto closedRelic = reliquary->Find<ClosedRelic>(openRelic->ID());
+                auto closedRelic = Arca::LocalPtr<ClosedRelic>(openRelic->ID(), *reliquary);
 
                 THEN("closed relic is not found")
                 {
@@ -186,7 +186,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("retrieving as typed")
             {
-                const auto asTyped = reliquary->Find<TypedRelic>(openRelic->ID());
+                const auto asTyped = Arca::LocalPtr<TypedRelic>(openRelic->ID(), *reliquary);
 
                 THEN("typed is empty")
                 {
@@ -202,7 +202,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             THEN("structure has been satisfied")
             {
-                REQUIRE(reliquary->Find<Shard>(closedRelic->ID()));
+                REQUIRE(Arca::LocalPtr<Shard>(closedRelic->ID(), *reliquary));
 
                 REQUIRE(closedRelic->Find<Shard>());
                 REQUIRE(closedRelic->Contains<Shard>());
@@ -220,7 +220,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("finding open relic")
             {
-                auto found = reliquary->Find<ClosedRelic>(closedRelic->ID());
+                auto found = Arca::LocalPtr<ClosedRelic>(closedRelic->ID(), *reliquary);
 
                 THEN("found is same as created")
                 {
@@ -238,7 +238,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
                 THEN("finding relic returns empty")
                 {
-                    REQUIRE(!reliquary->Find<ClosedRelic>(id));
+                    REQUIRE(!Arca::LocalPtr<ClosedRelic>(id, *reliquary));
                 }
 
                 THEN("destroying again does not throw")
@@ -254,7 +254,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("retrieving as open")
             {
-                const auto asOpen = reliquary->Find<OpenRelic>(closedRelic->ID());
+                const auto asOpen = Arca::LocalPtr<OpenRelic>(closedRelic->ID(), *reliquary);
 
                 THEN("open is empty")
                 {
@@ -264,7 +264,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("retrieving as typed")
             {
-                const auto asTyped = reliquary->Find<TypedRelic>(closedRelic->ID());
+                const auto asTyped = Arca::LocalPtr<TypedRelic>(closedRelic->ID(), *reliquary);
 
                 THEN("typed is empty")
                 {
@@ -295,7 +295,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("finding typed relic")
             {
-                auto found = reliquary->Find<TypedRelic>(typedRelic->ID());
+                auto found = Arca::LocalPtr<TypedRelic>(typedRelic->ID(), *reliquary);
 
                 THEN("found is same as created")
                 {
@@ -311,7 +311,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("retrieving as open")
             {
-                const auto asOpen = reliquary->Find<OpenRelic>(typedRelic->ID());
+                const auto asOpen = Arca::LocalPtr<OpenRelic>(typedRelic->ID(), *reliquary);
 
                 THEN("typed is empty")
                 {
@@ -321,7 +321,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("retrieving as closed")
             {
-                auto closedRelic = reliquary->Find<ClosedRelic>(typedRelic->ID());
+                auto closedRelic = Arca::LocalPtr<ClosedRelic>(typedRelic->ID(), *reliquary);
 
                 THEN("closed relic is not found")
                 {
@@ -408,7 +408,7 @@ SCENARIO_METHOD(RelicTestsFixture, "custom should create relic", "[relic][should
             THEN("relic was created")
             {
                 REQUIRE(relic);
-                REQUIRE(reliquary->Find<ShouldCreateRelic>(relic->ID()));
+                REQUIRE(Arca::LocalPtr<ShouldCreateRelic>(relic->ID(), *reliquary));
             }
         }
 
@@ -591,7 +591,7 @@ SCENARIO_METHOD(RelicTestsFixture, "open typed relic", "[relic][open]")
             THEN("reliquary created shard")
             {
                 REQUIRE(reliquary->ShardSize() == 2);
-                REQUIRE(reliquary->Find<OtherShard>(relic->ID()));
+                REQUIRE(Arca::LocalPtr<OtherShard>(relic->ID(), *reliquary));
             }
 
             WHEN("finding by either")
@@ -611,7 +611,7 @@ SCENARIO_METHOD(RelicTestsFixture, "open typed relic", "[relic][open]")
                 THEN("reliquary has destroyed shard")
                 {
                     REQUIRE(reliquary->ShardSize() == 1);
-                    REQUIRE(!reliquary->Find<OtherShard>(relic->ID()));
+                    REQUIRE(!Arca::LocalPtr<OtherShard>(relic->ID(), *reliquary));
                 }
             }
 
@@ -622,7 +622,7 @@ SCENARIO_METHOD(RelicTestsFixture, "open typed relic", "[relic][open]")
                 THEN("reliquary has destroyed shard")
                 {
                     REQUIRE(reliquary->ShardSize() == 1);
-                    REQUIRE(!reliquary->Find<OtherShard>(relic->ID()));
+                    REQUIRE(!Arca::LocalPtr<OtherShard>(relic->ID(), *reliquary));
                 }
             }
 
@@ -646,7 +646,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             .Type<Shard>()
             .Actualize();
 
-        auto globalRelic = reliquary->Find<GlobalRelic>();
+        auto globalRelic = Arca::GlobalPtr<GlobalRelic>(*reliquary);
 
         auto onParented = reliquary->Batch<RelicParented>();
 
@@ -696,7 +696,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
                 reliquary->Destroy(AsHandle(*parent));
 
                 REQUIRE(reliquary->RelicSize() == 0);
-                REQUIRE(!reliquary->Find<Shard>(child->ID()));
+                REQUIRE(!Arca::LocalPtr<Shard>(child->ID(), *reliquary));
             }
 
             WHEN("destroying child")
@@ -706,7 +706,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
                 THEN("does not destroy parent")
                 {
                     REQUIRE(reliquary->RelicSize() == 1);
-                    REQUIRE(reliquary->Find<Shard>(parent->ID()));
+                    REQUIRE(Arca::LocalPtr<Shard>(parent->ID(), *reliquary));
                 }
 
                 THEN("destroying parent works")
@@ -714,7 +714,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
                     reliquary->Destroy(AsHandle(*parent));
 
                     REQUIRE(reliquary->RelicSize() == 0);
-                    REQUIRE(!reliquary->Find<Shard>(parent->ID()));
+                    REQUIRE(!Arca::LocalPtr<Shard>(parent->ID(), *reliquary));
                 }
             }
 

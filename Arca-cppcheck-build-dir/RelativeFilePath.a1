@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<analyzerinfo checksum="1453684911">
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;RelativeFilePath&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;RelativeFilePath&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\RelativeFilePath.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\RelativeFilePath.h" line="16" column="9"/>
+            <symbol>RelativeFilePath</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;RelativeFilePath&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;RelativeFilePath&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\RelativeFilePath.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\RelativeFilePath.h" line="18" column="9"/>
+            <symbol>RelativeFilePath</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;FilePath&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;FilePath&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\RelativeFilePath.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\FilePath.h" line="16" column="9"/>
+            <symbol>FilePath</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;FilePath&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;FilePath&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\RelativeFilePath.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\FilePath.h" line="18" column="9"/>
+            <symbol>FilePath</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;FileName&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;FileName&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\RelativeFilePath.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\FileName.h" line="13" column="9"/>
+            <symbol>FileName</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;FileName&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;FileName&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\RelativeFilePath.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\FileName.h" line="15" column="9"/>
+            <symbol>FileName</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;FileName&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;FileName&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\RelativeFilePath.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\FileName.h" line="16" column="9"/>
+            <symbol>FileName</symbol>
+        </error>
+        <error id="stlcstr" severity="error" msg="Dangerous usage of c_str(). The value returned by c_str() is invalid after this call." verbose="Dangerous usage of c_str(). The c_str() return value is only valid until its string is deleted." cwe="664">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\RelativeFilePath.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\RelativeFilePath.cpp" line="96" column="9"/>
+        </error>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="c_str" lineNumber="94"/>
+    <functiondecl functionName="SetFileName" lineNumber="99"/>
+    <functiondecl functionName="SetExtension" lineNumber="115"/>
+    <functiondecl functionName="RemoveFileName" lineNumber="123"/>
+    <functiondecl functionName="RemoveExtension" lineNumber="131"/>
+    <functiondecl functionName="Up" lineNumber="139"/>
+    <functiondecl functionName="Down" lineNumber="145"/>
+    <functiondecl functionName="GetMoveUpCount" lineNumber="151"/>
+    <functiondecl functionName="GetMoveDown" lineNumber="156"/>
+    <functiondecl functionName="HasDirectory" lineNumber="161"/>
+    <functiondecl functionName="GetDirectoryCount" lineNumber="182"/>
+    <functiondecl functionName="GetDirectoryName" lineNumber="198"/>
+    <functiondecl functionName="GetValue" lineNumber="219"/>
+    <functiondecl functionName="GetExtension" lineNumber="228"/>
+    <functiondecl functionName="GetWithoutExtension" lineNumber="233"/>
+    <functiondecl functionName="IsEmpty" lineNumber="238"/>
+    <functiondecl functionName="GetFileName" lineNumber="243"/>
+    <functioncall functionName="FileName"/>
+    <functioncall functionName="FilePath"/>
+    <functioncall functionName="FromString"/>
+    <functioncall functionName="FromStringImpl"/>
+    <functioncall functionName="GetDirectoryCount"/>
+    <functioncall functionName="GetDirectoryName"/>
+    <functioncall functionName="GetFileExtension"/>
+    <functioncall functionName="GetValue"/>
+    <functioncall functionName="RelativeFilePath"/>
+    <functioncall functionName="RemoveFileExtension"/>
+    <functioncall functionName="RemoveFileName"/>
+    <functioncall functionName="ReplaceFileExtension"/>
+    <functioncall functionName="arg"/>
+    <functioncall functionName="break"/>
+    <functioncall functionName="c_str"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="continue"/>
+    <functioncall functionName="curPos"/>
+    <functioncall functionName="default"/>
+    <functioncall functionName="extension"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="fileSeparator"/>
+    <functioncall functionName="find"/>
+    <functioncall functionName="find_first_of"/>
+    <functioncall functionName="find_last_of"/>
+    <functioncall functionName="first"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="found"/>
+    <functioncall functionName="foundDifference"/>
+    <functioncall functionName="fromDirectoryName"/>
+    <functioncall functionName="hash"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="int"/>
+    <functioncall functionName="loop"/>
+    <functioncall functionName="move"/>
+    <functioncall functionName="moveDown"/>
+    <functioncall functionName="moveUp"/>
+    <functioncall functionName="name"/>
+    <functioncall functionName="newFilePath"/>
+    <functioncall functionName="npos"/>
+    <functioncall functionName="operatorconstchar*"/>
+    <functioncall functionName="operatorconststd::string&amp;"/>
+    <functioncall functionName="operatorstd::string"/>
+    <functioncall functionName="positionEnd"/>
+    <functioncall functionName="positionStart"/>
+    <functioncall functionName="replace"/>
+    <functioncall functionName="size"/>
+    <functioncall functionName="static_cast"/>
+    <functioncall functionName="str"/>
+    <functioncall functionName="string"/>
+    <functioncall functionName="substr"/>
+    <functioncall functionName="toValue"/>
+    <functioncall functionName="true"/>
+    <functioncall functionName="while"/>
+  </FileInfo>
+</analyzerinfo>

@@ -8,7 +8,7 @@ namespace Arca
     template<class ShardT>
     struct ShardListToTuple
     {
-        using Type = Ptr<ShardT>;
+        using Type = LocalPtr<ShardT>;
     };
 
     template<class Shards>
@@ -20,9 +20,9 @@ namespace Arca
         template<class ShardTuple>
         constexpr static void Do(ShardTuple& tuple, RelicID id, Reliquary& reliquary)
         {
-            using ShardT = typename std::tuple_element_t<i - 1, ShardTuple>::WrappedT;
+            using ShardT = typename std::tuple_element_t<i - 1, ShardTuple>::ValueT;
 
-            auto shard = reliquary.Find<ShardT>(id);
+            auto shard = Arca::LocalPtr<ShardT>(id, reliquary);
             std::get<i - 1>(tuple) = shard;
             return ShardListExtractor<i - 1>::Do(tuple, id, reliquary);
         }

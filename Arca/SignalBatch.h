@@ -1,11 +1,9 @@
 #pragma once
 
 #include "Batch.h"
+#include "IsSignal.h"
 #include "SignalBatchSource.h"
 #include "BatchException.h"
-#include "SignalTraits.h"
-
-#include "Serialization.h"
 
 namespace Arca
 {
@@ -39,8 +37,6 @@ namespace Arca
     private:
         SourceT* source = nullptr;
         void SourceRequired() const;
-    private:
-        INSCRIPTION_ACCESS;
     private:
         void Clear();
 

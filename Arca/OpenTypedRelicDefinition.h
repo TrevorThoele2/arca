@@ -6,7 +6,7 @@
 namespace Arca
 {
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    ShardT* OpenTypedRelic::Create()
+    LocalPtr<ShardT> OpenTypedRelic::Create()
     {
         return owner->shards.Create<ShardT>(id);
     }
@@ -14,19 +14,19 @@ namespace Arca
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     void OpenTypedRelic::Destroy()
     {
-        owner->shards.Destroy(AsHandle<ShardT>(ID(), Owner()));
+        owner->Destroy<ShardT>(ID());
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    ShardT* OpenTypedRelic::Find() const
+    LocalPtr<ShardT> OpenTypedRelic::Find() const
     {
-        return owner->Find<ShardT>(id);
+        return Arca::LocalPtr<ShardT>(id, *owner);
     }
 
     template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int>>
-    typename EitherT::ShardT* OpenTypedRelic::Find() const
+    LocalPtr<EitherT> OpenTypedRelic::Find() const
     {
-        return owner->Find<EitherT>(id);
+        return Arca::LocalPtr<EitherT>(id, *owner);
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>

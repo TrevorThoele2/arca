@@ -6,15 +6,15 @@
 namespace Arca
 {
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    Ptr<ShardT> ClosedRelic::Find() const
+    LocalPtr<ShardT> ClosedRelic::Find() const
     {
-        return owner->Find<ShardT>(id);
+        return Arca::LocalPtr<ShardT>(id, Owner());
     }
 
     template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int>>
-    Ptr<typename EitherT::ShardT> ClosedRelic::Find() const
+    LocalPtr<EitherT> ClosedRelic::Find() const
     {
-        return owner->Find<EitherT>(id);
+        return Arca::LocalPtr<EitherT>(id, Owner());
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
