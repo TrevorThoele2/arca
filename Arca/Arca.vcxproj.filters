@@ -426,9 +426,6 @@
     <ClInclude Include="PtrFor.h">
       <Filter>Header Files\Ptr</Filter>
     </ClInclude>
-    <ClInclude Include="AliasPtr.h">
-      <Filter>Header Files\Ptr</Filter>
-    </ClInclude>
     <ClInclude Include="Signal.h">
       <Filter>Header Files\Signal</Filter>
     </ClInclude>
@@ -437,6 +434,9 @@
     </ClInclude>
     <ClInclude Include="TransferableSignalDefinition.h">
       <Filter>Header Files\Signal</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputedPtr.h">
+      <Filter>Header Files\Ptr</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

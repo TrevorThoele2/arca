@@ -8,51 +8,51 @@
 namespace Arca
 {
     template<class T>
-    constexpr static bool usable_for_alias_ptr_v = !is_relic_v<T> && !is_shard_v<T> && !is_either_v<T>;
+    constexpr static bool usable_for_computed_ptr_v = !is_relic_v<T> && !is_shard_v<T> && !is_either_v<T>;
 
     template<class T>
-    class AliasPtr
+    class ComputedPtr
     {
     private:
         using StoredT = std::optional<T>;
     public:
         using ValueT = T;
     public:
-        AliasPtr() = default;
+        ComputedPtr() = default;
 
-        explicit AliasPtr(Reliquary& owner) : owner(&owner)
+        explicit ComputedPtr(Reliquary& owner) : owner(&owner)
         {
             value = FindValueFromOwner();
         }
 
-        AliasPtr(const AliasPtr& arg) : owner(arg.owner)
+        ComputedPtr(const ComputedPtr& arg) : owner(arg.owner)
         {
             value = FindValueFromOwner();
         }
 
-        AliasPtr(AliasPtr&& arg) noexcept : owner(arg.owner), value(arg.value)
+        ComputedPtr(ComputedPtr&& arg) noexcept : owner(arg.owner), value(arg.value)
         {}
 
-        AliasPtr& operator=(const AliasPtr& arg)
+        ComputedPtr& operator=(const ComputedPtr& arg)
         {
             owner = arg.owner;
             value = FindValueFromOwner();
             return *this;
         }
 
-        AliasPtr& operator=(AliasPtr&& arg) noexcept
+        ComputedPtr& operator=(ComputedPtr&& arg) noexcept
         {
             owner = arg.owner;
             value = arg.value;
             return *this;
         }
 
-        bool operator==(const AliasPtr& arg) const
+        bool operator==(const ComputedPtr& arg) const
         {
             return owner == arg.owner;
         }
 
-        bool operator!=(const AliasPtr& arg) const
+        bool operator!=(const ComputedPtr& arg) const
         {
             return !(*this == arg);
         }
@@ -67,9 +67,9 @@ namespace Arca
             return Get();
         }
 
-        operator AliasPtr<const T>() const
+        operator ComputedPtr<const T>() const
         {
-            return AliasPtr<const T>(*owner);
+            return ComputedPtr<const T>(*owner);
         }
 
         [[nodiscard]] ValueT& operator*() const
@@ -103,7 +103,7 @@ namespace Arca
             if (owner == nullptr)
                 return EmptyValue();
 
-            return owner->template FindGlobalAliasStorage<T>();
+            return owner->template FindGlobalComputation<T>();
         }
 
         bool IsSetup() const
@@ -123,11 +123,11 @@ namespace Arca
 namespace Inscription
 {
     template<class T>
-    class Scribe<Arca::AliasPtr<T>, BinaryArchive>
-        : public CompositeScribe<Arca::AliasPtr<T>, BinaryArchive>
+    class Scribe<Arca::ComputedPtr<T>, BinaryArchive>
+        : public CompositeScribe<Arca::ComputedPtr<T>, BinaryArchive>
     {
     private:
-        using BaseT = CompositeScribe<Arca::AliasPtr<T>, BinaryArchive>;
+        using BaseT = CompositeScribe<Arca::ComputedPtr<T>, BinaryArchive>;
     public:
         using ObjectT = typename BaseT::ObjectT;
         using ArchiveT = typename BaseT::ArchiveT;

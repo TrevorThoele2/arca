@@ -14,9 +14,6 @@ namespace Arca
     const TypeName Traits<::ReliquaryRegistrationTestsFixture::GlobalRelic>::typeName =
         "ReliquaryTestsGlobalRelic";
 
-    const TypeName Traits<::ReliquaryRegistrationTestsFixture::GlobalRelicAlias>::typeName =
-        "ReliquaryTestsGlobalRelicAlias";
-
     const TypeName Traits<::ReliquaryRegistrationTestsFixture::Curator>::typeName =
         "ReliquaryTestsCurator";
 
@@ -94,16 +91,16 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             }
         }
 
-        WHEN("retrieving unregistered global alias")
+        WHEN("retrieving unregistered global computation")
         {
             THEN("throws error")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    Arca::AliasPtr<int>(*reliquary),
+                    Arca::ComputedPtr<int>(*reliquary),
                     NotRegistered,
                     ::Catch::Matchers::Message(
-                        "The alias ("s + typeid(int).name() + ") was not registered.")
+                        "The global computation ("s + typeid(int).name() + ") was not registered.")
                 );
             }
         }

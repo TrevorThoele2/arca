@@ -150,7 +150,7 @@ namespace Arca
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         [[nodiscard]] RelicT* FindGlobalStorage();
         template<class T>
-        [[nodiscard]] T FindGlobalAliasStorage();
+        [[nodiscard]] T FindGlobalComputation();
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] ShardT* FindStorage(RelicID id);
         template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
@@ -175,7 +175,7 @@ namespace Arca
         template<class>
         friend class GlobalPtr;
         template<class>
-        friend class AliasPtr;
+        friend class ComputedPtr;
     private:
         INSCRIPTION_ACCESS;
     };
@@ -381,9 +381,9 @@ namespace Arca
     }
 
     template<class T>
-    T Reliquary::FindGlobalAliasStorage()
+    T Reliquary::FindGlobalComputation()
     {
-        return relics.FindGlobalAliasStorage<T>();
+        return relics.FindGlobalComputation<T>();
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>

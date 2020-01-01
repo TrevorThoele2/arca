@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AliasPtr.h" />
+    <ClInclude Include="ComputedPtr.h" />
     <ClInclude Include="All.h" />
     <ClInclude Include="TransferableSignal.h" />
     <ClInclude Include="TransferableSignalDefinition.h" />
