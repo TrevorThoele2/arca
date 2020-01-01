@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<analyzerinfo checksum="929099477">
-        <error id="internalAstError" severity="error" msg="Syntax Error: AST broken, binary operator &apos;&gt;&apos; doesn&apos;t have two operands." verbose="Syntax Error: AST broken, binary operator &apos;&gt;&apos; doesn&apos;t have two operands.">
-            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Arca\ClosedRelic.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Arca\UsableInAll.h" line="28" column="32"/>
-        </error>
-</analyzerinfo>

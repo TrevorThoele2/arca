@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<analyzerinfo checksum="1876838505">
-  <FileInfo check="CheckUnusedFunctions">
-    <functioncall functionName="Exception"/>
-    <functioncall functionName="InvalidPipeline"/>
-    <functioncall functionName="reason"/>
-  </FileInfo>
-</analyzerinfo>

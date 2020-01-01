@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<analyzerinfo checksum="2669088225">
-  <FileInfo check="CheckUnusedFunctions">
-    <functioncall functionName="Exception"/>
-    <functioncall functionName="TableNotLinked"/>
-  </FileInfo>
-</analyzerinfo>

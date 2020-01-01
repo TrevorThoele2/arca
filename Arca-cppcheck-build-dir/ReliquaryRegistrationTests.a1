@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<analyzerinfo checksum="1180946798">
-        <error id="preprocessorErrorDirective" severity="error" msg="failed to expand &apos;REQUIRE_THROWS_MATCHES&apos;, Invalid ## usage when expanding &apos;INTERNAL_CATCH_THROWS_MATCHES&apos;." verbose="failed to expand &apos;REQUIRE_THROWS_MATCHES&apos;, Invalid ## usage when expanding &apos;INTERNAL_CATCH_THROWS_MATCHES&apos;.">
-            <location file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="3786" column="0"/>
-        </error>
-</analyzerinfo>
