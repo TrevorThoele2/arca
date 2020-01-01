@@ -46,5 +46,39 @@ SCENARIO_METHOD(SignalTestsFixture, "signal", "[signal]")
                 REQUIRE(foundValue == emittedValue);
             }
         }
+
+        WHEN("registering second reliquary and transfering all relics to second reliquary")
+        {
+            auto secondReliquary = ReliquaryOrigin()
+                .Type<BasicSignal>()
+                .Actualize();
+
+            reliquary->ExecuteOn<TransferableSignal>(
+                [secondReliquary = &*secondReliquary](const TransferableSignal& signal)
+                {
+                    signal.Raise(*secondReliquary);
+                });
+
+            WHEN("raising signal with custom emission logic")
+            {
+                int foundValue = 0;
+
+                secondReliquary->ExecuteOn<BasicSignal>([&foundValue](const BasicSignal& signal)
+                    {
+                        foundValue = signal.value;
+                    });
+
+                const auto emittedValue = dataGeneration.Random<int>(
+                    TestFramework::Range(1, std::numeric_limits<int>::max()));
+
+                const BasicSignal signal{ emittedValue };
+                reliquary->Raise(signal);
+
+                THEN("custom emission logic is fired")
+                {
+                    REQUIRE(foundValue == emittedValue);
+                }
+            }
+        }
     }
 }

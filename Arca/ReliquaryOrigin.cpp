@@ -55,6 +55,8 @@ namespace Arca
         for (auto& initializer : signalList)
             initializer.factory(*reliquary);
 
+        reliquary->signals.batchSources.transferableSignals.emplace();
+
         for (auto& initializer : shardList)
             initializer.factory(*reliquary);
 

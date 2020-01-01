@@ -21,6 +21,8 @@
   <ItemGroup>
     <ClInclude Include="AliasPtr.h" />
     <ClInclude Include="All.h" />
+    <ClInclude Include="TransferableSignal.h" />
+    <ClInclude Include="TransferableSignalDefinition.h" />
     <ClInclude Include="AsHandle.h" />
     <ClInclude Include="CompositeScribe.h" />
     <ClInclude Include="CompositeShardBatch.h" />
@@ -128,6 +130,7 @@
     <ClInclude Include="TypeScribe.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="TransferableSignal.cpp" />
     <ClCompile Include="CompositeShardBatchSource.cpp" />
     <ClCompile Include="Created.cpp" />
     <ClCompile Include="StoredCurator.cpp" />

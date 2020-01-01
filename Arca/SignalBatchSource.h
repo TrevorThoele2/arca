@@ -34,7 +34,10 @@ namespace Arca
     public:
         BatchSource() = default;
         BatchSource(const BatchSource& arg) = delete;
-        BatchSource(BatchSource&& arg) = default;
+        BatchSource(BatchSource&& arg) noexcept = default;
+
+        BatchSource& operator=(const BatchSource& arg) = delete;
+        BatchSource& operator=(BatchSource&& arg) noexcept = default;
 
         void Raise(const T& signal);
 

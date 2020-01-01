@@ -16,7 +16,11 @@ namespace Arca
         }
 
         batchSource->Raise(signal);
-        ExecuteAllFor(signal);
+        ExecuteExecutionsFor(signal);
+
+        const TransferableSignal transferableSignal(signal);
+        batchSources.transferableSignals->Raise(transferableSignal);
+        ExecuteExecutionsFor(transferableSignal);
     }
 
     template<class SignalT, class... Args, std::enable_if_t<is_signal_v<SignalT>, int>>
@@ -38,7 +42,7 @@ namespace Arca
     }
 
     template<class SignalT>
-    void ReliquarySignals::ExecuteAllFor(const SignalT& signal)
+    void ReliquarySignals::ExecuteExecutionsFor(const SignalT& signal)
     {
         const auto typeName = TypeFor<SignalT>().name;
         auto found = executionMap.find(typeName);
