@@ -149,7 +149,7 @@ namespace Arca
     {
         const auto type = TypeFor<RelicT>();
         const auto normalFound = globalMap.find(type.name);
-        if (normalFound != globalMap.end() && normalFound->second.externallyVisible)
+        if (normalFound != globalMap.end())
             return reinterpret_cast<RelicT*>(normalFound->second.storage.get());
 
         throw NotRegistered(type, typeid(RelicT));
