@@ -7,6 +7,9 @@ using namespace std::string_literals;
 IntegrationTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std::move(myValue))
 {}
 
+IntegrationTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
+{}
+
 void IntegrationTestsFixture::ParentRelic::Initialize(int value)
 {
     this->value = value;
@@ -23,11 +26,20 @@ Reliquary& IntegrationTestsFixture::BasicCuratorBase::Owner()
 }
 
 std::function<void(IntegrationTestsFixture::BasicCuratorBase&)>
+    IntegrationTestsFixture::BasicCuratorBase::onPostConstruct = [](BasicCuratorBase&) {};
+
+std::function<void(IntegrationTestsFixture::BasicCuratorBase&)>
     IntegrationTestsFixture::BasicCuratorBase::onInitialize = [](BasicCuratorBase&){};
 
 IntegrationTestsFixture::BasicCuratorBase::BasicCuratorBase()
 {
     onWork = [](BasicCuratorBase&) {};
+}
+
+void IntegrationTestsFixture::BasicCuratorBase::PostConstructImplementation()
+{
+    onPostConstruct(*this);
+    onPostConstruct = [](BasicCuratorBase&) {};
 }
 
 void IntegrationTestsFixture::BasicCuratorBase::InitializeImplementation()
@@ -52,6 +64,9 @@ namespace Arca
 {
     const TypeName Traits<::IntegrationTestsFixture::BasicShard>::typeName =
         "IntegrationTestsBasicShard";
+
+    const TypeName Traits<::IntegrationTestsFixture::OtherShard>::typeName =
+        "IntegrationTestsOtherShard";
 
     const TypeName Traits<::IntegrationTestsFixture::BasicSignal>::typeName =
         "IntegrationTestsBasicSignal";
@@ -235,6 +250,68 @@ SCENARIO_METHOD(IntegrationTestsFixture, "curators with custom signal execution"
                         ++i;
                         return returnValue;
                     }));
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(
+    IntegrationTestsFixture,
+    "composite shard batch with either in it is occupied after loading",
+    "[integration][curator][composite][either][serialization]")
+{
+    GIVEN("registered reliquary and 3 relics with both shards")
+    {
+        using FocusedCurator = BasicCurator<0>;
+
+        const auto savedReliquary = ReliquaryOrigin()
+            .Type<BasicShard>()
+            .Type<OtherShard>()
+            .Type<BasicSignal>()
+            .Type<FocusedCurator>()
+            .Actualize();
+
+        auto relic0 = savedReliquary->Create<OpenRelic>();
+        relic0->Create<BasicShard>();
+        relic0->Create<OtherShard>();
+        auto relic1 = savedReliquary->Create<OpenRelic>();
+        relic1->Create<BasicShard>();
+        relic1->Create<OtherShard>();
+        auto relic2 = savedReliquary->Create<OpenRelic>();
+        relic2->Create<BasicShard>();
+        relic2->Create<OtherShard>();
+
+        WHEN("saving reliquary")
+        {
+            {
+                auto output = Inscription::OutputBinaryArchive("Test.dat", "Test", 1);
+                output(*savedReliquary);
+            }
+
+            WHEN("loading reliquary and taking batch in PostConstruct")
+            {
+
+                const auto loadedReliquary = ReliquaryOrigin()
+                    .Type<BasicShard>()
+                    .Type<OtherShard>()
+                    .Type<BasicSignal>()
+                    .Type<FocusedCurator>()
+                    .Actualize();
+
+                Batch<All<BasicShard, OtherShard>> compositeBatch;
+
+                FocusedCurator::onPostConstruct = [&compositeBatch](BasicCuratorBase& curator)
+                {
+                    compositeBatch = curator.Owner().Batch<All<BasicShard, OtherShard>>();
+                };
+
+                auto input = Inscription::InputBinaryArchive("Test.dat", "Test");
+                input(*loadedReliquary);
+
+                THEN("batch is occupied")
+                {
+                    REQUIRE(compositeBatch.Size() == 3);
+                }
             }
         }
     }

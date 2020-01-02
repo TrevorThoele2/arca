@@ -14,6 +14,7 @@ class IntegrationTestsFixture : public GeneralFixture
 {
 public:
     class BasicShard;
+    class OtherShard;
     struct BasicSignal;
     class ChildRelic;
     class ParentRelic;
@@ -26,6 +27,13 @@ namespace Arca
 {
     template<>
     struct Traits<::IntegrationTestsFixture::BasicShard>
+    {
+        static const ObjectType objectType = ObjectType::Shard;
+        static const TypeName typeName;
+    };
+
+    template<>
+    struct Traits<::IntegrationTestsFixture::OtherShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
         static const TypeName typeName;
@@ -74,6 +82,15 @@ public:
     explicit BasicShard(std::string myValue);
 };
 
+class IntegrationTestsFixture::OtherShard
+{
+public:
+    int myValue;
+public:
+    OtherShard() = default;
+    explicit OtherShard(int myValue);
+};
+
 struct IntegrationTestsFixture::BasicSignal
 {
     int value = 0;
@@ -103,6 +120,7 @@ class IntegrationTestsFixture::BasicCuratorBase : public Curator
 {
 public:
     bool shouldAbort = false;
+    static std::function<void(BasicCuratorBase&)> onPostConstruct;
     static std::function<void(BasicCuratorBase&)> onInitialize;
     std::function<void(BasicCuratorBase&)> onWork;
 
@@ -112,6 +130,7 @@ public:
 public:
     BasicCuratorBase();
 protected:
+    void PostConstructImplementation() override;
     void InitializeImplementation() override;
     void WorkImplementation(Stage& stage) override;
 };
@@ -128,6 +147,17 @@ namespace Inscription
     template<>
     class Scribe<::IntegrationTestsFixture::BasicShard, BinaryArchive> final
         : public ArcaCompositeScribe<::IntegrationTestsFixture::BasicShard, BinaryArchive>
+    {
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        {
+            archive(object.myValue);
+        }
+    };
+
+    template<>
+    class Scribe<::IntegrationTestsFixture::OtherShard, BinaryArchive> final
+        : public ArcaCompositeScribe<::IntegrationTestsFixture::OtherShard, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
