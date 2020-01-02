@@ -338,3 +338,47 @@ SCENARIO_METHOD(CompositeShardBatchFixture, "composite shard batch with either",
         }
     }
 }
+
+SCENARIO_METHOD(CompositeShardBatchFixture, "composite batch serialization", "[CompositeShardBatch][serialization]")
+{
+    GIVEN("saved reliquary")
+    {
+        auto savedReliquary = ReliquaryOrigin()
+            .Type<Shard<0>>()
+            .Type<Shard<1>>()
+            .Type<Shard<2>>()
+            .Actualize();
+
+        auto savedRelic = savedReliquary->Create<OpenRelic>();
+        savedRelic->Create<Shard<0>>();
+        savedRelic->Create<Shard<1>>();
+        savedRelic->Create<Shard<2>>();
+
+        {
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            outputArchive(*savedReliquary);
+        }
+
+        WHEN("loading reliquary")
+        {
+            auto loadedReliquary = ReliquaryOrigin()
+                .Type<Shard<0>>()
+                .Type<Shard<1>>()
+                .Type<Shard<2>>()
+                .Actualize();
+
+            {
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                inputArchive(*loadedReliquary);
+            }
+
+            auto batch = loadedReliquary->Batch<All<Shard<0>, Shard<1>, Shard<2>>>();
+
+            THEN("batch is occupied")
+            {
+                REQUIRE(batch.Size() == 1);
+                REQUIRE(!batch.IsEmpty());
+            }
+        }
+    }
+}
