@@ -23,10 +23,10 @@ public:
     explicit Shard(int value);
 };
 
-class EitherShardBatchFixture::Relic : public ClosedTypedRelicAutomation<Relic, Shard>
+class EitherShardBatchFixture::Relic final : public ClosedTypedRelicAutomation<Relic, Shard>
 {};
 
-class EitherShardBatchFixture::GlobalRelic : public ClosedTypedRelicAutomation<GlobalRelic, Shard>
+class EitherShardBatchFixture::GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic, Shard>
 {};
 
 namespace Arca
