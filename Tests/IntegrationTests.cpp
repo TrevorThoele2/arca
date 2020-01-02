@@ -264,6 +264,13 @@ SCENARIO_METHOD(
     {
         using FocusedCurator = BasicCurator<0>;
 
+        Batch<All<BasicShard, OtherShard>> compositeBatch;
+
+        FocusedCurator::onPostConstruct = [&compositeBatch](BasicCuratorBase& curator)
+        {
+            compositeBatch = curator.Owner().Batch<All<BasicShard, OtherShard>>();
+        };
+
         const auto savedReliquary = ReliquaryOrigin()
             .Type<BasicShard>()
             .Type<OtherShard>()
@@ -290,6 +297,10 @@ SCENARIO_METHOD(
 
             WHEN("loading reliquary and taking batch in PostConstruct")
             {
+                FocusedCurator::onPostConstruct = [&compositeBatch](BasicCuratorBase& curator)
+                {
+                    compositeBatch = curator.Owner().Batch<All<BasicShard, OtherShard>>();
+                };
 
                 const auto loadedReliquary = ReliquaryOrigin()
                     .Type<BasicShard>()
@@ -297,8 +308,6 @@ SCENARIO_METHOD(
                     .Type<BasicSignal>()
                     .Type<FocusedCurator>()
                     .Actualize();
-
-                Batch<All<BasicShard, OtherShard>> compositeBatch;
 
                 FocusedCurator::onPostConstruct = [&compositeBatch](BasicCuratorBase& curator)
                 {

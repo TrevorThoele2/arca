@@ -76,6 +76,12 @@ namespace Arca
     ReliquaryShards::CompositeBatchSources::CompositeBatchSources(ReliquaryShards& owner) : MetaBatchSources(owner)
     {}
 
+    void ReliquaryShards::ClearMetaBatchSources()
+    {
+        eitherBatchSources.map.clear();
+        compositeBatchSources.map.clear();
+    }
+
     bool ReliquaryShards::HasEitherType(Type type, RelicID id) const
     {
         auto otherType = std::move(type);

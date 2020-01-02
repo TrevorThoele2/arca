@@ -78,6 +78,12 @@ namespace Arca
     }
 
     template<class T>
+    void BatchSource<T, std::enable_if_t<is_either_v<T>>>::Clear()
+    {
+        list.clear();
+    }
+
+    template<class T>
     auto BatchSource<T, std::enable_if_t<is_either_v<T>>>::Find(RelicID id, bool isConst) -> const ShardT*
     {
         auto found = std::find_if(

@@ -131,6 +131,8 @@ namespace Arca
         } compositeBatchSources = CompositeBatchSources(*this);
 
         KnownPolymorphicSerializerList serializers;
+
+        void ClearMetaBatchSources();
     public:
         ReliquaryShards(const ReliquaryShards& arg) = delete;
         ReliquaryShards& operator=(const ReliquaryShards& arg) = delete;

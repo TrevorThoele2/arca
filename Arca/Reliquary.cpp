@@ -151,6 +151,8 @@ namespace Inscription
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::Load(ObjectT& object, ArchiveT& archive)
     {
+        object.shards.ClearMetaBatchSources();
+
         for(auto loop = object.relics.metadataList.begin(); loop != object.relics.metadataList.end();)
         {
             if (loop->locality == Arca::Locality::Global && !loop->shouldSerialize)
