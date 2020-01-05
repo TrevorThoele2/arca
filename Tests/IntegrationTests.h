@@ -29,35 +29,35 @@ namespace Arca
     struct Traits<::IntegrationTestsFixture::BasicShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "IntegrationTestsBasicShard";
     };
 
     template<>
     struct Traits<::IntegrationTestsFixture::OtherShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "IntegrationTestsOtherShard";
     };
 
     template<>
     struct Traits<::IntegrationTestsFixture::BasicSignal>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "IntegrationTestsBasicSignal";
     };
 
     template<>
     struct Traits<::IntegrationTestsFixture::ChildRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "IntegrationTestsChildRelic";
     };
 
     template<>
     struct Traits<::IntegrationTestsFixture::ParentRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "IntegrationTestsParentRelic";
         static bool ShouldCreate(Reliquary& reliquary, int value);
     };
 
@@ -65,12 +65,9 @@ namespace Arca
     struct Traits<::IntegrationTestsFixture::BasicCurator<differentiator>>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static const TypeName typeName;
+        static inline const TypeName typeName =
+            "IntegrationTestsBasicCurator" + ::Chroma::ToString(differentiator);
     };
-
-    template<size_t differentiator>
-    const TypeName Traits<::IntegrationTestsFixture::BasicCurator<differentiator>>::typeName =
-        "IntegrationTestsBasicCurator" + ::Chroma::ToString(differentiator);
 }
 
 class IntegrationTestsFixture::BasicShard

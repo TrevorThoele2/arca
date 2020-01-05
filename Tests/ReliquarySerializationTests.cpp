@@ -58,57 +58,6 @@ void ReliquarySerializationTestsFixture::MovableOnlyRelic::PostConstruct(ShardTu
     basicShard = std::get<0>(shards);
 }
 
-namespace Arca
-{
-    const TypeName Traits<::ReliquarySerializationTestsFixture::BasicShard>::typeName =
-        "ReliquarySerializationTestsBasicShard";
-
-    const TypeName Traits<::ReliquarySerializationTestsFixture::BasicShardWithDifferentInputHandle>::typeName =
-        "ReliquarySerializationTestsBasicShardWithDifferentInputHandle";
-
-    const TypeName Traits<::ReliquarySerializationTestsFixture::OtherShard>::typeName =
-        "ReliquarySerializationTestsOtherShard";
-
-    const TypeName Traits<::ReliquarySerializationTestsFixture::TypedClosedRelic>::typeName =
-        "ReliquarySerializationTestsTypedClosedRelic";
-
-    const TypeName Traits<::ReliquarySerializationTestsFixture::TypedOpenRelic>::typeName =
-        "ReliquarySerializationTestsTypedOpenRelic";
-
-    const TypeName Traits<::ReliquarySerializationTestsFixture::GlobalRelic>::typeName =
-        "ReliquarySerializationTestsGlobalRelic";
-
-    const TypeName Traits<::ReliquarySerializationTestsFixture::BasicCurator>::typeName =
-        "ReliquarySerializationTestsBasicCurator";
-
-    const TypeName Traits<::ReliquarySerializationTestsFixture::BasicSignal>::typeName =
-        "ReliquarySerializationTestsBasicSignal";
-
-    const TypeName Traits<::ReliquarySerializationTestsFixture::BasicShardNullInscription>::typeName =
-        "ReliquarySerializationTestsBasicShardNullInscription";
-
-    const TypeName Traits<::ReliquarySerializationTestsFixture::OtherShardNullInscription>::typeName =
-        "ReliquarySerializationTestsOtherShardNullInscription";
-
-    const TypeName Traits<::ReliquarySerializationTestsFixture::TypedClosedRelicNullInscription>::typeName =
-        "ReliquarySerializationTestsTypedClosedRelicNullInscription";
-
-    const TypeName Traits<::ReliquarySerializationTestsFixture::TypedOpenRelicNullInscription>::typeName =
-        "ReliquarySerializationTestsTypedOpenRelicNullInscription";
-
-    const TypeName Traits<::ReliquarySerializationTestsFixture::GlobalRelicNullInscription>::typeName =
-        "ReliquarySerializationTestsGlobalRelicNullInscription";
-
-    const TypeName Traits<::ReliquarySerializationTestsFixture::MovableOnlyRelic>::typeName =
-        "ReliquarySerializationTestsMovableOnlyRelic";
-
-    const TypeName Traits<::ReliquarySerializationTestsFixture::BasicCuratorNullInscription>::typeName =
-        "ReliquarySerializationTestsBasicCuratorNullInscription";
-
-    const TypeName Traits<::ReliquarySerializationTestsFixture::BasicSignalNullInscription>::typeName =
-        "ReliquarySerializationTestsBasicSignalNullInscription";
-}
-
 const Inscription::BinaryArchive::StreamPosition defaultOutputArchiveSize = 127;
 
 SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "[reliquary][serialization]")

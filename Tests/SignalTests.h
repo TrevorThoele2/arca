@@ -20,6 +20,6 @@ namespace Arca
     struct Traits<::SignalTestsFixture::BasicSignal>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "SignalTestsBasicSignal";
     };
 }

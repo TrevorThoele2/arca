@@ -4,18 +4,6 @@
 
 #include <Arca/IsType.h>
 
-namespace Arca
-{
-    const TypeName Traits<IsTypeTestsFixture::Shard>::typeName =
-        "IsTypeTestsShard";
-
-    const TypeName Traits<IsTypeTestsFixture::Relic>::typeName =
-        "IsTypeTestsRelic";
-
-    const TypeName Traits<IsTypeTestsFixture::Curator>::typeName =
-        "IsTypeTestsCurator";
-}
-
 SCENARIO_METHOD(IsTypeTestsFixture, "is type", "[IsType]")
 {
     GIVEN("shard type name")

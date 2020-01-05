@@ -6,14 +6,6 @@ RelicBatchFixture::Shard::Shard(int value) :
     value(value)
 {}
 
-namespace Arca
-{
-    const TypeName Traits<RelicBatchFixture::Relic>::typeName = "RelicBatchTestsRelic";
-    const TypeName Traits<RelicBatchFixture::GlobalRelic>::typeName = "RelicBatchTestsGlobalRelic";
-    const TypeName Traits<RelicBatchFixture::UnregisteredRelic>::typeName = "RelicBatchTestsUnregisteredRelic";
-    const TypeName Traits<RelicBatchFixture::Shard>::typeName = "RelicBatchTestsShard";
-}
-
 SCENARIO_METHOD(RelicBatchFixture, "default relic batch", "[RelicBatch]")
 {
     GIVEN("default relic batch")

@@ -62,28 +62,28 @@ namespace Arca
     struct Traits<::HandleTestsFixture::Shard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "HandleTestsShard";
     };
 
     template<>
     struct Traits<::HandleTestsFixture::OtherShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "HandleTestsOtherShard";
     };
 
     template<>
     struct Traits<::HandleTestsFixture::TypedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "HandleTestsTypedRelic";
     };
 
     template<>
     struct Traits<::HandleTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "HandleTestsGlobalRelic";
         static const Locality locality = Locality::Global;
     };
 
@@ -91,14 +91,14 @@ namespace Arca
     struct Traits<::HandleTestsFixture::Curator>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "HandleTestsBasicCurator";
     };
 
     template<>
     struct Traits<::HandleTestsFixture::Signal>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "HandleTestsBasicSignal";
     };
 }
 

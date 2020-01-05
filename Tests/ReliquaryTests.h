@@ -71,35 +71,35 @@ namespace Arca
     struct Traits<::ReliquaryTestsFixture::BasicShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "ReliquaryTestsBasicShard";
     };
 
     template<>
     struct Traits<::ReliquaryTestsFixture::OtherBasicShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "ReliquaryTestsOtherBasicShard";
     };
 
     template<>
     struct Traits<::ReliquaryTestsFixture::OtherShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "ReliquaryTestsOtherShard";
     };
 
     template<>
     struct Traits<::ReliquaryTestsFixture::BasicTypedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "ReliquaryTestsBasicTypedRelic";
     };
 
     template<>
     struct Traits<::ReliquaryTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "ReliquaryTestsGlobalRelic";
         static const Locality locality = Locality::Global;
     };
 
@@ -107,14 +107,14 @@ namespace Arca
     struct Traits<::ReliquaryTestsFixture::BasicCurator>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "ReliquaryTestsBasicCurator";
     };
 
     template<>
     struct Traits<::ReliquaryTestsFixture::BasicSignal>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "ReliquaryTestsBasicSignal";
     };
 }
 

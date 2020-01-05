@@ -42,19 +42,15 @@ namespace Arca
     struct Traits<CuratorTestsFixture::BasicCurator>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "BasicCurator";
     };
-
-    const TypeName Traits<CuratorTestsFixture::BasicCurator>::typeName = "BasicCurator";
 
     template<>
     struct Traits<CuratorTestsFixture::OtherBasicCurator>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "OtherBasicCurator";
     };
-
-    const TypeName Traits<CuratorTestsFixture::OtherBasicCurator>::typeName = "OtherBasicCurator";
 }
 
 template<size_t id>

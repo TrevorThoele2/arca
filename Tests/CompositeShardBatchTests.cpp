@@ -4,15 +4,6 @@
 
 #include <Arca/CompositeShardBatch.h>
 
-namespace Arca
-{
-    const TypeName Traits<CompositeShardBatchFixture::Relic>::typeName
-        = "EitherShardBatchTestsRelic";
-
-    const TypeName Traits<CompositeShardBatchFixture::GlobalRelic>::typeName
-        = "EitherShardBatchTestsGlobalRelic";
-}
-
 SCENARIO_METHOD(CompositeShardBatchFixture, "default composite shards batch", "[CompositeShardBatch]")
 {
     GIVEN("default composite shards batch")

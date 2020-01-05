@@ -8,18 +8,6 @@ EitherShardBatchFixture::Shard::Shard(int value) :
     value(value)
 {}
 
-namespace Arca
-{
-    const TypeName Traits<EitherShardBatchFixture::Shard>::typeName
-        = "EitherShardBatchTestsShard";
-
-    const TypeName Traits<EitherShardBatchFixture::Relic>::typeName
-        = "EitherShardBatchTestsRelic";
-
-    const TypeName Traits<EitherShardBatchFixture::GlobalRelic>::typeName
-        = "EitherShardBatchTestsGlobalRelic";
-}
-
 SCENARIO_METHOD(EitherShardBatchFixture, "default either shard batch", "[EitherBatch]")
 {
     GIVEN("default either batch")
