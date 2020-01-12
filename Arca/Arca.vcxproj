@@ -132,9 +132,7 @@
   <ItemGroup>
     <ClCompile Include="TransferableSignal.cpp" />
     <ClCompile Include="CompositeShardBatchSource.cpp" />
-    <ClCompile Include="Created.cpp" />
     <ClCompile Include="StoredCurator.cpp" />
-    <ClCompile Include="Destroying.cpp" />
     <ClCompile Include="EitherShardBatchSource.cpp" />
     <ClCompile Include="ClosedRelic.cpp" />
     <ClCompile Include="HandleSlim.cpp" />
@@ -146,7 +144,6 @@
     <ClCompile Include="PipelineException.cpp" />
     <ClCompile Include="RelicBatchSource.cpp" />
     <ClCompile Include="Handle.cpp" />
-    <ClCompile Include="RelicParented.cpp" />
     <ClCompile Include="ReliquaryComponent.cpp" />
     <ClCompile Include="ReliquaryCurators.cpp" />
     <ClCompile Include="ReliquaryRelics.cpp" />

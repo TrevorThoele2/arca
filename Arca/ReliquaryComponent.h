@@ -99,6 +99,15 @@ namespace Arca
                 return static_cast<BatchSource<ObjectT>*>(found->second.get());
             }
 
+            [[nodiscard]] BatchSourceBaseT& Required(const TypeName& typeName) const
+            {
+                auto found = Find(typeName);
+                if (!found)
+                    throw owner->NotRegistered(Type(typeName));
+
+                return *found;
+            }
+
             template<class ObjectT, std::enable_if_t<is_object<ObjectT>::value, int> = 0>
             [[nodiscard]] BatchSource<ObjectT>& Required() const
             {

@@ -200,8 +200,8 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
 
             THEN("relic does not have shard")
             {
-                REQUIRE_THROWS_AS(loadedRelic->Find<BasicShard>(), NotRegistered);
-                REQUIRE_THROWS_AS(Arca::LocalPtr<BasicShard>(loadedRelic->ID(), *loadedReliquary), NotRegistered);
+                REQUIRE_THROWS_AS(loadedRelic->Find<BasicShard>().Get(), NotRegistered);
+                REQUIRE_THROWS_AS(Arca::LocalPtr<BasicShard>(loadedRelic->ID(), *loadedReliquary).Get(), NotRegistered);
             }
 
             THEN("relic owner is loaded reliquary")

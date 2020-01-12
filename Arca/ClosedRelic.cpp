@@ -26,6 +26,4 @@ namespace Arca
     {
         return *owner;
     }
-
-    const TypeName Traits<ClosedRelic>::typeName = "ClosedRelic";
 }

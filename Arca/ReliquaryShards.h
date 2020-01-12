@@ -32,7 +32,9 @@ namespace Arca
         template<class ShardT>
         LocalPtr<ShardT> Create(RelicID id);
 
-        void Destroy(const Handle& handle);
+        void Destroy(const Type& type, RelicID id);
+        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        void Destroy(RelicID id);
 
         [[nodiscard]] bool Contains(const Handle& handle) const;
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
@@ -129,6 +131,10 @@ namespace Arca
             [[nodiscard]] static std::type_index KeyFor();
             friend MetaBatchSources<std::type_index, CompositeShardBatchSourceBase, ReliquaryShards, CompositeBatchSources, is_composite>;
         } compositeBatchSources = CompositeBatchSources(*this);
+
+        using Destroyer = std::function<void(Reliquary&, RelicID, bool)>;
+        using DestroyerMap = std::unordered_map<TypeName, Destroyer>;
+        DestroyerMap destroyerMap;
 
         KnownPolymorphicSerializerList serializers;
 

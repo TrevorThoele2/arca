@@ -9,27 +9,19 @@
 
 namespace Arca
 {
-    void ReliquaryRelics::Destroy(const Handle& handle)
+    void ReliquaryRelics::Destroy(const TypeName& typeName, RelicID id)
     {
-        assert(handle.ObjectType() == HandleObjectType::Relic);
+        const auto destroyer = destroyerMap.find(typeName);
+        if (destroyer == destroyerMap.end())
+            throw NotRegistered(Type(typeName));
 
-        if (&handle.Owner() != &Owner())
-            return;
-
-        const auto metadata = MetadataFor(handle.ID());
-        if (!WillDestroy(metadata))
-            return;
-
-        Destroy(*metadata);
+        destroyer->second(Owner(), id);
     }
 
-    void ReliquaryRelics::AttemptClear(const Type& type)
+    void ReliquaryRelics::Clear(const TypeName& typeName)
     {
-        auto batchSource = batchSources.Find(type.name);
-        if (!batchSource)
-            return;
-
-        batchSource->DestroyAllFromBase(Owner());
+        auto& batchSource = batchSources.Required(typeName);
+        batchSource.DestroyAllFromBase(Owner());
     }
 
     std::optional<Handle> ReliquaryRelics::ParentOf(const Handle& child) const

@@ -132,6 +132,12 @@ namespace Arca
             reliquary.relics.batchSources.map.emplace(
                 type.name,
                 std::make_unique<BatchSource<RelicT>>(reliquary));
+            reliquary.relics.destroyerMap.emplace(
+                type.name,
+                [](Reliquary& reliquary, RelicID id)
+                {
+                    reliquary.Destroy<RelicT>(id);
+                });
             if (HasScribe<RelicT>())
             {
                 reliquary.relics.serializers.push_back(
@@ -151,6 +157,9 @@ namespace Arca
             }
         };
         relicList.emplace_back(type.name, factory);
+
+        Type<CreatedKnown<RelicT>>();
+        Type<DestroyingKnown<RelicT>>();
 
         return *this;
     }
@@ -221,6 +230,12 @@ namespace Arca
                         ? creator(reliquary.shards.batchSources.Find<const ShardT>())
                         : creator(reliquary.shards.batchSources.Find<ShardT>());
                 });
+            reliquary.shards.destroyerMap.emplace(
+                type.name,
+                [](Reliquary& reliquary, RelicID id, bool isConst)
+                {
+                    reliquary.shards.Destroy<ShardT>(id);
+                });
 
             if (HasScribe<ShardT>())
             {
@@ -243,8 +258,10 @@ namespace Arca
                     });
             }
         };
-
         shardList.emplace_back(type.name, std::move(factory));
+
+        Type<CreatedKnown<ShardT>>();
+        Type<DestroyingKnown<ShardT>>();
 
         return *this;
     }
@@ -252,7 +269,8 @@ namespace Arca
     template<class CuratorT, class... Args, std::enable_if_t<is_curator_v<CuratorT>, int>>
     ReliquaryOrigin& ReliquaryOrigin::Type(Args&& ... args)
     {
-        CuratorCommon<CuratorT, CuratorProvider<CuratorT, Args...>>(std::make_tuple(std::forward<Args>(args)...));
+        using ProviderT = CuratorProvider<CuratorT, Args...>;
+        CuratorCommon<CuratorT, ProviderT>(typename ProviderT::ArgumentTuple{ std::forward<Args>(args)... });
 
         return *this;
     }
@@ -407,7 +425,9 @@ namespace Arca
         if (IsCuratorRegistered<CuratorT>())
             throw AlreadyRegistered("curator", type, typeid(CuratorT));
 
-        curatorProviders.emplace(type.name, std::make_unique<CuratorProvider>(std::forward<Args>(args)...));
+        curatorProviders.emplace(
+            type.name,
+            std::make_unique<CuratorProvider>(std::forward<Args>(args)...));
         if (HasScribe<CuratorT>())
         {
             const auto curatorSerializationTypesFactory = [](Reliquary& reliquary)

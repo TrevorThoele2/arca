@@ -45,7 +45,7 @@ namespace Arca
         using ArgumentTuple = std::tuple<Args...>;
         ArgumentTuple arguments;
     public:
-        explicit CuratorProvider(ArgumentTuple&& arguments);
+        explicit CuratorProvider(ArgumentTuple arguments);
 
         [[nodiscard]] std::unique_ptr<CuratorProviderBase> Clone() const override;
     protected:
@@ -53,7 +53,7 @@ namespace Arca
     };
 
     template<class Curator, class... Args>
-    CuratorProvider<Curator, Args...>::CuratorProvider(ArgumentTuple&& arguments) :
+    CuratorProvider<Curator, Args...>::CuratorProvider(ArgumentTuple arguments) :
         CuratorProviderBase(TypeFor<Curator>()), arguments(std::move(arguments))
     {}
 
@@ -66,7 +66,12 @@ namespace Arca
     template<class Curator, class... Args>
     auto CuratorProvider<Curator, Args...>::ProvideImpl() -> ProvidedCurator
     {
-        return std::make_unique<Curator>();
+        return std::apply(
+            [](auto&& ... args) -> std::unique_ptr<Curator>
+            {
+                return std::make_unique<Curator>(std::forward<Args>(args)...);
+            },
+            arguments);
     }
 
     class ExternalCuratorProvider final : public CuratorProviderBase

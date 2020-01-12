@@ -27,8 +27,6 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
             .Type<GlobalRelic>()
             .Actualize();
 
-        auto& test = *static_cast<Reliquary*>(nullptr);
-
         WHEN("retrieving global relic")
         {
             const auto globalRelic = Arca::GlobalPtr<GlobalRelic>(*reliquary);
@@ -39,17 +37,9 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
                 REQUIRE(globalRelic->basicShard);
             }
 
-            THEN("cannot destroy relic")
+            THEN("throws when trying to destroy relic through handle")
             {
-                auto preDestroyRelicCount = reliquary->RelicSize();
-
-                reliquary->Destroy(AsHandle(*globalRelic));
-
-                auto foundAgain = Arca::GlobalPtr<GlobalRelic>(*reliquary);
-
-                REQUIRE(foundAgain->ID() == globalRelic->ID());
-                REQUIRE(foundAgain->basicShard == globalRelic->basicShard);
-                REQUIRE(preDestroyRelicCount == reliquary->RelicSize());
+                REQUIRE_THROWS_AS(reliquary->Destroy(AsHandle(*globalRelic)), NotRegistered);
             }
 
             WHEN("retrieving global relic as open")

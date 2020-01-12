@@ -29,6 +29,7 @@
     <ClInclude Include="HandleTests.h" />
     <ClInclude Include="IntegrationTests.h" />
     <ClInclude Include="IsTypeTests.h" />
+    <ClInclude Include="PtrTests.h" />
     <ClInclude Include="RelicBatchTests.h" />
     <ClInclude Include="ReliquaryOriginRegistrationTests.h" />
     <ClInclude Include="ReliquaryRegistrationTests.h" />
@@ -36,6 +37,7 @@
     <ClInclude Include="ShardBatchTests.h" />
     <ClInclude Include="ReliquaryFixture.h" />
     <ClInclude Include="ReliquaryTests.h" />
+    <ClInclude Include="ShardTests.h" />
     <ClInclude Include="SignalBatchTests.h" />
     <ClInclude Include="RelicTests.h" />
     <ClInclude Include="SignalTests.h" />
@@ -52,6 +54,7 @@
     <ClCompile Include="IntegrationTests.cpp" />
     <ClCompile Include="IsTypeTests.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="PtrTests.cpp" />
     <ClCompile Include="RelicBatchTests.cpp" />
     <ClCompile Include="ReliquaryOriginRegistrationTests.cpp" />
     <ClCompile Include="ReliquaryRegistrationTests.cpp" />
@@ -59,6 +62,7 @@
     <ClCompile Include="ShardBatchTests.cpp" />
     <ClCompile Include="ReliquaryFixture.cpp" />
     <ClCompile Include="ReliquaryTests.cpp" />
+    <ClCompile Include="ShardTests.cpp" />
     <ClCompile Include="SignalBatchTests.cpp" />
     <ClCompile Include="RelicTests.cpp" />
     <ClCompile Include="SignalTests.cpp" />

@@ -68,6 +68,14 @@ public:
                 stage.Abort();
         }
     };
+
+    class CuratorWithNonDefaultConstructor final : public Curator
+    {
+    public:
+        int myValue = 0;
+
+        explicit CuratorWithNonDefaultConstructor(int myValue);
+    };
 };
 
 template<size_t id>
@@ -121,4 +129,9 @@ namespace Inscription
 
         using BaseT::Scriven;
     };
+
+    template<>
+    class Scribe<CuratorTestsFixture::CuratorWithNonDefaultConstructor, BinaryArchive> final :
+        public ArcaNullScribe<CuratorTestsFixture::CuratorWithNonDefaultConstructor, BinaryArchive>
+    {};
 }

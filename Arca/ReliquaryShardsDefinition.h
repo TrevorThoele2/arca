@@ -25,6 +25,29 @@ namespace Arca
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
+    void ReliquaryShards::Destroy(RelicID id)
+    {
+        Relics().ShardModificationRequired(id);
+
+        {
+            for (auto& eitherShardBatchSource : eitherBatchSources.map)
+                eitherShardBatchSource.second->DestroyFromBase(id);
+        }
+
+        auto& map = batchSources.MapFor<ShardT>();
+        auto shardBatchSource = map.find(TypeFor<ShardT>().name);
+        if (shardBatchSource != batchSources.map.end())
+        {
+            if (shardBatchSource->second->DestroyFromBase(id))
+            {
+                Owner().Raise<DestroyingKnown<ShardT>>(CreatePtr<ShardT>(id));
+                Owner().Raise<Destroying>(HandleFrom(id, shardBatchSource->second->Type(), HandleObjectType::Shard));
+                NotifyCompositesShardDestroy(id);
+            }
+        }
+    }
+
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     bool ReliquaryShards::Contains(RelicID id) const
     {
         auto& batchSource = batchSources.Required<ShardT>();
