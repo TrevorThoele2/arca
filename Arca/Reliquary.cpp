@@ -109,6 +109,8 @@ namespace Inscription
     {
         archive.EmplaceUserContext(&object);
 
+        archive(object.relics.nextRelicID);
+
         if (archive.IsOutput())
             Save(object, archive);
         else

@@ -116,7 +116,7 @@ namespace Arca
     {
         TupleT tuple;
         ::Chroma::IterateRange<::Chroma::VariadicTemplateSize, CompositeToTuple, Pack::count - 1>
-            (tuple, id, *owner);
+            (tuple, id, owner->Owner());
         return tuple;
     }
 
