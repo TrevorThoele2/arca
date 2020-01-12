@@ -17,6 +17,12 @@ namespace Arca
         return Arca::LocalPtr<EitherT>(id, Owner());
     }
 
+    template<class ShardsT, std::enable_if_t<is_composite_v<ShardsT>, int>>
+    CompositePtr<ShardsT> ClosedRelic::Find() const
+    {
+        return Arca::CompositePtr<ShardsT>(id, Owner());
+    }
+
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     bool ClosedRelic::Contains() const
     {

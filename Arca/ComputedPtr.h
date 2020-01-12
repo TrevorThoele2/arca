@@ -1,15 +1,12 @@
 #pragma once
 
-#include "IsRelic.h"
-#include "TypeFor.h"
+#include "UsableForComputedPtr.h"
+#include "PtrTypeFor.h"
 
 #include "Serialization.h"
 
 namespace Arca
 {
-    template<class T>
-    constexpr static bool usable_for_computed_ptr_v = !is_relic_v<T> && !is_shard_v<T> && !is_either_v<T>;
-
     template<class T>
     class ComputedPtr
     {
@@ -118,6 +115,18 @@ namespace Arca
     private:
         INSCRIPTION_ACCESS;
     };
+
+    template<class T>
+    struct PtrTypeFor<T, std::enable_if_t<usable_for_computed_ptr_v<T>>>
+    {
+        using Type = ComputedPtr<T>;
+    };
+
+    template<class T, std::enable_if_t<usable_for_computed_ptr_v<T>, int> = 0>
+    ComputedPtr<T> ToPtr(RelicID id, Reliquary& owner)
+    {
+        return ComputedPtr<T>(id, owner);
+    }
 }
 
 namespace Inscription

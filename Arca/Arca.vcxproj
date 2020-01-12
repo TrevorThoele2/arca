@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Composite.h" />
+    <ClInclude Include="CompositePtr.h" />
     <ClInclude Include="ComputedPtr.h" />
     <ClInclude Include="All.h" />
     <ClInclude Include="TransferableSignal.h" />
@@ -45,11 +47,15 @@
     <ClInclude Include="LocalityFor.h" />
     <ClInclude Include="LocalPtr.h" />
     <ClInclude Include="OpennessFor.h" />
-    <ClInclude Include="PtrFor.h" />
+    <ClInclude Include="PtrTypeFor.h" />
     <ClInclude Include="Shard.h" />
     <ClInclude Include="ShardList.h" />
     <ClInclude Include="ShardsFor.h" />
     <ClInclude Include="Signal.h" />
+    <ClInclude Include="UsableForCompositePtr.h" />
+    <ClInclude Include="UsableForComputedPtr.h" />
+    <ClInclude Include="UsableForGlobalPtr.h" />
+    <ClInclude Include="UsableForLocalPtr.h" />
     <ClInclude Include="UsableInAll.h" />
     <ClInclude Include="Either.h" />
     <ClInclude Include="EitherShardBatch.h" />

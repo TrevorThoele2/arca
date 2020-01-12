@@ -330,9 +330,6 @@
     <ClInclude Include="IsAll.h">
       <Filter>Header Files\Shard\Composite</Filter>
     </ClInclude>
-    <ClInclude Include="All.h">
-      <Filter>Header Files\Shard\Composite</Filter>
-    </ClInclude>
     <ClInclude Include="IsComposite.h">
       <Filter>Header Files\Shard\Composite</Filter>
     </ClInclude>
@@ -414,9 +411,6 @@
     <ClInclude Include="LocalPtr.h">
       <Filter>Header Files\Ptr</Filter>
     </ClInclude>
-    <ClInclude Include="PtrFor.h">
-      <Filter>Header Files\Ptr</Filter>
-    </ClInclude>
     <ClInclude Include="Signal.h">
       <Filter>Header Files\Signal</Filter>
     </ClInclude>
@@ -427,6 +421,30 @@
       <Filter>Header Files\Signal</Filter>
     </ClInclude>
     <ClInclude Include="ComputedPtr.h">
+      <Filter>Header Files\Ptr</Filter>
+    </ClInclude>
+    <ClInclude Include="CompositePtr.h">
+      <Filter>Header Files\Ptr</Filter>
+    </ClInclude>
+    <ClInclude Include="UsableForLocalPtr.h">
+      <Filter>Header Files\Ptr\Usable</Filter>
+    </ClInclude>
+    <ClInclude Include="UsableForGlobalPtr.h">
+      <Filter>Header Files\Ptr\Usable</Filter>
+    </ClInclude>
+    <ClInclude Include="UsableForCompositePtr.h">
+      <Filter>Header Files\Ptr\Usable</Filter>
+    </ClInclude>
+    <ClInclude Include="UsableForComputedPtr.h">
+      <Filter>Header Files\Ptr\Usable</Filter>
+    </ClInclude>
+    <ClInclude Include="All.h">
+      <Filter>Header Files\Shard\Composite</Filter>
+    </ClInclude>
+    <ClInclude Include="Composite.h">
+      <Filter>Header Files\Shard\Composite</Filter>
+    </ClInclude>
+    <ClInclude Include="PtrTypeFor.h">
       <Filter>Header Files\Ptr</Filter>
     </ClInclude>
   </ItemGroup>
@@ -577,6 +595,9 @@
     </Filter>
     <Filter Include="Source Files\Relic\Open">
       <UniqueIdentifier>{f42b3f06-82ee-428f-adf0-354c49789ba8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Ptr\Usable">
+      <UniqueIdentifier>{77a0550f-ea38-49d2-acd9-7f8379b18414}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

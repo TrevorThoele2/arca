@@ -1,8 +1,8 @@
 #pragma once
 
-#include "IsRelic.h"
-#include "IsGlobal.h"
 #include "TypeFor.h"
+#include "PtrTypeFor.h"
+#include "UsableForGlobalPtr.h"
 
 #include "HandleObjectTypeFor.h"
 
@@ -10,9 +10,6 @@
 
 namespace Arca
 {
-    template<class T>
-    constexpr static bool usable_for_global_ptr_v = is_relic_v<T> && is_global_v<T>;
-
     template<class T>
     class GlobalPtr
     {
@@ -137,6 +134,18 @@ namespace Arca
     private:
         INSCRIPTION_ACCESS;
     };
+
+    template<class T>
+    struct PtrTypeFor<T, std::enable_if_t<usable_for_global_ptr_v<T>>>
+    {
+        using Type = GlobalPtr<T>;
+    };
+
+    template<class T, std::enable_if_t<usable_for_global_ptr_v<T>, int> = 0>
+    GlobalPtr<T> ToPtr(RelicID, Reliquary& owner)
+    {
+        return GlobalPtr<T>(owner);
+    }
 }
 
 namespace Inscription

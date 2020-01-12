@@ -1,19 +1,16 @@
 #pragma once
 
-#include "IsLocal.h"
 #include "IsEither.h"
+#include "UsableForLocalPtr.h"
 
 #include "TypeFor.h"
+#include "PtrTypeFor.h"
 #include "HandleObjectTypeFor.h"
 
 #include "Serialization.h"
 
 namespace Arca
 {
-    template<class T>
-    constexpr static bool usable_for_local_ptr_v =
-        (is_relic_v<T> && is_local_v<T>) || is_either_v<T> || is_shard_v<T>;
-
     template<class T, class = void>
     struct LocalPtrValueT
     {
@@ -115,7 +112,7 @@ namespace Arca
         RelicID id = 0;
         Reliquary* owner = nullptr;
     private:
-        ValueT* FindValueFromOwner() const
+        [[nodiscard]] ValueT* FindValueFromOwner() const
         {
             if (owner == nullptr)
                 return nullptr;
@@ -125,6 +122,18 @@ namespace Arca
     private:
         INSCRIPTION_ACCESS;
     };
+
+    template<class T>
+    struct PtrTypeFor<T, std::enable_if_t<usable_for_local_ptr_v<T>>>
+    {
+        using Type = LocalPtr<T>;
+    };
+
+    template<class T, std::enable_if_t<usable_for_local_ptr_v<T>, int> = 0>
+    LocalPtr<T> ToPtr(RelicID id, Reliquary& owner)
+    {
+        return LocalPtr<T>(id, owner);
+    }
 }
 
 namespace Inscription

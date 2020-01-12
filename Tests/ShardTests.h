@@ -13,6 +13,12 @@ public:
     {
         int myInt;
     };
+
+    template<size_t i>
+    struct DifferentiableShard
+    {
+        int myInt;
+    };
 };
 
 namespace Arca
@@ -23,6 +29,13 @@ namespace Arca
         static const ObjectType objectType = ObjectType::Shard;
         static inline const TypeName typeName = "ShardTestsShard";
     };
+
+    template<size_t i>
+    struct Traits<ShardTestsFixture::DifferentiableShard<i>>
+    {
+        static const ObjectType objectType = ObjectType::Shard;
+        static inline const TypeName typeName = "ShardTestsDifferentiableShard" + Chroma::ToString(i);
+    };
 }
 
 namespace Inscription
@@ -30,5 +43,10 @@ namespace Inscription
     template<>
     class Scribe<ShardTestsFixture::Shard, BinaryArchive> final :
         public ArcaNullScribe<ShardTestsFixture::Shard, BinaryArchive>
+    {};
+
+    template<size_t i>
+    class Scribe<ShardTestsFixture::DifferentiableShard<i>, BinaryArchive> final :
+        public ArcaNullScribe<ShardTestsFixture::DifferentiableShard<i>, BinaryArchive>
     {};
 }
