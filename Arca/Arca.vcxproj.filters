@@ -447,6 +447,9 @@
     <ClInclude Include="PtrTypeFor.h">
       <Filter>Header Files\Ptr</Filter>
     </ClInclude>
+    <ClInclude Include="HasScribe.h">
+      <Filter>Header Files\Serialization</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">

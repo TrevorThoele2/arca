@@ -21,6 +21,10 @@ namespace Arca
         NotifyCompositesShardCreate(id);
 
         Owner().Raise<Created>(HandleFrom(id, type, HandleObjectType::Shard));
+        Owner().Raise<CreatedKnown<ShardT>>(CreatePtr<ShardT>(id));
+        using EitherT = Either<std::decay_t<ShardT>>;
+        Owner().Raise<CreatedKnown<EitherT>>(CreatePtr<EitherT>(id));
+
         return CreatePtr<ShardT>(id);
     }
 
@@ -40,6 +44,8 @@ namespace Arca
         {
             if (shardBatchSource->second->DestroyFromBase(id))
             {
+                using EitherT = Either<std::decay_t<ShardT>>;
+                Owner().Raise<DestroyingKnown<EitherT>>(CreatePtr<EitherT>(id));
                 Owner().Raise<DestroyingKnown<ShardT>>(CreatePtr<ShardT>(id));
                 Owner().Raise<Destroying>(HandleFrom(id, shardBatchSource->second->Type(), HandleObjectType::Shard));
                 NotifyCompositesShardDestroy(id);
@@ -225,9 +231,9 @@ namespace Arca
         return std::type_index(typeid(T));
     }
 
-    template<class ShardT>
-    LocalPtr<ShardT> ReliquaryShards::CreatePtr(RelicID id) const
+    template<class T>
+    auto ReliquaryShards::CreatePtr(RelicID id) const
     {
-        return { id, const_cast<Reliquary&>(Owner()) };
+        return ToPtr<T>(id, const_cast<Reliquary&>(Owner()));
     }
 }

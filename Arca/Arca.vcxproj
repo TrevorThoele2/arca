@@ -23,6 +23,7 @@
     <ClInclude Include="CompositePtr.h" />
     <ClInclude Include="ComputedPtr.h" />
     <ClInclude Include="All.h" />
+    <ClInclude Include="HasScribe.h" />
     <ClInclude Include="TransferableSignal.h" />
     <ClInclude Include="TransferableSignalDefinition.h" />
     <ClInclude Include="AsHandle.h" />

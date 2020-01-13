@@ -162,8 +162,8 @@ namespace Arca
     private:
         RelicMetadata& ValidateParentForParenting(const Handle& parent);
     private:
-        template<class RelicT>
-        LocalPtr<RelicT> CreatePtr(RelicID id) const;
+        template<class T>
+        auto CreatePtr(RelicID id) const;
     private:
         explicit ReliquaryRelics(Reliquary& owner);
         ReliquaryRelics(ReliquaryRelics&& arg) noexcept = default;

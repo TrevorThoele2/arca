@@ -13,6 +13,8 @@
 
 #include "AsHandle.h"
 
+#include "HasScribe.h"
+
 namespace Arca
 {
     template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
@@ -228,9 +230,9 @@ namespace Arca
         return added;
     }
 
-    template<class RelicT>
-    LocalPtr<RelicT> ReliquaryRelics::CreatePtr(RelicID id) const
+    template<class T>
+    auto ReliquaryRelics::CreatePtr(RelicID id) const
     {
-        return { id, const_cast<Reliquary&>(Owner()) };
+        return ToPtr<T>(id, const_cast<Reliquary&>(Owner()));
     }
 }

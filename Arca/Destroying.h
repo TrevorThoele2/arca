@@ -3,6 +3,7 @@
 #include "Traits.h"
 #include "Handle.h"
 #include "LocalPtr.h"
+#include "TypeFor.h"
 
 namespace Arca
 {
@@ -14,7 +15,7 @@ namespace Arca
     template<class T>
     struct DestroyingKnown
     {
-        LocalPtr<T> ptr;
+        typename PtrTypeFor<T>::Type ptr;
     };
 
     template<>
@@ -28,6 +29,6 @@ namespace Arca
     struct Traits<DestroyingKnown<T>>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static inline const TypeName typeName = "DestroyingKnown";
+        static inline const TypeName typeName = "DestroyingKnown<" + ::Chroma::ToString(TypeFor<T>()) + ">";
     };
 }

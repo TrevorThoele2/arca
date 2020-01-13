@@ -2,6 +2,7 @@
 
 #include <type_traits>
 #include "IsShard.h"
+#include "Traits.h"
 
 namespace Arca
 {
@@ -10,5 +11,11 @@ namespace Arca
     {
         using ShardT = const std::decay_t<T>;
         using BareT = std::decay_t<T>;
+    };
+
+    template<class T>
+    struct Traits<Either<T>>
+    {
+        static inline const TypeName typeName = "Either<" + Traits<std::decay_t<T>>::typeName + ">";
     };
 }

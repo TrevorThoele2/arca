@@ -80,16 +80,6 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
             .Type<BasicShard>()
             .Type<GlobalRelic>();
 
-        WHEN("actualizing and creating typed relic with type from global relic")
-        {
-            auto reliquary = origin.Actualize();
-
-            THEN("throws error")
-            {
-                REQUIRE_THROWS(reliquary->Create<GlobalRelic>());
-            }
-        }
-
         WHEN("registering int computation with global relic backing")
         {
             THEN("not throws error")
