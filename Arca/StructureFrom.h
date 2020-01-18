@@ -2,6 +2,8 @@
 
 #include "RelicStructure.h"
 
+#include "TypeFor.h"
+
 #include <Chroma/VariadicTemplate.h>
 #include <Chroma/Iterate.h>
 

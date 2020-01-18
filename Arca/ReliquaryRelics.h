@@ -101,7 +101,7 @@ namespace Arca
         RelicT* FindStorage(RelicID id);
     public:
         class BatchSources
-            : public StorageBatchSources<RelicBatchSourceBase, ReliquaryRelics, BatchSources, is_relic>
+            : public StorageBatchSourcesBase<RelicBatchSourceBase, ReliquaryRelics, BatchSources, is_relic>
         { 
         public:
             template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>

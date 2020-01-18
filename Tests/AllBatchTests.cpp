@@ -1,12 +1,12 @@
 #include <catch.hpp>
 
-#include "CompositeShardBatchTests.h"
+#include "AllBatchTests.h"
 
-#include <Arca/CompositeShardBatch.h>
+#include <Arca/All.h>
 
-SCENARIO_METHOD(CompositeShardBatchFixture, "default composite shards batch", "[CompositeShardBatch]")
+SCENARIO_METHOD(AllBatchTestsFixture, "default all shards batch", "[all][batch]")
 {
-    GIVEN("default composite shards batch")
+    GIVEN("default all batch")
     {
         Batch<All<Shard<0>, Shard<1>, Shard<2>>> batch;
 
@@ -64,7 +64,7 @@ SCENARIO_METHOD(CompositeShardBatchFixture, "default composite shards batch", "[
     }
 }
 
-SCENARIO_METHOD(CompositeShardBatchFixture, "composite shard batch", "[CompositeShardBatch]")
+SCENARIO_METHOD(AllBatchTestsFixture, "all batch", "[all][batch]")
 {
     GIVEN("registered reliquary and relic")
     {
@@ -111,7 +111,7 @@ SCENARIO_METHOD(CompositeShardBatchFixture, "composite shard batch", "[Composite
                     REQUIRE(batch.IsEmpty());
                 }
 
-                WHEN("adding a new relic")
+                WHEN("adding a new shard")
                 {
                     relic->Create<Shard<3>>();
 
@@ -189,7 +189,7 @@ SCENARIO_METHOD(CompositeShardBatchFixture, "composite shard batch", "[Composite
                     REQUIRE(batch.IsEmpty());
                 }
 
-                WHEN("adding a new relic")
+                WHEN("adding a new shard")
                 {
                     relic->Create<Shard<3>>();
 
@@ -249,7 +249,7 @@ SCENARIO_METHOD(CompositeShardBatchFixture, "composite shard batch", "[Composite
     }
 }
 
-SCENARIO_METHOD(CompositeShardBatchFixture, "composite shard batch with either", "[CompositeShardBatch][either]")
+SCENARIO_METHOD(AllBatchTestsFixture, "all batch with either", "[all][batch][either]")
 {
     GIVEN("registered reliquary and relic")
     {
@@ -277,7 +277,7 @@ SCENARIO_METHOD(CompositeShardBatchFixture, "composite shard batch with either",
                     REQUIRE(batch.Size() == 1);
                 }
 
-                THEN("returned shard contains each created shard")
+                THEN("returned matrix contains each created shard")
                 {
                     auto& first = *batch.begin();
                     REQUIRE(std::get<0>(first) == createdShard0);
@@ -306,7 +306,7 @@ SCENARIO_METHOD(CompositeShardBatchFixture, "composite shard batch with either",
                         REQUIRE(batch.Size() == 1);
                     }
 
-                    THEN("returned shard contains each created shard")
+                    THEN("returned matrix contains each created shard")
                     {
                         auto& first = *batch.begin();
                         REQUIRE(std::get<0>(first) == createdShard0);
@@ -330,7 +330,86 @@ SCENARIO_METHOD(CompositeShardBatchFixture, "composite shard batch with either",
     }
 }
 
-SCENARIO_METHOD(CompositeShardBatchFixture, "composite batch serialization", "[CompositeShardBatch][serialization]")
+SCENARIO_METHOD(AllBatchTestsFixture, "all formed batch", "[all][batch][signal]")
+{
+    GIVEN("registered reliquary, created relic and created batches")
+    {
+        auto reliquary = ReliquaryOrigin()
+            .Type<Shard<0>>()
+            .Type<Shard<1>>()
+            .Type<Shard<2>>()
+            .Type<Shard<3>>()
+            .Actualize();
+
+        auto relic = reliquary->Create<OpenRelic>();
+
+        auto formedBatch = reliquary->Batch<
+            MatrixFormed<All<Either<Shard<0>>, Either<Shard<1>>, Either<Shard<2>>>>>();
+        auto dissolvedBatch = reliquary->Batch<
+            MatrixDissolved<All<Either<Shard<0>>, Either<Shard<1>>, Either<Shard<2>>>>>();
+
+        WHEN("creating shards")
+        {
+            auto createdShard0 = relic->Create<Shard<0>>();
+            auto createdShard1 = relic->Create<Shard<1>>();
+            auto createdShard2 = relic->Create<Shard<2>>();
+
+            THEN("formed batch is not empty")
+            {
+                REQUIRE(!formedBatch.IsEmpty());
+                REQUIRE(formedBatch.Size() == 1);
+            }
+
+            THEN("formed batch contains matrix")
+            {
+                auto& first = *formedBatch.begin();
+                REQUIRE(std::get<0>(*first.ptr) == createdShard0);
+                REQUIRE(std::get<1>(*first.ptr) == createdShard1);
+                REQUIRE(std::get<2>(*first.ptr) == createdShard2);
+            }
+
+            THEN("formed batch begin is not end")
+            {
+                REQUIRE(formedBatch.begin() != formedBatch.end());
+            }
+
+            THEN("dissolved batch is empty")
+            {
+                REQUIRE(dissolvedBatch.IsEmpty());
+                REQUIRE(dissolvedBatch.Size() == 0);
+            }
+
+            THEN("dissolved batch begin is end")
+            {
+                REQUIRE(dissolvedBatch.begin() == dissolvedBatch.end());
+            }
+
+            WHEN("removing one shard")
+            {
+                relic->Destroy<Shard<0>>();
+
+                THEN("dissolved batch is not empty")
+                {
+                    REQUIRE(!dissolvedBatch.IsEmpty());
+                    REQUIRE(dissolvedBatch.Size() == 1);
+                }
+
+                THEN("dissolved batch contains matrix")
+                {
+                    REQUIRE(dissolvedBatch.begin()->ptr.ID() == relic->ID());
+                    REQUIRE(dissolvedBatch.begin()->ptr.Owner() == reliquary.get());
+                }
+
+                THEN("dissolved batch begin is not end")
+                {
+                    REQUIRE(dissolvedBatch.begin() != dissolvedBatch.end());
+                }
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(AllBatchTestsFixture, "all batch serialization", "[all][batch][serialization]")
 {
     GIVEN("saved reliquary")
     {

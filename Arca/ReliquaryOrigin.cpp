@@ -2,8 +2,6 @@
 
 #include <unordered_set>
 
-#include "Destroying.h"
-#include "RelicParented.h"
 #include "PipelineException.h"
 
 namespace Arca
@@ -12,10 +10,6 @@ namespace Arca
     {
         Type<OpenRelic>();
         Type<ClosedRelic>();
-
-        Type<Created>();
-        Type<Destroying>();
-        Type<RelicParented>();
     }
 
     ReliquaryOrigin::ReliquaryOrigin(const ReliquaryOrigin& arg) :
@@ -25,8 +19,7 @@ namespace Arca
         shardList(arg.shardList),
         curatorInitializationPipeline(arg.curatorInitializationPipeline),
         curatorWorkPipeline(arg.curatorWorkPipeline),
-        curatorSerializationTypesFactoryList(arg.curatorSerializationTypesFactoryList),
-        signalList(arg.signalList)
+        curatorSerializationTypesFactoryList(arg.curatorSerializationTypesFactoryList)
     {
         for (auto& provider : arg.curatorProviders)
             curatorProviders.emplace(provider.first, provider.second->Clone());
@@ -43,7 +36,6 @@ namespace Arca
         curatorInitializationPipeline = arg.curatorInitializationPipeline;
         curatorWorkPipeline = arg.curatorWorkPipeline;
         curatorSerializationTypesFactoryList = arg.curatorSerializationTypesFactoryList;
-        signalList = arg.signalList;
 
         return *this;
     }
@@ -51,9 +43,6 @@ namespace Arca
     std::unique_ptr<Reliquary> ReliquaryOrigin::Actualize() const
     {
         auto reliquary = std::make_unique<Reliquary>();
-
-        for (auto& initializer : signalList)
-            initializer.factory(*reliquary);
 
         reliquary->signals.batchSources.transferableSignals.emplace();
 
@@ -207,8 +196,4 @@ namespace Arca
 
         return createdPipeline;
     }
-
-    ReliquaryOrigin::SignalConstructor::SignalConstructor(std::type_index type, void(*factory)(Reliquary&))
-        : type(type), factory(factory)
-    {}
 }

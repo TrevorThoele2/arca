@@ -13,11 +13,10 @@ namespace Arca
         if (factory == factoryMap.end())
             throw NotRegistered(Type(type.name));
 
-        if (HasEitherType(type, id))
+        if (Contains(Handle(id, Owner(), type, HandleObjectType::Shard)))
             throw CannotCreate(type);
 
         factory->second(Owner(), id, type.isConst);
-        NotifyCompositesShardCreate(id);
     }
 
     void ReliquaryShards::Destroy(const Type& type, RelicID id)
@@ -51,39 +50,9 @@ namespace Arca
         return found->second.get();
     }
 
-    ReliquaryShards::BatchSources::BatchSources(ReliquaryShards& owner) : StorageBatchSources(owner)
+    ReliquaryShards::BatchSources::BatchSources(ReliquaryShards& owner) :
+        StorageBatchSourcesBase(owner)
     {}
-
-    ReliquaryShards::EitherBatchSources::EitherBatchSources(ReliquaryShards& owner) : MetaBatchSources(owner)
-    {}
-
-    ReliquaryShards::CompositeBatchSources::CompositeBatchSources(ReliquaryShards& owner) : MetaBatchSources(owner)
-    {}
-
-    void ReliquaryShards::ClearMetaBatchSources()
-    {
-        eitherBatchSources.map.clear();
-        compositeBatchSources.map.clear();
-    }
-
-    bool ReliquaryShards::HasEitherType(Type type, RelicID id) const
-    {
-        auto otherType = std::move(type);
-        otherType.isConst = !otherType.isConst;
-        return Contains(HandleFrom(id, otherType, HandleObjectType::Shard));
-    }
-
-    void ReliquaryShards::NotifyCompositesShardCreate(RelicID id)
-    {
-        for (auto& loop : compositeBatchSources.map)
-            loop.second->NotifyShardCreated(id);
-    }
-
-    void ReliquaryShards::NotifyCompositesShardDestroy(RelicID id)
-    {
-        for (auto& loop : compositeBatchSources.map)
-            loop.second->NotifyShardDestroyed(id);
-    }
 
     ReliquaryShards::ReliquaryShards(Reliquary& owner) : ReliquaryComponent(owner, "shard")
     {}

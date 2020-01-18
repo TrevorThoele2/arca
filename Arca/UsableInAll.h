@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IsShard.h"
-#include "IsEither.h"
+#include "IsMatrix.h"
 #include <Chroma/Iterate.h>
 
 namespace Arca
@@ -13,7 +13,7 @@ namespace Arca
         static constexpr bool Do(ShardPack pack)
         {
             using T = typename ShardPack::template Parameter<i - 1>::Type;
-            const auto value = is_shard_v<T> || is_either_v<T>;
+            const auto value = is_shard_v<T> || is_matrix_v<T>;
             return value ? UsableInAllIterator<i - 1>::Do(pack) : false;
         }
     };
@@ -25,7 +25,7 @@ namespace Arca
         static constexpr bool Do(ShardPack)
         {
             using T = typename ShardPack::template Parameter<0>::Type;
-            return is_shard_v<T> || is_either_v<T>;
+            return is_shard_v<T> || is_matrix_v<T>;
         }
     };
 

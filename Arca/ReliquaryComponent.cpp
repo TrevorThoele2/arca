@@ -106,6 +106,16 @@ namespace Arca
         return owner->shards;
     }
 
+    ReliquaryMatrices& ReliquaryComponent::Matrices()
+    {
+        return owner->matrices;
+    }
+
+    const ReliquaryMatrices& ReliquaryComponent::Matrices() const
+    {
+        return owner->matrices;
+    }
+
     ReliquaryCurators& ReliquaryComponent::Curators()
     {
         return owner->curators;

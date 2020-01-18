@@ -72,7 +72,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
             auto shard1 = relic->Create<DifferentiableShard<1>>();
             auto shard2 = relic->Create<DifferentiableShard<2>>();
 
-            WHEN("destroying all shards by composite")
+            WHEN("destroying all shards by all")
             {
                 relic->Destroy<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>();
 
@@ -94,7 +94,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
                 }
             }
 
-            WHEN("destroying two shards by composite")
+            WHEN("destroying two shards by all")
             {
                 relic->Destroy<All<DifferentiableShard<0>, DifferentiableShard<1>>>();
 
@@ -124,7 +124,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
                 }
             }
 
-            WHEN("finding all shards by composite")
+            WHEN("finding all shards by all")
             {
                 auto tuple = *relic->Find<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>();
 
@@ -143,7 +143,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
                 }
             }
 
-            WHEN("finding two shards by composite")
+            WHEN("finding two shards by all")
             {
                 auto tuple = *relic->Find<All<DifferentiableShard<1>, DifferentiableShard<2>>>();
 
@@ -300,7 +300,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
     }
 }
 
-SCENARIO_METHOD(ShardTestsFixture, "either shard signals", "[shard][signal][either]")
+SCENARIO_METHOD(ShardTestsFixture, "either signals", "[either][signal]")
 {
     GIVEN("registered reliquary")
     {
@@ -308,8 +308,8 @@ SCENARIO_METHOD(ShardTestsFixture, "either shard signals", "[shard][signal][eith
             .Type<Shard>()
             .Actualize();
 
-        auto createdSignals = reliquary->Batch<CreatedKnown<Either<Shard>>>();
-        auto destroyingSignals = reliquary->Batch<DestroyingKnown<Either<Shard>>>();
+        auto createdSignals = reliquary->Batch<MatrixFormed<Either<Shard>>>();
+        auto destroyingSignals = reliquary->Batch<MatrixDissolved<Either<Shard>>>();
 
         WHEN("creating open relic and non-const shard")
         {

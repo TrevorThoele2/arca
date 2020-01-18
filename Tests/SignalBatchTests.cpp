@@ -66,7 +66,7 @@ SCENARIO_METHOD(SignalBatchFixture, "signal batch", "[SignalBatch]")
 {
     GIVEN("registered and initialized reliquary")
     {
-        auto reliquary = ReliquaryOrigin().Type<BasicSignal>().Actualize();
+        auto reliquary = ReliquaryOrigin().Actualize();
 
         WHEN("raising signal")
         {

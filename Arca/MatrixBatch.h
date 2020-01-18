@@ -1,21 +1,25 @@
 #pragma once
 
 #include "Batch.h"
-#include "EitherShardBatchSource.h"
-#include "EitherShardBatchIterator.h"
+#include "BatchException.h"
+#include "MatrixBatchSource.h"
+#include "MatrixBatchIterator.h"
 
 namespace Arca
 {
     template<class T>
-    class Batch<T, std::enable_if_t<is_either_v<T>>>
+    class Batch<T, std::enable_if_t<is_matrix_v<T>>>
     {
     private:
         using SourceT = BatchSource<T>;
     public:
-        using ShardT = typename T::ShardT;
+        using ReferenceValueT = typename MatrixImplementation<T>::BatchReference;
+        using OptionalValueT = typename MatrixImplementation<T>::BatchOptional;
 
-        using iterator = EitherShardBatchIteratorBase<const ShardT, typename SourceT::iterator>;
-        using const_iterator = EitherShardBatchIteratorBase<const ShardT, typename SourceT::const_iterator>;
+        using iterator =
+            MatrixBatchIteratorBase<ReferenceValueT, OptionalValueT, typename SourceT::iterator>;
+        using const_iterator =
+            MatrixBatchIteratorBase<const ReferenceValueT, const OptionalValueT, typename SourceT::const_iterator>;
     public:
         Batch();
         explicit Batch(SourceT& source);
@@ -40,36 +44,39 @@ namespace Arca
     };
 
     template<class T>
-    Batch<T, std::enable_if_t<is_either_v<T>>>::Batch()
+    Batch<T, std::enable_if_t<is_matrix_v<T>>>::Batch()
     {}
 
     template<class T>
-    Batch<T, std::enable_if_t<is_either_v<T>>>::Batch(SourceT& source) : source(&source)
+    Batch<T, std::enable_if_t<is_matrix_v<T>>>::Batch(SourceT& source)
+        : source(&source)
     {
         AttemptReferenceSource();
     }
 
     template<class T>
-    Batch<T, std::enable_if_t<is_either_v<T>>>::Batch(const Batch& arg) : source(arg.source)
+    Batch<T, std::enable_if_t<is_matrix_v<T>>>::Batch(const Batch& arg)
+        : source(arg.source)
     {
         AttemptReferenceSource();
     }
 
     template<class T>
-    Batch<T, std::enable_if_t<is_either_v<T>>>::Batch(Batch&& arg) noexcept : source(std::move(arg.source))
+    Batch<T, std::enable_if_t<is_matrix_v<T>>>::Batch(Batch&& arg) noexcept
+        : source(std::move(arg.source))
     {
         arg.source = nullptr;
     }
 
     template<class T>
-    Batch<T, std::enable_if_t<is_either_v<T>>>::~Batch()
+    Batch<T, std::enable_if_t<is_matrix_v<T>>>::~Batch()
     {
         if (source)
             source->Dereference();
     }
 
     template<class T>
-    auto Batch<T, std::enable_if_t<is_either_v<T>>>::operator=(const Batch& arg) -> Batch&
+    auto Batch<T, std::enable_if_t<is_matrix_v<T>>>::operator=(const Batch& arg) -> Batch&
     {
         source = arg.source;
         AttemptReferenceSource();
@@ -78,7 +85,7 @@ namespace Arca
     }
 
     template<class T>
-    auto Batch<T, std::enable_if_t<is_either_v<T>>>::operator=(Batch&& arg) noexcept -> Batch&
+    auto Batch<T, std::enable_if_t<is_matrix_v<T>>>::operator=(Batch&& arg) noexcept -> Batch&
     {
         source = std::move(arg.source);
         arg.source = nullptr;
@@ -87,7 +94,7 @@ namespace Arca
     }
 
     template<class T>
-    auto Batch<T, std::enable_if_t<is_either_v<T>>>::Size() const -> size_t
+    auto Batch<T, std::enable_if_t<is_matrix_v<T>>>::Size() const -> size_t
     {
         SourceRequired();
 
@@ -95,7 +102,7 @@ namespace Arca
     }
 
     template<class T>
-    bool Batch<T, std::enable_if_t<is_either_v<T>>>::IsEmpty() const
+    bool Batch<T, std::enable_if_t<is_matrix_v<T>>>::IsEmpty() const
     {
         SourceRequired();
 
@@ -103,7 +110,7 @@ namespace Arca
     }
 
     template<class T>
-    auto Batch<T, std::enable_if_t<is_either_v<T>>>::begin() -> iterator
+    auto Batch<T, std::enable_if_t<is_matrix_v<T>>>::begin() -> iterator
     {
         SourceRequired();
 
@@ -111,7 +118,7 @@ namespace Arca
     }
 
     template<class T>
-    auto Batch<T, std::enable_if_t<is_either_v<T>>>::begin() const -> const_iterator
+    auto Batch<T, std::enable_if_t<is_matrix_v<T>>>::begin() const -> const_iterator
     {
         SourceRequired();
 
@@ -119,7 +126,7 @@ namespace Arca
     }
 
     template<class T>
-    auto Batch<T, std::enable_if_t<is_either_v<T>>>::end() -> iterator
+    auto Batch<T, std::enable_if_t<is_matrix_v<T>>>::end() -> iterator
     {
         SourceRequired();
 
@@ -127,7 +134,7 @@ namespace Arca
     }
 
     template<class T>
-    auto Batch<T, std::enable_if_t<is_either_v<T>>>::end() const -> const_iterator
+    auto Batch<T, std::enable_if_t<is_matrix_v<T>>>::end() const -> const_iterator
     {
         SourceRequired();
 
@@ -135,14 +142,14 @@ namespace Arca
     }
 
     template<class T>
-    void Batch<T, std::enable_if_t<is_either_v<T>>>::SourceRequired() const
+    void Batch<T, std::enable_if_t<is_matrix_v<T>>>::SourceRequired() const
     {
         if (!source)
             throw BatchNotSetup();
     }
 
     template<class T>
-    void Batch<T, std::enable_if_t<is_either_v<T>>>::AttemptReferenceSource()
+    void Batch<T, std::enable_if_t<is_matrix_v<T>>>::AttemptReferenceSource()
     {
         if (source)
             source->Reference();

@@ -87,21 +87,6 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             }
         }
 
-        WHEN("raising unregistered signal")
-        {
-            THEN("throws error")
-            {
-                REQUIRE_THROWS_MATCHES
-                (
-                    reliquary->Raise(Signal{}),
-                    NotRegistered,
-                    ::Catch::Matchers::Message(
-                        "The signal ("s + ::Chroma::ToString(TypeFor<Signal>()) + ") was not registered. " +
-                        "The class name is: \"" + typeid(Signal).name() + "\".")
-                );
-            }
-        }
-
         WHEN("retrieving unregistered curator")
         {
             THEN("throws error")
@@ -172,21 +157,6 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
                     Catch::Matchers::Message(
                         "The relic (" + ::Chroma::ToString(TypeFor<Relic>()) + ") was not registered. " +
                         "The class name is: \"" + typeid(Relic).name() + "\".")
-                );
-            }
-        }
-
-        WHEN("retrieving signal batch")
-        {
-            THEN("throws")
-            {
-                REQUIRE_THROWS_MATCHES
-                (
-                    reliquary->Batch<Signal>(),
-                    NotRegistered,
-                    Catch::Matchers::Message(
-                        "The signal ("s + ::Chroma::ToString(TypeFor<Signal>()) + ") was not registered. " +
-                        "The class name is: \"" + typeid(Signal).name() + "\".")
                 );
             }
         }

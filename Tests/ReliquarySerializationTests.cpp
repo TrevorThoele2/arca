@@ -71,7 +71,6 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             .Type<GlobalRelic>()
             .Type<BasicCurator>()
             .CuratorPipeline(Pipeline())
-            .Type<BasicSignal>()
             .Actualize();
 
         {
@@ -88,7 +87,6 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 .Type<GlobalRelic>()
                 .Type<BasicCurator>()
                 .CuratorPipeline(Pipeline())
-                .Type<BasicSignal>()
                 .Actualize();
 
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
@@ -512,9 +510,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
 
     GIVEN("saved reliquary with signal")
     {
-        auto savedReliquary = ReliquaryOrigin()
-            .Type<BasicSignal>()
-            .Actualize();
+        auto savedReliquary = ReliquaryOrigin().Actualize();
 
         savedReliquary->Raise<BasicSignal>();
 
@@ -525,9 +521,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
 
         WHEN("loading reliquary")
         {
-            auto loadedReliquary = ReliquaryOrigin()
-                .Type<BasicSignal>()
-                .Actualize();
+            auto loadedReliquary = ReliquaryOrigin().Actualize();
 
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
 
@@ -818,9 +812,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
 
     GIVEN("saved reliquary with signal")
     {
-        auto savedReliquary = ReliquaryOrigin()
-            .Type<BasicSignalNullInscription>()
-            .Actualize();
+        auto savedReliquary = ReliquaryOrigin().Actualize();
 
         savedReliquary->Raise<BasicSignalNullInscription>();
 
@@ -831,9 +823,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
 
         WHEN("loading reliquary")
         {
-            auto loadedReliquary = ReliquaryOrigin()
-                .Type<BasicSignalNullInscription>()
-                .Actualize();
+            auto loadedReliquary = ReliquaryOrigin().Actualize();
 
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
 

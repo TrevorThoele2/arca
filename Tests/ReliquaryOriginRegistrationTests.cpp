@@ -13,7 +13,6 @@ SCENARIO_METHOD(ReliquaryOriginRegistrationTestsFixture, "registering types mult
             .Type<Shard>()
             .Type<Relic>()
             .Type<GlobalRelic>()
-            .Type<Signal>()
             .Type<Curator>()
             .RelicStructure(relicStructureName, RelicStructure{});
 
@@ -73,20 +72,6 @@ SCENARIO_METHOD(ReliquaryOriginRegistrationTestsFixture, "registering types mult
                     Catch::Matchers::Message(
                         "The curator (" + TypeFor<Curator>().name + ") was already registered. " +
                         "The class name is: \"" + typeid(Curator).name() + "\".")
-                );
-            }
-        }
-
-        WHEN("registering signal again")
-        {
-            THEN("throws error")
-            {
-                REQUIRE_THROWS_MATCHES
-                (
-                    reliquaryOrigin.Type<Signal>(),
-                    AlreadyRegistered,
-                    Catch::Matchers::Message(
-                        "The signal ("s + typeid(Signal).name() + ") was already registered.")
                 );
             }
         }

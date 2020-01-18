@@ -41,9 +41,6 @@ namespace Arca
         ReliquaryOrigin& Type(ProvidedT* use);
         ReliquaryOrigin& CuratorPipeline(const Pipeline& pipeline);
         ReliquaryOrigin& CuratorPipeline(const Pipeline& initialization, const Pipeline& work);
-    public:
-        template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
-        ReliquaryOrigin& Type();
     private:
         struct TypeConstructor
         {
@@ -104,18 +101,6 @@ namespace Arca
             Reliquary& reliquary,
             const Pipeline& toTransform,
             const std::vector<Arca::Curator*>& allCurators);
-    private:
-        struct SignalConstructor
-        {
-            std::type_index type;
-            void(*factory)(Reliquary&);
-
-            SignalConstructor(std::type_index type, void(*factory)(Reliquary&));
-        };
-        std::vector<SignalConstructor> signalList;
-
-        template<class SignalT>
-        [[nodiscard]] bool IsSignalRegistered() const;
     };
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int>>
@@ -157,9 +142,6 @@ namespace Arca
             }
         };
         relicList.emplace_back(type.name, factory);
-
-        Type<CreatedKnown<RelicT>>();
-        Type<DestroyingKnown<RelicT>>();
 
         return *this;
     }
@@ -222,7 +204,6 @@ namespace Arca
                     const auto creator = [id, &reliquary](auto found)
                     {
                         auto added = found->Add(id);
-                        reliquary.shards.AttemptAddToEitherBatches(id, *added);
                         reliquary.Raise<Created>(Handle(id, reliquary, TypeFor<ShardT>(), HandleObjectType::Shard));
                     };
 
@@ -260,13 +241,6 @@ namespace Arca
         };
         shardList.emplace_back(type.name, std::move(factory));
 
-        Type<CreatedKnown<ShardT>>();
-        Type<DestroyingKnown<ShardT>>();
-        Type<CreatedKnown<const ShardT>>();
-        Type<DestroyingKnown<const ShardT>>();
-        Type<CreatedKnown<Either<ShardT>>>();
-        Type<DestroyingKnown<Either<ShardT>>>();
-
         return *this;
     }
 
@@ -286,25 +260,6 @@ namespace Arca
             throw IncorrectRegisteredCuratorType();
 
         CuratorCommon<AsT, ExternalCuratorProvider>(use, TypeFor<ProvidedT>());
-
-        return *this;
-    }
-
-    template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int>>
-    ReliquaryOrigin& ReliquaryOrigin::Type()
-    {
-        const auto type = std::type_index(typeid(SignalT));
-
-        if (IsSignalRegistered<SignalT>())
-            throw AlreadyRegistered("signal", Arca::Type(type.name()));
-
-        const auto factory = [](Reliquary& reliquary)
-        {
-            reliquary.signals.batchSources.map.emplace(
-                TypeFor<SignalT>().name,
-                std::make_unique<BatchSource<SignalT>>());
-        };
-        signalList.emplace_back(type, factory);
 
         return *this;
     }
@@ -462,18 +417,5 @@ namespace Arca
     {
         auto type = TypeFor<CuratorT>();
         return curatorProviders.find(type.name) != curatorProviders.end();
-    }
-
-    template<class SignalT>
-    bool ReliquaryOrigin::IsSignalRegistered() const
-    {
-        const auto found = std::find_if(
-            signalList.begin(),
-            signalList.end(),
-            [](const SignalConstructor& constructor)
-            {
-                return constructor.type == typeid(SignalT);
-            });
-        return found != signalList.end();
     }
 }

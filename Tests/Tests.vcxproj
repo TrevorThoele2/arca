@@ -19,11 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CompositeShardBatchTests.h" />
-    <ClInclude Include="CompositeShardTests.h" />
+    <ClInclude Include="AllBatchTests.h" />
+    <ClInclude Include="AllTests.h" />
     <ClInclude Include="ConstShardTests.h" />
     <ClInclude Include="CuratorTests.h" />
-    <ClInclude Include="EitherShardBatchTests.h" />
+    <ClInclude Include="EitherBatchTests.h" />
     <ClInclude Include="EitherTests.h" />
     <ClInclude Include="GeneralFixture.h" />
     <ClInclude Include="HandleTests.h" />
@@ -44,11 +44,11 @@
     <ClInclude Include="GlobalRelicTests.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CompositeShardBatchTests.cpp" />
-    <ClCompile Include="CompositeShardTests.cpp" />
+    <ClCompile Include="AllBatchTests.cpp" />
+    <ClCompile Include="AllTests.cpp" />
     <ClCompile Include="ConstShardTests.cpp" />
     <ClCompile Include="CuratorTests.cpp" />
-    <ClCompile Include="EitherShardBatchTests.cpp" />
+    <ClCompile Include="EitherBatchTests.cpp" />
     <ClCompile Include="EitherTests.cpp" />
     <ClCompile Include="HandleTests.cpp" />
     <ClCompile Include="IntegrationTests.cpp" />

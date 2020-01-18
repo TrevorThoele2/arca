@@ -34,9 +34,6 @@
     <ClCompile Include="ObjectType.cpp">
       <Filter>Source Files\Type</Filter>
     </ClCompile>
-    <ClCompile Include="KnownPolymorphicSerializer.cpp">
-      <Filter>Source Files\Reliquary\Components</Filter>
-    </ClCompile>
     <ClCompile Include="ReliquaryShards.cpp">
       <Filter>Source Files\Reliquary\Components</Filter>
     </ClCompile>
@@ -54,12 +51,6 @@
     </ClCompile>
     <ClCompile Include="ReliquaryRelicStructures.cpp">
       <Filter>Source Files\Reliquary\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="EitherShardBatchSource.cpp">
-      <Filter>Source Files\Shard\Batch\Either</Filter>
-    </ClCompile>
-    <ClCompile Include="CompositeShardBatchSource.cpp">
-      <Filter>Source Files\Shard\Batch\Composite</Filter>
     </ClCompile>
     <ClCompile Include="Handle.cpp">
       <Filter>Source Files\Handle</Filter>
@@ -99,6 +90,18 @@
     </ClCompile>
     <ClCompile Include="TransferableSignal.cpp">
       <Filter>Source Files\Signal</Filter>
+    </ClCompile>
+    <ClCompile Include="MatrixBatchSource.cpp">
+      <Filter>Source Files\Matrix\Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="ReliquaryMatrices.cpp">
+      <Filter>Source Files\Reliquary\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="KnownMatrix.cpp">
+      <Filter>Source Files\Matrix</Filter>
+    </ClCompile>
+    <ClCompile Include="KnownPolymorphicSerializer.cpp">
+      <Filter>Source Files\Serialization</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -183,9 +186,6 @@
     <ClInclude Include="ReliquaryRelics.h">
       <Filter>Header Files\Reliquary\Components</Filter>
     </ClInclude>
-    <ClInclude Include="KnownPolymorphicSerializer.h">
-      <Filter>Header Files\Reliquary\Components</Filter>
-    </ClInclude>
     <ClInclude Include="ReliquaryCurators.h">
       <Filter>Header Files\Reliquary\Components</Filter>
     </ClInclude>
@@ -209,30 +209,6 @@
     </ClInclude>
     <ClInclude Include="ReliquaryRelicStructures.h">
       <Filter>Header Files\Reliquary\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="EitherShardBatch.h">
-      <Filter>Header Files\Shard\Batch\Either</Filter>
-    </ClInclude>
-    <ClInclude Include="EitherShardBatchIterator.h">
-      <Filter>Header Files\Shard\Batch\Either</Filter>
-    </ClInclude>
-    <ClInclude Include="EitherShardBatchSource.h">
-      <Filter>Header Files\Shard\Batch\Either</Filter>
-    </ClInclude>
-    <ClInclude Include="EitherShardBatchSourceDefinition.h">
-      <Filter>Header Files\Shard\Batch\Either</Filter>
-    </ClInclude>
-    <ClInclude Include="CompositeShardBatch.h">
-      <Filter>Header Files\Shard\Batch\Composite</Filter>
-    </ClInclude>
-    <ClInclude Include="CompositeShardBatchIterator.h">
-      <Filter>Header Files\Shard\Batch\Composite</Filter>
-    </ClInclude>
-    <ClInclude Include="CompositeShardBatchSourceDefinition.h">
-      <Filter>Header Files\Shard\Batch\Composite</Filter>
-    </ClInclude>
-    <ClInclude Include="CompositeShardBatchSource.h">
-      <Filter>Header Files\Shard\Batch\Composite</Filter>
     </ClInclude>
     <ClInclude Include="Actualization.h">
       <Filter>Header Files\Handle</Filter>
@@ -285,9 +261,6 @@
     <ClInclude Include="GlobalPtr.h">
       <Filter>Header Files\Ptr</Filter>
     </ClInclude>
-    <ClInclude Include="RelicTraits.h">
-      <Filter>Header Files\Relic\Traits</Filter>
-    </ClInclude>
     <ClInclude Include="HasShouldCreateMethod.h">
       <Filter>Header Files\Relic\Traits</Filter>
     </ClInclude>
@@ -301,10 +274,7 @@
       <Filter>Header Files\Relic\Traits</Filter>
     </ClInclude>
     <ClInclude Include="Either.h">
-      <Filter>Header Files\Shard\Either</Filter>
-    </ClInclude>
-    <ClInclude Include="IsEither.h">
-      <Filter>Header Files\Shard\Either</Filter>
+      <Filter>Header Files\Matrix\Either</Filter>
     </ClInclude>
     <ClInclude Include="IsRelic.h">
       <Filter>Header Files\Relic\Traits</Filter>
@@ -325,13 +295,7 @@
       <Filter>Header Files\Shard</Filter>
     </ClInclude>
     <ClInclude Include="UsableInAll.h">
-      <Filter>Header Files\Shard\Composite</Filter>
-    </ClInclude>
-    <ClInclude Include="IsAll.h">
-      <Filter>Header Files\Shard\Composite</Filter>
-    </ClInclude>
-    <ClInclude Include="IsComposite.h">
-      <Filter>Header Files\Shard\Composite</Filter>
+      <Filter>Header Files\Matrix\All</Filter>
     </ClInclude>
     <ClInclude Include="StoredCurator.h">
       <Filter>Header Files\Curator</Filter>
@@ -347,9 +311,6 @@
     </ClInclude>
     <ClInclude Include="IsClosed.h">
       <Filter>Header Files\Relic\Traits\Openness</Filter>
-    </ClInclude>
-    <ClInclude Include="HasLocality.h">
-      <Filter>Header Files\Relic\Traits\Locality</Filter>
     </ClInclude>
     <ClInclude Include="IsGlobal.h">
       <Filter>Header Files\Relic\Traits\Locality</Filter>
@@ -423,32 +384,89 @@
     <ClInclude Include="ComputedPtr.h">
       <Filter>Header Files\Ptr</Filter>
     </ClInclude>
-    <ClInclude Include="CompositePtr.h">
-      <Filter>Header Files\Ptr</Filter>
-    </ClInclude>
     <ClInclude Include="UsableForLocalPtr.h">
       <Filter>Header Files\Ptr\Usable</Filter>
     </ClInclude>
     <ClInclude Include="UsableForGlobalPtr.h">
       <Filter>Header Files\Ptr\Usable</Filter>
     </ClInclude>
-    <ClInclude Include="UsableForCompositePtr.h">
-      <Filter>Header Files\Ptr\Usable</Filter>
-    </ClInclude>
     <ClInclude Include="UsableForComputedPtr.h">
       <Filter>Header Files\Ptr\Usable</Filter>
     </ClInclude>
     <ClInclude Include="All.h">
-      <Filter>Header Files\Shard\Composite</Filter>
-    </ClInclude>
-    <ClInclude Include="Composite.h">
-      <Filter>Header Files\Shard\Composite</Filter>
+      <Filter>Header Files\Matrix\All</Filter>
     </ClInclude>
     <ClInclude Include="PtrTypeFor.h">
       <Filter>Header Files\Ptr</Filter>
     </ClInclude>
     <ClInclude Include="HasScribe.h">
       <Filter>Header Files\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="HasLocalityTrait.h">
+      <Filter>Header Files\Relic\Traits\Locality</Filter>
+    </ClInclude>
+    <ClInclude Include="MatrixPtr.h">
+      <Filter>Header Files\Ptr</Filter>
+    </ClInclude>
+    <ClInclude Include="MatrixDissolved.h">
+      <Filter>Header Files\Signal\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="MatrixFormed.h">
+      <Filter>Header Files\Signal\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="IsMatrix.h">
+      <Filter>Header Files\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="MatrixBatch.h">
+      <Filter>Header Files\Matrix\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="MatrixBatchIterator.h">
+      <Filter>Header Files\Matrix\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="MatrixBatchSource.h">
+      <Filter>Header Files\Matrix\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="MatrixBatchSourceDefinition.h">
+      <Filter>Header Files\Matrix\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="UsableForMatrixPtr.h">
+      <Filter>Header Files\Ptr\Usable</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquaryMatrices.h">
+      <Filter>Header Files\Reliquary\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquaryMatricesDefinition.h">
+      <Filter>Header Files\Reliquary\Components\Definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="KnownMatrix.h">
+      <Filter>Header Files\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="KnownMatrixDefinition.h">
+      <Filter>Header Files\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="MatrixImplementation.h">
+      <Filter>Header Files\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="AllImplementation.h">
+      <Filter>Header Files\Matrix\All</Filter>
+    </ClInclude>
+    <ClInclude Include="EitherImplementation.h">
+      <Filter>Header Files\Matrix\Either</Filter>
+    </ClInclude>
+    <ClInclude Include="AllDefinition.h">
+      <Filter>Header Files\Matrix\All</Filter>
+    </ClInclude>
+    <ClInclude Include="EitherDefinition.h">
+      <Filter>Header Files\Matrix\Either</Filter>
+    </ClInclude>
+    <ClInclude Include="KnownPolymorphicSerializer.h">
+      <Filter>Header Files\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="IsMatrixSignal.h">
+      <Filter>Header Files\Signal</Filter>
+    </ClInclude>
+    <ClInclude Include="MatrixTypeForSignal.h">
+      <Filter>Header Files\Signal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -533,18 +551,6 @@
     <Filter Include="Header Files\Reliquary\Components\Definitions">
       <UniqueIdentifier>{6ef96acf-a18d-423e-86b9-391775f0d4e7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Shard\Batch\Either">
-      <UniqueIdentifier>{a19aec0b-0410-4ad3-86f0-8ec08a398b0a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Shard\Batch\Either">
-      <UniqueIdentifier>{ba0d62be-6fc6-42cb-9950-dfb82be604c7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Shard\Batch\Composite">
-      <UniqueIdentifier>{d48ea134-5016-4151-bfe1-407aff09ffad}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Shard\Batch\Composite">
-      <UniqueIdentifier>{e08ae1bc-fb86-4a8e-bf9c-82e1a92c7325}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Handle">
       <UniqueIdentifier>{83504bd3-278d-4458-899f-4fa22a50779d}</UniqueIdentifier>
     </Filter>
@@ -572,12 +578,6 @@
     <Filter Include="Header Files\Relic\Traits">
       <UniqueIdentifier>{8ee29fed-0593-482e-9bed-165183532f75}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Shard\Either">
-      <UniqueIdentifier>{62973e57-95a4-4085-a9b8-be5b381ee5e1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Shard\Composite">
-      <UniqueIdentifier>{6ecc1c89-7553-43b3-bf7d-21f3802d7326}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Relic\Traits\Openness">
       <UniqueIdentifier>{d0948f78-8c6b-4759-9d96-e3e19e1b3685}</UniqueIdentifier>
     </Filter>
@@ -601,6 +601,27 @@
     </Filter>
     <Filter Include="Header Files\Ptr\Usable">
       <UniqueIdentifier>{77a0550f-ea38-49d2-acd9-7f8379b18414}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Matrix">
+      <UniqueIdentifier>{29e57911-d8b4-43c0-b905-3e23fec96b58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Matrix">
+      <UniqueIdentifier>{e140eeb6-cc79-493a-a4cf-8afe8e3f7bbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Matrix\Batch">
+      <UniqueIdentifier>{5a0f53ee-6bed-4431-a992-e0c32bc97f64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Matrix\Batch">
+      <UniqueIdentifier>{b8d40926-f8fa-4192-b682-56ff2a2e1e81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Matrix\All">
+      <UniqueIdentifier>{6ecc1c89-7553-43b3-bf7d-21f3802d7326}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Matrix\Either">
+      <UniqueIdentifier>{62973e57-95a4-4085-a9b8-be5b381ee5e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Serialization">
+      <UniqueIdentifier>{73d7fa76-e6f8-461d-888b-df708ad13173}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

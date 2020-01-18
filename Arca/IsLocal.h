@@ -2,7 +2,7 @@
 
 #include <type_traits>
 
-#include "HasLocality.h"
+#include "HasLocalityTrait.h"
 #include "Locality.h"
 
 namespace Arca
@@ -12,7 +12,7 @@ namespace Arca
     {};
 
     template <class T>
-    struct is_local<T, std::enable_if_t<!has_locality_v<T>>> : std::true_type
+    struct is_local<T, std::enable_if_t<!has_locality_trait_v<T>>> : std::true_type
     {};
 
     template <class T>

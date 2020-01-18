@@ -19,26 +19,36 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Composite.h" />
-    <ClInclude Include="CompositePtr.h" />
+    <ClInclude Include="AllDefinition.h" />
+    <ClInclude Include="AllImplementation.h" />
+    <ClInclude Include="EitherDefinition.h" />
+    <ClInclude Include="EitherImplementation.h" />
+    <ClInclude Include="MatrixDissolved.h" />
+    <ClInclude Include="MatrixFormed.h" />
     <ClInclude Include="ComputedPtr.h" />
     <ClInclude Include="All.h" />
     <ClInclude Include="HasScribe.h" />
+    <ClInclude Include="IsMatrix.h" />
+    <ClInclude Include="KnownMatrix.h" />
+    <ClInclude Include="KnownMatrixDefinition.h" />
+    <ClInclude Include="MatrixImplementation.h" />
+    <ClInclude Include="MatrixPtr.h" />
+    <ClInclude Include="MatrixBatch.h" />
+    <ClInclude Include="MatrixBatchIterator.h" />
+    <ClInclude Include="MatrixBatchSource.h" />
+    <ClInclude Include="MatrixBatchSourceDefinition.h" />
+    <ClInclude Include="IsMatrixSignal.h" />
+    <ClInclude Include="MatrixTypeForSignal.h" />
+    <ClInclude Include="ReliquaryMatrices.h" />
+    <ClInclude Include="ReliquaryMatricesDefinition.h" />
     <ClInclude Include="TransferableSignal.h" />
     <ClInclude Include="TransferableSignalDefinition.h" />
     <ClInclude Include="AsHandle.h" />
     <ClInclude Include="CompositeScribe.h" />
-    <ClInclude Include="CompositeShardBatch.h" />
-    <ClInclude Include="CompositeShardBatchIterator.h" />
-    <ClInclude Include="CompositeShardBatchSource.h" />
-    <ClInclude Include="CompositeShardBatchSourceDefinition.h" />
     <ClInclude Include="HasShards.h" />
-    <ClInclude Include="IsAll.h" />
-    <ClInclude Include="IsComposite.h" />
     <ClInclude Include="HandleObjectTypeFor.h" />
-    <ClInclude Include="IsEither.h" />
     <ClInclude Include="GlobalPtr.h" />
-    <ClInclude Include="HasLocality.h" />
+    <ClInclude Include="HasLocalityTrait.h" />
     <ClInclude Include="IsClosed.h" />
     <ClInclude Include="IsGlobal.h" />
     <ClInclude Include="IsLocal.h" />
@@ -53,16 +63,12 @@
     <ClInclude Include="ShardList.h" />
     <ClInclude Include="ShardsFor.h" />
     <ClInclude Include="Signal.h" />
-    <ClInclude Include="UsableForCompositePtr.h" />
     <ClInclude Include="UsableForComputedPtr.h" />
     <ClInclude Include="UsableForGlobalPtr.h" />
     <ClInclude Include="UsableForLocalPtr.h" />
+    <ClInclude Include="UsableForMatrixPtr.h" />
     <ClInclude Include="UsableInAll.h" />
     <ClInclude Include="Either.h" />
-    <ClInclude Include="EitherShardBatch.h" />
-    <ClInclude Include="EitherShardBatchIterator.h" />
-    <ClInclude Include="EitherShardBatchSource.h" />
-    <ClInclude Include="EitherShardBatchSourceDefinition.h" />
     <ClInclude Include="ClosedRelic.h" />
     <ClInclude Include="ClosedRelicDefinition.h" />
     <ClInclude Include="Batch.h" />
@@ -132,15 +138,15 @@
     <ClInclude Include="OpenRelic.h" />
     <ClInclude Include="RelicMetadata.h" />
     <ClInclude Include="RelicStructure.h" />
-    <ClInclude Include="RelicTraits.h" />
     <ClInclude Include="TypeFor.h" />
     <ClInclude Include="TypeScribe.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="KnownMatrix.cpp" />
+    <ClCompile Include="MatrixBatchSource.cpp" />
+    <ClCompile Include="ReliquaryMatrices.cpp" />
     <ClCompile Include="TransferableSignal.cpp" />
-    <ClCompile Include="CompositeShardBatchSource.cpp" />
     <ClCompile Include="StoredCurator.cpp" />
-    <ClCompile Include="EitherShardBatchSource.cpp" />
     <ClCompile Include="ClosedRelic.cpp" />
     <ClCompile Include="HandleSlim.cpp" />
     <ClCompile Include="KnownPolymorphicSerializer.cpp" />

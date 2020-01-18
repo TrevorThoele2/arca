@@ -6,7 +6,7 @@
 
 using namespace Arca;
 
-class EitherShardBatchFixture : public ReliquaryFixture
+class EitherBatchTestsFixture : public ReliquaryFixture
 {
 public:
     class Shard;
@@ -14,7 +14,7 @@ public:
     class GlobalRelic;
 };
 
-class EitherShardBatchFixture::Shard
+class EitherBatchTestsFixture::Shard
 {
 public:
     int value = 0;
@@ -23,30 +23,30 @@ public:
     explicit Shard(int value);
 };
 
-class EitherShardBatchFixture::Relic final : public ClosedTypedRelicAutomation<Relic, Shard>
+class EitherBatchTestsFixture::Relic final : public ClosedTypedRelicAutomation<Relic, Shard>
 {};
 
-class EitherShardBatchFixture::GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic, Shard>
+class EitherBatchTestsFixture::GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic, Shard>
 {};
 
 namespace Arca
 {
     template<>
-    struct Traits<::EitherShardBatchFixture::Shard>
+    struct Traits<::EitherBatchTestsFixture::Shard>
     {
         static const ObjectType objectType = ObjectType::Shard;
         static inline const TypeName typeName = "EitherShardBatchTestsShard";
     };
 
     template<>
-    struct Traits<::EitherShardBatchFixture::Relic>
+    struct Traits<::EitherBatchTestsFixture::Relic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "EitherShardBatchTestsRelic";
     };
 
     template<>
-    struct Traits<::EitherShardBatchFixture::GlobalRelic>
+    struct Traits<::EitherBatchTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "EitherShardBatchTestsGlobalRelic";
@@ -57,8 +57,8 @@ namespace Arca
 namespace Inscription
 {
     template<>
-    class Scribe<::EitherShardBatchFixture::Shard, BinaryArchive> final
-        : public ArcaCompositeScribe<::EitherShardBatchFixture::Shard, BinaryArchive>
+    class Scribe<::EitherBatchTestsFixture::Shard, BinaryArchive> final
+        : public ArcaCompositeScribe<::EitherBatchTestsFixture::Shard, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
@@ -68,12 +68,12 @@ namespace Inscription
     };
 
     template<>
-    class Scribe<::EitherShardBatchFixture::Relic, BinaryArchive> final
-        : public ArcaNullScribe<::EitherShardBatchFixture::Relic, BinaryArchive>
+    class Scribe<::EitherBatchTestsFixture::Relic, BinaryArchive> final
+        : public ArcaNullScribe<::EitherBatchTestsFixture::Relic, BinaryArchive>
     {};
 
     template<>
-    class Scribe<::EitherShardBatchFixture::GlobalRelic, BinaryArchive> final
-        : public ArcaNullScribe<::EitherShardBatchFixture::GlobalRelic, BinaryArchive>
+    class Scribe<::EitherBatchTestsFixture::GlobalRelic, BinaryArchive> final
+        : public ArcaNullScribe<::EitherBatchTestsFixture::GlobalRelic, BinaryArchive>
     {};
 }

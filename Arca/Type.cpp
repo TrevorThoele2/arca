@@ -22,7 +22,7 @@ namespace Arca
 
 namespace Chroma
 {
-    std::string ToString(Arca::Type type)
+    std::string ToString(const Arca::Type& type)
     {
         return !type.isConst
             ? type.name

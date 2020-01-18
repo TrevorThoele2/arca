@@ -1,15 +1,15 @@
 #include <catch.hpp>
 
-#include "CompositeShardTests.h"
+#include "AllTests.h"
 
-void CompositeShardTestsFixture::BasicTypedRelic::PostConstruct(ShardTuple shards)
+void AllTestsFixture::BasicTypedRelic::PostConstruct(ShardTuple shards)
 {
     shard0 = std::get<0>(shards);
     shard1 = std::get<1>(shards);
     shard2 = std::get<2>(shards);
 }
 
-SCENARIO_METHOD(CompositeShardTestsFixture, "reliquary composite shards", "[reliquary][shard][composite]")
+SCENARIO_METHOD(AllTestsFixture, "all", "[all]")
 {
     GIVEN("registered reliquary")
     {
@@ -29,14 +29,14 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "reliquary composite shards", "[reli
             }
         }
 
-        WHEN("creating composite shards")
+        WHEN("creating shards")
         {
             auto relic = reliquary->Create<OpenRelic>();
             relic->Create<Shard<0>>();
             relic->Create<Shard<1>>();
             relic->Create<Shard<2>>();
 
-            THEN("contains composite")
+            THEN("contains all")
             {
                 REQUIRE(reliquary->Contains<All<Shard<0>, Shard<1>, Shard<2>>>(relic->ID()));
             }
@@ -45,7 +45,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "reliquary composite shards", "[reli
             {
                 relic->Destroy<Shard<0>>();
 
-                THEN("does not contain composite")
+                THEN("does not contain all")
                 {
                     REQUIRE(!reliquary->Contains<All<Shard<0>, Shard<1>, Shard<2>>>(relic->ID()));
                 }
@@ -55,7 +55,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "reliquary composite shards", "[reli
             {
                 relic->Create<Shard<3>>();
 
-                THEN("contains composite")
+                THEN("contains all")
                 {
                     REQUIRE(reliquary->Contains<All<Shard<0>, Shard<1>, Shard<2>>>(relic->ID()));
                 }
@@ -64,7 +64,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "reliquary composite shards", "[reli
                 {
                     relic->Destroy<Shard<3>>();
 
-                    THEN("contains composite")
+                    THEN("contains all")
                     {
                         REQUIRE(reliquary->Contains<All<Shard<0>, Shard<1>, Shard<2>>>(relic->ID()));
                     }
@@ -79,7 +79,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "reliquary composite shards", "[reli
             relic->Create<Shard<1>>();
             relic->Create<Shard<2>>();
 
-            THEN("irrelevant relic does not contain composite")
+            THEN("irrelevant relic does not contain all")
             {
                 auto irrelevant = reliquary->Create<OpenRelic>();
                 REQUIRE(!reliquary->Contains<All<Shard<0>, Shard<1>, Shard<2>>>(irrelevant->ID()));
@@ -88,7 +88,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "reliquary composite shards", "[reli
     }
 }
 
-SCENARIO_METHOD(CompositeShardTestsFixture, "OpenRelic composite shards", "[OpenRelic][shard][composite]")
+SCENARIO_METHOD(AllTestsFixture, "OpenRelic all", "[OpenRelic][all]")
 {
     GIVEN("registered reliquary")
     {
@@ -100,14 +100,14 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "OpenRelic composite shards", "[Open
             .Type<BasicTypedRelic>()
             .Actualize();
 
-        WHEN("creating composite shards")
+        WHEN("creating shards")
         {
             auto relic = reliquary->Create<OpenRelic>();
             relic->Create<Shard<0>>();
             relic->Create<Shard<1>>();
             relic->Create<Shard<2>>();
 
-            THEN("contains composite")
+            THEN("contains all")
             {
                 REQUIRE(relic->Contains<All<Shard<0>, Shard<1>, Shard<2>>>());
             }
@@ -116,7 +116,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "OpenRelic composite shards", "[Open
             {
                 relic->Destroy<Shard<0>>();
 
-                THEN("does not contain composite")
+                THEN("does not contain all")
                 {
                     REQUIRE(!relic->Contains<All<Shard<0>, Shard<1>, Shard<2>>>());
                 }
@@ -126,7 +126,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "OpenRelic composite shards", "[Open
             {
                 relic->Create<Shard<3>>();
 
-                THEN("contains composite")
+                THEN("contains all")
                 {
                     REQUIRE(relic->Contains<All<Shard<0>, Shard<1>, Shard<2>>>());
                 }
@@ -135,7 +135,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "OpenRelic composite shards", "[Open
                 {
                     relic->Destroy<Shard<3>>();
 
-                    THEN("contains composite")
+                    THEN("contains all")
                     {
                         REQUIRE(relic->Contains<All<Shard<0>, Shard<1>, Shard<2>>>());
                     }
@@ -150,7 +150,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "OpenRelic composite shards", "[Open
             relic->Create<Shard<1>>();
             relic->Create<Shard<2>>();
 
-            THEN("irrelevant relic does not contain composite")
+            THEN("irrelevant relic does not contain all")
             {
                 auto irrelevant = reliquary->Create<OpenRelic>();
                 REQUIRE(!irrelevant->Contains<All<Shard<0>, Shard<1>, Shard<2>>>());
@@ -159,7 +159,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "OpenRelic composite shards", "[Open
     }
 }
 
-SCENARIO_METHOD(CompositeShardTestsFixture, "ClosedRelic composite shards", "[ClosedRelic][shard][composite]")
+SCENARIO_METHOD(AllTestsFixture, "ClosedRelic all", "[ClosedRelic][all]")
 {
     GIVEN("registered reliquary")
     {
@@ -170,7 +170,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "ClosedRelic composite shards", "[Cl
             .Type<BasicTypedRelic>()
             .Actualize();
 
-        WHEN("creating const shard")
+        WHEN("creating shards")
         {
             auto relic = reliquary->CreateWith<ClosedRelic>(
                 RelicStructure
@@ -180,7 +180,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "ClosedRelic composite shards", "[Cl
                     TypeFor<Shard<2>>()
                 });
 
-            THEN("contains composite")
+            THEN("contains all")
             {
                 REQUIRE(relic->Contains<All<Shard<0>, Shard<1>, Shard<2>>>());
             }

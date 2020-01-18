@@ -128,7 +128,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary wih single shard")
 
             THEN("finding either shard gives correct")
             {
-                auto found = Arca::LocalPtr<Either<BasicShard>>(relic->ID(), relic->Owner());
+                auto found = Arca::MatrixPtr<Either<BasicShard>>(relic->ID(), relic->Owner());
                 REQUIRE(found);
                 REQUIRE(&*found == &*shard);
             }
@@ -191,7 +191,6 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "registered reliquary with every type", "
             .Type<BasicShard>()
             .Type<BasicCurator>()
             .CuratorPipeline(Pipeline())
-            .Type<BasicSignal>()
             .Actualize();
 
         WHEN("checking relic size")
