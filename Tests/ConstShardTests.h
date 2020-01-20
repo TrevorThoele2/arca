@@ -22,12 +22,13 @@ public:
     explicit Shard(int value);
 };
 
-class ConstShardTestsFixture::Relic final : public ClosedTypedRelicAutomation<Relic, const Shard>
+class ConstShardTestsFixture::Relic final : public ClosedTypedRelicAutomation<Relic>
 {
 public:
-    LocalPtr<const Shard> shard;
+    ShardIndex<const Shard> shard;
 
-    void PostConstruct(ShardTuple shards);
+    void PostConstruct();
+    void Initialize();
 };
 
 namespace Arca

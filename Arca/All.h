@@ -3,15 +3,21 @@
 #include <Chroma/VariadicTemplate.h>
 #include "Traits.h"
 #include "TypeFor.h"
-#include "PtrTypeFor.h"
+#include "IndexTypeFor.h"
 
 namespace Arca
 {
+    template<class T>
+    struct TransformToIndex
+    {
+        using Type = typename IndexTypeFor<T>::Type;
+    };
+
     template<class... Ts>
     struct All
     {
         using Pack = ::Chroma::VariadicTemplate<Ts...>;
-        using PtrTuple = typename Pack::template Transform<PtrTypeFor>::Type::TupleT;
+        using IndexTuple = typename Pack::template Transform<TransformToIndex>::Type::TupleT;
     };
 
     template<Chroma::VariadicTemplateSize i>

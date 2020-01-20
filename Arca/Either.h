@@ -8,11 +8,13 @@ namespace Arca
 {
     class Reliquary;
 
-    template<class T, std::enable_if_t<is_shard_v<T>, int> = 0>
+    template<class T>
     struct Either
     {
         using ShardT = const std::decay_t<T>;
         using BareT = std::decay_t<T>;
+
+        static_assert(is_shard_v<T>, "Eithers must wrap a Shard");
     };
 
     template<class T>

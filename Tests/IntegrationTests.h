@@ -172,17 +172,4 @@ namespace Inscription
     class Scribe<::IntegrationTestsFixture::ParentRelic, BinaryArchive> final
         : public ArcaNullScribe<::IntegrationTestsFixture::ParentRelic, BinaryArchive>
     {};
-
-    template<size_t differentiator>
-    class Scribe<::IntegrationTestsFixture::BasicCurator<differentiator>, BinaryArchive> final :
-        public ArcaNullScribe<::IntegrationTestsFixture::BasicCurator<differentiator>, BinaryArchive>
-    {
-    private:
-        using BaseT = ArcaNullScribe<::IntegrationTestsFixture::BasicCurator<differentiator>, BinaryArchive>;
-    public:
-        using ObjectT = typename BaseT::ObjectT;
-        using ArchiveT = typename BaseT::ArchiveT;
-
-        using BaseT::Scriven;
-    };
 }

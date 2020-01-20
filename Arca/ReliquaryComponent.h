@@ -27,7 +27,7 @@ namespace Arca
     class ReliquaryComponent
     {
     public:
-        using KnownPolymorphicSerializerList = std::vector<KnownPolymorphicSerializer>;
+        using KnownPolymorphicSerializerList = std::vector<KnownPolymorphicSerializer*>;
     public:
         [[nodiscard]] Arca::NotRegistered NotRegistered(
             const Type& type) const;
@@ -76,8 +76,8 @@ namespace Arca
         class StorageBatchSourcesBase
         {
         public:
-            using Ptr = std::unique_ptr<BatchSourceBaseT>;
-            using Map = std::unordered_map<TypeName, Ptr>;
+            using Entry = std::unique_ptr<BatchSourceBaseT>;
+            using Map = std::unordered_map<TypeName, Entry>;
 
             Map map;
 

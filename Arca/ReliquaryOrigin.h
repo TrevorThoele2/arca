@@ -7,7 +7,6 @@
 #include "Pipeline.h"
 
 #include "Curator.h"
-#include "CuratorProvider.h"
 
 #include "Initialize.h"
 
@@ -25,20 +24,18 @@ namespace Arca
         [[nodiscard]] std::unique_ptr<Reliquary> Actualize() const;
     public:
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int> = 0>
-        ReliquaryOrigin& Type();
+        ReliquaryOrigin& Register();
         template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
-        ReliquaryOrigin& Type(InitializeArgs&& ... initializeArgs);
+        ReliquaryOrigin& Register(InitializeArgs&& ... initializeArgs);
         template<class InterfaceT>
         ReliquaryOrigin& Compute(std::function<InterfaceT(Reliquary&)> computation);
         ReliquaryOrigin& RelicStructure(const std::string& name, const RelicStructure& structure);
     public:
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        ReliquaryOrigin& Type();
+        ReliquaryOrigin& Register();
     public:
         template<class CuratorT, class... Args, std::enable_if_t<is_curator_v<CuratorT>, int> = 0>
-        ReliquaryOrigin& Type(Args&& ... args);
-        template<class AsT, class ProvidedT, std::enable_if_t<is_curator_v<ProvidedT> && std::is_base_of_v<ProvidedT, Arca::Curator>, int> = 0>
-        ReliquaryOrigin& Type(ProvidedT* use);
+        ReliquaryOrigin& Register(Args&& ... args);
         ReliquaryOrigin& CuratorPipeline(const Pipeline& pipeline);
         ReliquaryOrigin& CuratorPipeline(const Pipeline& initialization, const Pipeline& work);
     private:
@@ -79,21 +76,13 @@ namespace Arca
         template<class ShardT>
         [[nodiscard]] bool IsShardRegistered() const;
     private:
-        using CuratorProviderPtr = std::unique_ptr<CuratorProviderBase>;
-        using CuratorProviderMap = std::unordered_map<TypeName, CuratorProviderPtr>;
-        CuratorProviderMap curatorProviders;
+        TypeConstructorList curatorList;
 
         Pipeline curatorInitializationPipeline;
         Pipeline curatorWorkPipeline;
 
-        using CuratorSerializationTypesFactory = void(*)(Reliquary&);
-        using CuratorSerializationTypesFactoryList = std::vector<CuratorSerializationTypesFactory>;
-        CuratorSerializationTypesFactoryList curatorSerializationTypesFactoryList;
+        std::vector<Curator*> PushAllCuratorsTo(Reliquary& reliquary) const;
 
-        std::vector<Arca::Curator*> PushAllCuratorsTo(Reliquary& reliquary) const;
-
-        template<class Curator, class CuratorProvider, class... Args>
-        void CuratorCommon(Args&& ... args);
         template<class Curator>
         [[nodiscard]] bool IsCuratorRegistered() const;
 
@@ -104,50 +93,25 @@ namespace Arca
     };
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int>>
-    ReliquaryOrigin& ReliquaryOrigin::Type()
+    ReliquaryOrigin& ReliquaryOrigin::Register()
     {
         const auto type = TypeFor<RelicT>();
 
         if (IsRelicRegistered<RelicT>())
             throw AlreadyRegistered("relic", type, typeid(RelicT));
 
-        const auto factory = [](Reliquary& reliquary)
-        {
-            const auto type = TypeFor<RelicT>();
-            reliquary.relics.batchSources.map.emplace(
-                type.name,
-                std::make_unique<BatchSource<RelicT>>(reliquary));
-            reliquary.relics.destroyerMap.emplace(
-                type.name,
-                [](Reliquary& reliquary, RelicID id)
-                {
-                    reliquary.Destroy<RelicT>(id);
-                });
-            if (HasScribe<RelicT>())
+        relicList.emplace_back(
+            type.name,
+            [](Reliquary& reliquary)
             {
-                reliquary.relics.serializers.push_back(
-                    KnownPolymorphicSerializer
-                    {
-                        type.name,
-                        [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
-                        {
-                            auto batchSource = reliquary.relics.batchSources.Find<RelicT>();
-                            archive(*batchSource);
-                        },
-                        [](::Inscription::BinaryArchive& archive)
-                        {
-                            return ::Inscription::InputTypesFor<RelicT>(archive);
-                        }
-                    });
-            }
-        };
-        relicList.emplace_back(type.name, factory);
+                reliquary.relics.CreateLocalHandler<RelicT>();
+            });
 
         return *this;
     }
 
     template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int>>
-    ReliquaryOrigin& ReliquaryOrigin::Type(InitializeArgs&& ... initializeArgs)
+    ReliquaryOrigin& ReliquaryOrigin::Register(InitializeArgs&& ... initializeArgs)
     {
         if (IsGlobalRelicRegistered<RelicT>())
             throw AlreadyRegistered("global relic", TypeFor<RelicT>(), typeid(RelicT));
@@ -181,85 +145,41 @@ namespace Arca
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    ReliquaryOrigin& ReliquaryOrigin::Type()
+    ReliquaryOrigin& ReliquaryOrigin::Register()
     {
         const auto type = TypeFor<ShardT>();
 
         if (IsShardRegistered<ShardT>())
             throw AlreadyRegistered("shard", type, typeid(ShardT));
 
-        const auto factory = [type](Reliquary& reliquary)
-        {
-            reliquary.shards.batchSources.map.emplace(
-                type.name,
-                std::make_unique<BatchSource<ShardT>>());
-            reliquary.shards.batchSources.constMap.emplace(
-                type.name,
-                std::make_unique<BatchSource<const ShardT>>());
-
-            reliquary.shards.factoryMap.emplace(
-                type.name,
-                [](Reliquary& reliquary, RelicID id, bool isConst)
-                {
-                    const auto creator = [id, &reliquary](auto found)
-                    {
-                        auto added = found->Add(id);
-                        reliquary.Raise<Created>(Handle(id, reliquary, TypeFor<ShardT>(), HandleObjectType::Shard));
-                    };
-
-                    isConst
-                        ? creator(reliquary.shards.batchSources.Find<const ShardT>())
-                        : creator(reliquary.shards.batchSources.Find<ShardT>());
-                });
-            reliquary.shards.destroyerMap.emplace(
-                type.name,
-                [](Reliquary& reliquary, RelicID id, bool isConst)
-                {
-                    reliquary.shards.Destroy<ShardT>(id);
-                });
-
-            if (HasScribe<ShardT>())
+        shardList.emplace_back(
+            type.name,
+            [](Reliquary& reliquary)
             {
-                reliquary.shards.serializers.push_back(
-                    KnownPolymorphicSerializer
-                    {
-                        type.name,
-                        [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
-                        {
-                            auto batchSource = reliquary.shards.batchSources.Find<ShardT>();
-                            archive(*batchSource);
-
-                            auto constBatchSource = reliquary.shards.batchSources.Find<const ShardT>();
-                            archive(*constBatchSource);
-                        },
-                        [](::Inscription::BinaryArchive& archive)
-                        {
-                            return ::Inscription::InputTypesFor<ShardT>(archive);
-                        }
-                    });
-            }
-        };
-        shardList.emplace_back(type.name, std::move(factory));
+                reliquary.shards.CreateHandler<ShardT>();
+            });
 
         return *this;
     }
 
     template<class CuratorT, class... Args, std::enable_if_t<is_curator_v<CuratorT>, int>>
-    ReliquaryOrigin& ReliquaryOrigin::Type(Args&& ... args)
+    ReliquaryOrigin& ReliquaryOrigin::Register(Args&& ... args)
     {
-        using ProviderT = CuratorProvider<CuratorT, Args...>;
-        CuratorCommon<CuratorT, ProviderT>(typename ProviderT::ArgumentTuple{ std::forward<Args>(args)... });
+        const auto type = TypeFor<CuratorT>();
 
-        return *this;
-    }
+        if (IsCuratorRegistered<CuratorT>())
+            throw AlreadyRegistered("curator", type, typeid(CuratorT));
 
-    template<class AsT, class ProvidedT, std::enable_if_t<is_curator_v<ProvidedT> && std::is_base_of_v<ProvidedT, Curator>, int>>
-    ReliquaryOrigin& ReliquaryOrigin::Type(ProvidedT* use)
-    {
-        if (!dynamic_cast<AsT>(use))
-            throw IncorrectRegisteredCuratorType();
-
-        CuratorCommon<AsT, ExternalCuratorProvider>(use, TypeFor<ProvidedT>());
+        const auto factory = [args = std::make_tuple(std::forward<Args>(args) ...)](Reliquary& reliquary)
+        {
+            return std::apply(
+                [&reliquary](auto ... args)
+                {
+                    reliquary.curators.CreateHandler<CuratorT>(std::forward<Args>(args)...);
+                },
+                args);
+        };
+        curatorList.emplace_back(type.name, factory);
 
         return *this;
     }
@@ -281,61 +201,14 @@ namespace Arca
     template<class RelicT, class... InitializeArgs>
     void ReliquaryOrigin::GlobalRelicCommon(InitializeArgs&& ... initializeArgs)
     {
-        const auto factory =
-            [args = std::make_tuple(std::forward<InitializeArgs>(initializeArgs) ...)]
-        (Reliquary& reliquary)
+        const auto factory = [args = std::make_tuple(std::forward<InitializeArgs>(initializeArgs) ...)](Reliquary& reliquary)
         {
-            auto execution = [&reliquary](auto&& ... initializeArgs)
-            {
-                const auto type = TypeFor<RelicT>();
-                const auto id = reliquary.relics.AdvanceID();
-                auto emplaced = reliquary.relics.globalMap.emplace(
-                    type.name,
-                    ReliquaryRelics::StoredGlobal
-                    {
-                        std::make_shared<RelicT>(),
-                        id
-                    }
-                );
-                auto relic = reinterpret_cast<RelicT*>(emplaced.first->second.storage.get());
-                relic->id = id;
-                relic->owner = &reliquary;
-                reliquary.relics.SetupNewInternals(
-                    id,
-                    OpennessFor<RelicT>(),
-                    LocalityFor<RelicT>(),
-                    HasScribe<RelicT>(),
-                    Arca::Type(type.name),
-                    relic);
-                reliquary.relics.SatisfyStructure(id, StructureFrom<shards_for_t<RelicT>>());
-                PostConstruct(*relic);
-                Initialize(*relic, std::forward<decltype(initializeArgs)>(initializeArgs)...);
-
-                if (HasScribe<RelicT>())
+            return std::apply(
+                [&reliquary](auto ... initializeArgs)
                 {
-                    reliquary.relics.globalSerializers.push_back(
-                        KnownPolymorphicSerializer
-                        {
-                            type.name,
-                            [relic](Reliquary&, ::Inscription::BinaryArchive& archive)
-                            {
-                                archive(*relic);
-                            },
-                            [](::Inscription::BinaryArchive& archive)
-                            {
-                                return ::Inscription::InputTypesFor<RelicT>(archive);
-                            }
-                        });
-
-                    reliquary.relics.globalConstructList.push_back(
-                        [relic](Reliquary& reliquary)
-                        {
-                            relic->owner = &reliquary;
-                            PostConstruct(*relic);
-                        });
-                }
-            };
-            return std::apply(execution, args);
+                    reliquary.relics.CreateGlobalHandler<RelicT>(std::forward<InitializeArgs>(initializeArgs)...);
+                },
+                args);
         };
         globalRelicList.emplace_back(TypeFor<RelicT>().name, factory);
     }
@@ -376,46 +249,16 @@ namespace Arca
         return found != shardList.end();
     }
 
-    template<class CuratorT, class CuratorProvider, class... Args>
-    void ReliquaryOrigin::CuratorCommon(Args&& ... args)
-    {
-        const auto type = TypeFor<CuratorT>();
-
-        if (IsCuratorRegistered<CuratorT>())
-            throw AlreadyRegistered("curator", type, typeid(CuratorT));
-
-        curatorProviders.emplace(
-            type.name,
-            std::make_unique<CuratorProvider>(std::forward<Args>(args)...));
-        if (HasScribe<CuratorT>())
-        {
-            const auto curatorSerializationTypesFactory = [](Reliquary& reliquary)
-            {
-                const auto type = TypeFor<CuratorT>();
-                reliquary.curators.serializers.push_back(
-                    KnownPolymorphicSerializer
-                    {
-                        type.name,
-                        [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
-                        {
-                            auto& curator = reliquary.Find<CuratorT>();
-                            archive(curator);
-                        },
-                        [](::Inscription::BinaryArchive& archive)
-                        {
-                            return ::Inscription::InputTypesFor<CuratorT>(archive);
-                        }
-                    });
-            };
-
-            curatorSerializationTypesFactoryList.push_back(curatorSerializationTypesFactory);
-        }
-    }
-
     template<class CuratorT>
     bool ReliquaryOrigin::IsCuratorRegistered() const
     {
         auto type = TypeFor<CuratorT>();
-        return curatorProviders.find(type.name) != curatorProviders.end();
+        return std::find_if(
+            curatorList.begin(),
+            curatorList.end(),
+            [](const TypeConstructor& entry)
+            {
+                return entry.typeName == TypeFor<CuratorT>().name;
+            }) != curatorList.end();
     }
 }

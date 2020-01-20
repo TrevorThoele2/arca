@@ -8,21 +8,15 @@ namespace Arca
 {
     class Reliquary;
 
-    struct KnownPolymorphicSerializer
+    class KnownPolymorphicSerializer
     {
-        const TypeName mainType;
+    public:
+        virtual ~KnownPolymorphicSerializer() = 0;
 
-        using Serializer = std::function<void(Reliquary&, ::Inscription::BinaryArchive&)>;
-        const Serializer serializer;
-
-        using InscriptionTypes = std::vector<::Inscription::Type>;
-        using InscriptionTypeProvider =
-            std::function<InscriptionTypes(::Inscription::BinaryArchive&)>;
-        InscriptionTypeProvider inscriptionTypeProvider;
-
-        KnownPolymorphicSerializer(
-            TypeName mainType,
-            Serializer&& serializer,
-            InscriptionTypeProvider&& inscriptionTypeProvider);
+        virtual bool WillSerialize() const = 0;
+        virtual void Serialize(Inscription::BinaryArchive& archive) = 0;
+        [[nodiscard]] virtual TypeName MainType() const = 0;
+        [[nodiscard]] virtual std::vector<::Inscription::Type>
+            InscriptionTypes(Inscription::BinaryArchive& archive) const = 0;
     };
 }

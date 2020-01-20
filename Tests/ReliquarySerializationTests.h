@@ -39,37 +39,39 @@ public:
         explicit OtherShard(int myValue);
     };
 
-    class TypedClosedRelic final : public ClosedTypedRelicAutomation<TypedClosedRelic, BasicShard>
+    class TypedClosedRelic final : public ClosedTypedRelicAutomation<TypedClosedRelic>
     {
     public:
         int myInt = 0;
-        LocalPtr<BasicShard> basicShard;
+        ShardIndex<BasicShard> basicShard;
     public:
         TypedClosedRelic() = default;
 
-        void PostConstruct(ShardTuple shards);
+        void PostConstruct();
+        void Initialize();
     };
 
-    class TypedOpenRelic final : public OpenTypedRelicAutomation<TypedOpenRelic, BasicShard>
+    class TypedOpenRelic final : public OpenTypedRelicAutomation<TypedOpenRelic>
     {
     public:
         int myInt = 0;
-        LocalPtr<BasicShard> basicShard;
+        ShardIndex<BasicShard> basicShard;
     public:
         TypedOpenRelic() = default;
 
-        void PostConstruct(ShardTuple shards);
+        void PostConstruct();
+        void Initialize();
     };
 
-    class GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic, BasicShard>
+    class GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic>
     {
     public:
         int myInt = 0;
-        LocalPtr<BasicShard> basicShard;
+        ShardIndex<BasicShard> basicShard;
     public:
         GlobalRelic() = default;
 
-        void PostConstruct(ShardTuple shards);
+        void PostConstruct();
         void Initialize(int myInt = 0);
     };
 
@@ -101,45 +103,48 @@ public:
     };
 
     class TypedClosedRelicNullInscription final :
-        public ClosedTypedRelicAutomation<TypedClosedRelicNullInscription, BasicShardNullInscription>
+        public ClosedTypedRelicAutomation<TypedClosedRelicNullInscription>
     {
     public:
         int myInt = 0;
-        LocalPtr<BasicShardNullInscription> basicShard;
+        ShardIndex<BasicShardNullInscription> basicShard;
     public:
         TypedClosedRelicNullInscription() = default;
 
-        void PostConstruct(ShardTuple shards);
+        void PostConstruct();
+        void Initialize();
     };
 
     class TypedOpenRelicNullInscription final :
-        public OpenTypedRelicAutomation<TypedOpenRelicNullInscription, BasicShardNullInscription>
+        public OpenTypedRelicAutomation<TypedOpenRelicNullInscription>
     {
     public:
         int myInt = 0;
-        LocalPtr<BasicShardNullInscription> basicShard;
+        ShardIndex<BasicShardNullInscription> basicShard;
     public:
         TypedOpenRelicNullInscription() = default;
 
-        void PostConstruct(ShardTuple shards);
+        void PostConstruct();
+        void Initialize();
     };
 
     class GlobalRelicNullInscription final :
-        public ClosedTypedRelicAutomation<GlobalRelicNullInscription, BasicShardNullInscription>
+        public ClosedTypedRelicAutomation<GlobalRelicNullInscription>
     {
     public:
         int myInt = 0;
-        LocalPtr<BasicShardNullInscription> basicShard;
+        ShardIndex<BasicShardNullInscription> basicShard;
     public:
         GlobalRelicNullInscription() = default;
 
-        void PostConstruct(ShardTuple shards);
+        void PostConstruct();
+        void Initialize();
     };
 
-    class MovableOnlyRelic final : public ClosedTypedRelicAutomation<MovableOnlyRelic, BasicShard>
+    class MovableOnlyRelic final : public ClosedTypedRelicAutomation<MovableOnlyRelic>
     {
     public:
-        LocalPtr<BasicShard> basicShard;
+        ShardIndex<BasicShard> basicShard;
 
         int myValue = 0;
     public:
@@ -149,7 +154,8 @@ public:
         MovableOnlyRelic& operator=(const MovableOnlyRelic& arg) = delete;
         MovableOnlyRelic& operator=(MovableOnlyRelic&& arg) noexcept = default;
 
-        void PostConstruct(ShardTuple shards);
+        void PostConstruct();
+        void Initialize();
     };
 
     class BasicCuratorNullInscription final : public Curator
@@ -353,17 +359,6 @@ namespace Inscription
     };
 
     template<>
-    class Scribe<::ReliquarySerializationTestsFixture::BasicCurator, BinaryArchive> final :
-        public ArcaCompositeScribe<::ReliquarySerializationTestsFixture::BasicCurator, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {
-            archive(object.myInt);
-        }
-    };
-
-    template<>
     class Scribe<::ReliquarySerializationTestsFixture::BasicShardNullInscription, BinaryArchive> final
         : public ArcaNullScribe<::ReliquarySerializationTestsFixture::BasicShardNullInscription, BinaryArchive>
     {};
@@ -397,10 +392,5 @@ namespace Inscription
     template<>
     class Scribe<::ReliquarySerializationTestsFixture::GlobalRelicNullInscription, BinaryArchive> final
         : public ArcaNullScribe<::ReliquarySerializationTestsFixture::GlobalRelicNullInscription, BinaryArchive>
-    {};
-
-    template<>
-    class Scribe<::ReliquarySerializationTestsFixture::BasicCuratorNullInscription, BinaryArchive> final :
-        public ArcaNullScribe<::ReliquarySerializationTestsFixture::BasicCuratorNullInscription, BinaryArchive>
     {};
 }

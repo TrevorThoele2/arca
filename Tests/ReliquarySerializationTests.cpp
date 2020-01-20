@@ -10,24 +10,35 @@ ReliquarySerializationTestsFixture::BasicShard::BasicShard(std::string myValue) 
 ReliquarySerializationTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
 {}
 
-void ReliquarySerializationTestsFixture::TypedClosedRelic::PostConstruct(ShardTuple shards)
+void ReliquarySerializationTestsFixture::TypedClosedRelic::PostConstruct()
 {
-    basicShard = std::get<0>(shards);
+    basicShard = Find<BasicShard>();
 }
 
-void ReliquarySerializationTestsFixture::TypedOpenRelic::PostConstruct(ShardTuple shards)
+void ReliquarySerializationTestsFixture::TypedClosedRelic::Initialize()
 {
-    basicShard = std::get<0>(shards);
+    basicShard = Create<BasicShard>();
 }
 
-void ReliquarySerializationTestsFixture::GlobalRelic::PostConstruct(ShardTuple shards)
+void ReliquarySerializationTestsFixture::TypedOpenRelic::PostConstruct()
 {
-    basicShard = std::get<0>(shards);
+    basicShard = Find<BasicShard>();
+}
+
+void ReliquarySerializationTestsFixture::TypedOpenRelic::Initialize()
+{
+    basicShard = Create<BasicShard>();
+}
+
+void ReliquarySerializationTestsFixture::GlobalRelic::PostConstruct()
+{
+    basicShard = Find<BasicShard>();
 }
 
 void ReliquarySerializationTestsFixture::GlobalRelic::Initialize(int myInt)
 {
     this->myInt = myInt;
+    basicShard = Create<BasicShard>();
 }
 
 ReliquarySerializationTestsFixture::BasicShardNullInscription::BasicShardNullInscription(std::string myValue) :
@@ -38,38 +49,58 @@ ReliquarySerializationTestsFixture::OtherShardNullInscription::OtherShardNullIns
     myValue(myValue)
 {}
 
-void ReliquarySerializationTestsFixture::TypedClosedRelicNullInscription::PostConstruct(ShardTuple shards)
+void ReliquarySerializationTestsFixture::TypedClosedRelicNullInscription::PostConstruct()
 {
-    basicShard = std::get<0>(shards);
+    basicShard = Find<BasicShardNullInscription>();
 }
 
-void ReliquarySerializationTestsFixture::TypedOpenRelicNullInscription::PostConstruct(ShardTuple shards)
+void ReliquarySerializationTestsFixture::TypedClosedRelicNullInscription::Initialize()
 {
-    basicShard = std::get<0>(shards);
+    basicShard = Create<BasicShardNullInscription>();
 }
 
-void ReliquarySerializationTestsFixture::GlobalRelicNullInscription::PostConstruct(ShardTuple shards)
+void ReliquarySerializationTestsFixture::TypedOpenRelicNullInscription::PostConstruct()
 {
-    basicShard = std::get<0>(shards);
+    basicShard = Find<BasicShardNullInscription>();
 }
 
-void ReliquarySerializationTestsFixture::MovableOnlyRelic::PostConstruct(ShardTuple shards)
+void ReliquarySerializationTestsFixture::TypedOpenRelicNullInscription::Initialize()
 {
-    basicShard = std::get<0>(shards);
+    basicShard = Create<BasicShardNullInscription>();
 }
 
-const Inscription::BinaryArchive::StreamPosition defaultOutputArchiveSize = 135;
+void ReliquarySerializationTestsFixture::GlobalRelicNullInscription::PostConstruct()
+{
+    basicShard = Find<BasicShardNullInscription>();
+}
+
+void ReliquarySerializationTestsFixture::GlobalRelicNullInscription::Initialize()
+{
+    basicShard = Create<BasicShardNullInscription>();
+}
+
+void ReliquarySerializationTestsFixture::MovableOnlyRelic::PostConstruct()
+{
+    basicShard = Find<BasicShard>();
+}
+
+void ReliquarySerializationTestsFixture::MovableOnlyRelic::Initialize()
+{
+    basicShard = Create<BasicShard>();
+}
+
+const Inscription::BinaryArchive::StreamPosition defaultOutputArchiveSize = 123;
 
 SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "[reliquary][serialization]")
 {
     GIVEN("saved empty reliquary with every type registered")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Type<TypedClosedRelic>()
-            .Type<TypedOpenRelic>()
-            .Type<BasicShard>()
-            .Type<GlobalRelic>()
-            .Type<BasicCurator>()
+            .Register<TypedClosedRelic>()
+            .Register<TypedOpenRelic>()
+            .Register<BasicShard>()
+            .Register<GlobalRelic>()
+            .Register<BasicCurator>()
             .CuratorPipeline(Pipeline())
             .Actualize();
 
@@ -81,11 +112,11 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Type<TypedClosedRelic>()
-                .Type<TypedOpenRelic>()
-                .Type<BasicShard>()
-                .Type<GlobalRelic>()
-                .Type<BasicCurator>()
+                .Register<TypedClosedRelic>()
+                .Register<TypedOpenRelic>()
+                .Register<BasicShard>()
+                .Register<GlobalRelic>()
+                .Register<BasicCurator>()
                 .CuratorPipeline(Pipeline())
                 .Actualize();
 
@@ -112,7 +143,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
     GIVEN("saved reliquary with open relic")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Type<BasicShard>()
+            .Register<BasicShard>()
             .Actualize();
 
         auto savedRelic = savedReliquary->Create<OpenRelic>();
@@ -127,7 +158,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Type<BasicShard>()
+                .Register<BasicShard>()
                 .Actualize();
 
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
@@ -138,7 +169,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 inputArchiveSize = inputArchive.TellStream();
             }
 
-            auto loadedRelic = Arca::LocalPtr<OpenRelic>(savedRelic->ID(), *loadedReliquary);
+            auto loadedRelic = Arca::RelicIndex<OpenRelic>(savedRelic->ID(), *loadedReliquary);
             auto shardFromRelic = loadedRelic->Find<BasicShard>();
 
             THEN("has relic")
@@ -150,7 +181,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
 
             THEN("relic has shard")
             {
-                auto shardFromReliquary = Arca::LocalPtr<BasicShard>(loadedRelic->ID(), *loadedReliquary);
+                auto shardFromReliquary = Arca::ShardIndex<BasicShard>(loadedRelic->ID(), *loadedReliquary);
                 REQUIRE(shardFromReliquary);
                 REQUIRE(shardFromRelic);
                 REQUIRE(loadedRelic->Contains<BasicShard>());
@@ -187,7 +218,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 inputArchive(*loadedReliquary);
             }
 
-            auto loadedRelic = Arca::LocalPtr<OpenRelic>(savedRelic->ID(), *loadedReliquary);
+            auto loadedRelic = Arca::RelicIndex<OpenRelic>(savedRelic->ID(), *loadedReliquary);
 
             THEN("has relic")
             {
@@ -199,7 +230,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             THEN("relic does not have shard")
             {
                 REQUIRE_THROWS_AS(loadedRelic->Find<BasicShard>().Get(), NotRegistered);
-                REQUIRE_THROWS_AS(Arca::LocalPtr<BasicShard>(loadedRelic->ID(), *loadedReliquary).Get(), NotRegistered);
+                REQUIRE_THROWS_AS(Arca::ShardIndex<BasicShard>(loadedRelic->ID(), *loadedReliquary).Get(), NotRegistered);
             }
 
             THEN("relic owner is loaded reliquary")
@@ -216,7 +247,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
         WHEN("loading reliquary with different shard type with same input type handle")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Type<BasicShardWithDifferentInputHandle>()
+                .Register<BasicShardWithDifferentInputHandle>()
                 .Actualize();
 
             {
@@ -224,7 +255,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 inputArchive(*loadedReliquary);
             }
 
-            auto loadedRelic = Arca::LocalPtr<OpenRelic>(savedRelic->ID(), *loadedReliquary);
+            auto loadedRelic = Arca::RelicIndex<OpenRelic>(savedRelic->ID(), *loadedReliquary);
             auto shardFromRelic = loadedRelic->Find<BasicShardWithDifferentInputHandle>();
 
             THEN("has relic")
@@ -237,7 +268,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             THEN("relic has shard")
             {
                 auto shardFromReliquary =
-                    Arca::LocalPtr<BasicShardWithDifferentInputHandle>(loadedRelic->ID(), *loadedReliquary);
+                    Arca::ShardIndex<BasicShardWithDifferentInputHandle>(loadedRelic->ID(), *loadedReliquary);
                 REQUIRE(shardFromReliquary);
                 REQUIRE(shardFromRelic);
                 REQUIRE(loadedRelic->Contains<BasicShardWithDifferentInputHandle>());
@@ -263,11 +294,11 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
     GIVEN("saved reliquary with global relic")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Type<BasicShard>()
-            .Type<GlobalRelic>()
+            .Register<BasicShard>()
+            .Register<GlobalRelic>()
             .Actualize();
 
-        auto savedRelic = Arca::GlobalPtr<GlobalRelic>(*savedReliquary);
+        auto savedRelic = Arca::GlobalIndex<GlobalRelic>(*savedReliquary);
         savedRelic->myInt = dataGeneration.Random<int>();
         savedRelic->basicShard->myValue = dataGeneration.Random<std::string>();
 
@@ -279,8 +310,8 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Type<BasicShard>()
-                .Type<GlobalRelic>()
+                .Register<BasicShard>()
+                .Register<GlobalRelic>()
                 .Actualize();
 
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
@@ -291,7 +322,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 inputArchiveSize = inputArchive.TellStream();
             }
 
-            auto loadedRelic = Arca::GlobalPtr<GlobalRelic>(*loadedReliquary);
+            auto loadedRelic = Arca::GlobalIndex<GlobalRelic>(*loadedReliquary);
 
             THEN("loaded relic has value of saved")
             {
@@ -313,8 +344,8 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
     GIVEN("saved reliquary with typed closed relic")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Type<BasicShard>()
-            .Type<TypedClosedRelic>()
+            .Register<BasicShard>()
+            .Register<TypedClosedRelic>()
             .Actualize();
 
         auto savedRelic = savedReliquary->Create<TypedClosedRelic>();
@@ -328,8 +359,8 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Type<BasicShard>()
-                .Type<TypedClosedRelic>()
+                .Register<BasicShard>()
+                .Register<TypedClosedRelic>()
                 .Actualize();
 
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
@@ -340,7 +371,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 inputArchiveSize = inputArchive.TellStream();
             }
 
-            auto loadedRelic = Arca::LocalPtr<TypedClosedRelic>(savedRelic->ID(), *loadedReliquary);
+            auto loadedRelic = Arca::RelicIndex<TypedClosedRelic>(savedRelic->ID(), *loadedReliquary);
 
             THEN("loaded relic has value of saved")
             {
@@ -362,9 +393,9 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
     GIVEN("saved reliquary with typed open relic")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Type<BasicShard>()
-            .Type<OtherShard>()
-            .Type<TypedOpenRelic>()
+            .Register<BasicShard>()
+            .Register<OtherShard>()
+            .Register<TypedOpenRelic>()
             .Actualize();
 
         auto savedRelic = savedReliquary->Create<TypedOpenRelic>();
@@ -379,9 +410,9 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Type<BasicShard>()
-                .Type<OtherShard>()
-                .Type<TypedOpenRelic>()
+                .Register<BasicShard>()
+                .Register<OtherShard>()
+                .Register<TypedOpenRelic>()
                 .Actualize();
 
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
@@ -392,7 +423,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 inputArchiveSize = inputArchive.TellStream();
             }
 
-            auto loadedRelic = Arca::LocalPtr<TypedOpenRelic>(savedRelic->ID(), *loadedReliquary);
+            auto loadedRelic = Arca::RelicIndex<TypedOpenRelic>(savedRelic->ID(), *loadedReliquary);
             auto loadedOtherShard = loadedRelic->Find<OtherShard>();
 
             THEN("loaded relic has value of saved")
@@ -420,8 +451,8 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
     GIVEN("saved reliquary with movable only relic")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Type<BasicShard>()
-            .Type<MovableOnlyRelic>()
+            .Register<BasicShard>()
+            .Register<MovableOnlyRelic>()
             .Actualize();
 
         auto savedRelic = savedReliquary->Create<MovableOnlyRelic>();
@@ -435,8 +466,8 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Type<BasicShard>()
-                .Type<MovableOnlyRelic>()
+                .Register<BasicShard>()
+                .Register<MovableOnlyRelic>()
                 .Actualize();
 
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
@@ -447,7 +478,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 inputArchiveSize = inputArchive.TellStream();
             }
 
-            auto loadedRelic = Arca::LocalPtr<MovableOnlyRelic>(savedRelic->ID(), *loadedReliquary);
+            auto loadedRelic = Arca::RelicIndex<MovableOnlyRelic>(savedRelic->ID(), *loadedReliquary);
 
             THEN("loaded relic has value of saved")
             {
@@ -457,48 +488,6 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             THEN("loaded relic has shard of saved")
             {
                 REQUIRE(loadedRelic->basicShard->myValue == savedRelic->basicShard->myValue);
-            }
-
-            THEN("input size is more than default output size")
-            {
-                REQUIRE(inputArchiveSize > defaultOutputArchiveSize);
-            }
-        }
-    }
-
-    GIVEN("saved reliquary with curator")
-    {
-        auto savedReliquary = ReliquaryOrigin()
-            .Type<BasicCurator>()
-            .Actualize();
-
-        auto& savedCurator = savedReliquary->Find<BasicCurator>();
-        savedCurator.myInt = dataGeneration.Random<int>();
-
-        {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
-            outputArchive(*savedReliquary);
-        }
-
-        WHEN("loading reliquary")
-        {
-            auto loadedReliquary = ReliquaryOrigin()
-                .Type<BasicCurator>()
-                .Actualize();
-
-            ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
-
-            {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
-                inputArchive(*loadedReliquary);
-                inputArchiveSize = inputArchive.TellStream();
-            }
-
-            auto& loadedCurator = loadedReliquary->Find<BasicCurator>();
-
-            THEN("loaded curator has value of saved")
-            {
-                REQUIRE(loadedCurator.myInt == savedCurator.myInt);
             }
 
             THEN("input size is more than default output size")
@@ -551,17 +540,17 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "global computation serializ
     GIVEN("saved reliquary with global computation")
     {
         const auto savedReliquary = ReliquaryOrigin()
-            .Type<BasicShard>()
-            .Type<GlobalRelic>(dataGeneration.Random<int>())
+            .Register<BasicShard>()
+            .Register<GlobalRelic>(dataGeneration.Random<int>())
             .Compute<int>(
                 [](Reliquary& reliquary)
                 {
-                    const GlobalPtr<GlobalRelic> backing(reliquary);
+                    const GlobalIndex<GlobalRelic> backing(reliquary);
                     return backing->myInt;
                 })
             .Actualize();
 
-        auto savedComputation = Arca::ComputedPtr<int>(*savedReliquary);
+        auto savedComputation = Arca::ComputedIndex<int>(*savedReliquary);
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
@@ -571,12 +560,12 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "global computation serializ
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Type<BasicShard>()
-                .Type<GlobalRelic>()
+                .Register<BasicShard>()
+                .Register<GlobalRelic>()
                 .Compute<int>(
                     [](Reliquary& reliquary)
                     {
-                        const GlobalPtr<GlobalRelic> backing(reliquary);
+                        const GlobalIndex<GlobalRelic> backing(reliquary);
                         return backing->myInt;
                     })
                 .Actualize();
@@ -586,7 +575,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "global computation serializ
                 inputArchive(*loadedReliquary);
             }
 
-            auto loadedComputation = Arca::ComputedPtr<int>(*loadedReliquary);
+            auto loadedComputation = Arca::ComputedIndex<int>(*loadedReliquary);
 
             THEN("loaded relic has saved value")
             {
@@ -597,7 +586,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "global computation serializ
             {
                 REQUIRE(loadedReliquary->RelicSize() == 1);
                 REQUIRE(loadedReliquary->ShardSize() == 1);
-                REQUIRE(loadedReliquary->SignalSize() == 1);
+                REQUIRE(loadedReliquary->SignalSize() == 2);
             }
         }
     }
@@ -608,11 +597,11 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
     GIVEN("saved reliquary with global relic")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Type<BasicShardNullInscription>()
-            .Type<GlobalRelicNullInscription>()
+            .Register<BasicShardNullInscription>()
+            .Register<GlobalRelicNullInscription>()
             .Actualize();
 
-        auto savedRelic = Arca::GlobalPtr<GlobalRelicNullInscription>(*savedReliquary);
+        auto savedRelic = Arca::GlobalIndex<GlobalRelicNullInscription>(*savedReliquary);
         savedRelic->myInt = dataGeneration.Random<int>();
         savedRelic->basicShard->myValue = dataGeneration.Random<std::string>();
 
@@ -624,8 +613,8 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Type<BasicShardNullInscription>()
-                .Type<GlobalRelicNullInscription>()
+                .Register<BasicShardNullInscription>()
+                .Register<GlobalRelicNullInscription>()
                 .Actualize();
 
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
@@ -636,7 +625,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
                 inputArchiveSize = inputArchive.TellStream();
             }
 
-            auto loadedRelic = Arca::GlobalPtr<GlobalRelicNullInscription>(*loadedReliquary);
+            auto loadedRelic = Arca::GlobalIndex<GlobalRelicNullInscription>(*loadedReliquary);
 
             THEN("loaded relic does not have saved value")
             {
@@ -647,7 +636,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
             {
                 REQUIRE(loadedReliquary->RelicSize() == 1);
                 REQUIRE(loadedReliquary->ShardSize() == 1);
-                REQUIRE(loadedReliquary->SignalSize() == 1);
+                REQUIRE(loadedReliquary->SignalSize() == 2);
             }
 
             THEN("input size is default output size")
@@ -660,8 +649,8 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
     GIVEN("saved reliquary with typed closed relic")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Type<BasicShardNullInscription>()
-            .Type<TypedClosedRelicNullInscription>()
+            .Register<BasicShardNullInscription>()
+            .Register<TypedClosedRelicNullInscription>()
             .Actualize();
 
         auto savedRelic = savedReliquary->Create<TypedClosedRelicNullInscription>();
@@ -674,8 +663,8 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Type<BasicShardNullInscription>()
-                .Type<TypedClosedRelicNullInscription>()
+                .Register<BasicShardNullInscription>()
+                .Register<TypedClosedRelicNullInscription>()
                 .Actualize();
 
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
@@ -686,7 +675,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
                 inputArchiveSize = inputArchive.TellStream();
             }
 
-            auto loadedRelic = Arca::LocalPtr<TypedClosedRelicNullInscription>(savedRelic->ID(), *loadedReliquary);
+            auto loadedRelic = Arca::RelicIndex<TypedClosedRelicNullInscription>(savedRelic->ID(), *loadedReliquary);
 
             THEN("loaded relic does not exist")
             {
@@ -710,9 +699,9 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
     GIVEN("saved reliquary with typed open relic")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Type<BasicShardNullInscription>()
-            .Type<OtherShardNullInscription>()
-            .Type<TypedOpenRelicNullInscription>()
+            .Register<BasicShardNullInscription>()
+            .Register<OtherShardNullInscription>()
+            .Register<TypedOpenRelicNullInscription>()
             .Actualize();
 
         auto savedRelic = savedReliquary->Create<TypedOpenRelicNullInscription>();
@@ -727,9 +716,9 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Type<BasicShardNullInscription>()
-                .Type<OtherShardNullInscription>()
-                .Type<TypedOpenRelicNullInscription>()
+                .Register<BasicShardNullInscription>()
+                .Register<OtherShardNullInscription>()
+                .Register<TypedOpenRelicNullInscription>()
                 .Actualize();
 
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
@@ -740,7 +729,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
                 inputArchiveSize = inputArchive.TellStream();
             }
 
-            auto loadedRelic = Arca::LocalPtr<TypedOpenRelicNullInscription>(savedRelic->ID(), *loadedReliquary);
+            auto loadedRelic = Arca::RelicIndex<TypedOpenRelicNullInscription>(savedRelic->ID(), *loadedReliquary);
 
             THEN("loaded relic does not exist")
             {
@@ -764,7 +753,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
     GIVEN("saved reliquary with curator")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Type<BasicCuratorNullInscription>()
+            .Register<BasicCuratorNullInscription>()
             .Actualize();
 
         auto& savedCurator = savedReliquary->Find<BasicCuratorNullInscription>();
@@ -778,7 +767,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Type<BasicCuratorNullInscription>()
+                .Register<BasicCuratorNullInscription>()
                 .Actualize();
 
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;

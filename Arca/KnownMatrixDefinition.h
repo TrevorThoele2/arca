@@ -3,7 +3,7 @@
 #include "KnownMatrix.h"
 
 #include "Reliquary.h"
-#include "MatrixPtr.h"
+#include "MatrixIndex.h"
 #include "MatrixFormed.h"
 #include "MatrixDissolved.h"
 
@@ -80,12 +80,12 @@ namespace Arca
     template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int>>
     void KnownMatrix::SignalCreated(RelicID relicID, Reliquary& reliquary)
     {
-        reliquary.Raise<MatrixFormed<MatrixT>>(MatrixPtr<MatrixT>(relicID, reliquary));
+        reliquary.Raise<MatrixFormed<MatrixT>>(MatrixIndex<MatrixT>(relicID, reliquary));
     }
 
     template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int>>
     void KnownMatrix::SignalDestroying(RelicID relicID, Reliquary& reliquary)
     {
-        reliquary.Raise<MatrixDissolved<MatrixT>>(MatrixPtr<MatrixT>(relicID, reliquary));
+        reliquary.Raise<MatrixDissolved<MatrixT>>(MatrixIndex<MatrixT>(relicID, reliquary));
     }
 }

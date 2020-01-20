@@ -5,7 +5,7 @@
 #include <memory>
 #include <unordered_map>
 
-#include "StoredCurator.h"
+#include "Curator.h"
 #include "IsCurator.h"
 
 #include "KnownPolymorphicSerializer.h"
@@ -15,6 +15,8 @@ namespace Arca
     class ReliquaryCurators : public ReliquaryComponent
     {
     public:
+        [[nodiscard]] Curator& Find(const TypeName& type);
+        [[nodiscard]] const Curator& Find(const TypeName& type) const;
         template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int> = 0>
         [[nodiscard]] Curator& Find(const TypeName& type);
         template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int> = 0>
@@ -24,15 +26,43 @@ namespace Arca
         template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int> = 0>
         [[nodiscard]] const CuratorT& Find() const;
     public:
-        using HandlePtr = std::unique_ptr<StoredCurator>;
-        using Map = std::unordered_map<TypeName, HandlePtr>;
-        Map map;
+        class HandlerBase
+        {
+        public:
+            const TypeName typeName;
+        public:
+            virtual ~HandlerBase() = 0;
+
+            virtual Curator& Value() = 0;
+        protected:
+            explicit HandlerBase(const TypeName& typeName);
+        };
+
+        template<class CuratorT>
+        class Handler final : public HandlerBase
+        {
+        public:
+            CuratorT curator;
+        public:
+            template<class... Args>
+            explicit Handler(Args&& ... args);
+
+            Curator& Value() override;
+        };
+
+        using HandlerPtr = std::unique_ptr<HandlerBase>;
+        using HandlerList = std::vector<HandlerPtr>;
+        HandlerList handlers;
+
+        template<class CuratorT, class... Args, std::enable_if_t<is_curator_v<CuratorT>, int> = 0>
+        void CreateHandler(Args&& ... args);
+        [[nodiscard]] HandlerBase* FindHandler(const TypeName& typeName) const;
+        template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int> = 0>
+        [[nodiscard]] Handler<CuratorT>* FindHandler() const;
 
         using Stage = std::vector<Curator*>;
         using Pipeline = std::vector<Stage>;
         Pipeline workPipeline;
-
-        KnownPolymorphicSerializerList serializers;
 
         template<class CuratorT>
         [[nodiscard]] bool Contains() const;

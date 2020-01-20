@@ -10,14 +10,24 @@ ReliquaryTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std
 ReliquaryTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
 {}
 
-void ReliquaryTestsFixture::BasicTypedRelic::PostConstruct(ShardTuple shards)
+void ReliquaryTestsFixture::BasicTypedRelic::PostConstruct()
 {
-    basicShard = std::get<0>(shards);
+    basicShard = Find<BasicShard>();
 }
 
-void ReliquaryTestsFixture::GlobalRelic::PostConstruct(ShardTuple shards)
+void ReliquaryTestsFixture::BasicTypedRelic::Initialize()
 {
-    basicShard = std::get<0>(shards);
+    basicShard = Create<BasicShard>();
+}
+
+void ReliquaryTestsFixture::GlobalRelic::PostConstruct()
+{
+    basicShard = Find<BasicShard>();
+}
+
+void ReliquaryTestsFixture::GlobalRelic::Initialize()
+{
+    basicShard = Create<BasicShard>();
 }
 
 SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
@@ -60,7 +70,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
 
         WHEN("finding relic")
         {
-            auto found = Arca::LocalPtr<OpenRelic>(1, *reliquary);
+            auto found = Arca::RelicIndex<OpenRelic>(1, *reliquary);
 
             THEN("is empty")
             {
@@ -113,7 +123,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary wih single shard")
     GIVEN("reliquary registered with single shard")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<BasicShard>()
+            .Register<BasicShard>()
             .Actualize();
 
         WHEN("creating open relic with non-const shard")
@@ -128,7 +138,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary wih single shard")
 
             THEN("finding either shard gives correct")
             {
-                auto found = Arca::MatrixPtr<Either<BasicShard>>(relic->ID(), relic->Owner());
+                auto found = Arca::MatrixIndex<Either<BasicShard>>(relic->ID(), relic->Owner());
                 REQUIRE(found);
                 REQUIRE(&*found == &*shard);
             }
@@ -149,7 +159,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "creating relic from registered relic str
         WHEN("constructing relic from registered structure")
         {
             auto reliquary = reliquaryOrigin
-                .Type<BasicShard>()
+                .Register<BasicShard>()
                 .Actualize();
 
             auto relic = reliquary->CreateWith<ClosedRelic>(structureName);
@@ -185,11 +195,11 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "registered reliquary with every type", "
     GIVEN("all registered")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<BasicTypedRelic>()
-            .Type<GlobalRelic>()
+            .Register<BasicTypedRelic>()
+            .Register<GlobalRelic>()
             .RelicStructure(dataGeneration.Random<std::string>(), RelicStructure())
-            .Type<BasicShard>()
-            .Type<BasicCurator>()
+            .Register<BasicShard>()
+            .Register<BasicCurator>()
             .CuratorPipeline(Pipeline())
             .Actualize();
 

@@ -35,7 +35,7 @@ namespace Arca
     template<class T>
     auto MatrixImplementation<Either<T>>::CreateStored(RelicID id, Reliquary& reliquary) -> Stored
     {
-        return CreatePtrValue(id, reliquary);
+        return CreateIndexValue(id, reliquary);
     }
 
     template<class T>
@@ -51,8 +51,8 @@ namespace Arca
     }
 
     template<class T>
-    auto MatrixImplementation<Either<T>>::CreatePtrValue(RelicID id, Reliquary& reliquary)
-        -> PtrOptional
+    auto MatrixImplementation<Either<T>>::CreateIndexValue(RelicID id, Reliquary& reliquary)
+        -> IndexOptional
     {
         auto found = reliquary.FindStorage<T>(id);
         if (found)

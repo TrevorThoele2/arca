@@ -2,24 +2,14 @@
 
 #include "OpenTypedRelic.h"
 #include "Reliquary.h"
-#include "ExtractShards.h"
 
 namespace Arca
 {
-    template<class Derived, class... AllShards>
+    template<class Derived>
     class OpenTypedRelicAutomation : public OpenTypedRelic
     {
-    public:
-        using Shards = ShardList<AllShards...>;
     protected:
         OpenTypedRelicAutomation() = default;
-    protected:
-        using ShardTuple = ShardTuple<Shards>;
-
-        [[nodiscard]] ShardTuple ExtractShards() const
-        {
-            return Arca::ExtractShards<Shards>(ID(), Owner());
-        }
     protected:
         [[nodiscard]] bool ReliquaryContainsSelf() const override final
         {

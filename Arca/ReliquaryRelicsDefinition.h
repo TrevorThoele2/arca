@@ -9,7 +9,6 @@
 
 #include "OpennessFor.h"
 #include "LocalityFor.h"
-#include "ShardsFor.h"
 
 #include "AsHandle.h"
 
@@ -18,29 +17,29 @@
 namespace Arca
 {
     template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    LocalPtr<RelicT> ReliquaryRelics::Create(InitializeArgs&& ... initializeArgs)
+    RelicIndex<RelicT> ReliquaryRelics::Create(InitializeArgs&& ... initializeArgs)
     {
         if (!ShouldCreate<RelicT>(std::forward<InitializeArgs>(initializeArgs)...))
             return {};
 
         RelicT relic;
         auto pushed = PushNewRelic(std::move(relic), {}, std::forward<InitializeArgs>(initializeArgs)...);
-        return CreatePtr<RelicT>(pushed->ID());
+        return CreateIndex<RelicT>(pushed->ID());
     }
 
     template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    LocalPtr<RelicT> ReliquaryRelics::CreateWith(const RelicStructure& structure, InitializeArgs&& ... initializeArgs)
+    RelicIndex<RelicT> ReliquaryRelics::CreateWith(const RelicStructure& structure, InitializeArgs&& ... initializeArgs)
     {
         if (!ShouldCreate<RelicT>(std::forward<InitializeArgs>(initializeArgs)...))
             return {};
 
         RelicT relic;
         auto pushed = PushNewRelic(std::move(relic), structure);
-        return CreatePtr<RelicT>(pushed->ID());
+        return CreateIndex<RelicT>(pushed->ID());
     }
 
     template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    LocalPtr<RelicT> ReliquaryRelics::CreateWith(const std::string& structureName, InitializeArgs&& ... initializeArgs)
+    RelicIndex<RelicT> ReliquaryRelics::CreateWith(const std::string& structureName, InitializeArgs&& ... initializeArgs)
     {
         if (!ShouldCreate<RelicT>(std::forward<InitializeArgs>(initializeArgs)...))
             return {};
@@ -48,11 +47,11 @@ namespace Arca
         RelicT relic;
         auto structure = RelicStructures().RequiredRelicStructure(structureName);
         auto pushed = PushNewRelic(std::move(relic), structure);
-        return CreatePtr<RelicT>(pushed->ID());
+        return CreateIndex<RelicT>(pushed->ID());
     }
 
     template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    LocalPtr<RelicT> ReliquaryRelics::CreateChild(const Handle& parent, InitializeArgs&& ... initializeArgs)
+    RelicIndex<RelicT> ReliquaryRelics::CreateChild(const Handle& parent, InitializeArgs&& ... initializeArgs)
     {
         ThrowIfCannotParent(parent, RelicPrototype{ NextID(), OpennessFor<RelicT>() });
         auto child = Create<RelicT>(std::forward<InitializeArgs>(initializeArgs)...);
@@ -61,7 +60,7 @@ namespace Arca
     }
 
     template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    LocalPtr<RelicT> ReliquaryRelics::CreateChildWith(
+    RelicIndex<RelicT> ReliquaryRelics::CreateChildWith(
         const Handle& parent, const RelicStructure& structure, InitializeArgs&& ... initializeArgs)
     {
         ThrowIfCannotParent(parent, RelicPrototype{ NextID(), OpennessFor<RelicT>() });
@@ -71,7 +70,7 @@ namespace Arca
     }
 
     template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    LocalPtr<RelicT> ReliquaryRelics::CreateChildWith(
+    RelicIndex<RelicT> ReliquaryRelics::CreateChildWith(
         const Handle& parent, const std::string& structureName, InitializeArgs&& ... initializeArgs)
     {
         ThrowIfCannotParent(parent, RelicPrototype{ NextID(), OpennessFor<RelicT>() });
@@ -87,15 +86,15 @@ namespace Arca
         if (!WillDestroy(metadata))
             return;
 
-        auto ptr = CreatePtr<RelicT>(id);
-        Owner().Raise<DestroyingKnown<RelicT>>(ptr);
+        auto index = CreateIndex<RelicT>(id);
+        Owner().Raise<DestroyingKnown<RelicT>>(index);
         Destroy(*metadata);
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
     void ReliquaryRelics::Clear()
     {
-        auto& batchSource = batchSources.Required<RelicT>();
+        auto& batchSource = RequiredBatchSource<RelicT>();
         for (auto loop = batchSource.begin(); loop != batchSource.end();)
         {
             auto next = std::next(loop);
@@ -115,8 +114,8 @@ namespace Arca
     bool ReliquaryRelics::Contains() const
     {
         const auto type = TypeFor<RelicT>();
-        const auto found = globalMap.find(type.name);
-        return found != globalMap.end();
+        const auto found = FindGlobalHandler<RelicT>();
+        return found != nullptr;
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int>>
@@ -128,11 +127,11 @@ namespace Arca
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int>>
     RelicID ReliquaryRelics::IDFor() const
     {
-        auto found = globalMap.find(TypeFor<RelicT>());
-        if (found == globalMap.end())
+        auto found = FindGlobalHandler<RelicT>();
+        if (found == nullptr)
             return 0;
 
-        return found->second->id;
+        return found->id;
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
@@ -142,31 +141,165 @@ namespace Arca
         if (!metadata)
             return {};
 
-        auto& batchSource = batchSources.Required<RelicT>();
+        auto& batchSource = RequiredBatchSource<RelicT>();
         return batchSource.Find(id);
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
-    auto ReliquaryRelics::BatchSources::MapFor() -> Map&
+    void ReliquaryRelics::CreateLocalHandler()
     {
-        return map;
+        localHandlers.push_back(std::make_unique<LocalHandler<RelicT>>(Owner()));
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
-    auto ReliquaryRelics::BatchSources::MapFor() const -> const Map&
+    ReliquaryRelics::LocalHandler<RelicT>* ReliquaryRelics::FindLocalHandler() const
     {
-        return map;
+        auto found = FindLocalHandler(TypeFor<RelicT>().name);
+        if (found == nullptr)
+            return nullptr;
+
+        return static_cast<LocalHandler<RelicT>*>(found);
+    }
+
+    template<class ObjectT, std::enable_if_t<is_relic_v<ObjectT>, int>>
+    BatchSource<ObjectT>* ReliquaryRelics::FindBatchSource() const
+    {
+        const auto typeName = TypeFor<ObjectT>().name;
+        auto batchSource = FindBatchSource(typeName);
+        if (batchSource == nullptr)
+            return nullptr;
+
+        return static_cast<BatchSource<ObjectT>*>(batchSource);
+    }
+
+    template<class ObjectT, std::enable_if_t<is_relic_v<ObjectT>, int>>
+    BatchSource<ObjectT>& ReliquaryRelics::RequiredBatchSource() const
+    {
+        auto found = FindBatchSource<ObjectT>();
+        if (!found)
+        {
+            const auto type = TypeFor<ObjectT>();
+            throw NotRegistered(type, typeid(ObjectT));
+        }
+
+        return *found;
+    }
+
+    template<class ObjectT, std::enable_if_t<is_relic_v<ObjectT>, int>>
+    Arca::Batch<ObjectT> ReliquaryRelics::Batch() const
+    {
+        auto& batchSource = RequiredBatchSource<ObjectT>();
+        return Arca::Batch<ObjectT>(batchSource);
+    }
+
+    template<class RelicT>
+    ReliquaryRelics::LocalHandler<RelicT>::LocalHandler(Reliquary& reliquary) :
+        LocalHandlerBase(TypeFor<RelicT>().name), batchSource(reliquary)
+    {}
+
+    template<class RelicT>
+    RelicBatchSourceBase& ReliquaryRelics::LocalHandler<RelicT>::BatchSource()
+    {
+        return batchSource;
+    }
+
+    template<class RelicT>
+    void ReliquaryRelics::LocalHandler<RelicT>::Destroy(RelicID id, Reliquary& reliquary)
+    {
+        reliquary.Destroy<RelicT>(id);
+    }
+
+    template<class RelicT>
+    bool ReliquaryRelics::LocalHandler<RelicT>::WillSerialize() const
+    {
+        return HasScribe<RelicT>();
+    }
+
+    template<class RelicT>
+    void ReliquaryRelics::LocalHandler<RelicT>::Serialize(Inscription::BinaryArchive& archive)
+    {
+        if (!HasScribe<RelicT>())
+            return;
+
+        archive(batchSource);
+    }
+
+    template<class RelicT>
+    std::vector<::Inscription::Type> ReliquaryRelics::LocalHandler<RelicT>::InscriptionTypes(Inscription::BinaryArchive& archive) const
+    {
+        return ::Inscription::InputTypesFor<RelicT>(archive);
+    }
+
+    template<class RelicT>
+    ReliquaryRelics::GlobalHandler<RelicT>::GlobalHandler(ReliquaryRelics& owner, std::shared_ptr<void>&& storage, RelicID id) :
+        GlobalHandlerBase(TypeFor<RelicT>().name, std::move(storage), id), owner(&owner)
+    {}
+
+    template<class RelicT>
+    void ReliquaryRelics::GlobalHandler<RelicT>::PostConstruct()
+    {
+        auto relic = reinterpret_cast<RelicT*>(storage.get());
+        relic->owner = &owner->Owner();
+        Arca::PostConstruct(*relic);
+    }
+
+    template<class RelicT>
+    bool ReliquaryRelics::GlobalHandler<RelicT>::WillSerialize() const
+    {
+        return HasScribe<RelicT>();
+    }
+
+    template<class RelicT>
+    void ReliquaryRelics::GlobalHandler<RelicT>::Serialize(Inscription::BinaryArchive& archive)
+    {
+        archive(*reinterpret_cast<RelicT*>(storage.get()));
+    }
+
+    template<class RelicT>
+    std::vector<::Inscription::Type> ReliquaryRelics::GlobalHandler<RelicT>::InscriptionTypes(Inscription::BinaryArchive& archive) const
+    {
+        return ::Inscription::InputTypesFor<RelicT>(archive);
+    }
+
+    template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
+    void ReliquaryRelics::CreateGlobalHandler(InitializeArgs&& ... initializeArgs)
+    {
+        const auto type = TypeFor<RelicT>();
+        const auto id = AdvanceID();
+        globalHandlers.push_back(
+            std::make_unique<GlobalHandler<RelicT>>(*this, std::make_shared<RelicT>(), id));
+        auto relic = reinterpret_cast<RelicT*>(globalHandlers.back()->storage.get());
+        relic->id = id;
+        relic->owner = &Owner();
+        SetupNewInternals(
+            id,
+            OpennessFor<RelicT>(),
+            LocalityFor<RelicT>(),
+            HasScribe<RelicT>(),
+            Type(type.name),
+            relic);
+        PostConstruct(*relic);
+        Initialize(*relic, std::forward<decltype(initializeArgs)>(initializeArgs)...);
+    }
+
+    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
+    ReliquaryRelics::GlobalHandler<RelicT>* ReliquaryRelics::FindGlobalHandler() const
+    {
+        auto found = FindGlobalHandler(TypeFor<RelicT>().name);
+        if (found == nullptr)
+            return nullptr;
+
+        return static_cast<GlobalHandler<RelicT>*>(found);
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
     RelicT* ReliquaryRelics::FindGlobalStorage()
     {
-        const auto type = TypeFor<RelicT>();
-        const auto normalFound = globalMap.find(type.name);
-        if (normalFound != globalMap.end())
-            return reinterpret_cast<RelicT*>(normalFound->second.storage.get());
+        auto found = FindGlobalHandler<RelicT>();
+        if (found == nullptr)
+            return nullptr;
 
-        throw NotRegistered(type, typeid(RelicT));
+        return static_cast<RelicT*>(found->storage.get());
     }
 
     template<class T>
@@ -199,13 +332,13 @@ namespace Arca
 
     template<class RelicT, class... InitializeArgs>
     RelicT* ReliquaryRelics::PushNewRelic(
-        RelicT&& relic, RelicStructure additionalStructure, InitializeArgs&& ... initializeArgs)
+        RelicT&& relic, RelicStructure structure, InitializeArgs&& ... initializeArgs)
     {
         const auto id = AdvanceID();
         relic.id = id;
         relic.owner = &Owner();
 
-        auto& batchSource = batchSources.Required<RelicT>();
+        auto& batchSource = RequiredBatchSource<RelicT>();
         auto added = batchSource.Add(std::move(relic));
 
         SetupNewInternals(
@@ -215,24 +348,19 @@ namespace Arca
             HasScribe<RelicT>(),
             TypeFor<RelicT>(),
             added);
-        auto structure = StructureFrom<shards_for_t<RelicT>>();
-        structure.insert(
-            structure.end(),
-            additionalStructure.begin(),
-            additionalStructure.end());
         SatisfyStructure(id, structure);
         PostConstruct(*added);
         Initialize(*added, std::forward<InitializeArgs>(initializeArgs)...);
 
         Owner().Raise<Created>(HandleFrom(id, TypeFor<RelicT>(), HandleObjectType::Relic));
-        Owner().Raise<CreatedKnown<RelicT>>(CreatePtr<RelicT>(id));
+        Owner().Raise<CreatedKnown<RelicT>>(CreateIndex<RelicT>(id));
 
         return added;
     }
 
     template<class T>
-    auto ReliquaryRelics::CreatePtr(RelicID id) const
+    auto ReliquaryRelics::CreateIndex(RelicID id) const
     {
-        return ToPtr<T>(id, const_cast<Reliquary&>(Owner()));
+        return ToIndex<T>(id, const_cast<Reliquary&>(Owner()));
     }
 }

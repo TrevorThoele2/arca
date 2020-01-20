@@ -1,5 +1,4 @@
 #include <catch.hpp>
-#include <utility>
 using namespace std::string_literals;
 
 #include "HandleTests.h"
@@ -12,14 +11,24 @@ HandleTestsFixture::Shard::Shard(std::string myValue) : myValue(std::move(myValu
 HandleTestsFixture::OtherShard::OtherShard(std::string myValue) : myValue(std::move(myValue))
 {}
 
-void HandleTestsFixture::TypedRelic::PostConstruct(ShardTuple shards)
+void HandleTestsFixture::TypedRelic::PostConstruct()
 {
-    basicShard = std::get<0>(shards);
+    basicShard = Find<Shard>();
 }
 
-void HandleTestsFixture::GlobalRelic::PostConstruct(ShardTuple shards)
+void HandleTestsFixture::TypedRelic::Initialize()
 {
-    basicShard = std::get<0>(shards);
+    basicShard = Create<Shard>();
+}
+
+void HandleTestsFixture::GlobalRelic::PostConstruct()
+{
+    basicShard = Find<Shard>();
+}
+
+void HandleTestsFixture::GlobalRelic::Initialize()
+{
+    basicShard = Create<Shard>();
 }
 
 SCENARIO_METHOD(HandleTestsFixture, "basic handle", "[handle]")
@@ -27,11 +36,11 @@ SCENARIO_METHOD(HandleTestsFixture, "basic handle", "[handle]")
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<Shard>()
-            .Type<OtherShard>()
-            .Type<TypedRelic>()
-            .Type<GlobalRelic>()
-            .Type<Curator>()
+            .Register<Shard>()
+            .Register<OtherShard>()
+            .Register<TypedRelic>()
+            .Register<GlobalRelic>()
+            .Register<Curator>()
             .Actualize();
 
         WHEN("creating object")
@@ -62,11 +71,11 @@ SCENARIO_METHOD(HandleTestsFixture, "handle comparison combinations", "[handle]"
     GIVEN("all types")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<Shard>()
-            .Type<OtherShard>()
-            .Type<TypedRelic>()
-            .Type<GlobalRelic>()
-            .Type<Curator>()
+            .Register<Shard>()
+            .Register<OtherShard>()
+            .Register<TypedRelic>()
+            .Register<GlobalRelic>()
+            .Register<Curator>()
             .Actualize();
 
         auto openRelic1 = reliquary->Create<OpenRelic>();
@@ -78,7 +87,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle comparison combinations", "[handle]"
         auto typedRelicHandle1 = AsHandle(*typedRelic1);
         auto typedRelicShardHandle1 = AsHandle<Shard>(typedRelic1->ID(), *reliquary);;
 
-        auto globalRelic1 = Arca::GlobalPtr<GlobalRelic>(*reliquary);
+        auto globalRelic1 = Arca::GlobalIndex<GlobalRelic>(*reliquary);
         auto globalRelicHandle1 = AsHandle(*globalRelic1);
 
         auto closedRelic1 = reliquary->CreateWith<ClosedRelic>(RelicStructure { TypeFor<Shard>() });
@@ -94,7 +103,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle comparison combinations", "[handle]"
         auto typedRelicHandle2 = AsHandle(*typedRelic2);
         auto typedRelicShardHandle2 = AsHandle<Shard>(typedRelic2->ID(), *reliquary);;
 
-        auto globalRelic2 = Arca::GlobalPtr<GlobalRelic>(*reliquary);
+        auto globalRelic2 = Arca::GlobalIndex<GlobalRelic>(*reliquary);
         auto globalRelicHandle2 = AsHandle(*globalRelic2);
 
         auto closedRelic2 = reliquary->CreateWith<ClosedRelic>(RelicStructure{ TypeFor<Shard>() });
@@ -348,11 +357,11 @@ SCENARIO_METHOD(HandleTestsFixture, "handle actualizations combinations", "[hand
     GIVEN("all types")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<Shard>()
-            .Type<OtherShard>()
-            .Type<TypedRelic>()
-            .Type<GlobalRelic>()
-            .Type<Curator>()
+            .Register<Shard>()
+            .Register<OtherShard>()
+            .Register<TypedRelic>()
+            .Register<GlobalRelic>()
+            .Register<Curator>()
             .Actualize();
 
         auto openRelic = reliquary->Create<OpenRelic>();
@@ -364,7 +373,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle actualizations combinations", "[hand
         auto typedRelicHandle = AsHandle(*typedRelic);
         auto typedRelicShardHandle = AsHandle<Shard>(typedRelic->ID(), *reliquary);;
 
-        auto globalRelic = Arca::GlobalPtr<GlobalRelic>(*reliquary);
+        auto globalRelic = Arca::GlobalIndex<GlobalRelic>(*reliquary);
         auto globalRelicHandle = AsHandle(*globalRelic);
 
         auto closedRelic = reliquary->CreateWith<ClosedRelic>(RelicStructure{ TypeFor<Shard>() });

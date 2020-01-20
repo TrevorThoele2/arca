@@ -2,25 +2,27 @@
 
 #include "ClosedTypedRelic.h"
 #include "Reliquary.h"
-#include "ExtractShards.h"
 #include "TypeFor.h"
 
 namespace Arca
 {
-    template<class Derived, class... AllShards>
+    template<class Derived>
     class ClosedTypedRelicAutomation : public ClosedTypedRelic
     {
-    public:
-        using Shards = ShardList<AllShards...>;
     protected:
         ClosedTypedRelicAutomation() = default;
         ClosedTypedRelicAutomation(ClosedTypedRelicAutomation&& arg) noexcept = default;
     protected:
-        using ShardTuple = ShardTuple<Shards>;
-
-        [[nodiscard]] ShardTuple ExtractShards() const
+        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        ShardIndex<ShardT> Create()
         {
-            return Arca::ExtractShards<Shards>(ID(), Owner());
+            return Owner().CreateFromInternal<ShardT>(ID());
+        }
+
+        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        ShardIndex<ShardT> Find()
+        {
+            return ShardIndex<ShardT>(ID(), Owner());
         }
     protected:
         [[nodiscard]] bool ReliquaryContainsSelf() const override final

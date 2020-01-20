@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Inscription/NullScribe.h>
+#include <Inscription/Scribe.h>
 
 namespace Arca
 {
@@ -8,7 +9,7 @@ namespace Arca
     constexpr static bool HasScribe()
     {
         return !std::is_base_of_v<
-            ::Inscription::NullScribe<T, ::Inscription::BinaryArchive>,
-            ::Inscription::Scribe<T, ::Inscription::BinaryArchive>>;
+            ::Inscription::NullScribe<std::remove_const_t<T>, ::Inscription::BinaryArchive>,
+            ::Inscription::Scribe<std::remove_const_t<T>, ::Inscription::BinaryArchive>>;
     }
 }

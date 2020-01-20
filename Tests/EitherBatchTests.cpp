@@ -8,6 +8,16 @@ EitherBatchTestsFixture::Shard::Shard(int value) :
     value(value)
 {}
 
+void EitherBatchTestsFixture::Relic::Initialize()
+{
+    Create<Shard>();
+}
+
+void EitherBatchTestsFixture::GlobalRelic::Initialize()
+{
+    Create<Shard>();
+}
+
 SCENARIO_METHOD(EitherBatchTestsFixture, "default either batch", "[either][batch]")
 {
     GIVEN("default either batch")
@@ -72,7 +82,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
 {
     GIVEN("registered reliquary and relic")
     {
-        auto reliquary = ReliquaryOrigin().Type<Shard>().Actualize();
+        auto reliquary = ReliquaryOrigin().Register<Shard>().Actualize();
         auto relic = reliquary->Create<OpenRelic>();
 
         WHEN("creating shard")
@@ -217,8 +227,8 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
     GIVEN("registered reliquary with global relic")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<Shard>()
-            .Type<GlobalRelic>()
+            .Register<Shard>()
+            .Register<GlobalRelic>()
             .Actualize();
 
         WHEN("starting batch")
@@ -244,8 +254,8 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either shard batch serialization", "[E
     GIVEN("saved reliquary")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Type<Relic>()
-            .Type<Shard>()
+            .Register<Relic>()
+            .Register<Shard>()
             .Actualize();
 
         savedReliquary->Create<Relic>();
@@ -258,8 +268,8 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either shard batch serialization", "[E
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Type<Relic>()
-                .Type<Shard>()
+                .Register<Relic>()
+                .Register<Shard>()
                 .Actualize();
 
             {

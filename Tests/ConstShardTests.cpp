@@ -6,9 +6,14 @@ ConstShardTestsFixture::Shard::Shard(int value) :
     value(value)
 {}
 
-void ConstShardTestsFixture::Relic::PostConstruct(ShardTuple shards)
+void ConstShardTestsFixture::Relic::PostConstruct()
 {
-    shard = std::get<0>(shards);
+    shard = Find<const Shard>();
+}
+
+void ConstShardTestsFixture::Relic::Initialize()
+{
+    shard = Create<const Shard>();
 }
 
 SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
@@ -16,7 +21,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
     GIVEN("open relic created")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<Shard>()
+            .Register<Shard>()
             .Actualize();
 
         auto relic = reliquary->Create<OpenRelic>();
@@ -192,7 +197,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
     GIVEN("relic created from relic structure")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<Shard>()
+            .Register<Shard>()
             .Actualize();
 
         auto relicStructure = RelicStructure{};
@@ -249,8 +254,8 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
     GIVEN("relic created from typed relic")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<Shard>()
-            .Type<Relic>()
+            .Register<Shard>()
+            .Register<Relic>()
             .Actualize();
 
         auto relic = reliquary->Create<Relic>();
@@ -301,7 +306,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shard serialization", "[shard][co
     GIVEN("saved reliquary with shard")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Type<Shard>()
+            .Register<Shard>()
             .Actualize();
 
         auto savedRelic = savedReliquary->Create<OpenRelic>();
@@ -315,7 +320,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shard serialization", "[shard][co
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Type<Shard>()
+                .Register<Shard>()
                 .Actualize();
 
             {
@@ -323,7 +328,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shard serialization", "[shard][co
                 inputArchive(*loadedReliquary);
             }
 
-            auto loadedRelic = Arca::LocalPtr<OpenRelic>(savedRelic->ID(), *loadedReliquary);
+            auto loadedRelic = Arca::RelicIndex<OpenRelic>(savedRelic->ID(), *loadedReliquary);
 
             WHEN("finding const shard")
             {

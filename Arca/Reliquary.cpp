@@ -48,10 +48,10 @@ namespace Arca
     Reliquary::SizeT Reliquary::ShardSize() const
     {
         SizeT totalSize = 0;
-        for (auto& loop : shards.batchSources.map)
-            totalSize += loop.second->Size();
-        for (auto& loop : shards.batchSources.constMap)
-            totalSize += loop.second->Size();
+        for (auto& loop : shards.handlers)
+            totalSize += loop->BatchSource().Size();
+        for (auto& loop : shards.handlers)
+            totalSize += loop->ConstBatchSource().Size();
         return totalSize;
     }
 
@@ -62,7 +62,7 @@ namespace Arca
 
     Reliquary::SizeT Reliquary::CuratorSize() const
     {
-        return curators.map.size();
+        return curators.handlers.size();
     }
 
     Reliquary::SizeT Reliquary::SignalSize() const
@@ -101,13 +101,13 @@ namespace Arca
 
 namespace Inscription
 {
-    KnownPolymorphic::KnownPolymorphic(Arca::Reliquary& reliquary, Serializer serializer) :
-        reliquary(&reliquary), serializer(std::move(serializer))
+    KnownPolymorphic::KnownPolymorphic(Arca::Reliquary& reliquary, Value value) :
+        reliquary(&reliquary), value(value)
     {}
 
     void Scribe<KnownPolymorphic, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
-        object.serializer(*object.reliquary, archive);
+        object.value->Serialize(archive);
     }
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
@@ -135,25 +135,24 @@ namespace Inscription
         for (auto& loop : metadataToSave)
             SaveRelicMetadata(loop, archive);
 
-        JumpSaveAll(
-            object,
-            archive,
-            object.shards.serializers);
+        auto shardSerializers = ToKnownPolymorphicSerializerList(object.shards.handlers);
+        auto relicSerializers = ToKnownPolymorphicSerializerList(object.relics.localHandlers);
+        auto globalRelicSerializers = ToKnownPolymorphicSerializerList(object.relics.globalHandlers);
 
         JumpSaveAll(
             object,
             archive,
-            object.relics.serializers);
+            shardSerializers);
 
         JumpSaveAll(
             object,
             archive,
-            object.relics.globalSerializers);
+            relicSerializers);
 
         JumpSaveAll(
             object,
             archive,
-            object.curators.serializers);
+            globalRelicSerializers);
     }
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::Load(ObjectT& object, ArchiveT& archive)
@@ -174,20 +173,24 @@ namespace Inscription
         while (metadataSize-- > 0)
             loadedRelicMetadata.push_back(LoadRelicMetadata(object, archive));
 
-        JumpLoadAll(
-            object,
-            archive,
-            object.shards.serializers);
+        auto shardSerializers = ToKnownPolymorphicSerializerList(object.shards.handlers);
+        auto relicSerializers = ToKnownPolymorphicSerializerList(object.relics.localHandlers);
+        auto globalRelicSerializers = ToKnownPolymorphicSerializerList(object.relics.globalHandlers);
 
         JumpLoadAll(
             object,
             archive,
-            object.relics.serializers);
+            shardSerializers);
 
         JumpLoadAll(
             object,
             archive,
-            object.relics.globalSerializers);
+            relicSerializers);
+
+        JumpLoadAll(
+            object,
+            archive,
+            globalRelicSerializers);
 
         for (auto& metadata : loadedRelicMetadata)
         {
@@ -215,19 +218,14 @@ namespace Inscription
             object.relics.metadataList.push_back(createdMetadata);
         }
 
-        JumpLoadAll(
-            object,
-            archive,
-            object.curators.serializers);
+        for (auto& loop : object.relics.globalHandlers)
+            loop->PostConstruct();
 
-        for (auto& loop : object.relics.globalConstructList)
-            loop(object);
+        for (auto& loop : object.relics.localHandlers)
+            loop->BatchSource().Construct(object);
 
-        for (auto& loop : object.relics.batchSources.map)
-            loop.second->Construct(object);
-
-        for (auto& loop : object.curators.map)
-            loop.second->Get()->PostConstruct(object);
+        for (auto& loop : object.curators.handlers)
+            loop->Value().PostConstruct(object);
     }
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::JumpSaveAll(
@@ -240,8 +238,8 @@ namespace Inscription
         knownPolymorphics.reserve(polymorphicsFromObject.size());
         for (auto& loop : polymorphicsFromObject)
         {
-            const auto id = loop.mainType;
-            knownPolymorphics.emplace_back(object, loop.serializer);
+            const auto id = loop->MainType();
+            knownPolymorphics.emplace_back(object, loop);
             jumpTable.Add(id, knownPolymorphics.back());
         }
 
@@ -263,7 +261,7 @@ namespace Inscription
 
         for (auto& typeToLoad : typesToLoad)
         {
-            const auto& serializer = FindFrom(typeToLoad.arca, polymorphicsFromObject)->serializer;
+            const auto serializer = FindFrom(typeToLoad.arca, polymorphicsFromObject);
             auto adapter = KnownPolymorphic(object, serializer);
             jumpTable.FillObject(typeToLoad.inscription, adapter, archive);
         }
@@ -277,12 +275,12 @@ namespace Inscription
         const auto found = std::find_if(
             list.begin(),
             list.end(),
-            [&mainType](const Arca::KnownPolymorphicSerializer& entry)
+            [&mainType](const Arca::KnownPolymorphicSerializer* entry)
             {
-                return entry.mainType == mainType;
+                return entry->MainType() == mainType;
             });
         return found != list.end()
-            ? &*found
+            ? *found
             : static_cast<Arca::KnownPolymorphicSerializer*>(nullptr);
     }
 
@@ -348,16 +346,17 @@ namespace Inscription
 
         -> MetadataExtension
     {
-        for (auto& relicBatchSource : object.relics.batchSources.map)
+        for (auto& handler : object.relics.localHandlers)
         {
-            auto found = relicBatchSource.second->FindStorage(id);
+            auto& batchSource = handler->BatchSource();
+            auto found = batchSource.FindStorage(id);
             if (found)
-                return { relicBatchSource.second->Type(), Arca::Locality::Local, found };
+                return { batchSource.Type(), Arca::Locality::Local, found };
         }
 
-        for(auto& global : object.relics.globalMap)
-            if (global.second.id == id)
-                return { Arca::Type(global.first, false), Arca::Locality::Global, global.second.storage.get() };
+        for(auto& global : object.relics.globalHandlers)
+            if (global->id == id)
+                return { Arca::Type(global->typeName, false), Arca::Locality::Global, global->storage.get() };
 
         DEBUG_ASSERT(false);
     }
@@ -389,10 +388,10 @@ namespace Inscription
         std::vector<TypePair> returnValue;
         for(auto& loop : fromObject)
         {
-            auto inscriptionTypes = loop.inscriptionTypeProvider(archive);
+            auto inscriptionTypes = loop->InscriptionTypes(archive);
 
             for(auto& inscriptionType : inscriptionTypes)
-                returnValue.push_back({ loop.mainType, inscriptionType });
+                returnValue.push_back({ loop->MainType(), inscriptionType });
         }
         return returnValue;
     }

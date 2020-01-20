@@ -8,8 +8,8 @@ namespace Arca
 {
     ReliquaryOrigin::ReliquaryOrigin()
     {
-        Type<OpenRelic>();
-        Type<ClosedRelic>();
+        Register<OpenRelic>();
+        Register<ClosedRelic>();
     }
 
     ReliquaryOrigin::ReliquaryOrigin(const ReliquaryOrigin& arg) :
@@ -17,13 +17,10 @@ namespace Arca
         globalRelicList(arg.globalRelicList),
         namedRelicStructureList(arg.namedRelicStructureList),
         shardList(arg.shardList),
+        curatorList(arg.curatorList),
         curatorInitializationPipeline(arg.curatorInitializationPipeline),
-        curatorWorkPipeline(arg.curatorWorkPipeline),
-        curatorSerializationTypesFactoryList(arg.curatorSerializationTypesFactoryList)
-    {
-        for (auto& provider : arg.curatorProviders)
-            curatorProviders.emplace(provider.first, provider.second->Clone());
-    }
+        curatorWorkPipeline(arg.curatorWorkPipeline)
+    {}
 
     ReliquaryOrigin& ReliquaryOrigin::operator=(const ReliquaryOrigin& arg)
     {
@@ -31,11 +28,9 @@ namespace Arca
         globalRelicList = arg.globalRelicList;
         namedRelicStructureList = arg.namedRelicStructureList;
         shardList = arg.shardList;
-        for (auto& provider : arg.curatorProviders)
-            curatorProviders.emplace(provider.first, provider.second->Clone());
+        curatorList = arg.curatorList;
         curatorInitializationPipeline = arg.curatorInitializationPipeline;
         curatorWorkPipeline = arg.curatorWorkPipeline;
-        curatorSerializationTypesFactoryList = arg.curatorSerializationTypesFactoryList;
 
         return *this;
     }
@@ -120,30 +115,12 @@ namespace Arca
 
     std::vector<Curator*> ReliquaryOrigin::PushAllCuratorsTo(Reliquary& reliquary) const
     {
-        std::vector<Arca::Curator*> returnValue;
+        for (auto& initializer : curatorList)
+            initializer.factory(reliquary);
 
-        std::vector<CuratorProviderBase::Provided> provided;
-
-        for (auto& loop : curatorProviders)
-            provided.push_back(loop.second->Provide());
-
-        for (auto& loop : provided)
-        {
-            ReliquaryCurators::HandlePtr handle;
-
-            if (loop.curator.index() == 0)
-                handle = std::make_unique<OwnedStoredCurator>(std::move(std::get<0>(loop.curator)), loop.type);
-            else
-                handle = std::make_unique<UnownedStoredCurator>(std::get<1>(loop.curator), loop.type);
-
-            returnValue.push_back(handle->Get());
-
-            reliquary.curators.map.emplace(handle->type.name, std::move(handle));
-        }
-
-        for (auto& loop : curatorSerializationTypesFactoryList)
-            loop(reliquary);
-
+        std::vector<Curator*> returnValue;
+        for (auto& loop : reliquary.curators.handlers)
+            returnValue.push_back(&loop->Value());
         return returnValue;
     }
 

@@ -30,34 +30,37 @@ public:
         explicit OtherShard(int myValue);
     };
 
-    class TypedRelic final : public ClosedTypedRelicAutomation<TypedRelic, Shard>
+    class TypedRelic final : public ClosedTypedRelicAutomation<TypedRelic>
     {
     public:
-        LocalPtr<Shard> basicShard;
+        ShardIndex<Shard> basicShard;
     public:
         TypedRelic() = default;
 
-        void PostConstruct(ShardTuple shards);
+        void PostConstruct();
+        void Initialize();
     };
 
-    class OpenTypedRelic final : public OpenTypedRelicAutomation<OpenTypedRelic, Shard>
+    class OpenTypedRelic final : public OpenTypedRelicAutomation<OpenTypedRelic>
     {
     public:
-        LocalPtr<Shard> basicShard;
+        ShardIndex<Shard> basicShard;
     public:
         OpenTypedRelic() = default;
 
-        void PostConstruct(ShardTuple shards);
+        void PostConstruct();
+        void Initialize();
     };
 
-    class GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic, Shard>
+    class GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic>
     {
     public:
-        LocalPtr<Shard> basicShard;
+        ShardIndex<Shard> basicShard;
     public:
         GlobalRelic() = default;
 
-        void PostConstruct(ShardTuple shards);
+        void PostConstruct();
+        void Initialize();
     };
 
     class ShouldCreateRelic final : public ClosedTypedRelicAutomation<ShouldCreateRelic>
@@ -70,22 +73,21 @@ public:
         void Initialize(int value);
     };
 
-    class InitializedRelic final : public ClosedTypedRelicAutomation<InitializedRelic, Shard>
+    class InitializedRelic final : public ClosedTypedRelicAutomation<InitializedRelic>
     {
     public:
-        LocalPtr<Shard> basicShard;
+        ShardIndex<Shard> basicShard;
 
         int myValue = 0;
     public:
-        void PostConstruct(ShardTuple shards);
-
+        void PostConstruct();
         void Initialize(int myValue);
     };
 
-    class MovableOnlyRelic final : public ClosedTypedRelicAutomation<MovableOnlyRelic, Shard>
+    class MovableOnlyRelic final : public ClosedTypedRelicAutomation<MovableOnlyRelic>
     {
     public:
-        LocalPtr<Shard> basicShard;
+        ShardIndex<Shard> basicShard;
 
         int myValue = 0;
     public:
@@ -95,7 +97,8 @@ public:
         MovableOnlyRelic& operator=(const MovableOnlyRelic& arg) = delete;
         MovableOnlyRelic& operator=(MovableOnlyRelic&& arg) noexcept = default;
 
-        void PostConstruct(ShardTuple shards);
+        void PostConstruct();
+        void Initialize();
     };
 };
 

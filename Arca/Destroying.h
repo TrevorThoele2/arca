@@ -2,7 +2,8 @@
 
 #include "Traits.h"
 #include "Handle.h"
-#include "LocalPtr.h"
+#include "RelicIndex.h"
+#include "ShardIndex.h"
 #include "TypeFor.h"
 
 #include "IsRelic.h"
@@ -18,7 +19,7 @@ namespace Arca
     template<class T>
     struct DestroyingKnown
     {
-        typename PtrTypeFor<T>::Type ptr;
+        typename IndexTypeFor<T>::Type index;
 
         static_assert(is_relic_v<T> || is_shard_v<T>, "CreatedKnown must be used for relics or shards.");
     };

@@ -27,9 +27,9 @@ namespace Arca
         static BatchReference ToBatchSourceReference(Stored& stored);
         static BatchOptional ToBatchSourceOptional(Stored& stored);
     public:
-        using PtrReference = const T&;
-        using PtrOptional = const T*;
+        using IndexReference = const T&;
+        using IndexOptional = const T*;
 
-        static PtrOptional CreatePtrValue(RelicID id, Reliquary& reliquary);
+        static IndexOptional CreateIndexValue(RelicID id, Reliquary& reliquary);
     };
 }

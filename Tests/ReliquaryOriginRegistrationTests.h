@@ -82,9 +82,4 @@ namespace Inscription
     class Scribe<::ReliquaryOriginRegistrationTestsFixture::GlobalRelic, BinaryArchive> final
         : public ArcaNullScribe<::ReliquaryOriginRegistrationTestsFixture::GlobalRelic, BinaryArchive>
     {};
-
-    template<>
-    class Scribe<::ReliquaryOriginRegistrationTestsFixture::Curator, BinaryArchive> final :
-        public ArcaNullScribe<::ReliquaryOriginRegistrationTestsFixture::Curator, BinaryArchive>
-    {};
 }

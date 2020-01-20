@@ -20,25 +20,27 @@ public:
         explicit BasicShard(std::string myValue);
     };
 
-    class BasicTypedRelic final : public ClosedTypedRelicAutomation<BasicTypedRelic, BasicShard>
+    class BasicTypedRelic final : public ClosedTypedRelicAutomation<BasicTypedRelic>
     {
     public:
-        LocalPtr<BasicShard> basicShard;
+        ShardIndex<BasicShard> basicShard;
     public:
         BasicTypedRelic() = default;
 
-        void PostConstruct(ShardTuple shards);
+        void PostConstruct();
+        void Initialize();
     };
 
-    class GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic, BasicShard>
+    class GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic>
     {
     public:
         int myValue = 0;
-        LocalPtr<BasicShard> basicShard;
+        ShardIndex<BasicShard> basicShard;
     public:
         GlobalRelic() = default;
 
-        void PostConstruct(ShardTuple shards);
+        void PostConstruct();
+        void Initialize();
     };
 };
 
