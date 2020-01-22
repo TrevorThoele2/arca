@@ -359,6 +359,17 @@ namespace Inscription
     };
 
     template<>
+    class Scribe<::ReliquarySerializationTestsFixture::BasicCurator, BinaryArchive> final :
+        public ArcaCompositeScribe<::ReliquarySerializationTestsFixture::BasicCurator, BinaryArchive>
+    {
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        {
+            archive(object.myInt);
+        }
+    };
+
+    template<>
     class Scribe<::ReliquarySerializationTestsFixture::BasicShardNullInscription, BinaryArchive> final
         : public ArcaNullScribe<::ReliquarySerializationTestsFixture::BasicShardNullInscription, BinaryArchive>
     {};
@@ -392,5 +403,10 @@ namespace Inscription
     template<>
     class Scribe<::ReliquarySerializationTestsFixture::GlobalRelicNullInscription, BinaryArchive> final
         : public ArcaNullScribe<::ReliquarySerializationTestsFixture::GlobalRelicNullInscription, BinaryArchive>
+    {};
+
+    template<>
+    class Scribe<::ReliquarySerializationTestsFixture::BasicCuratorNullInscription, BinaryArchive> final
+        : public ArcaNullScribe<::ReliquarySerializationTestsFixture::BasicCuratorNullInscription, BinaryArchive>
     {};
 }

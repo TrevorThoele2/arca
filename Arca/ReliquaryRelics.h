@@ -180,7 +180,7 @@ namespace Arca
 
             void PostConstruct() override;
 
-            bool WillSerialize() const override;
+            [[nodiscard]] bool WillSerialize() const override;
             void Serialize(Inscription::BinaryArchive& archive) override;
             [[nodiscard]] std::vector<::Inscription::Type> InscriptionTypes(Inscription::BinaryArchive& archive) const override;
         private:

@@ -137,4 +137,9 @@ namespace Inscription
     class Scribe<::HandleTestsFixture::GlobalRelic, BinaryArchive> final
         : public ArcaNullScribe<::HandleTestsFixture::GlobalRelic, BinaryArchive>
     {};
+
+    template<>
+    class Scribe<::HandleTestsFixture::Curator, BinaryArchive> final
+        : public ArcaNullScribe<::HandleTestsFixture::Curator, BinaryArchive>
+    {};
 }

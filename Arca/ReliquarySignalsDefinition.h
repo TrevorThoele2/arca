@@ -24,13 +24,13 @@ namespace Arca
         Raise(SignalT{ std::forward<Args>(args)... });
     }
 
-    template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int>>
+    template<class SignalT, std::enable_if_t<is_signal_v<SignalT> && !is_matrix_signal_v<SignalT>, int>>
     void ReliquarySignals::ExecuteOn(const std::function<void(const SignalT&)>& function)
     {
         ExecuteOnCommon<SignalT>(function);
     }
 
-    template<class SignalT, std::enable_if_t<is_matrix_signal_v<SignalT>, int>>
+    template<class SignalT, std::enable_if_t<is_signal_v<SignalT> && is_matrix_signal_v<SignalT>, int>>
     void ReliquarySignals::ExecuteOn(const std::function<void(const SignalT&)>& function)
     {
         ExecuteOnCommon<SignalT>(function);

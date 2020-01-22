@@ -13,7 +13,7 @@ namespace Arca
     public:
         virtual ~KnownPolymorphicSerializer() = 0;
 
-        virtual bool WillSerialize() const = 0;
+        [[nodiscard]] virtual bool WillSerialize() const = 0;
         virtual void Serialize(Inscription::BinaryArchive& archive) = 0;
         [[nodiscard]] virtual TypeName MainType() const = 0;
         [[nodiscard]] virtual std::vector<::Inscription::Type>

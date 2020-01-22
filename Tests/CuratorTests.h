@@ -96,3 +96,42 @@ namespace Arca
         static inline const TypeName typeName = "DifferentiableCurator" + Chroma::ToString(id);
     };
 }
+
+namespace Inscription
+{
+    template<>
+    class Scribe<CuratorTestsFixture::BasicCurator, BinaryArchive> final :
+        public ArcaCompositeScribe<CuratorTestsFixture::BasicCurator, BinaryArchive>
+    {
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+    };
+
+    template<>
+    class Scribe<CuratorTestsFixture::OtherBasicCurator, BinaryArchive> final :
+        public ArcaCompositeScribe<CuratorTestsFixture::OtherBasicCurator, BinaryArchive>
+    {
+    public:
+        static std::vector<Type> InputTypes(const ArchiveT& archive);
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+    };
+
+    template<size_t id>
+    class Scribe<CuratorTestsFixture::DifferentiableCurator<id>, BinaryArchive> final :
+        public ArcaNullScribe<CuratorTestsFixture::DifferentiableCurator<id>, BinaryArchive>
+    {
+    private:
+        using BaseT = ArcaNullScribe<CuratorTestsFixture::DifferentiableCurator<id>, BinaryArchive>;
+    public:
+        using ObjectT = typename BaseT::ObjectT;
+        using ArchiveT = typename BaseT::ArchiveT;
+
+        using BaseT::Scriven;
+    };
+
+    template<>
+    class Scribe<CuratorTestsFixture::CuratorWithNonDefaultConstructor, BinaryArchive> final :
+        public ArcaNullScribe<CuratorTestsFixture::CuratorWithNonDefaultConstructor, BinaryArchive>
+    {};
+}

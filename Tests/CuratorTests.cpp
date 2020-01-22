@@ -569,3 +569,96 @@ SCENARIO_METHOD(CuratorTestsFixture, "non default curator construction", "[curat
         }
     }
 }
+
+SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][serialization]")
+{
+    GIVEN("saved reliquary")
+    {
+        auto savedReliquary = ReliquaryOrigin()
+            .Register<BasicCurator>()
+            .Actualize();
+    
+        auto& savedCurator = savedReliquary->Find<BasicCurator>();
+        savedCurator.value = dataGeneration.Random<int>();
+    
+        {
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            outputArchive(*savedReliquary);
+        }
+    
+        WHEN("loading reliquary")
+        {
+            auto loadedReliquary = ReliquaryOrigin()
+                .Register<BasicCurator>()
+                .Actualize();
+        
+            {
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                inputArchive(*loadedReliquary);
+            }
+        
+            auto& loadedCurator = loadedReliquary->Find<BasicCurator>();
+        
+            THEN("value is loaded")
+            {
+                REQUIRE(loadedCurator.value == savedCurator.value);
+            }
+        }
+    
+        WHEN("loading reliquary without curator registered")
+        {
+            auto loadedReliquary = ReliquaryOrigin()
+                .Actualize();
+        
+            {
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                inputArchive(*loadedReliquary);
+            }
+        
+            THEN("throws error")
+            {
+                REQUIRE_THROWS_AS(loadedReliquary->Find<BasicCurator>(), NotRegistered);
+            }
+        }
+    
+        WHEN("loading reliquary with different curator with same input type handle")
+        {
+            auto loadedReliquary = ReliquaryOrigin()
+                .Register<OtherBasicCurator>()
+                .Actualize();
+        
+            {
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");;
+                inputArchive(*loadedReliquary);
+            }
+        
+            auto & loadedCurator = loadedReliquary->Find<OtherBasicCurator>();
+        
+            THEN("value is loaded")
+            {
+                REQUIRE(loadedCurator.value == savedCurator.value);
+            }
+        }
+    }
+}
+
+namespace Inscription
+{
+    void Scribe<CuratorTestsFixture::BasicCurator, BinaryArchive>::ScrivenImplementation(
+        ObjectT& object, ArchiveT& archive)
+    {
+        archive(object.value);
+    }
+
+    void Scribe<CuratorTestsFixture::OtherBasicCurator, BinaryArchive>::ScrivenImplementation(
+        ObjectT& object, ArchiveT& archive)
+    {
+        archive(object.value);
+    }
+
+    std::vector<Type> Scribe<CuratorTestsFixture::OtherBasicCurator, BinaryArchive>::InputTypes(
+        const ArchiveT&)
+    {
+        return { "BasicCurator" };
+    }
+}

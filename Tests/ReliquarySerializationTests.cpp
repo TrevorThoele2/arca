@@ -89,7 +89,7 @@ void ReliquarySerializationTestsFixture::MovableOnlyRelic::Initialize()
     basicShard = Create<BasicShard>();
 }
 
-const Inscription::BinaryArchive::StreamPosition defaultOutputArchiveSize = 123;
+const Inscription::BinaryArchive::StreamPosition defaultOutputArchiveSize = 135;
 
 SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "[reliquary][serialization]")
 {
@@ -488,6 +488,48 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             THEN("loaded relic has shard of saved")
             {
                 REQUIRE(loadedRelic->basicShard->myValue == savedRelic->basicShard->myValue);
+            }
+
+            THEN("input size is more than default output size")
+            {
+                REQUIRE(inputArchiveSize > defaultOutputArchiveSize);
+            }
+        }
+    }
+
+    GIVEN("saved reliquary with curator")
+    {
+        auto savedReliquary = ReliquaryOrigin()
+            .Register<BasicCurator>()
+            .Actualize();
+
+        auto& savedCurator = savedReliquary->Find<BasicCurator>();
+        savedCurator.myInt = dataGeneration.Random<int>();
+
+        {
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            outputArchive(*savedReliquary);
+        }
+
+        WHEN("loading reliquary")
+        {
+            auto loadedReliquary = ReliquaryOrigin()
+                .Register<BasicCurator>()
+                .Actualize();
+
+            ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
+
+            {
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                inputArchive(*loadedReliquary);
+                inputArchiveSize = inputArchive.TellStream();
+            }
+
+            auto& loadedCurator = loadedReliquary->Find<BasicCurator>();
+
+            THEN("loaded curator has value of saved")
+            {
+                REQUIRE(loadedCurator.myInt == savedCurator.myInt);
             }
 
             THEN("input size is more than default output size")
