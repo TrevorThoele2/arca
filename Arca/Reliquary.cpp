@@ -162,11 +162,6 @@ namespace Inscription
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::Load(ObjectT& object, ArchiveT& archive)
     {
-        object.matrices.Clear();
-        object.shards.Clear();
-        object.relics.Clear();
-        object.signals.Clear();
-
         ContainerSize metadataSize = 0;
         archive(metadataSize);
 
@@ -200,11 +195,14 @@ namespace Inscription
 
         for (auto& metadata : loadedRelicMetadata)
         {
+            auto [type, locality, storage] = FindExtensionForLoadedMetadata(metadata.id, object);
+            if (locality == Arca::Locality::Global)
+                continue;
+
             Arca::RelicMetadata createdMetadata;
             createdMetadata.id = metadata.id;
             createdMetadata.openness = metadata.openness;
             createdMetadata.shouldSerialize = true;
-            auto [type, locality, storage] = FindExtensionForLoadedMetadata(metadata.id, object);
             createdMetadata.type = type;
             createdMetadata.locality = locality;
             createdMetadata.storage = storage;

@@ -68,7 +68,7 @@ namespace Arca
             Arca::BatchSource<ShardT> batchSource;
             Arca::BatchSource<const ShardT> constBatchSource;
         public:
-            Handler();
+            Handler(Reliquary& reliquary);
 
             ShardBatchSourceBase& BatchSource() override;
             ShardBatchSourceBase& ConstBatchSource() override;

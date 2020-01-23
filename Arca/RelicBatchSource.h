@@ -120,19 +120,23 @@ namespace Inscription
             ContainerSize size;
             archive(size);
 
-            object.list.clear();
-
             while (size-- > 0)
             {
                 Arca::RelicID id = 0;
                 archive(id);
 
-                typename ObjectT::RelicT relic;
-                relic.id = id;
-                relic.owner = object.owner;
-                archive(relic);
-                object.list.push_back(std::move(relic));
-                archive.AttemptReplaceTrackedObject(relic, object.list.back());
+                auto foundRelic = object.Find(id);
+                if (foundRelic)
+                    archive(*foundRelic);
+                else
+                {
+                    typename ObjectT::RelicT relic;
+                    relic.id = id;
+                    relic.owner = object.owner;
+                    archive(relic);
+                    object.list.push_back(std::move(relic));
+                    archive.AttemptReplaceTrackedObject(relic, object.list.back());
+                }
             }
         }
     }
