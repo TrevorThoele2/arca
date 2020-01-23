@@ -98,6 +98,13 @@ namespace Arca
     }
 
     template<class ShardT>
+    void ReliquaryShards::Handler<ShardT>::Clear()
+    {
+        batchSource.Clear();
+        constBatchSource.Clear();
+    }
+
+    template<class ShardT>
     bool ReliquaryShards::Handler<ShardT>::WillSerialize() const
     {
         return HasScribe<ShardT>();

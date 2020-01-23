@@ -25,6 +25,8 @@ namespace Arca
         void ExecuteOn(const std::function<void(const SignalT&)>& function);
         template<class SignalT, std::enable_if_t<is_signal_v<SignalT> && is_matrix_signal_v<SignalT>, int> = 0>
         void ExecuteOn(const std::function<void(const SignalT&)>& function);
+
+        void Clear();
     public:
         template<class SignalT>
         using Execution = std::function<void(const SignalT&)>;

@@ -18,6 +18,22 @@ namespace Arca
         handler->Destroy(id, Owner());
     }
 
+    void ReliquaryRelics::Clear()
+    {
+        for (auto& loop : localHandlers)
+            loop->Clear();
+
+        for (auto loop = metadataList.begin(); loop != metadataList.end();)
+        {
+            if (loop->locality == Arca::Locality::Global && !loop->shouldSerialize)
+                ++loop;
+            else
+                loop = metadataList.erase(loop);
+        }
+
+        nextRelicID = 1;
+    }
+
     void ReliquaryRelics::Clear(const TypeName& typeName)
     {
         auto& batchSource = RequiredBatchSource(typeName);

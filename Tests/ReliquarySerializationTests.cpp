@@ -577,6 +577,103 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
     }
 }
 
+SCENARIO_METHOD(ReliquarySerializationTestsFixture, "loading reliquary with objects attached", "[reliquary][serialization]")
+{
+    GIVEN("saved reliquary with non-global types registered")
+    {
+        auto savedReliquary = ReliquaryOrigin()
+            .Register<BasicShard>()
+            .Actualize();
+
+        {
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            outputArchive(*savedReliquary);
+        }
+
+        WHEN("loading reliquary with relic")
+        {
+            auto loadedReliquary = ReliquaryOrigin()
+                .Register<BasicShard>()
+                .Actualize();
+
+            loadedReliquary->Create<OpenRelic>();
+
+            {
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                inputArchive(*loadedReliquary);
+            }
+
+            THEN("does not have any relics")
+            {
+                REQUIRE(loadedReliquary->RelicSize() == 0);
+            }
+        }
+
+        WHEN("loading reliquary with shard")
+        {
+            auto loadedReliquary = ReliquaryOrigin()
+                .Register<BasicShard>()
+                .Actualize();
+
+            loadedReliquary
+                ->Create<OpenRelic>()
+                ->Create<BasicShard>();
+
+            {
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                inputArchive(*loadedReliquary);
+            }
+
+            THEN("does not have any shards")
+            {
+                REQUIRE(loadedReliquary->ShardSize() == 0);
+            }
+        }
+
+        WHEN("loading reliquary with matrix")
+        {
+            auto loadedReliquary = ReliquaryOrigin()
+                .Register<BasicShard>()
+                .Actualize();
+
+            loadedReliquary
+                ->Create<OpenRelic>()
+                ->Create<BasicShard>();
+
+            auto batch = loadedReliquary->Batch<Either<BasicShard>>();
+
+            {
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                inputArchive(*loadedReliquary);
+            }
+
+            THEN("does not have any matrices")
+            {
+                REQUIRE(loadedReliquary->MatrixSize() == 0);
+            }
+        }
+
+        WHEN("loading reliquary with signal")
+        {
+            auto loadedReliquary = ReliquaryOrigin()
+                .Register<BasicShard>()
+                .Actualize();
+
+            loadedReliquary->Raise<BasicSignal>();
+
+            {
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                inputArchive(*loadedReliquary);
+            }
+
+            THEN("does not have any signals")
+            {
+                REQUIRE(loadedReliquary->SignalSize() == 0);
+            }
+        }
+    }
+}
+
 SCENARIO_METHOD(ReliquarySerializationTestsFixture, "global computation serialization", "[global][computation][serialization]")
 {
     GIVEN("saved reliquary with global computation")
