@@ -25,7 +25,11 @@ namespace Arca
         virtual ~ClosedTypedRelic() = 0;
     protected:
         ClosedTypedRelic() = default;
+        ClosedTypedRelic(const ClosedTypedRelic& arg) = default;
         ClosedTypedRelic(ClosedTypedRelic&& arg) noexcept = default;
+
+        ClosedTypedRelic& operator=(const ClosedTypedRelic& arg) = default;
+        ClosedTypedRelic& operator=(ClosedTypedRelic&& arg) noexcept = default;
 
         [[nodiscard]] virtual bool ReliquaryContainsSelf() const = 0;
         [[nodiscard]] virtual Type Type() const = 0;

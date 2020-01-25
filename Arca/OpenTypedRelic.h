@@ -43,6 +43,11 @@ namespace Arca
         virtual ~OpenTypedRelic() = 0;
     protected:
         OpenTypedRelic() = default;
+        OpenTypedRelic(const OpenTypedRelic& arg) = default;
+        OpenTypedRelic(OpenTypedRelic&& arg) noexcept = default;
+
+        OpenTypedRelic& operator=(const OpenTypedRelic& arg) = default;
+        OpenTypedRelic& operator=(OpenTypedRelic&& arg) noexcept = default;
 
         [[nodiscard]] virtual bool ReliquaryContainsSelf() const = 0;
         [[nodiscard]] virtual Type Type() const = 0;

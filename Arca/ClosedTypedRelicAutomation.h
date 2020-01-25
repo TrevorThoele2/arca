@@ -11,7 +11,11 @@ namespace Arca
     {
     protected:
         ClosedTypedRelicAutomation() = default;
+        ClosedTypedRelicAutomation(const ClosedTypedRelicAutomation& arg) = default;
         ClosedTypedRelicAutomation(ClosedTypedRelicAutomation&& arg) noexcept = default;
+
+        ClosedTypedRelicAutomation& operator=(const ClosedTypedRelicAutomation& arg) = default;
+        ClosedTypedRelicAutomation& operator=(ClosedTypedRelicAutomation&& arg) noexcept = default;
     protected:
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         ShardIndex<ShardT> Create()

@@ -170,10 +170,10 @@ namespace Arca
         if (IsCuratorRegistered<CuratorT>())
             throw AlreadyRegistered("curator", type, typeid(CuratorT));
 
-        const auto factory = [args = std::make_tuple(std::forward<Args>(args) ...)](Reliquary& reliquary)
+        const auto factory = [args = std::make_tuple(std::forward<Args>(args) ...)](Reliquary& reliquary) mutable
         {
             return std::apply(
-                [&reliquary](auto ... args)
+                [&reliquary](auto&& ... args)
                 {
                     reliquary.curators.CreateHandler<CuratorT>(std::forward<Args>(args)...);
                 },
@@ -201,7 +201,7 @@ namespace Arca
     template<class RelicT, class... InitializeArgs>
     void ReliquaryOrigin::GlobalRelicCommon(InitializeArgs&& ... initializeArgs)
     {
-        const auto factory = [args = std::make_tuple(std::forward<InitializeArgs>(initializeArgs) ...)](Reliquary& reliquary)
+        const auto factory = [args = std::make_tuple(std::forward<InitializeArgs>(initializeArgs) ...)](Reliquary& reliquary) mutable
         {
             return std::apply(
                 [&reliquary](auto ... initializeArgs)

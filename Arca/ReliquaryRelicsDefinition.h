@@ -95,11 +95,11 @@ namespace Arca
     void ReliquaryRelics::Clear()
     {
         auto& batchSource = RequiredBatchSource<RelicT>();
-        for (auto loop = batchSource.begin(); loop != batchSource.end();)
+        auto iterator = batchSource.begin();
+        while(iterator != batchSource.end())
         {
-            auto next = std::next(loop);
-            Owner().Destroy(*loop);
-            loop = next;
+            Owner().Destroy(*iterator);
+            iterator = batchSource.begin();
         }
     }
 
