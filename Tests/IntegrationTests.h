@@ -123,7 +123,12 @@ public:
 
     Batch<BasicSignal> basicSignals;
 
-    Reliquary& Owner();
+    Reliquary& TheOwner();
+
+    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+    RelicT* TheData(RelicID id);
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+    ShardT* TheData(RelicID id);
 public:
     BasicCuratorBase();
 protected:
@@ -131,6 +136,18 @@ protected:
     void InitializeImplementation() override;
     void WorkImplementation(Stage& stage) override;
 };
+
+template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
+RelicT* IntegrationTestsFixture::BasicCuratorBase::TheData(RelicID id)
+{
+    return Data<RelicT>(id);
+}
+
+template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
+ShardT* IntegrationTestsFixture::BasicCuratorBase::TheData(RelicID id)
+{
+    return Data<ShardT>(id);
+}
 
 template<size_t differentiator>
 class IntegrationTestsFixture::BasicCurator final : public BasicCuratorBase
