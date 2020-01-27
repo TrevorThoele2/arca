@@ -46,9 +46,9 @@ SCENARIO_METHOD(IndexTestsFixture, "Index resets to nullptr after underlying obj
 
         WHEN("creating open relic then destroying relic")
         {
-            auto relic = reliquary->Create<OpenRelic>();
+            auto relic = reliquary->Do<Create<OpenRelic>>();
 
-            reliquary->Destroy(*relic);
+            reliquary->Destroy(relic);
 
             THEN("relic is nullptr")
             {
@@ -68,9 +68,9 @@ SCENARIO_METHOD(IndexTestsFixture, "Index resets to nullptr after underlying obj
 
         WHEN("creating closed relic then destroying relic")
         {
-            auto relic = reliquary->Create<ClosedRelic>();
+            auto relic = reliquary->Do<Create<ClosedRelic>>();
 
-            reliquary->Destroy(*relic);
+            reliquary->Destroy(relic);
 
             THEN("relic is nullptr")
             {
@@ -90,9 +90,9 @@ SCENARIO_METHOD(IndexTestsFixture, "Index resets to nullptr after underlying obj
 
         WHEN("creating typed closed relic then destroying relic")
         {
-            auto relic = reliquary->Create<TypedClosedRelic>();
+            auto relic = reliquary->Do<Create<TypedClosedRelic>>();
 
-            reliquary->Destroy(*relic);
+            reliquary->Destroy(relic);
 
             THEN("relic is nullptr")
             {
@@ -112,9 +112,9 @@ SCENARIO_METHOD(IndexTestsFixture, "Index resets to nullptr after underlying obj
 
         WHEN("creating typed open relic then destroying relic")
         {
-            auto relic = reliquary->Create<TypedOpenRelic>();
+            auto relic = reliquary->Do<Create<TypedOpenRelic>>();
 
-            reliquary->Destroy(*relic);
+            reliquary->Destroy(relic);
 
             THEN("relic is nullptr")
             {
@@ -144,7 +144,7 @@ SCENARIO_METHOD(IndexTestsFixture, "Matrix Index", "[index][matrix]")
             .Register<DifferentiableShard<2>>()
             .Actualize();
 
-        auto relic = reliquary->Create<OpenRelic>();
+        auto relic = reliquary->Do<Create<OpenRelic>>();
         auto shard0 = relic->Create<DifferentiableShard<0>>();
         auto shard1 = relic->Create<DifferentiableShard<1>>();
         auto shard2 = relic->Create<DifferentiableShard<2>>();

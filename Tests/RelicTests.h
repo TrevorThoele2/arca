@@ -18,7 +18,9 @@ public:
         std::string myValue;
     public:
         Shard() = default;
-        explicit Shard(std::string myValue);
+
+        void Initialize() {}
+        void Initialize(std::string myValue);
     };
 
     class OtherShard
@@ -99,6 +101,7 @@ public:
 
         void PostConstruct();
         void Initialize();
+        void Initialize(int myValue);
     };
 };
 

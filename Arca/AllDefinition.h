@@ -48,7 +48,7 @@ namespace Arca
         {
             using T = typename Pack::template Parameter<i>::Type;
 
-            reliquary.Destroy<T>(id);
+            reliquary.Do<Destroy<T>>(id);
         }
     };
 

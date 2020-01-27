@@ -8,8 +8,10 @@ using namespace std::string_literals;
 
 #include <Chroma/StringUtility.h>
 
-RelicTestsFixture::Shard::Shard(std::string myValue) : myValue(std::move(myValue))
-{}
+void RelicTestsFixture::Shard::Initialize(std::string myValue)
+{
+    this->myValue = myValue;
+}
 
 RelicTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
 {}
@@ -70,6 +72,12 @@ void RelicTestsFixture::MovableOnlyRelic::Initialize()
     basicShard = Create<Shard>();
 }
 
+void RelicTestsFixture::MovableOnlyRelic::Initialize(int myValue)
+{
+    this->myValue = myValue;
+    Initialize();
+}
+
 namespace Arca
 {
     bool Traits<RelicTestsFixture::ShouldCreateRelic>::ShouldCreate(Reliquary& reliquary, int value)
@@ -92,7 +100,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
         WHEN("creating open relic")
         {
             auto preCreateRelicSize = reliquary->RelicSize();
-            auto openRelic = reliquary->Create<OpenRelic>();
+            auto openRelic = reliquary->Do<Create<OpenRelic>>();
 
             THEN("does not have parent")
             {
@@ -195,7 +203,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
         WHEN("creating closed relic with valid structure")
         {
             auto preCreateRelicCount = reliquary->RelicSize();
-            auto closedRelic = reliquary->CreateWith<ClosedRelic>(RelicStructure{ TypeFor<Shard>() });
+            auto closedRelic = reliquary->Do<CreateWith<ClosedRelic>>(RelicStructure{ TypeFor<Shard>() });
 
             THEN("structure has been satisfied")
             {
@@ -274,7 +282,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
         WHEN("creating typed relic")
         {
             auto preCreateRelicSize = reliquary->RelicSize();
-            auto typedRelic = reliquary->Create<TypedRelic>();
+            auto typedRelic = reliquary->Do<Create<TypedRelic>>();
 
             THEN("does not have parent")
             {
@@ -342,8 +350,8 @@ SCENARIO_METHOD(RelicTestsFixture, "many relics", "[relic]")
         std::vector<RelicIndex<OpenRelic>> relics;
         for (size_t i = 0; i < 100; ++i)
         {
-            relics.push_back(reliquary->Create<OpenRelic>());
-            relics.back()->Create<Shard>()->myValue = ::Chroma::ToString(i);
+            relics.push_back(reliquary->Do<Create<OpenRelic>>());
+            relics.back()->Create<Shard>(::Chroma::ToString(i));
         }
 
         WHEN("deleting all but the last")
@@ -369,7 +377,7 @@ SCENARIO_METHOD(RelicTestsFixture, "many relics", "[relic]")
 
         WHEN("clearing")
         {
-            reliquary->Clear<OpenRelic>();
+            reliquary->Do<Clear>(Chroma::TypeIdentity<OpenRelic>{});
 
             THEN("reliquary is empty")
             {
@@ -380,7 +388,7 @@ SCENARIO_METHOD(RelicTestsFixture, "many relics", "[relic]")
 
         WHEN("clearing by type")
         {
-            reliquary->Clear(TypeFor<OpenRelic>());
+            reliquary->Do<Clear>(TypeFor<OpenRelic>());
 
             THEN("reliquary is empty")
             {
@@ -401,7 +409,7 @@ SCENARIO_METHOD(RelicTestsFixture, "custom should create relic", "[relic][should
 
         WHEN("creating relic with 100 value")
         {
-            const auto relic = reliquary->Create<ShouldCreateRelic>(100);
+            const auto relic = reliquary->Do<Create<ShouldCreateRelic>>(100);
 
             THEN("relic was created")
             {
@@ -412,7 +420,7 @@ SCENARIO_METHOD(RelicTestsFixture, "custom should create relic", "[relic][should
 
         WHEN("creating relic with 99 value")
         {
-            const auto relic = reliquary->Create<ShouldCreateRelic>(99);
+            const auto relic = reliquary->Do<Create<ShouldCreateRelic>>(99);
 
             THEN("relic was not created")
             {
@@ -440,7 +448,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
             auto knownCreatedSignals = reliquary->Batch<CreatedKnown<OpenRelic>>();
             auto knownDestroyingSignals = reliquary->Batch<DestroyingKnown<OpenRelic>>();
 
-            const auto created = reliquary->Create<OpenRelic>();
+            const auto created = reliquary->Do<Create<OpenRelic>>();
             const auto createdHandle = AsHandle(*created);
 
             THEN("signal is emitted for relic")
@@ -466,7 +474,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
             WHEN("clearing")
             {
-                reliquary->Clear<OpenRelic>();
+                reliquary->Do<Clear>(Chroma::TypeIdentity<OpenRelic>{});
 
                 THEN("signal is emitted for relic")
                 {
@@ -479,7 +487,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
             WHEN("clearing by type")
             {
-                reliquary->Clear(TypeFor<OpenRelic>());
+                reliquary->Do<Clear>(TypeFor<OpenRelic>());
 
                 THEN("signal is emitted for relic")
                 {
@@ -496,7 +504,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
             auto knownCreatedSignals = reliquary->Batch<CreatedKnown<ClosedRelic>>();
             auto knownDestroyingSignals = reliquary->Batch<DestroyingKnown<ClosedRelic>>();
 
-            const auto created = reliquary->CreateWith<ClosedRelic>(RelicStructure { TypeFor<Shard>() });
+            const auto created = reliquary->Do<CreateWith<ClosedRelic>>(RelicStructure { TypeFor<Shard>() });
             const auto createdHandle = AsHandle(*created);
 
             THEN("generic signal is emitted for relic and shard")
@@ -542,7 +550,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
             WHEN("clearing")
             {
-                reliquary->Clear<ClosedRelic>();
+                reliquary->Do<Clear>(Chroma::TypeIdentity<ClosedRelic>{});
 
                 THEN("generic signal is emitted for relic and shard")
                 {
@@ -565,7 +573,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
             WHEN("clearing by type")
             {
-                reliquary->Clear(TypeFor<ClosedRelic>());
+                reliquary->Do<Clear>(TypeFor<ClosedRelic>());
 
                 THEN("generic signal is emitted for relic and shard")
                 {
@@ -592,7 +600,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
             auto knownCreatedSignals = reliquary->Batch<CreatedKnown<TypedRelic>>();
             auto knownDestroyingSignals = reliquary->Batch<DestroyingKnown<TypedRelic>>();
 
-            const auto created = reliquary->Create<TypedRelic>();
+            const auto created = reliquary->Do<Create<TypedRelic>>();
             const auto createdHandle = AsHandle(*created);
 
             THEN("signal is emitted for relic and shard")
@@ -638,7 +646,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
             WHEN("clearing")
             {
-                reliquary->Clear<TypedRelic>();
+                reliquary->Do<Clear>(Chroma::TypeIdentity<TypedRelic>{});
 
                 THEN("signal is emitted for relic and shard")
                 {
@@ -661,7 +669,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
             WHEN("clearing by type")
             {
-                reliquary->Clear(TypeFor<TypedRelic>());
+                reliquary->Do<Clear>(TypeFor<TypedRelic>());
 
                 THEN("signal is emitted for relic and shard")
                 {
@@ -695,7 +703,7 @@ SCENARIO_METHOD(RelicTestsFixture, "open typed relic", "[relic][open]")
             .Register<OtherShard>()
             .Actualize();
 
-        auto relic = reliquary->Create<OpenTypedRelic>();
+        auto relic = reliquary->Do<Create<OpenTypedRelic>>();
 
         WHEN("default created")
         {
@@ -782,7 +790,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary->CreateChild<OpenRelic>(AsHandle(*globalRelic)),
+                    reliquary->Do<CreateChild<OpenRelic>>(AsHandle(*globalRelic)),
                     CannotParentRelic,
                     ::Catch::Matchers::Message("Attempted to parent to a global relic.")
                 );
@@ -801,14 +809,14 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             .Register<Shard>()
             .Actualize();
 
-        auto parent = reliquary->Create<OpenRelic>();
+        auto parent = reliquary->Do<Create<OpenRelic>>();
         parent->Create<Shard>();
 
         auto onParented = reliquary->Batch<RelicParented>();
 
         WHEN("created child")
         {
-            auto child = reliquary->CreateChild<OpenRelic>(AsHandle(*parent));
+            auto child = reliquary->Do<CreateChild<OpenRelic>>(AsHandle(*parent));
             child->Create<Shard>();
 
             THEN("child has parent")
@@ -863,7 +871,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary->CreateChild<OpenRelic>(nonExistentRelic),
+                    reliquary->Do<CreateChild<OpenRelic>>(nonExistentRelic),
                     CannotParentRelic,
                     ::Catch::Matchers::Message(
                         "The parent relic is from a different Reliquary.")
@@ -885,7 +893,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
         auto parentReliquary = origin.Actualize();
         auto childReliquary = origin.Actualize();
 
-        auto parent = parentReliquary->Create<OpenRelic>();
+        auto parent = parentReliquary->Do<Create<OpenRelic>>();
         parent->Create<Shard>();
 
         WHEN("parenting child inside child reliquary")
@@ -894,7 +902,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    childReliquary->CreateChild<OpenRelic>(AsHandle(*parent)),
+                    childReliquary->Do<CreateChild<OpenRelic>>(AsHandle(*parent)),
                     CannotParentRelic,
                     ::Catch::Matchers::Message(
                         "The parent relic is from a different Reliquary.")
@@ -910,7 +918,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    irrelevantReliquary->CreateChild<OpenRelic>(AsHandle(*parent)),
+                    irrelevantReliquary->Do<CreateChild<OpenRelic>>(AsHandle(*parent)),
                     CannotParentRelic,
                     ::Catch::Matchers::Message(
                         "The parent relic is from a different Reliquary.")
@@ -932,7 +940,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic initialization", "[relic]")
         WHEN("creating initialized relic")
         {
             auto myValue = dataGeneration.Random<int>();
-            auto relic = reliquary->Create<InitializedRelic>(myValue);
+            auto relic = reliquary->Do<Create<InitializedRelic>>(myValue);
 
             THEN("has value")
             {
@@ -958,10 +966,9 @@ SCENARIO_METHOD(RelicTestsFixture, "relic moving only", "[relic]")
 
         WHEN("creating movable only relic")
         {
-            auto relic = reliquary->Create<MovableOnlyRelic>();
-
             auto myValue = dataGeneration.Random<int>();
-            relic->myValue = myValue;
+
+            auto relic = reliquary->Do<Create<MovableOnlyRelic>>(myValue);
 
             THEN("has value")
             {

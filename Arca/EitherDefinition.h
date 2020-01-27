@@ -14,8 +14,8 @@ namespace Arca
     template<class T>
     void MatrixImplementation<Either<T>>::Destroy(RelicID id, Reliquary& reliquary)
     {
-        reliquary.Destroy<T>(id);
-        reliquary.Destroy<const T>(id);
+        reliquary.Do<Arca::Destroy<T>>(id);
+        reliquary.Do<Arca::Destroy<const T>>(id);
     }
 
     template<class T>

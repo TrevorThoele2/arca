@@ -22,10 +22,10 @@ namespace Arca
     {
     public:
         void Create(const Type& type, RelicID id);
-        template<class ShardT>
-        ShardIndex<ShardT> Create(RelicID id);
-        template<class ShardT>
-        ShardIndex<ShardT> CreateFromInternal(RelicID id);
+        template<class ShardT, class... InitializeArgs>
+        ShardIndex<ShardT> Create(RelicID id, InitializeArgs&& ... initializeArgs);
+        template<class ShardT, class... InitializeArgs>
+        ShardIndex<ShardT> CreateFromInternal(RelicID id, InitializeArgs&& ... initializeArgs);
 
         void Destroy(const Type& type, RelicID id);
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
@@ -68,12 +68,14 @@ namespace Arca
             Arca::BatchSource<ShardT> batchSource;
             Arca::BatchSource<const ShardT> constBatchSource;
         public:
-            Handler(Reliquary& reliquary);
+            explicit Handler(Reliquary& reliquary);
 
             ShardBatchSourceBase& BatchSource() override;
             ShardBatchSourceBase& ConstBatchSource() override;
 
             void Create(RelicID id, Reliquary& reliquary, bool isConst) override;
+            template<class... InitializeArgs>
+            void CreateCommon(RelicID id, Reliquary& reliquary, bool isConst, InitializeArgs&& ... initializeArgs);
             void Destroy(RelicID id, Reliquary& reliquary) override;
             void Clear() override;
 
@@ -106,8 +108,8 @@ namespace Arca
         ReliquaryShards(const ReliquaryShards& arg) = delete;
         ReliquaryShards& operator=(const ReliquaryShards& arg) = delete;
     private:
-        template<class ShardT>
-        ShardIndex<ShardT> CreateCommon(RelicID id);
+        template<class ShardT, class... InitializeArgs>
+        ShardIndex<ShardT> CreateCommon(RelicID id, InitializeArgs&& ... initializeArgs);
     private:
         template<class T>
         [[nodiscard]] auto CreateIndex(RelicID id) const;

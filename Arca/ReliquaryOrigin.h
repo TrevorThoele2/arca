@@ -9,6 +9,7 @@
 #include "Curator.h"
 
 #include "Initialize.h"
+#include "HasHandledCommands.h"
 
 namespace Arca
 {
@@ -90,6 +91,18 @@ namespace Arca
             Reliquary& reliquary,
             const Pipeline& toTransform,
             const std::vector<Arca::Curator*>& allCurators);
+
+        template<Chroma::VariadicTemplateSize i>
+        struct LinkHandledCommandIterator
+        {
+            template<class Curator>
+            static void Do(Curator& curator, ReliquaryCommands& commands);
+        };
+
+        template<class Curator, std::enable_if_t<has_handled_commands_v<Curator>, int> = 0>
+        static void LinkHandledCommands(Curator& curator, Reliquary& reliquary);
+        template<class Curator, std::enable_if_t<!has_handled_commands_v<Curator>, int> = 0>
+        static void LinkHandledCommands(Curator& curator, Reliquary& reliquary);
     };
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int>>
@@ -176,6 +189,9 @@ namespace Arca
                 [&reliquary](auto&& ... args)
                 {
                     reliquary.curators.CreateHandler<CuratorT>(std::forward<Args>(args)...);
+
+                    auto& curator = reliquary.curators.Find<CuratorT>();
+                    LinkHandledCommands<CuratorT>(curator, reliquary);
                 },
                 args);
         };
@@ -261,4 +277,30 @@ namespace Arca
                 return entry.typeName == TypeFor<CuratorT>().name;
             }) != curatorList.end();
     }
+
+    template<Chroma::VariadicTemplateSize i>
+    template<class Curator>
+    void ReliquaryOrigin::LinkHandledCommandIterator<i>::Do(Curator& curator, ReliquaryCommands& commands)
+    {
+        using CommandT = typename Curator::HandledCommands::template Parameter<i>::Type;
+        commands.Link<Curator, CommandT>();
+    }
+
+    template<class Curator, std::enable_if_t<has_handled_commands_v<Curator>, int>>
+    void ReliquaryOrigin::LinkHandledCommands(Curator& curator, Reliquary& reliquary)
+    {
+        static_assert(
+            Curator::HandledCommands::AllUnique::value,
+            "A Curator should only declare each handled command once.");
+
+        Chroma::IterateRange<
+            Chroma::VariadicTemplateSize,
+            LinkHandledCommandIterator,
+            Curator::HandledCommands::count - 1>
+            (curator, reliquary.commands);
+    }
+
+    template<class Curator, std::enable_if_t<!has_handled_commands_v<Curator>, int>>
+    void ReliquaryOrigin::LinkHandledCommands(Curator& curator, Reliquary& reliquary)
+    {}
 }

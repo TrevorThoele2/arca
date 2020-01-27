@@ -93,7 +93,7 @@ struct IntegrationTestsFixture::BasicSignal
     int value = 0;
 };
 
-class IntegrationTestsFixture::ChildRelic : public ClosedTypedRelicAutomation<ChildRelic>
+class IntegrationTestsFixture::ChildRelic final : public ClosedTypedRelicAutomation<ChildRelic>
 {
 public:
     int value = 0;
@@ -101,7 +101,7 @@ public:
     ChildRelic() = default;
 };
 
-class IntegrationTestsFixture::ParentRelic : public ClosedTypedRelicAutomation<ParentRelic>
+class IntegrationTestsFixture::ParentRelic final : public ClosedTypedRelicAutomation<ParentRelic>
 {
 public:
     int value;
@@ -110,7 +110,7 @@ public:
 
     void Initialize(int value);
 
-    void CreateChild();
+    void CreateChild() const;
 };
 
 class IntegrationTestsFixture::BasicCuratorBase : public Curator

@@ -45,12 +45,12 @@ SCENARIO_METHOD(HandleTestsFixture, "basic handle", "[handle]")
 
         WHEN("creating object")
         {
-            const auto relic1 = reliquary->Create<TypedRelic>();
+            auto relic1 = reliquary->Do<Create<TypedRelic>>();
             auto handle1 = AsHandle(*relic1);
 
             THEN("is not equal to different ID object")
             {
-                const auto relic2 = reliquary->Create<TypedRelic>();
+                auto relic2 = reliquary->Do<Create<TypedRelic>>();
                 auto handle2 = AsHandle(*relic2);
 
                 REQUIRE(handle1 != handle2);
@@ -78,35 +78,35 @@ SCENARIO_METHOD(HandleTestsFixture, "handle comparison combinations", "[handle]"
             .Register<Curator>()
             .Actualize();
 
-        auto openRelic1 = reliquary->Create<OpenRelic>();
+        auto openRelic1 = reliquary->Do<Create<OpenRelic>>();
         auto openRelicHandle1 = AsHandle(*openRelic1);
         openRelic1->Create<OtherShard>();
         auto openRelicOtherShardHandle1 = AsHandle<OtherShard>(openRelic1->ID(), *reliquary);
 
-        auto typedRelic1 = reliquary->Create<TypedRelic>();
+        auto typedRelic1 = reliquary->Do<Create<TypedRelic>>();
         auto typedRelicHandle1 = AsHandle(*typedRelic1);
         auto typedRelicShardHandle1 = AsHandle<Shard>(typedRelic1->ID(), *reliquary);;
 
         auto globalRelic1 = Arca::GlobalIndex<GlobalRelic>(*reliquary);
         auto globalRelicHandle1 = AsHandle(*globalRelic1);
 
-        auto closedRelic1 = reliquary->CreateWith<ClosedRelic>(RelicStructure { TypeFor<Shard>() });
+        auto closedRelic1 = reliquary->Do<CreateWith<ClosedRelic>>(RelicStructure { TypeFor<Shard>() });
         auto closedRelicHandle1 = AsHandle(*closedRelic1);
         auto closedRelicShardHandle1 = AsHandle<Shard>(closedRelic1->ID(), *reliquary);
 
-        auto openRelic2 = reliquary->Create<OpenRelic>();
+        auto openRelic2 = reliquary->Do<Create<OpenRelic>>();
         auto openRelicHandle2 = AsHandle(*openRelic2);
         openRelic2->Create<OtherShard>();
         auto openRelicOtherShardHandle2 = AsHandle<OtherShard>(openRelic2->ID(), *reliquary);
 
-        auto typedRelic2 = reliquary->Create<TypedRelic>();
+        auto typedRelic2 = reliquary->Do<Create<TypedRelic>>();
         auto typedRelicHandle2 = AsHandle(*typedRelic2);
         auto typedRelicShardHandle2 = AsHandle<Shard>(typedRelic2->ID(), *reliquary);;
 
         auto globalRelic2 = Arca::GlobalIndex<GlobalRelic>(*reliquary);
         auto globalRelicHandle2 = AsHandle(*globalRelic2);
 
-        auto closedRelic2 = reliquary->CreateWith<ClosedRelic>(RelicStructure{ TypeFor<Shard>() });
+        auto closedRelic2 = reliquary->Do<CreateWith<ClosedRelic>>(RelicStructure{ TypeFor<Shard>() });
         auto closedRelicHandle2 = AsHandle(*closedRelic2);
         auto closedRelicShardHandle2 = AsHandle<Shard>(closedRelic2->ID(), *reliquary);
 
@@ -364,19 +364,19 @@ SCENARIO_METHOD(HandleTestsFixture, "handle actualizations combinations", "[hand
             .Register<Curator>()
             .Actualize();
 
-        auto openRelic = reliquary->Create<OpenRelic>();
+        auto openRelic = reliquary->Do<Create<OpenRelic>>();
         auto openRelicHandle = AsHandle(*openRelic);
         openRelic->Create<OtherShard>();
         auto openRelicOtherShardHandle = AsHandle<OtherShard>(openRelic->ID(), *reliquary);
 
-        auto typedRelic = reliquary->Create<TypedRelic>();
+        auto typedRelic = reliquary->Do<Create<TypedRelic>>();
         auto typedRelicHandle = AsHandle(*typedRelic);
         auto typedRelicShardHandle = AsHandle<Shard>(typedRelic->ID(), *reliquary);;
 
         auto globalRelic = Arca::GlobalIndex<GlobalRelic>(*reliquary);
         auto globalRelicHandle = AsHandle(*globalRelic);
 
-        auto closedRelic = reliquary->CreateWith<ClosedRelic>(RelicStructure{ TypeFor<Shard>() });
+        auto closedRelic = reliquary->Do<CreateWith<ClosedRelic>>(RelicStructure{ TypeFor<Shard>() });
         auto closedRelicHandle = AsHandle(*closedRelic);
         auto closedRelicShardHandle = AsHandle<Shard>(closedRelic->ID(), *reliquary);
 

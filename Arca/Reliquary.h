@@ -3,9 +3,10 @@
 #include "ReliquaryRelics.h"
 #include "ReliquaryRelicStructures.h"
 #include "ReliquaryShards.h"
-#include "ReliquaryCurators.h"
-#include "ReliquarySignals.h"
 #include "ReliquaryMatrices.h"
+#include "ReliquaryCurators.h"
+#include "ReliquaryCommands.h"
+#include "ReliquarySignals.h"
 
 #include "RelicBatch.h"
 #include "ShardBatch.h"
@@ -18,6 +19,13 @@
 #include "ComputedIndex.h"
 #include "MatrixIndex.h"
 #include "AsHandle.h"
+
+#include "Create.h"
+#include "CreateWith.h"
+#include "CreateChild.h"
+#include "CreateChildWith.h"
+#include "Destroy.h"
+#include "Clear.h"
 
 #include "Created.h"
 #include "Destroying.h"
@@ -48,31 +56,6 @@ namespace Arca
     public:
         void Work();
     public:
-        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicIndex<RelicT> Create(InitializeArgs&& ... initializeArgs);
-        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicIndex<RelicT> CreateWith(const RelicStructure& structure, InitializeArgs&& ... initializeArgs);
-        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicIndex<RelicT> CreateWith(const std::string& structureName, InitializeArgs&& ... initializeArgs);
-
-        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicIndex<RelicT> CreateChild(const Handle& parent, InitializeArgs&& ... initializeArgs);
-        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicIndex<RelicT> CreateChildWith(const Handle& parent, const RelicStructure& structure, InitializeArgs&& ... initializeArgs);
-        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicIndex<RelicT> CreateChildWith(const Handle& parent, const std::string& structureName, InitializeArgs&& ... initializeArgs);
-
-        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        void Destroy(RelicID id);
-        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        void Destroy(const RelicT& relic);
-        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        void Destroy(RelicIndex<RelicT> index);
-
-        void Clear(const Type& type);
-        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        void Clear();
-
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
@@ -92,12 +75,6 @@ namespace Arca
 
         [[nodiscard]] SizeT RelicSize() const;
     public:
-        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        ShardIndex<ShardT> Create(RelicID id);
-
-        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        void Destroy(RelicID id);
-
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
 
@@ -133,6 +110,16 @@ namespace Arca
 
         [[nodiscard]] SizeT CuratorSize() const;
     public:
+        template<class CommandT, std::enable_if_t<is_command_v<CommandT> && std::is_void_v<command_return_t<CommandT>>, int> = 0>
+        void Do(const CommandT& command);
+        template<class CommandT, class... Args, std::enable_if_t<is_command_v<CommandT> && std::is_void_v<command_return_t<CommandT>>, int> = 0>
+        void Do(Args&& ... args);
+
+        template<class CommandT, std::enable_if_t<is_command_v<CommandT> && !std::is_void_v<command_return_t<CommandT>>, int> = 0>
+        command_return_t<CommandT> Do(const CommandT& command);
+        template<class CommandT, class... Args, std::enable_if_t<is_command_v<CommandT> && !std::is_void_v<command_return_t<CommandT>>, int> = 0>
+        command_return_t<CommandT> Do(Args&& ... args);
+    public:
         template<class SignalT, std::enable_if_t<is_signal_v<SignalT> && !std::is_same_v<TransferableSignal, SignalT>, int> = 0>
         void Raise(const SignalT& signal);
         template<class SignalT, class... Args, std::enable_if_t<is_signal_v<SignalT> && !std::is_same_v<TransferableSignal, SignalT>, int> = 0>
@@ -151,18 +138,20 @@ namespace Arca
         using Relics = ReliquaryRelics;
         using RelicStructures = ReliquaryRelicStructures;
         using Shards = ReliquaryShards;
-        using Curators = ReliquaryCurators;
-        using Signals = ReliquarySignals;
         using Matrices = ReliquaryMatrices;
+        using Curators = ReliquaryCurators;
+        using Commands = ReliquaryCommands;
+        using Signals = ReliquarySignals;
         Relics relics = Relics(*this);
         RelicStructures relicStructures = RelicStructures(*this);
         Shards shards = Shards(*this);
-        Curators curators = Curators(*this);
-        Signals signals = Signals(*this);
         Matrices matrices = Matrices(*this);
+        Curators curators = Curators(*this);
+        Commands commands = Commands(*this);
+        Signals signals = Signals(*this);
     private:
-        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        ShardIndex<ShardT> CreateFromInternal(RelicID id);
+        template<class ShardT, class... InitializeArgs, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        ShardIndex<ShardT> CreateFromInternal(RelicID id, InitializeArgs&& ... initializeArgs);
     private:
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         [[nodiscard]] RelicT* FindStorage(RelicID id);
@@ -181,9 +170,10 @@ namespace Arca
         friend class ReliquaryRelics;
         friend class ReliquaryRelicStructures;
         friend class ReliquaryShards;
-        friend class ReliquaryCurators;
-        friend class ReliquarySignals;
         friend class ReliquaryMatrices;
+        friend class ReliquaryCurators;
+        friend class ReliquaryCommands;
+        friend class ReliquarySignals;
 
         friend class OpenRelic;
         friend class ClosedTypedRelic;
@@ -196,7 +186,7 @@ namespace Arca
         friend class MatrixIndex;
         template<class>
         friend class RelicIndex;
-        template<class>
+        template<class, class>
         friend class ShardIndex;
 
         friend class KnownMatrix;
@@ -205,71 +195,12 @@ namespace Arca
 
         template<class Derived>
         friend class ClosedTypedRelicAutomation;
+
+        template<class, class>
+        friend class BatchSource;
     private:
         INSCRIPTION_ACCESS;
     };
-
-    template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    RelicIndex<RelicT> Reliquary::Create(InitializeArgs&& ... initializeArgs)
-    {
-        return relics.Create<RelicT>(std::forward<InitializeArgs>(initializeArgs)...);
-    }
-
-    template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    RelicIndex<RelicT> Reliquary::CreateWith(const RelicStructure& structure, InitializeArgs&& ... initializeArgs)
-    {
-        return relics.CreateWith<RelicT>(structure, std::forward<InitializeArgs>(initializeArgs)...);
-    }
-
-    template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    RelicIndex<RelicT> Reliquary::CreateWith(const std::string& structureName, InitializeArgs&& ... initializeArgs)
-    {
-        return relics.CreateWith<RelicT>(structureName, std::forward<InitializeArgs>(initializeArgs)...);
-    }
-
-    template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    RelicIndex<RelicT> Reliquary::CreateChild(const Handle& parent, InitializeArgs&& ... initializeArgs)
-    {
-        return relics.CreateChild<RelicT>(parent, std::forward<InitializeArgs>(initializeArgs)...);
-    }
-
-    template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    RelicIndex<RelicT> Reliquary::CreateChildWith(
-        const Handle& parent, const RelicStructure& structure, InitializeArgs&& ... initializeArgs)
-    {
-        return relics.CreateChildWith<RelicT>(parent, structure, std::forward<InitializeArgs>(initializeArgs)...);
-    }
-
-    template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    RelicIndex<RelicT> Reliquary::CreateChildWith(
-        const Handle& parent, const std::string& structureName, InitializeArgs&& ... initializeArgs)
-    {
-        return relics.CreateChildWith<RelicT>(parent, structureName, std::forward<InitializeArgs>(initializeArgs)...);
-    }
-
-    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
-    void Reliquary::Destroy(RelicID id)
-    {
-        relics.Destroy<RelicT>(id);
-    }
-
-    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
-    void Reliquary::Destroy(const RelicT& relic)
-    {
-        Destroy<RelicT>(relic.ID());
-    }
-
-    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
-    void Reliquary::Destroy(RelicIndex<RelicT> index)
-    {
-        Destroy<RelicT>(index.ID());
-    }
-
-    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
-    void Reliquary::Clear()
-    {
-        relics.Clear<RelicT>();
-    }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int>>
     bool Reliquary::Contains(RelicID id) const
@@ -299,18 +230,6 @@ namespace Arca
     RelicID Reliquary::IDFor() const
     {
         return relics.IDFor<RelicT>();
-    }
-
-    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    ShardIndex<ShardT> Reliquary::Create(RelicID id)
-    {
-        return shards.Create<ShardT>(id);
-    }
-
-    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    void Reliquary::Destroy(RelicID id)
-    {
-        shards.Destroy<ShardT>(id);
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
@@ -379,6 +298,30 @@ namespace Arca
         return static_cast<bool>(Find<CuratorT>());
     }
 
+    template<class CommandT, std::enable_if_t<is_command_v<CommandT> && std::is_void_v<command_return_t<CommandT>>, int>>
+    void Reliquary::Do(const CommandT& command)
+    {
+        commands.Do(command);
+    }
+
+    template<class CommandT, class... Args, std::enable_if_t<is_command_v<CommandT> && std::is_void_v<command_return_t<CommandT>>, int>>
+    void Reliquary::Do(Args&& ... args)
+    {
+        Do(CommandT(std::forward<Args>(args)...));
+    }
+
+    template<class CommandT, std::enable_if_t<is_command_v<CommandT> && !std::is_void_v<command_return_t<CommandT>>, int>>
+    command_return_t<CommandT> Reliquary::Do(const CommandT& command)
+    {
+        return commands.Do(command);
+    }
+
+    template<class CommandT, class... Args, std::enable_if_t<is_command_v<CommandT> && !std::is_void_v<command_return_t<CommandT>>, int>>
+    command_return_t<CommandT> Reliquary::Do(Args&& ... args)
+    {
+        return Do(CommandT(std::forward<Args>(args)...));
+    }
+
     template<class SignalT, std::enable_if_t<is_signal_v<SignalT> && !std::is_same_v<TransferableSignal, SignalT>, int>>
     void Reliquary::Raise(const SignalT& signal)
     {
@@ -403,10 +346,10 @@ namespace Arca
         return signals.batchSources.Batch<SignalT>();
     }
 
-    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    ShardIndex<ShardT> Reliquary::CreateFromInternal(RelicID id)
+    template<class ShardT, class... InitializeArgs, std::enable_if_t<is_shard_v<ShardT>, int>>
+    ShardIndex<ShardT> Reliquary::CreateFromInternal(RelicID id, InitializeArgs&& ... initializeArgs)
     {
-        return shards.CreateFromInternal<ShardT>(id);
+        return shards.CreateFromInternal<ShardT>(id, std::forward<InitializeArgs>(initializeArgs)...);
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
@@ -537,11 +480,14 @@ namespace Inscription
 #include "OpenRelicDefinition.h"
 #include "ClosedRelicDefinition.h"
 #include "OpenTypedRelicDefinition.h"
+
 #include "ReliquaryRelicsDefinition.h"
 #include "ReliquaryShardsDefinition.h"
 #include "ReliquaryMatricesDefinition.h"
 #include "ReliquaryCuratorsDefinition.h"
 #include "ReliquarySignalsDefinition.h"
+#include "ReliquaryCommandsDefinition.h"
+
 #include "RelicBatchSourceDefinition.h"
 #include "MatrixBatchSourceDefinition.h"
 #include "TransferableSignalDefinition.h"

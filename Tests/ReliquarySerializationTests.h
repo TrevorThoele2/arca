@@ -18,7 +18,9 @@ public:
         std::string myValue;
     public:
         BasicShard() = default;
-        explicit BasicShard(std::string myValue);
+
+        void Initialize();
+        void Initialize(std::string myValue);
     };
 
     class BasicShardWithDifferentInputHandle
@@ -49,6 +51,7 @@ public:
 
         void PostConstruct();
         void Initialize();
+        void Initialize(int myInt);
     };
 
     class TypedOpenRelic final : public OpenTypedRelicAutomation<TypedOpenRelic>
@@ -61,6 +64,7 @@ public:
 
         void PostConstruct();
         void Initialize();
+        void Initialize(int myInt);
     };
 
     class GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic>
@@ -72,7 +76,8 @@ public:
         GlobalRelic() = default;
 
         void PostConstruct();
-        void Initialize(int myInt = 0);
+        void Initialize();
+        void Initialize(int myInt, std::string shardData);
     };
 
     class BasicCurator final : public Curator
@@ -90,7 +95,9 @@ public:
         std::string myValue;
     public:
         BasicShardNullInscription() = default;
-        explicit BasicShardNullInscription(std::string myValue);
+
+        void Initialize();
+        void Initialize(std::string myValue);
     };
 
     class OtherShardNullInscription
@@ -99,7 +106,8 @@ public:
         int myValue;
     public:
         OtherShardNullInscription() = default;
-        explicit OtherShardNullInscription(int myValue);
+
+        void Initialize(int myValue = 0);
     };
 
     class TypedClosedRelicNullInscription final :
@@ -139,6 +147,7 @@ public:
 
         void PostConstruct();
         void Initialize();
+        void Initialize(int myInt, std::string shardData);
     };
 
     class MovableOnlyRelic final : public ClosedTypedRelicAutomation<MovableOnlyRelic>
@@ -156,6 +165,7 @@ public:
 
         void PostConstruct();
         void Initialize();
+        void Initialize(int myInt, std::string shardData);
     };
 
     class BasicCuratorNullInscription final : public Curator

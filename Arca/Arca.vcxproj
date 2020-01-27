@@ -21,9 +21,21 @@
   <ItemGroup>
     <ClInclude Include="AllDefinition.h" />
     <ClInclude Include="AllImplementation.h" />
+    <ClInclude Include="Clear.h" />
+    <ClInclude Include="Command.h" />
+    <ClInclude Include="CommandReturn.h" />
+    <ClInclude Include="Create.h" />
+    <ClInclude Include="CreateChild.h" />
+    <ClInclude Include="CreateChildWith.h" />
+    <ClInclude Include="CreateWith.h" />
+    <ClInclude Include="Destroy.h" />
     <ClInclude Include="EitherDefinition.h" />
     <ClInclude Include="EitherImplementation.h" />
+    <ClInclude Include="HandledCommands.h" />
+    <ClInclude Include="HasCommandReturn.h" />
+    <ClInclude Include="HasHandledCommands.h" />
     <ClInclude Include="IndexTypeFor.h" />
+    <ClInclude Include="IsCommand.h" />
     <ClInclude Include="MatrixDissolved.h" />
     <ClInclude Include="MatrixFormed.h" />
     <ClInclude Include="ComputedIndex.h" />
@@ -40,6 +52,8 @@
     <ClInclude Include="MatrixBatchSourceDefinition.h" />
     <ClInclude Include="IsMatrixSignal.h" />
     <ClInclude Include="MatrixTypeForSignal.h" />
+    <ClInclude Include="ReliquaryCommands.h" />
+    <ClInclude Include="ReliquaryCommandsDefinition.h" />
     <ClInclude Include="ReliquaryMatrices.h" />
     <ClInclude Include="ReliquaryMatricesDefinition.h" />
     <ClInclude Include="ShardIndex.h" />
@@ -47,7 +61,6 @@
     <ClInclude Include="TransferableSignalDefinition.h" />
     <ClInclude Include="AsHandle.h" />
     <ClInclude Include="CompositeScribe.h" />
-    <ClInclude Include="HasShards.h" />
     <ClInclude Include="HandleObjectTypeFor.h" />
     <ClInclude Include="GlobalIndex.h" />
     <ClInclude Include="HasLocalityTrait.h" />
@@ -76,7 +89,7 @@
     <ClInclude Include="BatchSource.h" />
     <ClInclude Include="Destroying.h" />
     <ClInclude Include="HandleSlim.h" />
-    <ClInclude Include="HasInitializeMethod.h" />
+    <ClInclude Include="HasBareInitializeMethod.h" />
     <ClInclude Include="HasPostConstructMethod.h" />
     <ClInclude Include="HasShouldCreateMethod.h" />
     <ClInclude Include="Initialize.h" />
@@ -141,6 +154,7 @@
   <ItemGroup>
     <ClCompile Include="KnownMatrix.cpp" />
     <ClCompile Include="MatrixBatchSource.cpp" />
+    <ClCompile Include="ReliquaryCommands.cpp" />
     <ClCompile Include="ReliquaryMatrices.cpp" />
     <ClCompile Include="TransferableSignal.cpp" />
     <ClCompile Include="ClosedRelic.cpp" />

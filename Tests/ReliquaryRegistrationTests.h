@@ -26,6 +26,9 @@ public:
     class Curator final : public Arca::Curator
     {};
 
+    struct Command
+    {};
+
     struct Signal
     {};
 };
@@ -59,6 +62,13 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Curator;
         static inline const TypeName typeName = "ReliquaryTestsCurator";
+    };
+
+    template<>
+    struct Traits<::ReliquaryRegistrationTestsFixture::Command>
+    {
+        static const ObjectType objectType = ObjectType::Command;
+        static inline const TypeName typeName = "ReliquaryTestsCommand";
     };
 
     template<>

@@ -17,14 +17,14 @@ namespace Arca
         ClosedTypedRelicAutomation& operator=(const ClosedTypedRelicAutomation& arg) = default;
         ClosedTypedRelicAutomation& operator=(ClosedTypedRelicAutomation&& arg) noexcept = default;
     protected:
-        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        ShardIndex<ShardT> Create()
+        template<class ShardT, class... InitializeArgs, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        ShardIndex<ShardT> Create(InitializeArgs&& ... initializeArgs) const
         {
-            return Owner().CreateFromInternal<ShardT>(ID());
+            return Owner().template CreateFromInternal<ShardT>(ID(), std::forward<InitializeArgs>(initializeArgs)...);
         }
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        ShardIndex<ShardT> Find()
+        ShardIndex<ShardT> Find() const
         {
             return ShardIndex<ShardT>(ID(), Owner());
         }

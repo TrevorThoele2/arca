@@ -31,17 +31,14 @@ namespace Arca
 
         operator Handle() const;
 
-        operator ValueT* () const
-        {
-            return Get();
-        }
+        operator const ValueT* () const;
 
         operator RelicIndex<const T>() const;
 
-        [[nodiscard]] ValueT& operator*() const;
-        [[nodiscard]] ValueT* operator->() const;
+        [[nodiscard]] const ValueT& operator*() const;
+        [[nodiscard]] const ValueT* operator->() const;
 
-        [[nodiscard]] ValueT* Get() const;
+        [[nodiscard]] const ValueT* Get() const;
 
         [[nodiscard]] RelicID ID() const;
         [[nodiscard]] Reliquary* Owner() const;
@@ -106,7 +103,13 @@ namespace Arca
     template<class T>
     RelicIndex<T>::operator Handle() const
     {
-        return Handle(ID(), Owner(), TypeFor<T>(), HandleObjectTypeFor<T>());
+        return Handle(ID(), *Owner(), TypeFor<T>(), HandleObjectTypeFor<T>());
+    }
+
+    template<class T>
+    RelicIndex<T>::operator const ValueT* () const
+    {
+        return Get();
     }
 
     template<class T>
@@ -116,19 +119,19 @@ namespace Arca
     }
 
     template<class T>
-    auto RelicIndex<T>::operator*() const -> ValueT&
+    auto RelicIndex<T>::operator*() const -> const ValueT&
     {
         return *Get();
     }
 
     template<class T>
-    auto RelicIndex<T>::operator->() const -> ValueT*
+    auto RelicIndex<T>::operator->() const -> const ValueT*
     {
         return Get();
     }
 
     template<class T>
-    auto RelicIndex<T>::Get() const -> ValueT*
+    auto RelicIndex<T>::Get() const -> const ValueT*
     {
         return FindValueFromOwner();
     }

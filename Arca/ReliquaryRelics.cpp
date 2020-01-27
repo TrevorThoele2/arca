@@ -219,7 +219,7 @@ namespace Arca
     ReliquaryRelics::LocalHandlerBase::LocalHandlerBase(const TypeName& typeName) : typeName(typeName)
     {}
 
-    ReliquaryRelics::LocalHandlerBase* ReliquaryRelics::FindLocalHandler(const TypeName & typeName) const
+    ReliquaryRelics::LocalHandlerBase* ReliquaryRelics::FindLocalHandler(const TypeName& typeName) const
     {
         const auto found = std::find_if(
             localHandlers.begin(),

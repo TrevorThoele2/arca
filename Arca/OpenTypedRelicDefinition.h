@@ -5,22 +5,22 @@
 
 namespace Arca
 {
-    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    ShardIndex<ShardT> OpenTypedRelic::Create()
+    template<class ShardT, class... InitializeArgs, std::enable_if_t<is_shard_v<ShardT>, int>>
+    ShardIndex<ShardT> OpenTypedRelic::Create(InitializeArgs&& ... initializeArgs) const
     {
-        return owner->shards.Create<ShardT>(id);
+        return owner->Do<Arca::Create<ShardT>>(id, std::forward<InitializeArgs>(initializeArgs)...);
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    void OpenTypedRelic::Destroy()
+    void OpenTypedRelic::Destroy() const
     {
-        owner->shards.Destroy<ShardT>(id);
+        owner->Do<Arca::Destroy<ShardT>>(id);
     }
 
     template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int>>
-    void OpenTypedRelic::Destroy()
+    void OpenTypedRelic::Destroy() const
     {
-        owner->shards.Destroy<MatrixT>(id);
+        owner->Do<Arca::Destroy<MatrixT>>(id);
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>

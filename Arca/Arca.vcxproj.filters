@@ -97,6 +97,9 @@
     <ClCompile Include="KnownPolymorphicSerializer.cpp">
       <Filter>Source Files\Serialization</Filter>
     </ClCompile>
+    <ClCompile Include="ReliquaryCommands.cpp">
+      <Filter>Source Files\Reliquary\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Curator.h">
@@ -240,9 +243,6 @@
     <ClInclude Include="RelicBatchSourceDefinition.h">
       <Filter>Header Files\Relic\Batch</Filter>
     </ClInclude>
-    <ClInclude Include="Initialize.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="PostConstruct.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
@@ -253,9 +253,6 @@
       <Filter>Header Files\Relic\Traits</Filter>
     </ClInclude>
     <ClInclude Include="HasPostConstructMethod.h">
-      <Filter>Header Files\Relic\Traits</Filter>
-    </ClInclude>
-    <ClInclude Include="HasInitializeMethod.h">
       <Filter>Header Files\Relic\Traits</Filter>
     </ClInclude>
     <ClInclude Include="Either.h">
@@ -335,9 +332,6 @@
     </ClInclude>
     <ClInclude Include="OpenTypedRelicAutomation.h">
       <Filter>Header Files\Relic\Open</Filter>
-    </ClInclude>
-    <ClInclude Include="HasShards.h">
-      <Filter>Header Files\Relic\Traits</Filter>
     </ClInclude>
     <ClInclude Include="ShardList.h">
       <Filter>Header Files\Relic\Traits</Filter>
@@ -452,6 +446,54 @@
     </ClInclude>
     <ClInclude Include="IndexTypeFor.h">
       <Filter>Header Files\Index</Filter>
+    </ClInclude>
+    <ClInclude Include="IsCommand.h">
+      <Filter>Header Files\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquaryCommands.h">
+      <Filter>Header Files\Reliquary\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquaryCommandsDefinition.h">
+      <Filter>Header Files\Reliquary\Components\Definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="HasHandledCommands.h">
+      <Filter>Header Files\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="HandledCommands.h">
+      <Filter>Header Files\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Create.h">
+      <Filter>Header Files\Command\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Command.h">
+      <Filter>Header Files\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Destroy.h">
+      <Filter>Header Files\Command\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="CreateWith.h">
+      <Filter>Header Files\Command\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="CreateChild.h">
+      <Filter>Header Files\Command\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="CreateChildWith.h">
+      <Filter>Header Files\Command\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Clear.h">
+      <Filter>Header Files\Command\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandReturn.h">
+      <Filter>Header Files\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="HasCommandReturn.h">
+      <Filter>Header Files\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Initialize.h">
+      <Filter>Header Files\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="HasBareInitializeMethod.h">
+      <Filter>Header Files\Data</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -604,6 +646,18 @@
     </Filter>
     <Filter Include="Header Files\Matrix\All">
       <UniqueIdentifier>{6ecc1c89-7553-43b3-bf7d-21f3802d7326}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Command">
+      <UniqueIdentifier>{1d2451f0-57cd-40e4-8d95-6ca718fc94a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Command">
+      <UniqueIdentifier>{7779d746-74cd-4693-a2f9-2fb74e91cf6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Command\Common">
+      <UniqueIdentifier>{ed6bbebe-a81c-40d8-a01a-0e131925b3da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Data">
+      <UniqueIdentifier>{eb0a4366-bad0-4342-9b29-16eb35d79952}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

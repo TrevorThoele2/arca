@@ -15,9 +15,9 @@ void IntegrationTestsFixture::ParentRelic::Initialize(int value)
     this->value = value;
 }
 
-void IntegrationTestsFixture::ParentRelic::CreateChild()
+void IntegrationTestsFixture::ParentRelic::CreateChild() const
 {
-    Owner().CreateChild<ChildRelic>(AsHandle(*this));
+    Owner().Do<Arca::CreateChild<ChildRelic>>(AsHandle(*this));
 }
 
 Reliquary& IntegrationTestsFixture::BasicCuratorBase::Owner()
@@ -156,13 +156,13 @@ SCENARIO_METHOD(
             .Register<ParentChildCurator>()
             .Actualize();
 
-        std::unordered_map<int, ParentRelic*> mappedParents;
+        std::unordered_map<int, RelicIndex<ParentRelic>> mappedParents;
 
         auto& curator = reliquary->Find<ParentChildCurator>();
         curator.onWork = [&mappedParents](BasicCuratorBase& self)
         {
             auto value = 100;
-            auto parent = self.Owner().Create<ParentRelic>(value);
+            auto parent = self.Owner().Do<Create<ParentRelic>>(value);
             parent->CreateChild();
             mappedParents.emplace(value, parent);
         };
@@ -186,7 +186,7 @@ SCENARIO_METHOD(
                 REQUIRE(child != nullptr);
 
                 REQUIRE(!mappedParents.empty());
-                REQUIRE(static_cast<ParentRelic*>(mappedParents[100]) == parent);
+                REQUIRE(static_cast<const ParentRelic*>(mappedParents[100]) == parent);
             }
         }
     }
@@ -259,13 +259,13 @@ SCENARIO_METHOD(
             .Register<FocusedCurator>()
             .Actualize();
 
-        auto relic0 = savedReliquary->Create<OpenRelic>();
+        auto relic0 = savedReliquary->Do<Create<OpenRelic>>();
         relic0->Create<BasicShard>();
         relic0->Create<OtherShard>();
-        auto relic1 = savedReliquary->Create<OpenRelic>();
+        auto relic1 = savedReliquary->Do<Create<OpenRelic>>();
         relic1->Create<BasicShard>();
         relic1->Create<OtherShard>();
-        auto relic2 = savedReliquary->Create<OpenRelic>();
+        auto relic2 = savedReliquary->Do<Create<OpenRelic>>();
         relic2->Create<BasicShard>();
         relic2->Create<OtherShard>();
 
@@ -308,7 +308,7 @@ SCENARIO_METHOD(
 
 SCENARIO_METHOD(
     IntegrationTestsFixture,
-    "reliquary continues to use previous ID string after serialization",
+    "reliquary continues to use previous ID sequence after serialization",
     "[integration][serialization]")
 {
     GIVEN("registered reliquary with three open relics created")
@@ -316,9 +316,9 @@ SCENARIO_METHOD(
         const auto savedReliquary = ReliquaryOrigin()
             .Actualize();
 
-        auto relic0 = savedReliquary->Create<OpenRelic>();
-        auto relic1 = savedReliquary->Create<OpenRelic>();
-        auto relic2 = savedReliquary->Create<OpenRelic>();
+        auto relic0 = savedReliquary->Do<Create<OpenRelic>>();
+        auto relic1 = savedReliquary->Do<Create<OpenRelic>>();
+        auto relic2 = savedReliquary->Do<Create<OpenRelic>>();
 
         WHEN("saving reliquary")
         {
@@ -335,9 +335,9 @@ SCENARIO_METHOD(
                 auto input = Inscription::InputBinaryArchive("Test.dat", "Test");
                 input(*loadedReliquary);
 
-                auto relic3 = loadedReliquary->Create<OpenRelic>();
-                auto relic4 = loadedReliquary->Create<OpenRelic>();
-                auto relic5 = loadedReliquary->Create<OpenRelic>();
+                auto relic3 = loadedReliquary->Do<Create<OpenRelic>>();
+                auto relic4 = loadedReliquary->Do<Create<OpenRelic>>();
+                auto relic5 = loadedReliquary->Do<Create<OpenRelic>>();
 
                 THEN("all loaded relics have greater IDs than saved")
                 {
