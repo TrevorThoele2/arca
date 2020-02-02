@@ -2,7 +2,7 @@
 
 #include "ReliquaryFixture.h"
 
-#include <Arca/ClosedTypedRelicAutomation.h>
+#include <Arca/ClosedTypedRelic.h>
 
 using namespace Arca;
 
@@ -15,24 +15,30 @@ public:
     class Shard;
 };
 
-class RelicBatchFixture::Relic : public ClosedTypedRelicAutomation<Relic>
+class RelicBatchFixture::Relic final : public ClosedTypedRelic<Relic>
 {
 public:
     int value = 0;
 public:
-    Relic() = default;
+    explicit Relic(Initialization initialization) : ClosedTypedRelic(initialization)
+    {}
 };
 
-class RelicBatchFixture::GlobalRelic : public ClosedTypedRelicAutomation<GlobalRelic>
+class RelicBatchFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
 {
 public:
     int value = 0;
 public:
-    GlobalRelic() = default;
+    explicit GlobalRelic(Initialization initialization) : ClosedTypedRelic(initialization)
+    {}
 };
 
-class RelicBatchFixture::UnregisteredRelic : public ClosedTypedRelicAutomation<UnregisteredRelic>
-{};
+class RelicBatchFixture::UnregisteredRelic final : public ClosedTypedRelic<UnregisteredRelic>
+{
+public:
+    explicit UnregisteredRelic(Initialization initialization) : ClosedTypedRelic(initialization)
+    {}
+};
 
 class RelicBatchFixture::Shard
 {

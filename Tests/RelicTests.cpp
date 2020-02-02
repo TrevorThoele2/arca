@@ -1,5 +1,4 @@
 #include <catch.hpp>
-#include <utility>
 using namespace std::string_literals;
 
 #include "RelicTests.h"
@@ -8,74 +7,56 @@ using namespace std::string_literals;
 
 #include <Chroma/StringUtility.h>
 
-void RelicTestsFixture::Shard::Initialize(std::string myValue)
-{
-    this->myValue = myValue;
-}
+RelicTestsFixture::Shard::Shard(std::string myValue) : myValue(myValue)
+{}
 
 RelicTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
 {}
 
-void RelicTestsFixture::TypedRelic::PostConstruct()
+RelicTestsFixture::TypedClosedRelic::TypedClosedRelic(Initialization initialization)
+    : ClosedTypedRelic(initialization)
 {
-    basicShard = Find<Shard>();
+    basicShard = FindOrCreate<Shard>();
 }
 
-void RelicTestsFixture::TypedRelic::Initialize()
+RelicTestsFixture::TypedOpenRelic::TypedOpenRelic(Initialization initialization)
+    : OpenTypedRelic(initialization)
+{
+    basicShard = FindOrCreate<Shard>();
+}
+
+RelicTestsFixture::GlobalRelic::GlobalRelic(Initialization initialization)
+    : ClosedTypedRelic(initialization)
+{
+    basicShard = FindOrCreate<Shard>();
+}
+
+RelicTestsFixture::ShouldCreateRelic::ShouldCreateRelic(Initialization initialization, int value)
+    : ClosedTypedRelic(initialization), value(value)
+{}
+
+RelicTestsFixture::InitializedRelic::InitializedRelic(Initialization initialization)
+    : ClosedTypedRelic(initialization)
+{
+    basicShard = FindOrCreate<Shard>();
+}
+
+RelicTestsFixture::InitializedRelic::InitializedRelic(Initialization initialization, int value)
+    : ClosedTypedRelic(initialization), myValue(value)
 {
     basicShard = Create<Shard>();
 }
 
-void RelicTestsFixture::OpenTypedRelic::PostConstruct()
+RelicTestsFixture::MovableOnlyRelic::MovableOnlyRelic(Initialization initialization)
+    : ClosedTypedRelic(initialization)
 {
-    basicShard = Find<Shard>();
+    basicShard = FindOrCreate<Shard>();
 }
 
-void RelicTestsFixture::OpenTypedRelic::Initialize()
+RelicTestsFixture::MovableOnlyRelic::MovableOnlyRelic(Initialization initialization, int myInt)
+    : ClosedTypedRelic(initialization), myValue(myInt)
 {
     basicShard = Create<Shard>();
-}
-
-void RelicTestsFixture::GlobalRelic::PostConstruct()
-{
-    basicShard = Find<Shard>();
-}
-
-void RelicTestsFixture::GlobalRelic::Initialize()
-{
-    basicShard = Create<Shard>();
-}
-
-void RelicTestsFixture::ShouldCreateRelic::Initialize(int value)
-{
-    this->value = value;
-}
-
-void RelicTestsFixture::InitializedRelic::PostConstruct()
-{
-    basicShard = Find<Shard>();
-}
-
-void RelicTestsFixture::InitializedRelic::Initialize(int myValue)
-{
-    this->myValue = myValue;
-    basicShard = Create<Shard>();
-}
-
-void RelicTestsFixture::MovableOnlyRelic::PostConstruct()
-{
-    basicShard = Find<Shard>();
-}
-
-void RelicTestsFixture::MovableOnlyRelic::Initialize()
-{
-    basicShard = Create<Shard>();
-}
-
-void RelicTestsFixture::MovableOnlyRelic::Initialize(int myValue)
-{
-    this->myValue = myValue;
-    Initialize();
 }
 
 namespace Arca
@@ -93,7 +74,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
         auto reliquary = ReliquaryOrigin()
             .Register<Shard>()
             .Register<OtherShard>()
-            .Register<TypedRelic>()
+            .Register<TypedClosedRelic>()
             .Register<GlobalRelic>()
             .Actualize();
 
@@ -191,7 +172,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("retrieving as typed")
             {
-                const auto asTyped = Arca::RelicIndex<TypedRelic>(openRelic->ID(), *reliquary);
+                const auto asTyped = Arca::RelicIndex<TypedClosedRelic>(openRelic->ID(), *reliquary);
 
                 THEN("typed is empty")
                 {
@@ -270,7 +251,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("retrieving as typed")
             {
-                const auto asTyped = Arca::RelicIndex<TypedRelic>(closedRelic->ID(), *reliquary);
+                const auto asTyped = Arca::RelicIndex<TypedClosedRelic>(closedRelic->ID(), *reliquary);
 
                 THEN("typed is empty")
                 {
@@ -282,7 +263,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
         WHEN("creating typed relic")
         {
             auto preCreateRelicSize = reliquary->RelicSize();
-            auto typedRelic = reliquary->Do<Create<TypedRelic>>();
+            auto typedRelic = reliquary->Do<Create<TypedClosedRelic>>();
 
             THEN("does not have parent")
             {
@@ -296,12 +277,12 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             THEN("reliquary contains relic")
             {
-                REQUIRE(reliquary->Contains<TypedRelic>(typedRelic->ID()));
+                REQUIRE(reliquary->Contains<TypedClosedRelic>(typedRelic->ID()));
             }
 
             WHEN("finding typed relic")
             {
-                auto found = Arca::RelicIndex<TypedRelic>(typedRelic->ID(), *reliquary);
+                auto found = Arca::RelicIndex<TypedClosedRelic>(typedRelic->ID(), *reliquary);
 
                 THEN("found is same as created")
                 {
@@ -436,7 +417,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
-            .Register<TypedRelic>()
+            .Register<TypedClosedRelic>()
             .Register<Shard>()
             .Actualize();
 
@@ -597,10 +578,10 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
         WHEN("creating typed relic")
         {
-            auto knownCreatedSignals = reliquary->Batch<CreatedKnown<TypedRelic>>();
-            auto knownDestroyingSignals = reliquary->Batch<DestroyingKnown<TypedRelic>>();
+            auto knownCreatedSignals = reliquary->Batch<CreatedKnown<TypedClosedRelic>>();
+            auto knownDestroyingSignals = reliquary->Batch<DestroyingKnown<TypedClosedRelic>>();
 
-            const auto created = reliquary->Do<Create<TypedRelic>>();
+            const auto created = reliquary->Do<Create<TypedClosedRelic>>();
             const auto createdHandle = AsHandle(*created);
 
             THEN("signal is emitted for relic and shard")
@@ -646,7 +627,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
             WHEN("clearing")
             {
-                reliquary->Do<Clear>(Chroma::TypeIdentity<TypedRelic>{});
+                reliquary->Do<Clear>(Chroma::TypeIdentity<TypedClosedRelic>{});
 
                 THEN("signal is emitted for relic and shard")
                 {
@@ -669,7 +650,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
             WHEN("clearing by type")
             {
-                reliquary->Do<Clear>(TypeFor<TypedRelic>());
+                reliquary->Do<Clear>(TypeFor<TypedClosedRelic>());
 
                 THEN("signal is emitted for relic and shard")
                 {
@@ -698,12 +679,12 @@ SCENARIO_METHOD(RelicTestsFixture, "open typed relic", "[relic][open]")
     GIVEN("created open typed relic")
     {
         auto reliquary = ReliquaryOrigin()
-            .Register<OpenTypedRelic>()
+            .Register<TypedOpenRelic>()
             .Register<Shard>()
             .Register<OtherShard>()
             .Actualize();
 
-        auto relic = reliquary->Do<Create<OpenTypedRelic>>();
+        auto relic = reliquary->Do<Create<TypedOpenRelic>>();
 
         WHEN("default created")
         {

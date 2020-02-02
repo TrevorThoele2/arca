@@ -2,7 +2,7 @@
 
 #include "AllTests.h"
 
-void AllTestsFixture::BasicTypedRelic::Initialize()
+AllTestsFixture::BasicTypedRelic::BasicTypedRelic(Initialization initialization) : ClosedTypedRelic(initialization)
 {
     shard0 = Create<Shard<0>>();
     shard1 = Create<Shard<1>>();

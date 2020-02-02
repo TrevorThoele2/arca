@@ -5,6 +5,7 @@
 #include "BatchSource.h"
 #include "RelicID.h"
 #include "IsRelic.h"
+#include "RelicInitialization.h"
 
 #include "Serialization.h"
 
@@ -24,7 +25,7 @@ namespace Arca
         virtual void DestroyFromBase(RelicID id) = 0;
         virtual void DestroyAllFromBase(Reliquary& reliquary) = 0;
 
-        virtual void Construct(Reliquary& owner) = 0;
+        virtual void SetOwner(Reliquary& owner) = 0;
 
         [[nodiscard]] virtual SizeT Size() const = 0;
 
@@ -57,7 +58,7 @@ namespace Arca
 
         void Clear();
 
-        void Construct(Reliquary& owner) override;
+        void SetOwner(Reliquary& owner) override;
 
         [[nodiscard]] void* FindStorage(RelicID id) override;
         [[nodiscard]] RelicT* Find(RelicID id);
@@ -130,9 +131,7 @@ namespace Inscription
                     archive(*foundRelic);
                 else
                 {
-                    typename ObjectT::RelicT relic;
-                    relic.id = id;
-                    relic.owner = object.owner;
+                    typename ObjectT::RelicT relic{ Arca::RelicInitialization{id, *object.owner} };
                     archive(relic);
                     object.list.push_back(std::move(relic));
                     archive.AttemptReplaceTrackedObject(relic, object.list.back());

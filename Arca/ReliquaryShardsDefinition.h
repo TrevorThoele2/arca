@@ -5,18 +5,18 @@
 
 namespace Arca
 {
-    template<class ShardT, class... InitializeArgs>
-    ShardIndex<ShardT> ReliquaryShards::Create(RelicID id, InitializeArgs&& ... initializeArgs)
+    template<class ShardT, class... ConstructorArgs>
+    ShardIndex<ShardT> ReliquaryShards::Create(RelicID id, ConstructorArgs&& ... constructorArgs)
     {
         Relics().ShardModificationRequired(id);
 
-        return CreateCommon<ShardT>(id, std::forward<InitializeArgs>(initializeArgs)...);
+        return CreateCommon<ShardT>(id, std::forward<ConstructorArgs>(constructorArgs)...);
     }
 
-    template<class ShardT, class... InitializeArgs>
-    ShardIndex<ShardT> ReliquaryShards::CreateFromInternal(RelicID id, InitializeArgs&& ... initializeArgs)
+    template<class ShardT, class... ConstructorArgs>
+    ShardIndex<ShardT> ReliquaryShards::CreateFromInternal(RelicID id, ConstructorArgs&& ... constructorArgs)
     {
-        return CreateCommon<ShardT>(id, std::forward<InitializeArgs>(initializeArgs)...);
+        return CreateCommon<ShardT>(id, std::forward<ConstructorArgs>(constructorArgs)...);
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
@@ -87,16 +87,18 @@ namespace Arca
     }
 
     template<class ShardT>
-    template<class... InitializeArgs>
-    void ReliquaryShards::Handler<ShardT>::CreateCommon(RelicID id, Reliquary& reliquary, bool isConst, InitializeArgs&& ... initializeArgs)
+    template<class... ConstructorArgs>
+    void ReliquaryShards::Handler<ShardT>::CreateCommon(RelicID id, Reliquary& reliquary, bool isConst, ConstructorArgs&& ... constructorArgs)
     {
         if (isConst)
-            reliquary.shards.FindBatchSource<const ShardT>()->Add(id);
+            reliquary.shards
+            .FindBatchSource<const ShardT>()
+            ->Add(id, std::forward<ConstructorArgs>(constructorArgs)...);
         else
-            reliquary.shards.FindBatchSource<ShardT>()->Add(id);
+            reliquary.shards
+            .FindBatchSource<ShardT>()
+            ->Add(id, std::forward<ConstructorArgs>(constructorArgs)...);
 
-        auto storage = reliquary.shards.FindStorage<ShardT>(id);
-        Initialize(*storage, std::forward<InitializeArgs>(initializeArgs)...);
         reliquary.matrices.NotifyCreated(id);
         reliquary.Raise<Created>(reliquary.shards.HandleFrom(id, TypeFor<ShardT>(), HandleObjectType::Shard));
         reliquary.Raise<CreatedKnown<ShardT>>(reliquary.shards.CreateIndex<ShardT>(id));
@@ -182,8 +184,8 @@ namespace Arca
         return Arca::Batch<ObjectT>(batchSource);
     }
 
-    template<class ShardT, class... InitializeArgs>
-    ShardIndex<ShardT> ReliquaryShards::CreateCommon(RelicID id, InitializeArgs&& ... initializeArgs)
+    template<class ShardT, class... ConstructorArgs>
+    ShardIndex<ShardT> ReliquaryShards::CreateCommon(RelicID id, ConstructorArgs&& ... constructorArgs)
     {
         const auto type = TypeFor<ShardT>();
         if (Contains(Handle(id, Owner(), { type.name, true }, HandleObjectType::Shard)) ||
@@ -193,7 +195,7 @@ namespace Arca
         auto handler = FindHandler<ShardT>();
         if (!handler)
             throw NotRegistered(type, typeid(ShardT));
-        handler->CreateCommon(id, Owner(), std::is_const_v<ShardT>, std::forward<InitializeArgs>(initializeArgs)...);
+        handler->CreateCommon(id, Owner(), std::is_const_v<ShardT>, std::forward<ConstructorArgs>(constructorArgs)...);
 
         return CreateIndex<ShardT>(id);
     }

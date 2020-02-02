@@ -6,9 +6,6 @@
 #include "Destroy.h"
 #include "Created.h"
 
-#include "Initialize.h"
-#include "PostConstruct.h"
-
 #include "OpennessFor.h"
 #include "LocalityFor.h"
 
@@ -18,65 +15,62 @@
 
 namespace Arca
 {
-    template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    RelicIndex<RelicT> ReliquaryRelics::Create(InitializeArgs&& ... initializeArgs)
+    template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
+    RelicIndex<RelicT> ReliquaryRelics::Create(ConstructorArgs&& ... constructorArgs)
     {
-        if (!ShouldCreate<RelicT>(std::forward<InitializeArgs>(initializeArgs)...))
+        if (!ShouldCreate<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...))
             return {};
 
-        RelicT relic;
-        auto pushed = PushNewRelic(std::move(relic), {}, std::forward<InitializeArgs>(initializeArgs)...);
+        auto pushed = PushNewRelic<RelicT>({}, std::forward<ConstructorArgs>(constructorArgs)...);
         return CreateIndex<RelicT>(pushed->ID());
     }
 
-    template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    RelicIndex<RelicT> ReliquaryRelics::CreateWith(const RelicStructure& structure, InitializeArgs&& ... initializeArgs)
+    template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
+    RelicIndex<RelicT> ReliquaryRelics::CreateWith(const RelicStructure& structure, ConstructorArgs&& ... constructorArgs)
     {
-        if (!ShouldCreate<RelicT>(std::forward<InitializeArgs>(initializeArgs)...))
+        if (!ShouldCreate<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...))
             return {};
 
-        RelicT relic;
-        auto pushed = PushNewRelic(std::move(relic), structure);
+        auto pushed = PushNewRelic<RelicT>(structure, std::forward<ConstructorArgs>(constructorArgs)...);
         return CreateIndex<RelicT>(pushed->ID());
     }
 
-    template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    RelicIndex<RelicT> ReliquaryRelics::CreateWith(const std::string& structureName, InitializeArgs&& ... initializeArgs)
+    template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
+    RelicIndex<RelicT> ReliquaryRelics::CreateWith(const std::string& structureName, ConstructorArgs&& ... constructorArgs)
     {
-        if (!ShouldCreate<RelicT>(std::forward<InitializeArgs>(initializeArgs)...))
+        if (!ShouldCreate<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...))
             return {};
 
-        RelicT relic;
         auto structure = RelicStructures().RequiredRelicStructure(structureName);
-        auto pushed = PushNewRelic(std::move(relic), structure);
+        auto pushed = PushNewRelic<RelicT>(structure, std::forward<ConstructorArgs>(constructorArgs)...);
         return CreateIndex<RelicT>(pushed->ID());
     }
 
-    template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    RelicIndex<RelicT> ReliquaryRelics::CreateChild(const Handle& parent, InitializeArgs&& ... initializeArgs)
+    template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
+    RelicIndex<RelicT> ReliquaryRelics::CreateChild(const Handle& parent, ConstructorArgs&& ... constructorArgs)
     {
         ThrowIfCannotParent(parent, RelicPrototype{ NextID(), OpennessFor<RelicT>() });
-        auto child = Create<RelicT>(std::forward<InitializeArgs>(initializeArgs)...);
+        auto child = Create<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...);
         Parent(parent, AsHandle(*child));
         return child;
     }
 
-    template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
+    template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
     RelicIndex<RelicT> ReliquaryRelics::CreateChildWith(
-        const Handle& parent, const RelicStructure& structure, InitializeArgs&& ... initializeArgs)
+        const Handle& parent, const RelicStructure& structure, ConstructorArgs&& ... constructorArgs)
     {
         ThrowIfCannotParent(parent, RelicPrototype{ NextID(), OpennessFor<RelicT>() });
-        auto child = CreateWith<RelicT>(structure, std::forward<InitializeArgs>(initializeArgs)...);
+        auto child = CreateWith<RelicT>(structure, std::forward<ConstructorArgs>(constructorArgs)...);
         Parent(parent, AsHandle(*child));
         return child;
     }
 
-    template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
+    template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
     RelicIndex<RelicT> ReliquaryRelics::CreateChildWith(
-        const Handle& parent, const std::string& structureName, InitializeArgs&& ... initializeArgs)
+        const Handle& parent, const std::string& structureName, ConstructorArgs&& ... constructorArgs)
     {
         ThrowIfCannotParent(parent, RelicPrototype{ NextID(), OpennessFor<RelicT>() });
-        auto child = CreateWith<RelicT>(structureName, std::forward<InitializeArgs>(initializeArgs)...);
+        auto child = CreateWith<RelicT>(structureName, std::forward<ConstructorArgs>(constructorArgs)...);
         Parent(parent, AsHandle(*child));
         return child;
     }
@@ -244,14 +238,6 @@ namespace Arca
     {}
 
     template<class RelicT>
-    void ReliquaryRelics::GlobalHandler<RelicT>::PostConstruct()
-    {
-        auto relic = reinterpret_cast<RelicT*>(storage.get());
-        relic->owner = &owner->Owner();
-        Arca::PostConstruct(*relic);
-    }
-
-    template<class RelicT>
     bool ReliquaryRelics::GlobalHandler<RelicT>::WillSerialize() const
     {
         return HasScribe<RelicT>();
@@ -269,25 +255,22 @@ namespace Arca
         return ::Inscription::InputTypesFor<RelicT>(archive);
     }
 
-    template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    void ReliquaryRelics::CreateGlobalHandler(InitializeArgs&& ... initializeArgs)
+    template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
+    void ReliquaryRelics::CreateGlobalHandler(ConstructorArgs&& ... constructorArgs)
     {
         const auto type = TypeFor<RelicT>();
         const auto id = AdvanceID();
-        globalHandlers.push_back(
-            std::make_unique<GlobalHandler<RelicT>>(*this, std::make_shared<RelicT>(), id));
-        auto relic = reinterpret_cast<RelicT*>(globalHandlers.back()->storage.get());
-        relic->id = id;
-        relic->owner = &Owner();
-        SetupNewInternals(
+        auto metadata = SetupNewInternals(
             id,
             OpennessFor<RelicT>(),
             LocalityFor<RelicT>(),
             HasScribe<RelicT>(),
-            Type(type.name),
-            relic);
-        PostConstruct(*relic);
-        Initialize(*relic, std::forward<InitializeArgs>(initializeArgs)...);
+            Type(type.name));
+        const auto storage = std::make_shared<RelicT>(RelicInitialization{ id, Owner() }, std::forward<ConstructorArgs>(constructorArgs)...);
+        globalHandlers.push_back(
+            std::make_unique<GlobalHandler<RelicT>>(*this, storage, id));
+        auto relic = reinterpret_cast<RelicT*>(globalHandlers.back()->storage.get());
+        metadata->storage = relic;
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
@@ -322,43 +305,39 @@ namespace Arca
 
     template<
         class RelicT,
-        class... InitializeArgs,
+        class... ConstructorArgs,
         std::enable_if_t<is_relic_v<RelicT> && has_should_create_method_v<RelicT>, int>>
-        bool ReliquaryRelics::ShouldCreate(InitializeArgs&& ... initializeArgs)
+        bool ReliquaryRelics::ShouldCreate(ConstructorArgs&& ... constructorArgs)
     {
-        return Traits<RelicT>::ShouldCreate(Owner(), std::forward<InitializeArgs>(initializeArgs)...);
+        return Traits<RelicT>::ShouldCreate(Owner(), std::forward<ConstructorArgs>(constructorArgs)...);
     }
 
     template<
         class RelicT,
-        class... InitializeArgs,
+        class... ConstructorArgs,
         std::enable_if_t<is_relic_v<RelicT> && !has_should_create_method_v<RelicT>, int>>
-        bool ReliquaryRelics::ShouldCreate(InitializeArgs&& ...)
+        bool ReliquaryRelics::ShouldCreate(ConstructorArgs&& ...)
     {
         return true;
     }
 
-    template<class RelicT, class... InitializeArgs>
-    RelicT* ReliquaryRelics::PushNewRelic(
-        RelicT&& relic, RelicStructure structure, InitializeArgs&& ... initializeArgs)
+    template<class RelicT, class... ConstructorArgs>
+    RelicT* ReliquaryRelics::PushNewRelic(RelicStructure structure, ConstructorArgs&& ... constructorArgs)
     {
         const auto id = AdvanceID();
-        relic.id = id;
-        relic.owner = &Owner();
 
-        auto& batchSource = RequiredBatchSource<RelicT>();
-        auto added = batchSource.Add(std::move(relic));
-
-        SetupNewInternals(
+        auto metadata = SetupNewInternals(
             id,
             OpennessFor<RelicT>(),
             LocalityFor<RelicT>(),
             HasScribe<RelicT>(),
-            TypeFor<RelicT>(),
-            added);
+            TypeFor<RelicT>());
+
+        auto& batchSource = RequiredBatchSource<RelicT>();
+        auto added = batchSource.Add(RelicT{ RelicInitialization{id, Owner()}, std::forward<ConstructorArgs>(constructorArgs)... });
+
+        metadata->storage = added;
         SatisfyStructure(id, structure);
-        PostConstruct(*added);
-        Initialize(*added, std::forward<InitializeArgs>(initializeArgs)...);
 
         Owner().Raise<Created>(HandleFrom(id, TypeFor<RelicT>(), HandleObjectType::Relic));
         Owner().Raise<CreatedKnown<RelicT>>(CreateIndex<RelicT>(id));

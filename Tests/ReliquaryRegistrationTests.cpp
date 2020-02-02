@@ -3,7 +3,7 @@ using namespace std::string_literals;
 
 #include "ReliquaryRegistrationTests.h"
 
-void ReliquaryRegistrationTestsFixture::Relic::Initialize()
+ReliquaryRegistrationTestsFixture::Relic::Relic(Initialization initialization) : ClosedTypedRelic(initialization)
 {
     Create<Shard>();
 }

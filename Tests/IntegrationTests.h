@@ -2,7 +2,7 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/ClosedTypedRelicAutomation.h>
+#include <Arca/ClosedTypedRelic.h>
 
 #include <Inscription/BinaryArchive.h>
 
@@ -93,22 +93,24 @@ struct IntegrationTestsFixture::BasicSignal
     int value = 0;
 };
 
-class IntegrationTestsFixture::ChildRelic final : public ClosedTypedRelicAutomation<ChildRelic>
+class IntegrationTestsFixture::ChildRelic final : public ClosedTypedRelic<ChildRelic>
 {
 public:
     int value = 0;
 public:
-    ChildRelic() = default;
+    explicit ChildRelic(Initialization initialization) : ClosedTypedRelic(initialization)
+    {}
 };
 
-class IntegrationTestsFixture::ParentRelic final : public ClosedTypedRelicAutomation<ParentRelic>
+class IntegrationTestsFixture::ParentRelic final : public ClosedTypedRelic<ParentRelic>
 {
 public:
     int value;
 public:
-    ParentRelic() = default;
+    explicit ParentRelic(Initialization initialization) : ClosedTypedRelic(initialization)
+    {}
 
-    void Initialize(int value);
+    ParentRelic(Initialization initialization, int value);
 
     void CreateChild() const;
 };

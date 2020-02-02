@@ -17,31 +17,31 @@ namespace Arca
     {
         std::function<RelicIndex<T>(ReliquaryRelics&)> function;
 
-        template<class... InitializeArgs>
-        explicit CreateChildWith(const Handle& parent, const RelicStructure& structure, InitializeArgs&& ... initializeArgs)
+        template<class... ConstructorArgs>
+        explicit CreateChildWith(const Handle& parent, const RelicStructure& structure, ConstructorArgs&& ... constructorArgs)
         {
             function =
-                [parent, structure, args = std::make_tuple(std::forward<InitializeArgs>(initializeArgs)...)](ReliquaryRelics& relics) mutable
+                [parent, structure, args = std::make_tuple(std::forward<ConstructorArgs>(constructorArgs)...)](ReliquaryRelics& relics) mutable
             {
                 return std::apply(
                     [parent, structure, &relics](auto&& ... args)
                     {
-                        return relics.template CreateChildWith<T>(structure, std::forward<InitializeArgs>(args)...);
+                        return relics.template CreateChildWith<T>(structure, std::forward<ConstructorArgs>(args)...);
                     },
                     args);
             };
         }
 
-        template<class... InitializeArgs>
-        explicit CreateChildWith(const Handle& parent, const std::string& structureName, InitializeArgs&& ... initializeArgs)
+        template<class... ConstructorArgs>
+        explicit CreateChildWith(const Handle& parent, const std::string& structureName, ConstructorArgs&& ... constructorArgs)
         {
             function =
-                [parent, structureName, args = std::make_tuple(std::forward<InitializeArgs>(initializeArgs)...)](ReliquaryRelics& relics) mutable
+                [parent, structureName, args = std::make_tuple(std::forward<ConstructorArgs>(constructorArgs)...)](ReliquaryRelics& relics) mutable
             {
                 return std::apply(
                     [parent, structureName, &relics](auto&& ... args)
                     {
-                        return relics.template CreateChildWith<T>(structureName, std::forward<InitializeArgs>(args)...);
+                        return relics.template CreateChildWith<T>(structureName, std::forward<ConstructorArgs>(args)...);
                     },
                     args);
             };

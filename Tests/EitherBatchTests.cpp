@@ -8,14 +8,14 @@ EitherBatchTestsFixture::Shard::Shard(int value) :
     value(value)
 {}
 
-void EitherBatchTestsFixture::Relic::Initialize()
+EitherBatchTestsFixture::Relic::Relic(Initialization initialization) : ClosedTypedRelic(initialization)
 {
-    Create<Shard>();
+    FindOrCreate<Shard>();
 }
 
-void EitherBatchTestsFixture::GlobalRelic::Initialize()
+EitherBatchTestsFixture::GlobalRelic::GlobalRelic(Initialization initialization) : ClosedTypedRelic(initialization)
 {
-    Create<Shard>();
+    FindOrCreate<Shard>();
 }
 
 SCENARIO_METHOD(EitherBatchTestsFixture, "default either batch", "[either][batch]")

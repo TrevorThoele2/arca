@@ -4,34 +4,22 @@
 
 #include <Arca/ReliquaryOrigin.h>
 
-void IndexTestsFixture::TypedClosedRelic::PostConstruct()
+IndexTestsFixture::TypedClosedRelic::TypedClosedRelic(Initialization initialization) :
+    ClosedTypedRelic(initialization)
 {
-    shard = Find<Shard>();
+    shard = FindOrCreate<Shard>();
 }
 
-void IndexTestsFixture::TypedClosedRelic::Initialize()
+IndexTestsFixture::TypedOpenRelic::TypedOpenRelic(Initialization initialization) :
+    OpenTypedRelic(initialization)
 {
-    shard = Create<Shard>();
+    shard = FindOrCreate<Shard>();
 }
 
-void IndexTestsFixture::TypedOpenRelic::PostConstruct()
+IndexTestsFixture::GlobalRelic::GlobalRelic(Initialization initialization) :
+    ClosedTypedRelic(initialization)
 {
-    shard = Find<Shard>();
-}
-
-void IndexTestsFixture::TypedOpenRelic::Initialize()
-{
-    shard = Create<Shard>();
-}
-
-void IndexTestsFixture::GlobalRelic::PostConstruct()
-{
-    shard = Find<Shard>();
-}
-
-void IndexTestsFixture::GlobalRelic::Initialize()
-{
-    shard = Create<Shard>();
+    shard = FindOrCreate<Shard>();
 }
 
 SCENARIO_METHOD(IndexTestsFixture, "Index resets to nullptr after underlying object destroyed", "[index]")

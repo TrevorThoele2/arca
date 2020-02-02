@@ -22,16 +22,16 @@ namespace Arca
     {
         std::function<RelicIndex<T>(ReliquaryRelics&)> function;
 
-        template<class... InitializeArgs>
-        explicit Create(InitializeArgs&& ... initializeArgs)
+        template<class... ConstructorArgs>
+        explicit Create(ConstructorArgs&& ... constructorArgs)
         {
             function =
-                [args = std::make_tuple(std::forward<InitializeArgs>(initializeArgs)...)] (ReliquaryRelics& relics) mutable
+                [args = std::make_tuple(std::forward<ConstructorArgs>(constructorArgs)...)] (ReliquaryRelics& relics) mutable
             {
                 return std::apply(
                     [&relics](auto&& ... args)
                     {
-                        return relics.template Create<T>(std::forward<InitializeArgs>(args)...);
+                        return relics.template Create<T>(std::forward<ConstructorArgs>(args)...);
                     },
                     args);
             };
@@ -51,16 +51,16 @@ namespace Arca
     {
         std::function<ShardIndex<T>(ReliquaryShards&)> function;
 
-        template<class... InitializeArgs>
-        explicit Create(RelicID id, InitializeArgs&& ... initializeArgs)
+        template<class... ConstructorArgs>
+        explicit Create(RelicID id, ConstructorArgs&& ... constructorArgs)
         {
             function =
-                [id, args = std::make_tuple(std::forward<InitializeArgs>(initializeArgs)...)](ReliquaryShards& shards) mutable
+                [id, args = std::make_tuple(std::forward<ConstructorArgs>(constructorArgs)...)](ReliquaryShards& shards) mutable
             {
                 return std::apply(
                     [id, &shards](auto&& ... args)
                     {
-                        return shards.template Create<T>(id, std::forward<InitializeArgs>(args)...);
+                        return shards.template Create<T>(id, std::forward<ConstructorArgs>(args)...);
                     },
                     args);
             };

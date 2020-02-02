@@ -2,8 +2,8 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/ClosedTypedRelicAutomation.h>
-#include <Arca/OpenTypedRelicAutomation.h>
+#include <Arca/ClosedTypedRelic.h>
+#include <Arca/OpenTypedRelic.h>
 
 #include <Arca/Serialization.h>
 
@@ -18,9 +18,7 @@ public:
         std::string myValue;
     public:
         Shard() = default;
-
-        void Initialize() {}
-        void Initialize(std::string myValue);
+        explicit Shard(std::string myValue);
     };
 
     class OtherShard
@@ -32,76 +30,64 @@ public:
         explicit OtherShard(int myValue);
     };
 
-    class TypedRelic final : public ClosedTypedRelicAutomation<TypedRelic>
+    class TypedClosedRelic final : public ClosedTypedRelic<TypedClosedRelic>
     {
     public:
         ShardIndex<Shard> basicShard;
     public:
-        TypedRelic() = default;
-
-        void PostConstruct();
-        void Initialize();
+        explicit TypedClosedRelic(Initialization initialization);
     };
 
-    class OpenTypedRelic final : public OpenTypedRelicAutomation<OpenTypedRelic>
+    class TypedOpenRelic final : public OpenTypedRelic<TypedOpenRelic>
     {
     public:
         ShardIndex<Shard> basicShard;
     public:
-        OpenTypedRelic() = default;
-
-        void PostConstruct();
-        void Initialize();
+        explicit TypedOpenRelic(Initialization initialization);
     };
 
-    class GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic>
+    class GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
     {
     public:
         ShardIndex<Shard> basicShard;
     public:
-        GlobalRelic() = default;
-
-        void PostConstruct();
-        void Initialize();
+        explicit GlobalRelic(Initialization initialization);
     };
 
-    class ShouldCreateRelic final : public ClosedTypedRelicAutomation<ShouldCreateRelic>
+    class ShouldCreateRelic final : public ClosedTypedRelic<ShouldCreateRelic>
     {
     public:
         int value = 0;
     public:
-        ShouldCreateRelic() = default;
-
-        void Initialize(int value);
+        explicit ShouldCreateRelic(Initialization initialization) : ClosedTypedRelic(initialization)
+        {}
+        ShouldCreateRelic(Initialization initialization, int value);
     };
 
-    class InitializedRelic final : public ClosedTypedRelicAutomation<InitializedRelic>
+    class InitializedRelic final : public ClosedTypedRelic<InitializedRelic>
     {
     public:
         ShardIndex<Shard> basicShard;
 
         int myValue = 0;
     public:
-        void PostConstruct();
-        void Initialize(int myValue);
+        explicit InitializedRelic(Initialization initialization);
+        InitializedRelic(Initialization initialization, int value);
     };
 
-    class MovableOnlyRelic final : public ClosedTypedRelicAutomation<MovableOnlyRelic>
+    class MovableOnlyRelic final : public ClosedTypedRelic<MovableOnlyRelic>
     {
     public:
         ShardIndex<Shard> basicShard;
 
         int myValue = 0;
     public:
-        MovableOnlyRelic() = default;
+        explicit MovableOnlyRelic(Initialization initialization);
+        MovableOnlyRelic(Initialization initialization, int myInt);
         MovableOnlyRelic(const MovableOnlyRelic& arg) = delete;
         MovableOnlyRelic(MovableOnlyRelic&& arg) noexcept = default;
         MovableOnlyRelic& operator=(const MovableOnlyRelic& arg) = delete;
         MovableOnlyRelic& operator=(MovableOnlyRelic&& arg) noexcept = default;
-
-        void PostConstruct();
-        void Initialize();
-        void Initialize(int myValue);
     };
 };
 
@@ -122,17 +108,17 @@ namespace Arca
     };
 
     template<>
-    struct Traits<::RelicTestsFixture::TypedRelic>
+    struct Traits<::RelicTestsFixture::TypedClosedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "RelicTestsTypedRelic";
+        static inline const TypeName typeName = "RelicTestsTypedClosedRelic";
     };
 
     template<>
-    struct Traits<::RelicTestsFixture::OpenTypedRelic>
+    struct Traits<::RelicTestsFixture::TypedOpenRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "RelicTestsOpenTypedRelic";
+        static inline const TypeName typeName = "RelicTestsTypedOpenRelic";
     };
 
     template<>
@@ -191,13 +177,13 @@ namespace Inscription
     };
 
     template<>
-    class Scribe<::RelicTestsFixture::TypedRelic, BinaryArchive> final
-        : public ArcaNullScribe<::RelicTestsFixture::TypedRelic, BinaryArchive>
+    class Scribe<::RelicTestsFixture::TypedClosedRelic, BinaryArchive> final
+        : public ArcaNullScribe<::RelicTestsFixture::TypedClosedRelic, BinaryArchive>
     {};
 
     template<>
-    class Scribe<::RelicTestsFixture::OpenTypedRelic, BinaryArchive> final
-        : public ArcaNullScribe<::RelicTestsFixture::OpenTypedRelic, BinaryArchive>
+    class Scribe<::RelicTestsFixture::TypedOpenRelic, BinaryArchive> final
+        : public ArcaNullScribe<::RelicTestsFixture::TypedOpenRelic, BinaryArchive>
     {};
 
     template<>

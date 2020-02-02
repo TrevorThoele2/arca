@@ -17,7 +17,7 @@ public:
 class IsTypeTestsFixture::Shard
 {};
 
-class IsTypeTestsFixture::Relic : public ClosedTypedRelic
+class IsTypeTestsFixture::Relic : public ClosedTypedRelic<Relic>
 {};
 
 class IsTypeTestsFixture::Curator : public Arca::Curator

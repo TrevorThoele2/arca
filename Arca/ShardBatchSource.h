@@ -55,7 +55,8 @@ namespace Arca
         BatchSource(const BatchSource& arg) = delete;
         BatchSource(BatchSource&& arg) = default;
 
-        ShardT* Add(RelicID id);
+        template<class... ConstructorArgs>
+        ShardT* Add(RelicID id, ConstructorArgs&& ... constructorArgs);
 
         iterator Destroy(RelicID destroy);
         iterator Destroy(iterator destroy);
@@ -98,13 +99,14 @@ namespace Arca
     {}
 
     template<class T>
-    auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Add(RelicID id) -> ShardT*
+    template<class... ConstructorArgs>
+    auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Add(RelicID id, ConstructorArgs&& ... constructorArgs) -> ShardT*
     {
         auto found = Find(id);
         if (found)
             return found;
 
-        list.emplace_back(id, StoredT{});
+        list.emplace_back(id, StoredT{std::forward<ConstructorArgs>(constructorArgs)...});
         return &list.back().shard;
     }
 

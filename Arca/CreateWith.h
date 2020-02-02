@@ -16,31 +16,31 @@ namespace Arca
     {
         std::function<RelicIndex<T>(ReliquaryRelics&)> function;
 
-        template<class... InitializeArgs>
-        explicit CreateWith(const RelicStructure& structure, InitializeArgs&& ... initializeArgs)
+        template<class... ConstructorArgs>
+        explicit CreateWith(const RelicStructure& structure, ConstructorArgs&& ... constructorArgs)
         {
             function =
-                [structure, args = std::make_tuple(std::forward<InitializeArgs>(initializeArgs)...)](ReliquaryRelics& relics) mutable
+                [structure, args = std::make_tuple(std::forward<ConstructorArgs>(constructorArgs)...)](ReliquaryRelics& relics) mutable
             {
                 return std::apply(
                     [structure, &relics](auto&& ... args)
                     {
-                        return relics.template CreateWith<T>(structure, std::forward<InitializeArgs>(args)...);
+                        return relics.template CreateWith<T>(structure, std::forward<ConstructorArgs>(args)...);
                     },
                     args);
             };
         }
 
-        template<class... InitializeArgs>
-        explicit CreateWith(const std::string& structureName, InitializeArgs&& ... initializeArgs)
+        template<class... ConstructorArgs>
+        explicit CreateWith(const std::string& structureName, ConstructorArgs&& ... constructorArgs)
         {
             function =
-                [structureName, args = std::make_tuple(std::forward<InitializeArgs>(initializeArgs)...)](ReliquaryRelics& relics) mutable
+                [structureName, args = std::make_tuple(std::forward<ConstructorArgs>(constructorArgs)...)](ReliquaryRelics& relics) mutable
             {
                 return std::apply(
                     [structureName, &relics](auto&& ... args)
                     {
-                        return relics.template CreateWith<T>(structureName, std::forward<InitializeArgs>(args)...);
+                        return relics.template CreateWith<T>(structureName, std::forward<ConstructorArgs>(args)...);
                     },
                     args);
             };

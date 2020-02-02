@@ -4,14 +4,6 @@
 
 namespace Arca
 {
-    ClosedRelic::operator bool() const
-    {
-        if (!owner)
-            return false;
-
-        return owner->Contains<ClosedRelic>(id);
-    }
-
     std::optional<Handle> ClosedRelic::Parent() const
     {
         return owner->ParentOf(AsHandle(*this));
@@ -26,4 +18,8 @@ namespace Arca
     {
         return *owner;
     }
+
+    ClosedRelic::ClosedRelic(RelicInitialization initialization) :
+        id(initialization.id), owner(&initialization.owner)
+    {}
 }

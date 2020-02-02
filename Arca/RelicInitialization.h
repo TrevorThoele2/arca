@@ -8,9 +8,7 @@ namespace Arca
 
     struct RelicInitialization
     {
-        const RelicID id;
+        RelicID id;
         Reliquary& owner;
-        RelicInitialization(RelicID id, Reliquary& owner) : id(id), owner(owner)
-        {}
     };
 }

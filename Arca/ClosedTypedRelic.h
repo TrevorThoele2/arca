@@ -1,47 +1,68 @@
 #pragma once
 
-#include <optional>
-
-#include "RelicID.h"
-
-#include "Handle.h"
-
-#include "Serialization.h"
+#include "RelicInitialization.h"
+#include "Reliquary.h"
+#include "TypeFor.h"
 
 namespace Arca
 {
-    class Reliquary;
-
+    template<class Derived>
     class ClosedTypedRelic
     {
     public:
-        explicit operator bool() const;
+        [[nodiscard]] std::optional<Handle> Parent() const
+        {
+            return owner->ParentOf(Handle(ID(), Owner(), TypeFor<Derived>(), HandleObjectType::Relic));
+        }
 
-        [[nodiscard]] std::optional<Handle> Parent() const;
+        [[nodiscard]] RelicID ID() const
+        {
+            return id;
+        }
 
-        [[nodiscard]] RelicID ID() const;
-        [[nodiscard]] Reliquary& Owner() const;
-    public:
-        virtual ~ClosedTypedRelic() = 0;
+        [[nodiscard]] Reliquary& Owner() const
+        {
+            return *owner;
+        }
     protected:
-        ClosedTypedRelic() = default;
+        using Initialization = RelicInitialization;
+
+        explicit ClosedTypedRelic(Initialization initialization) :
+            id(initialization.id), owner(&initialization.owner)
+        {}
+
         ClosedTypedRelic(const ClosedTypedRelic& arg) = default;
         ClosedTypedRelic(ClosedTypedRelic&& arg) noexcept = default;
 
         ClosedTypedRelic& operator=(const ClosedTypedRelic& arg) = default;
         ClosedTypedRelic& operator=(ClosedTypedRelic&& arg) noexcept = default;
+    protected:
+        template<class ShardT, class... ConstructorArgs, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        ShardIndex<ShardT> Create(ConstructorArgs&& ... constructorArgs) const
+        {
+            return Owner().template CreateFromInternal<ShardT>(ID(), std::forward<ConstructorArgs>(constructorArgs)...);
+        }
 
-        [[nodiscard]] virtual bool ReliquaryContainsSelf() const = 0;
-        [[nodiscard]] virtual Type Type() const = 0;
+        template<class ShardT, class... ConstructorArgs, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        ShardIndex<ShardT> FindOrCreate(ConstructorArgs&& ... constructorArgs) const
+        {
+            auto found = Find<ShardT>();
+            if (found)
+                return found;
+
+            return Create<ShardT>(std::forward<ConstructorArgs>(constructorArgs)...);
+        }
+
+        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        [[nodiscard]] ShardIndex<ShardT> Find() const
+        {
+            return ShardIndex<ShardT>(ID(), Owner());
+        }
     private:
         RelicID id = 0;
         Reliquary* owner = nullptr;
     private:
-        friend class ReliquaryRelics;
-        friend class ReliquaryOrigin;
         template<class, class>
         friend class BatchSource;
-    private:
-        INSCRIPTION_ACCESS;
     };
 }
