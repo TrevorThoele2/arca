@@ -4,6 +4,8 @@ using namespace std::string_literals;
 
 #include "IntegrationTests.h"
 
+#include "DifferentiableCurator.h"
+
 IntegrationTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std::move(myValue))
 {}
 
@@ -19,46 +21,6 @@ void IntegrationTestsFixture::ParentRelic::CreateChild() const
     Owner().Do<Arca::CreateChild<ChildRelic>>(AsHandle(*this));
 }
 
-Reliquary& IntegrationTestsFixture::BasicCuratorBase::TheOwner()
-{
-    return Curator::Owner();
-}
-
-std::function<void(IntegrationTestsFixture::BasicCuratorBase&)>
-    IntegrationTestsFixture::BasicCuratorBase::onPostConstruct = [](BasicCuratorBase&) {};
-
-std::function<void(IntegrationTestsFixture::BasicCuratorBase&)>
-    IntegrationTestsFixture::BasicCuratorBase::onInitialize = [](BasicCuratorBase&){};
-
-IntegrationTestsFixture::BasicCuratorBase::BasicCuratorBase()
-{
-    onWork = [](BasicCuratorBase&) {};
-}
-
-void IntegrationTestsFixture::BasicCuratorBase::PostConstructImplementation()
-{
-    onPostConstruct(*this);
-    onPostConstruct = [](BasicCuratorBase&) {};
-}
-
-void IntegrationTestsFixture::BasicCuratorBase::InitializeImplementation()
-{
-    basicSignals = Owner().Batch<BasicSignal>();
-    onInitialize(*this);
-    onInitialize = [](BasicCuratorBase&) {};
-}
-
-void IntegrationTestsFixture::BasicCuratorBase::WorkImplementation(Stage& stage)
-{
-    if (shouldAbort)
-    {
-        stage.Abort();
-        return;
-    }
-
-    onWork(*this);
-}
-
 namespace Arca
 {
     bool Traits<::IntegrationTestsFixture::ParentRelic>::ShouldCreate(Reliquary& reliquary, int value)
@@ -67,44 +29,62 @@ namespace Arca
     }
 }
 
+template<size_t differentiator>
+void SetupDifferentiableCurator(std::unordered_map<size_t, Batch<IntegrationTestsFixture::BasicSignal>>& basicSignals)
+{
+    DifferentiableCurator<differentiator>::onConstructor = [&basicSignals](DifferentiableCurator<differentiator>& curator)
+    {
+        basicSignals.emplace(differentiator, curator.TheOwner()
+            .template Batch<IntegrationTestsFixture::BasicSignal>());
+    };
+}
+
 SCENARIO_METHOD(IntegrationTestsFixture, "working with signals through curators", "[integration][curator][signal]")
 {
     GIVEN("registered reliquary")
     {
         const auto curatorPipeline = Pipeline
         {
-            Stage::All<BasicCurator<1>>(),
-            Stage::All<BasicCurator<4>, BasicCurator<3>>(),
-            Stage::All<BasicCurator<2>, BasicCurator<0>>()
+            Stage::All<DifferentiableCurator<1>>(),
+            Stage::All<DifferentiableCurator<4>, DifferentiableCurator<3>>(),
+            Stage::All<DifferentiableCurator<2>, DifferentiableCurator<0>>()
         };
+
+        std::unordered_map<size_t, Batch<BasicSignal>> basicSignals;
+
+        SetupDifferentiableCurator<0>(basicSignals);
+        SetupDifferentiableCurator<1>(basicSignals);
+        SetupDifferentiableCurator<2>(basicSignals);
+        SetupDifferentiableCurator<3>(basicSignals);
+        SetupDifferentiableCurator<4>(basicSignals);
 
         auto reliquary = ReliquaryOrigin()
             .Register<BasicShard>()
-            .Register<BasicCurator<0>>()
-            .Register<BasicCurator<1>>()
-            .Register<BasicCurator<2>>()
-            .Register<BasicCurator<3>>()
-            .Register<BasicCurator<4>>()
+            .Register<DifferentiableCurator<0>>()
+            .Register<DifferentiableCurator<1>>()
+            .Register<DifferentiableCurator<2>>()
+            .Register<DifferentiableCurator<3>>()
+            .Register<DifferentiableCurator<4>>()
             .CuratorPipeline(curatorPipeline)
             .Actualize();
 
-        std::vector<BasicCuratorBase*> curatorsInOrder
+        std::vector<DifferentiableCuratorBase*> curatorsInOrder
         {
-            &reliquary->Find<BasicCurator<1>>(),
-            &reliquary->Find<BasicCurator<4>>(),
-            &reliquary->Find<BasicCurator<3>>(),
-            &reliquary->Find<BasicCurator<2>>(),
-            &reliquary->Find<BasicCurator<0>>()
+            &reliquary->Find<DifferentiableCurator<1>>(),
+            &reliquary->Find<DifferentiableCurator<4>>(),
+            &reliquary->Find<DifferentiableCurator<3>>(),
+            &reliquary->Find<DifferentiableCurator<2>>(),
+            &reliquary->Find<DifferentiableCurator<0>>()
         };
 
         WHEN("raising signal then working reliquary")
         {
             struct EncounteredSignal
             {
-                BasicCuratorBase* curator;
+                DifferentiableCuratorBase* curator;
                 BasicSignal signal;
 
-                EncounteredSignal(BasicCuratorBase* curator, BasicSignal signal) :
+                EncounteredSignal(DifferentiableCuratorBase* curator, BasicSignal signal) :
                     curator(curator), signal(signal)
                 {}
             };
@@ -112,9 +92,9 @@ SCENARIO_METHOD(IntegrationTestsFixture, "working with signals through curators"
 
             for(auto& curator : curatorsInOrder)
             {
-                curator->onWork = [&encounteredSignals](BasicCuratorBase& self)
+                curator->onWork = [&encounteredSignals, &basicSignals](DifferentiableCuratorBase& self)
                 {
-                    for (auto& signal : self.basicSignals)
+                    for (auto& signal : basicSignals[self.Differentiator()])
                         encounteredSignals.emplace_back(&self, signal);
                 };
             }
@@ -147,7 +127,7 @@ SCENARIO_METHOD(
 {
     GIVEN("registered reliquary")
     {
-        using ParentChildCurator = BasicCurator<0>;
+        using ParentChildCurator = DifferentiableCurator<0>;
 
         auto reliquary = ReliquaryOrigin()
             .Register<ChildRelic>()
@@ -158,7 +138,7 @@ SCENARIO_METHOD(
         std::unordered_map<int, RelicIndex<ParentRelic>> mappedParents;
 
         auto& curator = reliquary->Find<ParentChildCurator>();
-        curator.onWork = [&mappedParents](BasicCuratorBase& self)
+        curator.onWork = [&mappedParents](DifferentiableCuratorBase& self)
         {
             auto value = 100;
             auto parent = self.TheOwner().Do<Create<ParentRelic>>(value);
@@ -195,11 +175,9 @@ SCENARIO_METHOD(IntegrationTestsFixture, "curators with custom signal execution"
 {
     GIVEN("registered reliquary")
     {
-        using FocusedCurator = BasicCurator<0>;
-
         std::vector<BasicSignal> executedSignals;
 
-        FocusedCurator::onInitialize = [&executedSignals](BasicCuratorBase& curator)
+        DerivedCurator::onConstructor = [&executedSignals](DifferentiableCuratorBase& curator)
         {
             curator.TheOwner().ExecuteOn<BasicSignal>([&executedSignals](const BasicSignal& signal)
                 {
@@ -208,7 +186,7 @@ SCENARIO_METHOD(IntegrationTestsFixture, "curators with custom signal execution"
         };
 
         auto reliquary = ReliquaryOrigin()
-            .Register<FocusedCurator>()
+            .Register<DerivedCurator>()
             .Actualize();
 
         std::unordered_map<int, ParentRelic*> mappedParents;
@@ -243,11 +221,9 @@ SCENARIO_METHOD(
 {
     GIVEN("registered reliquary and 3 relics with both shards")
     {
-        using FocusedCurator = BasicCurator<0>;
-
         Batch<All<BasicShard, OtherShard>> allBatch;
 
-        FocusedCurator::onPostConstruct = [&allBatch](BasicCuratorBase& curator)
+        DerivedCurator::onConstructor = [&allBatch](DifferentiableCuratorBase& curator)
         {
             allBatch = curator.TheOwner().Batch<All<BasicShard, OtherShard>>();
         };
@@ -255,7 +231,7 @@ SCENARIO_METHOD(
         const auto savedReliquary = ReliquaryOrigin()
             .Register<BasicShard>()
             .Register<OtherShard>()
-            .Register<FocusedCurator>()
+            .Register<DerivedCurator>()
             .Actualize();
 
         auto relic0 = savedReliquary->Do<Create<OpenRelic>>();
@@ -275,9 +251,9 @@ SCENARIO_METHOD(
                 output(*savedReliquary);
             }
 
-            WHEN("loading reliquary and taking batch in PostConstruct")
+            WHEN("loading reliquary and taking batch in constructor")
             {
-                FocusedCurator::onPostConstruct = [&allBatch](BasicCuratorBase& curator)
+                DerivedCurator::onConstructor = [&allBatch](DifferentiableCuratorBase& curator)
                 {
                     allBatch = curator.TheOwner().Batch<All<BasicShard, OtherShard>>();
                 };
@@ -285,10 +261,10 @@ SCENARIO_METHOD(
                 const auto loadedReliquary = ReliquaryOrigin()
                     .Register<BasicShard>()
                     .Register<OtherShard>()
-                    .Register<FocusedCurator>()
+                    .Register<DerivedCurator>()
                     .Actualize();
 
-                FocusedCurator::onPostConstruct = [&allBatch](BasicCuratorBase& curator)
+                DerivedCurator::onConstructor = [&allBatch](DifferentiableCuratorBase& curator)
                 {
                     allBatch = curator.TheOwner().Batch<All<BasicShard, OtherShard>>();
                 };
@@ -362,21 +338,20 @@ SCENARIO_METHOD(
 {
     GIVEN("registered reliquary with curator, shard registered and shard created")
     {
-        using FocusedCurator = BasicCurator<0>;
-
         const auto reliquary = ReliquaryOrigin()
             .Register<BasicShard>()
-            .Register<FocusedCurator>()
+            .Register<OtherShard>()
+            .Register<DerivedCurator>()
             .Actualize();
 
-        auto& curator = reliquary->Find<FocusedCurator>();
+        auto& curator = reliquary->Find<DerivedCurator>();
 
         auto relic = reliquary->Do<Create<OpenRelic>>();
         auto shard = relic->Create<BasicShard>();
 
         auto setValue = dataGeneration.Random<std::string>();
 
-        curator.onWork = [relic, setValue](BasicCuratorBase& self)
+        curator.onWork = [relic, setValue](DifferentiableCuratorBase& self)
         {
             auto data = self.TheData<BasicShard>(relic.ID());
             data->myValue = setValue;

@@ -35,14 +35,20 @@ namespace Arca
 
     template<class CuratorT>
     template<class... Args>
-    ReliquaryCurators::Handler<CuratorT>::Handler(Args&& ... args) :
-        HandlerBase(TypeFor<CuratorT>().name), curator(std::forward<Args>(args)...)
+    ReliquaryCurators::Handler<CuratorT>::Handler(Reliquary& owner, Args&& ... args) :
+        HandlerBase(TypeFor<CuratorT>().name), curator(owner, std::forward<Args>(args)...)
     {}
 
     template<class CuratorT>
     Curator& ReliquaryCurators::Handler<CuratorT>::Value()
     {
         return curator;
+    }
+
+    template<class CuratorT>
+    void ReliquaryCurators::Handler<CuratorT>::Work(Curator::Stage& stage)
+    {
+        WorkImpl<CuratorT>(stage);
     }
 
     template<class CuratorT>
@@ -63,10 +69,29 @@ namespace Arca
         return ::Inscription::InputTypesFor<CuratorT>(archive);
     }
 
-    template<class CuratorT, class... Args, std::enable_if_t<is_curator_v<CuratorT>, int>>
-    void ReliquaryCurators::CreateHandler(Args && ... args)
+    template<class CuratorT>
+    template<class U, std::enable_if_t<has_empty_work_method_v<U> && !has_stage_work_method_v<U>, int>>
+    void ReliquaryCurators::Handler<CuratorT>::WorkImpl(Curator::Stage&)
     {
-        handlers.push_back(std::make_unique<Handler<CuratorT>>(std::forward<Args>(args)...));
+        curator.Work();
+    }
+
+    template<class CuratorT>
+    template<class U, std::enable_if_t<has_stage_work_method_v<U> && !has_empty_work_method_v<U>, int>>
+    void ReliquaryCurators::Handler<CuratorT>::WorkImpl(Curator::Stage& stage)
+    {
+        curator.Work(stage);
+    }
+
+    template<class CuratorT>
+    template<class U, std::enable_if_t<!has_empty_work_method_v<U> && !has_stage_work_method_v<U>, int>>
+    void ReliquaryCurators::Handler<CuratorT>::WorkImpl(Curator::Stage&)
+    {}
+
+    template<class CuratorT, class... Args, std::enable_if_t<is_curator_v<CuratorT>, int>>
+    void ReliquaryCurators::CreateHandler(Args&& ... args)
+    {
+        handlers.push_back(std::make_unique<Handler<CuratorT>>(Owner(), std::forward<Args>(args)...));
     }
 
     template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int>>

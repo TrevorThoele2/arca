@@ -55,7 +55,10 @@ public:
     };
 
     class BasicCurator final : public Curator
-    {};
+    {
+    public:
+        using Curator::Curator;
+    };
 
     struct BasicSignal
     {};

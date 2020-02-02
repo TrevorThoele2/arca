@@ -243,9 +243,6 @@
     <ClInclude Include="HasShouldCreateMethod.h">
       <Filter>Header Files\Relic\Traits</Filter>
     </ClInclude>
-    <ClInclude Include="HasPostConstructMethod.h">
-      <Filter>Header Files\Relic\Traits</Filter>
-    </ClInclude>
     <ClInclude Include="Either.h">
       <Filter>Header Files\Matrix\Either</Filter>
     </ClInclude>
@@ -473,6 +470,9 @@
     </ClInclude>
     <ClInclude Include="RelicInitialization.h">
       <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="HasWorkMethod.h">
+      <Filter>Header Files\Curator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

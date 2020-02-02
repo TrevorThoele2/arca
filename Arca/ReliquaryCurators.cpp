@@ -41,22 +41,15 @@ namespace Arca
         return found->get();
     }
 
-    void ReliquaryCurators::DoOn(void(*function)(Curator& curator))
-    {
-        for (auto& stage : workPipeline)
-            for (auto& curator : stage)
-                function(*curator);
-    }
-
-    void ReliquaryCurators::DoOn(void(*function)(Curator& curator, Curator::Stage& stage))
+    void ReliquaryCurators::Work()
     {
         Curator::Stage stageHandle;
 
         for (auto& stage : workPipeline)
         {
-            for (auto& curator : stage)
+            for (auto& handler : stage)
             {
-                function(*curator, stageHandle);
+                handler->Work(stageHandle);
                 if (stageHandle.IsAborted())
                     return;
             }

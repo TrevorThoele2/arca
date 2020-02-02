@@ -15,12 +15,7 @@ namespace Arca
 {
     void Reliquary::Work()
     {
-        curators.DoOn(
-            [](Curator& curator, Curator::Stage& stage)
-            {
-                curator.Work(stage);
-            });
-
+        curators.Work();
         signals.Clear();
     }
 
@@ -183,11 +178,6 @@ namespace Inscription
             archive,
             globalRelicSerializers);
 
-        JumpLoadAll(
-            object,
-            archive,
-            curatorSerializers);
-
         for (auto& metadata : loadedRelicMetadata)
         {
             auto [type, locality, storage] = FindExtensionForLoadedMetadata(metadata.id, object);
@@ -217,8 +207,10 @@ namespace Inscription
             object.relics.metadataList.push_back(createdMetadata);
         }
 
-        for (auto& loop : object.curators.handlers)
-            loop->Value().PostConstruct(object);
+        JumpLoadAll(
+            object,
+            archive,
+            curatorSerializers);
     }
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::JumpSaveAll(

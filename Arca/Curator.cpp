@@ -14,23 +14,8 @@ namespace Arca
         return isAborted;
     }
 
-    Curator::~Curator() = default;
-
-    void Curator::PostConstruct(Reliquary& owner)
-    {
-        this->owner = &owner;
-        PostConstructImplementation();
-    }
-
-    void Curator::Initialize()
-    {
-        InitializeImplementation();
-    }
-
-    void Curator::Work(Stage& stage)
-    {
-        WorkImplementation(stage);
-    }
+    Curator::Curator(Reliquary& owner) : owner(&owner)
+    {}
 
     Reliquary& Curator::Owner()
     {
@@ -41,13 +26,4 @@ namespace Arca
     {
         return *owner;
     }
-
-    void Curator::PostConstructImplementation()
-    {}
-
-    void Curator::InitializeImplementation()
-    {}
-
-    void Curator::WorkImplementation(Stage& stage)
-    {}
 }

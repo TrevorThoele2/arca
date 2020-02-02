@@ -7,6 +7,7 @@
 
 #include "Curator.h"
 #include "IsCurator.h"
+#include "HasWorkMethod.h"
 
 #include "KnownPolymorphicSerializer.h"
 
@@ -34,6 +35,7 @@ namespace Arca
             virtual ~HandlerBase() = 0;
 
             virtual Curator& Value() = 0;
+            virtual void Work(Curator::Stage& stage) = 0;
         public:
             [[nodiscard]] TypeName MainType() const override;
         protected:
@@ -47,13 +49,21 @@ namespace Arca
             CuratorT curator;
         public:
             template<class... Args>
-            explicit Handler(Args&& ... args);
+            explicit Handler(Reliquary& owner, Args&& ... args);
 
             Curator& Value() override;
+            void Work(Curator::Stage& stage) override;
 
             [[nodiscard]] bool WillSerialize() const override;
             void Serialize(Inscription::BinaryArchive& archive) override;
             [[nodiscard]] std::vector<::Inscription::Type> InscriptionTypes(Inscription::BinaryArchive& archive) const override;
+        private:
+            template<class U, std::enable_if_t<has_empty_work_method_v<U> && !has_stage_work_method_v<U>, int> = 0>
+            void WorkImpl(Curator::Stage& stage);
+            template<class U, std::enable_if_t<has_stage_work_method_v<U> && !has_empty_work_method_v<U>, int> = 0>
+            void WorkImpl(Curator::Stage& stage);
+            template<class U, std::enable_if_t<!has_empty_work_method_v<U> && !has_stage_work_method_v<U>, int> = 0>
+            void WorkImpl(Curator::Stage& stage);
         };
 
         using HandlerPtr = std::unique_ptr<HandlerBase>;
@@ -66,15 +76,14 @@ namespace Arca
         template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int> = 0>
         [[nodiscard]] Handler<CuratorT>* FindHandler() const;
 
-        using Stage = std::vector<Curator*>;
+        using Stage = std::vector<HandlerBase*>;
         using Pipeline = std::vector<Stage>;
         Pipeline workPipeline;
 
         template<class CuratorT>
         [[nodiscard]] bool Contains() const;
 
-        void DoOn(void(*function)(Curator& curator));
-        void DoOn(void(*function)(Curator& curator, Curator::Stage& stage));
+        void Work();
     public:
         ReliquaryCurators(const ReliquaryCurators& arg) = delete;
         ReliquaryCurators& operator=(const ReliquaryCurators& arg) = delete;
