@@ -20,7 +20,7 @@ class RelicBatchFixture::Relic final : public ClosedTypedRelic<Relic>
 public:
     int value = 0;
 public:
-    explicit Relic(Initialization initialization) : ClosedTypedRelic(initialization)
+    explicit Relic(Init init) : ClosedTypedRelic(init)
     {}
 };
 
@@ -29,14 +29,14 @@ class RelicBatchFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic
 public:
     int value = 0;
 public:
-    explicit GlobalRelic(Initialization initialization) : ClosedTypedRelic(initialization)
+    explicit GlobalRelic(Init init) : ClosedTypedRelic(init)
     {}
 };
 
 class RelicBatchFixture::UnregisteredRelic final : public ClosedTypedRelic<UnregisteredRelic>
 {
 public:
-    explicit UnregisteredRelic(Initialization initialization) : ClosedTypedRelic(initialization)
+    explicit UnregisteredRelic(Init init) : ClosedTypedRelic(init)
     {}
 };
 

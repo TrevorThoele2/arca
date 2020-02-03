@@ -1,7 +1,7 @@
 #pragma once
 
 #include "RelicID.h"
-#include "RelicInitialization.h"
+#include "RelicInit.h"
 
 #include "IsShard.h"
 #include "IsMatrix.h"
@@ -34,7 +34,7 @@ namespace Arca
         RelicID id = 0;
         Reliquary* owner = nullptr;
     private:
-        explicit ClosedRelic(RelicInitialization initialization);
+        explicit ClosedRelic(RelicInit init);
     private:
         friend class ReliquaryRelics;
         template<class, class>

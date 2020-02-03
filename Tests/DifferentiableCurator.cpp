@@ -7,7 +7,7 @@ Reliquary& DifferentiableCuratorBase::TheOwner()
     return Owner();
 }
 
-DifferentiableCuratorBase::DifferentiableCuratorBase(Reliquary& owner) : Curator(owner)
+DifferentiableCuratorBase::DifferentiableCuratorBase(Init init) : Curator(init)
 {
     onWork = [](DifferentiableCuratorBase&) {};
 }

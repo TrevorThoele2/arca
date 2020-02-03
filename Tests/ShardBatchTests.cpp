@@ -6,7 +6,7 @@ ShardBatchFixture::Shard::Shard(int value) :
     value(value)
 {}
 
-ShardBatchFixture::GlobalRelic::GlobalRelic(Initialization initialization) : ClosedTypedRelic(initialization)
+ShardBatchFixture::GlobalRelic::GlobalRelic(Init init) : ClosedTypedRelic(init)
 {
     shard = FindOrCreate<Shard>();
 }

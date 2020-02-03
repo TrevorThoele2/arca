@@ -41,7 +41,7 @@ public:
     public:
         int myValue = 0;
 
-        explicit CuratorWithNonDefaultConstructor(Reliquary& owner, int myValue);
+        explicit CuratorWithNonDefaultConstructor(Init init, int myValue);
     };
 };
 

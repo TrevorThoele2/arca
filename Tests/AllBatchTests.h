@@ -33,13 +33,13 @@ AllBatchTestsFixture::Shard<i>::Shard(int value) :
 class AllBatchTestsFixture::Relic final : public ClosedTypedRelic<Relic>
 {
 public:
-    explicit Relic(Initialization initialization);
+    explicit Relic(Init init);
 };
 
 class AllBatchTestsFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
 {
 public:
-    explicit GlobalRelic(Initialization initialization);
+    explicit GlobalRelic(Init init);
 };
 
 namespace Arca

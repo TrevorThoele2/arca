@@ -27,7 +27,7 @@ public:
     public:
         ShardIndex<Shard> shard;
     public:
-        explicit TypedClosedRelic(Initialization initialization);
+        explicit TypedClosedRelic(Init init);
     };
 
     class TypedOpenRelic final : public OpenTypedRelic<TypedOpenRelic>
@@ -35,7 +35,7 @@ public:
     public:
         ShardIndex<Shard> shard;
     public:
-        explicit TypedOpenRelic(Initialization initialization);
+        explicit TypedOpenRelic(Init init);
     };
 
     class GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
@@ -43,7 +43,7 @@ public:
     public:
         ShardIndex<Shard> shard;
     public:
-        explicit GlobalRelic(Initialization initialization);
+        explicit GlobalRelic(Init init);
     };
 };
 

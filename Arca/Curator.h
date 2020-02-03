@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CuratorInit.h"
 #include "HandledCommands.h"
 
 #include "IsRelic.h"
@@ -35,7 +36,8 @@ namespace Arca
         Curator& operator=(const Curator& arg) = delete;
         Curator& operator=(Curator&& arg) = delete;
     protected:
-        explicit Curator(Reliquary& owner);
+        using Init = CuratorInit;
+        explicit Curator(Init init);
     protected:
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int> = 0>
         [[nodiscard]] RelicT* Data(RelicID id);

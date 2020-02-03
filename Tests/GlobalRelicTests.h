@@ -25,7 +25,7 @@ public:
     public:
         ShardIndex<BasicShard> basicShard;
     public:
-        explicit BasicTypedRelic(Initialization initialization);
+        explicit BasicTypedRelic(Init init);
     };
 
     class GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
@@ -34,7 +34,7 @@ public:
         int myValue = 0;
         ShardIndex<BasicShard> basicShard;
     public:
-        explicit GlobalRelic(Initialization initialization);
+        explicit GlobalRelic(Init init);
     };
 };
 

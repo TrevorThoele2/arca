@@ -19,7 +19,7 @@ namespace Arca
         return *owner;
     }
 
-    ClosedRelic::ClosedRelic(RelicInitialization initialization) :
-        id(initialization.id), owner(&initialization.owner)
+    ClosedRelic::ClosedRelic(RelicInit init) :
+        id(init.id), owner(&init.owner)
     {}
 }

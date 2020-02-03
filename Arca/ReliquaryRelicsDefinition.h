@@ -266,7 +266,7 @@ namespace Arca
             LocalityFor<RelicT>(),
             HasScribe<RelicT>(),
             Type(type.name));
-        const auto storage = std::make_shared<RelicT>(RelicInitialization{ id, Owner() }, std::forward<ConstructorArgs>(constructorArgs)...);
+        const auto storage = std::make_shared<RelicT>(RelicInit{ id, Owner() }, std::forward<ConstructorArgs>(constructorArgs)...);
         globalHandlers.push_back(
             std::make_unique<GlobalHandler<RelicT>>(*this, storage, id));
         auto relic = reinterpret_cast<RelicT*>(globalHandlers.back()->storage.get());
@@ -334,7 +334,7 @@ namespace Arca
             TypeFor<RelicT>());
 
         auto& batchSource = RequiredBatchSource<RelicT>();
-        auto added = batchSource.Add(RelicT{ RelicInitialization{id, Owner()}, std::forward<ConstructorArgs>(constructorArgs)... });
+        auto added = batchSource.Add(RelicT{ RelicInit{id, Owner()}, std::forward<ConstructorArgs>(constructorArgs)... });
 
         metadata->storage = added;
         SatisfyStructure(id, structure);

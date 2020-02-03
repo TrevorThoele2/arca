@@ -19,7 +19,7 @@ namespace Arca
         return *owner;
     }
 
-    OpenRelic::OpenRelic(RelicInitialization initialization) :
-        id(initialization.id), owner(&initialization.owner)
+    OpenRelic::OpenRelic(RelicInit init) :
+        id(init.id), owner(&init.owner)
     {}
 }

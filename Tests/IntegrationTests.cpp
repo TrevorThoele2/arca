@@ -12,8 +12,8 @@ IntegrationTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(s
 IntegrationTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
 {}
 
-IntegrationTestsFixture::ParentRelic::ParentRelic(Initialization initialization, int value)
-    : ClosedTypedRelic(initialization), value(value)
+IntegrationTestsFixture::ParentRelic::ParentRelic(Init init, int value)
+    : ClosedTypedRelic(init), value(value)
 {}
 
 void IntegrationTestsFixture::ParentRelic::CreateChild() const

@@ -43,7 +43,7 @@ public:
     public:
         ShardIndex<BasicShard> basicShard;
     public:
-        explicit BasicTypedRelic(Initialization initialization);
+        explicit BasicTypedRelic(Init init);
     };
 
     class GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
@@ -51,7 +51,7 @@ public:
     public:
         ShardIndex<BasicShard> basicShard;
     public:
-        explicit GlobalRelic(Initialization initialization);
+        explicit GlobalRelic(Init init);
     };
 
     class BasicCurator final : public Curator

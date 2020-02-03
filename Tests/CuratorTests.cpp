@@ -23,9 +23,9 @@ const Reliquary& CuratorTestsFixture::BasicCurator::OwnerFromOutside() const
 }
 
 CuratorTestsFixture::CuratorWithNonDefaultConstructor::CuratorWithNonDefaultConstructor(
-    Reliquary& owner, int myValue)
+    Init init, int myValue)
     :
-    Curator(owner), myValue(myValue)
+    Curator(init), myValue(myValue)
 {}
 
 namespace Arca

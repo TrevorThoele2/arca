@@ -17,14 +17,14 @@ public:
     class Relic final : public ClosedTypedRelic<Relic>
     {
     public:
-        explicit Relic(Initialization initialization) : ClosedTypedRelic(initialization)
+        explicit Relic(Init init) : ClosedTypedRelic(init)
         {}
     };
 
     class GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
     {
     public:
-        explicit GlobalRelic(Initialization initialization) : ClosedTypedRelic(initialization)
+        explicit GlobalRelic(Init init) : ClosedTypedRelic(init)
         {}
     };
 

@@ -26,13 +26,13 @@ public:
 class EitherBatchTestsFixture::Relic final : public ClosedTypedRelic<Relic>
 {
 public:
-    explicit Relic(Initialization initialization);
+    explicit Relic(Init init);
 };
 
 class EitherBatchTestsFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
 {
 public:
-    explicit GlobalRelic(Initialization initialization);
+    explicit GlobalRelic(Init init);
 };
 
 namespace Arca

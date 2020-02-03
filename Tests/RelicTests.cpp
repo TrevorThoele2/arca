@@ -13,48 +13,48 @@ RelicTestsFixture::Shard::Shard(std::string myValue) : myValue(myValue)
 RelicTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
 {}
 
-RelicTestsFixture::TypedClosedRelic::TypedClosedRelic(Initialization initialization)
-    : ClosedTypedRelic(initialization)
+RelicTestsFixture::TypedClosedRelic::TypedClosedRelic(Init init)
+    : ClosedTypedRelic(init)
 {
     basicShard = FindOrCreate<Shard>();
 }
 
-RelicTestsFixture::TypedOpenRelic::TypedOpenRelic(Initialization initialization)
-    : OpenTypedRelic(initialization)
+RelicTestsFixture::TypedOpenRelic::TypedOpenRelic(Init init)
+    : OpenTypedRelic(init)
 {
     basicShard = FindOrCreate<Shard>();
 }
 
-RelicTestsFixture::GlobalRelic::GlobalRelic(Initialization initialization)
-    : ClosedTypedRelic(initialization)
+RelicTestsFixture::GlobalRelic::GlobalRelic(Init init)
+    : ClosedTypedRelic(init)
 {
     basicShard = FindOrCreate<Shard>();
 }
 
-RelicTestsFixture::ShouldCreateRelic::ShouldCreateRelic(Initialization initialization, int value)
-    : ClosedTypedRelic(initialization), value(value)
+RelicTestsFixture::ShouldCreateRelic::ShouldCreateRelic(Init init, int value)
+    : ClosedTypedRelic(init), value(value)
 {}
 
-RelicTestsFixture::InitializedRelic::InitializedRelic(Initialization initialization)
-    : ClosedTypedRelic(initialization)
+RelicTestsFixture::InitializedRelic::InitializedRelic(Init init)
+    : ClosedTypedRelic(init)
 {
     basicShard = FindOrCreate<Shard>();
 }
 
-RelicTestsFixture::InitializedRelic::InitializedRelic(Initialization initialization, int value)
-    : ClosedTypedRelic(initialization), myValue(value)
+RelicTestsFixture::InitializedRelic::InitializedRelic(Init init, int value)
+    : ClosedTypedRelic(init), myValue(value)
 {
     basicShard = Create<Shard>();
 }
 
-RelicTestsFixture::MovableOnlyRelic::MovableOnlyRelic(Initialization initialization)
-    : ClosedTypedRelic(initialization)
+RelicTestsFixture::MovableOnlyRelic::MovableOnlyRelic(Init init)
+    : ClosedTypedRelic(init)
 {
     basicShard = FindOrCreate<Shard>();
 }
 
-RelicTestsFixture::MovableOnlyRelic::MovableOnlyRelic(Initialization initialization, int myInt)
-    : ClosedTypedRelic(initialization), myValue(myInt)
+RelicTestsFixture::MovableOnlyRelic::MovableOnlyRelic(Init init, int myInt)
+    : ClosedTypedRelic(init), myValue(myInt)
 {
     basicShard = Create<Shard>();
 }

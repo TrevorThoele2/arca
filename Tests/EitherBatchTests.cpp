@@ -8,12 +8,12 @@ EitherBatchTestsFixture::Shard::Shard(int value) :
     value(value)
 {}
 
-EitherBatchTestsFixture::Relic::Relic(Initialization initialization) : ClosedTypedRelic(initialization)
+EitherBatchTestsFixture::Relic::Relic(Init init) : ClosedTypedRelic(init)
 {
     FindOrCreate<Shard>();
 }
 
-EitherBatchTestsFixture::GlobalRelic::GlobalRelic(Initialization initialization) : ClosedTypedRelic(initialization)
+EitherBatchTestsFixture::GlobalRelic::GlobalRelic(Init init) : ClosedTypedRelic(init)
 {
     FindOrCreate<Shard>();
 }

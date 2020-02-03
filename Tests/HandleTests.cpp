@@ -11,12 +11,12 @@ HandleTestsFixture::Shard::Shard(std::string myValue) : myValue(std::move(myValu
 HandleTestsFixture::OtherShard::OtherShard(std::string myValue) : myValue(std::move(myValue))
 {}
 
-HandleTestsFixture::TypedRelic::TypedRelic(Initialization initialization) : ClosedTypedRelic(initialization)
+HandleTestsFixture::TypedRelic::TypedRelic(Init init) : ClosedTypedRelic(init)
 {
     basicShard = FindOrCreate<Shard>();
 }
 
-HandleTestsFixture::GlobalRelic::GlobalRelic(Initialization initialization) : ClosedTypedRelic(initialization)
+HandleTestsFixture::GlobalRelic::GlobalRelic(Init init) : ClosedTypedRelic(init)
 {
     basicShard = FindOrCreate<Shard>();
 }

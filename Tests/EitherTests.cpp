@@ -6,7 +6,7 @@
 EitherTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std::move(myValue))
 {}
 
-EitherTestsFixture::BasicTypedRelic::BasicTypedRelic(Initialization initialization) : ClosedTypedRelic(initialization)
+EitherTestsFixture::BasicTypedRelic::BasicTypedRelic(Init init) : ClosedTypedRelic(init)
 {
     basicShard = FindOrCreate<BasicShard>();
 }

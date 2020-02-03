@@ -17,7 +17,7 @@ public:
     class Relic final : public ClosedTypedRelic<Relic>
     {
     public:
-        explicit Relic(Initialization initialization);
+        explicit Relic(Init init);
     };
 
     class GlobalRelic final : public ClosedTypedRelic<Relic>

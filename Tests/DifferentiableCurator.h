@@ -21,7 +21,7 @@ public:
 
     [[nodiscard]] virtual size_t Differentiator() const = 0;
 public:
-    explicit DifferentiableCuratorBase(Reliquary& owner);
+    explicit DifferentiableCuratorBase(Init init);
 
     void Work(Stage& stage);
 };
@@ -49,7 +49,7 @@ public:
         return differentiator;
     }
 public:
-    explicit DifferentiableCurator(Reliquary& owner);
+    explicit DifferentiableCurator(Init init);
 };
 
 template<size_t differentiator>
@@ -57,7 +57,7 @@ std::function<void(DifferentiableCurator<differentiator>&)>
     DifferentiableCurator<differentiator>::onConstructor = [](DifferentiableCurator<differentiator>&) {};
 
 template<size_t differentiator>
-DifferentiableCurator<differentiator>::DifferentiableCurator(Reliquary& owner) : DifferentiableCuratorBase(owner)
+DifferentiableCurator<differentiator>::DifferentiableCurator(Init init) : DifferentiableCuratorBase(init)
 {
     onConstructor(*this);
     onConstructor = [](DifferentiableCurator&) {};

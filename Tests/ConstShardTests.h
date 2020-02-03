@@ -27,7 +27,7 @@ class ConstShardTestsFixture::Relic final : public ClosedTypedRelic<Relic>
 public:
     ShardIndex<const Shard> shard;
 
-    explicit Relic(Initialization initialization);
+    explicit Relic(Init init);
 };
 
 namespace Arca
