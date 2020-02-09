@@ -2,10 +2,11 @@
 
 #include "Command.h"
 
-#include <functional>
 #include "IsRelic.h"
 #include "Handle.h"
 #include "RelicIndex.h"
+
+#include "ReliquaryRelics.h"
 
 namespace Arca
 {
@@ -14,25 +15,53 @@ namespace Arca
     template<class T>
     struct CreateChild
     {
-        std::function<RelicIndex<T>(ReliquaryRelics&)> function;
+        template<class... Args>
+        explicit CreateChild(const Handle& parent, Args&& ... args) :
+            base(std::make_unique<Derived<Handle, Args...>>(
+                parent, std::forward<Args>(args)...))
+        {}
 
-        template<class... ConstructorArgs>
-        explicit CreateChild(const Handle& parent, ConstructorArgs&& ... constructorArgs)
+        RelicIndex<T> Do(ReliquaryRelics& relics) const
         {
-            function =
-                [parent, args = std::make_tuple(std::forward<ConstructorArgs>(constructorArgs)...)](ReliquaryRelics& relics) mutable
-            {
-                return std::apply(
-                    [parent, &relics](auto&& ... args)
-                    {
-                        return relics.template CreateChild<T>(parent, std::forward<ConstructorArgs>(args)...);
-                    },
-                    args);
-            };
+            return base->Do(relics);
         }
+    private:
+        class Base
+        {
+        public:
+            virtual ~Base() = 0;
+
+            virtual RelicIndex<T> Do(ReliquaryRelics& relics) = 0;
+        };
+
+        std::unique_ptr<Base> base;
+
+        template<class... Args>
+        class Derived final : public Base
+        {
+        public:
+            explicit Derived(Args ... args) :
+                args(std::forward<Args>(args)...)
+            {}
+
+            RelicIndex<T> Do(ReliquaryRelics& relics) override
+            {
+
+                return std::apply(
+                    [&relics](auto&& ... args)
+                    {
+                        return relics.template CreateChild<T>(std::forward<decltype(args)>(args)...);
+                    }, std::move(args));
+            }
+        private:
+            std::tuple<Args...> args;
+        };
 
         static_assert(is_relic_v<T>, "CreateChild can only be used with relics.");
     };
+
+    template <class T>
+    CreateChild<T>::Base::~Base() = default;
 
     template<class T>
     struct Traits<CreateChild<T>>

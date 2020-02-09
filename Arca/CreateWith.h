@@ -2,10 +2,11 @@
 
 #include "Command.h"
 
-#include <functional>
 #include "IsRelic.h"
 #include "RelicStructure.h"
 #include "RelicIndex.h"
+
+#include "ReliquaryRelics.h"
 
 namespace Arca
 {
@@ -14,40 +15,58 @@ namespace Arca
     template<class T>
     struct CreateWith
     {
-        std::function<RelicIndex<T>(ReliquaryRelics&)> function;
+        template<class... Args>
+        explicit CreateWith(const RelicStructure& structure, Args&& ... args) :
+            base(std::make_unique<Derived<RelicStructure, Args...>>(
+                structure, std::forward<Args>(args)...))
+        {}
 
-        template<class... ConstructorArgs>
-        explicit CreateWith(const RelicStructure& structure, ConstructorArgs&& ... constructorArgs)
+        template<class... Args>
+        explicit CreateWith(const std::string& structureName, Args&& ... args) :
+            base(std::make_unique<Derived<std::string, Args...>>(
+                structureName, std::forward<Args>(args)...))
+        {}
+
+        RelicIndex<T> Do(ReliquaryRelics& relics) const
         {
-            function =
-                [structure, args = std::make_tuple(std::forward<ConstructorArgs>(constructorArgs)...)](ReliquaryRelics& relics) mutable
+            return base->Do(relics);
+        }
+    private:
+        class Base
+        {
+        public:
+            virtual ~Base() = 0;
+
+            virtual RelicIndex<T> Do(ReliquaryRelics& relics) = 0;
+        };
+
+        std::unique_ptr<Base> base;
+
+        template<class... Args>
+        class Derived final : public Base
+        {
+        public:
+            explicit Derived(Args ... args) :
+                args(std::forward<Args>(args)...)
+            {}
+
+            RelicIndex<T> Do(ReliquaryRelics& relics) override
             {
                 return std::apply(
-                    [structure, &relics](auto&& ... args)
+                    [&relics](auto&& ... args)
                     {
-                        return relics.template CreateWith<T>(structure, std::forward<ConstructorArgs>(args)...);
-                    },
-                    args);
-            };
-        }
-
-        template<class... ConstructorArgs>
-        explicit CreateWith(const std::string& structureName, ConstructorArgs&& ... constructorArgs)
-        {
-            function =
-                [structureName, args = std::make_tuple(std::forward<ConstructorArgs>(constructorArgs)...)](ReliquaryRelics& relics) mutable
-            {
-                return std::apply(
-                    [structureName, &relics](auto&& ... args)
-                    {
-                        return relics.template CreateWith<T>(structureName, std::forward<ConstructorArgs>(args)...);
-                    },
-                    args);
-            };
-        }
+                        return relics.template CreateWith<T>(std::forward<decltype(args)>(args)...);
+                    }, std::move(args));
+            }
+        private:
+            std::tuple<Args...> args;
+        };
 
         static_assert(is_relic_v<T>, "CreateWith can only be used with relics.");
     };
+
+    template <class T>
+    CreateWith<T>::Base::~Base() = default;
 
     template<class T>
     struct Traits<CreateWith<T>>

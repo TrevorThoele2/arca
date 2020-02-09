@@ -319,7 +319,7 @@ namespace Arca
     template<class CommandT, class... Args, std::enable_if_t<is_command_v<CommandT> && !std::is_void_v<command_return_t<CommandT>>, int>>
     command_return_t<CommandT> Reliquary::Do(Args&& ... args)
     {
-        return Do(CommandT(std::forward<Args>(args)...));
+        return Do(CommandT{ std::forward<Args>(args)... });
     }
 
     template<class SignalT, std::enable_if_t<is_signal_v<SignalT> && !std::is_same_v<TransferableSignal, SignalT>, int>>

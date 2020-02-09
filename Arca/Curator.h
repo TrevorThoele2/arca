@@ -43,10 +43,14 @@ namespace Arca
         [[nodiscard]] RelicT* Data(RelicID id);
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int> = 0>
         [[nodiscard]] RelicT* Data(RelicIndex<RelicT> index);
+        template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int> = 0>
+        [[nodiscard]] RelicT* Data(const RelicT& relic);
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
         [[nodiscard]] RelicT* Data();
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
         [[nodiscard]] RelicT* Data(GlobalIndex<RelicT> index);
+        template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
+        [[nodiscard]] RelicT* Data(const RelicT& relic);
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] ShardT* Data(RelicID id);
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
@@ -73,6 +77,12 @@ namespace Arca
         return Data<RelicT>(index.ID());
     }
 
+    template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int>>
+    RelicT* Curator::Data(const RelicT& relic)
+    {
+        return Data<RelicT>(relic.ID());
+    }
+
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int>>
     RelicT* Curator::Data()
     {
@@ -81,6 +91,12 @@ namespace Arca
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int>>
     RelicT* Curator::Data(GlobalIndex<RelicT>)
+    {
+        return Data<RelicT>();
+    }
+
+    template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int>>
+    RelicT* Curator::Data(const RelicT&)
     {
         return Data<RelicT>();
     }
