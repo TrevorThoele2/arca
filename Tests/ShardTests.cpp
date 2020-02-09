@@ -4,6 +4,10 @@
 
 #include <Arca/AsHandle.h>
 
+ShardTestsFixture::ShardConstructedFromMovedValue::ShardConstructedFromMovedValue(std::unique_ptr<int>&& myInt) :
+    myInt(std::move(myInt))
+{}
+
 SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
 {
     GIVEN("registered reliquary with regular shard")
@@ -378,6 +382,32 @@ SCENARIO_METHOD(ShardTestsFixture, "either signals", "[either][signal]")
                     REQUIRE(destroyingSignals.Size() == 1);
                     REQUIRE(destroyingSignals.begin()->index == shard);
                 }
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(ShardTestsFixture, "shard constructed from moved value", "[shard]")
+{
+    GIVEN("registered reliquary")
+    {
+        auto reliquary = ReliquaryOrigin()
+            .Register<ShardConstructedFromMovedValue>()
+            .Actualize();
+
+        WHEN("creating shard from moved value")
+        {
+            auto relic = reliquary->Do<Create<OpenRelic>>();
+
+            const auto generatedInt = dataGeneration.Random<int>();
+            auto backingInt = new int(generatedInt);
+            auto myInt = std::unique_ptr<int>(backingInt);
+
+            auto shard = relic->Create<ShardConstructedFromMovedValue>(std::move(myInt));
+
+            THEN("has moved value")
+            {
+                REQUIRE(shard->myInt.get() == backingInt);
             }
         }
     }
