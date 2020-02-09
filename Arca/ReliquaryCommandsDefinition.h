@@ -82,21 +82,23 @@ namespace Arca
     template<class CuratorT>
     void ReliquaryCommands::Handler<CommandT>::LinkTo()
     {
-        links.push_back(std::make_unique<Link<CuratorT>>());
+        if (link)
+            throw CommandAlreadyLinked(TypeFor<CommandT>());
+
+        link = std::move(std::make_unique<Link<CuratorT>>());
     }
 
     template<class CommandT>
-    void ReliquaryCommands::Handler<CommandT>::Handle(const CommandT& command, ReliquaryCurators& curators)
+    command_return_t<CommandT> ReliquaryCommands::Handler<CommandT>::Handle(const CommandT& command, ReliquaryCurators& curators)
     {
-        for (auto& loop : links)
-            loop->Handle(command, curators);
+        return link->Handle(command, curators);
     }
 
     template<class CommandT>
     template<class CuratorT>
-    void ReliquaryCommands::Handler<CommandT>::Link<CuratorT>::Handle(const CommandT& command, ReliquaryCurators& curators)
+    command_return_t<CommandT> ReliquaryCommands::Handler<CommandT>::Link<CuratorT>::Handle(const CommandT& command, ReliquaryCurators& curators)
     {
-        curators.Find<CuratorT>().Handle(command);
+        return curators.Find<CuratorT>().Handle(command);
     }
 
     template<class CommandT>

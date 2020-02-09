@@ -58,26 +58,25 @@ namespace Arca
             template<class CuratorT>
             void LinkTo();
 
-            void Handle(const CommandT& command, ReliquaryCurators& curators);
+            command_return_t<CommandT> Handle(const CommandT& command, ReliquaryCurators& curators);
         private:
             class LinkBase
             {
             public:
                 virtual ~LinkBase() = 0;
 
-                virtual void Handle(const CommandT& command, ReliquaryCurators& curators) = 0;
+                virtual command_return_t<CommandT> Handle(const CommandT& command, ReliquaryCurators& curators) = 0;
             };
 
             template<class CuratorT>
             class Link : public LinkBase
             {
             public:
-                void Handle(const CommandT& command, ReliquaryCurators& curators) override;
+                command_return_t<CommandT> Handle(const CommandT& command, ReliquaryCurators& curators) override;
             };
 
             using LinkPtr = std::unique_ptr<LinkBase>;
-            using LinkList = std::vector<LinkPtr>;
-            LinkList links;
+            LinkPtr link;
         };
 
         using HandlerPtr = std::unique_ptr<HandlerBase>;
