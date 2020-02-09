@@ -12,30 +12,7 @@ namespace Arca
         Register<ClosedRelic>();
     }
 
-    ReliquaryOrigin::ReliquaryOrigin(const ReliquaryOrigin& arg) :
-        relicList(arg.relicList),
-        globalRelicList(arg.globalRelicList),
-        namedRelicStructureList(arg.namedRelicStructureList),
-        shardList(arg.shardList),
-        curatorList(arg.curatorList),
-        curatorConstructionPipeline(arg.curatorConstructionPipeline),
-        curatorWorkPipeline(arg.curatorWorkPipeline)
-    {}
-
-    ReliquaryOrigin& ReliquaryOrigin::operator=(const ReliquaryOrigin& arg)
-    {
-        relicList = arg.relicList;
-        globalRelicList = arg.globalRelicList;
-        namedRelicStructureList = arg.namedRelicStructureList;
-        shardList = arg.shardList;
-        curatorList = arg.curatorList;
-        curatorConstructionPipeline = arg.curatorConstructionPipeline;
-        curatorWorkPipeline = arg.curatorWorkPipeline;
-
-        return *this;
-    }
-
-    std::unique_ptr<Reliquary> ReliquaryOrigin::Actualize() const
+    std::unique_ptr<Reliquary> ReliquaryOrigin::Actualize()
     {
         ValidateCuratorPipeline(curatorConstructionPipeline);
         ValidateCuratorPipeline(curatorWorkPipeline);
@@ -65,39 +42,48 @@ namespace Arca
         return reliquary;
     }
 
-    ReliquaryOrigin& ReliquaryOrigin::RelicStructure(const std::string& name, const Arca::RelicStructure& structure)
+    ReliquaryOrigin&& ReliquaryOrigin::RelicStructure(const std::string& name, const Arca::RelicStructure& structure)
     {
         for (auto& loop : namedRelicStructureList)
             if (loop.name == name)
                 throw AlreadyRegistered("relic structure", Arca::Type(name));
 
         namedRelicStructureList.emplace_back(name, structure);
-        return *this;
+        return std::move(*this);
     }
 
-    ReliquaryOrigin& ReliquaryOrigin::CuratorPipeline(const Arca::Pipeline& pipeline)
+    ReliquaryOrigin&& ReliquaryOrigin::CuratorPipeline(const Arca::Pipeline& pipeline)
     {
         curatorConstructionPipeline = pipeline;
         curatorWorkPipeline = pipeline;
 
-        return *this;
+        return std::move(*this);
     }
 
-    ReliquaryOrigin& ReliquaryOrigin::CuratorPipeline(const Pipeline& construction, const Pipeline& work)
+    ReliquaryOrigin&& ReliquaryOrigin::CuratorPipeline(const Pipeline& construction, const Pipeline& work)
     {
         curatorConstructionPipeline = construction;
         curatorWorkPipeline = work;
 
-        return *this;
+        return std::move(*this);
     }
 
-    ReliquaryOrigin::TypeConstructor::TypeConstructor(
-        TypeName typeName, std::function<void(Reliquary&)>&& factory)
-        :
+    ReliquaryOrigin::TypeConstructor::TypeConstructor(TypeName typeName, Factory&& factory) :
         typeName(std::move(typeName)), factory(std::move(factory))
     {}
 
-    void ReliquaryOrigin::PushAllCuratorsTo(Reliquary& reliquary, const Pipeline& pipeline) const
+    ReliquaryOrigin::TypeConstructor::TypeConstructor(TypeConstructor && arg) noexcept :
+        typeName(std::move(arg.typeName)), factory(std::move(arg.factory))
+    {}
+
+    auto ReliquaryOrigin::TypeConstructor::operator=(TypeConstructor && arg) noexcept -> TypeConstructor&
+    {
+        typeName = std::move(arg.typeName);
+        factory = std::move(arg.factory);
+        return *this;
+    }
+
+    void ReliquaryOrigin::PushAllCuratorsTo(Reliquary& reliquary, const Pipeline& pipeline)
     {
         std::unordered_set<TypeName> typesLeft;
         for (auto& initializer : curatorList)

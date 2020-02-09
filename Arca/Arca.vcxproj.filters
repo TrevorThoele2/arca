@@ -477,6 +477,9 @@
     <ClInclude Include="CuratorInit.h">
       <Filter>Header Files\Curator</Filter>
     </ClInclude>
+    <ClInclude Include="CuratorDefinition.h">
+      <Filter>Header Files\Curator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">

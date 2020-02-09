@@ -217,7 +217,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
         pipeline.emplace_back();
         pipeline.back().Add<BasicCurator>();
 
-        const auto reliquaryOrigin = ReliquaryOrigin()
+        auto reliquaryOrigin = ReliquaryOrigin()
             .CuratorPipeline(pipeline);
 
         WHEN("actualized")
@@ -236,7 +236,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
         pipeline.back().Add<BasicCurator>();
         pipeline.back().Add<BasicCurator>();
 
-        const auto reliquaryOrigin = ReliquaryOrigin()
+        auto reliquaryOrigin = ReliquaryOrigin()
             .CuratorPipeline(pipeline)
             .Register<BasicCurator>();
 
@@ -260,7 +260,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
         auto pipeline = Pipeline();
         pipeline.emplace_back();
 
-        const auto reliquaryOrigin = ReliquaryOrigin()
+        auto reliquaryOrigin = ReliquaryOrigin()
             .CuratorPipeline(pipeline);
 
         WHEN("actualized")
@@ -338,7 +338,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator split pipeline", "[curator][pipeli
         pipeline.emplace_back();
         pipeline.back().Add<BasicCurator>();
 
-        const auto reliquaryOrigin = ReliquaryOrigin()
+        auto reliquaryOrigin = ReliquaryOrigin()
             .CuratorPipeline(pipeline);
 
         WHEN("actualized")
@@ -357,7 +357,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator split pipeline", "[curator][pipeli
         pipeline.back().Add<BasicCurator>();
         pipeline.back().Add<BasicCurator>();
 
-        const auto reliquaryOrigin = ReliquaryOrigin()
+        auto reliquaryOrigin = ReliquaryOrigin()
             .CuratorPipeline(pipeline)
             .Register<BasicCurator>();
 
@@ -381,7 +381,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator split pipeline", "[curator][pipeli
         auto pipeline = Pipeline();
         pipeline.emplace_back();
 
-        const auto reliquaryOrigin = ReliquaryOrigin()
+        auto reliquaryOrigin = ReliquaryOrigin()
             .CuratorPipeline(pipeline);
 
         WHEN("actualized")

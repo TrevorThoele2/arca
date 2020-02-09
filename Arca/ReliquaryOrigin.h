@@ -5,10 +5,9 @@
 #include "Reliquary.h"
 
 #include "Pipeline.h"
-
-#include "Curator.h"
-
 #include "HasHandledCommands.h"
+
+#include <function2/function2.hpp>
 
 namespace Arca
 {
@@ -16,35 +15,39 @@ namespace Arca
     {
     public:
         ReliquaryOrigin();
-        ReliquaryOrigin(const ReliquaryOrigin& arg);
+        ReliquaryOrigin(const ReliquaryOrigin& arg) = delete;
         ReliquaryOrigin(ReliquaryOrigin&& arg) = default;
-        ReliquaryOrigin& operator=(const ReliquaryOrigin& arg);
+        ReliquaryOrigin& operator=(const ReliquaryOrigin& arg) = delete;
         ReliquaryOrigin& operator=(ReliquaryOrigin&& arg) = default;
     public:
-        [[nodiscard]] std::unique_ptr<Reliquary> Actualize() const;
+        [[nodiscard]] std::unique_ptr<Reliquary> Actualize();
     public:
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int> = 0>
-        ReliquaryOrigin& Register();
+        ReliquaryOrigin&& Register();
         template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
-        ReliquaryOrigin& Register(ConstructorArgs&& ... constructorArgs);
+        ReliquaryOrigin&& Register(ConstructorArgs&& ... constructorArgs);
         template<class InterfaceT>
-        ReliquaryOrigin& Compute(std::function<InterfaceT(Reliquary&)> computation);
-        ReliquaryOrigin& RelicStructure(const std::string& name, const RelicStructure& structure);
+        ReliquaryOrigin&& Compute(std::function<InterfaceT(Reliquary&)> computation);
+        ReliquaryOrigin&& RelicStructure(const std::string& name, const RelicStructure& structure);
     public:
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        ReliquaryOrigin& Register();
+        ReliquaryOrigin&& Register();
     public:
         template<class CuratorT, class... Args, std::enable_if_t<is_curator_v<CuratorT>, int> = 0>
-        ReliquaryOrigin& Register(Args&& ... args);
-        ReliquaryOrigin& CuratorPipeline(const Pipeline& pipeline);
-        ReliquaryOrigin& CuratorPipeline(const Pipeline& construction, const Pipeline& work);
+        ReliquaryOrigin&& Register(Args&& ... args);
+        ReliquaryOrigin&& CuratorPipeline(const Pipeline& pipeline);
+        ReliquaryOrigin&& CuratorPipeline(const Pipeline& construction, const Pipeline& work);
     private:
         struct TypeConstructor
         {
             TypeName typeName;
-            std::function<void(Reliquary&)> factory;
 
-            TypeConstructor(TypeName typeName, std::function<void(Reliquary&)>&& factory);
+            using Factory = fu2::unique_function<void(Reliquary&)>;
+            Factory factory;
+
+            TypeConstructor(TypeName typeName, Factory&& factory);
+            TypeConstructor(TypeConstructor&& arg) noexcept;
+            TypeConstructor& operator=(TypeConstructor&& arg) noexcept;
         };
         using TypeConstructorList = std::vector<TypeConstructor>;
     private:
@@ -81,7 +84,7 @@ namespace Arca
         Pipeline curatorConstructionPipeline;
         Pipeline curatorWorkPipeline;
 
-        void PushAllCuratorsTo(Reliquary& reliquary, const Pipeline& pipeline) const;
+        void PushAllCuratorsTo(Reliquary& reliquary, const Pipeline& pipeline);
 
         template<class Curator>
         [[nodiscard]] bool IsCuratorRegistered() const;
@@ -105,7 +108,7 @@ namespace Arca
     };
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int>>
-    ReliquaryOrigin& ReliquaryOrigin::Register()
+    ReliquaryOrigin&& ReliquaryOrigin::Register()
     {
         const auto type = TypeFor<RelicT>();
 
@@ -119,21 +122,21 @@ namespace Arca
                 reliquary.relics.CreateLocalHandler<RelicT>();
             });
 
-        return *this;
+        return std::move(*this);
     }
 
     template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int>>
-    ReliquaryOrigin& ReliquaryOrigin::Register(ConstructorArgs&& ... constructorArgs)
+    ReliquaryOrigin&& ReliquaryOrigin::Register(ConstructorArgs&& ... constructorArgs)
     {
         if (IsGlobalRelicRegistered<RelicT>())
             throw AlreadyRegistered("global relic", TypeFor<RelicT>(), typeid(RelicT));
 
         GlobalRelicCommon<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...);
-        return *this;
+        return std::move(*this);
     }
 
     template<class InterfaceT>
-    ReliquaryOrigin& ReliquaryOrigin::Compute(std::function<InterfaceT(Reliquary&)> computation)
+    ReliquaryOrigin&& ReliquaryOrigin::Compute(std::function<InterfaceT(Reliquary&)> computation)
     {
         const std::type_index interfaceType = typeid(InterfaceT);
 
@@ -153,11 +156,11 @@ namespace Arca
                     });
             });
 
-        return *this;
+        return std::move(*this);
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    ReliquaryOrigin& ReliquaryOrigin::Register()
+    ReliquaryOrigin&& ReliquaryOrigin::Register()
     {
         const auto type = TypeFor<ShardT>();
 
@@ -171,32 +174,33 @@ namespace Arca
                 reliquary.shards.CreateHandler<ShardT>();
             });
 
-        return *this;
+        return std::move(*this);
     }
 
     template<class CuratorT, class... Args, std::enable_if_t<is_curator_v<CuratorT>, int>>
-    ReliquaryOrigin& ReliquaryOrigin::Register(Args&& ... args)
+    ReliquaryOrigin&& ReliquaryOrigin::Register(Args&& ... args)
     {
         const auto type = TypeFor<CuratorT>();
 
         if (IsCuratorRegistered<CuratorT>())
             throw AlreadyRegistered("curator", type, typeid(CuratorT));
 
-        const auto factory = [args = std::make_tuple(std::forward<Args>(args) ...)](Reliquary& reliquary) mutable
-        {
-            return std::apply(
-                [&reliquary](auto&& ... args)
-                {
-                    reliquary.curators.CreateHandler<CuratorT>(std::forward<Args>(args)...);
+        curatorList.push_back(TypeConstructor{
+            type.name,
+            [args = std::make_tuple(std::forward<Args>(args) ...)](Reliquary& reliquary) mutable
+            {
+                return std::apply(
+                    [&reliquary](auto&& ... args)
+                    {
+                        reliquary.curators.CreateHandler<CuratorT>(std::forward<decltype(args)>(args)...);
 
-                    auto& curator = reliquary.curators.Find<CuratorT>();
-                    LinkHandledCommands<CuratorT>(curator, reliquary);
-                },
-                args);
-        };
-        curatorList.emplace_back(type.name, factory);
+                        auto& curator = reliquary.curators.Find<CuratorT>();
+                        LinkHandledCommands<CuratorT>(curator, reliquary);
+                    },
+                    std::move(args));
+            }});
 
-        return *this;
+        return std::move(*this);
     }
 
     template<class RelicT>
@@ -216,16 +220,18 @@ namespace Arca
     template<class RelicT, class... ConstructorArgs>
     void ReliquaryOrigin::GlobalRelicCommon(ConstructorArgs&& ... constructorArgs)
     {
-        const auto factory = [args = std::make_tuple(std::forward<ConstructorArgs>(constructorArgs) ...)](Reliquary& reliquary) mutable
-        {
-            return std::apply(
-                [&reliquary](auto ... constructorArgs)
-                {
-                    reliquary.relics.CreateGlobalHandler<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...);
-                },
-                args);
-        };
-        globalRelicList.emplace_back(TypeFor<RelicT>().name, factory);
+        globalRelicList.push_back(TypeConstructor{
+            TypeFor<RelicT>().name,
+            [args = std::make_tuple(std::forward<ConstructorArgs>(constructorArgs) ...)](Reliquary& reliquary) mutable
+            {
+                return std::apply(
+                    [&reliquary](auto&& ... constructorArgs)
+                    {
+                        reliquary.relics.CreateGlobalHandler<RelicT>(
+                            std::forward<decltype(constructorArgs)>(constructorArgs)...);
+                    },
+                    std::move(args));
+            }});
     }
 
     template<class RelicT>
