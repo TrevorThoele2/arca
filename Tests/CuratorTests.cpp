@@ -28,29 +28,13 @@ CuratorTestsFixture::CuratorWithNonDefaultConstructor::CuratorWithNonDefaultCons
     Curator(init), myValue(myValue)
 {}
 
-namespace Arca
-{
-    template<>
-    struct Traits<CuratorTestsFixture::BasicCurator>
-    {
-        static const ObjectType objectType = ObjectType::Curator;
-        static inline const TypeName typeName = "BasicCurator";
-    };
+CuratorTestsFixture::CuratorWithLocalRelicConstructor::CuratorWithLocalRelicConstructor(Init init) :
+    Curator(init), localRelic(init.owner.Do<Create<LocalRelic>>())
+{}
 
-    template<>
-    struct Traits<CuratorTestsFixture::OtherBasicCurator>
-    {
-        static const ObjectType objectType = ObjectType::Curator;
-        static inline const TypeName typeName = "OtherBasicCurator";
-    };
-
-    template<>
-    struct Traits<CuratorTestsFixture::CuratorWithNonDefaultConstructor>
-    {
-        static const ObjectType objectType = ObjectType::Curator;
-        static inline const TypeName typeName = "CuratorWithNonDefaultConstructor";
-    };
-}
+CuratorTestsFixture::CuratorWithGlobalRelicConstructor::CuratorWithGlobalRelicConstructor(Init init) :
+    Curator(init), globalRelic(init.owner)
+{}
 
 template<size_t id>
 struct StagePerCuratorIterator
@@ -162,6 +146,43 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator", "[curator]")
             THEN("curator was worked")
             {
                 REQUIRE(worked.size() == 1);
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(CuratorTestsFixture, "curator constructor", "[curator]")
+{
+    GIVEN("reliquary registered")
+    {
+        std::vector<Curator*> worked;
+
+        auto reliquary = ReliquaryOrigin()
+            .Register<LocalRelic>()
+            .Register<GlobalRelic>()
+            .Register<CuratorWithLocalRelicConstructor>()
+            .Register<CuratorWithGlobalRelicConstructor>()
+            .Actualize();
+
+        WHEN("querying curator with local relic's value")
+        {
+            auto& curator = reliquary->Find<CuratorWithLocalRelicConstructor>();
+            auto localRelic = curator.localRelic;
+
+            THEN("is occupied")
+            {
+                REQUIRE(localRelic);
+            }
+        }
+
+        WHEN("querying curator with global relic's value")
+        {
+            auto& curator = reliquary->Find<CuratorWithGlobalRelicConstructor>();
+            auto globalRelic = curator.globalRelic;
+
+            THEN("is occupied")
+            {
+                REQUIRE(globalRelic);
             }
         }
     }

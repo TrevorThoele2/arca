@@ -3,6 +3,7 @@
 #include "GeneralFixture.h"
 
 #include <Arca/Curator.h>
+#include <Arca/ClosedTypedRelic.h>
 
 #include <Inscription/BinaryArchive.h>
 #include "Chroma/StringUtility.h"
@@ -12,6 +13,20 @@ using namespace Arca;
 class CuratorTestsFixture : public GeneralFixture
 {
 public:
+    class LocalRelic : public ClosedTypedRelic<LocalRelic>
+    {
+    public:
+        explicit LocalRelic(Init init) : ClosedTypedRelic(init)
+        {}
+    };
+
+    class GlobalRelic : public ClosedTypedRelic<GlobalRelic>
+    {
+    public:
+        explicit GlobalRelic(Init init) : ClosedTypedRelic(init)
+        {}
+    };
+
     class BasicCurator final : public Curator
     {
     public:
@@ -41,12 +56,91 @@ public:
     public:
         int myValue = 0;
 
-        explicit CuratorWithNonDefaultConstructor(Init init, int myValue);
+        CuratorWithNonDefaultConstructor(Init init, int myValue);
+    };
+
+    class CuratorWithLocalRelicConstructor final : public Curator
+    {
+    public:
+        RelicIndex<LocalRelic> localRelic;
+
+        explicit CuratorWithLocalRelicConstructor(Init init);
+    };
+
+    class CuratorWithGlobalRelicConstructor final : public Curator
+    {
+    public:
+        GlobalIndex<GlobalRelic> globalRelic;
+
+        explicit CuratorWithGlobalRelicConstructor(Init init);
     };
 };
 
+namespace Arca
+{
+    template<>
+    struct Traits<CuratorTestsFixture::LocalRelic>
+    {
+        static const ObjectType objectType = ObjectType::Relic;
+        static inline const TypeName typeName = "LocalRelic";
+    };
+
+    template<>
+    struct Traits<CuratorTestsFixture::GlobalRelic>
+    {
+        static const ObjectType objectType = ObjectType::Relic;
+        static inline const TypeName typeName = "GlobalRelic";
+        static const Locality locality = Locality::Global;
+    };
+
+    template<>
+    struct Traits<CuratorTestsFixture::BasicCurator>
+    {
+        static const ObjectType objectType = ObjectType::Curator;
+        static inline const TypeName typeName = "BasicCurator";
+    };
+
+    template<>
+    struct Traits<CuratorTestsFixture::OtherBasicCurator>
+    {
+        static const ObjectType objectType = ObjectType::Curator;
+        static inline const TypeName typeName = "OtherBasicCurator";
+    };
+
+    template<>
+    struct Traits<CuratorTestsFixture::CuratorWithNonDefaultConstructor>
+    {
+        static const ObjectType objectType = ObjectType::Curator;
+        static inline const TypeName typeName = "CuratorWithNonDefaultConstructor";
+    };
+
+    template<>
+    struct Traits<CuratorTestsFixture::CuratorWithLocalRelicConstructor>
+    {
+        static const ObjectType objectType = ObjectType::Curator;
+        static inline const TypeName typeName = "CuratorWithLocalRelicConstructor";
+    };
+
+    template<>
+    struct Traits<CuratorTestsFixture::CuratorWithGlobalRelicConstructor>
+    {
+        static const ObjectType objectType = ObjectType::Curator;
+        static inline const TypeName typeName = "CuratorWithGlobalRelicConstructor";
+    };
+}
+
 namespace Inscription
 {
+    template<>
+    class Scribe<CuratorTestsFixture::LocalRelic, BinaryArchive> final :
+        public ArcaNullScribe<CuratorTestsFixture::LocalRelic, BinaryArchive>
+    {};
+
+    template<>
+    class Scribe<CuratorTestsFixture::GlobalRelic, BinaryArchive> final :
+        public ArcaNullScribe<CuratorTestsFixture::GlobalRelic, BinaryArchive>
+    {};
+
     template<>
     class Scribe<CuratorTestsFixture::BasicCurator, BinaryArchive> final :
         public ArcaCompositeScribe<CuratorTestsFixture::BasicCurator, BinaryArchive>
@@ -68,5 +162,15 @@ namespace Inscription
     template<>
     class Scribe<CuratorTestsFixture::CuratorWithNonDefaultConstructor, BinaryArchive> final :
         public ArcaNullScribe<CuratorTestsFixture::CuratorWithNonDefaultConstructor, BinaryArchive>
+    {};
+
+    template<>
+    class Scribe<CuratorTestsFixture::CuratorWithLocalRelicConstructor, BinaryArchive> final :
+        public ArcaNullScribe<CuratorTestsFixture::CuratorWithLocalRelicConstructor, BinaryArchive>
+    {};
+
+    template<>
+    class Scribe<CuratorTestsFixture::CuratorWithGlobalRelicConstructor, BinaryArchive> final :
+        public ArcaNullScribe<CuratorTestsFixture::CuratorWithGlobalRelicConstructor, BinaryArchive>
     {};
 }
