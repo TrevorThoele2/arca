@@ -34,7 +34,7 @@
     <ClInclude Include="EitherDefinition.h" />
     <ClInclude Include="EitherImplementation.h" />
     <ClInclude Include="HandledCommands.h" />
-    <ClInclude Include="HasCommandReturn.h" />
+    <ClInclude Include="HasCommandResult.h" />
     <ClInclude Include="HasHandledCommands.h" />
     <ClInclude Include="HasWorkMethod.h" />
     <ClInclude Include="IndexTypeFor.h" />

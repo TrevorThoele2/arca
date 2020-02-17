@@ -287,7 +287,7 @@ namespace Arca
     template<class Curator>
     void ReliquaryOrigin::LinkHandledCommandIterator<i>::Do(Curator& curator, ReliquaryCommands& commands)
     {
-        using CommandT = typename Curator::HandledCommands::template Parameter<i>::Type;
+        using CommandT = typename Traits<Curator>::HandledCommands::template Parameter<i>::Type;
         commands.Link<Curator, CommandT>();
     }
 
@@ -295,13 +295,13 @@ namespace Arca
     void ReliquaryOrigin::LinkHandledCommands(Curator& curator, Reliquary& reliquary)
     {
         static_assert(
-            Curator::HandledCommands::AllUnique::value,
+            Traits<Curator>::HandledCommands::AllUnique::value,
             "A Curator should only declare each handled command once.");
 
         Chroma::IterateRange<
             Chroma::VariadicTemplateSize,
             LinkHandledCommandIterator,
-            Curator::HandledCommands::count - 1>
+            Traits<Curator>::HandledCommands::count - 1>
             (curator, reliquary.commands);
     }
 

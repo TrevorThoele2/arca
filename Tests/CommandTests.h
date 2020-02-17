@@ -6,7 +6,7 @@ class CommandTestsFixture : public GeneralFixture
 {
 public:
     struct Command;
-    struct ReturnCommand;
+    struct CommandWithResult;
     class Curator;
     class CuratorWithSameLink;
 };
@@ -16,7 +16,7 @@ struct CommandTestsFixture::Command
     
 };
 
-struct CommandTestsFixture::ReturnCommand
+struct CommandTestsFixture::CommandWithResult
 {
 
 };
@@ -26,8 +26,7 @@ class CommandTestsFixture::Curator final : public Arca::Curator
 public:
     std::vector<Command> handledCommands;
     void Handle(const Command& command);
-    int Handle(const ReturnCommand& command);
-    using HandledCommands = Arca::HandledCommands<Command, ReturnCommand>;
+    int Handle(const CommandWithResult& command);
 public:
     using Arca::Curator::Curator;
 };
@@ -37,7 +36,6 @@ class CommandTestsFixture::CuratorWithSameLink final : public Arca::Curator
 public:
     std::vector<Command> handledCommands;
     void Handle(const Command& command);
-    using HandledCommands = Arca::HandledCommands<Command>;
 public:
     using Arca::Curator::Curator;
 };
@@ -52,11 +50,11 @@ namespace Arca
     };
 
     template<>
-    struct Traits<CommandTestsFixture::ReturnCommand>
+    struct Traits<CommandTestsFixture::CommandWithResult>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "CommandTestsFixtureReturnCommand";
-        using Return = int;
+        static inline const TypeName typeName = "CommandTestsFixtureCommandWithResult";
+        using Result = int;
     };
 
     template<>
@@ -64,6 +62,8 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Curator;
         static inline const TypeName typeName = "CommandTestsFixtureCurator";
+        using HandledCommands = Arca::HandledCommands<
+            CommandTestsFixture::Command, CommandTestsFixture::CommandWithResult>;
     };
 
     template<>
@@ -71,6 +71,8 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Curator;
         static inline const TypeName typeName = "CommandTestsFixtureCuratorWithSameLink";
+        using HandledCommands = Arca::HandledCommands<
+            CommandTestsFixture::Command>;
     };
 }
 

@@ -73,6 +73,6 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Command;
         static inline const TypeName typeName = "CreateWith";
-        using Return = RelicIndex<T>;
+        using Result = RelicIndex<T>;
     };
 }

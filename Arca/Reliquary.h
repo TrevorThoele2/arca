@@ -110,15 +110,15 @@ namespace Arca
 
         [[nodiscard]] SizeT CuratorSize() const;
     public:
-        template<class CommandT, std::enable_if_t<is_command_v<CommandT> && std::is_void_v<command_return_t<CommandT>>, int> = 0>
+        template<class CommandT, std::enable_if_t<is_command_v<CommandT> && std::is_void_v<command_result_t<CommandT>>, int> = 0>
         void Do(const CommandT& command);
-        template<class CommandT, class... Args, std::enable_if_t<is_command_v<CommandT> && std::is_void_v<command_return_t<CommandT>>, int> = 0>
+        template<class CommandT, class... Args, std::enable_if_t<is_command_v<CommandT> && std::is_void_v<command_result_t<CommandT>>, int> = 0>
         void Do(Args&& ... args);
 
-        template<class CommandT, std::enable_if_t<is_command_v<CommandT> && !std::is_void_v<command_return_t<CommandT>>, int> = 0>
-        command_return_t<CommandT> Do(const CommandT& command);
-        template<class CommandT, class... Args, std::enable_if_t<is_command_v<CommandT> && !std::is_void_v<command_return_t<CommandT>>, int> = 0>
-        command_return_t<CommandT> Do(Args&& ... args);
+        template<class CommandT, std::enable_if_t<is_command_v<CommandT> && !std::is_void_v<command_result_t<CommandT>>, int> = 0>
+        command_result_t<CommandT> Do(const CommandT& command);
+        template<class CommandT, class... Args, std::enable_if_t<is_command_v<CommandT> && !std::is_void_v<command_result_t<CommandT>>, int> = 0>
+        command_result_t<CommandT> Do(Args&& ... args);
     public:
         template<class SignalT, std::enable_if_t<is_signal_v<SignalT> && !std::is_same_v<TransferableSignal, SignalT>, int> = 0>
         void Raise(const SignalT& signal);
@@ -298,26 +298,26 @@ namespace Arca
         return static_cast<bool>(Find<CuratorT>());
     }
 
-    template<class CommandT, std::enable_if_t<is_command_v<CommandT> && std::is_void_v<command_return_t<CommandT>>, int>>
+    template<class CommandT, std::enable_if_t<is_command_v<CommandT> && std::is_void_v<command_result_t<CommandT>>, int>>
     void Reliquary::Do(const CommandT& command)
     {
         commands.Do(command);
     }
 
-    template<class CommandT, class... Args, std::enable_if_t<is_command_v<CommandT> && std::is_void_v<command_return_t<CommandT>>, int>>
+    template<class CommandT, class... Args, std::enable_if_t<is_command_v<CommandT> && std::is_void_v<command_result_t<CommandT>>, int>>
     void Reliquary::Do(Args&& ... args)
     {
         Do(CommandT(std::forward<Args>(args)...));
     }
 
-    template<class CommandT, std::enable_if_t<is_command_v<CommandT> && !std::is_void_v<command_return_t<CommandT>>, int>>
-    command_return_t<CommandT> Reliquary::Do(const CommandT& command)
+    template<class CommandT, std::enable_if_t<is_command_v<CommandT> && !std::is_void_v<command_result_t<CommandT>>, int>>
+    command_result_t<CommandT> Reliquary::Do(const CommandT& command)
     {
         return commands.Do(command);
     }
 
-    template<class CommandT, class... Args, std::enable_if_t<is_command_v<CommandT> && !std::is_void_v<command_return_t<CommandT>>, int>>
-    command_return_t<CommandT> Reliquary::Do(Args&& ... args)
+    template<class CommandT, class... Args, std::enable_if_t<is_command_v<CommandT> && !std::is_void_v<command_result_t<CommandT>>, int>>
+    command_result_t<CommandT> Reliquary::Do(Args&& ... args)
     {
         return Do(CommandT{ std::forward<Args>(args)... });
     }

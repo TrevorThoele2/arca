@@ -72,7 +72,7 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Command;
         static inline const TypeName typeName = "Create<Relic>";
-        using Return = RelicIndex<T>;
+        using Result = RelicIndex<T>;
     };
 
     template<class T>
@@ -128,6 +128,6 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Command;
         static inline const TypeName typeName = "Create<Shard>";
-        using Return = ShardIndex<T>;
+        using Result = ShardIndex<T>;
     };
 }
