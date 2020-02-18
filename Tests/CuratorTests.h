@@ -16,14 +16,24 @@ public:
     class LocalRelic : public ClosedTypedRelic<LocalRelic>
     {
     public:
+        int value = 0;
+
         explicit LocalRelic(Init init) : ClosedTypedRelic(init)
+        {}
+
+        LocalRelic(Init init, int value) : ClosedTypedRelic(init), value(value)
         {}
     };
 
     class GlobalRelic : public ClosedTypedRelic<GlobalRelic>
     {
     public:
+        int value = 0;
+
         explicit GlobalRelic(Init init) : ClosedTypedRelic(init)
+        {}
+
+        GlobalRelic(Init init, int value) : ClosedTypedRelic(init), value(value)
         {}
     };
 
@@ -63,14 +73,16 @@ public:
     {
     public:
         RelicIndex<LocalRelic> localRelic;
+        int localRelicValue = 0;
 
-        explicit CuratorWithLocalRelicConstructor(Init init);
+        explicit CuratorWithLocalRelicConstructor(Init init, int localRelicValue);
     };
 
     class CuratorWithGlobalRelicConstructor final : public Curator
     {
     public:
         GlobalIndex<GlobalRelic> globalRelic;
+        int globalRelicValue = 0;
 
         explicit CuratorWithGlobalRelicConstructor(Init init);
     };
@@ -133,13 +145,19 @@ namespace Inscription
 {
     template<>
     class Scribe<CuratorTestsFixture::LocalRelic, BinaryArchive> final :
-        public ArcaNullScribe<CuratorTestsFixture::LocalRelic, BinaryArchive>
-    {};
+        public ArcaCompositeScribe<CuratorTestsFixture::LocalRelic, BinaryArchive>
+    {
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+    };
 
     template<>
     class Scribe<CuratorTestsFixture::GlobalRelic, BinaryArchive> final :
-        public ArcaNullScribe<CuratorTestsFixture::GlobalRelic, BinaryArchive>
-    {};
+        public ArcaCompositeScribe<CuratorTestsFixture::GlobalRelic, BinaryArchive>
+    {
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+    };
 
     template<>
     class Scribe<CuratorTestsFixture::BasicCurator, BinaryArchive> final :
@@ -166,11 +184,17 @@ namespace Inscription
 
     template<>
     class Scribe<CuratorTestsFixture::CuratorWithLocalRelicConstructor, BinaryArchive> final :
-        public ArcaNullScribe<CuratorTestsFixture::CuratorWithLocalRelicConstructor, BinaryArchive>
-    {};
+        public ArcaCompositeScribe<CuratorTestsFixture::CuratorWithLocalRelicConstructor, BinaryArchive>
+    {
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+    };
 
     template<>
     class Scribe<CuratorTestsFixture::CuratorWithGlobalRelicConstructor, BinaryArchive> final :
-        public ArcaNullScribe<CuratorTestsFixture::CuratorWithGlobalRelicConstructor, BinaryArchive>
-    {};
+        public ArcaCompositeScribe<CuratorTestsFixture::CuratorWithGlobalRelicConstructor, BinaryArchive>
+    {
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+    };
 }

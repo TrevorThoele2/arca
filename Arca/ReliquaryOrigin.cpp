@@ -29,15 +29,15 @@ namespace Arca
 
         reliquary->relicStructures.namedList = namedRelicStructureList;
 
-        PushAllCuratorsTo(*reliquary, curatorConstructionPipeline);
-
-        reliquary->curators.workPipeline = TransformCuratorPipeline(*reliquary, curatorWorkPipeline);
-
         for (auto& initializer : globalRelicList)
             initializer.factory(*reliquary);
 
         for (auto& initializer : globalComputationInitializerMap)
             initializer.second(*reliquary);
+
+        PushAllCuratorsTo(*reliquary, curatorConstructionPipeline);
+
+        reliquary->curators.workPipeline = TransformCuratorPipeline(*reliquary, curatorWorkPipeline);
 
         return reliquary;
     }
