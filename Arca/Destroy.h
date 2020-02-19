@@ -27,7 +27,7 @@ namespace Arca
         explicit Destroy(const T& relic) : id(relic.id)
         {}
 
-        explicit Destroy(RelicIndex<T> index) : id(index.ID())
+        explicit Destroy(Index<T> index) : id(index.ID())
         {}
     };
 

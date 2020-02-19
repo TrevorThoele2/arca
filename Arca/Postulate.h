@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IndexTypeFor.h"
+#include "ReferenceTypeFor.h"
 #include "UsableForPostulate.h"
 
 #include "Serialization.h"
@@ -158,7 +158,7 @@ namespace Arca
     }
 
     template<class T>
-    struct IndexTypeFor<T, std::enable_if_t<usable_for_postulate_v<T>>>
+    struct ReferenceTypeFor<T, std::enable_if_t<usable_for_postulate_v<T>>>
     {
         using Type = Postulate<T>;
     };

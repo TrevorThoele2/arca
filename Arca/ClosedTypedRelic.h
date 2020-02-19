@@ -38,13 +38,13 @@ namespace Arca
         ClosedTypedRelic& operator=(ClosedTypedRelic&& arg) noexcept = default;
     protected:
         template<class ShardT, class... ConstructorArgs, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        ShardIndex<ShardT> Create(ConstructorArgs&& ... constructorArgs) const
+        Index<ShardT> Create(ConstructorArgs&& ... constructorArgs) const
         {
             return Owner().template CreateFromInternal<ShardT>(ID(), std::forward<ConstructorArgs>(constructorArgs)...);
         }
 
         template<class ShardT, class... ConstructorArgs, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        ShardIndex<ShardT> FindOrCreate(ConstructorArgs&& ... constructorArgs) const
+        Index<ShardT> FindOrCreate(ConstructorArgs&& ... constructorArgs) const
         {
             auto found = Find<ShardT>();
             if (found)
@@ -54,9 +54,9 @@ namespace Arca
         }
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] ShardIndex<ShardT> Find() const
+        [[nodiscard]] Index<ShardT> Find() const
         {
-            return ShardIndex<ShardT>(ID(), Owner());
+            return Index<ShardT>(ID(), Owner());
         }
     private:
         RelicID id = 0;

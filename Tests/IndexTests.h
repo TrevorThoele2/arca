@@ -11,40 +11,13 @@ using namespace Arca;
 class IndexTestsFixture : public GeneralFixture
 {
 public:
-    struct Shard
-    {
-        int myInt;
-    };
-
+    struct Shard;
     template<size_t i>
-    struct DifferentiableShard
-    {
-        int myInt;
-    };
+    struct DifferentiableShard;
 
-    class TypedClosedRelic final : public ClosedTypedRelic<TypedClosedRelic>
-    {
-    public:
-        ShardIndex<Shard> shard;
-    public:
-        explicit TypedClosedRelic(Init init);
-    };
-
-    class TypedOpenRelic final : public OpenTypedRelic<TypedOpenRelic>
-    {
-    public:
-        ShardIndex<Shard> shard;
-    public:
-        explicit TypedOpenRelic(Init init);
-    };
-
-    class GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
-    {
-    public:
-        ShardIndex<Shard> shard;
-    public:
-        explicit GlobalRelic(Init init);
-    };
+    class TypedClosedRelic;
+    class TypedOpenRelic;
+    class GlobalRelic;
 };
 
 namespace Arca
@@ -85,6 +58,41 @@ namespace Arca
         static const Locality locality = Locality::Global;
     };
 }
+
+struct IndexTestsFixture::Shard
+{
+    int myInt;
+};
+
+template<size_t i>
+struct IndexTestsFixture::DifferentiableShard
+{
+    int myInt;
+};
+
+class IndexTestsFixture::TypedClosedRelic final : public ClosedTypedRelic<TypedClosedRelic>
+{
+public:
+    Index<Shard> shard;
+public:
+    explicit TypedClosedRelic(Init init);
+};
+
+class IndexTestsFixture::TypedOpenRelic final : public OpenTypedRelic<TypedOpenRelic>
+{
+public:
+    Index<Shard> shard;
+public:
+    explicit TypedOpenRelic(Init init);
+};
+
+class IndexTestsFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
+{
+public:
+    Index<Shard> shard;
+public:
+    explicit GlobalRelic(Init init);
+};
 
 namespace Inscription
 {

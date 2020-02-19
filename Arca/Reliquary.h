@@ -151,7 +151,7 @@ namespace Arca
         Signals signals = Signals(*this);
     private:
         template<class ShardT, class... ConstructorArgs, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        ShardIndex<ShardT> CreateFromInternal(RelicID id, ConstructorArgs&& ... constructorArgs);
+        Index<ShardT> CreateFromInternal(RelicID id, ConstructorArgs&& ... constructorArgs);
     private:
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         [[nodiscard]] RelicT* FindStorage(RelicID id);
@@ -176,16 +176,10 @@ namespace Arca
         friend class ReliquarySignals;
 
         friend class OpenRelic;
+        template<class, class>
+        friend class Index;
         template<class>
         friend class Postulate;
-        template<class>
-        friend class GlobalIndex;
-        template<class>
-        friend class MatrixIndex;
-        template<class>
-        friend class RelicIndex;
-        template<class, class>
-        friend class ShardIndex;
 
         friend class KnownMatrix;
         template<class>
@@ -347,7 +341,7 @@ namespace Arca
     }
 
     template<class ShardT, class... ConstructorArgs, std::enable_if_t<is_shard_v<ShardT>, int>>
-    ShardIndex<ShardT> Reliquary::CreateFromInternal(RelicID id, ConstructorArgs&& ... constructorArgs)
+    Index<ShardT> Reliquary::CreateFromInternal(RelicID id, ConstructorArgs&& ... constructorArgs)
     {
         return shards.CreateFromInternal<ShardT>(id, std::forward<ConstructorArgs>(constructorArgs)...);
     }

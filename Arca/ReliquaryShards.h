@@ -23,9 +23,9 @@ namespace Arca
     public:
         void Create(const Type& type, RelicID id);
         template<class ShardT, class... ConstructorArgs>
-        ShardIndex<ShardT> Create(RelicID id, ConstructorArgs&& ... constructorArgs);
+        Index<ShardT> Create(RelicID id, ConstructorArgs&& ... constructorArgs);
         template<class ShardT, class... ConstructorArgs>
-        ShardIndex<ShardT> CreateFromInternal(RelicID id, ConstructorArgs&& ... constructorArgs);
+        Index<ShardT> CreateFromInternal(RelicID id, ConstructorArgs&& ... constructorArgs);
 
         void Destroy(const Type& type, RelicID id);
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
@@ -109,7 +109,7 @@ namespace Arca
         ReliquaryShards& operator=(const ReliquaryShards& arg) = delete;
     private:
         template<class ShardT, class... ConstructorArgs>
-        ShardIndex<ShardT> CreateCommon(RelicID id, ConstructorArgs&& ... constructorArgs);
+        Index<ShardT> CreateCommon(RelicID id, ConstructorArgs&& ... constructorArgs);
     private:
         template<class T>
         [[nodiscard]] auto CreateIndex(RelicID id) const;

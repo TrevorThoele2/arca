@@ -3,21 +3,21 @@
 #include <Chroma/VariadicTemplate.h>
 #include "Traits.h"
 #include "TypeFor.h"
-#include "IndexTypeFor.h"
+#include "ReferenceTypeFor.h"
 
 namespace Arca
 {
     template<class T>
-    struct TransformToIndex
+    struct TransformToReference
     {
-        using Type = typename IndexTypeFor<T>::Type;
+        using Type = typename ReferenceTypeFor<T>::Type;
     };
 
     template<class... Ts>
     struct All
     {
         using Pack = ::Chroma::VariadicTemplate<Ts...>;
-        using IndexTuple = typename Pack::template Transform<TransformToIndex>::Type::TupleT;
+        using ReferenceTuple = typename Pack::template Transform<TransformToReference>::Type::TupleT;
     };
 
     template<Chroma::VariadicTemplateSize i>

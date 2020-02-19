@@ -12,94 +12,16 @@ using namespace Arca;
 class RelicTestsFixture : public GeneralFixture
 {
 public:
-    class Shard
-    {
-    public:
-        std::string myValue;
-    public:
-        Shard() = default;
-        explicit Shard(std::string myValue);
-    };
+    class Shard;
+    class OtherShard;
 
-    class OtherShard
-    {
-    public:
-        int myValue;
-    public:
-        OtherShard() = default;
-        explicit OtherShard(int myValue);
-    };
-
-    class TypedClosedRelic final : public ClosedTypedRelic<TypedClosedRelic>
-    {
-    public:
-        ShardIndex<Shard> basicShard;
-    public:
-        explicit TypedClosedRelic(Init init);
-    };
-
-    class TypedOpenRelic final : public OpenTypedRelic<TypedOpenRelic>
-    {
-    public:
-        ShardIndex<Shard> basicShard;
-    public:
-        explicit TypedOpenRelic(Init init);
-    };
-
-    class GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
-    {
-    public:
-        ShardIndex<Shard> basicShard;
-    public:
-        explicit GlobalRelic(Init init);
-    };
-
-    class ShouldCreateRelic final : public ClosedTypedRelic<ShouldCreateRelic>
-    {
-    public:
-        int value = 0;
-    public:
-        explicit ShouldCreateRelic(Init init) : ClosedTypedRelic(init)
-        {}
-        ShouldCreateRelic(Init init, int value);
-    };
-
-    class InitializedRelic final : public ClosedTypedRelic<InitializedRelic>
-    {
-    public:
-        ShardIndex<Shard> basicShard;
-
-        int myValue = 0;
-    public:
-        explicit InitializedRelic(Init init);
-        InitializedRelic(Init init, int value);
-    };
-
-    class MovableOnlyRelic final : public ClosedTypedRelic<MovableOnlyRelic>
-    {
-    public:
-        ShardIndex<Shard> basicShard;
-
-        int myValue = 0;
-    public:
-        explicit MovableOnlyRelic(Init init);
-        MovableOnlyRelic(Init init, int myInt);
-        MovableOnlyRelic(const MovableOnlyRelic& arg) = delete;
-        MovableOnlyRelic(MovableOnlyRelic&& arg) noexcept = default;
-        MovableOnlyRelic& operator=(const MovableOnlyRelic& arg) = delete;
-        MovableOnlyRelic& operator=(MovableOnlyRelic&& arg) noexcept = default;
-    };
-
-    class RelicConstructedFromMovedValue final : public ClosedTypedRelic<RelicConstructedFromMovedValue>
-    {
-    public:
-        std::unique_ptr<int> myInt;
-    public:
-        explicit RelicConstructedFromMovedValue(Init init) : ClosedTypedRelic(init)
-        {}
-
-        RelicConstructedFromMovedValue(Init init, std::unique_ptr<int>&& myInt);
-    };
+    class TypedClosedRelic;
+    class TypedOpenRelic;
+    class GlobalRelic;
+    class ShouldCreateRelic;
+    class InitializedRelic;
+    class MovableOnlyRelic;
+    class RelicConstructedFromMovedValue;
 };
 
 namespace Arca
@@ -169,6 +91,95 @@ namespace Arca
         static inline const TypeName typeName = "ReliquaryTestsRelicConstructedFromMoveValue";
     };
 }
+
+class RelicTestsFixture::Shard
+{
+public:
+    std::string myValue;
+public:
+    Shard() = default;
+    explicit Shard(std::string myValue);
+};
+
+class RelicTestsFixture::OtherShard
+{
+public:
+    int myValue;
+public:
+    OtherShard() = default;
+    explicit OtherShard(int myValue);
+};
+
+class RelicTestsFixture::TypedClosedRelic final : public ClosedTypedRelic<TypedClosedRelic>
+{
+public:
+    Index<Shard> basicShard;
+public:
+    explicit TypedClosedRelic(Init init);
+};
+
+class RelicTestsFixture::TypedOpenRelic final : public OpenTypedRelic<TypedOpenRelic>
+{
+public:
+    Index<Shard> basicShard;
+public:
+    explicit TypedOpenRelic(Init init);
+};
+
+class RelicTestsFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
+{
+public:
+    Index<Shard> basicShard;
+public:
+    explicit GlobalRelic(Init init);
+};
+
+class RelicTestsFixture::ShouldCreateRelic final : public ClosedTypedRelic<ShouldCreateRelic>
+{
+public:
+    int value = 0;
+public:
+    explicit ShouldCreateRelic(Init init) : ClosedTypedRelic(init)
+    {}
+    ShouldCreateRelic(Init init, int value);
+};
+
+class RelicTestsFixture::InitializedRelic final : public ClosedTypedRelic<InitializedRelic>
+{
+public:
+    Index<Shard> basicShard;
+
+    int myValue = 0;
+public:
+    explicit InitializedRelic(Init init);
+    InitializedRelic(Init init, int value);
+};
+
+class RelicTestsFixture::MovableOnlyRelic final : public ClosedTypedRelic<MovableOnlyRelic>
+{
+public:
+    Index<Shard> basicShard;
+
+    int myValue = 0;
+public:
+    explicit MovableOnlyRelic(Init init);
+    MovableOnlyRelic(Init init, int myInt);
+    MovableOnlyRelic(const MovableOnlyRelic& arg) = delete;
+    MovableOnlyRelic(MovableOnlyRelic&& arg) noexcept = default;
+    MovableOnlyRelic& operator=(const MovableOnlyRelic& arg) = delete;
+    MovableOnlyRelic& operator=(MovableOnlyRelic&& arg) noexcept = default;
+};
+
+class RelicTestsFixture::RelicConstructedFromMovedValue final : public ClosedTypedRelic<RelicConstructedFromMovedValue>
+{
+public:
+    std::unique_ptr<int> myInt;
+public:
+    explicit RelicConstructedFromMovedValue(Init init) : ClosedTypedRelic(init)
+    {}
+
+    RelicConstructedFromMovedValue(Init init, std::unique_ptr<int>&& myInt);
+};
 
 namespace Inscription
 {

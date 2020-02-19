@@ -139,7 +139,7 @@ SCENARIO_METHOD(IndexTestsFixture, "Matrix Index", "[index][matrix]")
 
         WHEN("creating Index out of all")
         {
-            auto index = MatrixIndex<All<
+            auto index = Index<All<
                 DifferentiableShard<0>,
                 DifferentiableShard<1>,
                 DifferentiableShard<2>>>

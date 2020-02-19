@@ -411,9 +411,6 @@
     <ClInclude Include="RelicStructure.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
-    <ClInclude Include="IndexTypeFor.h">
-      <Filter>Header Files\Index</Filter>
-    </ClInclude>
     <ClInclude Include="IsCommand.h">
       <Filter>Header Files\Command</Filter>
     </ClInclude>
@@ -479,6 +476,12 @@
     </ClInclude>
     <ClInclude Include="UsableForPostulate.h">
       <Filter>Header Files\Postulate</Filter>
+    </ClInclude>
+    <ClInclude Include="Index.h">
+      <Filter>Header Files\Index</Filter>
+    </ClInclude>
+    <ClInclude Include="ReferenceTypeFor.h">
+      <Filter>Header Files\Reference</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -643,6 +646,9 @@
     </Filter>
     <Filter Include="Header Files\Postulate">
       <UniqueIdentifier>{1078d0a3-bed7-4d6d-aa22-0219d85740cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Reference">
+      <UniqueIdentifier>{29d022f3-04ee-45f2-bae7-8577ce0f63c5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

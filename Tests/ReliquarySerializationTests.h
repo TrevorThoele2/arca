@@ -12,149 +12,29 @@ using namespace Arca;
 class ReliquarySerializationTestsFixture : public GeneralFixture
 {
 public:
-    class BasicShard
-    {
-    public:
-        std::string myValue;
-    public:
-        BasicShard() = default;
-        explicit BasicShard(std::string myValue);
-    };
+    class BasicShard;
+    class BasicShardWithDifferentInputHandle;
+    class OtherShard;
 
-    class BasicShardWithDifferentInputHandle
-    {
-    public:
-        std::string myValue;
-    public:
-        BasicShardWithDifferentInputHandle() = default;
-        explicit BasicShardWithDifferentInputHandle(int myValue);
-    };
+    class TypedClosedRelic;
+    class TypedOpenRelic;
+    class GlobalRelic;
 
-    class OtherShard
-    {
-    public:
-        int myValue;
-    public:
-        OtherShard() = default;
-        explicit OtherShard(int myValue);
-    };
+    class BasicCurator;
 
-    class TypedClosedRelic final : public ClosedTypedRelic<TypedClosedRelic>
-    {
-    public:
-        int myInt = 0;
-        ShardIndex<BasicShard> basicShard;
-    public:
-        explicit TypedClosedRelic(Init init);
-        TypedClosedRelic(Init init, int myInt);
-    };
+    struct BasicSignal;
 
-    class TypedOpenRelic final : public OpenTypedRelic<TypedOpenRelic>
-    {
-    public:
-        int myInt = 0;
-        ShardIndex<BasicShard> basicShard;
-    public:
-        explicit TypedOpenRelic(Init init);
-        TypedOpenRelic(Init init, int myInt);
-    };
+    class BasicShardNullInscription;
+    class OtherShardNullInscription;
 
-    class GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
-    {
-    public:
-        int myInt = 0;
-        ShardIndex<BasicShard> basicShard;
-    public:
-        explicit GlobalRelic(Init init);
-        GlobalRelic(Init init, int myInt, std::string shardData);
-    };
+    class TypedClosedRelicNullInscription;
+    class TypedOpenRelicNullInscription;
+    class GlobalRelicNullInscription;
+    class MovableOnlyRelic;
 
-    class BasicCurator final : public Curator
-    {
-    public:
-        int myInt = 0;
+    class BasicCuratorNullInscription;
 
-        using Curator::Curator;
-    };
-
-    struct BasicSignal
-    {};
-
-    class BasicShardNullInscription
-    {
-    public:
-        std::string myValue;
-    public:
-        BasicShardNullInscription() = default;
-        explicit BasicShardNullInscription(std::string myValue);
-    };
-
-    class OtherShardNullInscription
-    {
-    public:
-        int myValue;
-    public:
-        explicit OtherShardNullInscription(int myValue = 0);
-    };
-
-    class TypedClosedRelicNullInscription final :
-        public ClosedTypedRelic<TypedClosedRelicNullInscription>
-    {
-    public:
-        int myInt = 0;
-        ShardIndex<BasicShardNullInscription> basicShard;
-    public:
-        explicit TypedClosedRelicNullInscription(Init init);
-        TypedClosedRelicNullInscription(Init init, int myInt);
-    };
-
-    class TypedOpenRelicNullInscription final :
-        public OpenTypedRelic<TypedOpenRelicNullInscription>
-    {
-    public:
-        int myInt = 0;
-        ShardIndex<BasicShardNullInscription> basicShard;
-    public:
-        explicit TypedOpenRelicNullInscription(Init init);
-        TypedOpenRelicNullInscription(Init init, int myInt);
-    };
-
-    class GlobalRelicNullInscription final :
-        public ClosedTypedRelic<GlobalRelicNullInscription>
-    {
-    public:
-        int myInt = 0;
-        ShardIndex<BasicShardNullInscription> basicShard;
-    public:
-        explicit GlobalRelicNullInscription(Init init);
-        GlobalRelicNullInscription(Init init, int myInt, std::string shardData);
-    };
-
-    class MovableOnlyRelic final : public ClosedTypedRelic<MovableOnlyRelic>
-    {
-    public:
-        ShardIndex<BasicShard> basicShard;
-
-        int myValue = 0;
-    public:
-        explicit MovableOnlyRelic(Init init);
-        MovableOnlyRelic(Init init, int myInt, std::string shardData);
-        MovableOnlyRelic(const MovableOnlyRelic& arg) = delete;
-        MovableOnlyRelic(MovableOnlyRelic&& arg) noexcept = default;
-        MovableOnlyRelic& operator=(const MovableOnlyRelic& arg) = delete;
-        MovableOnlyRelic& operator=(MovableOnlyRelic&& arg) noexcept = default;
-    };
-
-    class BasicCuratorNullInscription final : public Curator
-    {
-    public:
-        int myInt = 0;
-
-        using Curator::Curator;
-    };
-
-    struct BasicSignalNullInscription
-    {};
+    struct BasicSignalNullInscription;
 };
 
 namespace Arca
@@ -273,6 +153,150 @@ namespace Arca
         static inline const TypeName typeName = "ReliquarySerializationTestsBasicSignalNullInscription";
     };
 }
+
+class ReliquarySerializationTestsFixture::BasicShard
+{
+public:
+    std::string myValue;
+public:
+    BasicShard() = default;
+    explicit BasicShard(std::string myValue);
+};
+
+class ReliquarySerializationTestsFixture::BasicShardWithDifferentInputHandle
+{
+public:
+    std::string myValue;
+public:
+    BasicShardWithDifferentInputHandle() = default;
+    explicit BasicShardWithDifferentInputHandle(int myValue);
+};
+
+class ReliquarySerializationTestsFixture::OtherShard
+{
+public:
+    int myValue;
+public:
+    OtherShard() = default;
+    explicit OtherShard(int myValue);
+};
+
+class ReliquarySerializationTestsFixture::TypedClosedRelic final : public ClosedTypedRelic<TypedClosedRelic>
+{
+public:
+    int myInt = 0;
+    Index<BasicShard> basicShard;
+public:
+    explicit TypedClosedRelic(Init init);
+    TypedClosedRelic(Init init, int myInt);
+};
+
+class ReliquarySerializationTestsFixture::TypedOpenRelic final : public OpenTypedRelic<TypedOpenRelic>
+{
+public:
+    int myInt = 0;
+    Index<BasicShard> basicShard;
+public:
+    explicit TypedOpenRelic(Init init);
+    TypedOpenRelic(Init init, int myInt);
+};
+
+class ReliquarySerializationTestsFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
+{
+public:
+    int myInt = 0;
+    Index<BasicShard> basicShard;
+public:
+    explicit GlobalRelic(Init init);
+    GlobalRelic(Init init, int myInt, std::string shardData);
+};
+
+class ReliquarySerializationTestsFixture::BasicCurator final : public Curator
+{
+public:
+    int myInt = 0;
+
+    using Curator::Curator;
+};
+
+struct ReliquarySerializationTestsFixture::BasicSignal
+{};
+
+class ReliquarySerializationTestsFixture::BasicShardNullInscription
+{
+public:
+    std::string myValue;
+public:
+    BasicShardNullInscription() = default;
+    explicit BasicShardNullInscription(std::string myValue);
+};
+
+class ReliquarySerializationTestsFixture::OtherShardNullInscription
+{
+public:
+    int myValue;
+public:
+    explicit OtherShardNullInscription(int myValue = 0);
+};
+
+class ReliquarySerializationTestsFixture::TypedClosedRelicNullInscription final :
+    public ClosedTypedRelic<TypedClosedRelicNullInscription>
+{
+public:
+    int myInt = 0;
+    Index<BasicShardNullInscription> basicShard;
+public:
+    explicit TypedClosedRelicNullInscription(Init init);
+    TypedClosedRelicNullInscription(Init init, int myInt);
+};
+
+class ReliquarySerializationTestsFixture::TypedOpenRelicNullInscription final :
+    public OpenTypedRelic<TypedOpenRelicNullInscription>
+{
+public:
+    int myInt = 0;
+    Index<BasicShardNullInscription> basicShard;
+public:
+    explicit TypedOpenRelicNullInscription(Init init);
+    TypedOpenRelicNullInscription(Init init, int myInt);
+};
+
+class ReliquarySerializationTestsFixture::GlobalRelicNullInscription final :
+    public ClosedTypedRelic<GlobalRelicNullInscription>
+{
+public:
+    int myInt = 0;
+    Index<BasicShardNullInscription> basicShard;
+public:
+    explicit GlobalRelicNullInscription(Init init);
+    GlobalRelicNullInscription(Init init, int myInt, std::string shardData);
+};
+
+class ReliquarySerializationTestsFixture::MovableOnlyRelic final : public ClosedTypedRelic<MovableOnlyRelic>
+{
+public:
+    Index<BasicShard> basicShard;
+
+    int myValue = 0;
+public:
+    explicit MovableOnlyRelic(Init init);
+    MovableOnlyRelic(Init init, int myInt, std::string shardData);
+    MovableOnlyRelic(const MovableOnlyRelic& arg) = delete;
+    MovableOnlyRelic(MovableOnlyRelic&& arg) noexcept = default;
+    MovableOnlyRelic& operator=(const MovableOnlyRelic& arg) = delete;
+    MovableOnlyRelic& operator=(MovableOnlyRelic&& arg) noexcept = default;
+};
+
+class ReliquarySerializationTestsFixture::BasicCuratorNullInscription final : public Curator
+{
+public:
+    int myInt = 0;
+
+    using Curator::Curator;
+};
+
+struct ReliquarySerializationTestsFixture::BasicSignalNullInscription
+{};
 
 namespace Inscription
 {

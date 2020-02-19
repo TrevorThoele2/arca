@@ -6,86 +6,20 @@
 #include <Arca/ClosedTypedRelic.h>
 
 #include <Inscription/BinaryArchive.h>
-#include "Chroma/StringUtility.h"
 
 using namespace Arca;
 
 class CuratorTestsFixture : public GeneralFixture
 {
 public:
-    class LocalRelic : public ClosedTypedRelic<LocalRelic>
-    {
-    public:
-        int value = 0;
+    class LocalRelic;
+    class GlobalRelic;
 
-        explicit LocalRelic(Init init) : ClosedTypedRelic(init)
-        {}
-
-        LocalRelic(Init init, int value) : ClosedTypedRelic(init), value(value)
-        {}
-    };
-
-    class GlobalRelic : public ClosedTypedRelic<GlobalRelic>
-    {
-    public:
-        int value = 0;
-
-        explicit GlobalRelic(Init init) : ClosedTypedRelic(init)
-        {}
-
-        GlobalRelic(Init init, int value) : ClosedTypedRelic(init), value(value)
-        {}
-    };
-
-    class BasicCurator final : public Curator
-    {
-    public:
-        bool shouldAbort = false;
-        std::function<void()> onWork = [](){};
-
-        using Curator::Curator;
-
-        void Work();
-
-        [[nodiscard]] Reliquary& OwnerFromOutside();
-        [[nodiscard]] const Reliquary& OwnerFromOutside() const;
-    public:
-        int value = 0;
-    };
-
-    class OtherBasicCurator final : public Curator
-    {
-    public:
-        int value = 0;
-
-        using Curator::Curator;
-    };
-
-    class CuratorWithNonDefaultConstructor final : public Curator
-    {
-    public:
-        int myValue = 0;
-
-        CuratorWithNonDefaultConstructor(Init init, int myValue);
-    };
-
-    class CuratorWithLocalRelicConstructor final : public Curator
-    {
-    public:
-        RelicIndex<LocalRelic> localRelic;
-        int localRelicValue = 0;
-
-        explicit CuratorWithLocalRelicConstructor(Init init, int localRelicValue);
-    };
-
-    class CuratorWithGlobalRelicConstructor final : public Curator
-    {
-    public:
-        GlobalIndex<GlobalRelic> globalRelic;
-        int globalRelicValue = 0;
-
-        explicit CuratorWithGlobalRelicConstructor(Init init);
-    };
+    class BasicCurator;
+    class OtherBasicCurator;
+    class CuratorWithNonDefaultConstructor;
+    class CuratorWithLocalRelicConstructor;
+    class CuratorWithGlobalRelicConstructor;
 };
 
 namespace Arca
@@ -140,6 +74,80 @@ namespace Arca
         static inline const TypeName typeName = "CuratorWithGlobalRelicConstructor";
     };
 }
+
+class CuratorTestsFixture::LocalRelic : public ClosedTypedRelic<LocalRelic>
+{
+public:
+    int value = 0;
+
+    explicit LocalRelic(Init init) : ClosedTypedRelic(init)
+    {}
+
+    LocalRelic(Init init, int value) : ClosedTypedRelic(init), value(value)
+    {}
+};
+
+class CuratorTestsFixture::GlobalRelic : public ClosedTypedRelic<GlobalRelic>
+{
+public:
+    int value = 0;
+
+    explicit GlobalRelic(Init init) : ClosedTypedRelic(init)
+    {}
+
+    GlobalRelic(Init init, int value) : ClosedTypedRelic(init), value(value)
+    {}
+};
+
+class CuratorTestsFixture::BasicCurator final : public Curator
+{
+public:
+    bool shouldAbort = false;
+    std::function<void()> onWork = []() {};
+
+    using Curator::Curator;
+
+    void Work();
+
+    [[nodiscard]] Reliquary& OwnerFromOutside();
+    [[nodiscard]] const Reliquary& OwnerFromOutside() const;
+public:
+    int value = 0;
+};
+
+class CuratorTestsFixture::OtherBasicCurator final : public Curator
+{
+public:
+    int value = 0;
+
+    using Curator::Curator;
+};
+
+class CuratorTestsFixture::CuratorWithNonDefaultConstructor final : public Curator
+{
+public:
+    int myValue = 0;
+
+    CuratorWithNonDefaultConstructor(Init init, int myValue);
+};
+
+class CuratorTestsFixture::CuratorWithLocalRelicConstructor final : public Curator
+{
+public:
+    Index<LocalRelic> localRelic;
+    int localRelicValue = 0;
+
+    explicit CuratorWithLocalRelicConstructor(Init init, int localRelicValue);
+};
+
+class CuratorTestsFixture::CuratorWithGlobalRelicConstructor final : public Curator
+{
+public:
+    Index<GlobalRelic> globalRelic;
+    int globalRelicValue = 0;
+
+    explicit CuratorWithGlobalRelicConstructor(Init init);
+};
 
 namespace Inscription
 {

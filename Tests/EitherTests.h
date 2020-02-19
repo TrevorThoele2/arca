@@ -11,22 +11,9 @@ using namespace Arca;
 class EitherTestsFixture : public GeneralFixture
 {
 public:
-    class BasicShard
-    {
-    public:
-        std::string myValue;
-    public:
-        BasicShard() = default;
-        explicit BasicShard(std::string myValue);
-    };
+    class BasicShard;
 
-    class BasicTypedRelic final : public ClosedTypedRelic<BasicTypedRelic>
-    {
-    public:
-        ShardIndex<BasicShard> basicShard;
-    public:
-        explicit BasicTypedRelic(Init init);
-    };
+    class BasicTypedRelic;
 };
 
 namespace Arca
@@ -45,6 +32,23 @@ namespace Arca
         static inline const TypeName typeName = "ReliquaryTestsBasicTypedRelic";
     };
 }
+
+class EitherTestsFixture::BasicShard
+{
+public:
+    std::string myValue;
+public:
+    BasicShard() = default;
+    explicit BasicShard(std::string myValue);
+};
+
+class EitherTestsFixture::BasicTypedRelic final : public ClosedTypedRelic<BasicTypedRelic>
+{
+public:
+    Index<BasicShard> basicShard;
+public:
+    explicit BasicTypedRelic(Init init);
+};
 
 namespace Inscription
 {

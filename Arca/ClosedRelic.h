@@ -18,9 +18,9 @@ namespace Arca
     {
     public:
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] ShardIndex<ShardT> Find() const;
+        [[nodiscard]] Index<ShardT> Find() const;
         template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
-        [[nodiscard]] MatrixIndex<MatrixT> Find() const;
+        [[nodiscard]] Index<MatrixT> Find() const;
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] bool Contains() const;
         template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>

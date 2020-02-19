@@ -10,7 +10,7 @@ namespace Arca
     template<class T>
     struct MatrixDissolved
     {
-        MatrixIndex<T> index;
+        Index<T> index;
 
         static_assert(is_matrix_v<T>, "MatrixFormed must be used for matrices.");
     };

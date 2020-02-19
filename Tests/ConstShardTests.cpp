@@ -323,7 +323,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shard serialization", "[shard][co
                 inputArchive(*loadedReliquary);
             }
 
-            auto loadedRelic = Arca::RelicIndex<OpenRelic>(savedRelic->ID(), *loadedReliquary);
+            auto loadedRelic = Arca::Index<OpenRelic>(savedRelic->ID(), *loadedReliquary);
 
             WHEN("finding const shard")
             {

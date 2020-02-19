@@ -12,29 +12,10 @@ class AllTestsFixture : public GeneralFixture
 {
 public:
     template<size_t i>
-    class Shard
-    {
-    public:
-        std::string myValue;
-    public:
-        Shard() = default;
-        explicit Shard(std::string myValue);
-    };
+    class Shard;
 
-    class BasicTypedRelic final : public ClosedTypedRelic<BasicTypedRelic>
-    {
-    public:
-        ShardIndex<Shard<0>> shard0;
-        ShardIndex<Shard<1>> shard1;
-        ShardIndex<Shard<2>> shard2;
-    public:
-        explicit BasicTypedRelic(Init init);
-    };
+    class BasicTypedRelic;
 };
-
-template<size_t i>
-AllTestsFixture::Shard<i>::Shard(std::string myValue) : myValue(std::move(myValue))
-{}
 
 namespace Arca
 {
@@ -52,6 +33,30 @@ namespace Arca
         static inline const TypeName typeName = "ReliquaryTestsBasicTypedRelic";
     };
 }
+
+template<size_t i>
+class AllTestsFixture::Shard
+{
+public:
+    std::string myValue;
+public:
+    Shard() = default;
+    explicit Shard(std::string myValue);
+};
+
+template<size_t i>
+AllTestsFixture::Shard<i>::Shard(std::string myValue) : myValue(std::move(myValue))
+{}
+
+class AllTestsFixture::BasicTypedRelic final : public ClosedTypedRelic<BasicTypedRelic>
+{
+public:
+    Index<Shard<0>> shard0;
+    Index<Shard<1>> shard1;
+    Index<Shard<2>> shard2;
+public:
+    explicit BasicTypedRelic(Init init);
+};
 
 namespace Inscription
 {

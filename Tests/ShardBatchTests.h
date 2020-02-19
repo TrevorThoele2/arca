@@ -14,26 +14,6 @@ public:
     class GlobalRelic;
 };
 
-class ShardBatchFixture::Shard
-{
-public:
-    int value = 0;
-public:
-    Shard() = default;
-    explicit Shard(int value);
-};
-
-class ShardBatchFixture::UnregisteredShard
-{};
-
-class ShardBatchFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
-{
-public:
-    ShardIndex<Shard> shard;
-
-    explicit GlobalRelic(Init init);
-};
-
 namespace Arca
 {
     template<>
@@ -58,6 +38,26 @@ namespace Arca
         static const Locality locality = Locality::Global;
     };
 }
+
+class ShardBatchFixture::Shard
+{
+public:
+    int value = 0;
+public:
+    Shard() = default;
+    explicit Shard(int value);
+};
+
+class ShardBatchFixture::UnregisteredShard
+{};
+
+class ShardBatchFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
+{
+public:
+    Index<Shard> shard;
+
+    explicit GlobalRelic(Init init);
+};
 
 namespace Inscription
 {

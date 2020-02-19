@@ -6,7 +6,7 @@
 namespace Arca
 {
     template<class ShardT, class... ConstructorArgs>
-    ShardIndex<ShardT> ReliquaryShards::Create(RelicID id, ConstructorArgs&& ... constructorArgs)
+    Index<ShardT> ReliquaryShards::Create(RelicID id, ConstructorArgs&& ... constructorArgs)
     {
         Relics().ShardModificationRequired(id);
 
@@ -14,7 +14,7 @@ namespace Arca
     }
 
     template<class ShardT, class... ConstructorArgs>
-    ShardIndex<ShardT> ReliquaryShards::CreateFromInternal(RelicID id, ConstructorArgs&& ... constructorArgs)
+    Index<ShardT> ReliquaryShards::CreateFromInternal(RelicID id, ConstructorArgs&& ... constructorArgs)
     {
         return CreateCommon<ShardT>(id, std::forward<ConstructorArgs>(constructorArgs)...);
     }
@@ -185,7 +185,7 @@ namespace Arca
     }
 
     template<class ShardT, class... ConstructorArgs>
-    ShardIndex<ShardT> ReliquaryShards::CreateCommon(RelicID id, ConstructorArgs&& ... constructorArgs)
+    Index<ShardT> ReliquaryShards::CreateCommon(RelicID id, ConstructorArgs&& ... constructorArgs)
     {
         const auto type = TypeFor<ShardT>();
         if (Contains(Handle(id, Owner(), { type.name, true }, HandleObjectType::Shard)) ||

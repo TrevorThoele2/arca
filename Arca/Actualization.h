@@ -11,7 +11,7 @@ namespace Arca
     auto Actualize(const Handle& handle)
     {
         if (handle.Type() != TypeFor<T>())
-            return typename IndexTypeFor<T>::Type{};
+            return typename ReferenceTypeFor<T>::Type{};
 
         return ToReference<T>(handle.ID(), handle.Owner());
     }

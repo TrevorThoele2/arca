@@ -16,7 +16,7 @@ namespace Arca
         static bool Contains(RelicID id, const Reliquary& reliquary);
         static void Destroy(RelicID id, Reliquary& reliquary);
     public:
-        using Tuple = typename All<Ts...>::Pack::template Transform<TransformToIndex>::Type::TupleT;
+        using Tuple = typename All<Ts...>::Pack::template Transform<TransformToReference>::Type::TupleT;
     public:
         using Stored = Tuple;
 
