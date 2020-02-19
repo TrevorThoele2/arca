@@ -40,21 +40,21 @@ namespace Arca
         explicit Curator(Init init);
     protected:
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int> = 0>
-        [[nodiscard]] RelicT* Data(RelicID id);
+        [[nodiscard]] RelicT* MutablePointer(RelicID id);
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int> = 0>
-        [[nodiscard]] RelicT* Data(RelicIndex<RelicT> index);
+        [[nodiscard]] RelicT* MutablePointer(RelicIndex<RelicT> index);
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int> = 0>
-        [[nodiscard]] RelicT* Data(const RelicT& relic);
+        [[nodiscard]] RelicT* MutablePointer(const RelicT& relic);
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
-        [[nodiscard]] RelicT* Data();
+        [[nodiscard]] RelicT* MutablePointer();
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
-        [[nodiscard]] RelicT* Data(GlobalIndex<RelicT> index);
+        [[nodiscard]] RelicT* MutablePointer(GlobalIndex<RelicT> index);
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
-        [[nodiscard]] RelicT* Data(const RelicT& relic);
+        [[nodiscard]] RelicT* MutablePointer(const RelicT& relic);
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] ShardT* Data(RelicID id);
+        [[nodiscard]] ShardT* MutablePointer(RelicID id);
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] ShardT* Data(ShardIndex<ShardT> index);
+        [[nodiscard]] ShardT* MutablePointer(ShardIndex<ShardT> index);
     protected:
         [[nodiscard]] Reliquary& Owner();
         [[nodiscard]] const Reliquary& Owner() const;

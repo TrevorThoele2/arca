@@ -6,50 +6,50 @@
 namespace Arca
 {
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int>>
-    RelicT* Curator::Data(RelicID id)
+    RelicT* Curator::MutablePointer(RelicID id)
     {
         return Owner().template FindStorage<RelicT>(id);
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int>>
-    RelicT* Curator::Data(RelicIndex<RelicT> index)
+    RelicT* Curator::MutablePointer(RelicIndex<RelicT> index)
     {
-        return Data<RelicT>(index.ID());
+        return MutablePointer<RelicT>(index.ID());
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int>>
-    RelicT* Curator::Data(const RelicT& relic)
+    RelicT* Curator::MutablePointer(const RelicT& relic)
     {
-        return Data<RelicT>(relic.ID());
+        return MutablePointer<RelicT>(relic.ID());
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int>>
-    RelicT* Curator::Data()
+    RelicT* Curator::MutablePointer()
     {
         return Owner().template FindGlobalStorage<RelicT>();
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int>>
-    RelicT* Curator::Data(GlobalIndex<RelicT>)
+    RelicT* Curator::MutablePointer(GlobalIndex<RelicT>)
     {
-        return Data<RelicT>();
+        return MutablePointer<RelicT>();
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int>>
-    RelicT* Curator::Data(const RelicT&)
+    RelicT* Curator::MutablePointer(const RelicT&)
     {
-        return Data<RelicT>();
+        return MutablePointer<RelicT>();
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    ShardT* Curator::Data(RelicID id)
+    ShardT* Curator::MutablePointer(RelicID id)
     {
         return Owner().template FindStorage<ShardT>(id);
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    ShardT* Curator::Data(ShardIndex<ShardT> index)
+    ShardT* Curator::MutablePointer(ShardIndex<ShardT> index)
     {
-        return Data<ShardT>(index.ID());
+        return MutablePointer<ShardT>(index.ID());
     }
 }

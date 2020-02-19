@@ -319,7 +319,7 @@ namespace Arca
     };
 
     template<class T, std::enable_if_t<usable_for_shard_index_v<T>, int> = 0>
-    ShardIndex<T> ToIndex(RelicID id, Reliquary& owner)
+    ShardIndex<T> ToReference(RelicID id, Reliquary& owner)
     {
         return ShardIndex<T>(id, owner);
     }

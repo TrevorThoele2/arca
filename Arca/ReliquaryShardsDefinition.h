@@ -203,6 +203,6 @@ namespace Arca
     template<class T>
     auto ReliquaryShards::CreateIndex(RelicID id) const
     {
-        return ToIndex<T>(id, const_cast<Reliquary&>(Owner()));
+        return ToReference<T>(id, const_cast<Reliquary&>(Owner()));
     }
 }

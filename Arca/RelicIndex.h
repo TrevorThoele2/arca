@@ -164,7 +164,7 @@ namespace Arca
     };
 
     template<class T, std::enable_if_t<usable_for_relic_index_v<T>, int> = 0>
-    RelicIndex<T> ToIndex(RelicID id, Reliquary& owner)
+    RelicIndex<T> ToReference(RelicID id, Reliquary& owner)
     {
         return RelicIndex<T>(id, owner);
     }

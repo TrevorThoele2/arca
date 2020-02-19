@@ -396,9 +396,6 @@
     <ClInclude Include="GlobalIndex.h">
       <Filter>Header Files\Index</Filter>
     </ClInclude>
-    <ClInclude Include="ComputedIndex.h">
-      <Filter>Header Files\Index</Filter>
-    </ClInclude>
     <ClInclude Include="UsableForShardIndex.h">
       <Filter>Header Files\Index\Usable</Filter>
     </ClInclude>
@@ -409,9 +406,6 @@
       <Filter>Header Files\Index\Usable</Filter>
     </ClInclude>
     <ClInclude Include="UsableForGlobalIndex.h">
-      <Filter>Header Files\Index\Usable</Filter>
-    </ClInclude>
-    <ClInclude Include="UsableForComputedIndex.h">
       <Filter>Header Files\Index\Usable</Filter>
     </ClInclude>
     <ClInclude Include="RelicStructure.h">
@@ -479,6 +473,12 @@
     </ClInclude>
     <ClInclude Include="CommandResult.h">
       <Filter>Header Files\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Postulate.h">
+      <Filter>Header Files\Postulate</Filter>
+    </ClInclude>
+    <ClInclude Include="UsableForPostulate.h">
+      <Filter>Header Files\Postulate</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -640,6 +640,9 @@
     </Filter>
     <Filter Include="Header Files\Command\Common">
       <UniqueIdentifier>{ed6bbebe-a81c-40d8-a01a-0e131925b3da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Postulate">
+      <UniqueIdentifier>{1078d0a3-bed7-4d6d-aa22-0219d85740cb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
