@@ -5,11 +5,15 @@
 
 #include "IsRelic.h"
 #include "IsShard.h"
+#include "IsLocal.h"
+#include "IsGlobal.h"
 #include "RelicID.h"
 
 #include "RelicIndex.h"
 #include "ShardIndex.h"
 #include "GlobalIndex.h"
+#include "MatrixIndex.h"
+#include "Postulate.h"
 
 #include "Serialization.h"
 

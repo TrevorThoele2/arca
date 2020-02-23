@@ -3,7 +3,7 @@
 #include "KnownMatrix.h"
 
 #include "Reliquary.h"
-#include "MatrixIndex.h"
+#include "Index.h"
 #include "MatrixFormed.h"
 #include "MatrixDissolved.h"
 

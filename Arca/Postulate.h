@@ -7,8 +7,11 @@
 
 namespace Arca
 {
+    template<class T, class Enable = void>
+    class Postulate;
+
     template<class T>
-    class Postulate
+    class Postulate<T, std::enable_if_t<!std::is_pointer_v<T>>>
     {
     private:
         using StoredT = std::optional<T>;
@@ -28,17 +31,11 @@ namespace Arca
 
         explicit operator bool() const;
 
-        operator ValueT* () const
-        {
-            return Get();
-        }
-
         operator Postulate<const T>() const;
 
         [[nodiscard]] ValueT& operator*() const;
-        [[nodiscard]] ValueT* operator->() const;
 
-        [[nodiscard]] ValueT* Get() const;
+        [[nodiscard]] ValueT& Get() const;
 
         [[nodiscard]] Reliquary* Owner() const;
     private:
@@ -53,24 +50,24 @@ namespace Arca
     };
 
     template<class T>
-    Postulate<T>::Postulate(Reliquary& owner) : owner(&owner)
+    Postulate<T, std::enable_if_t<!std::is_pointer_v<T>>>::Postulate(Reliquary& owner) : owner(&owner)
     {
         value = FindValueFromOwner();
     }
 
     template<class T>
-    Postulate<T>::Postulate(const Postulate& arg) : owner(arg.owner)
+    Postulate<T, std::enable_if_t<!std::is_pointer_v<T>>>::Postulate(const Postulate& arg) : owner(arg.owner)
     {
         value = FindValueFromOwner();
     }
 
     template<class T>
-    Postulate<T>::Postulate(Postulate&& arg) noexcept :
+    Postulate<T, std::enable_if_t<!std::is_pointer_v<T>>>::Postulate(Postulate&& arg) noexcept :
         owner(arg.owner), value(arg.value)
     {}
 
     template<class T>
-    auto Postulate<T>::operator=(const Postulate& arg) -> Postulate&
+    auto Postulate<T, std::enable_if_t<!std::is_pointer_v<T>>>::operator=(const Postulate& arg) -> Postulate&
     {
         owner = arg.owner;
         value = FindValueFromOwner();
@@ -78,7 +75,7 @@ namespace Arca
     }
 
     template<class T>
-    auto Postulate<T>::operator=(Postulate&& arg) noexcept -> Postulate&
+    auto Postulate<T, std::enable_if_t<!std::is_pointer_v<T>>>::operator=(Postulate&& arg) noexcept -> Postulate&
     {
         owner = arg.owner;
         value = arg.value;
@@ -86,87 +83,214 @@ namespace Arca
     }
 
     template<class T>
-    bool Postulate<T>::operator==(const Postulate& arg) const
+    bool Postulate<T, std::enable_if_t<!std::is_pointer_v<T>>>::operator==(const Postulate& arg) const
     {
         return owner == arg.owner;
     }
 
     template<class T>
-    bool Postulate<T>::operator!=(const Postulate& arg) const
+    bool Postulate<T, std::enable_if_t<!std::is_pointer_v<T>>>::operator!=(const Postulate& arg) const
     {
         return !(*this == arg);
     }
 
     template<class T>
-    Postulate<T>::operator bool() const
+    Postulate<T, std::enable_if_t<!std::is_pointer_v<T>>>::operator bool() const
     {
         return IsSetup();
     }
 
     template<class T>
-    Postulate<T>::operator Postulate<const T>() const
+    Postulate<T, std::enable_if_t<!std::is_pointer_v<T>>>::operator Postulate<const T>() const
     {
         return Postulate<const T>(*owner);
     }
 
     template<class T>
-    auto Postulate<T>::operator*() const -> ValueT&
-    {
-        return *Get();
-    }
-
-    template<class T>
-    auto Postulate<T>::operator->() const -> ValueT*
+    auto Postulate<T, std::enable_if_t<!std::is_pointer_v<T>>>::operator*() const -> ValueT&
     {
         return Get();
     }
 
     template<class T>
-    auto Postulate<T>::Get() const -> ValueT*
+    auto Postulate<T, std::enable_if_t<!std::is_pointer_v<T>>>::Get() const -> ValueT&
     {
         if (!IsSetup())
             value = FindValueFromOwner();
 
-        return value ? &*value : nullptr;
+        return *value;
     }
 
     template<class T>
-    Reliquary* Postulate<T>::Owner() const
+    Reliquary* Postulate<T, std::enable_if_t<!std::is_pointer_v<T>>>::Owner() const
     {
         return owner;
     }
 
     template<class T>
-    auto Postulate<T>::FindValueFromOwner() const -> StoredT
+    auto Postulate<T, std::enable_if_t<!std::is_pointer_v<T>>>::FindValueFromOwner() const -> StoredT
     {
         if (owner == nullptr)
             return EmptyValue();
 
-        return owner->template FindPostulate<T>();
+        return owner->template FindPostulateValue<T>();
     }
 
     template<class T>
-    bool Postulate<T>::IsSetup() const
+    bool Postulate<T, std::enable_if_t<!std::is_pointer_v<T>>>::IsSetup() const
     {
         return static_cast<bool>(value);
     }
 
     template<class T>
-    constexpr auto Postulate<T>::EmptyValue() -> StoredT
+    constexpr auto Postulate<T, std::enable_if_t<!std::is_pointer_v<T>>>::EmptyValue() -> StoredT
     {
         return {};
     }
 
     template<class T>
-    struct ReferenceTypeFor<T, std::enable_if_t<usable_for_postulate_v<T>>>
+    class Postulate<T, std::enable_if_t<std::is_pointer_v<T>>>
     {
-        using Type = Postulate<T>;
+    private:
+        using StoredT = T;
+    public:
+        using ValueT = T;
+    public:
+        Postulate() = default;
+        explicit Postulate(Reliquary& owner);
+        Postulate(const Postulate& arg);
+        Postulate(Postulate&& arg) noexcept;
+
+        Postulate& operator=(const Postulate& arg);
+        Postulate& operator=(Postulate&& arg) noexcept;
+
+        bool operator==(const Postulate& arg) const;
+        bool operator!=(const Postulate& arg) const;
+
+        explicit operator bool() const;
+
+        operator Postulate<const T>() const;
+
+        [[nodiscard]] std::remove_pointer_t<ValueT>& operator*() const;
+        [[nodiscard]] ValueT operator->() const;
+
+        [[nodiscard]] ValueT Get() const;
+
+        [[nodiscard]] Reliquary* Owner() const;
+    private:
+        Reliquary* owner = nullptr;
+        mutable StoredT value = EmptyValue();
+    private:
+        StoredT FindValueFromOwner() const;
+        bool IsSetup() const;
+        constexpr static StoredT EmptyValue();
+    private:
+        INSCRIPTION_ACCESS;
     };
 
-    template<class T, std::enable_if_t<usable_for_postulate_v<T>, int> = 0>
-    Postulate<T> ToReference(RelicID id, Reliquary& owner)
+    template<class T>
+    Postulate<T, std::enable_if_t<std::is_pointer_v<T>>>::Postulate(Reliquary& owner) : owner(&owner)
     {
-        return Postulate<T>(id, owner);
+        value = FindValueFromOwner();
+    }
+
+    template<class T>
+    Postulate<T, std::enable_if_t<std::is_pointer_v<T>>>::Postulate(const Postulate& arg) : owner(arg.owner)
+    {
+        value = FindValueFromOwner();
+    }
+
+    template<class T>
+    Postulate<T, std::enable_if_t<std::is_pointer_v<T>>>::Postulate(Postulate&& arg) noexcept :
+        owner(arg.owner), value(arg.value)
+    {}
+
+    template<class T>
+    auto Postulate<T, std::enable_if_t<std::is_pointer_v<T>>>::operator=(const Postulate& arg) -> Postulate&
+    {
+        owner = arg.owner;
+        value = FindValueFromOwner();
+        return *this;
+    }
+
+    template<class T>
+    auto Postulate<T, std::enable_if_t<std::is_pointer_v<T>>>::operator=(Postulate&& arg) noexcept -> Postulate&
+    {
+        owner = arg.owner;
+        value = arg.value;
+        return *this;
+    }
+
+    template<class T>
+    bool Postulate<T, std::enable_if_t<std::is_pointer_v<T>>>::operator==(const Postulate& arg) const
+    {
+        return owner == arg.owner;
+    }
+
+    template<class T>
+    bool Postulate<T, std::enable_if_t<std::is_pointer_v<T>>>::operator!=(const Postulate& arg) const
+    {
+        return !(*this == arg);
+    }
+
+    template<class T>
+    Postulate<T, std::enable_if_t<std::is_pointer_v<T>>>::operator bool() const
+    {
+        return IsSetup();
+    }
+
+    template<class T>
+    Postulate<T, std::enable_if_t<std::is_pointer_v<T>>>::operator Postulate<const T>() const
+    {
+        return Postulate<const T>(*owner);
+    }
+
+    template<class T>
+    auto Postulate<T, std::enable_if_t<std::is_pointer_v<T>>>::operator*() const -> std::remove_pointer_t<ValueT>&
+    {
+        return *Get();
+    }
+
+    template<class T>
+    auto Postulate<T, std::enable_if_t<std::is_pointer_v<T>>>::operator->() const -> ValueT
+    {
+        return Get();
+    }
+
+    template<class T>
+    auto Postulate<T, std::enable_if_t<std::is_pointer_v<T>>>::Get() const -> ValueT
+    {
+        if (!IsSetup())
+            value = FindValueFromOwner();
+
+        return value;
+    }
+
+    template<class T>
+    Reliquary* Postulate<T, std::enable_if_t<std::is_pointer_v<T>>>::Owner() const
+    {
+        return owner;
+    }
+
+    template<class T>
+    auto Postulate<T, std::enable_if_t<std::is_pointer_v<T>>>::FindValueFromOwner() const -> StoredT
+    {
+        if (owner == nullptr)
+            return EmptyValue();
+
+        return owner->template FindPostulateValue<T>();
+    }
+
+    template<class T>
+    bool Postulate<T, std::enable_if_t<std::is_pointer_v<T>>>::IsSetup() const
+    {
+        return static_cast<bool>(value);
+    }
+
+    template<class T>
+    constexpr auto Postulate<T, std::enable_if_t<std::is_pointer_v<T>>>::EmptyValue() -> StoredT
+    {
+        return nullptr;
     }
 }
 

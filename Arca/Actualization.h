@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Handle.h"
-#include "RelicIndex.h"
-#include "ShardIndex.h"
-#include "GlobalIndex.h"
+#include "Index.h"
+#include "Index.h"
+#include "Index.h"
 
 namespace Arca
 {

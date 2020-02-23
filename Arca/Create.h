@@ -5,8 +5,8 @@
 #include "IsRelic.h"
 #include "IsShard.h"
 #include "RelicID.h"
-#include "RelicIndex.h"
-#include "ShardIndex.h"
+#include "Index.h"
+#include "Index.h"
 
 #include "ReliquaryRelics.h"
 #include "ReliquaryShards.h"

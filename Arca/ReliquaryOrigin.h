@@ -151,8 +151,7 @@ namespace Arca
                     interfaceType,
                     [function](Reliquary& reliquary) -> std::any
                     {
-                        auto transformed = function(reliquary);
-                        return transformed;
+                        return { function(reliquary) };
                     });
             });
 

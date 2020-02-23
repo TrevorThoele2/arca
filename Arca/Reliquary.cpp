@@ -341,7 +341,7 @@ namespace Inscription
 
         for(auto& global : object.relics.globalHandlers)
             if (global->id == id)
-                return { Arca::Type(global->typeName, false), Arca::Locality::Global, global->storage.get() };
+                return { Arca::Type(global->typeName, false), Arca::Locality::Global, global->Storage() };
 
         DEBUG_ASSERT(false);
     }
