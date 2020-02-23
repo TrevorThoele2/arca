@@ -3,6 +3,7 @@
 #include "GeneralFixture.h"
 
 #include <Arca/ClosedTypedRelic.h>
+#include <Arca/Reliquary.h>
 
 #include <Inscription/BinaryArchive.h>
 

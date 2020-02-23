@@ -79,6 +79,9 @@
     <ClCompile Include="DifferentiableCurator.cpp">
       <Filter>Source Files\Data</Filter>
     </ClCompile>
+    <ClCompile Include="PostulateTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConstShardTests.h">
@@ -158,6 +161,9 @@
     </ClInclude>
     <ClInclude Include="DifferentiableCurator.h">
       <Filter>Header Files\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="PostulateTests.h">
+      <Filter>Header Files\Tests</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

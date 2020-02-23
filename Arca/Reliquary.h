@@ -193,6 +193,7 @@ namespace Arca
         friend class BatchSource;
 
         friend class Curator;
+        friend class MutablePointer;
     private:
         INSCRIPTION_ACCESS;
     };
@@ -482,12 +483,19 @@ namespace Inscription
 #include "ReliquarySignalsDefinition.h"
 #include "ReliquaryCommandsDefinition.h"
 
+#include "RelicIndexDefinition.h"
+#include "MatrixIndexDefinition.h"
+#include "GlobalIndexDefinition.h"
+#include "ShardIndexDefinition.h"
+#include "PostulateDefinition.h"
+
 #include "RelicBatchSourceDefinition.h"
 #include "MatrixBatchSourceDefinition.h"
 #include "TransferableSignalDefinition.h"
 #include "KnownMatrixDefinition.h"
 #include "EitherDefinition.h"
 #include "AllDefinition.h"
-#include "CuratorDefinition.h"
+
+#include "MutablePointerDefinition.h"
 
 #include "RelicInitDefinition.h"

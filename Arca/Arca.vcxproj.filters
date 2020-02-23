@@ -94,6 +94,9 @@
     <ClCompile Include="ReliquaryCommands.cpp">
       <Filter>Source Files\Reliquary\Components</Filter>
     </ClCompile>
+    <ClCompile Include="MutablePointer.cpp">
+      <Filter>Source Files\Curator</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Curator.h">
@@ -384,30 +387,6 @@
     <ClInclude Include="MatrixTypeForSignal.h">
       <Filter>Header Files\Signal</Filter>
     </ClInclude>
-    <ClInclude Include="MatrixIndex.h">
-      <Filter>Header Files\Index</Filter>
-    </ClInclude>
-    <ClInclude Include="RelicIndex.h">
-      <Filter>Header Files\Index</Filter>
-    </ClInclude>
-    <ClInclude Include="ShardIndex.h">
-      <Filter>Header Files\Index</Filter>
-    </ClInclude>
-    <ClInclude Include="GlobalIndex.h">
-      <Filter>Header Files\Index</Filter>
-    </ClInclude>
-    <ClInclude Include="UsableForShardIndex.h">
-      <Filter>Header Files\Index\Usable</Filter>
-    </ClInclude>
-    <ClInclude Include="UsableForRelicIndex.h">
-      <Filter>Header Files\Index\Usable</Filter>
-    </ClInclude>
-    <ClInclude Include="UsableForMatrixIndex.h">
-      <Filter>Header Files\Index\Usable</Filter>
-    </ClInclude>
-    <ClInclude Include="UsableForGlobalIndex.h">
-      <Filter>Header Files\Index\Usable</Filter>
-    </ClInclude>
     <ClInclude Include="RelicStructure.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
@@ -462,9 +441,6 @@
     <ClInclude Include="CuratorInit.h">
       <Filter>Header Files\Curator</Filter>
     </ClInclude>
-    <ClInclude Include="CuratorDefinition.h">
-      <Filter>Header Files\Curator</Filter>
-    </ClInclude>
     <ClInclude Include="HasCommandResult.h">
       <Filter>Header Files\Command</Filter>
     </ClInclude>
@@ -472,19 +448,64 @@
       <Filter>Header Files\Command</Filter>
     </ClInclude>
     <ClInclude Include="Postulate.h">
-      <Filter>Header Files\Postulate</Filter>
+      <Filter>Header Files\Reference\Postulate</Filter>
     </ClInclude>
     <ClInclude Include="UsableForPostulate.h">
-      <Filter>Header Files\Postulate</Filter>
+      <Filter>Header Files\Reference\Postulate</Filter>
     </ClInclude>
     <ClInclude Include="Index.h">
-      <Filter>Header Files\Index</Filter>
+      <Filter>Header Files\Reference\Index</Filter>
     </ClInclude>
     <ClInclude Include="ReferenceTypeFor.h">
       <Filter>Header Files\Reference</Filter>
     </ClInclude>
     <ClInclude Include="RelicInitDefinition.h">
       <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="PostulateDefinition.h">
+      <Filter>Header Files\Reference\Postulate</Filter>
+    </ClInclude>
+    <ClInclude Include="ShardIndexDefinition.h">
+      <Filter>Header Files\Reference\Index\Shard</Filter>
+    </ClInclude>
+    <ClInclude Include="ShardIndex.h">
+      <Filter>Header Files\Reference\Index\Shard</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicIndexDefinition.h">
+      <Filter>Header Files\Reference\Index\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicIndex.h">
+      <Filter>Header Files\Reference\Index\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="MatrixIndexDefinition.h">
+      <Filter>Header Files\Reference\Index\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="MatrixIndex.h">
+      <Filter>Header Files\Reference\Index\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalIndex.h">
+      <Filter>Header Files\Reference\Index\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalIndexDefinition.h">
+      <Filter>Header Files\Reference\Index\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="UsableForGlobalIndex.h">
+      <Filter>Header Files\Reference\Index\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="UsableForMatrixIndex.h">
+      <Filter>Header Files\Reference\Index\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="UsableForRelicIndex.h">
+      <Filter>Header Files\Reference\Index\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="UsableForShardIndex.h">
+      <Filter>Header Files\Reference\Index\Shard</Filter>
+    </ClInclude>
+    <ClInclude Include="MutablePointer.h">
+      <Filter>Header Files\Curator</Filter>
+    </ClInclude>
+    <ClInclude Include="MutablePointerDefinition.h">
+      <Filter>Header Files\Curator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -629,12 +650,6 @@
     <Filter Include="Source Files\Serialization">
       <UniqueIdentifier>{73d7fa76-e6f8-461d-888b-df708ad13173}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Index">
-      <UniqueIdentifier>{0af7c992-c8d6-4968-b66c-32a0a88b551e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Index\Usable">
-      <UniqueIdentifier>{77a0550f-ea38-49d2-acd9-7f8379b18414}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Matrix\All">
       <UniqueIdentifier>{6ecc1c89-7553-43b3-bf7d-21f3802d7326}</UniqueIdentifier>
     </Filter>
@@ -647,11 +662,26 @@
     <Filter Include="Header Files\Command\Common">
       <UniqueIdentifier>{ed6bbebe-a81c-40d8-a01a-0e131925b3da}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Postulate">
-      <UniqueIdentifier>{1078d0a3-bed7-4d6d-aa22-0219d85740cb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Reference">
       <UniqueIdentifier>{29d022f3-04ee-45f2-bae7-8577ce0f63c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Reference\Postulate">
+      <UniqueIdentifier>{1078d0a3-bed7-4d6d-aa22-0219d85740cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Reference\Index">
+      <UniqueIdentifier>{0af7c992-c8d6-4968-b66c-32a0a88b551e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Reference\Index\Global">
+      <UniqueIdentifier>{49b6d08a-2413-4117-85c7-a0a70d75ae7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Reference\Index\Matrix">
+      <UniqueIdentifier>{f2f3ac2d-f774-44d0-b57a-2572b288d2b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Reference\Index\Relic">
+      <UniqueIdentifier>{afffbee4-a109-4de8-89b2-14c892d41f96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Reference\Index\Shard">
+      <UniqueIdentifier>{22a61877-3ec0-46fc-94ab-a99eb6bbb63f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
