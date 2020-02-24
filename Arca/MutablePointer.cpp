@@ -2,6 +2,16 @@
 
 namespace Arca
 {
-    MutablePointer::MutablePointer(Reliquary& reliquary) : reliquary(&reliquary)
+    Arca::Reliquary& MutablePointer::Reliquary()
+    {
+        return *reliquary;
+    }
+
+    const Arca::Reliquary& MutablePointer::Reliquary() const
+    {
+        return *reliquary;
+    }
+
+    MutablePointer::MutablePointer(Arca::Reliquary& reliquary) : reliquary(&reliquary)
     {}
 }
