@@ -121,7 +121,7 @@ namespace Arca
 
         const auto id = metadata.id;
 
-        Owner().matrices.NotifyDestroying(id);
+        auto matrixSnapshot = Owner().matrices.DestroyingSnapshot(metadata.id);
 
         for (auto& handler : Shards().handlers)
         {
@@ -130,6 +130,8 @@ namespace Arca
             if (handler->ConstBatchSource().DestroyFromBase(id))
                 Owner().Raise<Destroying>(HandleFrom(id, Type{ handler->typeName, true }, HandleObjectType::Shard));
         }
+
+        matrixSnapshot.Finalize();
 
         if (metadata.parent)
         {

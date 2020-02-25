@@ -20,18 +20,46 @@ namespace Arca
         template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
     public:
-        void NotifyCreated(RelicID id);
-        void NotifyDestroying(RelicID id);
-
         template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
         void EnsureInteraction(void(KnownMatrix::* interaction)(bool));
         template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
         void EnsureStopInteraction(void(KnownMatrix::* stopInteraction)(bool));
-
-        [[nodiscard]] std::vector<KnownMatrix> AllKnown() const;
     public:
         ReliquaryMatrices(const ReliquaryMatrices& arg) = delete;
         ReliquaryMatrices& operator=(const ReliquaryMatrices& arg) = delete;
+    public:
+        class CreationSnapshotObject
+        {
+        public:
+            CreationSnapshotObject(const CreationSnapshotObject& arg) = default;
+            CreationSnapshotObject(CreationSnapshotObject&& arg) noexcept = default;
+
+            void Finalize();
+        private:
+            explicit CreationSnapshotObject(std::vector<KnownMatrix*>&& knownMatrices, RelicID id, Reliquary& owner);
+            RelicID id;
+            Reliquary* owner;
+            std::vector<KnownMatrix*> knownMatrices;
+            friend ReliquaryMatrices;
+        };
+
+        class DestroyingSnapshotObject
+        {
+        public:
+            DestroyingSnapshotObject(const DestroyingSnapshotObject& arg) = default;
+            DestroyingSnapshotObject(DestroyingSnapshotObject&& arg) noexcept = default;
+
+            void Finalize();
+        private:
+            explicit DestroyingSnapshotObject(std::vector<KnownMatrix*>&& knownMatrices, RelicID id, Reliquary& owner);
+            RelicID id;
+            Reliquary* owner;
+            std::vector<KnownMatrix*> knownMatrices;
+            friend ReliquaryMatrices;
+        };
+
+        CreationSnapshotObject CreationSnapshot(RelicID id);
+        DestroyingSnapshotObject DestroyingSnapshot(RelicID id);
     public:
         class BatchSources
         {

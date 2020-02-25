@@ -8,24 +8,48 @@ namespace Arca
         batchSources.Clear();
     }
 
-    void ReliquaryMatrices::NotifyCreated(RelicID id)
+    void ReliquaryMatrices::CreationSnapshotObject::Finalize()
     {
-        for (auto& loop : knownList)
-            loop.value.Created(id, Owner());
+        for (auto& matrix : knownMatrices)
+            if (matrix->Exists(id, *owner))
+                matrix->Created(id, *owner);
     }
 
-    void ReliquaryMatrices::NotifyDestroying(RelicID id)
+    ReliquaryMatrices::CreationSnapshotObject::CreationSnapshotObject(
+        std::vector<KnownMatrix*>&& knownMatrices, RelicID id, Reliquary& owner)
+        :
+        id(id), owner(&owner), knownMatrices(std::move(knownMatrices))
+    {}
+
+    void ReliquaryMatrices::DestroyingSnapshotObject::Finalize()
     {
-        for (auto& loop : knownList)
-            loop.value.Destroying(id, Owner());
+        for (auto& matrix : knownMatrices)
+            if (!matrix->Exists(id, *owner))
+                matrix->Destroying(id, *owner);
     }
 
-    std::vector<KnownMatrix> ReliquaryMatrices::AllKnown() const
+    ReliquaryMatrices::DestroyingSnapshotObject::DestroyingSnapshotObject(
+        std::vector<KnownMatrix*> && knownMatrices, RelicID id, Reliquary& owner)
+        :
+        id(id), owner(&owner), knownMatrices(std::move(knownMatrices))
+    {}
+
+    auto ReliquaryMatrices::CreationSnapshot(RelicID id) -> CreationSnapshotObject
     {
-        std::vector<KnownMatrix> returnValue;
-        for (auto& loop : knownList)
-            returnValue.push_back(loop.value);
-        return returnValue;
+        std::vector<KnownMatrix*> knownMatrices;
+        for (auto& matrix : knownList)
+            if (!matrix.value.Exists(id, Owner()))
+                knownMatrices.push_back(&matrix.value);
+        return CreationSnapshotObject(std::move(knownMatrices), id, Owner());
+    }
+
+    auto ReliquaryMatrices::DestroyingSnapshot(RelicID id) -> DestroyingSnapshotObject
+    {
+        std::vector<KnownMatrix*> knownMatrices;
+        for (auto& matrix : knownList)
+            if (matrix.value.Exists(id, Owner()))
+                knownMatrices.push_back(&matrix.value);
+        return DestroyingSnapshotObject(std::move(knownMatrices), id, Owner());
     }
 
     ReliquaryMatrices::BatchSources::BatchSources(ReliquaryMatrices& owner) : owner(&owner)
