@@ -23,9 +23,6 @@ namespace Arca
     template<class MatrixT>
     void KnownMatrix::Derived<MatrixT>::Created(RelicID relicID, Reliquary& reliquary)
     {
-        if (!reliquary.Contains<MatrixT>(relicID))
-            return;
-
         if (interactWithBatchSource)
             CreateBatchSourceEntry<MatrixT>(relicID, reliquary);
         if (interactWithSignals)
@@ -35,13 +32,16 @@ namespace Arca
     template<class MatrixT>
     void KnownMatrix::Derived<MatrixT>::Destroying(RelicID relicID, Reliquary& reliquary)
     {
-        if (reliquary.Contains<MatrixT>(relicID))
-            return;
-
         if (interactWithBatchSource)
             RemoveBatchSourceEntry<MatrixT>(relicID, reliquary);
         if (interactWithSignals)
             SignalDestroying<MatrixT>(relicID, reliquary);
+    }
+
+    template<class MatrixT>
+    bool KnownMatrix::Derived<MatrixT>::Exists(RelicID relicID, Reliquary& reliquary) const
+    {
+        return reliquary.Contains<MatrixT>(relicID);
     }
 
     template<class MatrixT>

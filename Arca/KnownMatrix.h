@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <unordered_set>
 
 #include "IsMatrix.h"
 #include "RelicID.h"
@@ -22,10 +23,10 @@ namespace Arca
 
         void Created(RelicID relicID, Reliquary& reliquary);
         void Destroying(RelicID relicID, Reliquary& reliquary);
+        [[nodiscard]] bool Exists(RelicID id, Reliquary& reliquary) const;
 
         void InteractWithBatchSource(bool value = true);
         void InteractWithSignals(bool value = true);
-
         [[nodiscard]] bool IsInteractingWithAnything() const;
     private:
         class Base
@@ -37,10 +38,10 @@ namespace Arca
 
             virtual void Created(RelicID relicID, Reliquary& reliquary) = 0;
             virtual void Destroying(RelicID relicID, Reliquary& reliquary) = 0;
+            [[nodiscard]] virtual bool Exists(RelicID id, Reliquary& reliquary) const = 0;
 
             virtual void InteractWithBatchSource(bool value) = 0;
             virtual void InteractWithSignals(bool value) = 0;
-
             [[nodiscard]] virtual bool IsInteractingWithAnything() const = 0;
         };
 
@@ -54,10 +55,10 @@ namespace Arca
 
             void Created(RelicID relicID, Reliquary& reliquary) override;
             void Destroying(RelicID relicID, Reliquary& reliquary) override;
+            [[nodiscard]] bool Exists(RelicID relicID, Reliquary& reliquary) const override;
 
             void InteractWithBatchSource(bool value) override;
             void InteractWithSignals(bool value) override;
-
             [[nodiscard]] bool IsInteractingWithAnything() const override;
         private:
             bool interactWithBatchSource = false;

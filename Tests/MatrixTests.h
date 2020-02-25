@@ -13,6 +13,11 @@ public:
     {
         int myInt;
     };
+
+    struct OtherShard
+    {
+        std::string string;
+    };
 };
 
 namespace Arca
@@ -23,6 +28,13 @@ namespace Arca
         static const ObjectType objectType = ObjectType::Shard;
         static inline const TypeName typeName = "ShardTestsShard";
     };
+
+    template<>
+    struct Traits<MatrixTestsFixture::OtherShard>
+    {
+        static const ObjectType objectType = ObjectType::Shard;
+        static inline const TypeName typeName = "ShardTestsOtherShard";
+    };
 }
 
 namespace Inscription
@@ -30,5 +42,10 @@ namespace Inscription
     template<>
     class Scribe<MatrixTestsFixture::Shard, BinaryArchive> final :
         public ArcaNullScribe<MatrixTestsFixture::Shard, BinaryArchive>
+    {};
+
+    template<>
+    class Scribe<MatrixTestsFixture::OtherShard, BinaryArchive> final :
+        public ArcaNullScribe<MatrixTestsFixture::OtherShard, BinaryArchive>
     {};
 }

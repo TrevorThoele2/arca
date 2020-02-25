@@ -27,6 +27,14 @@ namespace Arca
         base->Destroying(relicID, reliquary);
     }
 
+    bool KnownMatrix::Exists(RelicID id, Reliquary& reliquary) const
+    {
+        if (!base)
+            return false;
+
+        return base->Exists(id, reliquary);
+    }
+
     void KnownMatrix::InteractWithBatchSource(bool value)
     {
         if (!base)
