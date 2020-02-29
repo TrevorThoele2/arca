@@ -6,6 +6,9 @@ namespace Arca
     {
         for (auto& batchSource : batchSources.map)
             batchSource.second->Clear();
+
+        if (batchSources.transferableSignals)
+            batchSources.transferableSignals->Clear();
     }
 
     ReliquarySignals::BatchSources::BatchSources(ReliquarySignals& owner) :

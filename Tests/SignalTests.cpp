@@ -94,6 +94,16 @@ SCENARIO_METHOD(SignalTestsFixture, "batching transferable signals", "[signal][t
             {
                 REQUIRE(batch.begin()->TransferringTypeName() == Traits<BasicSignal>::typeName);
             }
+
+            WHEN("working reliquary")
+            {
+                reliquary->Work();
+
+                THEN("batch is empty")
+                {
+                    REQUIRE(batch.IsEmpty());
+                }
+            }
         }
     }
 }
