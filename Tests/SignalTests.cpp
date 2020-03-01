@@ -107,3 +107,23 @@ SCENARIO_METHOD(SignalTestsFixture, "batching transferable signals", "[signal][t
         }
     }
 }
+
+SCENARIO_METHOD(SignalTestsFixture, "batching empty signals", "[signal]")
+{
+    GIVEN("reliquary and batch of transferable signals")
+    {
+        auto reliquary = ReliquaryOrigin().Actualize();
+
+        auto batch = reliquary->Batch<EmptySignal>();
+
+        WHEN("raising signal")
+        {
+            reliquary->Raise<EmptySignal>();
+
+            THEN("batch has size of 1")
+            {
+                REQUIRE(batch.Size() == 1);
+            }
+        }
+    }
+}

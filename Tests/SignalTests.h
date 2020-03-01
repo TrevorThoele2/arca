@@ -12,6 +12,9 @@ public:
     public:
         int value = 0;
     };
+
+    class EmptySignal
+    {};
 };
 
 namespace Arca
@@ -20,6 +23,13 @@ namespace Arca
     struct Traits<::SignalTestsFixture::BasicSignal>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static inline const TypeName typeName = "SignalTestsBasicSignal";
+        static inline const TypeName typeName = "SignalTests_BasicSignal";
+    };
+
+    template<>
+    struct Traits<::SignalTestsFixture::EmptySignal>
+    {
+        static const ObjectType objectType = ObjectType::Signal;
+        static inline const TypeName typeName = "SignalTests_EmptySignal";
     };
 }
