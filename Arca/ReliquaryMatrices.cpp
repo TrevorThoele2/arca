@@ -21,10 +21,10 @@ namespace Arca
         id(id), owner(&owner), knownMatrices(std::move(knownMatrices))
     {}
 
-    void ReliquaryMatrices::DestroyingSnapshotObject::Finalize()
+    void ReliquaryMatrices::DestroyingSnapshotObject::Finalize(Type type)
     {
         for (auto& matrix : knownMatrices)
-            if (!matrix->Exists(id, *owner))
+            if(matrix->Contains(type))
                 matrix->Destroying(id, *owner);
     }
 

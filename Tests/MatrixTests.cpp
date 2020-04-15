@@ -83,7 +83,7 @@ SCENARIO_METHOD(MatrixTestsFixture, "matrix signals", "[matrix][signal]")
             auto createdShardSameAsSignaled = false;
 
             reliquary->ExecuteOn<MatrixDissolved<Either<Shard>>>(
-                [createdShard, &createdShardSameAsSignaled](const MatrixDissolved<Either<Shard>>& signal)
+                [&createdShard, &createdShardSameAsSignaled](const MatrixDissolved<Either<Shard>>& signal)
                 {
                     createdShardSameAsSignaled = createdShard == &*signal.index;
                 });
@@ -105,7 +105,7 @@ SCENARIO_METHOD(MatrixTestsFixture, "matrix signals", "[matrix][signal]")
             auto createdShardSameAsSignaled = false;
 
             reliquary->ExecuteOn<MatrixDissolved<Either<Shard>>>(
-                [createdShard, &createdShardSameAsSignaled](const MatrixDissolved<Either<Shard>>& signal)
+                [&createdShard, &createdShardSameAsSignaled](const MatrixDissolved<Either<Shard>>& signal)
                 {
                     createdShardSameAsSignaled = createdShard == &*signal.index;
                 });

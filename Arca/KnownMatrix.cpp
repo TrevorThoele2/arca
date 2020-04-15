@@ -35,6 +35,14 @@ namespace Arca
         return base->Exists(id, reliquary);
     }
 
+    bool KnownMatrix::Contains(Type type) const
+    {
+        if (!base)
+            return false;
+
+        return base->Contains(type);
+    }
+
     void KnownMatrix::InteractWithBatchSource(bool value)
     {
         if (!base)

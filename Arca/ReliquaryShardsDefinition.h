@@ -29,12 +29,14 @@ namespace Arca
         {
             auto matrixSnapshot = Owner().matrices.DestroyingSnapshot(id);
 
-            if (batchSource->DestroyFromBase(id))
+            if (batchSource->ContainsFromBase(id))
             {
-                matrixSnapshot.Finalize();
+                matrixSnapshot.Finalize(TypeFor<ShardT>());
 
                 Owner().Raise<DestroyingKnown<ShardT>>(CreateIndex<ShardT>(id));
                 Owner().Raise<Destroying>(HandleFrom(id, batchSource->Type(), HandleObjectType::Shard));
+
+                batchSource->DestroyFromBase(id); 
             }
         }
     }

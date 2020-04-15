@@ -36,4 +36,12 @@ namespace Arca
     private:
         using Pack = typename All<Ts...>::Pack;
     };
+
+    template<class... Ts>
+    struct MatrixContains<All<Ts...>>
+    {
+        static bool Contains(Type type);
+    private:
+        using Pack = typename All<Ts...>::Pack;
+    };
 }
