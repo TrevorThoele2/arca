@@ -2,6 +2,8 @@
 
 #include "GeneralFixture.h"
 
+#include <Arca/ClosedTypedRelic.h>
+
 class CommandTestsFixture : public GeneralFixture
 {
 public:
@@ -9,6 +11,8 @@ public:
     struct CommandWithResult;
     class Curator;
     class CuratorWithSameLink;
+    class Relic;
+    class Shard;
 };
 
 struct CommandTestsFixture::Command
@@ -38,6 +42,26 @@ public:
     void Handle(const Command& command);
 public:
     using Arca::Curator::Curator;
+};
+
+class CommandTestsFixture::Relic final : public Arca::ClosedTypedRelic<Relic>
+{
+public:
+    int integer = 0;
+    std::string string;
+public:
+    explicit Relic(Init init);
+    explicit Relic(Init init, int integer, const std::string& string);
+};
+
+class CommandTestsFixture::Shard final
+{
+public:
+    int integer = 0;
+    std::string string;
+public:
+    explicit Shard() = default;
+    explicit Shard(int integer, const std::string& string);
 };
 
 namespace Arca
@@ -74,6 +98,20 @@ namespace Arca
         using HandledCommands = Arca::HandledCommands<
             CommandTestsFixture::Command>;
     };
+
+    template<>
+    struct Traits<CommandTestsFixture::Relic>
+    {
+        static const ObjectType objectType = ObjectType::Relic;
+        static inline const TypeName typeName = "CommandTestsFixtureRelic";
+    };
+
+    template<>
+    struct Traits<CommandTestsFixture::Shard>
+    {
+        static const ObjectType objectType = ObjectType::Shard;
+        static inline const TypeName typeName = "CommandTestsFixtureShard";
+    };
 }
 
 namespace Inscription
@@ -86,5 +124,15 @@ namespace Inscription
     template<>
     class Scribe<CommandTestsFixture::CuratorWithSameLink, BinaryArchive> final
         : public ArcaNullScribe<CommandTestsFixture::CuratorWithSameLink, BinaryArchive>
+    {};
+
+    template<>
+    class Scribe<CommandTestsFixture::Relic, BinaryArchive> final
+        : public ArcaNullScribe<CommandTestsFixture::Relic, BinaryArchive>
+    {};
+
+    template<>
+    class Scribe<CommandTestsFixture::Shard, BinaryArchive> final
+        : public ArcaNullScribe<CommandTestsFixture::Shard, BinaryArchive>
     {};
 }

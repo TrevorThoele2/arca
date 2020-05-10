@@ -123,21 +123,30 @@ namespace Arca
 
         auto matrixSnapshot = Owner().matrices.DestroyingSnapshot(metadata.id);
 
-        const auto attemptDestroyFromBase = [metadata, &matrixSnapshot, id, this](ShardBatchSourceBase& batchSource, bool isConst, ReliquaryShards::HandlerBase& handler)
+        for(auto& handler : Shards().handlers)
         {
-            if (batchSource.ContainsFromBase(id))
+            if (handler->BatchSource().ContainsFromBase(id))
             {
-                const Type type{ handler.typeName, isConst };
+                const Type type{ handler->typeName, false };
                 Owner().Raise<Destroying>(HandleFrom(id, type, HandleObjectType::Shard));
                 matrixSnapshot.Finalize(type);
-                batchSource.DestroyFromBase(id);
             }
-        };
+
+            if (handler->ConstBatchSource().ContainsFromBase(id))
+            {
+                const Type type{ handler->typeName, true };
+                Owner().Raise<Destroying>(HandleFrom(id, type, HandleObjectType::Shard));
+                matrixSnapshot.Finalize(type);
+            }
+        }
 
         for(auto& handler : Shards().handlers)
         {
-            attemptDestroyFromBase(handler->BatchSource(), false, *handler);
-            attemptDestroyFromBase(handler->ConstBatchSource(), true, *handler);
+            if (handler->BatchSource().ContainsFromBase(id))
+                handler->BatchSource().DestroyFromBase(id);
+
+            if (handler->ConstBatchSource().ContainsFromBase(id))
+                handler->ConstBatchSource().DestroyFromBase(id);
         }
 
         if (metadata.parent)

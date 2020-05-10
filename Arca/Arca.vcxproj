@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="AllDefinition.h" />
     <ClInclude Include="AllImplementation.h" />
+    <ClInclude Include="Assign.h" />
     <ClInclude Include="Clear.h" />
     <ClInclude Include="Command.h" />
     <ClInclude Include="CommandResult.h" />
@@ -255,6 +256,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

@@ -67,7 +67,7 @@ namespace Arca
     struct Traits<CreateChild<T>>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "CreateChild";
+        static inline const TypeName typeName = "CreateChild<" + Traits<std::remove_const_t<T>>::typeName + ">";
         using Result = Index<T>;
     };
 }
