@@ -18,7 +18,10 @@ namespace Arca
     template<class T>
     Index<T, std::enable_if_t<usable_for_relic_index_v<T>>>::Index(Index&& arg) noexcept :
         id(arg.id), owner(arg.owner)
-    {}
+    {
+        arg.id = 0;
+        arg.owner = nullptr;
+    }
 
     template<class T>
     auto Index<T, std::enable_if_t<usable_for_relic_index_v<T>>>::operator=(const Index& arg) -> Index&

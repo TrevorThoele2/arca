@@ -18,7 +18,10 @@ namespace Arca
     template<class T>
     Index<T, std::enable_if_t<usable_for_matrix_index_v<T>>>::Index(Index&& arg) noexcept :
         id(arg.id), owner(arg.owner)
-    {}
+    {
+        arg.id = 0;
+        arg.owner = nullptr;
+    }
 
     template<class T>
     auto Index<T, std::enable_if_t<usable_for_matrix_index_v<T>>>::operator=(const Index& arg) -> Index&
@@ -33,6 +36,8 @@ namespace Arca
     {
         id = arg.id;
         owner = arg.owner;
+        arg.id = 0;
+        arg.owner = nullptr;
         return *this;
     }
 
@@ -93,6 +98,9 @@ namespace Arca
     template<class T>
     auto Index<T, std::enable_if_t<usable_for_matrix_index_v<T>>>::FindValueFromOwner() const -> OptionalValueT
     {
-        return MatrixImplementation<T>::CreateIndexValue(id, *owner);
+        if (!owner)
+            return MatrixImplementation<T>::DefaultIndexValue();
+        else
+            return MatrixImplementation<T>::CreateIndexValue(id, *owner);
     }
 }
