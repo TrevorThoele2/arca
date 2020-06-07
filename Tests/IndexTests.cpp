@@ -3,7 +3,7 @@
 #include "IndexTests.h"
 
 #include <Arca/ReliquaryOrigin.h>
-#include <Arca/DependentReliquaries.h>
+#include <Arca/ReliquaryDependencies.h>
 
 IndexTestsFixture::Shard::Shard(int myInt) : myInt(myInt)
 {}
@@ -603,11 +603,12 @@ SCENARIO_METHOD(IndexTestsFixture, "Index from different reliquary is serializab
         auto origin = ReliquaryOrigin()
             .Register<Shard>()
             .Register<RelicHolderRelic>()
-            .Register<DependentReliquaries>();
+            .Register<ReliquaryDependencies>();
 
         auto dependentReliquary = origin.Actualize();
         auto mainReliquary = origin.Actualize();
-        mainReliquary->Do(AddDependentReliquary{ dependentReliquary.get() });
+        const auto name = dataGeneration.Random<std::string>();
+        mainReliquary->Do(AddReliquaryDependency{ name, dependentReliquary.get() });
 
         WHEN("creating open relic giving to other reliquary and saving")
         {
@@ -623,7 +624,7 @@ SCENARIO_METHOD(IndexTestsFixture, "Index from different reliquary is serializab
             THEN("loading gives correct held relic")
             {
                 auto loadedReliquary2 = origin.Actualize();
-                loadedReliquary2->Do(AddDependentReliquary{ dependentReliquary.get() });
+                loadedReliquary2->Do(AddReliquaryDependency{ name, dependentReliquary.get() });
 
                 {
                     ::Inscription::InputBinaryArchive archive("Testing.dat", "Testing");

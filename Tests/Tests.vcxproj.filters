@@ -82,6 +82,9 @@
     <ClCompile Include="PostulateTests.cpp">
       <Filter>Source Files\Tests</Filter>
     </ClCompile>
+    <ClCompile Include="ReliquaryDependenciesTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConstShardTests.h">
@@ -163,6 +166,9 @@
       <Filter>Header Files\Data</Filter>
     </ClInclude>
     <ClInclude Include="PostulateTests.h">
+      <Filter>Header Files\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquaryDependenciesTests.h">
       <Filter>Header Files\Tests</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,6 @@
 #include "InscriptionUserContext.h"
 
-#include "CannotFindDependent.h"
+#include "CannotFindReliquaryDependency.h"
 
 namespace Arca
 {
@@ -16,7 +16,7 @@ namespace Arca
             if (dependent.reliquary == reliquary)
                 return dependent.id;
 
-        throw CannotFindDependent(reliquary);
+        throw CannotFindReliquaryDependency(reliquary);
     }
 
     Reliquary* InscriptionUserContext::ReliquaryFor(int id)
@@ -31,6 +31,6 @@ namespace Arca
             if (dependent.id == id)
                 return dependent.reliquary;
 
-        throw CannotFindDependent(id);
+        throw CannotFindReliquaryDependency(id);
     }
 }

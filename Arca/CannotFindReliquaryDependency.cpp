@@ -1,14 +1,14 @@
-#include "CannotFindDependent.h"
+#include "CannotFindReliquaryDependency.h"
 
 #include <Chroma/StringUtility.h>
 
 namespace Arca
 {
-    CannotFindDependent::CannotFindDependent(int id) :
+    CannotFindReliquaryDependency::CannotFindReliquaryDependency(int id) :
         Exception("Cannot find dependent " + ::Chroma::ToString(id) + ".")
     {}
 
-    CannotFindDependent::CannotFindDependent(Reliquary*) :
+    CannotFindReliquaryDependency::CannotFindReliquaryDependency(Reliquary*) :
         Exception("Cannot find dependent reliquary.")
     {}
 }
