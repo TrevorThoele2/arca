@@ -70,7 +70,7 @@ namespace Arca
     struct Traits<Create<T, std::enable_if_t<is_relic_v<T>>>>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "Create<" + Traits<std::remove_const_t<T>>::typeName + ">";
+        static inline const TypeName typeName = "Arca::Create<" + Traits<std::remove_const_t<T>>::typeName + ">";
         using Result = Index<T>;
     };
 
@@ -126,7 +126,7 @@ namespace Arca
     struct Traits<Create<T, std::enable_if_t<is_shard_v<T>>>>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "Create<" + Traits<std::remove_const_t<T>>::typeName + ">";
+        static inline const TypeName typeName = "Arca::Create<" + Traits<std::remove_const_t<T>>::typeName + ">";
         using Result = Index<T>;
     };
 }

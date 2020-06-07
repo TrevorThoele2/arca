@@ -41,6 +41,11 @@ namespace Arca
         return found->get();
     }
 
+    bool ReliquaryCurators::Contains(const TypeName& type) const
+    {
+        return FindHandler(type) != nullptr;
+    }
+
     void ReliquaryCurators::Work()
     {
         Curator::Stage stageHandle;

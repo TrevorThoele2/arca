@@ -107,6 +107,6 @@ namespace Arca
     template<class CuratorT>
     bool ReliquaryCurators::Contains() const
     {
-        return Owner().Find<CuratorT>() != nullptr;
+        return FindHandler<CuratorT>() != nullptr;
     }
 }

@@ -47,7 +47,7 @@ namespace Arca
     struct Traits<ClosedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "ClosedRelic";
+        static inline const TypeName typeName = "Arca::ClosedRelic";
     };
 }
 

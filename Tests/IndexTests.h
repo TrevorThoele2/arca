@@ -18,6 +18,8 @@ public:
     class TypedClosedRelic;
     class TypedOpenRelic;
     class GlobalRelic;
+
+    class RelicHolderRelic;
 };
 
 namespace Arca
@@ -57,17 +59,26 @@ namespace Arca
         static inline const TypeName typeName = "IndexTestsGlobalRelic";
         static const Locality locality = Locality::Global;
     };
+
+    template<>
+    struct Traits<IndexTestsFixture::RelicHolderRelic>
+    {
+        static const ObjectType objectType = ObjectType::Relic;
+        static inline const TypeName typeName = "IndexTestsRelicHolderRelic";
+    };
 }
 
 struct IndexTestsFixture::Shard
 {
-    int myInt;
+    int myInt = 0;
+    Shard() = default;
+    Shard(int myInt);
 };
 
 template<size_t i>
 struct IndexTestsFixture::DifferentiableShard
 {
-    int myInt;
+    int myInt = 0;
 };
 
 class IndexTestsFixture::TypedClosedRelic final : public ClosedTypedRelic<TypedClosedRelic>
@@ -92,6 +103,15 @@ public:
     Index<Shard> shard;
 public:
     explicit GlobalRelic(Init init);
+};
+
+class IndexTestsFixture::RelicHolderRelic final : public ClosedTypedRelic<RelicHolderRelic>
+{
+public:
+    Index<OpenRelic> held;
+public:
+    explicit RelicHolderRelic(Init init);
+    explicit RelicHolderRelic(Init init, Index<OpenRelic> held);
 };
 
 namespace Inscription
@@ -120,4 +140,12 @@ namespace Inscription
     class Scribe<IndexTestsFixture::GlobalRelic, BinaryArchive> final :
         public ArcaNullScribe<IndexTestsFixture::GlobalRelic, BinaryArchive>
     {};
+
+    template<>
+    class Scribe<IndexTestsFixture::RelicHolderRelic, BinaryArchive> final :
+        public ArcaCompositeScribe<IndexTestsFixture::RelicHolderRelic, BinaryArchive>
+    {
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+    };
 }

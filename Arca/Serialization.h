@@ -14,3 +14,5 @@
 #include "CompositeScribe.h"
 #include "NullScribe.h"
 #include "TableScribe.h"
+
+#include "InscriptionUserContext.h"

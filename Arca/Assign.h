@@ -77,7 +77,7 @@ namespace Arca
     struct Traits<AssignCopy<T, std::enable_if_t<is_relic_v<T>>>>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "AssignCopy<" + Traits<std::remove_const_t<T>>::typeName + ">";
+        static inline const TypeName typeName = "Arca::AssignCopy<" + Traits<std::remove_const_t<T>>::typeName + ">";
         using Result = Index<T>;
     };
 
@@ -140,7 +140,7 @@ namespace Arca
     struct Traits<AssignCopy<T, std::enable_if_t<is_shard_v<T>>>>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "AssignCopy<" + Traits<std::remove_const_t<T>>::typeName + ">";
+        static inline const TypeName typeName = "Arca::AssignCopy<" + Traits<std::remove_const_t<T>>::typeName + ">";
         using Result = Index<T>;
     };
 
@@ -206,7 +206,7 @@ namespace Arca
     struct Traits<AssignMove<T, std::enable_if_t<is_relic_v<T>>>>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "AssignMove<" + Traits<std::remove_const_t<T>>::typeName + ">";
+        static inline const TypeName typeName = "Arca::AssignMove<" + Traits<std::remove_const_t<T>>::typeName + ">";
         using Result = Index<T>;
     };
 
@@ -269,7 +269,7 @@ namespace Arca
     struct Traits<AssignMove<T, std::enable_if_t<is_shard_v<T>>>>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "AssignMove<" + Traits<std::remove_const_t<T>>::typeName + ">";
+        static inline const TypeName typeName = "Arca::AssignMove<" + Traits<std::remove_const_t<T>>::typeName + ">";
         using Result = Index<T>;
     };
 }
