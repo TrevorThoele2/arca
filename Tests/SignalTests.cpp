@@ -18,9 +18,9 @@ SCENARIO_METHOD(SignalTestsFixture, "signal", "[signal]")
             }
         }
 
-        WHEN("raising signal with custom emission logic")
+        WHEN("raising signal with one method listening")
         {
-            int foundValue = 0;
+            auto foundValue = 0;
 
             reliquary->ExecuteOn<BasicSignal>([&foundValue](const BasicSignal& signal)
                 {
@@ -33,9 +33,40 @@ SCENARIO_METHOD(SignalTestsFixture, "signal", "[signal]")
             const BasicSignal signal{ emittedValue };
             reliquary->Raise(signal);
 
-            THEN("custom emission logic is fired")
+            THEN("method was fired")
             {
                 REQUIRE(foundValue == emittedValue);
+            }
+        }
+
+        WHEN("raising signal with ten methods listening")
+        {
+            std::vector<int> foundValues;
+
+            const auto executionCreator = [&reliquary, &foundValues]()
+            {
+                reliquary->ExecuteOn<BasicSignal>([&foundValues](const BasicSignal& signal)
+                    {
+                        foundValues.push_back(signal.value);
+                    });
+            };
+
+            for(auto i = 0; i < 10; ++i)
+                executionCreator();
+
+            const auto emittedValue = dataGeneration.Random<int>(
+                TestFramework::Range(1, std::numeric_limits<int>::max()));
+
+            const BasicSignal signal{ emittedValue };
+            reliquary->Raise(signal);
+
+            THEN("custom emission logic is fired")
+            {
+                REQUIRE(foundValues.size() == 10);
+                for(auto& value : foundValues)
+                {
+                    REQUIRE(value == emittedValue);
+                }
             }
         }
 
