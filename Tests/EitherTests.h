@@ -38,7 +38,7 @@ class EitherTestsFixture::BasicShard
 public:
     std::string myValue;
 public:
-    BasicShard() = default;
+    explicit BasicShard() = default;
     explicit BasicShard(std::string myValue);
 };
 

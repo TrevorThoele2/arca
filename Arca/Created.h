@@ -3,7 +3,6 @@
 #include "Traits.h"
 #include "Handle.h"
 #include "Index.h"
-#include "Index.h"
 #include "TypeFor.h"
 
 #include "IsRelic.h"

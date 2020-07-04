@@ -11,19 +11,19 @@ IndexTestsFixture::Shard::Shard(int myInt) : myInt(myInt)
 IndexTestsFixture::TypedClosedRelic::TypedClosedRelic(Init init) :
     ClosedTypedRelic(init)
 {
-    shard = FindOrCreate<Shard>();
+    shard = Create<Shard>();
 }
 
 IndexTestsFixture::TypedOpenRelic::TypedOpenRelic(Init init) :
     OpenTypedRelic(init)
 {
-    shard = FindOrCreate<Shard>();
+    shard = Create<Shard>();
 }
 
 IndexTestsFixture::GlobalRelic::GlobalRelic(Init init) :
     ClosedTypedRelic(init)
 {
-    shard = FindOrCreate<Shard>();
+    shard = Create<Shard>();
 }
 
 IndexTestsFixture::RelicHolderRelic::RelicHolderRelic(Init init) :

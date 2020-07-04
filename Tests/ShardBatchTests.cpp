@@ -8,7 +8,7 @@ ShardBatchFixture::Shard::Shard(int value) :
 
 ShardBatchFixture::GlobalRelic::GlobalRelic(Init init) : ClosedTypedRelic(init)
 {
-    shard = FindOrCreate<Shard>();
+    shard = Create<Shard>();
 }
 
 SCENARIO_METHOD(ShardBatchFixture, "default shard batch", "[ShardBatch]")

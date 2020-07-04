@@ -13,12 +13,12 @@ HandleTestsFixture::OtherShard::OtherShard(std::string myValue) : myValue(std::m
 
 HandleTestsFixture::TypedRelic::TypedRelic(Init init) : ClosedTypedRelic(init)
 {
-    basicShard = FindOrCreate<Shard>();
+    basicShard = Create<Shard>();
 }
 
 HandleTestsFixture::GlobalRelic::GlobalRelic(Init init) : ClosedTypedRelic(init)
 {
-    basicShard = FindOrCreate<Shard>();
+    basicShard = Create<Shard>();
 }
 
 SCENARIO_METHOD(HandleTestsFixture, "basic handle", "[handle]")

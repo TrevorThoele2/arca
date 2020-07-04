@@ -13,13 +13,13 @@ ReliquaryTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
 ReliquaryTestsFixture::BasicTypedRelic::BasicTypedRelic(Init init)
     : ClosedTypedRelic(init)
 {
-    basicShard = FindOrCreate<BasicShard>();
+    basicShard = Create<BasicShard>();
 }
 
 ReliquaryTestsFixture::GlobalRelic::GlobalRelic(Init init)
     : ClosedTypedRelic(init)
 {
-    basicShard = FindOrCreate<BasicShard>();
+    basicShard = Create<BasicShard>();
 }
 
 SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
@@ -49,14 +49,6 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
             THEN("has size of zero")
             {
                 REQUIRE(reliquary->CuratorSize() == 0);
-            }
-        }
-
-        WHEN("checking signal size")
-        {
-            THEN("has size of zero")
-            {
-                REQUIRE(reliquary->SignalSize() == 0);
             }
         }
 

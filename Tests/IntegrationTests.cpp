@@ -30,12 +30,19 @@ namespace Arca
 }
 
 template<size_t differentiator>
-void SetupDifferentiableCurator(std::unordered_map<size_t, Batch<IntegrationTestsFixture::BasicSignal>>& basicSignals)
+void SetupDifferentiableCurator(std::unordered_map<size_t, std::list<IntegrationTestsFixture::BasicSignal>>& basicSignals)
 {
+    using BasicSignal = IntegrationTestsFixture::BasicSignal;
+
     DifferentiableCurator<differentiator>::onConstructor = [&basicSignals](DifferentiableCurator<differentiator>& curator)
     {
-        basicSignals.emplace(differentiator, curator.TheOwner()
-            .template Batch<IntegrationTestsFixture::BasicSignal>());
+        auto& list = basicSignals.emplace(differentiator, std::list<BasicSignal>{})
+            .first->second;
+
+        curator.TheOwner().template On<BasicSignal>([&list](const BasicSignal& signal)
+            {
+                list.push_back(signal);
+            });
     };
 }
 
@@ -50,7 +57,7 @@ SCENARIO_METHOD(IntegrationTestsFixture, "working with signals through curators"
             Stage::All<DifferentiableCurator<2>, DifferentiableCurator<0>>()
         };
 
-        std::unordered_map<size_t, Batch<BasicSignal>> basicSignals;
+        std::unordered_map<size_t, std::list<BasicSignal>> basicSignals;
 
         SetupDifferentiableCurator<0>(basicSignals);
         SetupDifferentiableCurator<1>(basicSignals);
@@ -109,12 +116,6 @@ SCENARIO_METHOD(IntegrationTestsFixture, "working with signals through curators"
                 REQUIRE(encounteredSignals.size() == 5);
                 for(size_t i = 0; i < curatorsInOrder.size(); ++i)
                     REQUIRE(encounteredSignals[i].curator == curatorsInOrder[i]);
-            }
-
-            THEN("signals are cleared")
-            {
-                const auto signalBatch = reliquary->Batch<BasicSignal>();
-                REQUIRE(signalBatch.IsEmpty());
             }
         }
     }
@@ -179,7 +180,7 @@ SCENARIO_METHOD(IntegrationTestsFixture, "curators with custom signal execution"
 
         DerivedCurator::onConstructor = [&executedSignals](DifferentiableCuratorBase& curator)
         {
-            curator.TheOwner().ExecuteOn<BasicSignal>([&executedSignals](const BasicSignal& signal)
+            curator.TheOwner().On<BasicSignal>([&executedSignals](const BasicSignal& signal)
                 {
                     executedSignals.push_back(signal);
                 });

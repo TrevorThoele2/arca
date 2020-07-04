@@ -43,8 +43,8 @@
     <ClInclude Include="ReliquaryFixture.h" />
     <ClInclude Include="ReliquaryTests.h" />
     <ClInclude Include="ShardTests.h" />
-    <ClInclude Include="SignalBatchTests.h" />
     <ClInclude Include="RelicTests.h" />
+    <ClInclude Include="SignalListener.h" />
     <ClInclude Include="SignalTests.h" />
     <ClInclude Include="GlobalRelicTests.h" />
   </ItemGroup>
@@ -73,7 +73,6 @@
     <ClCompile Include="ReliquaryFixture.cpp" />
     <ClCompile Include="ReliquaryTests.cpp" />
     <ClCompile Include="ShardTests.cpp" />
-    <ClCompile Include="SignalBatchTests.cpp" />
     <ClCompile Include="RelicTests.cpp" />
     <ClCompile Include="SignalTests.cpp" />
     <ClCompile Include="GlobalRelicTests.cpp" />

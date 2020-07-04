@@ -35,7 +35,7 @@ class ConstShardTestsFixture::Shard
 public:
     int value = 100;
 public:
-    Shard() = default;
+    explicit Shard() = default;
     explicit Shard(int value);
 };
 

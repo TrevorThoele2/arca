@@ -33,6 +33,37 @@ namespace Arca
             loop->Clear();
     }
 
+    void ReliquaryShards::Clear(RelicID id)
+    {
+        auto matrixSnapshot = Owner().matrices.DestroyingSnapshot(id);
+
+        for (auto& handler : Shards().handlers)
+        {
+            if (handler->BatchSource().ContainsFromBase(id))
+            {
+                const Type type{ handler->typeName, false };
+                Owner().Raise<Destroying>(HandleFrom(id, type, HandleObjectType::Shard));
+                matrixSnapshot.Finalize(type);
+            }
+
+            if (handler->ConstBatchSource().ContainsFromBase(id))
+            {
+                const Type type{ handler->typeName, true };
+                Owner().Raise<Destroying>(HandleFrom(id, type, HandleObjectType::Shard));
+                matrixSnapshot.Finalize(type);
+            }
+        }
+
+        for (auto& handler : Shards().handlers)
+        {
+            if (handler->BatchSource().ContainsFromBase(id))
+                handler->BatchSource().DestroyFromBase(id);
+
+            if (handler->ConstBatchSource().ContainsFromBase(id))
+                handler->ConstBatchSource().DestroyFromBase(id);
+        }
+    }
+
     bool ReliquaryShards::Contains(const Handle& handle) const
     {
         assert(handle.ObjectType() == HandleObjectType::Shard);

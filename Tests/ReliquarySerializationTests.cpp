@@ -4,17 +4,17 @@ using namespace std::string_literals;
 
 #include "ReliquarySerializationTests.h"
 
+#include "SignalListener.h"
+
 ReliquarySerializationTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(myValue)
+{}
+
+ReliquarySerializationTestsFixture::PreferentialSerializationConstructorShard::PreferentialSerializationConstructorShard(Serialization) :
+    calledPreferential(true)
 {}
 
 ReliquarySerializationTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
 {}
-
-ReliquarySerializationTestsFixture::TypedClosedRelic::TypedClosedRelic(Init init) :
-    ClosedTypedRelic(init)
-{
-    basicShard = FindOrCreate<BasicShard>();
-}
 
 ReliquarySerializationTestsFixture::TypedClosedRelic::TypedClosedRelic(Init init, int myInt) :
     ClosedTypedRelic(init), myInt(myInt)
@@ -22,10 +22,10 @@ ReliquarySerializationTestsFixture::TypedClosedRelic::TypedClosedRelic(Init init
     basicShard = Create<BasicShard>();
 }
 
-ReliquarySerializationTestsFixture::TypedOpenRelic::TypedOpenRelic(Init init) :
-    OpenTypedRelic(init)
+ReliquarySerializationTestsFixture::TypedClosedRelic::TypedClosedRelic(Init init, Serialization) :
+    ClosedTypedRelic(init)
 {
-    basicShard = FindOrCreate<BasicShard>();
+    basicShard = Find<BasicShard>();
 }
 
 ReliquarySerializationTestsFixture::TypedOpenRelic::TypedOpenRelic(Init init, int myInt) :
@@ -34,10 +34,16 @@ ReliquarySerializationTestsFixture::TypedOpenRelic::TypedOpenRelic(Init init, in
     basicShard = Create<BasicShard>();
 }
 
+ReliquarySerializationTestsFixture::TypedOpenRelic::TypedOpenRelic(Init init, Serialization) :
+    OpenTypedRelic(init)
+{
+    basicShard = Find<BasicShard>();
+}
+
 ReliquarySerializationTestsFixture::GlobalRelic::GlobalRelic(Init init) :
     ClosedTypedRelic(init)
 {
-    basicShard = FindOrCreate<BasicShard>();
+    basicShard = Create<BasicShard>();
 }
 
 ReliquarySerializationTestsFixture::GlobalRelic::GlobalRelic(Init init, int myInt, std::string shardData)
@@ -64,7 +70,7 @@ ReliquarySerializationTestsFixture::TypedClosedRelicNullInscription::TypedClosed
     :
     ClosedTypedRelic(init)
 {
-    basicShard = FindOrCreate<BasicShardNullInscription>();
+    basicShard = Create<BasicShardNullInscription>();
 }
 
 ReliquarySerializationTestsFixture::TypedClosedRelicNullInscription::TypedClosedRelicNullInscription(
@@ -80,7 +86,7 @@ ReliquarySerializationTestsFixture::TypedOpenRelicNullInscription::TypedOpenReli
     :
     OpenTypedRelic(init)
 {
-    basicShard = FindOrCreate<BasicShardNullInscription>();
+    basicShard = Create<BasicShardNullInscription>();
 }
 
 ReliquarySerializationTestsFixture::TypedOpenRelicNullInscription::TypedOpenRelicNullInscription(
@@ -96,7 +102,7 @@ ReliquarySerializationTestsFixture::GlobalRelicNullInscription::GlobalRelicNullI
     :
     ClosedTypedRelic(init)
 {
-    basicShard = FindOrCreate<BasicShardNullInscription>();
+    basicShard = Create<BasicShardNullInscription>();
 }
 
 ReliquarySerializationTestsFixture::GlobalRelicNullInscription::GlobalRelicNullInscription(
@@ -107,18 +113,18 @@ ReliquarySerializationTestsFixture::GlobalRelicNullInscription::GlobalRelicNullI
     basicShard = Create<BasicShardNullInscription>(std::move(shardData));
 }
 
-ReliquarySerializationTestsFixture::MovableOnlyRelic::MovableOnlyRelic(Init init)
-    : ClosedTypedRelic(init)
-{
-    basicShard = FindOrCreate<BasicShard>();
-}
-
 ReliquarySerializationTestsFixture::MovableOnlyRelic::MovableOnlyRelic(
     Init init, int myInt, std::string shardData)
     :
     ClosedTypedRelic(init), myValue(myInt)
 {
     basicShard = Create<BasicShard>(std::move(shardData));
+}
+
+ReliquarySerializationTestsFixture::MovableOnlyRelic::MovableOnlyRelic(Init init, Serialization) :
+    ClosedTypedRelic(init)
+{
+    basicShard = Find<BasicShard>();
 }
 
 const Inscription::BinaryArchive::StreamPosition defaultOutputArchiveSize = 147;
@@ -585,6 +591,8 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
         {
             auto loadedReliquary = ReliquaryOrigin().Actualize();
 
+            auto loadedSignals = SignalListener<BasicSignal>(*loadedReliquary);
+
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
 
             {
@@ -593,16 +601,65 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 inputArchiveSize = inputArchive.TellStream();
             }
 
-            auto loadedSignals = loadedReliquary->Batch<BasicSignal>();
-
             THEN("has no signals")
             {
-                REQUIRE(loadedSignals.IsEmpty());
+                REQUIRE(loadedSignals.Executions().empty());
             }
 
             THEN("input size is default output size")
             {
                 REQUIRE(inputArchiveSize == defaultOutputArchiveSize);
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(ReliquarySerializationTestsFixture, "preferential serialization", "[preferential][serialization]")
+{
+    GIVEN("saved reliquary with preferential relic and shard")
+    {
+        const auto savedReliquary = ReliquaryOrigin()
+            .Register<PreferentialSerializationConstructorRelic>()
+            .Register<PreferentialSerializationConstructorShard>()
+            .Actualize();
+
+        auto savedRelic = savedReliquary->Do(Arca::Create<PreferentialSerializationConstructorRelic>());
+        const auto openRelic = savedReliquary->Do(Arca::Create<OpenRelic>());
+        openRelic->Create<PreferentialSerializationConstructorShard>();
+
+        {
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            outputArchive(*savedReliquary);
+        }
+
+        WHEN("loading reliquary")
+        {
+            auto loadedReliquary = ReliquaryOrigin()
+                .Register<PreferentialSerializationConstructorRelic>()
+                .Register<PreferentialSerializationConstructorShard>()
+                .Actualize();
+
+            {
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                inputArchive(*loadedReliquary);
+            }
+
+            auto loadedRelic = Arca::Index<PreferentialSerializationConstructorRelic>(
+                savedRelic->ID(), *loadedReliquary);
+
+            auto loadedOpenRelic = Arca::Index<OpenRelic>(
+                openRelic->ID(), *loadedReliquary);
+
+            auto loadedShard = loadedOpenRelic->Find<PreferentialSerializationConstructorShard>();
+
+            THEN("loaded relic used preferential constructor")
+            {
+                REQUIRE(loadedRelic->calledPreferential);
+            }
+
+            THEN("loaded shard used preferential constructor")
+            {
+                REQUIRE(loadedShard->calledPreferential);
             }
         }
     }
@@ -655,11 +712,10 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "postulate serialization", "
                 REQUIRE(*loadedPostulate == *savedPostulate);
             }
 
-            THEN("reliquary has global, shard for global, and created signal")
+            THEN("reliquary has global, shard for global")
             {
                 REQUIRE(loadedReliquary->RelicSize() == 1);
                 REQUIRE(loadedReliquary->ShardSize() == 1);
-                REQUIRE(loadedReliquary->SignalSize() == 2);
             }
         }
     }
@@ -710,7 +766,6 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
             {
                 REQUIRE(loadedReliquary->RelicSize() == 1);
                 REQUIRE(loadedReliquary->ShardSize() == 1);
-                REQUIRE(loadedReliquary->SignalSize() == 2);
             }
 
             THEN("input size is default output size")
@@ -760,7 +815,6 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
             {
                 REQUIRE(loadedReliquary->RelicSize() == 0);
                 REQUIRE(loadedReliquary->ShardSize() == 0);
-                REQUIRE(loadedReliquary->SignalSize() == 0);
             }
 
             THEN("input size is default output size")
@@ -813,7 +867,6 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
             {
                 REQUIRE(loadedReliquary->RelicSize() == 0);
                 REQUIRE(loadedReliquary->ShardSize() == 0);
-                REQUIRE(loadedReliquary->SignalSize() == 0);
             }
 
             THEN("input size is default output size")
@@ -862,7 +915,6 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
             {
                 REQUIRE(loadedReliquary->RelicSize() == 0);
                 REQUIRE(loadedReliquary->ShardSize() == 0);
-                REQUIRE(loadedReliquary->SignalSize() == 0);
             }
 
             THEN("input size is default output size")
@@ -887,6 +939,8 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
         {
             auto loadedReliquary = ReliquaryOrigin().Actualize();
 
+            auto loadedSignals = SignalListener<BasicSignalNullInscription>(*loadedReliquary);
+
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
 
             {
@@ -895,18 +949,15 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
                 inputArchiveSize = inputArchive.TellStream();
             }
 
-            auto loadedSignals = loadedReliquary->Batch<BasicSignalNullInscription>();
-
             THEN("has no signals")
             {
-                REQUIRE(loadedSignals.IsEmpty());
+                REQUIRE(loadedSignals.Executions().empty());
             }
 
             THEN("reliquary is empty")
             {
                 REQUIRE(loadedReliquary->RelicSize() == 0);
                 REQUIRE(loadedReliquary->ShardSize() == 0);
-                REQUIRE(loadedReliquary->SignalSize() == 0);
             }
 
             THEN("input size is default output size")

@@ -73,7 +73,7 @@ class HandleTestsFixture::Shard
 public:
     std::string myValue;
 public:
-    Shard() = default;
+    explicit Shard() = default;
     explicit Shard(std::string myValue);
 };
 
@@ -82,7 +82,7 @@ class HandleTestsFixture::OtherShard
 public:
     std::string myValue;
 public:
-    OtherShard() = default;
+    explicit OtherShard() = default;
     explicit OtherShard(std::string myValue);
 };
 

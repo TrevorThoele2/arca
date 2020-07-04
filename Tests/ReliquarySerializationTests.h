@@ -15,11 +15,13 @@ public:
     class BasicShard;
     class BasicShardWithDifferentInputHandle;
     class OtherShard;
+    class PreferentialSerializationConstructorShard;
 
     class TypedClosedRelic;
     class TypedOpenRelic;
     class GlobalRelic;
     class NonDefaultConstructorRelic;
+    class PreferentialSerializationConstructorRelic;
 
     class BasicCurator;
 
@@ -52,6 +54,13 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Shard;
         static inline const TypeName typeName = "ReliquarySerializationTests_BasicShardWithDifferentInputHandle";
+    };
+
+    template<>
+    struct Traits<::ReliquarySerializationTestsFixture::PreferentialSerializationConstructorShard>
+    {
+        static const ObjectType objectType = ObjectType::Shard;
+        static inline const TypeName typeName = "ReliquarySerializationTests_PreferentialSerializationConstructorShard";
     };
 
     template<>
@@ -88,6 +97,13 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "ReliquarySerializationTests_NonDefaultConstructorRelic";
+    };
+
+    template<>
+    struct Traits<::ReliquarySerializationTestsFixture::PreferentialSerializationConstructorRelic>
+    {
+        static const ObjectType objectType = ObjectType::Relic;
+        static inline const TypeName typeName = "ReliquarySerializationTests_RelicPreferentialSerializationConstructor";
     };
 
     template<>
@@ -180,6 +196,15 @@ public:
     explicit BasicShardWithDifferentInputHandle(int myValue);
 };
 
+class ReliquarySerializationTestsFixture::PreferentialSerializationConstructorShard
+{
+public:
+    bool calledPreferential = false;
+public:
+    PreferentialSerializationConstructorShard() = default;
+    explicit PreferentialSerializationConstructorShard(Serialization);
+};
+
 class ReliquarySerializationTestsFixture::OtherShard
 {
 public:
@@ -195,8 +220,8 @@ public:
     int myInt = 0;
     Index<BasicShard> basicShard;
 public:
-    explicit TypedClosedRelic(Init init);
     TypedClosedRelic(Init init, int myInt);
+    TypedClosedRelic(Init init, Serialization);
 };
 
 class ReliquarySerializationTestsFixture::TypedOpenRelic final : public OpenTypedRelic<TypedOpenRelic>
@@ -205,8 +230,8 @@ public:
     int myInt = 0;
     Index<BasicShard> basicShard;
 public:
-    explicit TypedOpenRelic(Init init);
     TypedOpenRelic(Init init, int myInt);
+    TypedOpenRelic(Init init, Serialization);
 };
 
 class ReliquarySerializationTestsFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
@@ -226,6 +251,21 @@ public:
     int myInt = 0;
 public:
     NonDefaultConstructorRelic(Init init, int myInt);
+};
+
+class ReliquarySerializationTestsFixture::PreferentialSerializationConstructorRelic final :
+    public ClosedTypedRelic<PreferentialSerializationConstructorRelic>
+{
+public:
+    bool calledPreferential = false;
+public:
+    explicit PreferentialSerializationConstructorRelic(Init init) :
+        ClosedTypedRelic(init)
+    {}
+
+    explicit PreferentialSerializationConstructorRelic(Init init, Serialization) :
+        ClosedTypedRelic(init), calledPreferential(true)
+    {}
 };
 
 class ReliquarySerializationTestsFixture::BasicCurator final : public Curator
@@ -296,8 +336,8 @@ public:
 
     int myValue = 0;
 public:
-    explicit MovableOnlyRelic(Init init);
     MovableOnlyRelic(Init init, int myInt, std::string shardData);
+    MovableOnlyRelic(Init init, Serialization);
     MovableOnlyRelic(const MovableOnlyRelic& arg) = delete;
     MovableOnlyRelic(MovableOnlyRelic&& arg) noexcept = default;
     MovableOnlyRelic& operator=(const MovableOnlyRelic& arg) = delete;
@@ -342,6 +382,15 @@ namespace Inscription
         {
             archive(object.myValue);
         }
+    };
+
+    template<>
+    class Scribe<::ReliquarySerializationTestsFixture::PreferentialSerializationConstructorShard, BinaryArchive> final
+        : public ArcaCompositeScribe<::ReliquarySerializationTestsFixture::PreferentialSerializationConstructorShard, BinaryArchive>
+    {
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        {}
     };
 
     template<>
@@ -392,6 +441,15 @@ namespace Inscription
     class Scribe<::ReliquarySerializationTestsFixture::NonDefaultConstructorRelic, BinaryArchive> final
         : public ArcaNullScribe<::ReliquarySerializationTestsFixture::NonDefaultConstructorRelic, BinaryArchive>
     {};
+
+    template<>
+    class Scribe<::ReliquarySerializationTestsFixture::PreferentialSerializationConstructorRelic, BinaryArchive> final
+        : public ArcaCompositeScribe<::ReliquarySerializationTestsFixture::PreferentialSerializationConstructorRelic, BinaryArchive>
+    {
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        {}
+    };
 
     template<>
     class Scribe<::ReliquarySerializationTestsFixture::BasicCurator, BinaryArchive> final :

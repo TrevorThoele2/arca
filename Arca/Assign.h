@@ -6,15 +6,15 @@
 #include "IsShard.h"
 #include "RelicID.h"
 #include "Index.h"
+#include "Assigned.h"
+#include "Assigning.h"
 
 #include "ReliquaryRelics.h"
 #include "ReliquaryShards.h"
+#include "ReliquarySignals.h"
 
 namespace Arca
 {
-    class ReliquaryRelics;
-    class ReliquaryShards;
-
     template<class T, class Enable = void>
     struct AssignCopy;
 
@@ -27,9 +27,9 @@ namespace Arca
                 id, std::forward<Args>(args)...))
         {}
 
-        Index<T> Do(ReliquaryRelics& relics) const
+        Index<T> Do(ReliquaryRelics& relics, ReliquaryShards& shards, ReliquarySignals& signals) const
         {
-            return base->Do(relics);
+            return base->Do(relics, shards, signals);
         }
     private:
         class Base
@@ -37,7 +37,7 @@ namespace Arca
         public:
             virtual ~Base() = 0;
 
-            virtual Index<T> Do(ReliquaryRelics& relics) = 0;
+            virtual Index<T> Do(ReliquaryRelics& relics, ReliquaryShards& shards, ReliquarySignals& signals) = 0;
         };
 
         std::unique_ptr<Base> base;
@@ -51,17 +51,23 @@ namespace Arca
                 args(std::forward<Args>(args)...)
             {}
 
-            Index<T> Do(ReliquaryRelics& relics) override
+            Index<T> Do(ReliquaryRelics& relics, ReliquaryShards& shards, ReliquarySignals& signals) override
             {
                 return std::apply(
-                    [this, &relics](auto&& ... args)
+                    [this, &relics, &shards, &signals](auto&& ... args)
                     {
                         auto storage = relics.FindStorage<T>(id);
                         if (!storage)
                             throw relics.CannotFind(TypeFor<T>());
 
-                        *storage = T{ RelicInit{id, relics.Owner()}, std::forward<Args>(args)... };
-                        return Index<T>(id, relics.Owner());
+                        auto& owner = relics.Owner();
+
+                        signals.Raise(AssigningKnown<T>{ Index<T> { id, owner }});
+                        shards.Clear(id);
+                        *storage = T{ RelicInit{id, owner}, std::forward<Args>(args)... };
+                        signals.Raise(AssignedKnown<T>{ Index<T> { id, owner }});
+
+                        return Index<T>(id, owner);
                     }, std::move(args));
             }
         private:
@@ -90,9 +96,9 @@ namespace Arca
                 id, std::forward<Args>(args)...))
         {}
 
-        Index<T> Do(ReliquaryShards& shards) const
+        Index<T> Do(ReliquaryShards& shards, ReliquarySignals& signals) const
         {
-            return base->Do(shards);
+            return base->Do(shards, signals);
         }
     private:
         class Base
@@ -100,7 +106,7 @@ namespace Arca
         public:
             virtual ~Base() = 0;
 
-            virtual Index<T> Do(ReliquaryShards& shards) = 0;
+            virtual Index<T> Do(ReliquaryShards& shards, ReliquarySignals& signals) = 0;
         };
 
         std::unique_ptr<Base> base;
@@ -114,17 +120,22 @@ namespace Arca
                 args(std::forward<Args>(args)...)
             {}
 
-            Index<T> Do(ReliquaryShards& shards) override
+            Index<T> Do(ReliquaryShards& shards, ReliquarySignals& signals) override
             {
                 return std::apply(
-                    [this, &shards](auto&& ... args)
+                    [this, &shards, &signals](auto&& ... args)
                     {
                         auto storage = shards.FindStorage<T>(id);
                         if (!storage)
                             throw shards.CannotFind(TypeFor<T>());
 
+                        auto& owner = shards.Owner();
+
+                        signals.Raise(AssigningKnown<T>{ Index<T> { id, owner }});
                         *storage = T{ std::forward<Args>(args)... };
-                        return Index<T>(id, shards.Owner());
+                        signals.Raise(AssignedKnown<T>{ Index<T> { id, owner }});
+
+                        return Index<T>(id, owner);
                     }, std::move(args));
             }
         private:
@@ -156,9 +167,9 @@ namespace Arca
                 id, std::forward<Args>(args)...))
         {}
 
-        Index<T> Do(ReliquaryRelics& relics) const
+        Index<T> Do(ReliquaryRelics& relics, ReliquaryShards& shards, ReliquarySignals& signals) const
         {
-            return base->Do(relics);
+            return base->Do(relics, shards, signals);
         }
     private:
         class Base
@@ -166,7 +177,7 @@ namespace Arca
         public:
             virtual ~Base() = 0;
 
-            virtual Index<T> Do(ReliquaryRelics& relics) = 0;
+            virtual Index<T> Do(ReliquaryRelics& relics, ReliquaryShards& shards, ReliquarySignals& signals) = 0;
         };
 
         std::unique_ptr<Base> base;
@@ -180,17 +191,23 @@ namespace Arca
                 args(std::forward<Args>(args)...)
             {}
 
-            Index<T> Do(ReliquaryRelics& relics) override
+            Index<T> Do(ReliquaryRelics& relics, ReliquaryShards& shards, ReliquarySignals& signals) override
             {
                 return std::apply(
-                    [this, &relics](auto&& ... args)
+                    [this, &relics, &shards, &signals](auto&& ... args)
                     {
                         auto storage = relics.FindStorage<T>(id);
                         if (!storage)
                             throw relics.CannotFind(TypeFor<T>());
 
-                        *storage = std::move(T{ RelicInit{id, relics.Owner()}, std::forward<Args>(args)... });
-                        return Index<T>(id, relics.Owner());
+                        auto& owner = relics.Owner();
+
+                        signals.Raise(AssigningKnown<T>{ Index<T> { id, owner }});
+                        shards.Clear(id);
+                        *storage = std::move(T{ RelicInit{id, owner}, std::forward<Args>(args)... });
+                        signals.Raise(AssignedKnown<T>{ Index<T> { id, owner }});
+
+                        return Index<T>(id, owner);
                     }, std::move(args));
             }
         private:
@@ -219,9 +236,9 @@ namespace Arca
                 id, std::forward<Args>(args)...))
         {}
 
-        Index<T> Do(ReliquaryShards& shards) const
+        Index<T> Do(ReliquaryShards& shards, ReliquarySignals& signals) const
         {
-            return base->Do(shards);
+            return base->Do(shards, signals);
         }
     private:
         class Base
@@ -229,7 +246,7 @@ namespace Arca
         public:
             virtual ~Base() = 0;
 
-            virtual Index<T> Do(ReliquaryShards& shards) = 0;
+            virtual Index<T> Do(ReliquaryShards& shards, ReliquarySignals& signals) = 0;
         };
 
         std::unique_ptr<Base> base;
@@ -243,17 +260,22 @@ namespace Arca
                 args(std::forward<Args>(args)...)
             {}
 
-            Index<T> Do(ReliquaryShards& shards) override
+            Index<T> Do(ReliquaryShards& shards, ReliquarySignals& signals) override
             {
                 return std::apply(
-                    [this, &shards](auto&& ... args)
+                    [this, &shards, &signals](auto&& ... args)
                     {
                         auto storage = shards.FindStorage<T>(id);
                         if (!storage)
                             throw shards.CannotFind(TypeFor<T>());
 
+                        auto& owner = shards.Owner();
+
+                        signals.Raise(AssigningKnown<T>{ Index<T> { id, owner }});
                         *storage = std::move(T{ std::forward<Args>(args)... });
-                        return Index<T>(id, shards.Owner());
+                        signals.Raise(AssignedKnown<T>{ Index<T> { id, owner }});
+
+                        return Index<T>(id, owner);
                     }, std::move(args));
             }
         private:

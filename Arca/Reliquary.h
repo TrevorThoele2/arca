@@ -10,7 +10,6 @@
 
 #include "RelicBatch.h"
 #include "ShardBatch.h"
-#include "SignalBatch.h"
 #include "ClosedRelic.h"
 
 #include "RelicIndex.h"
@@ -19,6 +18,7 @@
 #include "MatrixIndex.h"
 #include "Postulate.h"
 #include "AsHandle.h"
+#include "IsSignal.h"
 
 #include "Create.h"
 #include "CreateWith.h"
@@ -30,7 +30,6 @@
 #include "Created.h"
 #include "Destroying.h"
 #include "RelicParented.h"
-#include "TransferableSignal.h"
 #include "MatrixFormed.h"
 #include "MatrixDissolved.h"
 
@@ -121,18 +120,13 @@ namespace Arca
         template<class CommandT, class... Args, std::enable_if_t<is_command_v<CommandT> && !std::is_void_v<command_result_t<CommandT>>, int> = 0>
         command_result_t<CommandT> Do(Args&& ... args);
     public:
-        template<class SignalT, std::enable_if_t<is_signal_v<SignalT> && !std::is_same_v<TransferableSignal, SignalT>, int> = 0>
+        template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
         void Raise(const SignalT& signal);
-        template<class SignalT, class... Args, std::enable_if_t<is_signal_v<SignalT> && !std::is_same_v<TransferableSignal, SignalT>, int> = 0>
+        template<class SignalT, class... Args, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
         void Raise(Args&& ... args);
 
         template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
-        void ExecuteOn(const std::function<void(const SignalT&)>& function);
-
-        template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
-        Arca::Batch<SignalT> Batch() const;
-
-        [[nodiscard]] SizeT SignalSize() const;
+        void On(const std::function<void(const SignalT&)>& function);
     public:
         void Destroy(const Handle& handle);
     private:
@@ -319,28 +313,22 @@ namespace Arca
         return Do(CommandT{ std::forward<Args>(args)... });
     }
 
-    template<class SignalT, std::enable_if_t<is_signal_v<SignalT> && !std::is_same_v<TransferableSignal, SignalT>, int>>
+    template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int>>
     void Reliquary::Raise(const SignalT& signal)
     {
         signals.Raise(signal);
     }
 
-    template<class SignalT, class... Args, std::enable_if_t<is_signal_v<SignalT> && !std::is_same_v<TransferableSignal, SignalT>, int>>
+    template<class SignalT, class... Args, std::enable_if_t<is_signal_v<SignalT>, int>>
     void Reliquary::Raise(Args&& ... args)
     {
         signals.Raise<SignalT>(std::forward<Args>(args)...);
     }
 
     template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int>>
-    void Reliquary::ExecuteOn(const std::function<void(const SignalT&)>& function)
+    void Reliquary::On(const std::function<void(const SignalT&)>& function)
     {
-        signals.ExecuteOn(function);
-    }
-
-    template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int>>
-    Batch<SignalT> Reliquary::Batch() const
-    {
-        return signals.batchSources.Batch<SignalT>();
+        signals.On(function);
     }
 
     template<class ShardT, class... ConstructorArgs, std::enable_if_t<is_shard_v<ShardT>, int>>
@@ -494,7 +482,6 @@ namespace Inscription
 
 #include "RelicBatchSourceDefinition.h"
 #include "MatrixBatchSourceDefinition.h"
-#include "TransferableSignalDefinition.h"
 #include "KnownMatrixDefinition.h"
 #include "EitherDefinition.h"
 #include "AllDefinition.h"

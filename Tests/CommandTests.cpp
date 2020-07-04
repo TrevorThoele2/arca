@@ -2,6 +2,8 @@
 
 #include "CommandTests.h"
 
+#include "SignalListener.h"
+
 void CommandTestsFixture::Curator::Handle(const Command& command)
 {
     handledCommands.push_back(command);
@@ -24,6 +26,10 @@ CommandTestsFixture::Relic::Relic(Init init, int integer, const std::string& str
 
 CommandTestsFixture::Shard::Shard(int integer, const std::string& string) :
     integer(integer), string(string)
+{}
+
+CommandTestsFixture::RelicWithShard::RelicWithShard(Init init, int integer, const std::string& string) :
+    ClosedTypedRelic(init), shard(init.Create<Shard>(integer, string))
 {}
 
 SCENARIO_METHOD(CommandTestsFixture, "command", "[command]")
@@ -94,17 +100,20 @@ SCENARIO_METHOD(CommandTestsFixture, "command linked multiple times", "[command]
 
 SCENARIO_METHOD(CommandTestsFixture, "relic copy assignment", "[command]")
 {
+    auto integers = dataGeneration.RandomGroup<int>(2);
+    auto strings = dataGeneration.RandomGroup<std::string>(2);
+
     GIVEN("registered reliquary")
     {
         auto reliquary = Arca::ReliquaryOrigin()
             .Register<Relic>()
             .Actualize();
 
-        auto integers = dataGeneration.RandomGroup<int>(2);
-        auto strings = dataGeneration.RandomGroup<std::string>(2);
-
         WHEN("creating relic and emitting command")
         {
+            auto assigningKnown = SignalListener<Arca::AssigningKnown<Relic>>(*reliquary);
+            auto assignedKnown = SignalListener<Arca::AssignedKnown<Relic>>(*reliquary);
+
             auto created = reliquary->Do<Arca::Create<Relic>>(integers[0], strings[0]);
 
             reliquary->Do<Arca::AssignCopy<Relic>>(created.ID(), integers[1], strings[1]);
@@ -115,6 +124,14 @@ SCENARIO_METHOD(CommandTestsFixture, "relic copy assignment", "[command]")
                 REQUIRE(created->integer != integers[0]);
                 REQUIRE(created->string == strings[1]);
                 REQUIRE(created->string != strings[0]);
+            }
+
+            THEN("emits signals")
+            {
+                REQUIRE(assigningKnown.Executions().size() == 1);
+                REQUIRE(assignedKnown.Executions().size() == 1);
+                REQUIRE(assigningKnown.Executions().begin()->reference.ID() == created->ID());
+                REQUIRE(assignedKnown.Executions().begin()->reference.ID() == created->ID());
             }
         }
 
@@ -129,21 +146,58 @@ SCENARIO_METHOD(CommandTestsFixture, "relic copy assignment", "[command]")
             }
         }
     }
+
+    GIVEN("registered relic with shard")
+    {
+        auto reliquary = Arca::ReliquaryOrigin()
+            .Register<RelicWithShard>()
+            .Register<Shard>()
+            .Actualize();
+
+        WHEN("creating relic and emitting command")
+        {
+            auto assigningKnown = SignalListener<Arca::AssigningKnown<RelicWithShard>>(*reliquary);
+            auto assignedKnown = SignalListener<Arca::AssignedKnown<RelicWithShard>>(*reliquary);
+
+            auto created = reliquary->Do<Arca::Create<RelicWithShard>>(integers[0], strings[0]);
+
+            reliquary->Do<Arca::AssignCopy<RelicWithShard>>(created.ID(), integers[1], strings[1]);
+
+            THEN("assigns new shard")
+            {
+                REQUIRE(created->shard->integer == integers[1]);
+                REQUIRE(created->shard->integer != integers[0]);
+                REQUIRE(created->shard->string == strings[1]);
+                REQUIRE(created->shard->string != strings[0]);
+            }
+
+            THEN("emits signals")
+            {
+                REQUIRE(assigningKnown.Executions().size() == 1);
+                REQUIRE(assignedKnown.Executions().size() == 1);
+                REQUIRE(assigningKnown.Executions().begin()->reference.ID() == created->ID());
+                REQUIRE(assignedKnown.Executions().begin()->reference.ID() == created->ID());
+            }
+        }
+    }
 }
 
 SCENARIO_METHOD(CommandTestsFixture, "relic move assignment", "[command]")
 {
+    auto integers = dataGeneration.RandomGroup<int>(2);
+    auto strings = dataGeneration.RandomGroup<std::string>(2);
+
     GIVEN("registered reliquary")
     {
         auto reliquary = Arca::ReliquaryOrigin()
             .Register<Relic>()
             .Actualize();
 
-        auto integers = dataGeneration.RandomGroup<int>(2);
-        auto strings = dataGeneration.RandomGroup<std::string>(2);
-
         WHEN("creating relic and emitting command")
         {
+            auto assigningKnown = SignalListener<Arca::AssigningKnown<Relic>>(*reliquary);
+            auto assignedKnown = SignalListener<Arca::AssignedKnown<Relic>>(*reliquary);
+
             auto created = reliquary->Do<Arca::Create<Relic>>(integers[0], strings[0]);
 
             reliquary->Do<Arca::AssignMove<Relic>>(created.ID(), integers[1], strings[1]);
@@ -155,6 +209,14 @@ SCENARIO_METHOD(CommandTestsFixture, "relic move assignment", "[command]")
                 REQUIRE(created->string == strings[1]);
                 REQUIRE(created->string != strings[0]);
             }
+
+            THEN("emits signals")
+            {
+                REQUIRE(assigningKnown.Executions().size() == 1);
+                REQUIRE(assignedKnown.Executions().size() == 1);
+                REQUIRE(assigningKnown.Executions().begin()->reference.ID() == created->ID());
+                REQUIRE(assignedKnown.Executions().begin()->reference.ID() == created->ID());
+            }
         }
 
         WHEN("emitting command without creating relic")
@@ -165,6 +227,40 @@ SCENARIO_METHOD(CommandTestsFixture, "relic move assignment", "[command]")
                     reliquary->Do<Arca::AssignMove<Relic>>(1, integers[1], strings[1]),
                     Arca::CannotFind,
                     ::Catch::Matchers::Message("The relic (" + Arca::Traits<Relic>::typeName + ") cannot be found."));
+            }
+        }
+    }
+
+    GIVEN("registered relic with shard")
+    {
+        auto reliquary = Arca::ReliquaryOrigin()
+            .Register<RelicWithShard>()
+            .Register<Shard>()
+            .Actualize();
+
+        WHEN("creating relic and emitting command")
+        {
+            auto assigningKnown = SignalListener<Arca::AssigningKnown<RelicWithShard>>(*reliquary);
+            auto assignedKnown = SignalListener<Arca::AssignedKnown<RelicWithShard>>(*reliquary);
+
+            auto created = reliquary->Do<Arca::Create<RelicWithShard>>(integers[0], strings[0]);
+
+            reliquary->Do<Arca::AssignMove<RelicWithShard>>(created.ID(), integers[1], strings[1]);
+
+            THEN("assigns new shard")
+            {
+                REQUIRE(created->shard->integer == integers[1]);
+                REQUIRE(created->shard->integer != integers[0]);
+                REQUIRE(created->shard->string == strings[1]);
+                REQUIRE(created->shard->string != strings[0]);
+            }
+
+            THEN("emits signals")
+            {
+                REQUIRE(assigningKnown.Executions().size() == 1);
+                REQUIRE(assignedKnown.Executions().size() == 1);
+                REQUIRE(assigningKnown.Executions().begin()->reference.ID() == created->ID());
+                REQUIRE(assignedKnown.Executions().begin()->reference.ID() == created->ID());
             }
         }
     }
@@ -183,6 +279,9 @@ SCENARIO_METHOD(CommandTestsFixture, "shard copy assignment", "[command]")
 
         WHEN("creating relic and emitting command")
         {
+            auto assigningKnown = SignalListener<Arca::AssigningKnown<Shard>>(*reliquary);
+            auto assignedKnown = SignalListener<Arca::AssignedKnown<Shard>>(*reliquary);
+
             auto created = reliquary->Do<Arca::Create<Arca::OpenRelic>>();
             created->Create<Shard>(integers[0], strings[0]);
 
@@ -196,6 +295,14 @@ SCENARIO_METHOD(CommandTestsFixture, "shard copy assignment", "[command]")
                 REQUIRE(shard->integer != integers[0]);
                 REQUIRE(shard->string == strings[1]);
                 REQUIRE(shard->string != strings[0]);
+            }
+
+            THEN("emits signals")
+            {
+                REQUIRE(assigningKnown.Executions().size() == 1);
+                REQUIRE(assignedKnown.Executions().size() == 1);
+                REQUIRE(assigningKnown.Executions().begin()->reference.ID() == created->ID());
+                REQUIRE(assignedKnown.Executions().begin()->reference.ID() == created->ID());
             }
         }
 
@@ -225,6 +332,9 @@ SCENARIO_METHOD(CommandTestsFixture, "shard move assignment", "[command]")
 
         WHEN("creating relic and emitting command")
         {
+            auto assigningKnown = SignalListener<Arca::AssigningKnown<Shard>>(*reliquary);
+            auto assignedKnown = SignalListener<Arca::AssignedKnown<Shard>>(*reliquary);
+
             auto created = reliquary->Do<Arca::Create<Arca::OpenRelic>>();
             created->Create<Shard>(integers[0], strings[0]);
 
@@ -238,6 +348,14 @@ SCENARIO_METHOD(CommandTestsFixture, "shard move assignment", "[command]")
                 REQUIRE(shard->integer != integers[0]);
                 REQUIRE(shard->string == strings[1]);
                 REQUIRE(shard->string != strings[0]);
+            }
+
+            THEN("emits signals")
+            {
+                REQUIRE(assigningKnown.Executions().size() == 1);
+                REQUIRE(assignedKnown.Executions().size() == 1);
+                REQUIRE(assigningKnown.Executions().begin()->reference.ID() == created->ID());
+                REQUIRE(assignedKnown.Executions().begin()->reference.ID() == created->ID());
             }
         }
 

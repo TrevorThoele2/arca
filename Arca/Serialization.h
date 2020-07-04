@@ -15,4 +15,5 @@
 #include "NullScribe.h"
 #include "TableScribe.h"
 
+#include "SerializationConstructorMarker.h"
 #include "InscriptionUserContext.h"
