@@ -16,7 +16,6 @@
 #include "ShardIndex.h"
 #include "GlobalIndex.h"
 #include "MatrixIndex.h"
-#include "Postulate.h"
 #include "AsHandle.h"
 #include "IsSignal.h"
 
@@ -478,7 +477,6 @@ namespace Inscription
 #include "MatrixIndexDefinition.h"
 #include "GlobalIndexDefinition.h"
 #include "ShardIndexDefinition.h"
-#include "PostulateDefinition.h"
 
 #include "RelicBatchSourceDefinition.h"
 #include "MatrixBatchSourceDefinition.h"

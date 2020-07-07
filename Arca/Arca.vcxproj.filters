@@ -441,12 +441,6 @@
     <ClInclude Include="CommandResult.h">
       <Filter>Header Files\Command</Filter>
     </ClInclude>
-    <ClInclude Include="Postulate.h">
-      <Filter>Header Files\Reference\Postulate</Filter>
-    </ClInclude>
-    <ClInclude Include="UsableForPostulate.h">
-      <Filter>Header Files\Reference\Postulate</Filter>
-    </ClInclude>
     <ClInclude Include="Index.h">
       <Filter>Header Files\Reference\Index</Filter>
     </ClInclude>
@@ -455,9 +449,6 @@
     </ClInclude>
     <ClInclude Include="RelicInitDefinition.h">
       <Filter>Header Files\Relic</Filter>
-    </ClInclude>
-    <ClInclude Include="PostulateDefinition.h">
-      <Filter>Header Files\Reference\Postulate</Filter>
     </ClInclude>
     <ClInclude Include="ShardIndexDefinition.h">
       <Filter>Header Files\Reference\Index\Shard</Filter>
@@ -685,9 +676,6 @@
     </Filter>
     <Filter Include="Header Files\Reference">
       <UniqueIdentifier>{29d022f3-04ee-45f2-bae7-8577ce0f63c5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Reference\Postulate">
-      <UniqueIdentifier>{1078d0a3-bed7-4d6d-aa22-0219d85740cb}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Reference\Index">
       <UniqueIdentifier>{0af7c992-c8d6-4968-b66c-32a0a88b551e}</UniqueIdentifier>

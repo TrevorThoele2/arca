@@ -51,12 +51,10 @@
     <ClInclude Include="MatrixIndexDefinition.h" />
     <ClInclude Include="MutablePointer.h" />
     <ClInclude Include="MutablePointerDefinition.h" />
-    <ClInclude Include="PostulateDefinition.h" />
     <ClInclude Include="ReferenceTypeFor.h" />
     <ClInclude Include="IsCommand.h" />
     <ClInclude Include="MatrixDissolved.h" />
     <ClInclude Include="MatrixFormed.h" />
-    <ClInclude Include="Postulate.h" />
     <ClInclude Include="All.h" />
     <ClInclude Include="HasScribe.h" />
     <ClInclude Include="IsMatrix.h" />
@@ -98,7 +96,6 @@
     <ClInclude Include="Shard.h" />
     <ClInclude Include="ShardList.h" />
     <ClInclude Include="Signal.h" />
-    <ClInclude Include="UsableForPostulate.h" />
     <ClInclude Include="UsableForGlobalIndex.h" />
     <ClInclude Include="UsableForRelicIndex.h" />
     <ClInclude Include="UsableForMatrixIndex.h" />

@@ -33,7 +33,6 @@
     <ClInclude Include="IsTypeTests.h" />
     <ClInclude Include="IndexTests.h" />
     <ClInclude Include="MatrixTests.h" />
-    <ClInclude Include="PostulateTests.h" />
     <ClInclude Include="RelicBatchTests.h" />
     <ClInclude Include="ReliquaryDependenciesTests.h" />
     <ClInclude Include="ReliquaryOriginRegistrationTests.h" />
@@ -63,7 +62,6 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="IndexTests.cpp" />
     <ClCompile Include="MatrixTests.cpp" />
-    <ClCompile Include="PostulateTests.cpp" />
     <ClCompile Include="RelicBatchTests.cpp" />
     <ClCompile Include="ReliquaryDependenciesTests.cpp" />
     <ClCompile Include="ReliquaryOriginRegistrationTests.cpp" />
