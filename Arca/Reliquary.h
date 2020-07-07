@@ -151,8 +151,6 @@ namespace Arca
         [[nodiscard]] RelicT* FindStorage(RelicID id);
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         [[nodiscard]] RelicT* FindGlobalStorage();
-        template<class T>
-        [[nodiscard]] T FindPostulateValue();
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] ShardT* FindStorage(RelicID id);
     private:
@@ -173,8 +171,6 @@ namespace Arca
         friend struct RelicInit;
         template<class, class>
         friend class Index;
-        template<class, class>
-        friend class Postulate;
 
         friend class KnownMatrix;
         template<class>
@@ -346,12 +342,6 @@ namespace Arca
     RelicT* Reliquary::FindGlobalStorage()
     {
         return relics.FindGlobalStorage<RelicT>();
-    }
-
-    template<class T>
-    T Reliquary::FindPostulateValue()
-    {
-        return relics.FindPostulateValue<T>();
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>

@@ -73,49 +73,4 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
             }
         }
     }
-
-    GIVEN("global relic registered")
-    {
-        auto origin = ReliquaryOrigin()
-            .Register<BasicShard>()
-            .Register<GlobalRelic>();
-
-        WHEN("registering int postulate with global relic backing")
-        {
-            THEN("not throws error")
-            {
-                REQUIRE_NOTHROW(origin.Postulate<int>(
-                    [](Reliquary& reliquary)
-                    {
-                        const Index<GlobalRelic> backing(reliquary);
-                        return backing->myValue;
-                    }));
-            }
-        }
-    }
-
-    GIVEN("postulate registered")
-    {
-        auto reliquary = ReliquaryOrigin()
-            .Register<BasicShard>()
-            .Register<BasicTypedRelic>()
-            .Register<GlobalRelic>()
-            .Postulate<int>(
-                [](Reliquary& reliquary)
-                {
-                    const Index<GlobalRelic> backing(reliquary);
-                    return backing->myValue;
-                })
-            .Actualize();
-
-        WHEN("retrieving backing relic type")
-        {
-            Index<GlobalRelic> global(*reliquary);
-
-            THEN("is retrieved")
-            {
-                REQUIRE(static_cast<bool>(global));
-            }
-        }
-    }
 }

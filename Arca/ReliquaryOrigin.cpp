@@ -30,9 +30,6 @@ namespace Arca
         for (auto& initializer : globalRelicList)
             initializer.factory(*reliquary);
 
-        for (auto& initializer : postulateInitializerMap)
-            initializer.second(*reliquary);
-
         PushAllCuratorsTo(*reliquary, curatorConstructionPipeline);
 
         reliquary->curators.workPipeline = TransformCuratorPipeline(*reliquary, curatorWorkPipeline);

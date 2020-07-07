@@ -302,16 +302,6 @@ namespace Arca
         return static_cast<RelicT*>(found->storage.get());
     }
 
-    template<class T>
-    T ReliquaryRelics::FindPostulateValue()
-    {
-        const auto found = postulateMap.find(typeid(T));
-        if (found != postulateMap.end())
-            return std::any_cast<T>(found->second(Owner()));
-
-        throw Arca::NotRegistered("postulate", typeid(T));
-    }
-
     template<
         class RelicT,
         class... ConstructorArgs,
