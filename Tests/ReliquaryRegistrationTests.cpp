@@ -8,6 +8,9 @@ ReliquaryRegistrationTestsFixture::Relic::Relic(Init init) : ClosedTypedRelic(in
     Create<Shard>();
 }
 
+ReliquaryRegistrationTestsFixture::GlobalRelic::GlobalRelic(Init init) : ClosedTypedRelic(init)
+{}
+
 SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reliquary]")
 {
     GIVEN("no types registered to origin")
@@ -149,6 +152,125 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
                         "The command (" + ::Chroma::ToString(TypeFor<Command>()) + ") was not registered. " +
                         "The class name is: \"" + typeid(Command).name() + "\".")
                 );
+            }
+        }
+    }
+
+    GIVEN("relic types registered to reliquary")
+    {
+        auto reliquary = ReliquaryOrigin()
+            .Register<Relic>()
+            .Register<GlobalRelic>()
+            .Actualize();
+
+        const auto typeNames = reliquary->AllRelicTypeNames();
+
+        WHEN("checking open relic type")
+        {
+            const auto typeName = TypeFor<OpenRelic>().name;
+
+            THEN("is relic type")
+            {
+                REQUIRE(reliquary->IsRelicTypeName(typeName));
+                const auto found = std::find(
+                    typeNames.begin(),
+                    typeNames.end(),
+                    typeName);
+                REQUIRE(found != typeNames.end());
+            }
+
+            THEN("is relic object handle type")
+            {
+                REQUIRE(reliquary->ObjectHandleTypeFor(typeName) == HandleObjectType::Relic);
+            }
+        }
+
+        WHEN("checking closed relic type")
+        {
+            const auto typeName = TypeFor<OpenRelic>().name;
+
+            THEN("is relic type")
+            {
+                REQUIRE(reliquary->IsRelicTypeName(typeName));
+                const auto found = std::find(
+                    typeNames.begin(),
+                    typeNames.end(),
+                    typeName);
+                REQUIRE(found != typeNames.end());
+            }
+
+            THEN("is relic object handle type")
+            {
+                REQUIRE(reliquary->ObjectHandleTypeFor(typeName) == HandleObjectType::Relic);
+            }
+        }
+
+        WHEN("checking typed relic type")
+        {
+            const auto typeName = TypeFor<OpenRelic>().name;
+
+            THEN("is relic type")
+            {
+                REQUIRE(reliquary->IsRelicTypeName(typeName));
+                const auto found = std::find(
+                    typeNames.begin(),
+                    typeNames.end(),
+                    typeName);
+                REQUIRE(found != typeNames.end());
+            }
+
+            THEN("is relic object handle type")
+            {
+                REQUIRE(reliquary->ObjectHandleTypeFor(typeName) == HandleObjectType::Relic);
+            }
+        }
+
+        WHEN("checking global relic type")
+        {
+            const auto typeName = TypeFor<OpenRelic>().name;
+
+            THEN("is relic type")
+            {
+                REQUIRE(reliquary->IsRelicTypeName(typeName));
+                const auto found = std::find(
+                    typeNames.begin(),
+                    typeNames.end(),
+                    typeName);
+                REQUIRE(found != typeNames.end());
+            }
+
+            THEN("is relic object handle type")
+            {
+                REQUIRE(reliquary->ObjectHandleTypeFor(typeName) == HandleObjectType::Relic);
+            }
+        }
+    }
+
+    GIVEN("shard types registered to reliquary")
+    {
+        auto reliquary = ReliquaryOrigin()
+            .Register<Shard>()
+            .Actualize();
+
+        const auto typeNames = reliquary->AllShardTypeNames();
+
+        WHEN("checking shard type")
+        {
+            const auto typeName = TypeFor<Shard>().name;
+
+            THEN("is shard type")
+            {
+                REQUIRE(reliquary->IsShardTypeName(typeName));
+                const auto found = std::find(
+                    typeNames.begin(),
+                    typeNames.end(),
+                    typeName);
+                REQUIRE(found != typeNames.end());
+            }
+
+            THEN("is shard object handle type")
+            {
+                REQUIRE(reliquary->ObjectHandleTypeFor(typeName) == HandleObjectType::Shard);
             }
         }
     }

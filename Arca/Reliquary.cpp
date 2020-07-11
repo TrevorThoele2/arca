@@ -4,7 +4,6 @@
 #include <cassert>
 #include <utility>
 
-#include "ReliquaryDependencies.h"
 #include <Inscription/MultimapScribe.h>
 #include <Inscription/MemoryScribe.h>
 #include <Inscription/VectorScribe.h>
@@ -24,6 +23,16 @@ namespace Arca
         return relics.ParentOf(child);
     }
 
+    bool Reliquary::IsRelicTypeName(const TypeName& typeName) const
+    {
+        return relics.IsRelicTypeName(typeName);
+    }
+
+    std::vector<TypeName> Reliquary::AllRelicTypeNames() const
+    {
+        return relics.AllTypeNames();
+    }
+
     std::vector<RelicID> Reliquary::AllIDs() const
     {
         return relics.AllIDs();
@@ -34,6 +43,16 @@ namespace Arca
         return relics.metadataList.size();
     }
 
+    bool Reliquary::IsShardTypeName(const TypeName& typeName) const
+    {
+        return shards.IsShardTypeName(typeName);
+    }
+
+    std::vector<TypeName> Reliquary::AllShardTypeNames() const
+    {
+        return shards.AllTypeNames();
+    }
+
     Reliquary::SizeT Reliquary::ShardSize() const
     {
         SizeT totalSize = 0;
@@ -42,6 +61,16 @@ namespace Arca
         for (auto& loop : shards.handlers)
             totalSize += loop->ConstBatchSource().Size();
         return totalSize;
+    }
+
+    std::optional<HandleObjectType> Reliquary::ObjectHandleTypeFor(const TypeName& typeName) const
+    {
+        if (IsRelicTypeName(typeName))
+            return HandleObjectType::Relic;
+        else if (IsShardTypeName(typeName))
+            return HandleObjectType::Shard;
+        else
+            return {};
     }
 
     Reliquary::SizeT Reliquary::MatrixSize() const
@@ -94,14 +123,6 @@ namespace Inscription
     void Scribe<::Arca::Reliquary, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
         userContext.reliquary = &object;
-        if (object.Contains<Arca::ReliquaryDependencies>())
-        {
-            auto dependencies = object.Do<Arca::AllReliquaryDependencies>();
-            userContext.dependents.reserve(dependencies.size());
-            for (auto& dependent : dependencies)
-                userContext.dependents.push_back(
-                    Arca::InscriptionUserContext::Dependent{ dependent.id, dependent.reliquary });
-        }
         archive.EmplaceUserContext(&userContext);
 
         archive(object.relics.nextRelicID);
@@ -110,6 +131,8 @@ namespace Inscription
             Save(object, archive);
         else
             Load(object, archive);
+
+        archive.RemoveUserContext<Arca::InscriptionUserContext>();
     }
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::Save(ObjectT& object, ArchiveT& archive)

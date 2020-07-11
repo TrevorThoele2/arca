@@ -11,26 +11,12 @@ using namespace Arca;
 class ReliquaryRegistrationTestsFixture : public GeneralFixture
 {
 public:
-    class Shard
-    {};
-
-    class Relic final : public ClosedTypedRelic<Relic>
-    {
-    public:
-        explicit Relic(Init init);
-    };
-
-    class GlobalRelic final : public ClosedTypedRelic<Relic>
-    {};
-
-    class Curator final : public Arca::Curator
-    {};
-
-    struct Command
-    {};
-
-    struct Signal
-    {};
+    class Shard;
+    class Relic;
+    class GlobalRelic;
+    class Curator;
+    struct Command;
+    struct Signal;
 };
 
 namespace Arca
@@ -78,6 +64,30 @@ namespace Arca
         static inline const TypeName typeName = "ReliquaryTestsSignal";
     };
 }
+
+class ReliquaryRegistrationTestsFixture::Shard
+{};
+
+class ReliquaryRegistrationTestsFixture::Relic final : public ClosedTypedRelic<Relic>
+{
+public:
+    explicit Relic(Init init);
+};
+
+class ReliquaryRegistrationTestsFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
+{
+public:
+    explicit GlobalRelic(Init init);
+};
+
+class ReliquaryRegistrationTestsFixture::Curator final : public Arca::Curator
+{};
+
+struct ReliquaryRegistrationTestsFixture::Command
+{};
+
+struct ReliquaryRegistrationTestsFixture::Signal
+{};
 
 namespace Inscription
 {

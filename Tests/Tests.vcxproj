@@ -34,7 +34,6 @@
     <ClInclude Include="IndexTests.h" />
     <ClInclude Include="MatrixTests.h" />
     <ClInclude Include="RelicBatchTests.h" />
-    <ClInclude Include="ReliquaryDependenciesTests.h" />
     <ClInclude Include="ReliquaryOriginRegistrationTests.h" />
     <ClInclude Include="ReliquaryRegistrationTests.h" />
     <ClInclude Include="ReliquarySerializationTests.h" />
@@ -46,6 +45,7 @@
     <ClInclude Include="SignalListener.h" />
     <ClInclude Include="SignalTests.h" />
     <ClInclude Include="GlobalRelicTests.h" />
+    <ClInclude Include="TypeTests.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AllBatchTests.cpp" />
@@ -63,7 +63,6 @@
     <ClCompile Include="IndexTests.cpp" />
     <ClCompile Include="MatrixTests.cpp" />
     <ClCompile Include="RelicBatchTests.cpp" />
-    <ClCompile Include="ReliquaryDependenciesTests.cpp" />
     <ClCompile Include="ReliquaryOriginRegistrationTests.cpp" />
     <ClCompile Include="ReliquaryRegistrationTests.cpp" />
     <ClCompile Include="ReliquarySerializationTests.cpp" />
@@ -74,6 +73,7 @@
     <ClCompile Include="RelicTests.cpp" />
     <ClCompile Include="SignalTests.cpp" />
     <ClCompile Include="GlobalRelicTests.cpp" />
+    <ClCompile Include="TypeTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Chroma\Chroma\Chroma.vcxproj">

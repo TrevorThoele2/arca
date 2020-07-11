@@ -2,6 +2,9 @@
 
 #include <string>
 
+#include <Inscription/CompositeScribe.h>
+#include <Inscription/BinaryArchive.h>
+
 namespace Arca
 {
     using TypeName = std::string;
@@ -28,4 +31,15 @@ namespace Arca
 namespace Chroma
 {
     std::string ToString(const Arca::Type& type);
+}
+
+namespace Inscription
+{
+    template<>
+    class Scribe<Arca::Type, BinaryArchive> final :
+        public CompositeScribe<Arca::Type, BinaryArchive>
+    {
+    public:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+    };
 }

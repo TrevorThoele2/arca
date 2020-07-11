@@ -2,8 +2,6 @@
 
 #include "Handle.h"
 #include "Index.h"
-#include "Index.h"
-#include "Index.h"
 
 namespace Arca
 {

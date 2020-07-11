@@ -35,7 +35,6 @@
 #include "InscriptionUserContext.h"
 #include "Serialization.h"
 #include "HasScribe.h"
-#include "TypeScribe.h"
 #include <Inscription/OutputJumpTable.h>
 #include <Inscription/InputJumpTable.h>
 
@@ -70,6 +69,9 @@ namespace Arca
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
         [[nodiscard]] RelicID IDFor() const;
 
+        [[nodiscard]] bool IsRelicTypeName(const TypeName& typeName) const;
+        [[nodiscard]] std::vector<TypeName> AllRelicTypeNames() const;
+
         [[nodiscard]] std::vector<RelicID> AllIDs() const;
 
         [[nodiscard]] SizeT RelicSize() const;
@@ -83,7 +85,12 @@ namespace Arca
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] RelicID IDFor(const ShardT& shard) const;
 
+        [[nodiscard]] bool IsShardTypeName(const TypeName& typeName) const;
+        [[nodiscard]] std::vector<TypeName> AllShardTypeNames() const;
+
         [[nodiscard]] SizeT ShardSize() const;
+    public:
+        [[nodiscard]] std::optional<HandleObjectType> ObjectHandleTypeFor(const TypeName& typeName) const;
     public:
         template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;

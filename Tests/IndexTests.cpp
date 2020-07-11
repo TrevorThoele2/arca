@@ -3,7 +3,6 @@
 #include "IndexTests.h"
 
 #include <Arca/ReliquaryOrigin.h>
-#include <Arca/ReliquaryDependencies.h>
 
 IndexTestsFixture::Shard::Shard(int myInt) : myInt(myInt)
 {}
@@ -591,50 +590,6 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
             THEN("index2 is true")
             {
                 REQUIRE(static_cast<bool>(index2) == true);
-            }
-        }
-    }
-}
-
-SCENARIO_METHOD(IndexTestsFixture, "Index from different reliquary is serializable", "[index][serialization]")
-{
-    GIVEN("two registered reliquaries")
-    {
-        auto origin = ReliquaryOrigin()
-            .Register<Shard>()
-            .Register<RelicHolderRelic>()
-            .Register<ReliquaryDependencies>();
-
-        auto dependentReliquary = origin.Actualize();
-        auto mainReliquary = origin.Actualize();
-        const auto name = dataGeneration.Random<std::string>();
-        mainReliquary->Do(AddReliquaryDependency{ name, dependentReliquary.get() });
-
-        WHEN("creating open relic giving to other reliquary and saving")
-        {
-            auto relic = mainReliquary->Do<Create<RelicHolderRelic>>(dependentReliquary->Do<Create<OpenRelic>>());
-            auto shard = relic->held->Create<Shard>(dataGeneration.Random<int>());
-
-            {
-                ::Inscription::OutputBinaryArchive archive("Testing.dat", "Testing", 1);
-
-                archive(*mainReliquary);
-            }
-
-            THEN("loading gives correct held relic")
-            {
-                auto loadedReliquary2 = origin.Actualize();
-                loadedReliquary2->Do(AddReliquaryDependency{ name, dependentReliquary.get() });
-
-                {
-                    ::Inscription::InputBinaryArchive archive("Testing.dat", "Testing");
-
-                    archive(*loadedReliquary2);
-                }
-
-                auto loadedRelic = Arca::Index<RelicHolderRelic>(relic.ID(), *loadedReliquary2);
-
-                REQUIRE(loadedRelic->held->Find<Shard>()->myInt == shard->myInt);
             }
         }
     }
