@@ -6,7 +6,7 @@ namespace Arca
 {
     std::optional<Handle> OpenRelic::Parent() const
     {
-        return owner->ParentOf(AsHandle(*this));
+        return owner->ParentOf(ID());
     }
 
     RelicID OpenRelic::ID() const

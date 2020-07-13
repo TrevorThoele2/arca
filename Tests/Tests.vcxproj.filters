@@ -79,6 +79,9 @@
     <ClCompile Include="TypeTests.cpp">
       <Filter>Source Files\Tests</Filter>
     </ClCompile>
+    <ClCompile Include="RelicParentingTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConstShardTests.h">
@@ -160,6 +163,9 @@
       <Filter>Header Files\Automation</Filter>
     </ClInclude>
     <ClInclude Include="TypeTests.h">
+      <Filter>Header Files\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicParentingTests.h">
       <Filter>Header Files\Tests</Filter>
     </ClInclude>
   </ItemGroup>

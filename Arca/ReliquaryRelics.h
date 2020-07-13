@@ -54,7 +54,8 @@ namespace Arca
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
         [[nodiscard]] bool Contains() const;
 
-        [[nodiscard]] std::optional<Handle> ParentOf(const Handle& child) const;
+        [[nodiscard]] std::optional<Handle> ParentOf(RelicID childID) const;
+        [[nodiscard]] std::vector<Handle> ChildrenOf(RelicID parentID) const;
 
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int> = 0>
         [[nodiscard]] RelicID IDFor(const RelicT& relic) const;
