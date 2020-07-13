@@ -46,10 +46,16 @@ ReliquarySerializationTestsFixture::GlobalRelic::GlobalRelic(Init init) :
     basicShard = Create<BasicShard>();
 }
 
-ReliquarySerializationTestsFixture::GlobalRelic::GlobalRelic(Init init, int myInt, std::string shardData)
-    : ClosedTypedRelic(init), myInt(myInt)
+ReliquarySerializationTestsFixture::GlobalRelic::GlobalRelic(Init init, int myInt, std::string shardData) :
+    ClosedTypedRelic(init), myInt(myInt)
 {
     basicShard = Create<BasicShard>(std::move(shardData));
+}
+
+ReliquarySerializationTestsFixture::GlobalRelic::GlobalRelic(Init init, Serialization) :
+    ClosedTypedRelic(init)
+{
+    basicShard = Find<BasicShard>();
 }
 
 ReliquarySerializationTestsFixture::NonDefaultConstructorRelic::NonDefaultConstructorRelic(
