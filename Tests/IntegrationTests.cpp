@@ -21,6 +21,23 @@ void IntegrationTestsFixture::ParentRelic::CreateChild() const
     Owner().Do<Arca::CreateChild<ChildRelic>>(AsHandle(*this));
 }
 
+IntegrationTestsFixture::MatrixCreatingRelic::MatrixCreatingRelic(Init init) :
+    ClosedTypedRelic(init)
+{
+    init.Create<BasicShard>();
+    init.Create<OtherShard>();
+}
+
+IntegrationTestsFixture::MatrixAndParentCurator::MatrixAndParentCurator(Init init) :
+    Curator(init)
+{
+    Owner().On<MatrixFormed<All<BasicShard, OtherShard>>>(
+        [this](const MatrixFormed<All<BasicShard, OtherShard>>& signal)
+        {
+            hadMatrixAndParent = static_cast<bool>(Owner().ParentOf(signal.index.ID()));
+        });
+}
+
 namespace Arca
 {
     bool Traits<::IntegrationTestsFixture::ParentRelic>::ShouldCreate(Reliquary& reliquary, int value)
@@ -210,6 +227,36 @@ SCENARIO_METHOD(IntegrationTestsFixture, "curators with custom signal execution"
                         ++i;
                         return returnValue;
                     }));
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(
+    IntegrationTestsFixture,
+    "curator relying on matrix formation and parenting sees both true",
+    "[integration][matrix][signal][curator]")
+{
+    GIVEN("registered reliquary with curator, shard registered and shard created")
+    {
+        const auto reliquary = ReliquaryOrigin()
+            .Register<BasicShard>()
+            .Register<OtherShard>()
+            .Register<MatrixCreatingRelic>()
+            .Register<MatrixAndParentCurator>()
+            .Actualize();
+
+        auto parent = reliquary->Do(Create<OpenRelic>());
+
+        WHEN("creating child relic")
+        {
+            reliquary->Do(CreateChild<MatrixCreatingRelic>(parent));
+
+            THEN("curator has seen both matrix and parent")
+            {
+                auto& curator = reliquary->Find<MatrixAndParentCurator>();
+
+                REQUIRE(curator.hadMatrixAndParent);
             }
         }
     }

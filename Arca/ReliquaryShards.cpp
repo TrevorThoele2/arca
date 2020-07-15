@@ -35,7 +35,7 @@ namespace Arca
 
     void ReliquaryShards::Clear(RelicID id)
     {
-        auto matrixSnapshot = Owner().matrices.DestroyingSnapshot(id);
+        auto matrixSnapshot = Owner().matrices.StartDestroyingTransaction(id);
 
         for (auto& handler : handlers)
         {

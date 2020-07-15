@@ -7,7 +7,7 @@
 #include "Pipeline.h"
 #include "HasHandledCommands.h"
 
-#include <function2/function2.hpp>
+#include "Operation.h"
 
 namespace Arca
 {
@@ -155,18 +155,15 @@ namespace Arca
 
         curatorList.push_back(TypeConstructor{
             type.name,
-            [args = std::make_tuple(std::forward<Args>(args) ...)](Reliquary& reliquary) mutable
-            {
-                return std::apply(
-                    [&reliquary](auto&& ... args)
-                    {
-                        reliquary.curators.CreateHandler<CuratorT>(std::forward<decltype(args)>(args)...);
+            CreateOperation<Reliquary&>(
+                [](Reliquary& reliquary, auto&& ... args)
+                {
+                    reliquary.curators.CreateHandler<CuratorT>(std::forward<decltype(args)>(args)...);
 
-                        auto& curator = reliquary.curators.Find<CuratorT>();
-                        LinkHandledCommands<CuratorT>(curator, reliquary);
-                    },
-                    std::move(args));
-            }});
+                    auto& curator = reliquary.curators.Find<CuratorT>();
+                    LinkHandledCommands<CuratorT>(curator, reliquary);
+                },
+                std::forward<Args>(args)...) });
 
         return std::move(*this);
     }
@@ -190,16 +187,13 @@ namespace Arca
     {
         globalRelicList.push_back(TypeConstructor{
             TypeFor<RelicT>().name,
-            [args = std::make_tuple(std::forward<ConstructorArgs>(constructorArgs) ...)](Reliquary& reliquary) mutable
-            {
-                return std::apply(
-                    [&reliquary](auto&& ... constructorArgs)
-                    {
-                        reliquary.relics.CreateGlobalHandler<RelicT>(
-                            std::forward<decltype(constructorArgs)>(constructorArgs)...);
-                    },
-                    std::move(args));
-            }});
+            CreateOperation<Reliquary&>(
+                [](Reliquary& reliquary, auto&& ... constructorArgs)
+                {
+                    reliquary.relics.CreateGlobalHandler<RelicT>(
+                        std::forward<decltype(constructorArgs)>(constructorArgs)...);
+                },
+                std::forward<ConstructorArgs>(constructorArgs)...) });
     }
 
     template<class RelicT>

@@ -21,8 +21,8 @@ namespace Arca
         if (!ShouldCreate<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...))
             return {};
 
-        auto pushed = PushNewRelic<RelicT>({}, std::forward<ConstructorArgs>(constructorArgs)...);
-        return CreateIndex<RelicT>(pushed->ID());
+        auto id = StartNewRelic<RelicT>();
+        return FinishNewRelic<RelicT>({}, id, std::forward<ConstructorArgs>(constructorArgs)...);
     }
 
     template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
@@ -31,8 +31,8 @@ namespace Arca
         if (!ShouldCreate<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...))
             return {};
 
-        auto pushed = PushNewRelic<RelicT>(structure, std::forward<ConstructorArgs>(constructorArgs)...);
-        return CreateIndex<RelicT>(pushed->ID());
+        auto id = StartNewRelic<RelicT>();
+        return FinishNewRelic<RelicT>(structure, id, std::forward<ConstructorArgs>(constructorArgs)...);
     }
 
     template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
@@ -41,18 +41,24 @@ namespace Arca
         if (!ShouldCreate<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...))
             return {};
 
+        auto id = StartNewRelic<RelicT>();
         auto structure = RelicStructures().RequiredRelicStructure(structureName);
-        auto pushed = PushNewRelic<RelicT>(structure, std::forward<ConstructorArgs>(constructorArgs)...);
-        return CreateIndex<RelicT>(pushed->ID());
+        return FinishNewRelic<RelicT>(structure, id, std::forward<ConstructorArgs>(constructorArgs)...);
     }
 
     template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
     Index<RelicT> ReliquaryRelics::CreateChild(const Handle& parent, ConstructorArgs&& ... constructorArgs)
     {
         ThrowIfCannotParent(parent, RelicPrototype{ NextID(), OpennessFor<RelicT>() });
-        auto child = Create<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...);
-        Parent(parent, AsHandle(*child));
-        return child;
+
+        if (!ShouldCreate<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...))
+            return {};
+
+        auto id = StartNewRelic<RelicT>();
+        Parent(parent, Handle(id, Owner(), TypeFor<RelicT>(), HandleObjectType::Relic));
+        auto index = FinishNewRelic<RelicT>({}, id, std::forward<ConstructorArgs>(constructorArgs)...);
+        Owner().Raise<RelicParented>({ parent, AsHandle(*index) });
+        return index;
     }
 
     template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
@@ -60,9 +66,15 @@ namespace Arca
         const Handle& parent, const RelicStructure& structure, ConstructorArgs&& ... constructorArgs)
     {
         ThrowIfCannotParent(parent, RelicPrototype{ NextID(), OpennessFor<RelicT>() });
-        auto child = CreateWith<RelicT>(structure, std::forward<ConstructorArgs>(constructorArgs)...);
-        Parent(parent, AsHandle(*child));
-        return child;
+
+        if (!ShouldCreate<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...))
+            return {};
+
+        auto id = StartNewRelic<RelicT>();
+        Parent(parent, Handle(id, Owner(), TypeFor<RelicT>(), HandleObjectType::Relic));
+        auto index = FinishNewRelic<RelicT>(structure, id, std::forward<ConstructorArgs>(constructorArgs)...);
+        Owner().Raise<RelicParented>({ parent, AsHandle(*index) });
+        return index;
     }
 
     template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
@@ -70,9 +82,16 @@ namespace Arca
         const Handle& parent, const std::string& structureName, ConstructorArgs&& ... constructorArgs)
     {
         ThrowIfCannotParent(parent, RelicPrototype{ NextID(), OpennessFor<RelicT>() });
-        auto child = CreateWith<RelicT>(structureName, std::forward<ConstructorArgs>(constructorArgs)...);
-        Parent(parent, AsHandle(*child));
-        return child;
+
+        if (!ShouldCreate<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...))
+            return {};
+
+        auto id = StartNewRelic<RelicT>();
+        Parent(parent, Handle(id, Owner(), TypeFor<RelicT>(), HandleObjectType::Relic));
+        auto structure = RelicStructures().RequiredRelicStructure(structureName);
+        auto index = FinishNewRelic<RelicT>(structure, id, std::forward<ConstructorArgs>(constructorArgs)...);
+        Owner().Raise<RelicParented>({ parent, AsHandle(*index) });
+        return index;
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
@@ -82,7 +101,7 @@ namespace Arca
         if (!WillDestroy(metadata))
             return;
 
-        auto index = CreateIndex<RelicT>(id);
+        auto index = Index<RelicT>(id, Owner());
         Owner().Raise<DestroyingKnown<RelicT>>(index);
         Destroy(*metadata);
     }
@@ -267,7 +286,7 @@ namespace Arca
         const auto type = TypeFor<RelicT>();
         const auto id = AdvanceID();
 
-        auto metadata = SetupNewInternals(
+        auto metadata = SetupNewMetadata(
             id,
             OpennessFor<RelicT>(),
             LocalityFor<RelicT>(),
@@ -320,34 +339,38 @@ namespace Arca
         return true;
     }
 
-    template<class RelicT, class... ConstructorArgs>
-    RelicT* ReliquaryRelics::PushNewRelic(RelicStructure structure, ConstructorArgs&& ... constructorArgs)
+    template<class RelicT>
+    RelicID ReliquaryRelics::StartNewRelic()
     {
         const auto id = AdvanceID();
 
-        SetupNewInternals(
+        SetupNewMetadata(
             id,
             OpennessFor<RelicT>(),
             LocalityFor<RelicT>(),
             HasScribe<RelicT>(),
             TypeFor<RelicT>());
 
+        return id;
+    }
+
+    template<class RelicT, class... ConstructorArgs>
+    Index<RelicT> ReliquaryRelics::FinishNewRelic(
+        RelicStructure structure, RelicID id, ConstructorArgs&& ... constructorArgs)
+    {
         auto& batchSource = RequiredBatchSource<RelicT>();
-        auto added = batchSource.Add(RelicT{ RelicInit{id, Owner()}, std::forward<ConstructorArgs>(constructorArgs)... });
+        auto added = batchSource.Add(
+            RelicT{ RelicInit{id, Owner()}, std::forward<ConstructorArgs>(constructorArgs)... });
 
         MetadataFor(id)->storage = added;
 
         SatisfyStructure(id, structure);
 
-        Owner().Raise<Created>(HandleFrom(id, TypeFor<RelicT>(), HandleObjectType::Relic));
-        Owner().Raise<CreatedKnown<RelicT>>(CreateIndex<RelicT>(id));
+        const auto index = Index<RelicT>{ id, Owner() };
 
-        return added;
-    }
+        Owner().Raise<Created>(HandleFrom(index.ID(), TypeFor<RelicT>(), HandleObjectType::Relic));
+        Owner().Raise<CreatedKnown<RelicT>>(index);
 
-    template<class T>
-    auto ReliquaryRelics::CreateIndex(RelicID id) const
-    {
-        return ToReference<T>(id, const_cast<Reliquary&>(Owner()));
+        return index;
     }
 }

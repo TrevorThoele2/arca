@@ -28,38 +28,38 @@ namespace Arca
         ReliquaryMatrices(const ReliquaryMatrices& arg) = delete;
         ReliquaryMatrices& operator=(const ReliquaryMatrices& arg) = delete;
     public:
-        class CreationSnapshotObject
+        class CreationTransaction
         {
         public:
-            CreationSnapshotObject(const CreationSnapshotObject& arg) = default;
-            CreationSnapshotObject(CreationSnapshotObject&& arg) noexcept = default;
+            CreationTransaction(const CreationTransaction& arg) = default;
+            CreationTransaction(CreationTransaction&& arg) noexcept = default;
 
             void Finalize();
         private:
-            explicit CreationSnapshotObject(std::vector<KnownMatrix*>&& knownMatrices, RelicID id, Reliquary& owner);
+            explicit CreationTransaction(std::vector<KnownMatrix*>&& knownMatrices, RelicID id, Reliquary& owner);
             RelicID id;
             Reliquary* owner;
             std::vector<KnownMatrix*> knownMatrices;
             friend ReliquaryMatrices;
         };
 
-        class DestroyingSnapshotObject
+        class DestroyingTransaction
         {
         public:
-            DestroyingSnapshotObject(const DestroyingSnapshotObject& arg) = default;
-            DestroyingSnapshotObject(DestroyingSnapshotObject&& arg) noexcept = default;
+            DestroyingTransaction(const DestroyingTransaction& arg) = default;
+            DestroyingTransaction(DestroyingTransaction&& arg) noexcept = default;
 
             void Finalize(Type type);
         private:
-            explicit DestroyingSnapshotObject(std::vector<KnownMatrix*>&& knownMatrices, RelicID id, Reliquary& owner);
+            explicit DestroyingTransaction(std::vector<KnownMatrix*>&& knownMatrices, RelicID id, Reliquary& owner);
             RelicID id;
             Reliquary* owner;
             std::vector<KnownMatrix*> knownMatrices;
             friend ReliquaryMatrices;
         };
 
-        CreationSnapshotObject CreationSnapshot(RelicID id);
-        DestroyingSnapshotObject DestroyingSnapshot(RelicID id);
+        CreationTransaction StartCreationTransaction(RelicID id);
+        DestroyingTransaction StartDestroyingTransaction(RelicID id);
     public:
         class BatchSources
         {

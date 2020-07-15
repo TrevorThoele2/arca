@@ -27,11 +27,11 @@ namespace Arca
         auto batchSource = FindBatchSource<ShardT>();
         if (batchSource != nullptr)
         {
-            auto matrixSnapshot = Owner().matrices.DestroyingSnapshot(id);
+            auto matrixTransaction = Owner().matrices.StartDestroyingTransaction(id);
 
             if (batchSource->ContainsFromBase(id))
             {
-                matrixSnapshot.Finalize(TypeFor<ShardT>());
+                matrixTransaction.Finalize(TypeFor<ShardT>());
 
                 Owner().Raise<DestroyingKnown<ShardT>>(CreateIndex<ShardT>(id));
                 Owner().Raise<Destroying>(HandleFrom(id, batchSource->Type(), HandleObjectType::Shard));
@@ -95,7 +95,7 @@ namespace Arca
     template<class... ConstructorArgs>
     void ReliquaryShards::Handler<ShardT>::CreateCommon(RelicID id, Reliquary& reliquary, bool isConst, ConstructorArgs&& ... constructorArgs)
     {
-        auto matrixSnapshot = reliquary.matrices.CreationSnapshot(id);
+        auto matrixTransaction = reliquary.matrices.StartCreationTransaction(id);
 
         if (isConst)
             reliquary.shards
@@ -106,7 +106,7 @@ namespace Arca
             .FindBatchSource<ShardT>()
             ->Add(id, std::forward<ConstructorArgs>(constructorArgs)...);
 
-        matrixSnapshot.Finalize();
+        matrixTransaction.Finalize();
         reliquary.Raise<Created>(reliquary.shards.HandleFrom(id, TypeFor<ShardT>(), HandleObjectType::Shard));
         reliquary.Raise<CreatedKnown<ShardT>>(reliquary.shards.CreateIndex<ShardT>(id));
     }

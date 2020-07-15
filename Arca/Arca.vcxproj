@@ -51,6 +51,7 @@
     <ClInclude Include="MatrixIndexDefinition.h" />
     <ClInclude Include="MutablePointer.h" />
     <ClInclude Include="MutablePointerDefinition.h" />
+    <ClInclude Include="Operation.h" />
     <ClInclude Include="ReferenceTypeFor.h" />
     <ClInclude Include="IsCommand.h" />
     <ClInclude Include="MatrixDissolved.h" />

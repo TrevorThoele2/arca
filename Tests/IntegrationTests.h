@@ -18,6 +18,9 @@ public:
     class ChildRelic;
     class ParentRelic;
     class BasicCuratorBase;
+
+    class MatrixCreatingRelic;
+    class MatrixAndParentCurator;
 };
 
 namespace Arca
@@ -44,18 +47,32 @@ namespace Arca
     };
 
     template<>
-    struct Traits<::IntegrationTestsFixture::ChildRelic>
+    struct Traits<IntegrationTestsFixture::ChildRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "IntegrationTestsChildRelic";
     };
 
     template<>
-    struct Traits<::IntegrationTestsFixture::ParentRelic>
+    struct Traits<IntegrationTestsFixture::ParentRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "IntegrationTestsParentRelic";
         static bool ShouldCreate(Reliquary& reliquary, int value);
+    };
+
+    template<>
+    struct Traits<IntegrationTestsFixture::MatrixCreatingRelic>
+    {
+        static const ObjectType objectType = ObjectType::Relic;
+        static inline const TypeName typeName = "IntegrationTestsMatrixCreatingRelic";
+    };
+
+    template<>
+    struct Traits<IntegrationTestsFixture::MatrixAndParentCurator>
+    {
+        static const ObjectType objectType = ObjectType::Curator;
+        static inline const TypeName typeName = "IntegrationTestsParentAndMatrixCurator";
     };
 }
 
@@ -104,6 +121,20 @@ public:
     void CreateChild() const;
 };
 
+class IntegrationTestsFixture::MatrixCreatingRelic final : public ClosedTypedRelic<MatrixCreatingRelic>
+{
+public:
+    explicit MatrixCreatingRelic(Init init);
+};
+
+class IntegrationTestsFixture::MatrixAndParentCurator final : public Curator
+{
+public:
+    bool hadMatrixAndParent = false;
+public:
+    MatrixAndParentCurator(Init init);
+};
+
 namespace Inscription
 {
     template<>
@@ -136,5 +167,15 @@ namespace Inscription
     template<>
     class Scribe<::IntegrationTestsFixture::ParentRelic, BinaryArchive> final
         : public ArcaNullScribe<::IntegrationTestsFixture::ParentRelic, BinaryArchive>
+    {};
+
+    template<>
+    class Scribe<::IntegrationTestsFixture::MatrixCreatingRelic, BinaryArchive> final
+        : public ArcaNullScribe<::IntegrationTestsFixture::MatrixCreatingRelic, BinaryArchive>
+    {};
+
+    template<>
+    class Scribe<::IntegrationTestsFixture::MatrixAndParentCurator, BinaryArchive> final
+        : public ArcaNullScribe<::IntegrationTestsFixture::MatrixAndParentCurator, BinaryArchive>
     {};
 }
