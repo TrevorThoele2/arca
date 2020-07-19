@@ -246,7 +246,7 @@ SCENARIO_METHOD(
             .Register<MatrixAndParentCurator>()
             .Actualize();
 
-        auto parent = reliquary->Do(Create<OpenRelic>());
+        const auto parent = reliquary->Do(Create<OpenRelic>());
 
         WHEN("creating child relic")
         {
