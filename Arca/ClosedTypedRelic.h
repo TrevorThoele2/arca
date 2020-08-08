@@ -10,6 +10,18 @@ namespace Arca
     class ClosedTypedRelic
     {
     public:
+        using Init = RelicInit;
+    public:
+        explicit ClosedTypedRelic(Init init) :
+            id(init.id), owner(&init.owner)
+        {}
+
+        ClosedTypedRelic(const ClosedTypedRelic& arg) = default;
+        ClosedTypedRelic(ClosedTypedRelic && arg) noexcept = default;
+
+        ClosedTypedRelic& operator=(const ClosedTypedRelic & arg) = default;
+        ClosedTypedRelic& operator=(ClosedTypedRelic && arg) noexcept = default;
+
         [[nodiscard]] std::optional<Handle> Parent() const
         {
             return owner->ParentOf(ID());
@@ -24,18 +36,6 @@ namespace Arca
         {
             return *owner;
         }
-    protected:
-        using Init = RelicInit;
-
-        explicit ClosedTypedRelic(Init init) :
-            id(init.id), owner(&init.owner)
-        {}
-
-        ClosedTypedRelic(const ClosedTypedRelic& arg) = default;
-        ClosedTypedRelic(ClosedTypedRelic&& arg) noexcept = default;
-
-        ClosedTypedRelic& operator=(const ClosedTypedRelic& arg) = default;
-        ClosedTypedRelic& operator=(ClosedTypedRelic&& arg) noexcept = default;
     protected:
         template<class ShardT, class... ConstructorArgs, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         Index<ShardT> Create(ConstructorArgs&& ... constructorArgs) const
