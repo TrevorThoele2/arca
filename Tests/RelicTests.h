@@ -22,6 +22,8 @@ public:
     class InitializedRelic;
     class MovableOnlyRelic;
     class RelicConstructedFromMovedValue;
+    class ClosedTypedRelicWithUsingConstructor;
+    class OpenTypedRelicWithUsingConstructor;
 };
 
 namespace Arca
@@ -89,6 +91,20 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "ReliquaryTestsRelicConstructedFromMoveValue";
+    };
+
+    template<>
+    struct Traits<::RelicTestsFixture::ClosedTypedRelicWithUsingConstructor>
+    {
+        static const ObjectType objectType = ObjectType::Relic;
+        static inline const TypeName typeName = "ReliquaryTestsClosedTypedRelicWithUsingConstructor";
+    };
+
+    template<>
+    struct Traits<::RelicTestsFixture::OpenTypedRelicWithUsingConstructor>
+    {
+        static const ObjectType objectType = ObjectType::Relic;
+        static inline const TypeName typeName = "ReliquaryTestsOpenTypedRelicWithUsingConstructor";
     };
 }
 
@@ -181,6 +197,18 @@ public:
     RelicConstructedFromMovedValue(Init init, std::unique_ptr<int>&& myInt);
 };
 
+class RelicTestsFixture::ClosedTypedRelicWithUsingConstructor final : public ClosedTypedRelic<ClosedTypedRelicWithUsingConstructor>
+{
+public:
+    using ClosedTypedRelic::ClosedTypedRelic;
+};
+
+class RelicTestsFixture::OpenTypedRelicWithUsingConstructor final : public OpenTypedRelic<OpenTypedRelicWithUsingConstructor>
+{
+public:
+    using OpenTypedRelic::OpenTypedRelic;
+};
+
 namespace Inscription
 {
     template<>
@@ -238,5 +266,15 @@ namespace Inscription
     template<>
     class Scribe<::RelicTestsFixture::RelicConstructedFromMovedValue, BinaryArchive> final
         : public ArcaNullScribe<::RelicTestsFixture::RelicConstructedFromMovedValue, BinaryArchive>
+    {};
+
+    template<>
+    class Scribe<::RelicTestsFixture::ClosedTypedRelicWithUsingConstructor, BinaryArchive> final
+        : public ArcaNullScribe<::RelicTestsFixture::ClosedTypedRelicWithUsingConstructor, BinaryArchive>
+    {};
+
+    template<>
+    class Scribe<::RelicTestsFixture::OpenTypedRelicWithUsingConstructor, BinaryArchive> final
+        : public ArcaNullScribe<::RelicTestsFixture::OpenTypedRelicWithUsingConstructor, BinaryArchive>
     {};
 }

@@ -887,3 +887,34 @@ SCENARIO_METHOD(RelicTestsFixture, "relic constructed from moved value", "[relic
         }
     }
 }
+
+SCENARIO_METHOD(RelicTestsFixture, "relic constructed with using constructor", "[relic]")
+{
+    GIVEN("registered reliquary")
+    {
+        auto reliquary = ReliquaryOrigin()
+            .Register<ClosedTypedRelicWithUsingConstructor>()
+            .Register<OpenTypedRelicWithUsingConstructor>()
+            .Actualize();
+
+        WHEN("creating closed relic")
+        {
+            auto relic = reliquary->Do<Create<ClosedTypedRelicWithUsingConstructor>>();
+
+            THEN("returned is occupied")
+            {
+                REQUIRE(relic);
+            }
+        }
+
+        WHEN("creating open relic")
+        {
+            auto relic = reliquary->Do<Create<OpenTypedRelicWithUsingConstructor>>();
+
+            THEN("returned is occupied")
+            {
+                REQUIRE(relic);
+            }
+        }
+    }
+}
