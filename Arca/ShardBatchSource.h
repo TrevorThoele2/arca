@@ -223,23 +223,23 @@ namespace Arca
 namespace Inscription
 {
     template<class T>
-    class Scribe<::Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>, BinaryArchive> final :
-        public CompositeScribe<::Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>, BinaryArchive>
+    class Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>> final
     {
-    private:
-        using BaseT = CompositeScribe<::Arca::BatchSource<T>, BinaryArchive>;
     public:
-        using ObjectT = typename BaseT::ObjectT;
-        using ArchiveT = typename BaseT::ArchiveT;
-
-        using BaseT::Scriven;
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+        using ObjectT = Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive);
+        void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
     private:
-        template<class U, std::enable_if_t<Arca::HasScribe<U>(), int> = 0>
-        void DoScriven(ObjectT& object, ArchiveT& archive);
-        template<class U, std::enable_if_t<!Arca::HasScribe<U>(), int> = 0>
-        void DoScriven(ObjectT& object, ArchiveT& archive);
+        template<class U, std::enable_if_t<Arca::HasScribe<U, BinaryArchive>(), int> = 0>
+        void DoScriven(ObjectT& object, BinaryArchive& archive);
+        template<class U, std::enable_if_t<!Arca::HasScribe<U, BinaryArchive>(), int> = 0>
+        void DoScriven(ObjectT& object, BinaryArchive& archive);
+
+        template<class U, std::enable_if_t<Arca::HasScribe<U, JsonArchive>(), int> = 0>
+        void DoScriven(const std::string& name, ObjectT& object, JsonArchive& archive);
+        template<class U, std::enable_if_t<!Arca::HasScribe<U, JsonArchive>(), int> = 0>
+        void DoScriven(const std::string& name, ObjectT& object, JsonArchive& archive);
 
         template<class U, std::enable_if_t<Arca::has_shard_serialization_constructor_v<U>, int> = 0>
         U Create();
@@ -250,16 +250,23 @@ namespace Inscription
     };
 
     template<class T>
-    void Scribe<::Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>, BinaryArchive>::
-        ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::
+        Scriven(ObjectT& object, BinaryArchive& archive)
     {
         DoScriven<typename ObjectT::ShardT>(object, archive);
     }
 
     template<class T>
-    template<class U, std::enable_if_t<Arca::HasScribe<U>(), int>>
-    void Scribe<::Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>, BinaryArchive>::
-        DoScriven(ObjectT& object, ArchiveT& archive)
+    void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::
+        Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
+    {
+        DoScriven<typename ObjectT::ShardT>(name, object, archive);
+    }
+
+    template<class T>
+    template<class U, std::enable_if_t<Arca::HasScribe<U, BinaryArchive>(), int>>
+    void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::
+        DoScriven(ObjectT& object, BinaryArchive& archive)
     {
         using ShardT = typename ObjectT::ShardT;
 
@@ -268,10 +275,10 @@ namespace Inscription
             auto size = object.list.size();
             archive(size);
 
-            for (auto& loop : object.list)
+            for (auto& stored : object.list)
             {
-                archive(loop.id);
-                archive(loop.shard);
+                archive(stored.id);
+                archive(stored.shard);
             }
         }
         else
@@ -302,28 +309,85 @@ namespace Inscription
     }
 
     template<class T>
-    template<class U, std::enable_if_t<!Arca::HasScribe<U>(), int>>
-    void Scribe<::Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>, BinaryArchive>::
-        DoScriven(ObjectT&, ArchiveT&)
+    template<class U, std::enable_if_t<!Arca::HasScribe<U, BinaryArchive>(), int>>
+    void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::
+        DoScriven(ObjectT&, BinaryArchive&)
+    {}
+
+    template<class T>
+    template<class U, std::enable_if_t<Arca::HasScribe<U, JsonArchive>(), int>>
+    void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::
+        DoScriven(const std::string& name, ObjectT& object, JsonArchive& archive)
+    {
+        using ShardT = typename ObjectT::ShardT;
+
+        if (archive.IsOutput())
+        {
+            auto output = archive.AsOutput();
+            output->StartList(name);
+            for (auto& stored : object.list)
+            {
+                output->StartObject("");
+                archive("id", stored.id);
+                archive("shard", stored.shard);
+                output->EndObject();
+            }
+            output->EndList();
+        }
+        else
+        {
+            auto input = archive.AsInput();
+            auto size = input->StartList(name);
+            while (size-- > 0)
+            {
+                input->StartObject("");
+
+                Arca::RelicID id = 0;
+                archive("id", id);
+
+                auto matrixSnapshot = object.owner->matrices.StartCreationTransaction(id);
+
+                auto foundShard = object.Find(id);
+                if (foundShard)
+                    archive("shard", *foundShard);
+                else
+                {
+                    auto shard = Create<ShardT>();
+                    archive("shard", shard);
+                    object.list.emplace_back(id, std::move(shard));
+                }
+
+                matrixSnapshot.Finalize();
+
+                input->EndObject();
+            }
+            input->EndList();
+        }
+    }
+
+    template<class T>
+    template<class U, std::enable_if_t<!Arca::HasScribe<U, JsonArchive>(), int>>
+    void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::
+        DoScriven(const std::string& name, ObjectT&, JsonArchive&)
     {}
 
     template<class T>
     template<class U, std::enable_if_t<Arca::has_shard_serialization_constructor_v<U>, int>>
-    U Scribe<::Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>, BinaryArchive>::Create()
+    U Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::Create()
     {
         return ObjectT::StoredT{ Arca::Serialization{} };
     }
 
     template<class T>
     template<class U, std::enable_if_t<!Arca::has_shard_serialization_constructor_v<U> && Arca::has_shard_default_constructor_v<U>, int>>
-    U Scribe<::Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>, BinaryArchive>::Create()
+    U Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::Create()
     {
         return ObjectT::StoredT{};
     }
 
     template<class T>
     template<class U, std::enable_if_t<!Arca::has_shard_serialization_constructor_v<U> && !Arca::has_shard_default_constructor_v<U>, int>>
-    U Scribe<::Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>, BinaryArchive>::Create()
+    U Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::Create()
     {
         static_assert(
             "A shard requires a serialization constructor (taking only the class Serialization) "

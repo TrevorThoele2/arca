@@ -47,12 +47,11 @@
     <ClInclude Include="HasHandledCommands.h" />
     <ClInclude Include="HasWorkMethod.h" />
     <ClInclude Include="Index.h" />
-    <ClInclude Include="InscriptionUserContext.h" />
+    <ClInclude Include="ReliquaryUserContext.h" />
     <ClInclude Include="MatrixIndexDefinition.h" />
     <ClInclude Include="MutablePointer.h" />
     <ClInclude Include="MutablePointerDefinition.h" />
     <ClInclude Include="Operation.h" />
-    <ClInclude Include="ReferenceTypeFor.h" />
     <ClInclude Include="IsCommand.h" />
     <ClInclude Include="MatrixDissolved.h" />
     <ClInclude Include="MatrixFormed.h" />
@@ -80,7 +79,7 @@
     <ClInclude Include="ShardIndex.h" />
     <ClInclude Include="ShardIndexDefinition.h" />
     <ClInclude Include="AsHandle.h" />
-    <ClInclude Include="CompositeScribe.h" />
+    <ClInclude Include="CompositeScribeCategory.h" />
     <ClInclude Include="HandleObjectTypeFor.h" />
     <ClInclude Include="GlobalIndex.h" />
     <ClInclude Include="HasLocalityTrait.h" />
@@ -112,7 +111,7 @@
     <ClInclude Include="IsType.h" />
     <ClInclude Include="KnownPolymorphicSerializer.h" />
     <ClInclude Include="Locality.h" />
-    <ClInclude Include="NullScribe.h" />
+    <ClInclude Include="NullScribeCategory.h" />
     <ClInclude Include="ObjectType.h" />
     <ClInclude Include="OpenTypedRelic.h" />
     <ClInclude Include="PipelineException.h" />
@@ -139,7 +138,7 @@
     <ClInclude Include="Exception.h" />
     <ClInclude Include="IsSignal.h" />
     <ClInclude Include="ReliquaryOrigin.h" />
-    <ClInclude Include="TableScribe.h" />
+    <ClInclude Include="TableScribeCategory.h" />
     <ClInclude Include="Traits.h" />
     <ClInclude Include="OpenRelicDefinition.h" />
     <ClInclude Include="Openness.h" />

@@ -4,25 +4,19 @@
 
 #include <Arca/ClosedTypedRelic.h>
 
+#include "BasicShard.h"
+
 using namespace Arca;
 
 class ShardBatchFixture : public ReliquaryFixture
 {
 public:
-    class Shard;
     class UnregisteredShard;
     class GlobalRelic;
 };
 
 namespace Arca
 {
-    template<>
-    struct Traits<::ShardBatchFixture::Shard>
-    {
-        static const ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "ShardBatchTestsShard";
-    };
-
     template<>
     struct Traits<::ShardBatchFixture::UnregisteredShard>
     {
@@ -39,41 +33,22 @@ namespace Arca
     };
 }
 
-class ShardBatchFixture::Shard
-{
-public:
-    int value = 0;
-public:
-    Shard() = default;
-    explicit Shard(int value);
-};
-
 class ShardBatchFixture::UnregisteredShard
 {};
 
 class ShardBatchFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
 {
 public:
-    Index<Shard> shard;
+    Index<BasicShard> shard;
 
     explicit GlobalRelic(Init init);
 };
 
 namespace Inscription
 {
-    template<>
-    class Scribe<::ShardBatchFixture::Shard, BinaryArchive> final
-        : public ArcaCompositeScribe<::ShardBatchFixture::Shard, BinaryArchive>
+    template<class Archive>
+    struct ScribeTraits<ShardBatchFixture::GlobalRelic, Archive> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {
-            archive(object.value);
-        }
+        using Category = ArcaNullScribeCategory<ShardBatchFixture::GlobalRelic>;
     };
-
-    template<>
-    class Scribe<::ShardBatchFixture::GlobalRelic, BinaryArchive> final
-        : public ArcaNullScribe<::ShardBatchFixture::GlobalRelic, BinaryArchive>
-    {};
 }

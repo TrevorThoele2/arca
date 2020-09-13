@@ -12,7 +12,6 @@ public:
     class Relic;
     class GlobalRelic;
     class UnregisteredRelic;
-    class Shard;
 };
 
 class RelicBatchFixture::Relic final : public ClosedTypedRelic<Relic>
@@ -40,15 +39,6 @@ public:
     {}
 };
 
-class RelicBatchFixture::Shard
-{
-public:
-    int value = 0;
-public:
-    Shard() = default;
-    explicit Shard(int value);
-};
-
 namespace Arca
 {
     template<>
@@ -71,47 +61,45 @@ namespace Arca
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "RelicBatchTestsUnregisteredRelic";
     };
-
-    template<>
-    struct Traits<::RelicBatchFixture::Shard>
-    {
-        static const ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "RelicBatchTestsShard";
-    };
 }
 
 namespace Inscription
 {
     template<>
-    class Scribe<::RelicBatchFixture::Relic, BinaryArchive> final
-        : public ArcaCompositeScribe<::RelicBatchFixture::Relic, BinaryArchive>
+    class Scribe<RelicBatchFixture::Relic> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+    public:
+        using ObjectT = RelicBatchFixture::Relic;
+    public:
+        template<class Archive>
+        void Scriven(ObjectT& object, Archive& archive)
         {
-            archive(object.value);
+            archive("value", object.value);
         }
     };
 
-    template<>
-    class Scribe<::RelicBatchFixture::GlobalRelic, BinaryArchive> final
-        : public ArcaCompositeScribe<::RelicBatchFixture::Relic, BinaryArchive>
+    template<class Archive>
+    struct ScribeTraits<RelicBatchFixture::Relic, Archive> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {
-            archive(object.value);
-        }
+        using Category = ArcaCompositeScribeCategory<RelicBatchFixture::Relic>;
     };
 
     template<>
-    class Scribe<::RelicBatchFixture::Shard, BinaryArchive> final
-        : public ArcaCompositeScribe<::RelicBatchFixture::Shard, BinaryArchive>
+    class Scribe<RelicBatchFixture::GlobalRelic> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+    public:
+        using ObjectT = RelicBatchFixture::GlobalRelic;
+    public:
+        template<class Archive>
+        void Scriven(ObjectT& object, Archive& archive)
         {
-            archive(object.value);
+            archive("value", object.value);
         }
+    };
+
+    template<class Archive>
+    struct ScribeTraits<RelicBatchFixture::GlobalRelic, Archive> final
+    {
+        using Category = ArcaCompositeScribeCategory<RelicBatchFixture::GlobalRelic>;
     };
 }

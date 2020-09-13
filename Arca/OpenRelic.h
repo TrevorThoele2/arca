@@ -10,7 +10,7 @@
 #include "Index.h"
 #include "Handle.h"
 
-#include "CompositeScribe.h"
+#include "CompositeScribeCategory.h"
 
 namespace Arca
 {
@@ -18,6 +18,8 @@ namespace Arca
 
     class OpenRelic final
     {
+    public:
+        explicit OpenRelic(RelicInit init);
     public:
         template<class ShardT, class... ConstructorArgs, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         Index<ShardT> Create(ConstructorArgs&& ... constructorArgs) const;
@@ -42,8 +44,6 @@ namespace Arca
         RelicID id = 0;
         Reliquary* owner = nullptr;
     private:
-        explicit OpenRelic(RelicInit init);
-    private:
         friend class ReliquaryRelics;
         template<class, class>
         friend class BatchSource;
@@ -62,11 +62,19 @@ namespace Arca
 namespace Inscription
 {
     template<>
-    class Scribe<::Arca::OpenRelic, BinaryArchive> final :
-        public ArcaCompositeScribe<::Arca::OpenRelic, BinaryArchive>
+    class Scribe<Arca::OpenRelic> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+    public:
+        using ObjectT = Arca::OpenRelic;
+    public:
+        template<class Archive>
+        void Scriven(ObjectT&, Archive&)
         {}
+    };
+
+    template<class Archive>
+    struct ScribeTraits<Arca::OpenRelic, Archive> final
+    {
+        using Category = ArcaCompositeScribeCategory<Arca::OpenRelic>;
     };
 }

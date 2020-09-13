@@ -6,14 +6,16 @@
 
 #include <Inscription/BinaryArchive.h>
 
+#include "DifferentiableShard.h"
+
 using namespace Arca;
 
 class ReliquaryTestsFixture : public GeneralFixture
 {
 public:
-    class BasicShard;
-    class OtherBasicShard;
-    class OtherShard;
+    using BasicShard = DifferentiableShard<0>;
+    using OtherBasicShard = DifferentiableShard<1>;
+    using OtherShard = DifferentiableShard<2>;
 
     class BasicTypedRelic;
     class GlobalRelic;
@@ -76,33 +78,6 @@ namespace Arca
     };
 }
 
-class ReliquaryTestsFixture::BasicShard
-{
-public:
-    std::string myValue;
-public:
-    BasicShard() = default;
-    explicit BasicShard(std::string myValue);
-};
-
-class ReliquaryTestsFixture::OtherBasicShard
-{
-public:
-    std::string myValue;
-public:
-    OtherBasicShard() = default;
-    explicit OtherBasicShard(int myValue);
-};
-
-class ReliquaryTestsFixture::OtherShard
-{
-public:
-    int myValue;
-public:
-    OtherShard() = default;
-    explicit OtherShard(int myValue);
-};
-
 class ReliquaryTestsFixture::BasicTypedRelic final : public ClosedTypedRelic<BasicTypedRelic>
 {
 public:
@@ -130,56 +105,21 @@ struct ReliquaryTestsFixture::BasicSignal
 
 namespace Inscription
 {
-    template<>
-    class Scribe<::ReliquaryTestsFixture::BasicShard, BinaryArchive> final
-        : public ArcaCompositeScribe<::ReliquaryTestsFixture::BasicShard, BinaryArchive>
+    template<class Archive>
+    struct ScribeTraits<ReliquaryTestsFixture::BasicTypedRelic, Archive> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {
-            archive(object.myValue);
-        }
+        using Category = ArcaNullScribeCategory<ReliquaryTestsFixture::BasicTypedRelic>;
     };
 
-    template<>
-    class Scribe<::ReliquaryTestsFixture::OtherBasicShard, BinaryArchive> final
-        : public ArcaCompositeScribe<::ReliquaryTestsFixture::OtherBasicShard, BinaryArchive>
+    template<class Archive>
+    struct ScribeTraits<ReliquaryTestsFixture::GlobalRelic, Archive> final
     {
-    public:
-        static std::vector<Type> InputTypes(const ArchiveT& archive)
-        {
-            return { "ReliquaryTestsBasicShard" };
-        }
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {
-            archive(object.myValue);
-        }
+        using Category = ArcaNullScribeCategory<ReliquaryTestsFixture::GlobalRelic>;
     };
 
-    template<>
-    class Scribe<::ReliquaryTestsFixture::OtherShard, BinaryArchive> final
-        : public ArcaCompositeScribe<::ReliquaryTestsFixture::OtherShard, BinaryArchive>
+    template<class Archive>
+    struct ScribeTraits<ReliquaryTestsFixture::BasicCurator, Archive> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {
-            archive(object.myValue);
-        }
+        using Category = ArcaNullScribeCategory<ReliquaryTestsFixture::BasicCurator>;
     };
-
-    template<>
-    class Scribe<::ReliquaryTestsFixture::BasicTypedRelic, BinaryArchive> final
-        : public ArcaNullScribe<::ReliquaryTestsFixture::BasicTypedRelic, BinaryArchive>
-    {};
-
-    template<>
-    class Scribe<::ReliquaryTestsFixture::GlobalRelic, BinaryArchive> final
-        : public ArcaNullScribe<::ReliquaryTestsFixture::GlobalRelic, BinaryArchive>
-    {};
-
-    template<>
-    class Scribe<::ReliquaryTestsFixture::BasicCurator, BinaryArchive> final
-        : public ArcaNullScribe<::ReliquaryTestsFixture::BasicCurator, BinaryArchive>
-    {};
 }

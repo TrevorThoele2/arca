@@ -18,7 +18,7 @@ namespace Arca
     template<class T>
     struct DestroyingKnown
     {
-        typename ReferenceTypeFor<T>::Type reference;
+        Index<T> index;
 
         static_assert(is_relic_v<T> || is_shard_v<T>, "CreatedKnown must be used for relics or shards.");
     };

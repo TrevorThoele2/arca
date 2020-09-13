@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <Inscription/CompositeScribe.h>
+#include <Inscription/CompositeScribeCategory.h>
 #include <Inscription/BinaryArchive.h>
 
 namespace Arca
@@ -36,10 +36,18 @@ namespace Chroma
 namespace Inscription
 {
     template<>
-    class Scribe<Arca::Type, BinaryArchive> final :
-        public CompositeScribe<Arca::Type, BinaryArchive>
+    class Scribe<Arca::Type> final
     {
     public:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+        using ObjectT = Arca::Type;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive);
+        void Scriven(ObjectT& object, JsonArchive& archive);
+    };
+
+    template<class Archive>
+    struct ScribeTraits<Arca::Type, Archive> final
+    {
+        using Category = CompositeScribeCategory<Arca::Type>;
     };
 }

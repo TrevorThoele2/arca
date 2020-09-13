@@ -4,8 +4,8 @@
 
 namespace Arca
 {
-    HandleSlim::HandleSlim(RelicID id, Arca::Type type, HandleObjectType objectType)
-        : id(id), type(std::move(type)), objectType(objectType)
+    HandleSlim::HandleSlim(RelicID id, Arca::Type type, HandleObjectType objectType) :
+        id(id), type(std::move(type)), objectType(objectType)
     {}
 
     bool HandleSlim::operator==(const HandleSlim& arg) const
@@ -31,22 +31,5 @@ namespace Arca
     HandleObjectType HandleSlim::ObjectType()
     {
         return objectType;
-    }
-}
-
-namespace Inscription
-{
-    void Scribe<Arca::HandleSlim, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
-    {
-        archive(object.id);
-        archive(object.type);
-
-        if (archive.IsInput())
-        {
-            const auto reliquary = archive.UserContext<Arca::InscriptionUserContext>()->reliquary;
-
-            const auto objectType = reliquary->ObjectHandleTypeFor(object.type.name);
-            object.objectType = *objectType;
-        }
     }
 }

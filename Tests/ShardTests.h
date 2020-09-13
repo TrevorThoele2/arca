@@ -9,17 +9,6 @@ using namespace Arca;
 class ShardTestsFixture : public GeneralFixture
 {
 public:
-    struct Shard
-    {
-        int myInt;
-    };
-
-    template<size_t i>
-    struct DifferentiableShard
-    {
-        int myInt;
-    };
-
     struct ShardConstructedFromMovedValue
     {
         std::unique_ptr<int> myInt;
@@ -32,20 +21,6 @@ public:
 namespace Arca
 {
     template<>
-    struct Traits<ShardTestsFixture::Shard>
-    {
-        static const ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "ShardTestsShard";
-    };
-
-    template<size_t i>
-    struct Traits<ShardTestsFixture::DifferentiableShard<i>>
-    {
-        static const ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "ShardTestsDifferentiableShard" + Chroma::ToString(i);
-    };
-
-    template<>
     struct Traits<ShardTestsFixture::ShardConstructedFromMovedValue>
     {
         static const ObjectType objectType = ObjectType::Shard;
@@ -55,18 +30,9 @@ namespace Arca
 
 namespace Inscription
 {
-    template<>
-    class Scribe<ShardTestsFixture::Shard, BinaryArchive> final :
-        public ArcaNullScribe<ShardTestsFixture::Shard, BinaryArchive>
-    {};
-
-    template<size_t i>
-    class Scribe<ShardTestsFixture::DifferentiableShard<i>, BinaryArchive> final :
-        public ArcaNullScribe<ShardTestsFixture::DifferentiableShard<i>, BinaryArchive>
-    {};
-
-    template<>
-    class Scribe<ShardTestsFixture::ShardConstructedFromMovedValue, BinaryArchive> final :
-        public ArcaNullScribe<ShardTestsFixture::ShardConstructedFromMovedValue, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<ShardTestsFixture::ShardConstructedFromMovedValue, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<ShardTestsFixture::ShardConstructedFromMovedValue>;
+    };
 }

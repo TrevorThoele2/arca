@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Index.h"
-#include "ReferenceTypeFor.h"
 #include "RelicID.h"
 
 #include "MatrixImplementation.h"
@@ -49,12 +48,6 @@ namespace Arca
         INSCRIPTION_ACCESS;
     };
 
-    template<class T>
-    struct ReferenceTypeFor<T, std::enable_if_t<usable_for_matrix_index_v<T>>>
-    {
-        using Type = Index<T, std::enable_if_t<usable_for_matrix_index_v<T>>>;
-    };
-
     template<class T, std::enable_if_t<usable_for_matrix_index_v<T>, int> = 0>
     Index<T, std::enable_if_t<usable_for_matrix_index_v<T>>> ToReference(RelicID id, Reliquary& owner)
     {
@@ -65,30 +58,33 @@ namespace Arca
 namespace Inscription
 {
     template<class T>
-    class Scribe<Arca::Index<T, std::enable_if_t<Arca::usable_for_matrix_index_v<T>>>, BinaryArchive>
-        : public CompositeScribe<Arca::Index<T, std::enable_if_t<Arca::usable_for_matrix_index_v<T>>>, BinaryArchive>
+    class Scribe<Arca::Index<T, std::enable_if_t<Arca::usable_for_matrix_index_v<T>>>>
     {
-    private:
-        using BaseT = CompositeScribe<Arca::Index<T, std::enable_if_t<Arca::usable_for_matrix_index_v<T>>>, BinaryArchive>;
     public:
-        using ObjectT = typename BaseT::ObjectT;
-        using ArchiveT = typename BaseT::ArchiveT;
+        using ObjectT = Arca::Index<T, std::enable_if_t<Arca::usable_for_matrix_index_v<T>>>;
     protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        template<class Archive>
+        void Scriven(ObjectT& object, Archive& archive)
         {
             if (archive.IsOutput())
             {
                 auto id = object.ID();
-                archive(id);
+                archive("id", id);
             }
             else
             {
                 Arca::RelicID id;
-                archive(id);
+                archive("id", id);
                 object.id = id;
 
-                object.owner = archive.template UserContext<Arca::InscriptionUserContext>()->reliquary;
+                object.owner = archive.template UserContext<ReliquaryUserContext>()->reliquary;
             }
         }
+    };
+
+    template<class T, class Archive>
+    struct ScribeTraits<Arca::Index<T, std::enable_if_t<Arca::usable_for_matrix_index_v<T>>>, Archive> final
+    {
+        using Category = CompositeScribeCategory<Arca::Index<T, std::enable_if_t<Arca::usable_for_matrix_index_v<T>>>>;
     };
 }

@@ -21,10 +21,14 @@
   <ItemGroup>
     <ClInclude Include="AllBatchTests.h" />
     <ClInclude Include="AllTests.h" />
+    <ClInclude Include="BasicGlobalClosedTypedRelic.h" />
+    <ClInclude Include="BasicLocalClosedTypedRelic.h" />
+    <ClInclude Include="BasicShard.h" />
     <ClInclude Include="CommandTests.h" />
     <ClInclude Include="ConstShardTests.h" />
     <ClInclude Include="CuratorTests.h" />
     <ClInclude Include="DifferentiableCurator.h" />
+    <ClInclude Include="DifferentiableShard.h" />
     <ClInclude Include="EitherBatchTests.h" />
     <ClInclude Include="EitherTests.h" />
     <ClInclude Include="GeneralFixture.h" />
@@ -35,9 +39,11 @@
     <ClInclude Include="MatrixTests.h" />
     <ClInclude Include="RelicBatchTests.h" />
     <ClInclude Include="RelicParentingTests.h" />
+    <ClInclude Include="ReliquaryJsonSerializationTests.h" />
     <ClInclude Include="ReliquaryOriginRegistrationTests.h" />
     <ClInclude Include="ReliquaryRegistrationTests.h" />
-    <ClInclude Include="ReliquarySerializationTests.h" />
+    <ClInclude Include="ReliquaryBinarySerializationTests.h" />
+    <ClInclude Include="SerializationData.h" />
     <ClInclude Include="ShardBatchTests.h" />
     <ClInclude Include="ReliquaryFixture.h" />
     <ClInclude Include="ReliquaryTests.h" />
@@ -51,6 +57,7 @@
   <ItemGroup>
     <ClCompile Include="AllBatchTests.cpp" />
     <ClCompile Include="AllTests.cpp" />
+    <ClCompile Include="BasicShard.cpp" />
     <ClCompile Include="CommandTests.cpp" />
     <ClCompile Include="ConstShardTests.cpp" />
     <ClCompile Include="CuratorTests.cpp" />
@@ -65,9 +72,11 @@
     <ClCompile Include="MatrixTests.cpp" />
     <ClCompile Include="RelicBatchTests.cpp" />
     <ClCompile Include="RelicParentingTests.cpp" />
+    <ClCompile Include="ReliquaryJsonSerializationTests.cpp" />
     <ClCompile Include="ReliquaryOriginRegistrationTests.cpp" />
     <ClCompile Include="ReliquaryRegistrationTests.cpp" />
-    <ClCompile Include="ReliquarySerializationTests.cpp" />
+    <ClCompile Include="ReliquaryBinarySerializationTests.cpp" />
+    <ClCompile Include="SerializationData.cpp" />
     <ClCompile Include="ShardBatchTests.cpp" />
     <ClCompile Include="ReliquaryFixture.cpp" />
     <ClCompile Include="ReliquaryTests.cpp" />

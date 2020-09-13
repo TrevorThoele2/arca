@@ -210,15 +210,6 @@
     <ClInclude Include="Traits.h">
       <Filter>Header Files\Traits</Filter>
     </ClInclude>
-    <ClInclude Include="CompositeScribe.h">
-      <Filter>Header Files\Serialization</Filter>
-    </ClInclude>
-    <ClInclude Include="TableScribe.h">
-      <Filter>Header Files\Serialization</Filter>
-    </ClInclude>
-    <ClInclude Include="NullScribe.h">
-      <Filter>Header Files\Serialization</Filter>
-    </ClInclude>
     <ClInclude Include="Type.h">
       <Filter>Header Files\Type</Filter>
     </ClInclude>
@@ -427,49 +418,46 @@
       <Filter>Header Files\Command</Filter>
     </ClInclude>
     <ClInclude Include="Index.h">
-      <Filter>Header Files\Reference\Index</Filter>
-    </ClInclude>
-    <ClInclude Include="ReferenceTypeFor.h">
-      <Filter>Header Files\Reference</Filter>
+      <Filter>Header Files\Index</Filter>
     </ClInclude>
     <ClInclude Include="RelicInitDefinition.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
     <ClInclude Include="ShardIndexDefinition.h">
-      <Filter>Header Files\Reference\Index\Shard</Filter>
+      <Filter>Header Files\Index\Shard</Filter>
     </ClInclude>
     <ClInclude Include="ShardIndex.h">
-      <Filter>Header Files\Reference\Index\Shard</Filter>
+      <Filter>Header Files\Index\Shard</Filter>
     </ClInclude>
     <ClInclude Include="RelicIndexDefinition.h">
-      <Filter>Header Files\Reference\Index\Relic</Filter>
+      <Filter>Header Files\Index\Relic</Filter>
     </ClInclude>
     <ClInclude Include="RelicIndex.h">
-      <Filter>Header Files\Reference\Index\Relic</Filter>
+      <Filter>Header Files\Index\Relic</Filter>
     </ClInclude>
     <ClInclude Include="MatrixIndexDefinition.h">
-      <Filter>Header Files\Reference\Index\Matrix</Filter>
+      <Filter>Header Files\Index\Matrix</Filter>
     </ClInclude>
     <ClInclude Include="MatrixIndex.h">
-      <Filter>Header Files\Reference\Index\Matrix</Filter>
+      <Filter>Header Files\Index\Matrix</Filter>
     </ClInclude>
     <ClInclude Include="GlobalIndex.h">
-      <Filter>Header Files\Reference\Index\Global</Filter>
+      <Filter>Header Files\Index\Global</Filter>
     </ClInclude>
     <ClInclude Include="GlobalIndexDefinition.h">
-      <Filter>Header Files\Reference\Index\Global</Filter>
+      <Filter>Header Files\Index\Global</Filter>
     </ClInclude>
     <ClInclude Include="UsableForGlobalIndex.h">
-      <Filter>Header Files\Reference\Index\Global</Filter>
+      <Filter>Header Files\Index\Global</Filter>
     </ClInclude>
     <ClInclude Include="UsableForMatrixIndex.h">
-      <Filter>Header Files\Reference\Index\Matrix</Filter>
+      <Filter>Header Files\Index\Matrix</Filter>
     </ClInclude>
     <ClInclude Include="UsableForRelicIndex.h">
-      <Filter>Header Files\Reference\Index\Relic</Filter>
+      <Filter>Header Files\Index\Relic</Filter>
     </ClInclude>
     <ClInclude Include="UsableForShardIndex.h">
-      <Filter>Header Files\Reference\Index\Shard</Filter>
+      <Filter>Header Files\Index\Shard</Filter>
     </ClInclude>
     <ClInclude Include="MutablePointer.h">
       <Filter>Header Files\Curator</Filter>
@@ -479,9 +467,6 @@
     </ClInclude>
     <ClInclude Include="Assign.h">
       <Filter>Header Files\Command\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="InscriptionUserContext.h">
-      <Filter>Header Files\Serialization</Filter>
     </ClInclude>
     <ClInclude Include="CannotFindReliquaryDependency.h">
       <Filter>Header Files\Serialization</Filter>
@@ -512,6 +497,18 @@
     </ClInclude>
     <ClInclude Include="Operation.h">
       <Filter>Header Files\Operation</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquaryUserContext.h">
+      <Filter>Header Files\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="CompositeScribeCategory.h">
+      <Filter>Header Files\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="NullScribeCategory.h">
+      <Filter>Header Files\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="TableScribeCategory.h">
+      <Filter>Header Files\Serialization</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -659,26 +656,23 @@
     <Filter Include="Header Files\Command\Common">
       <UniqueIdentifier>{ed6bbebe-a81c-40d8-a01a-0e131925b3da}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Reference">
-      <UniqueIdentifier>{29d022f3-04ee-45f2-bae7-8577ce0f63c5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Reference\Index">
-      <UniqueIdentifier>{0af7c992-c8d6-4968-b66c-32a0a88b551e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Reference\Index\Global">
-      <UniqueIdentifier>{49b6d08a-2413-4117-85c7-a0a70d75ae7f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Reference\Index\Matrix">
-      <UniqueIdentifier>{f2f3ac2d-f774-44d0-b57a-2572b288d2b7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Reference\Index\Relic">
-      <UniqueIdentifier>{afffbee4-a109-4de8-89b2-14c892d41f96}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Reference\Index\Shard">
-      <UniqueIdentifier>{22a61877-3ec0-46fc-94ab-a99eb6bbb63f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Operation">
       <UniqueIdentifier>{e12cb0d3-751a-4e99-816c-385c18335124}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Index">
+      <UniqueIdentifier>{0af7c992-c8d6-4968-b66c-32a0a88b551e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Index\Global">
+      <UniqueIdentifier>{49b6d08a-2413-4117-85c7-a0a70d75ae7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Index\Matrix">
+      <UniqueIdentifier>{f2f3ac2d-f774-44d0-b57a-2572b288d2b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Index\Relic">
+      <UniqueIdentifier>{afffbee4-a109-4de8-89b2-14c892d41f96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Index\Shard">
+      <UniqueIdentifier>{22a61877-3ec0-46fc-94ab-a99eb6bbb63f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

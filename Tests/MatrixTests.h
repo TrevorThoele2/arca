@@ -39,13 +39,15 @@ namespace Arca
 
 namespace Inscription
 {
-    template<>
-    class Scribe<MatrixTestsFixture::Shard, BinaryArchive> final :
-        public ArcaNullScribe<MatrixTestsFixture::Shard, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<MatrixTestsFixture::Shard, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<MatrixTestsFixture::Shard>;
+    };
 
-    template<>
-    class Scribe<MatrixTestsFixture::OtherShard, BinaryArchive> final :
-        public ArcaNullScribe<MatrixTestsFixture::OtherShard, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<MatrixTestsFixture::OtherShard, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<MatrixTestsFixture::OtherShard>;
+    };
 }

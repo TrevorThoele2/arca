@@ -1,15 +1,19 @@
 #pragma once
 
-#include <Inscription/NullScribe.h>
-#include <Inscription/Scribe.h>
+#include "NullScribeCategory.h"
 
 namespace Arca
 {
-    template<class T>
+    template<class T, class Archive>
     constexpr static bool HasScribe()
     {
-        return !std::is_base_of_v<
-            ::Inscription::NullScribe<std::remove_const_t<T>, ::Inscription::BinaryArchive>,
-            ::Inscription::Scribe<std::remove_const_t<T>, ::Inscription::BinaryArchive>>;
+        using ObjectT = Inscription::remove_const_t<T>;
+        using IsNullInscription = std::is_same<
+            Inscription::NullScribeCategory<ObjectT>,
+            typename Inscription::ScribeTraits<ObjectT, Archive>::Category>;
+        using IsNullArca = std::is_same<
+            Inscription::ArcaNullScribeCategory<ObjectT>,
+            typename Inscription::ScribeTraits<ObjectT, Archive>::Category>;
+        return std::negation<std::disjunction<IsNullInscription, IsNullArca>>::value;
     }
 }

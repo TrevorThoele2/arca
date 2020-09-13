@@ -91,23 +91,27 @@ struct ReliquaryRegistrationTestsFixture::Signal
 
 namespace Inscription
 {
-    template<>
-    class Scribe<::ReliquaryRegistrationTestsFixture::Shard, BinaryArchive> final
-        : public ArcaNullScribe<::ReliquaryRegistrationTestsFixture::Shard, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<ReliquaryRegistrationTestsFixture::Shard, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<ReliquaryRegistrationTestsFixture::Shard>;
+    };
 
-    template<>
-    class Scribe<::ReliquaryRegistrationTestsFixture::Relic, BinaryArchive> final
-        : public ArcaNullScribe<::ReliquaryRegistrationTestsFixture::Relic, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<ReliquaryRegistrationTestsFixture::Relic, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<ReliquaryRegistrationTestsFixture::Relic>;
+    };
 
-    template<>
-    class Scribe<::ReliquaryRegistrationTestsFixture::GlobalRelic, BinaryArchive> final
-        : public ArcaNullScribe<::ReliquaryRegistrationTestsFixture::GlobalRelic, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<ReliquaryRegistrationTestsFixture::GlobalRelic, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<ReliquaryRegistrationTestsFixture::GlobalRelic>;
+    };
 
-    template<>
-    class Scribe<::ReliquaryRegistrationTestsFixture::Curator, BinaryArchive> final
-        : public ArcaNullScribe<::ReliquaryRegistrationTestsFixture::Curator, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<ReliquaryRegistrationTestsFixture::Curator, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<ReliquaryRegistrationTestsFixture::Curator>;
+    };
 }

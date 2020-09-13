@@ -13,9 +13,9 @@ namespace Arca
     template<class T>
     struct AssignedKnown
     {
-        using ReferenceType = typename ReferenceTypeFor<T>::Type;
+        using IndexType = Index<T>;
         
-        ReferenceType reference;
+        IndexType index;
     private:
         static_assert(is_relic_v<T> || is_shard_v<T>, "AssignedKnown must be used with relics or shards.");
     };

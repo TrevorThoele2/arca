@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Index.h"
-#include "ReferenceTypeFor.h"
 #include "TypeFor.h"
 #include "UsableForGlobalIndex.h"
 
@@ -57,12 +56,6 @@ namespace Arca
         INSCRIPTION_ACCESS;
     };
 
-    template<class T>
-    struct ReferenceTypeFor<T, std::enable_if_t<usable_for_global_index_v<T>>>
-    {
-        using Type = Index<T, std::enable_if_t<usable_for_global_index_v<T>>>;
-    };
-
     template<class T, std::enable_if_t<usable_for_global_index_v<T>, int> = 0>
     Index<T, std::enable_if_t<usable_for_global_index_v<T>>> ToReference(RelicID, Reliquary& owner)
     {
@@ -73,16 +66,19 @@ namespace Arca
 namespace Inscription
 {
     template<class T>
-    class Scribe<Arca::Index<T, std::enable_if_t<Arca::usable_for_global_index_v<T>>>, BinaryArchive>
-        : public CompositeScribe<Arca::Index<T, std::enable_if_t<Arca::usable_for_global_index_v<T>>>, BinaryArchive>
+    class Scribe<Arca::Index<T, std::enable_if_t<Arca::usable_for_global_index_v<T>>>>
     {
-    private:
-        using BaseT = CompositeScribe<Arca::Index<T, std::enable_if_t<Arca::usable_for_global_index_v<T>>>, BinaryArchive>;
     public:
-        using ObjectT = typename BaseT::ObjectT;
-        using ArchiveT = typename BaseT::ArchiveT;
-    protected:
-        void ScrivenImplementation(ObjectT&, ArchiveT&) override
+        using ObjectT = Arca::Index<T, std::enable_if_t<Arca::usable_for_global_index_v<T>>>;
+    public:
+        template<class Archive>
+        void Scriven(ObjectT&, Archive&)
         {}
+    };
+
+    template<class T, class Archive>
+    struct ScribeTraits<Arca::Index<T, std::enable_if_t<Arca::usable_for_global_index_v<T>>>, Archive> final
+    {
+        using Category = CompositeScribeCategory<Arca::Index<T, std::enable_if_t<Arca::usable_for_global_index_v<T>>>>;
     };
 }

@@ -7,13 +7,16 @@
 
 #include <Inscription/BinaryArchive.h>
 
+#include "DifferentiableShard.h"
+
 using namespace Arca;
 
 class IntegrationTestsFixture : public GeneralFixture
 {
 public:
-    class BasicShard;
-    class OtherShard;
+    using BasicShard = DifferentiableShard<0>;
+    using OtherShard = DifferentiableShard<1>;
+
     struct BasicSignal;
     class ChildRelic;
     class ParentRelic;
@@ -25,20 +28,6 @@ public:
 
 namespace Arca
 {
-    template<>
-    struct Traits<::IntegrationTestsFixture::BasicShard>
-    {
-        static const ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "IntegrationTestsBasicShard";
-    };
-
-    template<>
-    struct Traits<::IntegrationTestsFixture::OtherShard>
-    {
-        static const ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "IntegrationTestsOtherShard";
-    };
-
     template<>
     struct Traits<::IntegrationTestsFixture::BasicSignal>
     {
@@ -75,24 +64,6 @@ namespace Arca
         static inline const TypeName typeName = "IntegrationTestsParentAndMatrixCurator";
     };
 }
-
-class IntegrationTestsFixture::BasicShard
-{
-public:
-    std::string myValue;
-public:
-    BasicShard() = default;
-    explicit BasicShard(std::string myValue);
-};
-
-class IntegrationTestsFixture::OtherShard
-{
-public:
-    int myValue;
-public:
-    OtherShard() = default;
-    explicit OtherShard(int myValue);
-};
 
 struct IntegrationTestsFixture::BasicSignal
 {
@@ -137,45 +108,27 @@ public:
 
 namespace Inscription
 {
-    template<>
-    class Scribe<::IntegrationTestsFixture::BasicShard, BinaryArchive> final
-        : public ArcaCompositeScribe<::IntegrationTestsFixture::BasicShard, BinaryArchive>
+    template<class Archive>
+    struct ScribeTraits<IntegrationTestsFixture::ChildRelic, Archive> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {
-            archive(object.myValue);
-        }
+        using Category = ArcaNullScribeCategory<IntegrationTestsFixture::ChildRelic>;
     };
 
-    template<>
-    class Scribe<::IntegrationTestsFixture::OtherShard, BinaryArchive> final
-        : public ArcaCompositeScribe<::IntegrationTestsFixture::OtherShard, BinaryArchive>
+    template<class Archive>
+    struct ScribeTraits<IntegrationTestsFixture::ParentRelic, Archive> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {
-            archive(object.myValue);
-        }
+        using Category = ArcaNullScribeCategory<IntegrationTestsFixture::ParentRelic>;
     };
 
-    template<>
-    class Scribe<::IntegrationTestsFixture::ChildRelic, BinaryArchive> final
-        : public ArcaNullScribe<::IntegrationTestsFixture::ChildRelic, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<IntegrationTestsFixture::MatrixCreatingRelic, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<IntegrationTestsFixture::MatrixCreatingRelic>;
+    };
 
-    template<>
-    class Scribe<::IntegrationTestsFixture::ParentRelic, BinaryArchive> final
-        : public ArcaNullScribe<::IntegrationTestsFixture::ParentRelic, BinaryArchive>
-    {};
-
-    template<>
-    class Scribe<::IntegrationTestsFixture::MatrixCreatingRelic, BinaryArchive> final
-        : public ArcaNullScribe<::IntegrationTestsFixture::MatrixCreatingRelic, BinaryArchive>
-    {};
-
-    template<>
-    class Scribe<::IntegrationTestsFixture::MatrixAndParentCurator, BinaryArchive> final
-        : public ArcaNullScribe<::IntegrationTestsFixture::MatrixAndParentCurator, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<IntegrationTestsFixture::MatrixAndParentCurator, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<IntegrationTestsFixture::MatrixAndParentCurator>;
+    };
 }

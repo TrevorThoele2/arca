@@ -6,13 +6,10 @@ using namespace std::string_literals;
 
 #include <Arca/RelicParented.h>
 
-RelicParentingTestsFixture::Shard::Shard(std::string myValue) : myValue(myValue)
-{}
-
 RelicParentingTestsFixture::GlobalRelic::GlobalRelic(Init init)
     : ClosedTypedRelic(init)
 {
-    basicShard = Create<Shard>();
+    basicShard = Create<BasicShard>();
 }
 
 SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parenting]")
@@ -20,7 +17,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
-            .Register<Shard>()
+            .Register<BasicShard>()
             .Actualize();
 
         auto onParented = SignalListener<RelicParented>(*reliquary);
@@ -57,7 +54,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
     {
         auto reliquary = ReliquaryOrigin()
             .Register<GlobalRelic>()
-            .Register<Shard>()
+            .Register<BasicShard>()
             .Actualize();
 
         auto globalRelic = Arca::Index<GlobalRelic>(*reliquary);
@@ -98,18 +95,18 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
     GIVEN("parent and child created")
     {
         auto reliquary = ReliquaryOrigin()
-            .Register<Shard>()
+            .Register<BasicShard>()
             .Actualize();
 
         auto parent = reliquary->Do<Create<OpenRelic>>();
-        parent->Create<Shard>();
+        parent->Create<BasicShard>();
 
         auto onParented = SignalListener<RelicParented>(*reliquary);
 
         WHEN("created child")
         {
             auto child = reliquary->Do<CreateChild<OpenRelic>>(AsHandle(*parent));
-            child->Create<Shard>();
+            child->Create<BasicShard>();
 
             THEN("child has parent")
             {
@@ -136,7 +133,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
                 reliquary->Destroy(AsHandle(*parent));
 
                 REQUIRE(reliquary->RelicSize() == 0);
-                REQUIRE(!Arca::Index<Shard>(child.ID(), *reliquary));
+                REQUIRE(!Arca::Index<BasicShard>(child.ID(), *reliquary));
             }
 
             THEN("sends signal")
@@ -162,7 +159,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
                 THEN("does not destroy parent")
                 {
                     REQUIRE(reliquary->RelicSize() == 1);
-                    REQUIRE(Arca::Index<Shard>(parent.ID(), *reliquary));
+                    REQUIRE(Arca::Index<BasicShard>(parent.ID(), *reliquary));
                 }
 
                 THEN("destroying parent works")
@@ -170,7 +167,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
                     reliquary->Destroy(AsHandle(*parent));
 
                     REQUIRE(reliquary->RelicSize() == 0);
-                    REQUIRE(!Arca::Index<Shard>(parent.ID(), *reliquary));
+                    REQUIRE(!Arca::Index<BasicShard>(parent.ID(), *reliquary));
                 }
             }
         }
@@ -179,11 +176,11 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
     GIVEN("multiple children parented to same relic")
     {
         auto reliquary = ReliquaryOrigin()
-            .Register<Shard>()
+            .Register<BasicShard>()
             .Actualize();
 
         auto parent = reliquary->Do<Create<OpenRelic>>();
-        parent->Create<Shard>();
+        parent->Create<BasicShard>();
 
         auto onParented = SignalListener<RelicParented>(*reliquary);
 
@@ -193,7 +190,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
             for (auto i = 0; i < 10; ++i)
             {
                 auto child = reliquary->Do<CreateChild<OpenRelic>>(AsHandle(*parent));
-                child->Create<Shard>();
+                child->Create<BasicShard>();
                 children.push_back(child);
             }
 
@@ -230,7 +227,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
 
                 REQUIRE(reliquary->RelicSize() == 0);
                 for (auto& child : children)
-                    REQUIRE(!Arca::Index<Shard>(child.ID(), *reliquary));
+                    REQUIRE(!Arca::Index<BasicShard>(child.ID(), *reliquary));
             }
 
             THEN("sends 10 signals")
@@ -264,7 +261,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
                 THEN("does not destroy parent")
                 {
                     REQUIRE(reliquary->RelicSize() == 10);
-                    REQUIRE(Arca::Index<Shard>(parent.ID(), *reliquary));
+                    REQUIRE(Arca::Index<BasicShard>(parent.ID(), *reliquary));
                 }
 
                 THEN("destroying parent works")
@@ -273,7 +270,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
 
                     REQUIRE(reliquary->RelicSize() == 0);
                     for (auto& child : children)
-                        REQUIRE(!Arca::Index<Shard>(child.ID(), *reliquary));
+                        REQUIRE(!Arca::Index<BasicShard>(child.ID(), *reliquary));
                 }
             }
         }
@@ -282,13 +279,13 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
     GIVEN("parent from one reliquary and child from another")
     {
         auto origin = ReliquaryOrigin()
-            .Register<Shard>();
+            .Register<BasicShard>();
 
         auto parentReliquary = origin.Actualize();
         auto childReliquary = origin.Actualize();
 
         auto parent = parentReliquary->Do<Create<OpenRelic>>();
-        parent->Create<Shard>();
+        parent->Create<BasicShard>();
 
         WHEN("parenting child inside child reliquary")
         {

@@ -2,9 +2,6 @@
 
 #include "GlobalRelicTests.h"
 
-GlobalRelicTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std::move(myValue))
-{}
-
 GlobalRelicTestsFixture::BasicTypedRelic::BasicTypedRelic(Init init)
     : ClosedTypedRelic(init)
 {

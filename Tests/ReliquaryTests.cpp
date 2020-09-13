@@ -4,12 +4,6 @@ using namespace std::string_literals;
 
 #include "ReliquaryTests.h"
 
-ReliquaryTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std::move(myValue))
-{}
-
-ReliquaryTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
-{}
-
 ReliquaryTestsFixture::BasicTypedRelic::BasicTypedRelic(Init init)
     : ClosedTypedRelic(init)
 {

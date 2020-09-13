@@ -4,6 +4,10 @@
 
 namespace Arca
 {
+    OpenRelic::OpenRelic(RelicInit init) :
+        id(init.id), owner(&init.owner)
+    {}
+
     std::optional<Handle> OpenRelic::Parent() const
     {
         return owner->ParentOf(ID());
@@ -18,8 +22,4 @@ namespace Arca
     {
         return *owner;
     }
-
-    OpenRelic::OpenRelic(RelicInit init) :
-        id(init.id), owner(&init.owner)
-    {}
 }

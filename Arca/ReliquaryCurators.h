@@ -54,9 +54,12 @@ namespace Arca
             Curator& Value() override;
             void Work(Curator::Stage& stage) override;
 
-            [[nodiscard]] bool WillSerialize() const override;
+            [[nodiscard]] bool WillBinarySerialize() const override;
+            [[nodiscard]] bool WillJsonSerialize() const override;
             void Serialize(Inscription::BinaryArchive& archive) override;
+            void Serialize(const std::string& name, Inscription::JsonArchive& archive) override;
             [[nodiscard]] std::vector<::Inscription::Type> InscriptionTypes(Inscription::BinaryArchive& archive) const override;
+            [[nodiscard]] std::vector<::Inscription::Type> InscriptionTypes(Inscription::JsonArchive& archive) const override;
         private:
             template<class U, std::enable_if_t<has_empty_work_method_v<U> && !has_stage_work_method_v<U>, int> = 0>
             void WorkImpl(Curator::Stage& stage);

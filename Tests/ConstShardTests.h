@@ -50,18 +50,27 @@ public:
 namespace Inscription
 {
     template<>
-    class Scribe<::ConstShardTestsFixture::Shard, BinaryArchive> final
-        : public ArcaCompositeScribe<::ConstShardTestsFixture::Shard, BinaryArchive>
+    class Scribe<ConstShardTestsFixture::Shard> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+    public:
+        using ObjectT = ConstShardTestsFixture::Shard;
+    public:
+        template<class Archive>
+        void Scriven(ObjectT& object, Archive& archive)
         {
-            archive(object.value);
+            archive("value", object.value);
         }
     };
 
-    template<>
-    class Scribe<::ConstShardTestsFixture::Relic, BinaryArchive> final
-        : public ArcaNullScribe<::ConstShardTestsFixture::Relic, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<ConstShardTestsFixture::Shard, Archive> final
+    {
+        using Category = ArcaCompositeScribeCategory<ConstShardTestsFixture::Shard>;
+    };
+
+    template<class Archive>
+    struct ScribeTraits<ConstShardTestsFixture::Relic, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<ConstShardTestsFixture::Relic>;
+    };
 }

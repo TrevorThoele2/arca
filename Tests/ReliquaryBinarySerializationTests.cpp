@@ -2,140 +2,13 @@
 #include <utility>
 using namespace std::string_literals;
 
-#include "ReliquarySerializationTests.h"
+#include "ReliquaryBinarySerializationTests.h"
 
 #include "SignalListener.h"
 
-ReliquarySerializationTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(myValue)
-{}
+const Inscription::BinaryArchive::StreamPosition defaultOutputArchiveSize = 124;
 
-ReliquarySerializationTestsFixture::PreferentialSerializationConstructorShard::PreferentialSerializationConstructorShard(Serialization) :
-    calledPreferential(true)
-{}
-
-ReliquarySerializationTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
-{}
-
-ReliquarySerializationTestsFixture::TypedClosedRelic::TypedClosedRelic(Init init, int myInt) :
-    ClosedTypedRelic(init), myInt(myInt)
-{
-    basicShard = Create<BasicShard>();
-}
-
-ReliquarySerializationTestsFixture::TypedClosedRelic::TypedClosedRelic(Init init, Serialization) :
-    ClosedTypedRelic(init)
-{
-    basicShard = Find<BasicShard>();
-}
-
-ReliquarySerializationTestsFixture::TypedOpenRelic::TypedOpenRelic(Init init, int myInt) :
-    OpenTypedRelic(init), myInt(myInt)
-{
-    basicShard = Create<BasicShard>();
-}
-
-ReliquarySerializationTestsFixture::TypedOpenRelic::TypedOpenRelic(Init init, Serialization) :
-    OpenTypedRelic(init)
-{
-    basicShard = Find<BasicShard>();
-}
-
-ReliquarySerializationTestsFixture::GlobalRelic::GlobalRelic(Init init) :
-    ClosedTypedRelic(init)
-{
-    basicShard = Create<BasicShard>();
-}
-
-ReliquarySerializationTestsFixture::GlobalRelic::GlobalRelic(Init init, int myInt, std::string shardData) :
-    ClosedTypedRelic(init), myInt(myInt)
-{
-    basicShard = Create<BasicShard>(std::move(shardData));
-}
-
-ReliquarySerializationTestsFixture::GlobalRelic::GlobalRelic(Init init, Serialization) :
-    ClosedTypedRelic(init)
-{
-    basicShard = Find<BasicShard>();
-}
-
-ReliquarySerializationTestsFixture::NonDefaultConstructorRelic::NonDefaultConstructorRelic(
-    Init init, int myInt)
-    : ClosedTypedRelic(init), myInt(myInt)
-{}
-
-ReliquarySerializationTestsFixture::BasicShardNullInscription::BasicShardNullInscription(std::string myValue)
-    : myValue(std::move(myValue))
-{}
-
-ReliquarySerializationTestsFixture::OtherShardNullInscription::OtherShardNullInscription(int myValue)
-    : myValue(myValue)
-{}
-
-ReliquarySerializationTestsFixture::TypedClosedRelicNullInscription::TypedClosedRelicNullInscription(
-    Init init)
-    :
-    ClosedTypedRelic(init)
-{
-    basicShard = Create<BasicShardNullInscription>();
-}
-
-ReliquarySerializationTestsFixture::TypedClosedRelicNullInscription::TypedClosedRelicNullInscription(
-    Init init, int myInt)
-    :
-    ClosedTypedRelic(init), myInt(myInt)
-{
-    basicShard = Create<BasicShardNullInscription>();
-}
-
-ReliquarySerializationTestsFixture::TypedOpenRelicNullInscription::TypedOpenRelicNullInscription(
-    Init init)
-    :
-    OpenTypedRelic(init)
-{
-    basicShard = Create<BasicShardNullInscription>();
-}
-
-ReliquarySerializationTestsFixture::TypedOpenRelicNullInscription::TypedOpenRelicNullInscription(
-    Init init, int myInt)
-    :
-    OpenTypedRelic(init), myInt(myInt)
-{
-    basicShard = Create<BasicShardNullInscription>();
-}
-
-ReliquarySerializationTestsFixture::GlobalRelicNullInscription::GlobalRelicNullInscription(
-    Init init)
-    :
-    ClosedTypedRelic(init)
-{
-    basicShard = Create<BasicShardNullInscription>();
-}
-
-ReliquarySerializationTestsFixture::GlobalRelicNullInscription::GlobalRelicNullInscription(
-    Init init, int myInt, std::string shardData)
-    :
-    ClosedTypedRelic(init), myInt(myInt)
-{
-    basicShard = Create<BasicShardNullInscription>(std::move(shardData));
-}
-
-ReliquarySerializationTestsFixture::MovableOnlyRelic::MovableOnlyRelic(
-    Init init, int myInt, std::string shardData)
-    :
-    ClosedTypedRelic(init), myValue(myInt)
-{
-    basicShard = Create<BasicShard>(std::move(shardData));
-}
-
-ReliquarySerializationTestsFixture::MovableOnlyRelic::MovableOnlyRelic(Init init, Serialization) :
-    ClosedTypedRelic(init)
-{
-    basicShard = Find<BasicShard>();
-}
-
-const Inscription::BinaryArchive::StreamPosition defaultOutputArchiveSize = 147;
-
-SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "[reliquary][serialization]")
+SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary serialization", "[reliquary][serialization][binary]")
 {
     GIVEN("saved empty reliquary with every type registered")
     {
@@ -149,7 +22,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             .Actualize();
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -167,7 +40,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                 inputArchive(*loadedReliquary);
                 inputArchiveSize = inputArchive.TellStream();
             }
@@ -194,7 +67,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
         auto savedShard = savedRelic->Create<BasicShard>(dataGeneration.Random<std::string>());
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -207,7 +80,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                 inputArchive(*loadedReliquary);
                 inputArchiveSize = inputArchive.TellStream();
             }
@@ -257,7 +130,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 .Actualize();
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                 inputArchive(*loadedReliquary);
             }
 
@@ -294,7 +167,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 .Actualize();
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                 inputArchive(*loadedReliquary);
             }
 
@@ -347,7 +220,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
         auto savedRelic = Arca::Index<GlobalRelic>(*savedReliquary);
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -361,7 +234,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                 inputArchive(*loadedReliquary);
                 inputArchiveSize = inputArchive.TellStream();
             }
@@ -395,7 +268,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
         auto savedRelic = savedReliquary->Do<Create<TypedClosedRelic>>(dataGeneration.Random<int>());
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -409,7 +282,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                 inputArchive(*loadedReliquary);
                 inputArchiveSize = inputArchive.TellStream();
             }
@@ -445,7 +318,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
         auto savedOtherShard = savedRelic->Create<OtherShard>();
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -460,7 +333,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                 inputArchive(*loadedReliquary);
                 inputArchiveSize = inputArchive.TellStream();
             }
@@ -502,7 +375,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             dataGeneration.Random<std::string>());
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -516,7 +389,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                 inputArchive(*loadedReliquary);
                 inputArchiveSize = inputArchive.TellStream();
             }
@@ -550,7 +423,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
         savedCurator.myInt = dataGeneration.Random<int>();
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -563,7 +436,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                 inputArchive(*loadedReliquary);
                 inputArchiveSize = inputArchive.TellStream();
             }
@@ -589,7 +462,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
         savedReliquary->Raise<BasicSignal>();
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -602,7 +475,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                 inputArchive(*loadedReliquary);
                 inputArchiveSize = inputArchive.TellStream();
             }
@@ -620,7 +493,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
     }
 }
 
-SCENARIO_METHOD(ReliquarySerializationTestsFixture, "preferential serialization", "[preferential][serialization]")
+SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "preferential binary serialization", "[preferential][serialization][binary]")
 {
     GIVEN("saved reliquary with preferential relic and shard")
     {
@@ -634,7 +507,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "preferential serialization"
         openRelic->Create<PreferentialSerializationConstructorShard>();
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -646,7 +519,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "preferential serialization"
                 .Actualize();
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                 inputArchive(*loadedReliquary);
             }
 
@@ -671,7 +544,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "preferential serialization"
     }
 }
 
-SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serialization", "[reliquary][serialization]")
+SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "null reliquary binary serialization", "[reliquary][serialization][binary]")
 {
     GIVEN("saved reliquary with global relic")
     {
@@ -686,7 +559,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
         auto savedRelic = Arca::Index<GlobalRelicNullInscription>(*savedReliquary);
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -700,7 +573,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                 inputArchive(*loadedReliquary);
                 inputArchiveSize = inputArchive.TellStream();
             }
@@ -735,7 +608,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
         auto savedRelic = savedReliquary->Do<Create<TypedClosedRelicNullInscription>>();
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -749,7 +622,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                 inputArchive(*loadedReliquary);
                 inputArchiveSize = inputArchive.TellStream();
             }
@@ -786,7 +659,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
         savedRelic->Create<OtherShardNullInscription>(dataGeneration.Random<int>());
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -801,7 +674,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                 inputArchive(*loadedReliquary);
                 inputArchiveSize = inputArchive.TellStream();
             }
@@ -836,7 +709,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
         savedCurator.myInt = dataGeneration.Random<int>();
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -849,7 +722,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                 inputArchive(*loadedReliquary);
                 inputArchiveSize = inputArchive.TellStream();
             }
@@ -881,7 +754,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
         savedReliquary->Raise<BasicSignalNullInscription>();
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -894,7 +767,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                 inputArchive(*loadedReliquary);
                 inputArchiveSize = inputArchive.TellStream();
             }
@@ -919,9 +792,9 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
 }
 
 SCENARIO_METHOD(
-    ReliquarySerializationTestsFixture,
-    "null reliquary serialization with non default constructor",
-    "[reliquary][serialization]")
+    ReliquaryBinarySerializationTestsFixture,
+    "null reliquary binary serialization with non default constructor",
+    "[reliquary][serialization][binary]")
 {
     GIVEN("saved reliquary with non default shard")
     {
@@ -933,7 +806,7 @@ SCENARIO_METHOD(
             dataGeneration.Random<int>());
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -944,7 +817,7 @@ SCENARIO_METHOD(
                 .Actualize();
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                 inputArchive(*loadedReliquary);
             }
 
