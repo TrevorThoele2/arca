@@ -27,9 +27,9 @@ namespace Arca
                 structureName, std::forward<Args>(args)...))
         {}
 
-        Index<T> Do(ReliquaryRelics& relics) const
+        Index<T> Do(Reliquary& reliquary) const
         {
-            return base->Do(relics);
+            return base->Do(reliquary.relics);
         }
     private:
         class Base
@@ -74,5 +74,6 @@ namespace Arca
         static const ObjectType objectType = ObjectType::Command;
         static inline const TypeName typeName = "Arca::CreateWith<" + Traits<std::remove_const_t<T>>::typeName + ">";
         using Result = Index<T>;
+        static const bool selfContained = true;
     };
 }

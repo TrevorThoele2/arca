@@ -9,8 +9,6 @@ namespace Arca
         Relics().Clear(command.type.name);
     }
 
-    ReliquaryCommands::HandlerBase::~HandlerBase() = default;
-
     ReliquaryCommands::ReliquaryCommands(Reliquary& owner) : ReliquaryComponent(owner, "command")
     {}
 }

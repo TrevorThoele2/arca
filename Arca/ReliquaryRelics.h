@@ -34,11 +34,25 @@ namespace Arca
         Index<RelicT> CreateWith(const std::string& structureName, ConstructorArgs&& ... constructorArgs);
 
         template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        Index<RelicT> IdentifiedCreate(RelicID id, ConstructorArgs&& ... constructorArgs);
+        template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        Index<RelicT> IdentifiedCreateWith(RelicID id, const RelicStructure& structure, ConstructorArgs&& ... constructorArgs);
+        template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        Index<RelicT> IdentifiedCreateWith(RelicID id, const std::string& structureName, ConstructorArgs&& ... constructorArgs);
+
+        template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         Index<RelicT> CreateChild(const Handle& parent, ConstructorArgs&& ... constructorArgs);
         template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         Index<RelicT> CreateChildWith(const Handle& parent, const RelicStructure& structure, ConstructorArgs&& ... constructorArgs);
         template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         Index<RelicT> CreateChildWith(const Handle& parent, const std::string& structureName, ConstructorArgs&& ... constructorArgs);
+
+        template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        Index<RelicT> IdentifiedCreateChild(RelicID id, const Handle& parent, ConstructorArgs&& ... constructorArgs);
+        template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        Index<RelicT> IdentifiedCreateChildWith(RelicID id, const Handle& parent, const RelicStructure& structure, ConstructorArgs&& ... constructorArgs);
+        template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        Index<RelicT> IdentifiedCreateChildWith(RelicID id, const Handle& parent, const std::string& structureName, ConstructorArgs&& ... constructorArgs);
 
         void Destroy(const TypeName& typeName, RelicID id);
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
@@ -49,6 +63,7 @@ namespace Arca
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         void Clear();
 
+        [[nodiscard]] bool Contains(RelicID id) const;
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
@@ -64,6 +79,9 @@ namespace Arca
 
         [[nodiscard]] bool IsRelicTypeName(const TypeName& typeName) const;
         [[nodiscard]] std::vector<TypeName> AllTypeNames() const;
+
+        template<class RelicT>
+        void SignalCreation(const Index<RelicT>& index);
     public:
         struct RelicPrototype
         {
@@ -76,6 +94,8 @@ namespace Arca
 
         RelicID nextRelicID = 1;
 
+        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        RelicMetadata* SetupNewMetadata(RelicID id);
         RelicMetadata* SetupNewMetadata(
             RelicID id,
             Openness openness,
@@ -95,7 +115,7 @@ namespace Arca
         [[nodiscard]] std::vector<RelicID> AllIDs() const;
 
         [[nodiscard]] RelicID NextID() const;
-        [[nodiscard]] RelicID AdvanceID();
+        RelicID AdvanceID();
 
         [[nodiscard]] bool CanModifyShards(RelicID id) const;
         void ShardModificationRequired(RelicID id) const;
@@ -116,7 +136,7 @@ namespace Arca
             virtual RelicBatchSourceBase& BatchSource() = 0;
 
             virtual void Destroy(RelicID id, Reliquary& reliquary) = 0;
-            virtual void Clear() = 0;
+            virtual void Clear(Reliquary& reliquary) = 0;
         public:
             [[nodiscard]] TypeName MainType() const override;
         protected:
@@ -134,7 +154,7 @@ namespace Arca
             RelicBatchSourceBase& BatchSource() override;
 
             void Destroy(RelicID id, Reliquary& reliquary) override;
-            void Clear() override;
+            void Clear(Reliquary& reliquary) override;
 
             [[nodiscard]] bool WillBinarySerialize() const override;
             [[nodiscard]] bool WillJsonSerialize() const override;
@@ -227,8 +247,6 @@ namespace Arca
             std::enable_if_t<is_relic_v<RelicT> && !has_should_create_method_v<RelicT>, int> = 0>
             bool ShouldCreate(ConstructorArgs&& ... constructorArgs);
 
-        template<class RelicT>
-        RelicID StartNewRelic();
         template<class RelicT, class... ConstructorArgs>
         Index<RelicT> FinishNewRelic(
             RelicStructure structure, RelicID id, ConstructorArgs&& ... constructorArgs);

@@ -2,8 +2,6 @@
 
 #include "ReliquaryComponent.h"
 
-#include <unordered_map>
-
 #include "ShardBatch.h"
 
 #include "IsShard.h"
@@ -27,9 +25,11 @@ namespace Arca
         template<class ShardT, class... ConstructorArgs>
         Index<ShardT> CreateFromInternal(RelicID id, ConstructorArgs&& ... constructorArgs);
 
-        void Destroy(const Type& type, RelicID id);
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         void Destroy(RelicID id);
+        void TransactionalDestroy(const Type& type, RelicID id);
+        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        void TransactionalDestroy(RelicID id);
         void Clear();
         void Clear(RelicID id);
 
@@ -45,6 +45,9 @@ namespace Arca
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] ShardT* FindStorage(RelicID id);
+
+        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        void SignalCreation(const Index<ShardT>& index);
     public:
         class HandlerBase : public KnownPolymorphicSerializer
         {
@@ -57,8 +60,10 @@ namespace Arca
             virtual ShardBatchSourceBase& ConstBatchSource() = 0;
 
             virtual void Create(RelicID id, Reliquary& reliquary, bool isConst) = 0;
-            virtual void Destroy(RelicID id, Reliquary& reliquary) = 0;
+            virtual void RequiredDestroy(RelicID id, Reliquary& reliquary) = 0;
             virtual void Clear() = 0;
+
+            [[nodiscard]] virtual bool Contains(RelicID id) const = 0;
 
             [[nodiscard]] TypeName MainType() const override;
         protected:
@@ -80,8 +85,10 @@ namespace Arca
             void Create(RelicID id, Reliquary& reliquary, bool isConst) override;
             template<class... ConstructorArgs>
             void CreateCommon(RelicID id, Reliquary& reliquary, bool isConst, ConstructorArgs&& ... constructorArgs);
-            void Destroy(RelicID id, Reliquary& reliquary) override;
+            void RequiredDestroy(RelicID id, Reliquary& reliquary) override;
             void Clear() override;
+
+            [[nodiscard]] bool Contains(RelicID id) const override;
 
             [[nodiscard]] bool WillBinarySerialize() const override;
             [[nodiscard]] bool WillJsonSerialize() const override;
@@ -129,7 +136,7 @@ namespace Arca
             {
                 using T = typename ShardPack::template Parameter<i>::Type;
 
-                shards.Destroy<T>(id);
+                shards.TransactionalDestroy<T>(id);
             }
         };
 

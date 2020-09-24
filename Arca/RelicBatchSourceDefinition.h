@@ -128,3 +128,147 @@ namespace Arca
         return TypeFor<T>();
     }
 }
+
+namespace Inscription
+{
+    template<class T>
+    void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::
+        Scriven(ObjectT& object, BinaryArchive& archive)
+    {
+        DoScriven<typename ObjectT::RelicT>(object, archive);
+    }
+
+    template<class T>
+    void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::
+        Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
+    {
+        DoScriven<typename ObjectT::RelicT>(name, object, archive);
+    }
+
+    template<class T>
+    template<class U, std::enable_if_t<Arca::HasScribe<U, BinaryArchive>(), int>>
+    void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::
+        DoScriven(ObjectT& object, BinaryArchive& archive)
+    {
+        if (archive.IsOutput())
+        {
+            auto size = object.list.size();
+            archive(size);
+
+            for (auto& relic : object.list)
+            {
+                auto id = relic.ID();
+                archive(id);
+                archive(relic);
+            }
+        }
+        else
+        {
+            auto& reliquary = *archive.UserContext<ReliquaryUserContext>()->reliquary;
+
+            ContainerSize size;
+            archive(size);
+
+            while (size-- > 0)
+            {
+                Arca::RelicID id = 0;
+                archive(id);
+
+                auto foundRelic = object.Find(id);
+                if (foundRelic)
+                    archive(*foundRelic);
+                else
+                {
+                    auto relic = Create<RelicT>(Arca::RelicInit{ id, *object.owner });
+                    archive(relic);
+                    object.list.push_back(std::move(relic));
+                    archive.types.AttemptReplaceTrackedObject(relic, object.list.back());
+                }
+
+                reliquary.relics.SignalCreation(Arca::Index<RelicT>(id, reliquary));
+            }
+        }
+    }
+
+    template<class T>
+    template<class U, std::enable_if_t<!Arca::HasScribe<U, BinaryArchive>(), int>>
+    void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::
+        DoScriven(ObjectT&, BinaryArchive&)
+    {}
+
+    template<class T>
+    template<class U, std::enable_if_t<Arca::HasScribe<U, JsonArchive>(), int>>
+    void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::
+        DoScriven(const std::string& name, ObjectT& object, JsonArchive& archive)
+    {
+        if (archive.IsOutput())
+        {
+            auto output = archive.AsOutput();
+            output->StartList(name);
+            for (auto& relic : object.list)
+            {
+                output->StartObject("");
+                auto id = relic.ID();
+                archive("id", id);
+                archive("relic", relic);
+                output->EndObject();
+            }
+            output->EndList();
+        }
+        else
+        {
+            auto& reliquary = *archive.UserContext<ReliquaryUserContext>()->reliquary;
+
+            auto input = archive.AsInput();
+            auto size = input->StartList(name);
+            while (size-- > 0)
+            {
+                input->StartObject("");
+
+                Arca::RelicID id = 0;
+                archive("id", id);
+
+                auto relic = Create<RelicT>(Arca::RelicInit{ id, *object.owner });
+                archive("relic", relic);
+                object.list.push_back(std::move(relic));
+                archive.types.AttemptReplaceTrackedObject(relic, object.list.back());
+
+                input->EndObject();
+
+                reliquary.relics.SignalCreation(Arca::Index<RelicT>(id, reliquary));
+            }
+            input->EndList();
+        }
+    }
+
+    template<class T>
+    template<class U, std::enable_if_t<!Arca::HasScribe<U, JsonArchive>(), int>>
+    void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::
+        DoScriven(const std::string& name, ObjectT&, JsonArchive&)
+    {}
+
+    template<class T>
+    template<class U, std::enable_if_t<Arca::has_relic_serialization_constructor_v<U>, int>>
+    U Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::Create(Arca::RelicInit init)
+    {
+        return ObjectT::RelicT{ init, Arca::Serialization{} };
+    }
+
+    template<class T>
+    template<class U, std::enable_if_t<!Arca::has_relic_serialization_constructor_v<U> && Arca::has_relic_default_constructor_v<U>, int>>
+    U Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::Create(Arca::RelicInit init)
+    {
+        return ObjectT::RelicT{ init };
+    }
+
+    template<class T>
+    template<class U, std::enable_if_t<!Arca::has_relic_serialization_constructor_v<U> && !Arca::has_relic_default_constructor_v<U>, int>>
+    U Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::Create(Arca::RelicInit init)
+    {
+        static_assert(
+            false,
+            "A relic requires a serialization constructor (taking a RelicInit and Serialization) "
+            "or a constructor taking only RelicInit in order to be serialized.");
+        return ObjectT::RelicT{ init };
+    }
+}

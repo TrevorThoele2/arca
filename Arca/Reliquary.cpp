@@ -1,5 +1,7 @@
 #include "Reliquary.h"
 
+#include "SaveUserContext.h"
+
 #include <unordered_set>
 #include <cassert>
 #include <utility>
@@ -97,7 +99,7 @@ namespace Arca
             relics.Destroy(handle.Type().name, handle.ID());
             break;
         case HandleObjectType::Shard:
-            shards.Destroy(handle.Type(), handle.ID());
+            shards.TransactionalDestroy(handle.Type(), handle.ID());
             break;
         default:
             assert(false);
@@ -131,7 +133,7 @@ namespace Inscription
         object.value->Serialize(name, archive);
     }
 
-    auto Scribe<::Arca::Reliquary>::FindExtensionForLoadedMetadata(Arca::RelicID id, ObjectT& object)
+    auto Scribe<Arca::Reliquary>::FindExtensionForLoadedMetadata(Arca::RelicID id, ObjectT& object)
         -> MetadataExtension
     {
         for (auto& handler : object.relics.localHandlers)
@@ -147,9 +149,10 @@ namespace Inscription
                 return { Arca::Type(global->typeName, false), Arca::Locality::Global, global->Storage() };
 
         DEBUG_ASSERT(false);
+        return {};
     }
 
-    auto Scribe<::Arca::Reliquary>::FindFrom(
+    auto Scribe<Arca::Reliquary>::FindFrom(
         Type mainType,
         KnownPolymorphicSerializerList& list)
         -> Arca::KnownPolymorphicSerializer*
@@ -168,10 +171,19 @@ namespace Inscription
 
     void Scribe<Arca::Reliquary>::Save(ObjectT& object, OutputBinaryArchive& archive)
     {
+        SaveUserContext saveUserContext;
+
         std::vector<Arca::RelicMetadata> metadataToSave;
         for (auto& loop : object.relics.metadataList)
+        {
             if (loop.shouldSerializeBinary)
+            {
                 metadataToSave.push_back(loop);
+                saveUserContext.ids.emplace(loop.id);
+            }
+        }
+
+        archive.EmplaceUserContext(&saveUserContext);
 
         ContainerSize metadataSize = metadataToSave.size();
         archive(metadataSize);
@@ -307,8 +319,7 @@ namespace Inscription
         }
     }
 
-
-    auto Scribe<::Arca::Reliquary>::PruneTypesToLoad(
+    auto Scribe<Arca::Reliquary>::PruneTypesToLoad(
         KnownPolymorphicSerializerList& fromObject,
         InputBinaryArchive& archive,
         const std::vector<Type>& typesFromArchive)
@@ -407,10 +418,17 @@ namespace Inscription
             if (loop.shouldSerializeBinary)
                 metadataToSave.push_back(loop);
 
+        SaveUserContext saveUserContext;
+
         archive.StartList("relicMetadata");
         for (auto& metadata : metadataToSave)
+        {
             SaveRelicMetadata(metadata, archive);
+            saveUserContext.ids.emplace(metadata.id);
+        }
         archive.EndList();
+
+        archive.EmplaceUserContext(&saveUserContext);
 
         auto shardSerializers = ToKnownPolymorphicSerializerList(object.shards.handlers);
         auto relicSerializers = ToKnownPolymorphicSerializerList(object.relics.localHandlers);
@@ -440,6 +458,8 @@ namespace Inscription
             object,
             archive,
             curatorSerializers);
+
+        archive.RemoveUserContext<SaveUserContext>();
     }
 
     void Scribe<Arca::Reliquary>::Load(ObjectT& object, InputJsonArchive& archive)
@@ -610,7 +630,7 @@ namespace Inscription
         return returnValue;
     }
 
-    auto Scribe<::Arca::Reliquary>::ExtractTypes(KnownPolymorphicSerializerList& fromObject, InputJsonArchive& archive)
+    auto Scribe<Arca::Reliquary>::ExtractTypes(KnownPolymorphicSerializerList& fromObject, InputJsonArchive& archive)
         -> std::vector<TypePair>
     {
         std::vector<TypePair> returnValue;

@@ -19,15 +19,9 @@
 #include "AsHandle.h"
 #include "IsSignal.h"
 
-#include "Create.h"
-#include "CreateWith.h"
-#include "CreateChild.h"
-#include "CreateChildWith.h"
-#include "Destroy.h"
-#include "Clear.h"
-
 #include "Created.h"
 #include "Destroying.h"
+#include "Assigning.h"
 #include "RelicParented.h"
 #include "MatrixFormed.h"
 #include "MatrixDissolved.h"
@@ -117,14 +111,32 @@ namespace Arca
 
         [[nodiscard]] SizeT CuratorSize() const;
     public:
-        template<class CommandT, std::enable_if_t<is_command_v<CommandT> && std::is_void_v<command_result_t<CommandT>>, int> = 0>
+        template<
+            class CommandT,
+            std::enable_if_t<
+                is_command_v<CommandT>
+                && !has_command_result_v<CommandT>, int> = 0>
         void Do(const CommandT& command);
-        template<class CommandT, class... Args, std::enable_if_t<is_command_v<CommandT> && std::is_void_v<command_result_t<CommandT>>, int> = 0>
+        template<
+            class CommandT,
+            class... Args,
+            std::enable_if_t<
+                is_command_v<CommandT>
+                && !has_command_result_v<CommandT>, int> = 0>
         void Do(Args&& ... args);
 
-        template<class CommandT, std::enable_if_t<is_command_v<CommandT> && !std::is_void_v<command_result_t<CommandT>>, int> = 0>
+        template<
+            class CommandT,
+            std::enable_if_t<
+                is_command_v<CommandT>
+                && has_command_result_v<CommandT>, int> = 0>
         command_result_t<CommandT> Do(const CommandT& command);
-        template<class CommandT, class... Args, std::enable_if_t<is_command_v<CommandT> && !std::is_void_v<command_result_t<CommandT>>, int> = 0>
+        template<
+            class CommandT,
+            class... Args,
+            std::enable_if_t<
+                is_command_v<CommandT>
+                && has_command_result_v<CommandT>, int> = 0>
         command_result_t<CommandT> Do(Args&& ... args);
     public:
         template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
@@ -192,6 +204,27 @@ namespace Arca
 
         friend class Curator;
         friend class MutablePointer;
+
+        template<class, class>
+        friend struct Create;
+        template<class>
+        friend struct IdentifiedCreate;
+        template<class>
+        friend struct CreateWith;
+        template<class>
+        friend struct IdentifiedCreateWith;
+        template<class>
+        friend struct CreateChild;
+        template<class>
+        friend struct IdentifiedCreateChild;
+        template<class>
+        friend struct CreateChildWith;
+        template<class>
+        friend struct IdentifiedCreateChildWith;
+        template<class, class>
+        friend struct AssignCopy;
+        template<class, class>
+        friend struct AssignMove;
     private:
         INSCRIPTION_ACCESS;
     };
@@ -292,25 +325,43 @@ namespace Arca
         return curators.Contains<CuratorT>();
     }
 
-    template<class CommandT, std::enable_if_t<is_command_v<CommandT> && std::is_void_v<command_result_t<CommandT>>, int>>
+    template<
+        class CommandT,
+        std::enable_if_t<
+            is_command_v<CommandT>
+            && !has_command_result_v<CommandT>, int>>
     void Reliquary::Do(const CommandT& command)
     {
         commands.Do(command);
     }
 
-    template<class CommandT, class... Args, std::enable_if_t<is_command_v<CommandT> && std::is_void_v<command_result_t<CommandT>>, int>>
+    template<
+        class CommandT,
+        class... Args,
+        std::enable_if_t<
+            is_command_v<CommandT>
+            && !has_command_result_v<CommandT>, int>>
     void Reliquary::Do(Args&& ... args)
     {
         Do(CommandT(std::forward<Args>(args)...));
     }
 
-    template<class CommandT, std::enable_if_t<is_command_v<CommandT> && !std::is_void_v<command_result_t<CommandT>>, int>>
+    template<
+        class CommandT,
+        std::enable_if_t<
+            is_command_v<CommandT>
+            && has_command_result_v<CommandT>, int>>
     command_result_t<CommandT> Reliquary::Do(const CommandT& command)
     {
         return commands.Do(command);
     }
 
-    template<class CommandT, class... Args, std::enable_if_t<is_command_v<CommandT> && !std::is_void_v<command_result_t<CommandT>>, int>>
+    template<
+        class CommandT,
+        class... Args,
+        std::enable_if_t<
+            is_command_v<CommandT>
+            && has_command_result_v<CommandT>, int>>
     command_result_t<CommandT> Reliquary::Do(Args&& ... args)
     {
         return Do(CommandT{ std::forward<Args>(args)... });
@@ -484,6 +535,9 @@ namespace Inscription
         userContext.reliquary = &object;
         archive.EmplaceUserContext(&userContext);
 
+        if (archive.IsInput())
+            object.relics.Clear();
+
         archive("nextRelicId", object.relics.nextRelicID);
 
         if (archive.IsOutput())
@@ -529,6 +583,7 @@ namespace Inscription
 #include "ShardIndexDefinition.h"
 
 #include "RelicBatchSourceDefinition.h"
+#include "ShardBatchSourceDefinition.h"
 #include "MatrixBatchSourceDefinition.h"
 #include "KnownMatrixDefinition.h"
 #include "EitherDefinition.h"

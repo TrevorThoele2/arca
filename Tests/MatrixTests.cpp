@@ -90,7 +90,7 @@ SCENARIO_METHOD(MatrixTestsFixture, "matrix signals not executed", "[matrix][sig
             auto encounterCount = 0;
 
             reliquary->On<MatrixFormed<Either<OtherShard>>>(
-                [&encounterCount](const MatrixFormed<Either<OtherShard>>& signal)
+                [&encounterCount](const MatrixFormed<Either<OtherShard>>&)
                 {
                     ++encounterCount;
                 });
@@ -110,7 +110,7 @@ SCENARIO_METHOD(MatrixTestsFixture, "matrix signals not executed", "[matrix][sig
             auto encounterCount = 0;
 
             reliquary->On<MatrixDissolved<Either<OtherShard>>>(
-                [&encounterCount](const MatrixDissolved<Either<OtherShard>>& signal)
+                [&encounterCount](const MatrixDissolved<Either<OtherShard>>&)
                 {
                     ++encounterCount;
                 });
@@ -132,7 +132,7 @@ SCENARIO_METHOD(MatrixTestsFixture, "matrix signals not executed", "[matrix][sig
             auto encounterCount = 0;
 
             reliquary->On<MatrixDissolved<Either<OtherShard>>>(
-                [&encounterCount](const MatrixDissolved<Either<OtherShard>>& signal)
+                [&encounterCount](const MatrixDissolved<Either<OtherShard>>&)
                 {
                     ++encounterCount;
                 });

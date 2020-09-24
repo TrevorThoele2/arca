@@ -21,11 +21,11 @@ namespace Arca
     void ReliquaryRelics::Clear()
     {
         for (auto& loop : localHandlers)
-            loop->Clear();
+            loop->Clear(Owner());
 
         for (auto loop = metadataList.begin(); loop != metadataList.end();)
         {
-            if (loop->locality == Arca::Locality::Global && !loop->shouldSerializeBinary)
+            if (loop->locality == Arca::Locality::Global)
                 ++loop;
             else
                 loop = metadataList.erase(loop);
@@ -38,6 +38,12 @@ namespace Arca
     {
         auto& batchSource = RequiredBatchSource(typeName);
         batchSource.DestroyAllFromBase(Owner());
+    }
+
+    bool ReliquaryRelics::Contains(RelicID id) const
+    {
+        const auto metadata = MetadataFor(id);
+        return metadata;
     }
 
     std::optional<Handle> ReliquaryRelics::ParentOf(RelicID childID) const

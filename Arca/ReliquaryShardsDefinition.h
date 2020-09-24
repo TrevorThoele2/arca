@@ -22,8 +22,22 @@ namespace Arca
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     void ReliquaryShards::Destroy(RelicID id)
     {
-        Relics().ShardModificationRequired(id);
+        auto batchSource = FindBatchSource<ShardT>();
+        if (batchSource != nullptr)
+        {
+            if (batchSource->ContainsFromBase(id))
+            {
+                Owner().Raise<DestroyingKnown<ShardT>>(CreateIndex<ShardT>(id));
+                Owner().Raise<Destroying>(HandleFrom(id, batchSource->Type(), HandleObjectType::Shard));
 
+                batchSource->DestroyFromBase(id);
+            }
+        }
+    }
+
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
+    void ReliquaryShards::TransactionalDestroy(RelicID id)
+    {
         auto batchSource = FindBatchSource<ShardT>();
         if (batchSource != nullptr)
         {
@@ -67,6 +81,13 @@ namespace Arca
         return batchSource.Find(id);
     }
 
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
+    void ReliquaryShards::SignalCreation(const Index<ShardT>& index)
+    {
+        Owner().Raise<Created>(HandleFrom(index.ID(), TypeFor<ShardT>(), HandleObjectType::Shard));
+        Owner().Raise<CreatedKnown<ShardT>>(index);
+    }
+
     template<class ShardT>
     ReliquaryShards::Handler<ShardT>::Handler(Reliquary& reliquary) :
         HandlerBase(TypeFor<ShardT>().name),
@@ -107,14 +128,14 @@ namespace Arca
             ->Add(id, std::forward<ConstructorArgs>(constructorArgs)...);
 
         matrixTransaction.Finalize();
-        reliquary.Raise<Created>(reliquary.shards.HandleFrom(id, TypeFor<ShardT>(), HandleObjectType::Shard));
-        reliquary.Raise<CreatedKnown<ShardT>>(reliquary.shards.CreateIndex<ShardT>(id));
+        reliquary.shards.SignalCreation(reliquary.shards.CreateIndex<ShardT>(id));
     }
 
     template<class ShardT>
-    void ReliquaryShards::Handler<ShardT>::Destroy(RelicID id, Reliquary& reliquary)
+    void ReliquaryShards::Handler<ShardT>::RequiredDestroy(RelicID id, Reliquary& reliquary)
     {
         reliquary.shards.Destroy<ShardT>(id);
+        reliquary.shards.Destroy<const ShardT>(id);
     }
 
     template<class ShardT>
@@ -122,6 +143,12 @@ namespace Arca
     {
         batchSource.Clear();
         constBatchSource.Clear();
+    }
+
+    template<class ShardT>
+    bool ReliquaryShards::Handler<ShardT>::Contains(RelicID id) const
+    {
+        return batchSource.ContainsFromBase(id) || constBatchSource.ContainsFromBase(id);
     }
 
     template<class ShardT>

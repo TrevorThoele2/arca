@@ -27,9 +27,9 @@ namespace Arca
                 id, std::forward<Args>(args)...))
         {}
 
-        Index<T> Do(ReliquaryRelics& relics, ReliquaryShards& shards, ReliquarySignals& signals) const
+        Index<T> Do(Reliquary& reliquary) const
         {
-            return base->Do(relics, shards, signals);
+            return base->Do(reliquary.relics, reliquary.shards, reliquary.signals);
         }
     private:
         class Base
@@ -85,6 +85,7 @@ namespace Arca
         static const ObjectType objectType = ObjectType::Command;
         static inline const TypeName typeName = "Arca::AssignCopy<" + Traits<std::remove_const_t<T>>::typeName + ">";
         using Result = Index<T>;
+        static const bool selfContained = true;
     };
 
     template<class T>
@@ -96,9 +97,9 @@ namespace Arca
                 id, std::forward<Args>(args)...))
         {}
 
-        Index<T> Do(ReliquaryShards& shards, ReliquarySignals& signals) const
+        Index<T> Do(Reliquary& reliquary) const
         {
-            return base->Do(shards, signals);
+            return base->Do(reliquary.shards, reliquary.signals);
         }
     private:
         class Base
@@ -153,6 +154,7 @@ namespace Arca
         static const ObjectType objectType = ObjectType::Command;
         static inline const TypeName typeName = "Arca::AssignCopy<" + Traits<std::remove_const_t<T>>::typeName + ">";
         using Result = Index<T>;
+        static const bool selfContained = true;
     };
 
     template<class T, class Enable = void>
@@ -167,9 +169,9 @@ namespace Arca
                 id, std::forward<Args>(args)...))
         {}
 
-        Index<T> Do(ReliquaryRelics& relics, ReliquaryShards& shards, ReliquarySignals& signals) const
+        Index<T> Do(Reliquary& reliquary) const
         {
-            return base->Do(relics, shards, signals);
+            return base->Do(reliquary.relics, reliquary.shards, reliquary.signals);
         }
     private:
         class Base
@@ -225,6 +227,7 @@ namespace Arca
         static const ObjectType objectType = ObjectType::Command;
         static inline const TypeName typeName = "Arca::AssignMove<" + Traits<std::remove_const_t<T>>::typeName + ">";
         using Result = Index<T>;
+        static const bool selfContained = true;
     };
 
     template<class T>
@@ -236,9 +239,9 @@ namespace Arca
                 id, std::forward<Args>(args)...))
         {}
 
-        Index<T> Do(ReliquaryShards& shards, ReliquarySignals& signals) const
+        Index<T> Do(Reliquary& reliquary) const
         {
-            return base->Do(shards, signals);
+            return base->Do(reliquary.shards, reliquary.signals);
         }
     private:
         class Base
@@ -293,5 +296,6 @@ namespace Arca
         static const ObjectType objectType = ObjectType::Command;
         static inline const TypeName typeName = "Arca::AssignMove<" + Traits<std::remove_const_t<T>>::typeName + ">";
         using Result = Index<T>;
+        static const bool selfContained = true;
     };
 }

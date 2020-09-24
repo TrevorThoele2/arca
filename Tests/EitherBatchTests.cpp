@@ -6,16 +6,6 @@
 
 #include "BasicShard.h"
 
-EitherBatchTestsFixture::Relic::Relic(Init init) : ClosedTypedRelic(init)
-{
-    Create<BasicShard>();
-}
-
-EitherBatchTestsFixture::GlobalRelic::GlobalRelic(Init init) : ClosedTypedRelic(init)
-{
-    Create<BasicShard>();
-}
-
 SCENARIO_METHOD(EitherBatchTestsFixture, "default either batch", "[either][batch]")
 {
     GIVEN("default either batch")
@@ -252,11 +242,11 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either shard batch serialization", "[E
     GIVEN("saved reliquary")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Register<Relic>()
+            .Register<TypedClosedRelic>()
             .Register<BasicShard>()
             .Actualize();
 
-        savedReliquary->Do<Create<Relic>>();
+        savedReliquary->Do<Create<TypedClosedRelic>>(dataGeneration.Random<int>());
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
@@ -266,7 +256,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either shard batch serialization", "[E
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Register<Relic>()
+                .Register<TypedClosedRelic>()
                 .Register<BasicShard>()
                 .Actualize();
 

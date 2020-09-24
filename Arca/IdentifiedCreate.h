@@ -3,7 +3,7 @@
 #include "Command.h"
 
 #include "IsRelic.h"
-#include "Handle.h"
+#include "RelicID.h"
 #include "Index.h"
 
 #include "ReliquaryRelics.h"
@@ -11,14 +11,15 @@
 namespace Arca
 {
     class ReliquaryRelics;
+    class ReliquaryShards;
 
     template<class T>
-    struct CreateChild
+    struct IdentifiedCreate
     {
         template<class... Args>
-        explicit CreateChild(const Handle& parent, Args&& ... args) :
-            base(std::make_unique<Derived<Handle, Args...>>(
-                parent, std::forward<Args>(args)...))
+        explicit IdentifiedCreate(RelicID id, Args&& ... args) :
+            base(std::make_unique<Derived<RelicID, Args...>>(
+                id, std::forward<Args>(args)...))
         {}
 
         Index<T> Do(Reliquary& reliquary) const
@@ -46,28 +47,27 @@ namespace Arca
 
             Index<T> Do(ReliquaryRelics& relics) override
             {
-
                 return std::apply(
                     [&relics](auto&& ... args)
                     {
-                        return relics.template CreateChild<T>(std::forward<decltype(args)>(args)...);
+                        return relics.template IdentifiedCreate<T>(std::forward<decltype(args)>(args)...);
                     }, std::move(args));
             }
         private:
             std::tuple<Args...> args;
         };
-
-        static_assert(is_relic_v<T>, "CreateChild can only be used with relics.");
+    private:
+        static_assert(is_relic_v<T>, "IdentifiedCreate can only be used with relics.");
     };
 
     template <class T>
-    CreateChild<T>::Base::~Base() = default;
+    IdentifiedCreate<T>::Base::~Base() = default;
 
     template<class T>
-    struct Traits<CreateChild<T>>
+    struct Traits<IdentifiedCreate<T>>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "Arca::CreateChild<" + Traits<std::remove_const_t<T>>::typeName + ">";
+        static inline const TypeName typeName = "Arca::IdentifiedCreate<" + Traits<std::remove_const_t<T>>::typeName + ">";
         using Result = Index<T>;
         static const bool selfContained = true;
     };
