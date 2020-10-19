@@ -94,6 +94,12 @@
     <ClCompile Include="CommandHandler.cpp">
       <Filter>Source Files\Command</Filter>
     </ClCompile>
+    <ClCompile Include="Clear.cpp">
+      <Filter>Source Files\Command\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Destroy.cpp">
+      <Filter>Source Files\Command\Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Curator.h">
@@ -706,6 +712,9 @@
     </Filter>
     <Filter Include="Header Files\Index\Shard">
       <UniqueIdentifier>{22a61877-3ec0-46fc-94ab-a99eb6bbb63f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Command\Common">
+      <UniqueIdentifier>{c4a29e23-eb34-419f-8dac-de05b9d8a108}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -7,24 +7,28 @@
 
 namespace Arca
 {
-    class ReliquaryRelics;
+    class Reliquary;
 
     struct Clear
     {
         Type type;
 
-        explicit Clear(Type type) : type(std::move(type))
-        {}
-
+        explicit Clear(Type type);
         template<class T, std::enable_if_t<is_relic_v<T>, int> = 0>
-        explicit Clear(Chroma::TypeIdentity<T>) : type(TypeFor<T>())
-        {}
+        explicit Clear(Chroma::TypeIdentity<T>);
+
+        void Do(Reliquary& reliquary) const;
     };
+
+    template<class T, std::enable_if_t<is_relic_v<T>, int>>
+    Clear::Clear(Chroma::TypeIdentity<T>) : type(TypeFor<T>())
+    {}
 
     template<>
     struct Traits<Clear>
     {
         static const ObjectType objectType = ObjectType::Command;
         static inline const TypeName typeName = "Arca::Clear";
+        static const bool selfContained = true;
     };
 }

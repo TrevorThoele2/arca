@@ -7,9 +7,6 @@
 #include "IsCurator.h"
 #include "IsSelfContained.h"
 
-#include "Destroy.h"
-#include "Clear.h"
-
 namespace Arca
 {
     class ReliquaryCommands : public ReliquaryComponent
@@ -43,15 +40,6 @@ namespace Arca
                 && has_command_result_v<CommandT>
                 && is_self_contained_v<CommandT>, int> = 0>
             command_result_t<CommandT> Do(const CommandT& command);
-
-        template<class T, std::enable_if_t<is_relic_v<T>, int> = 0>
-        void Do(const Destroy<T>& command);
-        template<class T, std::enable_if_t<is_shard_v<T>, int> = 0>
-        void Do(const Destroy<T>& command);
-        template<class T, std::enable_if_t<is_matrix_v<T>, int> = 0>
-        void Do(const Destroy<T>& command);
-
-        void Do(const Clear& command);
 
         template<class CuratorT, class CommandT, std::enable_if_t<is_curator_v<CuratorT> && is_command_v<CommandT>, int> = 0>
         void Link();
