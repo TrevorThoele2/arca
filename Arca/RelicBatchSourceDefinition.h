@@ -164,8 +164,6 @@ namespace Inscription
         }
         else
         {
-            auto& reliquary = *archive.UserContext<ReliquaryUserContext>()->reliquary;
-
             ContainerSize size;
             archive(size);
 
@@ -184,8 +182,6 @@ namespace Inscription
                     object.list.push_back(std::move(relic));
                     archive.types.AttemptReplaceTrackedObject(relic, object.list.back());
                 }
-
-                reliquary.relics.SignalCreation(Arca::Index<RelicT>(id, reliquary));
             }
         }
     }
@@ -217,8 +213,6 @@ namespace Inscription
         }
         else
         {
-            auto& reliquary = *archive.UserContext<ReliquaryUserContext>()->reliquary;
-
             auto input = archive.AsInput();
             auto size = input->StartList(name);
             while (size-- > 0)
@@ -234,8 +228,6 @@ namespace Inscription
                 archive.types.AttemptReplaceTrackedObject(relic, object.list.back());
 
                 input->EndObject();
-
-                reliquary.relics.SignalCreation(Arca::Index<RelicT>(id, reliquary));
             }
             input->EndList();
         }

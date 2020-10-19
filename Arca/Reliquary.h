@@ -530,6 +530,8 @@ namespace Inscription
         static std::vector<TypePair> ExtractTypes(
             KnownPolymorphicSerializerList& fromObject,
             InputJsonArchive& archive);
+    private:
+        static void SignalCreation(ObjectT& object);
     };
 
     template<class Archive>
@@ -546,7 +548,10 @@ namespace Inscription
         if (archive.IsOutput())
             Save(object, *archive.AsOutput());
         else
+        {
             Load(object, *archive.AsInput());
+            SignalCreation(object);
+        }
 
         archive.template RemoveUserContext<ReliquaryUserContext>();
     }
