@@ -24,29 +24,31 @@ public:
 
     class MatrixCreatingRelic;
     class MatrixAndParentCurator;
+
+    class RelicListeningToSignalFromConstructor;
 };
 
 namespace Arca
 {
     template<>
-    struct Traits<::IntegrationTestsFixture::BasicSignal>
+    struct Traits<IntegrationTestsFixture::BasicSignal>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static inline const TypeName typeName = "IntegrationTestsBasicSignal";
+        static inline const TypeName typeName = "IntegrationTestsFixture::BasicSignal";
     };
 
     template<>
     struct Traits<IntegrationTestsFixture::ChildRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "IntegrationTestsChildRelic";
+        static inline const TypeName typeName = "IntegrationTestsFixture::ChildRelic";
     };
 
     template<>
     struct Traits<IntegrationTestsFixture::ParentRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "IntegrationTestsParentRelic";
+        static inline const TypeName typeName = "IntegrationTestsFixture::ParentRelic";
         static bool ShouldCreate(Reliquary& reliquary, int value);
     };
 
@@ -54,14 +56,21 @@ namespace Arca
     struct Traits<IntegrationTestsFixture::MatrixCreatingRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "IntegrationTestsMatrixCreatingRelic";
+        static inline const TypeName typeName = "IntegrationTestsFixture::MatrixCreatingRelic";
     };
 
     template<>
     struct Traits<IntegrationTestsFixture::MatrixAndParentCurator>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static inline const TypeName typeName = "IntegrationTestsParentAndMatrixCurator";
+        static inline const TypeName typeName = "IntegrationTestsFixture::ParentAndMatrixCurator";
+    };
+
+    template<>
+    struct Traits<IntegrationTestsFixture::RelicListeningToSignalFromConstructor>
+    {
+        static const ObjectType objectType = ObjectType::Relic;
+        static inline const TypeName typeName = "IntegrationTestsFixture::RelicListeningToSignalFromConstructor";
     };
 }
 
@@ -106,6 +115,15 @@ public:
     MatrixAndParentCurator(Init init);
 };
 
+class IntegrationTestsFixture::RelicListeningToSignalFromConstructor final :
+    public ClosedTypedRelic<RelicListeningToSignalFromConstructor>
+{
+public:
+    std::vector<int> signalExecutions;
+public:
+    RelicListeningToSignalFromConstructor(Init init);
+};
+
 namespace Inscription
 {
     template<class Archive>
@@ -130,5 +148,11 @@ namespace Inscription
     struct ScribeTraits<IntegrationTestsFixture::MatrixAndParentCurator, Archive> final
     {
         using Category = ArcaNullScribeCategory<IntegrationTestsFixture::MatrixAndParentCurator>;
+    };
+
+    template<class Archive>
+    struct ScribeTraits<IntegrationTestsFixture::RelicListeningToSignalFromConstructor, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<IntegrationTestsFixture::RelicListeningToSignalFromConstructor>;
     };
 }

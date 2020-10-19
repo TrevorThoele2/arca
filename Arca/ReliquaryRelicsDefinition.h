@@ -516,8 +516,7 @@ namespace Arca
         RelicStructure structure, RelicID id, ConstructorArgs&& ... constructorArgs)
     {
         auto& batchSource = RequiredBatchSource<RelicT>();
-        auto added = batchSource.Add(
-            RelicT{ RelicInit{id, Owner()}, std::forward<ConstructorArgs>(constructorArgs)... });
+        auto added = batchSource.Add(RelicInit{id, Owner()}, std::forward<ConstructorArgs>(constructorArgs)...);
 
         MetadataFor(id)->storage = added;
 
