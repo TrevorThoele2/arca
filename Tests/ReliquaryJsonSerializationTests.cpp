@@ -7,6 +7,50 @@ using namespace std::string_literals;
 
 SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serialization", "[reliquary][serialization][json]")
 {
+    GIVEN("registered reliquary with three open relics created")
+    {
+        const auto savedReliquary = ReliquaryOrigin()
+            .Actualize();
+
+        auto relic0 = savedReliquary->Do(Create<OpenRelic>());
+        auto relic1 = savedReliquary->Do(Create<OpenRelic>());
+        auto relic2 = savedReliquary->Do(Create<OpenRelic>());
+
+        WHEN("saving reliquary")
+        {
+            {
+                auto output = Inscription::OutputJsonArchive("Test.dat");
+                output("reliquary", *savedReliquary);
+            }
+
+            WHEN("loading reliquary and creating three new open relics")
+            {
+                const auto loadedReliquary = ReliquaryOrigin()
+                    .Actualize();
+
+                auto input = Inscription::InputJsonArchive("Test.dat");
+                input("reliquary", *loadedReliquary);
+
+                auto relic3 = loadedReliquary->Do(Create<OpenRelic>());
+                auto relic4 = loadedReliquary->Do(Create<OpenRelic>());
+                auto relic5 = loadedReliquary->Do(Create<OpenRelic>());
+
+                THEN("all loaded relics have greater IDs than saved")
+                {
+                    REQUIRE(relic3.ID() > relic0.ID());
+                    REQUIRE(relic3.ID() > relic1.ID());
+                    REQUIRE(relic3.ID() > relic2.ID());
+                    REQUIRE(relic4.ID() > relic0.ID());
+                    REQUIRE(relic4.ID() > relic1.ID());
+                    REQUIRE(relic4.ID() > relic2.ID());
+                    REQUIRE(relic5.ID() > relic0.ID());
+                    REQUIRE(relic5.ID() > relic1.ID());
+                    REQUIRE(relic5.ID() > relic2.ID());
+                }
+            }
+        }
+    }
+
     GIVEN("saved empty reliquary with every type registered")
     {
         auto savedReliquary = ReliquaryOrigin()
@@ -608,14 +652,14 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
 
             auto loadedRelic = Arca::Index<TypedClosedRelicNullInscription<BasicShardNullInscription>>(savedRelic->ID(), *loadedReliquary);
 
-            THEN("loaded relic does not exist")
+            THEN("loaded relic exists")
             {
-                REQUIRE(!loadedRelic);
+                REQUIRE(loadedRelic);
             }
 
-            THEN("reliquary is empty")
+            THEN("reliquary has relic")
             {
-                REQUIRE(loadedReliquary->RelicSize() == 0);
+                REQUIRE(loadedReliquary->RelicSize() == 1);
                 REQUIRE(loadedReliquary->ShardSize() == 0);
             }
         }
@@ -652,14 +696,14 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
 
             auto loadedRelic = Arca::Index<TypedOpenRelicNullInscription<BasicShardNullInscription>>(savedRelic->ID(), *loadedReliquary);
 
-            THEN("loaded relic does not exist")
+            THEN("loaded relic exists")
             {
-                REQUIRE(!loadedRelic);
+                REQUIRE(loadedRelic);
             }
 
-            THEN("reliquary is empty")
+            THEN("reliquary has relic")
             {
-                REQUIRE(loadedReliquary->RelicSize() == 0);
+                REQUIRE(loadedReliquary->RelicSize() == 1);
                 REQUIRE(loadedReliquary->ShardSize() == 0);
             }
         }
@@ -773,9 +817,9 @@ SCENARIO_METHOD(
 
             const auto loadedRelic = Arca::Index<NonDefaultConstructorRelic>(savedRelic.ID(), *loadedReliquary);
 
-            THEN("has no loaded relic")
+            THEN("has loaded relic")
             {
-                REQUIRE(!loadedRelic);
+                REQUIRE(loadedRelic);
             }
         }
     }

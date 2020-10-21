@@ -35,6 +35,10 @@ CommandTestsFixture::RelicWithShard::RelicWithShard(Init init, int integer, cons
     ClosedTypedRelic(init), shard(init.Create<BasicShard>(integer, string))
 {}
 
+CommandTestsFixture::RelicWithShard::RelicWithShard(Init init, Arca::Serialization) :
+    ClosedTypedRelic(init)
+{}
+
 SCENARIO_METHOD(CommandTestsFixture, "command", "[command]")
 {
     GIVEN("registered reliquary")

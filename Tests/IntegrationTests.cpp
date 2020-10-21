@@ -42,6 +42,19 @@ IntegrationTestsFixture::RelicListeningToSignalFromConstructor::RelicListeningTo
         });
 }
 
+IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic::GlobalRelicCreatingNullSerializedRelic(
+    Init init)
+    :
+    ClosedTypedRelic(init),
+    localRelic(init.owner.Do(Arca::Create<LocalRelic>()))
+{}
+
+IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic::GlobalRelicCreatingNullSerializedRelic(
+    Init init, Serialization)
+    :
+    ClosedTypedRelic(init)
+{}
+
 namespace Arca
 {
     bool Traits<::IntegrationTestsFixture::ParentRelic>::ShouldCreate(Reliquary& reliquary, int value)
@@ -286,13 +299,13 @@ SCENARIO_METHOD(
             .Register<DerivedCurator>()
             .Actualize();
 
-        auto relic0 = savedReliquary->Do(Create<OpenRelic>());
+        const auto relic0 = savedReliquary->Do(Create<OpenRelic>());
         relic0->Create<BasicShard>();
         relic0->Create<OtherShard>();
-        auto relic1 = savedReliquary->Do(Create<OpenRelic>());
+        const auto relic1 = savedReliquary->Do(Create<OpenRelic>());
         relic1->Create<BasicShard>();
         relic1->Create<OtherShard>();
-        auto relic2 = savedReliquary->Do(Create<OpenRelic>());
+        const auto relic2 = savedReliquary->Do(Create<OpenRelic>());
         relic2->Create<BasicShard>();
         relic2->Create<OtherShard>();
 
@@ -335,56 +348,6 @@ SCENARIO_METHOD(
 
 SCENARIO_METHOD(
     IntegrationTestsFixture,
-    "reliquary continues to use previous ID sequence after serialization",
-    "[integration][serialization]")
-{
-    GIVEN("registered reliquary with three open relics created")
-    {
-        const auto savedReliquary = ReliquaryOrigin()
-            .Actualize();
-
-        auto relic0 = savedReliquary->Do(Create<OpenRelic>());
-        auto relic1 = savedReliquary->Do(Create<OpenRelic>());
-        auto relic2 = savedReliquary->Do(Create<OpenRelic>());
-
-        WHEN("saving reliquary")
-        {
-            {
-                auto output = Inscription::OutputBinaryArchive("Test.dat");
-                output(*savedReliquary);
-            }
-
-            WHEN("loading reliquary and creating three new open relics")
-            {
-                const auto loadedReliquary = ReliquaryOrigin()
-                    .Actualize();
-
-                auto input = Inscription::InputBinaryArchive("Test.dat");
-                input(*loadedReliquary);
-
-                auto relic3 = loadedReliquary->Do(Create<OpenRelic>());
-                auto relic4 = loadedReliquary->Do(Create<OpenRelic>());
-                auto relic5 = loadedReliquary->Do(Create<OpenRelic>());
-
-                THEN("all loaded relics have greater IDs than saved")
-                {
-                    REQUIRE(relic3.ID() > relic0.ID());
-                    REQUIRE(relic3.ID() > relic1.ID());
-                    REQUIRE(relic3.ID() > relic2.ID());
-                    REQUIRE(relic4.ID() > relic0.ID());
-                    REQUIRE(relic4.ID() > relic1.ID());
-                    REQUIRE(relic4.ID() > relic2.ID());
-                    REQUIRE(relic5.ID() > relic0.ID());
-                    REQUIRE(relic5.ID() > relic1.ID());
-                    REQUIRE(relic5.ID() > relic2.ID());
-                }
-            }
-        }
-    }
-}
-
-SCENARIO_METHOD(
-    IntegrationTestsFixture,
     "curator can mutate data",
     "[integration][serialization]")
 {
@@ -405,7 +368,7 @@ SCENARIO_METHOD(
 
         curator.onWork = [relic, setValue](DifferentiableCuratorBase& self)
         {
-            auto data = self.TheData<BasicShard>(relic.ID());
+            const auto data = self.TheData<BasicShard>(relic.ID());
             data->value = setValue;
         };
 
@@ -454,6 +417,45 @@ SCENARIO_METHOD(
             {
                 REQUIRE(relic->signalExecutions.size() == 1);
                 REQUIRE(relic->signalExecutions[0] == value);
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(
+    IntegrationTestsFixture,
+    "global relic's local relic that is null serialized is constructed on load",
+    "[integration][relic][serialization]")
+{
+    GIVEN("registered reliquary with relic")
+    {
+        const auto savedReliquary = ReliquaryOrigin()
+            .Register<GlobalRelicCreatingNullSerializedRelic>()
+            .Register<GlobalRelicCreatingNullSerializedRelic::LocalShard>()
+            .Register<GlobalRelicCreatingNullSerializedRelic::LocalRelic>()
+            .Actualize();
+
+        WHEN("saving and loading")
+        {
+            {
+                auto output = Inscription::OutputBinaryArchive("Test.dat");
+                output(*savedReliquary);
+            }
+
+            const auto loadedReliquary = ReliquaryOrigin()
+                .Register<GlobalRelicCreatingNullSerializedRelic>()
+                .Register<GlobalRelicCreatingNullSerializedRelic::LocalShard>()
+                .Register<GlobalRelicCreatingNullSerializedRelic::LocalRelic>()
+                .Actualize();
+
+            auto input = Inscription::InputBinaryArchive("Test.dat");
+            input(*loadedReliquary);
+
+            auto globalRelic = Arca::Index<GlobalRelicCreatingNullSerializedRelic>(*loadedReliquary);
+
+            THEN("local relic is setup correctly")
+            {
+                REQUIRE(globalRelic->localRelic);
             }
         }
     }

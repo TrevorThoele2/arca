@@ -40,9 +40,6 @@
     <ClCompile Include="ReliquaryRegistrationTests.cpp">
       <Filter>Source Files\Tests</Filter>
     </ClCompile>
-    <ClCompile Include="ReliquaryOriginRegistrationTests.cpp">
-      <Filter>Source Files\Tests</Filter>
-    </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -79,17 +76,11 @@
     <ClCompile Include="RelicParentingTests.cpp">
       <Filter>Source Files\Tests</Filter>
     </ClCompile>
-    <ClCompile Include="ReliquaryBinarySerializationTests.cpp">
-      <Filter>Source Files\Tests</Filter>
-    </ClCompile>
     <ClCompile Include="SerializationData.cpp">
       <Filter>Source Files\Data</Filter>
     </ClCompile>
     <ClCompile Include="BasicShard.cpp">
       <Filter>Source Files\Data</Filter>
-    </ClCompile>
-    <ClCompile Include="ReliquaryJsonSerializationTests.cpp">
-      <Filter>Source Files\Tests</Filter>
     </ClCompile>
     <ClCompile Include="IdentifiedRelicCreationTests.cpp">
       <Filter>Source Files\Tests</Filter>
@@ -97,10 +88,19 @@
     <ClCompile Include="SelfContainedCommandTests.cpp">
       <Filter>Source Files\Tests</Filter>
     </ClCompile>
+    <ClCompile Include="ReliquaryBinarySerializationTests.cpp">
+      <Filter>Source Files\Tests\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="ReliquaryJsonSerializationTests.cpp">
+      <Filter>Source Files\Tests\Serialization</Filter>
+    </ClCompile>
     <ClCompile Include="SignaledBinarySerializationTests.cpp">
-      <Filter>Source Files\Tests</Filter>
+      <Filter>Source Files\Tests\Serialization</Filter>
     </ClCompile>
     <ClCompile Include="SignaledJsonSerializationTests.cpp">
+      <Filter>Source Files\Tests\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="ReliquaryOriginRegistrationTests.cpp">
       <Filter>Source Files\Tests</Filter>
     </ClCompile>
   </ItemGroup>
@@ -186,9 +186,6 @@
     <ClInclude Include="RelicParentingTests.h">
       <Filter>Header Files\Tests</Filter>
     </ClInclude>
-    <ClInclude Include="ReliquaryBinarySerializationTests.h">
-      <Filter>Header Files\Tests</Filter>
-    </ClInclude>
     <ClInclude Include="SerializationData.h">
       <Filter>Header Files\Data</Filter>
     </ClInclude>
@@ -204,20 +201,23 @@
     <ClInclude Include="BasicGlobalClosedTypedRelic.h">
       <Filter>Header Files\Data</Filter>
     </ClInclude>
-    <ClInclude Include="ReliquaryJsonSerializationTests.h">
-      <Filter>Header Files\Tests</Filter>
-    </ClInclude>
     <ClInclude Include="IdentifiedRelicCreationTests.h">
       <Filter>Header Files\Tests</Filter>
     </ClInclude>
     <ClInclude Include="SelfContainedCommandTests.h">
       <Filter>Header Files\Tests</Filter>
     </ClInclude>
+    <ClInclude Include="ReliquaryBinarySerializationTests.h">
+      <Filter>Header Files\Tests\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquaryJsonSerializationTests.h">
+      <Filter>Header Files\Tests\Serialization</Filter>
+    </ClInclude>
     <ClInclude Include="SignaledBinarySerializationTests.h">
-      <Filter>Header Files\Tests</Filter>
+      <Filter>Header Files\Tests\Serialization</Filter>
     </ClInclude>
     <ClInclude Include="SignaledJsonSerializationTests.h">
-      <Filter>Header Files\Tests</Filter>
+      <Filter>Header Files\Tests\Serialization</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -247,6 +247,12 @@
     </Filter>
     <Filter Include="Header Files\Automation">
       <UniqueIdentifier>{16e78be9-de02-48f3-b901-fa35e62aafc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests\Serialization">
+      <UniqueIdentifier>{ff6f7506-6c78-4dc2-a825-9ec4d7edd8b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Tests\Serialization">
+      <UniqueIdentifier>{fe00b090-5eef-4700-aa7f-d6a35949f034}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

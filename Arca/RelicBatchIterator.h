@@ -67,13 +67,13 @@ namespace Arca
     template<class ReturnT, class WrapT>
     ReturnT& RelicBatchIteratorBase<ReturnT, WrapT>::operator*()
     {
-        return *wrapped;
+        return wrapped->second;
     }
 
     template<class ReturnT, class WrapT>
     ReturnT* RelicBatchIteratorBase<ReturnT, WrapT>::operator->()
     {
-        return &*wrapped;
+        return &wrapped->second;
     }
 
     template<class ReturnT, class WrapT>

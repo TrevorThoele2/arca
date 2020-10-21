@@ -5,9 +5,8 @@
 #include <Arca/ClosedTypedRelic.h>
 #include <Arca/Reliquary.h>
 
-#include <Inscription/BinaryArchive.h>
-
 #include "DifferentiableShard.h"
+#include "SerializationData.h"
 
 using namespace Arca;
 
@@ -26,6 +25,8 @@ public:
     class MatrixAndParentCurator;
 
     class RelicListeningToSignalFromConstructor;
+
+    class GlobalRelicCreatingNullSerializedRelic;
 };
 
 namespace Arca
@@ -71,6 +72,14 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "IntegrationTestsFixture::RelicListeningToSignalFromConstructor";
+    };
+
+    template<>
+    struct Traits<IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic>
+    {
+        static const ObjectType objectType = ObjectType::Relic;
+        static inline const TypeName typeName = "IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic";
+        static const Locality locality = Locality::Global;
     };
 }
 
@@ -124,6 +133,18 @@ public:
     RelicListeningToSignalFromConstructor(Init init);
 };
 
+class IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic final :
+    public ClosedTypedRelic<GlobalRelicCreatingNullSerializedRelic>
+{
+public:
+    using LocalShard = SerializationData::BasicShardNullInscription;
+    using LocalRelic = SerializationData::TypedClosedRelicNullInscription<LocalShard>;
+    Index<LocalRelic> localRelic;
+public:
+    GlobalRelicCreatingNullSerializedRelic(Init init);
+    GlobalRelicCreatingNullSerializedRelic(Init init, Serialization);
+};
+
 namespace Inscription
 {
     template<class Archive>
@@ -154,5 +175,24 @@ namespace Inscription
     struct ScribeTraits<IntegrationTestsFixture::RelicListeningToSignalFromConstructor, Archive> final
     {
         using Category = ArcaNullScribeCategory<IntegrationTestsFixture::RelicListeningToSignalFromConstructor>;
+    };
+
+    template<>
+    class Scribe<IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic> final
+    {
+    public:
+        using ObjectT = IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic;
+    public:
+        template<class Archive>
+        void Scriven(ObjectT& object, Archive& archive)
+        {
+            archive("localRelic", object.localRelic);
+        }
+    };
+
+    template<class Archive>
+    struct ScribeTraits<IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic, Archive> final
+    {
+        using Category = ArcaCompositeScribeCategory<IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic>;
     };
 }

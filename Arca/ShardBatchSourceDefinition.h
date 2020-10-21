@@ -6,11 +6,6 @@
 namespace Arca
 {
     template<class T>
-    BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Entry::Entry(RelicID id, StoredT&& shard)
-        : id(id), shard(std::move(shard))
-    {}
-
-    template<class T>
     BatchSource<T, std::enable_if_t<is_shard_v<T>>>::BatchSource(Reliquary& owner) : owner(&owner)
     {}
 
@@ -22,30 +17,33 @@ namespace Arca
         if (found)
             return found;
 
-        list.emplace_back(id, StoredT{ std::forward<ConstructorArgs>(constructorArgs)... });
-        return &list.back().shard;
+        return &map.emplace(
+            std::piecewise_construct,
+            std::forward_as_tuple(id),
+            std::forward_as_tuple(std::forward<ConstructorArgs>(constructorArgs)...))
+                .first->second;
     }
 
     template<class T>
     auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Destroy(RelicID destroy) -> iterator
     {
-        for (auto loop = list.begin(); loop != list.end(); ++loop)
-            if (loop->id == destroy)
-                return list.erase(loop);
+        auto found = map.find(destroy);
+        if (found != map.end())
+            return map.erase(found);
 
-        return list.end();
+        return map.end();
     }
 
     template<class T>
     auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Destroy(iterator destroy) -> iterator
     {
-        return list.erase(destroy);
+        return map.erase(destroy);
     }
 
     template<class T>
     auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Destroy(const_iterator destroy) -> iterator
     {
-        return list.erase(destroy);
+        return map.erase(destroy);
     }
 
     template<class T>
@@ -59,23 +57,17 @@ namespace Arca
     template<class T>
     void BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Clear()
     {
-        list.clear();
+        map.clear();
     }
 
     template<class T>
     auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Find(RelicID id) -> ShardT*
     {
-        auto found = std::find_if(
-            list.begin(),
-            list.end(),
-            [id](const Entry& entry)
-            {
-                return entry.id == id;
-            });
-        if (found == list.end())
+        auto found = map.find(id);
+        if (found == map.end())
             return {};
 
-        return &found->shard;
+        return &found->second;
     }
 
     template<class T>
@@ -93,37 +85,37 @@ namespace Arca
     template<class T>
     auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Size() const -> SizeT
     {
-        return list.size();
+        return map.size();
     }
 
     template<class T>
     bool BatchSource<T, std::enable_if_t<is_shard_v<T>>>::IsEmpty() const
     {
-        return list.empty();
+        return map.empty();
     }
 
     template<class T>
     auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::begin() -> iterator
     {
-        return list.begin();
+        return map.begin();
     }
 
     template<class T>
     auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::begin() const -> const_iterator
     {
-        return list.begin();
+        return map.begin();
     }
 
     template<class T>
     auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::end() -> iterator
     {
-        return list.end();
+        return map.end();
     }
 
     template<class T>
     auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::end() const -> const_iterator
     {
-        return list.end();
+        return map.end();
     }
 
     template<class T>
@@ -139,45 +131,28 @@ namespace Inscription
     void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::
         Scriven(ObjectT& object, BinaryArchive& archive)
     {
-        DoScriven<typename ObjectT::ShardT>(object, archive);
-    }
-
-    template<class T>
-    void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::
-        Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
-    {
-        DoScriven<typename ObjectT::ShardT>(name, object, archive);
-    }
-
-    template<class T>
-    template<class U, std::enable_if_t<Arca::HasScribe<U, BinaryArchive>(), int>>
-    void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::
-        DoScriven(ObjectT& object, BinaryArchive& archive)
-    {
         if (archive.IsOutput())
         {
             auto& saveIDs = archive.UserContext<SaveUserContext>()->ids;
 
-            typename ObjectT::List save;
-            std::copy_if(
-                object.list.begin(),
-                object.list.end(),
-                std::back_inserter(save),
-                [&saveIDs](const typename ObjectT::Entry& entry)
-                {
-                    return saveIDs.find(entry.id) != saveIDs.end();
-                });
+            std::vector<typename ObjectT::iterator> save;
+            for (auto& id : saveIDs)
+            {
+                auto found = object.map.find(id);
+                if (found != object.map.end())
+                    save.push_back(found);
+            }
 
             auto size = save.size();
             archive(size);
 
             for (auto& stored : save)
             {
-                if (saveIDs.find(stored.id) == saveIDs.end())
+                if (saveIDs.find(stored->first) == saveIDs.end())
                     continue;
 
-                archive(stored.id);
-                archive(stored.shard);
+                archive(stored->first);
+                archive(stored->second);
             }
         }
         else
@@ -199,7 +174,7 @@ namespace Inscription
                 {
                     auto shard = Create<ShardT>();
                     archive(shard);
-                    object.list.emplace_back(id, std::move(shard));
+                    object.map.emplace(id, std::move(shard));
                 }
 
                 matrixSnapshot.Finalize();
@@ -208,37 +183,28 @@ namespace Inscription
     }
 
     template<class T>
-    template<class U, std::enable_if_t<!Arca::HasScribe<U, BinaryArchive>(), int>>
     void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::
-        DoScriven(ObjectT&, BinaryArchive&)
-    {}
-
-    template<class T>
-    template<class U, std::enable_if_t<Arca::HasScribe<U, JsonArchive>(), int>>
-    void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::
-        DoScriven(const std::string& name, ObjectT& object, JsonArchive& archive)
+        Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
     {
         if (archive.IsOutput())
         {
             auto& saveIDs = archive.UserContext<SaveUserContext>()->ids;
 
-            typename ObjectT::List save;
-            std::copy_if(
-                object.list.begin(),
-                object.list.end(),
-                std::back_inserter(save),
-                [&saveIDs](const typename ObjectT::Entry& entry)
-                {
-                    return saveIDs.find(entry.id) != saveIDs.end();
-                });
+            std::vector<typename ObjectT::iterator> save;
+            for(auto& id : saveIDs)
+            {
+                auto found = object.map.find(id);
+                if (found != object.map.end())
+                    save.push_back(found);
+            }
 
             auto output = archive.AsOutput();
             output->StartList(name);
             for (auto& stored : save)
             {
                 output->StartObject("");
-                archive("id", stored.id);
-                archive("shard", stored.shard);
+                archive("id", stored->first);
+                archive("shard", stored->second);
                 output->EndObject();
             }
             output->EndList();
@@ -263,7 +229,7 @@ namespace Inscription
                 {
                     auto shard = Create<ShardT>();
                     archive("shard", shard);
-                    object.list.emplace_back(id, std::move(shard));
+                    object.map.emplace(id, std::move(shard));
                 }
 
                 matrixSnapshot.Finalize();
@@ -273,12 +239,6 @@ namespace Inscription
             input->EndList();
         }
     }
-
-    template<class T>
-    template<class U, std::enable_if_t<!Arca::HasScribe<U, JsonArchive>(), int>>
-    void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::
-        DoScriven(const std::string& name, ObjectT&, JsonArchive&)
-    {}
 
     template<class T>
     template<class U, std::enable_if_t<Arca::has_shard_serialization_constructor_v<U>, int>>

@@ -226,7 +226,7 @@ namespace Arca
         auto iterator = batchSource.begin();
         while(iterator != batchSource.end())
         {
-            Destroy<RelicT>(iterator->ID());
+            Destroy<RelicT>(iterator->first);
             iterator = batchSource.begin();
         }
     }
@@ -366,7 +366,7 @@ namespace Arca
     void ReliquaryRelics::LocalHandler<RelicT>::SignalAllCreated(Reliquary& reliquary)
     {
         for (auto& relic : batchSource)
-            reliquary.relics.SignalCreation(Index<RelicT>(relic.ID(), reliquary));
+            reliquary.relics.SignalCreation(Index<RelicT>(relic.first, reliquary));
     }
 
     template<class RelicT>
@@ -384,18 +384,12 @@ namespace Arca
     template<class RelicT>
     void ReliquaryRelics::LocalHandler<RelicT>::Serialize(Inscription::BinaryArchive& archive)
     {
-        if (!HasScribe<RelicT, Inscription::BinaryArchive>())
-            return;
-
         archive(batchSource);
     }
 
     template<class RelicT>
     void ReliquaryRelics::LocalHandler<RelicT>::Serialize(const std::string& name, Inscription::JsonArchive& archive)
     {
-        if (!HasScribe<RelicT, Inscription::JsonArchive>())
-            return;
-
         archive(name, batchSource);
     }
 

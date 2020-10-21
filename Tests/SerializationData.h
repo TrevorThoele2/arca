@@ -253,6 +253,7 @@ public:
     int myInt = 0;
 public:
     NonDefaultConstructorRelic(Init init, int myInt);
+    NonDefaultConstructorRelic(Init init, Serialization);
 };
 
 class SerializationData::PreferentialSerializationConstructorRelic final :
@@ -288,6 +289,7 @@ public:
 public:
     BasicShardNullInscription() = default;
     explicit BasicShardNullInscription(std::string myValue);
+    BasicShardNullInscription(Serialization);
 };
 
 class SerializationData::OtherShardNullInscription
@@ -316,6 +318,7 @@ public:
     TypedClosedRelicNullInscription(Init init, ShardArgs&& ... shardArgs);
     template<class... ShardArgs>
     TypedClosedRelicNullInscription(Init init, int myInt, ShardArgs&& ... shardArgs);
+    TypedClosedRelicNullInscription(Init init, Serialization);
 };
 
 template<class ShardT>
@@ -343,6 +346,11 @@ SerializationData::TypedClosedRelicNullInscription<ShardT>::TypedClosedRelicNull
 }
 
 template<class ShardT>
+SerializationData::TypedClosedRelicNullInscription<ShardT>::TypedClosedRelicNullInscription(Init init, Serialization) :
+    ClosedTypedRelic<TypedClosedRelicNullInscription<ShardT>>(init)
+{}
+
+template<class ShardT>
 class SerializationData::TypedOpenRelicNullInscription final :
     public OpenTypedRelic<TypedOpenRelicNullInscription<ShardT>>
 {
@@ -360,6 +368,7 @@ public:
     TypedOpenRelicNullInscription(Init init, ShardArgs&& ... shardArgs);
     template<class... ShardArgs>
     TypedOpenRelicNullInscription(Init init, int myInt, ShardArgs&& ... shardArgs);
+    TypedOpenRelicNullInscription(Init init, Serialization);
 };
 
 template<class ShardT>
@@ -385,6 +394,11 @@ SerializationData::TypedOpenRelicNullInscription<ShardT>::TypedOpenRelicNullInsc
 {
     shard = this->template Create<ShardT>(std::forward<ShardArgs>(shardArgs)...);
 }
+
+template<class ShardT>
+SerializationData::TypedOpenRelicNullInscription<ShardT>::TypedOpenRelicNullInscription(Init init, Serialization) :
+    OpenTypedRelic<TypedOpenRelicNullInscription<ShardT>>(init)
+{}
 
 template<class ShardT>
 class SerializationData::GlobalRelicNullInscription final :

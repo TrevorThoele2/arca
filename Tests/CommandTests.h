@@ -130,6 +130,7 @@ public:
     Arca::Index<BasicShard> shard;
 public:
     RelicWithShard(Init init, int integer, const std::string& string);
+    RelicWithShard(Init init, Arca::Serialization);
 };
 
 namespace Inscription

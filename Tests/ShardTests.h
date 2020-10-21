@@ -15,6 +15,7 @@ public:
 
         ShardConstructedFromMovedValue() = default;
         explicit ShardConstructedFromMovedValue(std::unique_ptr<int>&& myInt);
+        ShardConstructedFromMovedValue(ShardConstructedFromMovedValue&& arg) = default;
     };
 };
 

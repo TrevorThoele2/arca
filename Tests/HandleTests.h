@@ -84,6 +84,7 @@ public:
     Index<Shard> basicShard;
 public:
     explicit TypedRelic(Init init);
+    TypedRelic(Init init, Serialization);
 };
 
 class HandleTestsFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>

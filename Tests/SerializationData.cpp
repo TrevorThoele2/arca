@@ -58,8 +58,15 @@ SerializationData::NonDefaultConstructorRelic::NonDefaultConstructorRelic(
     ClosedTypedRelic(init), myInt(myInt)
 {}
 
+SerializationData::NonDefaultConstructorRelic::NonDefaultConstructorRelic(Init init, Serialization) :
+    ClosedTypedRelic(init)
+{}
+
 SerializationData::BasicShardNullInscription::BasicShardNullInscription(std::string myValue) :
     myValue(std::move(myValue))
+{}
+
+SerializationData::BasicShardNullInscription::BasicShardNullInscription(Serialization)
 {}
 
 SerializationData::OtherShardNullInscription::OtherShardNullInscription(int myValue) :

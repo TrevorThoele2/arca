@@ -174,13 +174,11 @@ namespace Inscription
         SaveUserContext saveUserContext;
 
         std::vector<Arca::RelicMetadata> metadataToSave;
-        for (auto& loop : object.relics.metadataList)
+        for (auto& metadata : object.relics.metadataList)
         {
-            if (loop.shouldSerializeBinary)
-            {
-                metadataToSave.push_back(loop);
-                saveUserContext.ids.emplace(loop.id);
-            }
+            metadataToSave.push_back(metadata);
+            if (metadata.shouldSerializeBinary)
+                saveUserContext.ids.emplace(metadata.id);
         }
 
         archive.EmplaceUserContext(&saveUserContext);
@@ -245,34 +243,7 @@ namespace Inscription
             archive,
             globalRelicSerializers);
 
-        for (auto& metadata : loadedRelicMetadata)
-        {
-            auto [type, locality, storage] = FindExtensionForLoadedMetadata(metadata.id, object);
-            if (locality == Arca::Locality::Global)
-                continue;
-
-            Arca::RelicMetadata createdMetadata;
-            createdMetadata.id = metadata.id;
-            createdMetadata.openness = metadata.openness;
-            createdMetadata.shouldSerializeBinary = true;
-            createdMetadata.type = type;
-            createdMetadata.locality = locality;
-            createdMetadata.storage = storage;
-            if (metadata.parent)
-            {
-                const auto parentID = *metadata.parent;
-                const auto parentType = std::get<0>(FindExtensionForLoadedMetadata(parentID, object));
-                createdMetadata.parent = Arca::HandleSlim(parentID, parentType, Arca::HandleObjectType::Relic);
-            }
-            for (auto& child : metadata.children)
-            {
-                const auto childID = child;
-                const auto childType = std::get<0>(FindExtensionForLoadedMetadata(childID, object));
-                createdMetadata.parent = Arca::HandleSlim(childID, childType, Arca::HandleObjectType::Relic);
-            }
-
-            object.relics.metadataList.push_back(createdMetadata);
-        }
+        SetupLoadedRelicMetadata(loadedRelicMetadata, object);
 
         LoadAll(
             object,
@@ -357,8 +328,6 @@ namespace Inscription
     void Scribe<Arca::Reliquary>::SaveRelicMetadata(
         Arca::RelicMetadata& metadata, OutputBinaryArchive& archive)
     {
-        assert(metadata.shouldSerializeBinary);
-
         archive(metadata.id);
         archive(metadata.openness);
 
@@ -413,18 +382,14 @@ namespace Inscription
 
     void Scribe<Arca::Reliquary>::Save(ObjectT& object, OutputJsonArchive& archive)
     {
-        std::vector<Arca::RelicMetadata> metadataToSave;
-        for (auto& loop : object.relics.metadataList)
-            if (loop.shouldSerializeBinary)
-                metadataToSave.push_back(loop);
-
         SaveUserContext saveUserContext;
 
         archive.StartList("relicMetadata");
-        for (auto& metadata : metadataToSave)
+        for (auto& metadata : object.relics.metadataList)
         {
             SaveRelicMetadata(metadata, archive);
-            saveUserContext.ids.emplace(metadata.id);
+            if (metadata.shouldSerializeJson)
+                saveUserContext.ids.emplace(metadata.id);
         }
         archive.EndList();
 
@@ -492,34 +457,7 @@ namespace Inscription
             archive,
             globalRelicSerializers);
 
-        for (auto& metadata : loadedRelicMetadata)
-        {
-            auto [type, locality, storage] = FindExtensionForLoadedMetadata(metadata.id, object);
-            if (locality == Arca::Locality::Global)
-                continue;
-
-            Arca::RelicMetadata createdMetadata;
-            createdMetadata.id = metadata.id;
-            createdMetadata.openness = metadata.openness;
-            createdMetadata.shouldSerializeBinary = true;
-            createdMetadata.type = type;
-            createdMetadata.locality = locality;
-            createdMetadata.storage = storage;
-            if (metadata.parent)
-            {
-                const auto parentID = *metadata.parent;
-                const auto parentType = std::get<0>(FindExtensionForLoadedMetadata(parentID, object));
-                createdMetadata.parent = Arca::HandleSlim(parentID, parentType, Arca::HandleObjectType::Relic);
-            }
-            for (auto& child : metadata.children)
-            {
-                const auto childID = child;
-                const auto childType = std::get<0>(FindExtensionForLoadedMetadata(childID, object));
-                createdMetadata.parent = Arca::HandleSlim(childID, childType, Arca::HandleObjectType::Relic);
-            }
-
-            object.relics.metadataList.push_back(createdMetadata);
-        }
+        SetupLoadedRelicMetadata(loadedRelicMetadata, object);
 
         LoadAll(
             "curators",
@@ -573,8 +511,6 @@ namespace Inscription
 
     void Scribe<Arca::Reliquary>::SaveRelicMetadata(Arca::RelicMetadata& metadata, OutputJsonArchive& archive)
     {
-        assert(metadata.shouldSerializeJson);
-
         archive.StartObject("");
 
         archive("id", metadata.id);
@@ -616,6 +552,38 @@ namespace Inscription
         archive.EndObject();
 
         return metadata;
+    }
+
+    void Scribe<Arca::Reliquary>::SetupLoadedRelicMetadata(
+        const std::vector<LoadedRelicMetadata>& loadedRelicMetadata, ObjectT& object)
+    {
+        for (auto& metadata : loadedRelicMetadata)
+        {
+            auto [type, locality, storage] = FindExtensionForLoadedMetadata(metadata.id, object);
+            if (locality == Arca::Locality::Global)
+                continue;
+
+            Arca::RelicMetadata createdMetadata;
+            createdMetadata.id = metadata.id;
+            createdMetadata.openness = metadata.openness;
+            createdMetadata.type = type;
+            createdMetadata.locality = locality;
+            createdMetadata.storage = storage;
+            if (metadata.parent)
+            {
+                const auto parentID = *metadata.parent;
+                const auto parentType = std::get<0>(FindExtensionForLoadedMetadata(parentID, object));
+                createdMetadata.parent = Arca::HandleSlim(parentID, parentType, Arca::HandleObjectType::Relic);
+            }
+            for (auto& child : metadata.children)
+            {
+                const auto childID = child;
+                const auto childType = std::get<0>(FindExtensionForLoadedMetadata(childID, object));
+                createdMetadata.parent = Arca::HandleSlim(childID, childType, Arca::HandleObjectType::Relic);
+            }
+
+            object.relics.metadataList.push_back(createdMetadata);
+        }
     }
 
     auto Scribe<Arca::Reliquary>::LoadTypes(KnownPolymorphicSerializerList& fromObject, InputJsonArchive& archive)
