@@ -117,13 +117,6 @@ namespace Arca
                 is_command_v<CommandT>
                 && !has_command_result_v<CommandT>, int> = 0>
         void Do(const CommandT& command);
-        template<
-            class CommandT,
-            class... Args,
-            std::enable_if_t<
-                is_command_v<CommandT>
-                && !has_command_result_v<CommandT>, int> = 0>
-        void Do(Args&& ... args);
 
         template<
             class CommandT,
@@ -131,18 +124,9 @@ namespace Arca
                 is_command_v<CommandT>
                 && has_command_result_v<CommandT>, int> = 0>
         command_result_t<CommandT> Do(const CommandT& command);
-        template<
-            class CommandT,
-            class... Args,
-            std::enable_if_t<
-                is_command_v<CommandT>
-                && has_command_result_v<CommandT>, int> = 0>
-        command_result_t<CommandT> Do(Args&& ... args);
     public:
         template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
         void Raise(const SignalT& signal);
-        template<class SignalT, class... Args, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
-        void Raise(Args&& ... args);
 
         template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
         void On(const std::function<void(const SignalT&)>& function);
@@ -340,17 +324,6 @@ namespace Arca
 
     template<
         class CommandT,
-        class... Args,
-        std::enable_if_t<
-            is_command_v<CommandT>
-            && !has_command_result_v<CommandT>, int>>
-    void Reliquary::Do(Args&& ... args)
-    {
-        Do(CommandT(std::forward<Args>(args)...));
-    }
-
-    template<
-        class CommandT,
         std::enable_if_t<
             is_command_v<CommandT>
             && has_command_result_v<CommandT>, int>>
@@ -359,27 +332,10 @@ namespace Arca
         return commands.Do(command);
     }
 
-    template<
-        class CommandT,
-        class... Args,
-        std::enable_if_t<
-            is_command_v<CommandT>
-            && has_command_result_v<CommandT>, int>>
-    command_result_t<CommandT> Reliquary::Do(Args&& ... args)
-    {
-        return Do(CommandT{ std::forward<Args>(args)... });
-    }
-
     template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int>>
     void Reliquary::Raise(const SignalT& signal)
     {
         signals.Raise(signal);
-    }
-
-    template<class SignalT, class... Args, std::enable_if_t<is_signal_v<SignalT>, int>>
-    void Reliquary::Raise(Args&& ... args)
-    {
-        signals.Raise<SignalT>(std::forward<Args>(args)...);
     }
 
     template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int>>

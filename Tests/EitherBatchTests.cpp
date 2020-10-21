@@ -71,7 +71,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
     GIVEN("registered reliquary and relic")
     {
         auto reliquary = ReliquaryOrigin().Register<BasicShard>().Actualize();
-        auto relic = reliquary->Do<Create<OpenRelic>>();
+        auto relic = reliquary->Do(Create<OpenRelic>());
 
         WHEN("creating shard")
         {
@@ -246,7 +246,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either shard batch serialization", "[E
             .Register<BasicShard>()
             .Actualize();
 
-        savedReliquary->Do<Create<TypedClosedRelic>>(dataGeneration.Random<int>());
+        savedReliquary->Do(Create<TypedClosedRelic>{ dataGeneration.Random<int>() });
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");

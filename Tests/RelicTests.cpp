@@ -82,7 +82,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
         WHEN("creating open relic")
         {
             auto preCreateRelicSize = reliquary->RelicSize();
-            auto openRelic = reliquary->Do<Create<OpenRelic>>();
+            auto openRelic = reliquary->Do(Create<OpenRelic>());
 
             THEN("does not have parent")
             {
@@ -185,7 +185,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
         WHEN("creating closed relic with valid structure")
         {
             auto preCreateRelicCount = reliquary->RelicSize();
-            auto closedRelic = reliquary->Do<CreateWith<ClosedRelic>>(RelicStructure{ TypeFor<Shard>() });
+            auto closedRelic = reliquary->Do(CreateWith<ClosedRelic>{RelicStructure{ TypeFor<Shard>() }});
 
             THEN("structure has been satisfied")
             {
@@ -264,7 +264,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
         WHEN("creating typed relic")
         {
             auto preCreateRelicSize = reliquary->RelicSize();
-            auto typedRelic = reliquary->Do<Create<TypedClosedRelic>>();
+            auto typedRelic = reliquary->Do(Create<TypedClosedRelic>());
 
             THEN("does not have parent")
             {
@@ -332,7 +332,7 @@ SCENARIO_METHOD(RelicTestsFixture, "many relics", "[relic]")
         std::vector<Index<OpenRelic>> relics;
         for (size_t i = 0; i < 100; ++i)
         {
-            relics.push_back(reliquary->Do<Create<OpenRelic>>());
+            relics.push_back(reliquary->Do(Create<OpenRelic>()));
             relics.back()->Create<Shard>(static_cast<int>(i));
         }
 
@@ -359,7 +359,7 @@ SCENARIO_METHOD(RelicTestsFixture, "many relics", "[relic]")
 
         WHEN("clearing")
         {
-            reliquary->Do<Clear>(Chroma::TypeIdentity<OpenRelic>{});
+            reliquary->Do(Clear{ Chroma::TypeIdentity<OpenRelic>{} });
 
             THEN("reliquary is empty")
             {
@@ -370,7 +370,7 @@ SCENARIO_METHOD(RelicTestsFixture, "many relics", "[relic]")
 
         WHEN("clearing by type")
         {
-            reliquary->Do<Clear>(TypeFor<OpenRelic>());
+            reliquary->Do(Clear{ TypeFor<OpenRelic>() });
 
             THEN("reliquary is empty")
             {
@@ -391,7 +391,7 @@ SCENARIO_METHOD(RelicTestsFixture, "custom should create relic", "[relic][should
 
         WHEN("creating relic with 100 value")
         {
-            const auto relic = reliquary->Do<Create<ShouldCreateRelic>>(100);
+            const auto relic = reliquary->Do(Create<ShouldCreateRelic>{100});
 
             THEN("relic was created")
             {
@@ -402,7 +402,7 @@ SCENARIO_METHOD(RelicTestsFixture, "custom should create relic", "[relic][should
 
         WHEN("creating relic with 99 value")
         {
-            const auto relic = reliquary->Do<Create<ShouldCreateRelic>>(99);
+            const auto relic = reliquary->Do(Create<ShouldCreateRelic>{99});
 
             THEN("relic was not created")
             {
@@ -430,7 +430,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
             auto knownCreatedSignals = SignalListener<CreatedKnown<OpenRelic>>(*reliquary);
             auto knownDestroyingSignals = SignalListener<DestroyingKnown<OpenRelic>>(*reliquary);
 
-            const auto created = reliquary->Do<Create<OpenRelic>>();
+            const auto created = reliquary->Do(Create<OpenRelic>());
             const auto createdHandle = AsHandle(*created);
 
             THEN("signal is emitted for relic")
@@ -456,7 +456,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
             WHEN("clearing")
             {
-                reliquary->Do<Clear>(Chroma::TypeIdentity<OpenRelic>{});
+                reliquary->Do(Clear{ Chroma::TypeIdentity<OpenRelic>{} });
 
                 THEN("signal is emitted for relic")
                 {
@@ -469,7 +469,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
             WHEN("clearing by type")
             {
-                reliquary->Do<Clear>(TypeFor<OpenRelic>());
+                reliquary->Do(Clear{ TypeFor<OpenRelic>() });
 
                 THEN("signal is emitted for relic")
                 {
@@ -486,7 +486,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
             auto knownCreatedSignals = SignalListener<CreatedKnown<ClosedRelic>>(*reliquary);
             auto knownDestroyingSignals = SignalListener<DestroyingKnown<ClosedRelic>>(*reliquary);
 
-            const auto created = reliquary->Do<CreateWith<ClosedRelic>>(RelicStructure { TypeFor<Shard>() });
+            const auto created = reliquary->Do(CreateWith<ClosedRelic>{RelicStructure{ TypeFor<Shard>() }});
             const auto createdHandle = AsHandle(*created);
 
             THEN("generic signal is emitted for relic and shard")
@@ -532,7 +532,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
             WHEN("clearing")
             {
-                reliquary->Do<Clear>(Chroma::TypeIdentity<ClosedRelic>{});
+                reliquary->Do(Clear{ Chroma::TypeIdentity<ClosedRelic>{} });
 
                 THEN("generic signal is emitted for relic and shard")
                 {
@@ -555,7 +555,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
             WHEN("clearing by type")
             {
-                reliquary->Do<Clear>(TypeFor<ClosedRelic>());
+                reliquary->Do(Clear{ TypeFor<ClosedRelic>() });
 
                 THEN("generic signal is emitted for relic and shard")
                 {
@@ -582,7 +582,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
             auto knownCreatedSignals = SignalListener<CreatedKnown<TypedClosedRelic>>(*reliquary);
             auto knownDestroyingSignals = SignalListener<DestroyingKnown<TypedClosedRelic>>(*reliquary);
 
-            const auto created = reliquary->Do<Create<TypedClosedRelic>>();
+            const auto created = reliquary->Do(Create<TypedClosedRelic>());
             const auto createdHandle = AsHandle(*created);
 
             THEN("signal is emitted for relic and shard")
@@ -628,7 +628,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
             WHEN("clearing")
             {
-                reliquary->Do<Clear>(Chroma::TypeIdentity<TypedClosedRelic>{});
+                reliquary->Do(Clear{ Chroma::TypeIdentity<TypedClosedRelic>{} });
 
                 THEN("signal is emitted for relic and shard")
                 {
@@ -651,7 +651,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
             WHEN("clearing by type")
             {
-                reliquary->Do<Clear>(TypeFor<TypedClosedRelic>());
+                reliquary->Do(Clear{ TypeFor<TypedClosedRelic>() });
 
                 THEN("signal is emitted for relic and shard")
                 {
@@ -685,7 +685,7 @@ SCENARIO_METHOD(RelicTestsFixture, "open typed relic", "[relic][open]")
             .Register<OtherShard>()
             .Actualize();
 
-        auto relic = reliquary->Do<Create<TypedOpenRelic>>();
+        auto relic = reliquary->Do(Create<TypedOpenRelic>{});
 
         WHEN("default created")
         {
@@ -765,7 +765,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic initialization", "[relic]")
         WHEN("creating initialized relic")
         {
             auto myValue = dataGeneration.Random<int>();
-            auto relic = reliquary->Do<Create<InitializedRelic>>(myValue);
+            auto relic = reliquary->Do(Create<InitializedRelic>{myValue});
 
             THEN("has value")
             {
@@ -793,7 +793,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic moving only", "[relic]")
         {
             auto myValue = dataGeneration.Random<int>();
 
-            auto relic = reliquary->Do<Create<MovableOnlyRelic>>(myValue);
+            auto relic = reliquary->Do(Create<MovableOnlyRelic>{myValue});
 
             THEN("has value")
             {
@@ -841,7 +841,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic constructed from moved value", "[relic
             const auto value = dataGeneration.Random<int>();
             auto uniquePtr = std::make_unique<int>(value);
 
-            auto relic = reliquary->Do<Create<RelicConstructedFromMovedValue>>(std::move(uniquePtr));
+            auto relic = reliquary->Do(Create<RelicConstructedFromMovedValue>{std::move(uniquePtr)});
 
             THEN("has moved value")
             {
@@ -851,12 +851,12 @@ SCENARIO_METHOD(RelicTestsFixture, "relic constructed from moved value", "[relic
 
         WHEN("creating child relic from moved value")
         {
-            auto parent = reliquary->Do<Create<OpenRelic>>();
+            auto parent = reliquary->Do(Create<OpenRelic>());
 
             const auto value = dataGeneration.Random<int>();
             auto uniquePtr = std::make_unique<int>(value);
 
-            auto relic = reliquary->Do<CreateChild<RelicConstructedFromMovedValue>>(parent, std::move(uniquePtr));
+            auto relic = reliquary->Do(CreateChild<RelicConstructedFromMovedValue>{parent, std::move(uniquePtr)});
 
             THEN("has moved value")
             {
@@ -871,7 +871,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic constructed from moved value", "[relic
             const auto value = dataGeneration.Random<int>();
             auto uniquePtr = std::make_unique<int>(value);
 
-            auto relic = reliquary->Do<CreateWith<RelicConstructedFromMovedValue>>(structure, std::move(uniquePtr));
+            auto relic = reliquary->Do(CreateWith<RelicConstructedFromMovedValue>{structure, std::move(uniquePtr)});
 
             THEN("has moved value")
             {
@@ -881,13 +881,13 @@ SCENARIO_METHOD(RelicTestsFixture, "relic constructed from moved value", "[relic
 
         WHEN("creating child relic from moved value with structure")
         {
-            auto parent = reliquary->Do<Create<OpenRelic>>();
+            auto parent = reliquary->Do(Create<OpenRelic>());
             auto structure = RelicStructure{};
 
             const auto value = dataGeneration.Random<int>();
             auto uniquePtr = std::make_unique<int>(value);
 
-            auto relic = reliquary->Do<CreateChildWith<RelicConstructedFromMovedValue>>(parent, structure, std::move(uniquePtr));
+            auto relic = reliquary->Do(CreateChildWith<RelicConstructedFromMovedValue>{parent, structure, std::move(uniquePtr)});
 
             THEN("has moved value")
             {
@@ -908,7 +908,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic constructed with using constructor", "
 
         WHEN("creating closed relic")
         {
-            auto relic = reliquary->Do<Create<ClosedTypedRelicWithUsingConstructor>>();
+            auto relic = reliquary->Do(Create<ClosedTypedRelicWithUsingConstructor>());
 
             THEN("returned is occupied")
             {
@@ -918,7 +918,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic constructed with using constructor", "
 
         WHEN("creating open relic")
         {
-            auto relic = reliquary->Do<Create<OpenTypedRelicWithUsingConstructor>>();
+            auto relic = reliquary->Do(Create<OpenTypedRelicWithUsingConstructor>());
 
             THEN("returned is occupied")
             {

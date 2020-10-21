@@ -68,7 +68,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
 
         WHEN("creating relic")
         {
-            reliquary->Do<Create<OpenRelic>>();
+            reliquary->Do(Create<OpenRelic>());
 
             THEN("reliquary has relic count of one")
             {
@@ -106,7 +106,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary wih single shard")
 
         WHEN("creating open relic with non-const shard")
         {
-            auto relic = reliquary->Do<Create<OpenRelic>>();
+            auto relic = reliquary->Do(Create<OpenRelic>());
             auto shard = relic->Create<BasicShard>();
 
             THEN("creating const shard of same type throws")
@@ -140,7 +140,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "creating relic from registered relic str
                 .Register<BasicShard>()
                 .Actualize();
 
-            auto relic = reliquary->Do<CreateWith<ClosedRelic>>(structureName);
+            auto relic = reliquary->Do(CreateWith<ClosedRelic>{structureName});
 
             THEN("relic has shard")
             {
@@ -158,7 +158,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "creating relic from registered relic str
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary->Do<CreateWith<ClosedRelic>>(structureName),
+                    reliquary->Do(CreateWith<ClosedRelic>{structureName}),
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The shard ("s + Traits<BasicShard>::typeName + ") was not registered.")

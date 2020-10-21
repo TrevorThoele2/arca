@@ -165,7 +165,7 @@ namespace Arca
 
     void ReliquaryRelics::Destroy(RelicMetadata& metadata)
     {
-        Owner().Raise<Destroying>(HandleFrom(metadata));
+        Owner().Raise(Destroying{ HandleFrom(metadata) });
 
         while(!metadata.children.empty())
             Destroy(*MetadataFor(metadata.children[0].ID()));

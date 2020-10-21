@@ -12,7 +12,7 @@ IntegrationTestsFixture::ParentRelic::ParentRelic(Init init, int value)
 
 void IntegrationTestsFixture::ParentRelic::CreateChild() const
 {
-    Owner().Do<Arca::CreateChild<ChildRelic>>(AsHandle(*this));
+    Owner().Do(Arca::CreateChild<ChildRelic>{AsHandle(*this)});
 }
 
 IntegrationTestsFixture::MatrixCreatingRelic::MatrixCreatingRelic(Init init) :
@@ -163,7 +163,7 @@ SCENARIO_METHOD(
         curator.onWork = [&mappedParents](DifferentiableCuratorBase& self)
         {
             auto value = 100;
-            auto parent = self.TheOwner().Do<Create<ParentRelic>>(value);
+            auto parent = self.TheOwner().Do(Create<ParentRelic>{value});
             parent->CreateChild();
             mappedParents.emplace(value, parent);
         };
@@ -286,13 +286,13 @@ SCENARIO_METHOD(
             .Register<DerivedCurator>()
             .Actualize();
 
-        auto relic0 = savedReliquary->Do<Create<OpenRelic>>();
+        auto relic0 = savedReliquary->Do(Create<OpenRelic>());
         relic0->Create<BasicShard>();
         relic0->Create<OtherShard>();
-        auto relic1 = savedReliquary->Do<Create<OpenRelic>>();
+        auto relic1 = savedReliquary->Do(Create<OpenRelic>());
         relic1->Create<BasicShard>();
         relic1->Create<OtherShard>();
-        auto relic2 = savedReliquary->Do<Create<OpenRelic>>();
+        auto relic2 = savedReliquary->Do(Create<OpenRelic>());
         relic2->Create<BasicShard>();
         relic2->Create<OtherShard>();
 
@@ -343,9 +343,9 @@ SCENARIO_METHOD(
         const auto savedReliquary = ReliquaryOrigin()
             .Actualize();
 
-        auto relic0 = savedReliquary->Do<Create<OpenRelic>>();
-        auto relic1 = savedReliquary->Do<Create<OpenRelic>>();
-        auto relic2 = savedReliquary->Do<Create<OpenRelic>>();
+        auto relic0 = savedReliquary->Do(Create<OpenRelic>());
+        auto relic1 = savedReliquary->Do(Create<OpenRelic>());
+        auto relic2 = savedReliquary->Do(Create<OpenRelic>());
 
         WHEN("saving reliquary")
         {
@@ -362,9 +362,9 @@ SCENARIO_METHOD(
                 auto input = Inscription::InputBinaryArchive("Test.dat");
                 input(*loadedReliquary);
 
-                auto relic3 = loadedReliquary->Do<Create<OpenRelic>>();
-                auto relic4 = loadedReliquary->Do<Create<OpenRelic>>();
-                auto relic5 = loadedReliquary->Do<Create<OpenRelic>>();
+                auto relic3 = loadedReliquary->Do(Create<OpenRelic>());
+                auto relic4 = loadedReliquary->Do(Create<OpenRelic>());
+                auto relic5 = loadedReliquary->Do(Create<OpenRelic>());
 
                 THEN("all loaded relics have greater IDs than saved")
                 {
@@ -398,7 +398,7 @@ SCENARIO_METHOD(
 
         auto& curator = reliquary->Find<DerivedCurator>();
 
-        auto relic = reliquary->Do<Create<OpenRelic>>();
+        auto relic = reliquary->Do(Create<OpenRelic>());
         auto shard = relic->Create<BasicShard>();
 
         auto setValue = dataGeneration.Random<int>();
@@ -442,7 +442,7 @@ SCENARIO_METHOD(
             .Register<RelicListeningToSignalFromConstructor>()
             .Actualize();
 
-        auto relic = reliquary->Do<Create<RelicListeningToSignalFromConstructor>>();
+        auto relic = reliquary->Do(Create<RelicListeningToSignalFromConstructor>{});
 
         WHEN("emitting signal")
         {

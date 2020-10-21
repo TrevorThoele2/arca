@@ -27,8 +27,8 @@ namespace Arca
         {
             if (batchSource->ContainsFromBase(id))
             {
-                Owner().Raise<DestroyingKnown<ShardT>>(CreateIndex<ShardT>(id));
-                Owner().Raise<Destroying>(HandleFrom(id, batchSource->Type(), HandleObjectType::Shard));
+                Owner().Raise(DestroyingKnown<ShardT>{CreateIndex<ShardT>(id)});
+                Owner().Raise(Destroying{ HandleFrom(id, batchSource->Type(), HandleObjectType::Shard) });
 
                 batchSource->DestroyFromBase(id);
             }
@@ -47,8 +47,8 @@ namespace Arca
             {
                 matrixTransaction.Finalize(TypeFor<ShardT>());
 
-                Owner().Raise<DestroyingKnown<ShardT>>(CreateIndex<ShardT>(id));
-                Owner().Raise<Destroying>(HandleFrom(id, batchSource->Type(), HandleObjectType::Shard));
+                Owner().Raise(DestroyingKnown<ShardT>{CreateIndex<ShardT>(id)});
+                Owner().Raise(Destroying{ HandleFrom(id, batchSource->Type(), HandleObjectType::Shard) });
 
                 batchSource->DestroyFromBase(id); 
             }
@@ -84,8 +84,8 @@ namespace Arca
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     void ReliquaryShards::SignalCreation(const Index<ShardT>& index)
     {
-        Owner().Raise<Created>(HandleFrom(index.ID(), TypeFor<ShardT>(), HandleObjectType::Shard));
-        Owner().Raise<CreatedKnown<ShardT>>(index);
+        Owner().Raise(Created{ HandleFrom(index.ID(), TypeFor<ShardT>(), HandleObjectType::Shard) });
+        Owner().Raise(CreatedKnown<ShardT>{index});
     }
 
     template<class ShardT>

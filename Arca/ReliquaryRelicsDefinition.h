@@ -107,7 +107,7 @@ namespace Arca
         SetupNewMetadata<RelicT>(id);
         Parent(parent, Handle(id, Owner(), TypeFor<RelicT>(), HandleObjectType::Relic));
         auto index = FinishNewRelic<RelicT>({}, id, std::forward<ConstructorArgs>(constructorArgs)...);
-        Owner().Raise<RelicParented>({ parent, AsHandle(*index) });
+        Owner().Raise(RelicParented{ parent, AsHandle(*index) });
         return index;
     }
 
@@ -124,7 +124,7 @@ namespace Arca
         SetupNewMetadata<RelicT>(id);
         Parent(parent, Handle(id, Owner(), TypeFor<RelicT>(), HandleObjectType::Relic));
         auto index = FinishNewRelic<RelicT>(structure, id, std::forward<ConstructorArgs>(constructorArgs)...);
-        Owner().Raise<RelicParented>({ parent, AsHandle(*index) });
+        Owner().Raise(RelicParented{ parent, AsHandle(*index) });
         return index;
     }
 
@@ -142,7 +142,7 @@ namespace Arca
         Parent(parent, Handle(id, Owner(), TypeFor<RelicT>(), HandleObjectType::Relic));
         auto structure = RelicStructures().RequiredRelicStructure(structureName);
         auto index = FinishNewRelic<RelicT>(structure, id, std::forward<ConstructorArgs>(constructorArgs)...);
-        Owner().Raise<RelicParented>({ parent, AsHandle(*index) });
+        Owner().Raise(RelicParented{ parent, AsHandle(*index) });
         return index;
     }
 
@@ -162,7 +162,7 @@ namespace Arca
         SetupNewMetadata<RelicT>(id);
         Parent(parent, Handle(id, Owner(), TypeFor<RelicT>(), HandleObjectType::Relic));
         auto index = FinishNewRelic<RelicT>({}, id, std::forward<ConstructorArgs>(constructorArgs)...);
-        Owner().Raise<RelicParented>({ parent, AsHandle(*index) });
+        Owner().Raise(RelicParented{ parent, AsHandle(*index) });
         return index;
     }
 
@@ -182,7 +182,7 @@ namespace Arca
         SetupNewMetadata<RelicT>(id);
         Parent(parent, Handle(id, Owner(), TypeFor<RelicT>(), HandleObjectType::Relic));
         auto index = FinishNewRelic<RelicT>(structure, id, std::forward<ConstructorArgs>(constructorArgs)...);
-        Owner().Raise<RelicParented>({ parent, AsHandle(*index) });
+        Owner().Raise(RelicParented{parent, AsHandle(*index)});
         return index;
     }
 
@@ -203,7 +203,7 @@ namespace Arca
         Parent(parent, Handle(id, Owner(), TypeFor<RelicT>(), HandleObjectType::Relic));
         auto structure = RelicStructures().RequiredRelicStructure(structureName);
         auto index = FinishNewRelic<RelicT>(structure, id, std::forward<ConstructorArgs>(constructorArgs)...);
-        Owner().Raise<RelicParented>({ parent, AsHandle(*index) });
+        Owner().Raise(RelicParented{ parent, AsHandle(*index) });
         return index;
     }
 
@@ -215,7 +215,7 @@ namespace Arca
             return;
 
         auto index = Index<RelicT>(id, Owner());
-        Owner().Raise<DestroyingKnown<RelicT>>(index);
+        Owner().Raise(DestroyingKnown<RelicT>{index});
         Destroy(*metadata);
     }
 
@@ -265,8 +265,8 @@ namespace Arca
     template<class RelicT>
     void ReliquaryRelics::SignalCreation(const Index<RelicT>& index)
     {
-        Owner().Raise<Created>(HandleFrom(index.ID(), TypeFor<RelicT>(), HandleObjectType::Relic));
-        Owner().Raise<CreatedKnown<RelicT>>(index);
+        Owner().Raise(Created{ HandleFrom(index.ID(), TypeFor<RelicT>(), HandleObjectType::Relic) });
+        Owner().Raise(CreatedKnown<RelicT>{index});
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
@@ -353,7 +353,7 @@ namespace Arca
     template<class RelicT>
     void ReliquaryRelics::LocalHandler<RelicT>::Destroy(RelicID id, Reliquary& reliquary)
     {
-        reliquary.Do<Arca::Destroy<RelicT>>(id);
+        reliquary.Do(Arca::Destroy<RelicT>{id});
     }
 
     template<class RelicT>

@@ -30,7 +30,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary->Do<CreateChild<OpenRelic>>(nonExistentRelic),
+                    reliquary->Do(CreateChild<OpenRelic>{nonExistentRelic}),
                     CannotParentRelic,
                     ::Catch::Matchers::Message(
                         "Cannot parent a relic to a relic in a different Reliquary.")
@@ -67,7 +67,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary->Do<CreateChild<OpenRelic>>(AsHandle(*globalRelic)),
+                    reliquary->Do(CreateChild<OpenRelic>{AsHandle(*globalRelic)}),
                     CannotParentRelic,
                     ::Catch::Matchers::Message("Cannot parent a relic to a global relic.")
                 );
@@ -98,14 +98,14 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
             .Register<BasicShard>()
             .Actualize();
 
-        auto parent = reliquary->Do<Create<OpenRelic>>();
+        auto parent = reliquary->Do(Create<OpenRelic>());
         parent->Create<BasicShard>();
 
         auto onParented = SignalListener<RelicParented>(*reliquary);
 
         WHEN("created child")
         {
-            auto child = reliquary->Do<CreateChild<OpenRelic>>(AsHandle(*parent));
+            auto child = reliquary->Do(CreateChild<OpenRelic>{AsHandle(*parent)});
             child->Create<BasicShard>();
 
             THEN("child has parent")
@@ -179,7 +179,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
             .Register<BasicShard>()
             .Actualize();
 
-        auto parent = reliquary->Do<Create<OpenRelic>>();
+        auto parent = reliquary->Do(Create<OpenRelic>());
         parent->Create<BasicShard>();
 
         auto onParented = SignalListener<RelicParented>(*reliquary);
@@ -189,7 +189,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
             std::vector<Index<OpenRelic>> children;
             for (auto i = 0; i < 10; ++i)
             {
-                auto child = reliquary->Do<CreateChild<OpenRelic>>(AsHandle(*parent));
+                auto child = reliquary->Do(CreateChild<OpenRelic>{AsHandle(*parent)});
                 child->Create<BasicShard>();
                 children.push_back(child);
             }
@@ -284,7 +284,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
         auto parentReliquary = origin.Actualize();
         auto childReliquary = origin.Actualize();
 
-        auto parent = parentReliquary->Do<Create<OpenRelic>>();
+        auto parent = parentReliquary->Do(Create<OpenRelic>());
         parent->Create<BasicShard>();
 
         WHEN("parenting child inside child reliquary")
@@ -293,7 +293,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    childReliquary->Do<CreateChild<OpenRelic>>(AsHandle(*parent)),
+                    childReliquary->Do(CreateChild<OpenRelic>{AsHandle(*parent)}),
                     CannotParentRelic,
                     ::Catch::Matchers::Message(
                         "Cannot parent a relic to a relic in a different Reliquary.")
@@ -315,7 +315,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    irrelevantReliquary->Do<CreateChild<OpenRelic>>(AsHandle(*parent)),
+                    irrelevantReliquary->Do(CreateChild<OpenRelic>{AsHandle(*parent)}),
                     CannotParentRelic,
                     ::Catch::Matchers::Message(
                         "Cannot parent a relic to a relic in a different Reliquary.")

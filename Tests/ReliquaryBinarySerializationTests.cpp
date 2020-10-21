@@ -62,7 +62,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
             .Register<BasicShard>()
             .Actualize();
 
-        auto savedRelic = savedReliquary->Do<Create<OpenRelic>>();
+        auto savedRelic = savedReliquary->Do(Create<OpenRelic>());
         auto savedShard = savedRelic->Create<BasicShard>(dataGeneration.Random<std::string>());
 
         {
@@ -264,7 +264,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
             .Register<TypedClosedRelic>()
             .Actualize();
 
-        auto savedRelic = savedReliquary->Do<Create<TypedClosedRelic>>(dataGeneration.Random<int>());
+        auto savedRelic = savedReliquary->Do(Create<TypedClosedRelic>{dataGeneration.Random<int>()});
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
@@ -313,7 +313,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
             .Register<TypedOpenRelic>()
             .Actualize();
 
-        auto savedRelic = savedReliquary->Do<Create<TypedOpenRelic>>(dataGeneration.Random<int>());
+        auto savedRelic = savedReliquary->Do(Create<TypedOpenRelic>{dataGeneration.Random<int>()});
         auto savedOtherShard = savedRelic->Create<OtherShard>();
 
         {
@@ -369,9 +369,9 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
             .Register<MovableOnlyRelic>()
             .Actualize();
 
-        auto savedRelic = savedReliquary->Do<Create<MovableOnlyRelic>>(
-            dataGeneration.Random<int>(),
-            dataGeneration.Random<std::string>());
+        auto savedRelic = savedReliquary->Do(Create<MovableOnlyRelic> {
+        dataGeneration.Random<int>(),
+            dataGeneration.Random<std::string>() });
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
@@ -458,7 +458,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
     {
         auto savedReliquary = ReliquaryOrigin().Actualize();
 
-        savedReliquary->Raise<BasicSignal>();
+        savedReliquary->Raise(BasicSignal());
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
@@ -661,7 +661,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "null reliquary binary
             .Register<TypedClosedRelicNullInscription<BasicShardNullInscription>>()
             .Actualize();
 
-        auto savedRelic = savedReliquary->Do<Create<TypedClosedRelicNullInscription<BasicShardNullInscription>>>();
+        auto savedRelic = savedReliquary->Do(Create<TypedClosedRelicNullInscription<BasicShardNullInscription>>());
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
@@ -712,7 +712,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "null reliquary binary
             .Register<TypedOpenRelicNullInscription<BasicShardNullInscription>>()
             .Actualize();
 
-        auto savedRelic = savedReliquary->Do<Create<TypedOpenRelicNullInscription<BasicShardNullInscription>>>();
+        auto savedRelic = savedReliquary->Do(Create<TypedOpenRelicNullInscription<BasicShardNullInscription>>());
         savedRelic->Create<OtherShardNullInscription>(dataGeneration.Random<int>());
 
         {
@@ -809,7 +809,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "null reliquary binary
     {
         auto savedReliquary = ReliquaryOrigin().Actualize();
 
-        savedReliquary->Raise<BasicSignalNullInscription>();
+        savedReliquary->Raise(BasicSignalNullInscription());
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
@@ -860,8 +860,8 @@ SCENARIO_METHOD(
             .Register<NonDefaultConstructorRelic>()
             .Actualize();
 
-        const auto& savedRelic = *savedReliquary->Do<Create<NonDefaultConstructorRelic>>(
-            dataGeneration.Random<int>());
+        const auto& savedRelic = *savedReliquary->Do(Create<NonDefaultConstructorRelic>(
+            dataGeneration.Random<int>()));
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");

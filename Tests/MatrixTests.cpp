@@ -20,7 +20,7 @@ SCENARIO_METHOD(MatrixTestsFixture, "matrix signals", "[matrix][signal]")
                     shardFromExecution = signal.index.Get();
                 });
 
-            auto relic = reliquary->Do<Create<OpenRelic>>();
+            auto relic = reliquary->Do(Create<OpenRelic>());
             auto shard = relic->Create<Shard>();
 
             THEN("shard from execution is occupied")
@@ -41,7 +41,7 @@ SCENARIO_METHOD(MatrixTestsFixture, "matrix signals", "[matrix][signal]")
                     createdShardSameAsSignaled = createdShard == &*signal.index;
                 });
 
-            auto relic = reliquary->Do<Create<OpenRelic>>();
+            auto relic = reliquary->Do(Create<OpenRelic>());
             auto shard = relic->Create<Shard>();
             createdShard = &*shard;
             relic->Destroy<Shard>();
@@ -63,10 +63,10 @@ SCENARIO_METHOD(MatrixTestsFixture, "matrix signals", "[matrix][signal]")
                     createdShardSameAsSignaled = createdShard == &*signal.index;
                 });
 
-            auto relic = reliquary->Do<Create<OpenRelic>>();
+            auto relic = reliquary->Do(Create<OpenRelic>());
             auto shard = relic->Create<Shard>();
             createdShard = &*shard;
-            reliquary->Do<Destroy<OpenRelic>>(relic);
+            reliquary->Do(Destroy<OpenRelic>{relic});
 
             THEN("shard from execution is occupied")
             {
@@ -95,7 +95,7 @@ SCENARIO_METHOD(MatrixTestsFixture, "matrix signals not executed", "[matrix][sig
                     ++encounterCount;
                 });
 
-            auto relic = reliquary->Do<Create<OpenRelic>>();
+            auto relic = reliquary->Do(Create<OpenRelic>());
             relic->Create<OtherShard>();
             relic->Create<Shard>();
 
@@ -115,7 +115,7 @@ SCENARIO_METHOD(MatrixTestsFixture, "matrix signals not executed", "[matrix][sig
                     ++encounterCount;
                 });
 
-            auto relic = reliquary->Do<Create<OpenRelic>>();
+            auto relic = reliquary->Do(Create<OpenRelic>());
             relic->Create<OtherShard>();
             relic->Create<Shard>();
             relic->Destroy<Shard>();
@@ -137,10 +137,10 @@ SCENARIO_METHOD(MatrixTestsFixture, "matrix signals not executed", "[matrix][sig
                     ++encounterCount;
                 });
 
-            auto relic = reliquary->Do<Create<OpenRelic>>();
+            auto relic = reliquary->Do(Create<OpenRelic>());
             relic->Create<OtherShard>();
             relic->Create<Shard>();
-            reliquary->Do<Destroy<OpenRelic>>(relic);
+            reliquary->Do(Destroy<OpenRelic>{relic});
 
             THEN("encounter count is 1")
             {

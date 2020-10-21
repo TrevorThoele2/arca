@@ -88,7 +88,7 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all batch", "[all][batch]")
             .Register<DifferentiableShard<2>>()
             .Register<DifferentiableShard<3>>()
             .Actualize();
-        auto relic = reliquary->Do<Create<OpenRelic>>();
+        auto relic = reliquary->Do(Create<OpenRelic>{});
 
         WHEN("creating shards")
         {
@@ -273,7 +273,7 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all batch with either", "[all][batch][eit
             .Register<DifferentiableShard<2>>()
             .Register<DifferentiableShard<3>>()
             .Actualize();
-        auto relic = reliquary->Do<Create<OpenRelic>>();
+        auto relic = reliquary->Do(Create<OpenRelic>{});
 
         WHEN("creating shards")
         {
@@ -354,7 +354,7 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all batch serialization", "[all][batch][s
             .Register<DifferentiableShard<2>>()
             .Actualize();
 
-        auto savedRelic = savedReliquary->Do<Create<OpenRelic>>();
+        auto savedRelic = savedReliquary->Do(Create<OpenRelic>{});
         savedRelic->Create<DifferentiableShard<0>>();
         savedRelic->Create<DifferentiableShard<1>>();
         savedRelic->Create<DifferentiableShard<2>>();
