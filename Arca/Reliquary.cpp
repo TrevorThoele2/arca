@@ -372,7 +372,7 @@ namespace Inscription
         archive(childrenSize);
         while (childrenSize-- > 0)
         {
-            Arca::RelicID id = 0;
+            Arca::RelicID id = Arca::nullRelicID;
             archive(id);
             metadata.children.push_back(id);
         }

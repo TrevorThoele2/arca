@@ -19,7 +19,7 @@ namespace Arca
     Index<T, std::enable_if_t<usable_for_relic_index_v<T>>>::Index(Index&& arg) noexcept :
         id(arg.id), owner(arg.owner)
     {
-        arg.id = 0;
+        arg.id = nullRelicID;
         arg.owner = nullptr;
     }
 

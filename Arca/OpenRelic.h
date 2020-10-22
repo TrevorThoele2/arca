@@ -41,7 +41,7 @@ namespace Arca
         [[nodiscard]] RelicID ID() const;
         [[nodiscard]] Reliquary& Owner() const;
     private:
-        RelicID id = 0;
+        RelicID id = nullRelicID;
         Reliquary* owner = nullptr;
     private:
         friend class ReliquaryRelics;

@@ -107,7 +107,7 @@ namespace Arca
     RelicID Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::ID() const
     {
         if (!Owner())
-            return 0;
+            return nullRelicID;
 
         return Owner()->template IDFor<T>();
     }

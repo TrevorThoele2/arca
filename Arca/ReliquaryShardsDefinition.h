@@ -71,7 +71,7 @@ namespace Arca
             if (&loop->shard == &shard)
                 return loop->id;
 
-        return 0;
+        return nullRelicID;
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
