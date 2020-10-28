@@ -1,18 +1,16 @@
 #pragma once
 
-#include <Arca/ClosedTypedRelic.h>
+#include <Arca/Relic.h>
 
-class BasicGlobalClosedTypedRelic : public Arca::ClosedTypedRelic<BasicGlobalClosedTypedRelic>
+class BasicGlobalClosedTypedRelic
 {
 public:
     int integer = 0;
     std::string string;
 
-    explicit BasicGlobalClosedTypedRelic(Init init) : ClosedTypedRelic(init)
-    {}
+    BasicGlobalClosedTypedRelic() = default;
 
-    BasicGlobalClosedTypedRelic(Init init, int integer, const std::string& string) :
-        ClosedTypedRelic(init), integer(integer), string(string)
+    BasicGlobalClosedTypedRelic(int integer, const std::string& string) : integer(integer), string(string)
     {}
 };
 

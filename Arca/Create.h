@@ -84,6 +84,12 @@ namespace Arca
                 std::forward<Args>(args)...))
         {}
 
+        template<class U, class... Args, std::enable_if_t<is_relic_v<U>, int> = 0>
+        explicit Create(Index<U> relic, Args && ... args) :
+            base(std::make_unique<Derived<RelicID, Args...>>(
+                relic.ID(), std::forward<Args>(args)...))
+        {}
+
         Index<T> Do(Reliquary& reliquary) const
         {
             return base->Do(reliquary.shards);

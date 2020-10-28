@@ -3,28 +3,28 @@ using namespace std::string_literals;
 
 #include "HandleTests.h"
 
+#include <Arca/LocalRelic.h>
 #include <Arca/Actualization.h>
 
-HandleTestsFixture::TypedRelic::TypedRelic(Init init) : ClosedTypedRelic(init)
+HandleTestsFixture::TypedRelic::TypedRelic(RelicInit init)
 {
-    basicShard = Create<Shard>();
+    basicShard = init.Create<Shard>();
 }
 
-HandleTestsFixture::TypedRelic::TypedRelic(Init init, Serialization) : ClosedTypedRelic(init)
+HandleTestsFixture::TypedRelic::TypedRelic(RelicInit init, Serialization)
 {
-    basicShard = Find<Shard>();
+    basicShard = init.Find<Shard>();
 }
 
-HandleTestsFixture::GlobalRelic::GlobalRelic(Init init) : ClosedTypedRelic(init)
+HandleTestsFixture::GlobalRelic::GlobalRelic(RelicInit init)
 {
-    basicShard = Create<Shard>();
+    basicShard = init.Create<Shard>();
 }
 
-HandleTestsFixture::HandleHolder::HandleHolder(Init init) : ClosedTypedRelic(init)
+HandleTestsFixture::HandleHolder::HandleHolder(RelicInit init)
 {}
 
-HandleTestsFixture::HandleHolder::HandleHolder(Init init, Handle handle) :
-    ClosedTypedRelic(init), handle(handle)
+HandleTestsFixture::HandleHolder::HandleHolder(RelicInit init, Handle handle) : handle(handle)
 {}
 
 SCENARIO_METHOD(HandleTestsFixture, "basic handle", "[handle]")
@@ -42,19 +42,19 @@ SCENARIO_METHOD(HandleTestsFixture, "basic handle", "[handle]")
         WHEN("creating object")
         {
             auto relic1 = reliquary->Do(Create<TypedRelic>());
-            auto handle1 = AsHandle(*relic1);
+            auto handle1 = AsHandle(relic1);
 
             THEN("is not equal to different ID object")
             {
                 auto relic2 = reliquary->Do(Create<TypedRelic>());
-                auto handle2 = AsHandle(*relic2);
+                auto handle2 = AsHandle(relic2);
 
                 REQUIRE(handle1 != handle2);
             }
 
             THEN("is not equal to same ID object with different type")
             {
-                auto handle2 = AsHandle<Shard>(relic1->ID(), *reliquary);
+                auto handle2 = AsHandle<Shard>(relic1.ID(), *reliquary);
 
                 REQUIRE(handle1 != handle2);
             }
@@ -67,6 +67,8 @@ SCENARIO_METHOD(HandleTestsFixture, "handle comparison combinations", "[handle]"
     GIVEN("all types")
     {
         auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
+            .Register<ClosedRelic>()
             .Register<Shard>()
             .Register<OtherShard>()
             .Register<TypedRelic>()
@@ -75,36 +77,36 @@ SCENARIO_METHOD(HandleTestsFixture, "handle comparison combinations", "[handle]"
             .Actualize();
 
         auto openRelic1 = reliquary->Do(Create<OpenRelic>());
-        auto openRelicHandle1 = AsHandle(*openRelic1);
-        openRelic1->Create<OtherShard>();
-        auto openRelicOtherShardHandle1 = AsHandle<OtherShard>(openRelic1->ID(), *reliquary);
+        auto openRelicHandle1 = AsHandle(openRelic1);
+        reliquary->Do(Create<OtherShard>(openRelic1.ID()));
+        auto openRelicOtherShardHandle1 = AsHandle<OtherShard>(openRelic1.ID(), *reliquary);
 
         auto typedRelic1 = reliquary->Do(Create<TypedRelic>());
-        auto typedRelicHandle1 = AsHandle(*typedRelic1);
-        auto typedRelicShardHandle1 = AsHandle<Shard>(typedRelic1->ID(), *reliquary);;
+        auto typedRelicHandle1 = AsHandle(typedRelic1);
+        auto typedRelicShardHandle1 = AsHandle<Shard>(typedRelic1.ID(), *reliquary);;
 
         auto globalRelic1 = Arca::Index<GlobalRelic>(*reliquary);
-        auto globalRelicHandle1 = AsHandle(*globalRelic1);
+        auto globalRelicHandle1 = AsHandle(globalRelic1);
 
         auto closedRelic1 = reliquary->Do(CreateWith<ClosedRelic>{RelicStructure{ TypeFor<Shard>() }});
-        auto closedRelicHandle1 = AsHandle(*closedRelic1);
-        auto closedRelicShardHandle1 = AsHandle<Shard>(closedRelic1->ID(), *reliquary);
+        auto closedRelicHandle1 = AsHandle(closedRelic1);
+        auto closedRelicShardHandle1 = AsHandle<Shard>(closedRelic1.ID(), *reliquary);
 
         auto openRelic2 = reliquary->Do(Create<OpenRelic>());
-        auto openRelicHandle2 = AsHandle(*openRelic2);
-        openRelic2->Create<OtherShard>();
-        auto openRelicOtherShardHandle2 = AsHandle<OtherShard>(openRelic2->ID(), *reliquary);
+        auto openRelicHandle2 = AsHandle(openRelic2);
+        reliquary->Do(Create<OtherShard>(openRelic2.ID()));
+        auto openRelicOtherShardHandle2 = AsHandle<OtherShard>(openRelic2.ID(), *reliquary);
 
         auto typedRelic2 = reliquary->Do(Create<TypedRelic>());
-        auto typedRelicHandle2 = AsHandle(*typedRelic2);
-        auto typedRelicShardHandle2 = AsHandle<Shard>(typedRelic2->ID(), *reliquary);;
+        auto typedRelicHandle2 = AsHandle(typedRelic2);
+        auto typedRelicShardHandle2 = AsHandle<Shard>(typedRelic2.ID(), *reliquary);;
 
         auto globalRelic2 = Arca::Index<GlobalRelic>(*reliquary);
-        auto globalRelicHandle2 = AsHandle(*globalRelic2);
+        auto globalRelicHandle2 = AsHandle(globalRelic2);
 
         auto closedRelic2 = reliquary->Do(CreateWith<ClosedRelic>{RelicStructure{ TypeFor<Shard>() }});
-        auto closedRelicHandle2 = AsHandle(*closedRelic2);
-        auto closedRelicShardHandle2 = AsHandle<Shard>(closedRelic2->ID(), *reliquary);
+        auto closedRelicHandle2 = AsHandle(closedRelic2);
+        auto closedRelicShardHandle2 = AsHandle<Shard>(closedRelic2.ID(), *reliquary);
 
         WHEN("comparing open relic")
         {
@@ -353,6 +355,8 @@ SCENARIO_METHOD(HandleTestsFixture, "handle actualizations combinations", "[hand
     GIVEN("all types")
     {
         auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
+            .Register<ClosedRelic>()
             .Register<Shard>()
             .Register<OtherShard>()
             .Register<TypedRelic>()
@@ -361,20 +365,20 @@ SCENARIO_METHOD(HandleTestsFixture, "handle actualizations combinations", "[hand
             .Actualize();
 
         auto openRelic = reliquary->Do(Create<OpenRelic>());
-        auto openRelicHandle = AsHandle(*openRelic);
-        openRelic->Create<OtherShard>();
-        auto openRelicOtherShardHandle = AsHandle<OtherShard>(openRelic->ID(), *reliquary);
+        auto openRelicHandle = AsHandle(openRelic);
+        reliquary->Do(Create<OtherShard>(openRelic.ID()));
+        auto openRelicOtherShardHandle = AsHandle<OtherShard>(openRelic.ID(), *reliquary);
 
         auto typedRelic = reliquary->Do(Create<TypedRelic>());
-        auto typedRelicHandle = AsHandle(*typedRelic);
-        auto typedRelicShardHandle = AsHandle<Shard>(typedRelic->ID(), *reliquary);;
+        auto typedRelicHandle = AsHandle(typedRelic);
+        auto typedRelicShardHandle = AsHandle<Shard>(typedRelic.ID(), *reliquary);;
 
         auto globalRelic = Arca::Index<GlobalRelic>(*reliquary);
-        auto globalRelicHandle = AsHandle(*globalRelic);
+        auto globalRelicHandle = AsHandle(globalRelic);
 
         auto closedRelic = reliquary->Do(CreateWith<ClosedRelic>{RelicStructure{ TypeFor<Shard>() }});
-        auto closedRelicHandle = AsHandle(*closedRelic);
-        auto closedRelicShardHandle = AsHandle<Shard>(closedRelic->ID(), *reliquary);
+        auto closedRelicHandle = AsHandle(closedRelic);
+        auto closedRelicShardHandle = AsHandle<Shard>(closedRelic.ID(), *reliquary);
 
         WHEN("actualizing open relic")
         {
@@ -542,7 +546,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle actualizations combinations", "[hand
 
         WHEN("actualizing global relic")
         {
-            const auto handle = AsHandle(*globalRelic);
+            const auto handle = AsHandle(globalRelic);
 
             THEN("is not valid when set to open relic")
             {
@@ -583,7 +587,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle actualizations combinations", "[hand
 
         WHEN("actualizing closed relic")
         {
-            const auto handle = AsHandle(*closedRelic);
+            const auto handle = AsHandle(closedRelic);
 
             THEN("is not valid when set to open relic")
             {
@@ -662,7 +666,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle serialization", "[handle][serializat
 
                 REQUIRE(loadedHandleHolder->handle.ID() == savedHandleHolder->handle.ID());
                 REQUIRE(loadedHandleHolder->handle.Type() == savedHandleHolder->handle.Type());
-                REQUIRE(&loadedHandleHolder->handle.Owner() == loadedReliquary.get());
+                REQUIRE(loadedHandleHolder->handle.Owner() == loadedReliquary.get());
                 REQUIRE(loadedHandleHolder->handle.ObjectType() == savedHandleHolder->handle.ObjectType());
             }
         }
@@ -671,12 +675,13 @@ SCENARIO_METHOD(HandleTestsFixture, "handle serialization", "[handle][serializat
     GIVEN("shard registered")
     {
         auto savedReliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
             .Register<Shard>()
             .Register<HandleHolder>()
             .Actualize();
 
         const auto relic = savedReliquary->Do(Arca::Create<OpenRelic>());
-        auto index = relic->Create<Shard>();
+        auto index = savedReliquary->Do(Create<Shard>(relic.ID()));
         const auto savedHandleHolder = savedReliquary->Do(Arca::Create<HandleHolder>(index));
 
         WHEN("saving handle")
@@ -689,6 +694,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle serialization", "[handle][serializat
             THEN("loading handle contains same information")
             {
                 auto loadedReliquary = ReliquaryOrigin()
+                    .Register<OpenRelic>()
                     .Register<Shard>()
                     .Register<TypedRelic>()
                     .Register<HandleHolder>()
@@ -706,7 +712,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle serialization", "[handle][serializat
 
                 REQUIRE(loadedHandleHolder->handle.ID() == savedHandleHolder->handle.ID());
                 REQUIRE(loadedHandleHolder->handle.Type() == savedHandleHolder->handle.Type());
-                REQUIRE(&loadedHandleHolder->handle.Owner() == loadedReliquary.get());
+                REQUIRE(loadedHandleHolder->handle.Owner() == loadedReliquary.get());
                 REQUIRE(loadedHandleHolder->handle.ObjectType() == savedHandleHolder->handle.ObjectType());
             }
         }

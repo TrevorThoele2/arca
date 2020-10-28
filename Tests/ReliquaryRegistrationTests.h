@@ -2,8 +2,6 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/ClosedTypedRelic.h>
-
 #include <Inscription/BinaryArchive.h>
 
 using namespace Arca;
@@ -22,21 +20,21 @@ public:
 namespace Arca
 {
     template<>
-    struct Traits<::ReliquaryRegistrationTestsFixture::Shard>
+    struct Traits<ReliquaryRegistrationTestsFixture::Shard>
     {
         static constexpr ObjectType objectType = ObjectType::Shard;
         static inline const TypeName typeName = "ReliquaryTestsShard";
     };
 
     template<>
-    struct Traits<::ReliquaryRegistrationTestsFixture::Relic>
+    struct Traits<ReliquaryRegistrationTestsFixture::Relic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "ReliquaryTestsRelic";
     };
 
     template<>
-    struct Traits<::ReliquaryRegistrationTestsFixture::GlobalRelic>
+    struct Traits<ReliquaryRegistrationTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "ReliquaryTestsGlobalRelic";
@@ -44,21 +42,21 @@ namespace Arca
     };
 
     template<>
-    struct Traits<::ReliquaryRegistrationTestsFixture::Curator>
+    struct Traits<ReliquaryRegistrationTestsFixture::Curator>
     {
         static const ObjectType objectType = ObjectType::Curator;
         static inline const TypeName typeName = "ReliquaryTestsCurator";
     };
 
     template<>
-    struct Traits<::ReliquaryRegistrationTestsFixture::Command>
+    struct Traits<ReliquaryRegistrationTestsFixture::Command>
     {
         static const ObjectType objectType = ObjectType::Command;
         static inline const TypeName typeName = "ReliquaryTestsCommand";
     };
 
     template<>
-    struct Traits<::ReliquaryRegistrationTestsFixture::Signal>
+    struct Traits<ReliquaryRegistrationTestsFixture::Signal>
     {
         static const ObjectType objectType = ObjectType::Signal;
         static inline const TypeName typeName = "ReliquaryTestsSignal";
@@ -68,16 +66,16 @@ namespace Arca
 class ReliquaryRegistrationTestsFixture::Shard
 {};
 
-class ReliquaryRegistrationTestsFixture::Relic final : public ClosedTypedRelic<Relic>
+class ReliquaryRegistrationTestsFixture::Relic final
 {
 public:
-    explicit Relic(Init init);
+    explicit Relic(RelicInit init);
 };
 
-class ReliquaryRegistrationTestsFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
+class ReliquaryRegistrationTestsFixture::GlobalRelic final
 {
 public:
-    explicit GlobalRelic(Init init);
+    explicit GlobalRelic(RelicInit init);
 };
 
 class ReliquaryRegistrationTestsFixture::Curator final : public Arca::Curator

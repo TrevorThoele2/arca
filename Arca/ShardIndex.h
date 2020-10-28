@@ -17,6 +17,7 @@ namespace Arca
         using ValueT = T;
     public:
         Index() = default;
+        Index(RelicID id, Reliquary* owner);
         Index(RelicID id, Reliquary& owner);
         Index(const Index& arg);
         Index(Index&& arg) noexcept;
@@ -58,6 +59,7 @@ namespace Arca
         using ValueT = T;
     public:
         Index() = default;
+        Index(RelicID id, Reliquary* owner);
         Index(RelicID id, Reliquary& owner);
         Index(const Index& arg);
         Index(Index&& arg) noexcept;
@@ -96,7 +98,7 @@ namespace Arca
     };
 
     template<class T, std::enable_if_t<usable_for_shard_index_v<T>, int> = 0>
-    Index<T> ToReference(RelicID id, Reliquary& owner)
+    Index<T> ToIndex(RelicID id, Reliquary* owner)
     {
         return Index<T>(id, owner);
     }

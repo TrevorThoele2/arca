@@ -2,8 +2,6 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/ClosedTypedRelic.h>
-
 #include <Inscription/BinaryArchive.h>
 
 #include "DifferentiableShard.h"
@@ -28,35 +26,35 @@ public:
 namespace Arca
 {
     template<>
-    struct Traits<::ReliquaryTestsFixture::BasicShard>
+    struct Traits<ReliquaryTestsFixture::BasicShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
         static inline const TypeName typeName = "ReliquaryTestsBasicShard";
     };
 
     template<>
-    struct Traits<::ReliquaryTestsFixture::OtherBasicShard>
+    struct Traits<ReliquaryTestsFixture::OtherBasicShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
         static inline const TypeName typeName = "ReliquaryTestsOtherBasicShard";
     };
 
     template<>
-    struct Traits<::ReliquaryTestsFixture::OtherShard>
+    struct Traits<ReliquaryTestsFixture::OtherShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
         static inline const TypeName typeName = "ReliquaryTestsOtherShard";
     };
 
     template<>
-    struct Traits<::ReliquaryTestsFixture::BasicTypedRelic>
+    struct Traits<ReliquaryTestsFixture::BasicTypedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "ReliquaryTestsBasicTypedRelic";
     };
 
     template<>
-    struct Traits<::ReliquaryTestsFixture::GlobalRelic>
+    struct Traits<ReliquaryTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "ReliquaryTestsGlobalRelic";
@@ -64,34 +62,34 @@ namespace Arca
     };
 
     template<>
-    struct Traits<::ReliquaryTestsFixture::BasicCurator>
+    struct Traits<ReliquaryTestsFixture::BasicCurator>
     {
         static const ObjectType objectType = ObjectType::Curator;
         static inline const TypeName typeName = "ReliquaryTestsBasicCurator";
     };
 
     template<>
-    struct Traits<::ReliquaryTestsFixture::BasicSignal>
+    struct Traits<ReliquaryTestsFixture::BasicSignal>
     {
         static const ObjectType objectType = ObjectType::Signal;
         static inline const TypeName typeName = "ReliquaryTestsBasicSignal";
     };
 }
 
-class ReliquaryTestsFixture::BasicTypedRelic final : public ClosedTypedRelic<BasicTypedRelic>
+class ReliquaryTestsFixture::BasicTypedRelic final
 {
 public:
     Index<BasicShard> basicShard;
 public:
-    explicit BasicTypedRelic(Init init);
+    explicit BasicTypedRelic(RelicInit init);
 };
 
-class ReliquaryTestsFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
+class ReliquaryTestsFixture::GlobalRelic final
 {
 public:
     Index<BasicShard> basicShard;
 public:
-    explicit GlobalRelic(Init init);
+    explicit GlobalRelic(RelicInit init);
 };
 
 class ReliquaryTestsFixture::BasicCurator final : public Curator

@@ -3,12 +3,14 @@ using namespace std::string_literals;
 
 #include "ReliquaryRegistrationTests.h"
 
-ReliquaryRegistrationTestsFixture::Relic::Relic(Init init) : ClosedTypedRelic(init)
+#include <Arca/LocalRelic.h>
+
+ReliquaryRegistrationTestsFixture::Relic::Relic(RelicInit init)
 {
-    Create<Shard>();
+    init.Create<Shard>();
 }
 
-ReliquaryRegistrationTestsFixture::GlobalRelic::GlobalRelic(Init init) : ClosedTypedRelic(init)
+ReliquaryRegistrationTestsFixture::GlobalRelic::GlobalRelic(RelicInit init)
 {}
 
 SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reliquary]")
@@ -17,7 +19,9 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
     {
         const auto relicStructureName = dataGeneration.Random<std::string>();
 
-        auto reliquary = ReliquaryOrigin().Actualize();
+        auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
+            .Actualize();
 
         auto openRelic = reliquary->Do(Create<OpenRelic>());
 
@@ -27,7 +31,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    openRelic->Create<Shard>(),
+                    reliquary->Do(Create<Shard>(openRelic.ID())),
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The shard ("s + ::Chroma::ToString(TypeFor<Shard>()) + ") was not registered. " +
@@ -42,7 +46,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    openRelic->Create<const Shard>(),
+                    reliquary->Do(Create<const Shard>(openRelic.ID())),
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The shard ("s + ::Chroma::ToString(TypeFor<const Shard>()) + ") was not registered. " +
@@ -159,6 +163,8 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
     GIVEN("relic types registered to reliquary")
     {
         auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
+            .Register<ClosedRelic>()
             .Register<Relic>()
             .Register<GlobalRelic>()
             .Actualize();
@@ -187,7 +193,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
 
         WHEN("checking closed relic type")
         {
-            const auto typeName = TypeFor<OpenRelic>().name;
+            const auto typeName = TypeFor<ClosedRelic>().name;
 
             THEN("is relic type")
             {
@@ -207,7 +213,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
 
         WHEN("checking typed relic type")
         {
-            const auto typeName = TypeFor<OpenRelic>().name;
+            const auto typeName = TypeFor<Relic>().name;
 
             THEN("is relic type")
             {
@@ -227,7 +233,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
 
         WHEN("checking global relic type")
         {
-            const auto typeName = TypeFor<OpenRelic>().name;
+            const auto typeName = TypeFor<GlobalRelic>().name;
 
             THEN("is relic type")
             {

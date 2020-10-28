@@ -10,7 +10,6 @@
 
 #include "RelicBatch.h"
 #include "ShardBatch.h"
-#include "ClosedRelic.h"
 
 #include "RelicIndex.h"
 #include "ShardIndex.h"
@@ -171,7 +170,6 @@ namespace Arca
         friend class ReliquaryCommands;
         friend class ReliquarySignals;
 
-        friend class OpenRelic;
         friend struct RelicInit;
         template<class, class>
         friend class Index;
@@ -531,9 +529,6 @@ namespace Inscription
         using Category = CompositeScribeCategory<Arca::Reliquary>;
     };
 }
-
-#include "OpenRelicDefinition.h"
-#include "ClosedRelicDefinition.h"
 
 #include "ReliquaryRelicsDefinition.h"
 #include "ReliquaryShardsDefinition.h"

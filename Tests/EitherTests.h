@@ -2,8 +2,6 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/ClosedTypedRelic.h>
-
 #include "BasicShard.h"
 
 #include <Arca/Serialization.h>
@@ -26,12 +24,12 @@ namespace Arca
     };
 }
 
-class EitherTestsFixture::BasicTypedRelic final : public ClosedTypedRelic<BasicTypedRelic>
+class EitherTestsFixture::BasicTypedRelic final
 {
 public:
     Index<BasicShard> basicShard;
 public:
-    explicit BasicTypedRelic(Init init);
+    explicit BasicTypedRelic(RelicInit init);
 };
 
 namespace Inscription

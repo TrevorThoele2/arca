@@ -64,12 +64,6 @@
     <ClCompile Include="Type.cpp">
       <Filter>Source Files\Type</Filter>
     </ClCompile>
-    <ClCompile Include="ClosedRelic.cpp">
-      <Filter>Source Files\Relic\Closed</Filter>
-    </ClCompile>
-    <ClCompile Include="OpenRelic.cpp">
-      <Filter>Source Files\Relic\Open</Filter>
-    </ClCompile>
     <ClCompile Include="MatrixBatchSource.cpp">
       <Filter>Source Files\Matrix\Batch</Filter>
     </ClCompile>
@@ -279,18 +273,6 @@
     <ClInclude Include="AsHandle.h">
       <Filter>Header Files\Handle</Filter>
     </ClInclude>
-    <ClInclude Include="ClosedRelic.h">
-      <Filter>Header Files\Relic\Closed</Filter>
-    </ClInclude>
-    <ClInclude Include="ClosedRelicDefinition.h">
-      <Filter>Header Files\Relic\Closed</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenRelic.h">
-      <Filter>Header Files\Relic\Open</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenRelicDefinition.h">
-      <Filter>Header Files\Relic\Open</Filter>
-    </ClInclude>
     <ClInclude Include="ShardList.h">
       <Filter>Header Files\Relic\Traits</Filter>
     </ClInclude>
@@ -402,12 +384,6 @@
     <ClInclude Include="Clear.h">
       <Filter>Header Files\Command\Common</Filter>
     </ClInclude>
-    <ClInclude Include="ClosedTypedRelic.h">
-      <Filter>Header Files\Relic\Closed</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenTypedRelic.h">
-      <Filter>Header Files\Relic\Open</Filter>
-    </ClInclude>
     <ClInclude Include="HasWorkMethod.h">
       <Filter>Header Files\Curator</Filter>
     </ClInclude>
@@ -486,9 +462,6 @@
     <ClInclude Include="Assigning.h">
       <Filter>Header Files\Signal\Common</Filter>
     </ClInclude>
-    <ClInclude Include="HasRelicDefaultConstructor.h">
-      <Filter>Header Files\Relic\Traits</Filter>
-    </ClInclude>
     <ClInclude Include="HasShardDefaultConstructor.h">
       <Filter>Header Files\Shard</Filter>
     </ClInclude>
@@ -548,6 +521,18 @@
     </ClInclude>
     <ClInclude Include="ShardBatchSourceDefinition.h">
       <Filter>Header Files\Shard\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="HasOpennessTrait.h">
+      <Filter>Header Files\Relic\Traits\Openness</Filter>
+    </ClInclude>
+    <ClInclude Include="LocalRelic.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="Relic.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="HasRelicInitConstructor.h">
+      <Filter>Header Files\Relic\Traits</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -652,18 +637,6 @@
     </Filter>
     <Filter Include="Header Files\Relic\Traits\Locality">
       <UniqueIdentifier>{d2a34d83-bb1a-4ea5-b655-437789a7974b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Relic\Open">
-      <UniqueIdentifier>{333c4855-e18f-4302-aea4-d03d1cc417a6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Relic\Closed">
-      <UniqueIdentifier>{8cbe489a-ca83-4884-89b1-22c4e32767ee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Relic\Closed">
-      <UniqueIdentifier>{8ff883cd-a3b8-454e-a56f-e3ca4b22355f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Relic\Open">
-      <UniqueIdentifier>{f42b3f06-82ee-428f-adf0-354c49789ba8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Matrix">
       <UniqueIdentifier>{29e57911-d8b4-43c0-b905-3e23fec96b58}</UniqueIdentifier>

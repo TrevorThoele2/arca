@@ -6,8 +6,13 @@
 namespace Arca
 {
     template<class T>
+    Index<T, std::enable_if_t<usable_for_shard_index_v<T> && !std::is_const_v<T>>>::Index(RelicID id, Reliquary* owner) :
+        id(id), owner(owner)
+    {}
+
+    template<class T>
     Index<T, std::enable_if_t<usable_for_shard_index_v<T> && !std::is_const_v<T>>>::Index(RelicID id, Reliquary& owner) :
-        id(id), owner(&owner)
+        Index(id, &owner)
     {}
 
     template<class T>
@@ -117,8 +122,13 @@ namespace Arca
     }
 
     template<class T>
+    Index<T, std::enable_if_t<usable_for_shard_index_v<T> && std::is_const_v<T>>>::Index(RelicID id, Reliquary* owner) :
+        id(id), owner(owner)
+    {}
+
+    template<class T>
     Index<T, std::enable_if_t<usable_for_shard_index_v<T> && std::is_const_v<T>>>::Index(RelicID id, Reliquary& owner) :
-        id(id), owner(&owner)
+        Index(id, &owner)
     {}
 
     template<class T>

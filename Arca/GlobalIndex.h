@@ -19,6 +19,7 @@ namespace Arca
         using ValueT = T;
     public:
         Index() = default;
+        explicit Index(Reliquary* owner);
         explicit Index(Reliquary& owner);
         Index(const Index& arg);
         Index(Index&& arg) noexcept;
@@ -57,7 +58,7 @@ namespace Arca
     };
 
     template<class T, std::enable_if_t<usable_for_global_index_v<T>, int> = 0>
-    Index<T, std::enable_if_t<usable_for_global_index_v<T>>> ToReference(RelicID, Reliquary& owner)
+    Index<T, std::enable_if_t<usable_for_global_index_v<T>>> ToIndex(RelicID, Reliquary* owner)
     {
         return Index<T, std::enable_if_t<usable_for_global_index_v<T>>>(owner);
     }

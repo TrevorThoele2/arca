@@ -2,8 +2,6 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/ClosedTypedRelic.h>
-
 #include <Arca/Serialization.h>
 
 #include "BasicShard.h"
@@ -27,12 +25,12 @@ namespace Arca
     };
 }
 
-class RelicParentingTestsFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
+class RelicParentingTestsFixture::GlobalRelic final
 {
 public:
     Index<BasicShard> basicShard;
 public:
-    explicit GlobalRelic(Init init);
+    explicit GlobalRelic(RelicInit init);
 };
 
 namespace Inscription

@@ -2,19 +2,21 @@
 
 #include <type_traits>
 
+#include "HasOpennessTrait.h"
+#include "Openness.h"
+
 namespace Arca
 {
-    class ClosedTypedRelic;
-    class ClosedRelic;
-
     template <class T, class Enable = void>
     struct is_closed : std::false_type
     {};
 
     template <class T>
-    struct is_closed<
-        T,
-        std::enable_if_t<(std::is_base_of_v<ClosedTypedRelic, T> || std::is_same_v<ClosedRelic, T>)>> : std::true_type
+    struct is_closed<T, std::enable_if_t<!has_openness_trait_v<T>>> : std::true_type
+    {};
+
+    template <class T>
+    struct is_closed<T, std::enable_if_t<Traits<T>::openness == Openness::Closed>> : std::true_type
     {};
 
     template<class T>

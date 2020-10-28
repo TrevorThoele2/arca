@@ -5,7 +5,6 @@
 #include <vector>
 #include <any>
 
-#include "OpenRelic.h"
 #include "RelicStructure.h"
 #include "RelicMetadata.h"
 #include "RelicBatch.h"
@@ -254,6 +253,27 @@ namespace Arca
         template<class RelicT, class... ConstructorArgs>
         Index<RelicT> FinishNewRelic(
             RelicStructure structure, RelicID id, ConstructorArgs&& ... constructorArgs);
+
+        template<
+            class T,
+            class... ConstructorArgs,
+            std::enable_if_t<
+                std::is_constructible_v<T, RelicInit, ConstructorArgs...> &&
+                !std::is_constructible_v<T, ConstructorArgs...>, int> = 0>
+        std::unique_ptr<T> CreateGlobalImpl(RelicInit init, ConstructorArgs&& ... constructorArgs)
+        {
+            return std::make_unique<T>(init, std::forward<ConstructorArgs>(constructorArgs)...);
+        }
+
+        template<
+            class T,
+            class... ConstructorArgs,
+            std::enable_if_t<
+                std::is_constructible_v<T, ConstructorArgs...>, int> = 0>
+        std::unique_ptr<T> CreateGlobalImpl(RelicInit init, ConstructorArgs&& ... constructorArgs)
+        {
+            return std::make_unique<T>(std::forward<ConstructorArgs>(constructorArgs)...);
+        }
     private:
         RelicMetadata& ValidateParentForParenting(const Handle& parent);
     private:

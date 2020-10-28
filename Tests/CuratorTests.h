@@ -6,8 +6,6 @@
 #include "BasicLocalClosedTypedRelic.h"
 #include "BasicGlobalClosedTypedRelic.h"
 
-#include <Inscription/BinaryArchive.h>
-
 using namespace Arca;
 
 class CuratorTestsFixture : public GeneralFixture

@@ -6,7 +6,8 @@
 #include "RelicID.h"
 #include "IsRelic.h"
 #include "RelicInit.h"
-#include "HasRelicDefaultConstructor.h"
+#include <Chroma/IsBracesConstructible.h>
+#include "HasRelicInitConstructor.h"
 #include "HasRelicSerializationConstructor.h"
 
 #include "Serialization.h"
@@ -27,8 +28,6 @@ namespace Arca
 
         virtual void DestroyFromBase(RelicID id) = 0;
         virtual void DestroyAllFromBase(Reliquary& reliquary) = 0;
-
-        virtual void SetOwner(Reliquary& owner) = 0;
 
         [[nodiscard]] virtual SizeT Size() const = 0;
 
@@ -51,7 +50,7 @@ namespace Arca
         BatchSource(BatchSource&& arg) = default;
 
         template<class... ConstructorArgs>
-        RelicT* Add(RelicInit init, ConstructorArgs&& ... constructorArgs);
+        RelicT* Create(RelicID id, Reliquary& owner, ConstructorArgs&& ... constructorArgs);
 
         iterator Destroy(RelicID destroy);
         iterator Destroy(iterator destroy);
@@ -61,8 +60,6 @@ namespace Arca
         void DestroyAllFromBase(Reliquary& reliquary) override;
 
         void Clear();
-
-        void SetOwner(Reliquary& owner) override;
 
         [[nodiscard]] void* FindStorage(RelicID id) override;
         [[nodiscard]] RelicT* Find(RelicID id);
@@ -79,6 +76,35 @@ namespace Arca
     private:
         Map map;
         Reliquary* owner;
+
+        template<
+            class U,
+            class... ConstructorArgs,
+            std::enable_if_t<
+                std::is_constructible_v<U, RelicInit, ConstructorArgs...> &&
+                !std::is_constructible_v<U, ConstructorArgs...>, int> = 0>
+        RelicT* CreateImpl(RelicInit init, ConstructorArgs&& ... constructorArgs)
+        {
+            auto emplaced = map.emplace(
+                std::piecewise_construct,
+                std::forward_as_tuple(init.id),
+                std::forward_as_tuple(init, std::forward<ConstructorArgs>(constructorArgs)...));
+            return &emplaced.first->second;
+        }
+
+        template<
+            class U,
+            class... ConstructorArgs,
+            std::enable_if_t<
+                std::is_constructible_v<U, ConstructorArgs...>, int> = 0>
+        RelicT* CreateImpl(RelicInit init, ConstructorArgs&& ... constructorArgs)
+        {
+            auto emplaced = map.emplace(
+                std::piecewise_construct,
+                std::forward_as_tuple(init.id),
+                std::forward_as_tuple(std::forward<ConstructorArgs>(constructorArgs)...));
+            return &emplaced.first->second;
+        }
     private:
         friend class Reliquary;
     private:
@@ -97,11 +123,39 @@ namespace Inscription
         void Scriven(ObjectT& object, BinaryArchive& archive);
         void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
     private:
-        template<class U, std::enable_if_t<Arca::has_relic_serialization_constructor_v<U>, int> = 0>
+        template<
+            class U,
+            std::enable_if_t<
+                Arca::has_relic_init_serialization_constructor_v<U>, int> = 0>
         U Create(Arca::RelicInit init);
-        template<class U, std::enable_if_t<!Arca::has_relic_serialization_constructor_v<U> && Arca::has_relic_default_constructor_v<U>, int> = 0>
+        template<
+            class U,
+            std::enable_if_t<
+                !Arca::has_relic_init_serialization_constructor_v<U> &&
+                Arca::has_relic_serialization_constructor_v<U>, int> = 0>
         U Create(Arca::RelicInit init);
-        template<class U, std::enable_if_t<!Arca::has_relic_serialization_constructor_v<U> && !Arca::has_relic_default_constructor_v<U>, int> = 0>
+        template<
+            class U,
+            std::enable_if_t<
+                !Arca::has_relic_init_serialization_constructor_v<U> &&
+                !Arca::has_relic_serialization_constructor_v<U> &&
+                Arca::has_relic_init_constructor_v<U>, int> = 0>
+        U Create(Arca::RelicInit init);
+        template<
+            class U,
+            std::enable_if_t<
+                !Arca::has_relic_init_serialization_constructor_v<U> &&
+                !Arca::has_relic_serialization_constructor_v<U> &&
+                !Arca::has_relic_init_constructor_v<U> &&
+                Chroma::is_braces_default_constructible_v<U>, int> = 0>
+        U Create(Arca::RelicInit init);
+        template<
+            class U,
+            std::enable_if_t<
+                !Arca::has_relic_init_serialization_constructor_v<U> &&
+                !Arca::has_relic_serialization_constructor_v<U> &&
+                !Arca::has_relic_init_constructor_v<U> &&
+                !Chroma::is_braces_default_constructible_v<U>, int> = 0>
         U Create(Arca::RelicInit init);
     private:
         using RelicT = typename ObjectT::RelicT;

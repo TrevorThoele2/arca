@@ -1,18 +1,17 @@
 #pragma once
 
-#include <Arca/ClosedTypedRelic.h>
+#include <Arca/Relic.h>
 
-class BasicLocalClosedTypedRelic : public Arca::ClosedTypedRelic<BasicLocalClosedTypedRelic>
+class BasicLocalClosedTypedRelic
 {
 public:
     int integer = 0;
     std::string string;
 
-    explicit BasicLocalClosedTypedRelic(Init init) : ClosedTypedRelic(init)
-    {}
+    BasicLocalClosedTypedRelic() = default;
 
-    BasicLocalClosedTypedRelic(Init init, int integer, const std::string& string) :
-        ClosedTypedRelic(init), integer(integer), string(string)
+    BasicLocalClosedTypedRelic(int integer, const std::string& string) :
+        integer(integer), string(string)
     {}
 };
 

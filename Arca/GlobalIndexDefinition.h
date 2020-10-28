@@ -6,10 +6,14 @@
 namespace Arca
 {
     template<class T>
-    Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::Index(Reliquary& owner) : owner(&owner)
+    Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::Index(Reliquary* owner) : owner(owner)
     {
         value = FindValueFromOwner();
     }
+
+    template<class T>
+    Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::Index(Reliquary& owner) : Index(&owner)
+    {}
 
     template<class T>
     Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::Index(const Index& arg) : owner(arg.owner)

@@ -2,7 +2,6 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/ClosedTypedRelic.h>
 #include "DifferentiableShard.h"
 
 #include <Arca/Serialization.h>
@@ -18,21 +17,21 @@ public:
 namespace Arca
 {
     template<>
-    struct Traits<::AllTestsFixture::BasicTypedRelic>
+    struct Traits<AllTestsFixture::BasicTypedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "ReliquaryTestsBasicTypedRelic";
     };
 }
 
-class AllTestsFixture::BasicTypedRelic final : public ClosedTypedRelic<BasicTypedRelic>
+class AllTestsFixture::BasicTypedRelic final
 {
 public:
     Index<DifferentiableShard<0>> shard0;
     Index<DifferentiableShard<1>> shard1;
     Index<DifferentiableShard<2>> shard2;
 public:
-    explicit BasicTypedRelic(Init init);
+    explicit BasicTypedRelic(RelicInit init);
 };
 
 namespace Inscription

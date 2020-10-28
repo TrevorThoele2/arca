@@ -4,8 +4,12 @@
 
 namespace Arca
 {
-    Handle::Handle(RelicID id, Reliquary& owner, Arca::Type type, HandleObjectType objectType)
-        : id(id), owner(&owner), type(std::move(type)), objectType(objectType)
+    Handle::Handle(RelicID id, Reliquary* owner, Arca::Type type, HandleObjectType objectType) :
+        id(id), owner(owner), type(std::move(type)), objectType(objectType)
+    {}
+
+    Handle::Handle(RelicID id, Reliquary& owner, Arca::Type type, HandleObjectType objectType) :
+        Handle(id, &owner, type, objectType)
     {}
 
     bool Handle::operator==(const Handle& arg) const
@@ -23,9 +27,9 @@ namespace Arca
         return HandleSlim(ID(), Type(), ObjectType());
     }
 
-    Reliquary& Handle::Owner() const
+    Reliquary* Handle::Owner() const
     {
-        return *owner;
+        return owner;
     }
 
     RelicID Handle::ID() const

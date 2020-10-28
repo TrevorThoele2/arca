@@ -3,9 +3,6 @@ using namespace std::string_literals;
 
 #include "TypeTests.h"
 
-TypeTestsFixture::TypedRelic::TypedRelic(Init init) : ClosedTypedRelic(init)
-{}
-
 SCENARIO_METHOD(TypeTestsFixture, "type serialization", "[type][serialization]")
 {
     GIVEN("relic type")

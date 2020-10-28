@@ -3,6 +3,12 @@ using namespace std::string_literals;
 
 #include "ReliquaryOriginRegistrationTests.h"
 
+ReliquaryOriginRegistrationTestsFixture::GlobalRelicWithMovedValue::GlobalRelicWithMovedValue(
+    std::unique_ptr<int>&& myInt)
+    :
+    myInt(std::move(myInt))
+{}
+
 ReliquaryOriginRegistrationTestsFixture::CuratorWithMovedValue::CuratorWithMovedValue(
     Init init, std::unique_ptr<int>&& myInt)
     :

@@ -64,7 +64,7 @@ namespace Arca
 
                         signals.Raise(AssigningKnown<T>{ Index<T> { id, owner }});
                         shards.Clear(id);
-                        *storage = T{ RelicInit{id, owner}, std::forward<Args>(args)... };
+                        Impl<T>(*storage, RelicInit{ id, owner }, std::forward<Args>(args)...);
                         signals.Raise(AssignedKnown<T>{ Index<T> { id, owner }});
 
                         return Index<T>(id, owner);
@@ -73,6 +73,26 @@ namespace Arca
         private:
             RelicID id;
             std::tuple<Args...> args;
+        private:
+            template<
+                class U,
+                std::enable_if_t<
+                    std::is_constructible_v<U, RelicInit, Args...> &&
+                    !std::is_constructible_v<U, Args...>, int> = 0>
+            static void Impl(T& storage, RelicInit init, Args&& ... args)
+            {
+                storage = std::move(T{ init, std::forward<Args>(args)... });
+            }
+
+            template<
+                class U,
+                std::enable_if_t<
+                    !std::is_constructible_v<U, RelicInit, Args...> &&
+                    std::is_constructible_v<U, Args...>, int> = 0>
+            static void Impl(T& storage, RelicInit init, Args&& ... args)
+            {
+                storage = std::move(T{ std::forward<Args>(args)... });
+            }
         };
     };
 
@@ -206,7 +226,7 @@ namespace Arca
 
                         signals.Raise(AssigningKnown<T>{ Index<T> { id, owner }});
                         shards.Clear(id);
-                        *storage = std::move(T{ RelicInit{id, owner}, std::forward<Args>(args)... });
+                        Impl<T>(*storage, RelicInit{ id, owner }, std::forward<Args>(args)...);
                         signals.Raise(AssignedKnown<T>{ Index<T> { id, owner }});
 
                         return Index<T>(id, owner);
@@ -215,6 +235,26 @@ namespace Arca
         private:
             RelicID id;
             std::tuple<Args...> args;
+        private:
+            template<
+                class U,
+                std::enable_if_t<
+                    std::is_constructible_v<U, RelicInit, Args...> &&
+                    !std::is_constructible_v<U, Args...>, int> = 0>
+            static void Impl(T& storage, RelicInit init, Args&& ... args)
+            {
+                storage = std::move(T{ init, std::forward<Args>(args)... });
+            }
+
+            template<
+                class U,
+                std::enable_if_t<
+                    !std::is_constructible_v<U, RelicInit, Args...> &&
+                    std::is_constructible_v<U, Args...>, int> = 0>
+            static void Impl(T& storage, RelicInit init, Args&& ... args)
+            {
+                storage = std::move(T{ std::forward<Args>(args)... });
+            }
         };
     };
 

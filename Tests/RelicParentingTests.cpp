@@ -4,12 +4,12 @@ using namespace std::string_literals;
 #include "RelicParentingTests.h"
 #include "SignalListener.h"
 
+#include <Arca/LocalRelic.h>
 #include <Arca/RelicParented.h>
 
-RelicParentingTestsFixture::GlobalRelic::GlobalRelic(Init init)
-    : ClosedTypedRelic(init)
+RelicParentingTestsFixture::GlobalRelic::GlobalRelic(RelicInit init)
 {
-    basicShard = Create<BasicShard>();
+    basicShard = init.Create<BasicShard>();
 }
 
 SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parenting]")
@@ -67,7 +67,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary->Do(CreateChild<OpenRelic>{AsHandle(*globalRelic)}),
+                    reliquary->Do(CreateChild<OpenRelic>{AsHandle(globalRelic)}),
                     CannotParentRelic,
                     ::Catch::Matchers::Message("Cannot parent a relic to a global relic.")
                 );
@@ -75,13 +75,13 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
 
             THEN("parent of global relic from Reliquary is null")
             {
-                const auto foundParent = reliquary->ParentOf(globalRelic->ID());
+                const auto foundParent = reliquary->ParentOf(globalRelic.ID());
                 REQUIRE(!foundParent);
             }
 
             THEN("children of global relic from Reliquary is empty")
             {
-                const auto foundChildren = reliquary->ChildrenOf(globalRelic->ID());
+                const auto foundChildren = reliquary->ChildrenOf(globalRelic.ID());
                 REQUIRE(foundChildren.empty());
             }
 
@@ -95,42 +95,37 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
     GIVEN("parent and child created")
     {
         auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
             .Register<BasicShard>()
             .Actualize();
 
         auto parent = reliquary->Do(Create<OpenRelic>());
-        parent->Create<BasicShard>();
+        reliquary->Do(Create<BasicShard>(parent.ID()));
 
         auto onParented = SignalListener<RelicParented>(*reliquary);
 
         WHEN("created child")
         {
-            auto child = reliquary->Do(CreateChild<OpenRelic>{AsHandle(*parent)});
-            child->Create<BasicShard>();
-
-            THEN("child has parent")
-            {
-                REQUIRE(child->Parent());
-                REQUIRE(child->Parent()->ID() == parent->ID());
-            }
+            auto child = reliquary->Do(CreateChild<OpenRelic>{AsHandle(parent)});
+            reliquary->Do(Create<BasicShard>(child.ID()));
 
             THEN("parent of child from Reliquary is parent")
             {
-                const auto foundParent = reliquary->ParentOf(child->ID());
+                const auto foundParent = reliquary->ParentOf(child.ID());
                 REQUIRE(foundParent);
-                REQUIRE(foundParent->ID() == parent->ID());
+                REQUIRE(foundParent->ID() == parent.ID());
             }
 
             THEN("children of parent from Reliquary is child")
             {
-                const auto foundChildren = reliquary->ChildrenOf(parent->ID());
+                const auto foundChildren = reliquary->ChildrenOf(parent.ID());
                 REQUIRE(foundChildren.size() == 1);
-                REQUIRE(foundChildren[0].ID() == child->ID());
+                REQUIRE(foundChildren[0].ID() == child.ID());
             }
 
             THEN("destroying parent also destroys child")
             {
-                reliquary->Destroy(AsHandle(*parent));
+                reliquary->Destroy(AsHandle(parent));
 
                 REQUIRE(reliquary->RelicSize() == 0);
                 REQUIRE(!Arca::Index<BasicShard>(child.ID(), *reliquary));
@@ -142,17 +137,17 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
 
                 auto signal = onParented.Executions().begin();
 
-                REQUIRE(signal->parent.ID() == parent->ID());
-                REQUIRE(signal->child.ID() == child->ID());
+                REQUIRE(signal->parent.ID() == parent.ID());
+                REQUIRE(signal->child.ID() == child.ID());
             }
 
             WHEN("destroying child")
             {
-                reliquary->Destroy(AsHandle(*child));
+                reliquary->Destroy(AsHandle(child));
 
                 THEN("children of parent from Reliquary is empty")
                 {
-                    const auto foundChildren = reliquary->ChildrenOf(parent->ID());
+                    const auto foundChildren = reliquary->ChildrenOf(parent.ID());
                     REQUIRE(foundChildren.empty());
                 }
 
@@ -164,7 +159,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
 
                 THEN("destroying parent works")
                 {
-                    reliquary->Destroy(AsHandle(*parent));
+                    reliquary->Destroy(AsHandle(parent));
 
                     REQUIRE(reliquary->RelicSize() == 0);
                     REQUIRE(!Arca::Index<BasicShard>(parent.ID(), *reliquary));
@@ -176,11 +171,12 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
     GIVEN("multiple children parented to same relic")
     {
         auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
             .Register<BasicShard>()
             .Actualize();
 
         auto parent = reliquary->Do(Create<OpenRelic>());
-        parent->Create<BasicShard>();
+        reliquary->Do(Create<BasicShard>(parent.ID()));
 
         auto onParented = SignalListener<RelicParented>(*reliquary);
 
@@ -189,33 +185,24 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
             std::vector<Index<OpenRelic>> children;
             for (auto i = 0; i < 10; ++i)
             {
-                auto child = reliquary->Do(CreateChild<OpenRelic>{AsHandle(*parent)});
-                child->Create<BasicShard>();
+                auto child = reliquary->Do(CreateChild<OpenRelic>{AsHandle(parent)});
+                reliquary->Do(Create<BasicShard>(child.ID()));
                 children.push_back(child);
-            }
-
-            THEN("children have parent")
-            {
-                for (auto& child : children)
-                {
-                    REQUIRE(child->Parent());
-                    REQUIRE(child->Parent()->ID() == parent->ID());
-                }
             }
 
             THEN("parent of children from Reliquary is parent")
             {
                 for (auto& child : children)
                 {
-                    const auto foundParent = reliquary->ParentOf(child->ID());
+                    const auto foundParent = reliquary->ParentOf(child.ID());
                     REQUIRE(foundParent);
-                    REQUIRE(foundParent->ID() == parent->ID());
+                    REQUIRE(foundParent->ID() == parent.ID());
                 }
             }
 
             THEN("children of parent from Reliquary is child")
             {
-                const auto foundChildren = reliquary->ChildrenOf(parent->ID());
+                const auto foundChildren = reliquary->ChildrenOf(parent.ID());
                 REQUIRE(foundChildren.size() == children.size());
                 for (auto i = 0; i < 10; ++i)
                     REQUIRE(foundChildren[i].ID() == children[i].ID());
@@ -223,7 +210,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
 
             THEN("destroying parent also destroys children")
             {
-                reliquary->Destroy(AsHandle(*parent));
+                reliquary->Destroy(AsHandle(parent));
 
                 REQUIRE(reliquary->RelicSize() == 0);
                 for (auto& child : children)
@@ -238,21 +225,21 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
                 {
                     auto& signal = onParented.Executions()[i];
                     auto& child = children[i];
-                    REQUIRE(signal.parent.ID() == parent->ID());
-                    REQUIRE(signal.child.ID() == child->ID());
+                    REQUIRE(signal.parent.ID() == parent.ID());
+                    REQUIRE(signal.child.ID() == child.ID());
                 }
             }
 
             WHEN("destroying child")
             {
-                reliquary->Destroy(AsHandle(*children[4]));
+                reliquary->Destroy(AsHandle(children[4]));
 
                 auto checkChildren = children;
                 children.erase(children.begin() + 4);
 
                 THEN("children of parent from Reliquary is 9")
                 {
-                    const auto foundChildren = reliquary->ChildrenOf(parent->ID());
+                    const auto foundChildren = reliquary->ChildrenOf(parent.ID());
                     REQUIRE(foundChildren.size() == 9);
                     for (auto i = 0; i < 9; ++i)
                         REQUIRE(foundChildren[i].ID() == children[i].ID());
@@ -266,7 +253,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
 
                 THEN("destroying parent works")
                 {
-                    reliquary->Destroy(AsHandle(*parent));
+                    reliquary->Destroy(AsHandle(parent));
 
                     REQUIRE(reliquary->RelicSize() == 0);
                     for (auto& child : children)
@@ -279,13 +266,14 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
     GIVEN("parent from one reliquary and child from another")
     {
         auto origin = ReliquaryOrigin()
+            .Register<OpenRelic>()
             .Register<BasicShard>();
 
         auto parentReliquary = origin.Actualize();
         auto childReliquary = origin.Actualize();
 
         auto parent = parentReliquary->Do(Create<OpenRelic>());
-        parent->Create<BasicShard>();
+        parentReliquary->Do(Create<BasicShard>(parent.ID()));
 
         WHEN("parenting child inside child reliquary")
         {
@@ -293,7 +281,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    childReliquary->Do(CreateChild<OpenRelic>{AsHandle(*parent)}),
+                    childReliquary->Do(CreateChild<OpenRelic>{AsHandle(parent)}),
                     CannotParentRelic,
                     ::Catch::Matchers::Message(
                         "Cannot parent a relic to a relic in a different Reliquary.")
@@ -302,7 +290,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
 
             THEN("children of parent from parent Reliquary is empty")
             {
-                const auto foundChildren = parentReliquary->ChildrenOf(parent->ID());
+                const auto foundChildren = parentReliquary->ChildrenOf(parent.ID());
                 REQUIRE(foundChildren.empty());
             }
         }
@@ -315,7 +303,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    irrelevantReliquary->Do(CreateChild<OpenRelic>{AsHandle(*parent)}),
+                    irrelevantReliquary->Do(CreateChild<OpenRelic>{AsHandle(parent)}),
                     CannotParentRelic,
                     ::Catch::Matchers::Message(
                         "Cannot parent a relic to a relic in a different Reliquary.")
@@ -324,7 +312,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
 
             THEN("children of parent from parent Reliquary is empty")
             {
-                const auto foundChildren = parentReliquary->ChildrenOf(parent->ID());
+                const auto foundChildren = parentReliquary->ChildrenOf(parent.ID());
                 REQUIRE(foundChildren.empty());
             }
         }

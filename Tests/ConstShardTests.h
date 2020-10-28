@@ -2,8 +2,6 @@
 
 #include "ReliquaryFixture.h"
 
-#include <Arca/ClosedTypedRelic.h>
-
 using namespace Arca;
 
 class ConstShardTestsFixture : public ReliquaryFixture
@@ -39,12 +37,12 @@ public:
     explicit Shard(int value);
 };
 
-class ConstShardTestsFixture::Relic final : public ClosedTypedRelic<Relic>
+class ConstShardTestsFixture::Relic final
 {
 public:
     Index<const Shard> shard;
 
-    explicit Relic(Init init);
+    explicit Relic(RelicInit init);
 };
 
 namespace Inscription

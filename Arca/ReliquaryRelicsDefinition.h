@@ -107,7 +107,7 @@ namespace Arca
         SetupNewMetadata<RelicT>(id);
         Parent(parent, Handle(id, Owner(), TypeFor<RelicT>(), HandleObjectType::Relic));
         auto index = FinishNewRelic<RelicT>({}, id, std::forward<ConstructorArgs>(constructorArgs)...);
-        Owner().Raise(RelicParented{ parent, AsHandle(*index) });
+        Owner().Raise(RelicParented{ parent, AsHandle(index) });
         return index;
     }
 
@@ -124,7 +124,7 @@ namespace Arca
         SetupNewMetadata<RelicT>(id);
         Parent(parent, Handle(id, Owner(), TypeFor<RelicT>(), HandleObjectType::Relic));
         auto index = FinishNewRelic<RelicT>(structure, id, std::forward<ConstructorArgs>(constructorArgs)...);
-        Owner().Raise(RelicParented{ parent, AsHandle(*index) });
+        Owner().Raise(RelicParented{ parent, AsHandle(index) });
         return index;
     }
 
@@ -142,7 +142,7 @@ namespace Arca
         Parent(parent, Handle(id, Owner(), TypeFor<RelicT>(), HandleObjectType::Relic));
         auto structure = RelicStructures().RequiredRelicStructure(structureName);
         auto index = FinishNewRelic<RelicT>(structure, id, std::forward<ConstructorArgs>(constructorArgs)...);
-        Owner().Raise(RelicParented{ parent, AsHandle(*index) });
+        Owner().Raise(RelicParented{ parent, AsHandle(index) });
         return index;
     }
 
@@ -162,7 +162,7 @@ namespace Arca
         SetupNewMetadata<RelicT>(id);
         Parent(parent, Handle(id, Owner(), TypeFor<RelicT>(), HandleObjectType::Relic));
         auto index = FinishNewRelic<RelicT>({}, id, std::forward<ConstructorArgs>(constructorArgs)...);
-        Owner().Raise(RelicParented{ parent, AsHandle(*index) });
+        Owner().Raise(RelicParented{ parent, AsHandle(index) });
         return index;
     }
 
@@ -182,7 +182,7 @@ namespace Arca
         SetupNewMetadata<RelicT>(id);
         Parent(parent, Handle(id, Owner(), TypeFor<RelicT>(), HandleObjectType::Relic));
         auto index = FinishNewRelic<RelicT>(structure, id, std::forward<ConstructorArgs>(constructorArgs)...);
-        Owner().Raise(RelicParented{parent, AsHandle(*index)});
+        Owner().Raise(RelicParented{parent, AsHandle(index)});
         return index;
     }
 
@@ -459,7 +459,8 @@ namespace Arca
 
         SetupNewMetadata<RelicT>(id);
 
-        auto relic = std::make_unique<RelicT>(RelicInit{ id, Owner() }, std::forward<ConstructorArgs>(constructorArgs)...);
+        auto relic = CreateGlobalImpl<RelicT>(
+            RelicInit {id, Owner()}, std::forward<ConstructorArgs>(constructorArgs)...);
 
         globalHandlers.push_back(
             std::make_unique<GlobalHandler<RelicT>>(*this, std::move(relic), id));
@@ -510,7 +511,7 @@ namespace Arca
         RelicStructure structure, RelicID id, ConstructorArgs&& ... constructorArgs)
     {
         auto& batchSource = RequiredBatchSource<RelicT>();
-        auto added = batchSource.Add(RelicInit{id, Owner()}, std::forward<ConstructorArgs>(constructorArgs)...);
+        auto added = batchSource.Create(id, Owner(), std::forward<ConstructorArgs>(constructorArgs)...);
 
         MetadataFor(id)->storage = added;
 

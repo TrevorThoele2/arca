@@ -11,18 +11,16 @@ namespace Arca
 
     template<class T>
     template<class... ConstructorArgs>
-    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Add(RelicInit init, ConstructorArgs&& ... constructorArgs)
+    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Create(
+        RelicID id, Reliquary& owner, ConstructorArgs&& ... constructorArgs)
+
         -> RelicT*
     {
-        auto found = Find(init.id);
+        auto found = Find(id);
         if (found)
             return nullptr;
 
-        return &map.emplace(
-            std::piecewise_construct,
-            std::forward_as_tuple(init.id),
-            std::forward_as_tuple(init, std::forward<ConstructorArgs>(constructorArgs)...))
-                .first->second;
+        return CreateImpl<T>(RelicInit{ id, owner }, std::forward<ConstructorArgs>(constructorArgs)...);
     }
 
     template<class T>
@@ -63,13 +61,6 @@ namespace Arca
     void BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Clear()
     {
         map.clear();
-    }
-
-    template<class T>
-    void BatchSource<T, std::enable_if_t<is_relic_v<T>>>::SetOwner(Reliquary& owner)
-    {
-        for (auto& loop : map)
-            loop.second.owner = &owner;
     }
 
     template<class T>
@@ -214,27 +205,69 @@ namespace Inscription
     }
 
     template<class T>
-    template<class U, std::enable_if_t<Arca::has_relic_serialization_constructor_v<U>, int>>
+    template<
+        class U,
+        std::enable_if_t<
+            Arca::has_relic_init_serialization_constructor_v<U>, int>>
     U Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::Create(Arca::RelicInit init)
     {
         return ObjectT::RelicT{ init, Arca::Serialization{} };
     }
 
     template<class T>
-    template<class U, std::enable_if_t<!Arca::has_relic_serialization_constructor_v<U> && Arca::has_relic_default_constructor_v<U>, int>>
+    template<
+        class U,
+        std::enable_if_t<
+            !Arca::has_relic_init_serialization_constructor_v<U> &&
+            Arca::has_relic_serialization_constructor_v<U>, int>>
+    U Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::Create(Arca::RelicInit init)
+    {
+        return ObjectT::RelicT{ Arca::Serialization{} };
+    }
+
+    template<class T>
+    template<
+        class U,
+        std::enable_if_t<
+            !Arca::has_relic_init_serialization_constructor_v<U> &&
+            !Arca::has_relic_serialization_constructor_v<U> &&
+            Arca::has_relic_init_constructor_v<U>, int>>
     U Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::Create(Arca::RelicInit init)
     {
         return ObjectT::RelicT{ init };
     }
 
     template<class T>
-    template<class U, std::enable_if_t<!Arca::has_relic_serialization_constructor_v<U> && !Arca::has_relic_default_constructor_v<U>, int>>
+    template<
+        class U,
+        std::enable_if_t<
+            !Arca::has_relic_init_serialization_constructor_v<U> &&
+            !Arca::has_relic_serialization_constructor_v<U> &&
+            !Arca::has_relic_init_constructor_v<U> &&
+            Chroma::is_braces_default_constructible_v<U>, int>>
+    U Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::Create(Arca::RelicInit init)
+    {
+        return ObjectT::RelicT{};
+    }
+
+    template<class T>
+    template<
+        class U,
+        std::enable_if_t<
+            !Arca::has_relic_init_serialization_constructor_v<U> &&
+            !Arca::has_relic_serialization_constructor_v<U> &&
+            !Arca::has_relic_init_constructor_v<U> &&
+            !Chroma::is_braces_default_constructible_v<U>, int>>
     U Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::Create(Arca::RelicInit init)
     {
         static_assert(
             false,
-            "A relic requires a serialization constructor (taking a RelicInit and Serialization) "
-            "or a constructor taking only RelicInit in order to be serialized.");
+            "A relic requires a constructor of form "
+            "(RelicInit, Serialization), "
+            "(Serialization), "
+            "(RelicInit) or"
+            "()"
+            "in order to be serialized. Order given is priority order.");
         return ObjectT::RelicT{ init };
     }
 }

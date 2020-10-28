@@ -6,30 +6,26 @@
 
 #include "DifferentiableShard.h"
 
-IndexTestsFixture::TypedClosedRelic::TypedClosedRelic(Init init) :
-    ClosedTypedRelic(init)
+IndexTestsFixture::TypedClosedRelic::TypedClosedRelic(RelicInit init)
 {
-    shard = Create<BasicShard>();
+    shard = init.Create<BasicShard>();
 }
 
-IndexTestsFixture::TypedOpenRelic::TypedOpenRelic(Init init) :
-    OpenTypedRelic(init)
+IndexTestsFixture::TypedOpenRelic::TypedOpenRelic(RelicInit init)
 {
-    shard = Create<BasicShard>();
+    shard = init.Create<BasicShard>();
 }
 
-IndexTestsFixture::GlobalRelic::GlobalRelic(Init init) :
-    ClosedTypedRelic(init)
+IndexTestsFixture::GlobalRelic::GlobalRelic(RelicInit init)
 {
-    shard = Create<BasicShard>();
+    shard = init.Create<BasicShard>();
 }
 
-IndexTestsFixture::RelicHolderRelic::RelicHolderRelic(Init init) :
-    ClosedTypedRelic(init)
+IndexTestsFixture::RelicHolderRelic::RelicHolderRelic(RelicInit init)
 {}
 
-IndexTestsFixture::RelicHolderRelic::RelicHolderRelic(Init init, Index<OpenRelic> held) :
-    ClosedTypedRelic(init), held(held)
+IndexTestsFixture::RelicHolderRelic::RelicHolderRelic(RelicInit init, Index<OpenRelic> held) :
+    held(held)
 {}
 
 SCENARIO_METHOD(IndexTestsFixture, "Index resets to nullptr after underlying object destroyed", "[index]")
@@ -37,6 +33,8 @@ SCENARIO_METHOD(IndexTestsFixture, "Index resets to nullptr after underlying obj
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
+            .Register<ClosedRelic>()
             .Register<BasicShard>()
             .Register<TypedClosedRelic>()
             .Register<TypedOpenRelic>()
@@ -137,15 +135,16 @@ SCENARIO_METHOD(IndexTestsFixture, "Matrix Index", "[index][matrix]")
     GIVEN("registered reliquary, open relic and three shards")
     {
         auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
             .Register<DifferentiableShard<0>>()
             .Register<DifferentiableShard<1>>()
             .Register<DifferentiableShard<2>>()
             .Actualize();
 
         auto relic = reliquary->Do(Create<OpenRelic>());
-        auto shard0 = relic->Create<DifferentiableShard<0>>();
-        auto shard1 = relic->Create<DifferentiableShard<1>>();
-        auto shard2 = relic->Create<DifferentiableShard<2>>();
+        auto shard0 = reliquary->Do(Create<DifferentiableShard<0>>(relic));
+        auto shard1 = reliquary->Do(Create<DifferentiableShard<1>>(relic));
+        auto shard2 = reliquary->Do(Create<DifferentiableShard<2>>(relic));
 
         WHEN("creating Index out of all")
         {
@@ -192,6 +191,7 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
             .Register<BasicShard>()
             .Register<TypedClosedRelic>()
             .Register<TypedOpenRelic>()
@@ -276,7 +276,7 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
         {
             auto relic = reliquary->Do(Create<OpenRelic>());
 
-            auto index1 = relic->Create<BasicShard>();
+            auto index1 = reliquary->Do(Create<BasicShard>(relic));
 
             auto index2 = std::move(index1);
 
@@ -315,7 +315,7 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
         {
             auto relic = reliquary->Do(Create<OpenRelic>());
 
-            auto index1 = relic->Create<BasicShard>();
+            auto index1 = reliquary->Do(Create<BasicShard>(relic));
 
             auto index2(std::move(index1));
 
@@ -354,7 +354,7 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
         {
             auto relic = reliquary->Do(Create<OpenRelic>());
 
-            auto index1 = relic->Create<const BasicShard>();
+            auto index1 = reliquary->Do(Create<const BasicShard>(relic));
 
             auto index2 = std::move(index1);
 
@@ -393,7 +393,7 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
         {
             auto relic = reliquary->Do(Create<OpenRelic>());
 
-            auto index1 = relic->Create<const BasicShard>();
+            auto index1 = reliquary->Do(Create<const BasicShard>(relic));
 
             auto index2(std::move(index1));
 
@@ -506,9 +506,9 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
         {
             auto relic = reliquary->Do(Create<OpenRelic>());
 
-            relic->Create<BasicShard>();
+            reliquary->Do(Create<BasicShard>(relic));
 
-            auto index1 = Arca::Index<Either<BasicShard>>(relic->ID(), *reliquary);
+            auto index1 = Arca::Index<Either<BasicShard>>(relic.ID(), *reliquary);
 
             auto index2 = std::move(index1);
 
@@ -547,9 +547,9 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
         {
             auto relic = reliquary->Do(Create<OpenRelic>());
 
-            relic->Create<BasicShard>();
+            reliquary->Do(Create<BasicShard>(relic));
 
-            auto index1 = Arca::Index<Either<BasicShard>>(relic->ID(), *reliquary);
+            auto index1 = Arca::Index<Either<BasicShard>>(relic.ID(), *reliquary);
 
             auto index2(std::move(index1));
 
