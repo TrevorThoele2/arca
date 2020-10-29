@@ -113,6 +113,6 @@ namespace Arca
     template<class ReturnT, class WrapT>
     RelicID RelicBatchIteratorBase<ReturnT, WrapT>::ID() const
     {
-        return wrapped->id;
+        return wrapped->first;
     }
 }

@@ -97,7 +97,7 @@ SCENARIO_METHOD(IntegrationTestsFixture, "working with signals through curators"
             .Register<DifferentiableCurator<2>>()
             .Register<DifferentiableCurator<3>>()
             .Register<DifferentiableCurator<4>>()
-            .CuratorPipeline(curatorPipeline)
+            .CuratorConstructionPipeline(curatorPipeline)
             .Actualize();
 
         std::vector<DifferentiableCuratorBase*> curatorsInOrder
@@ -109,7 +109,7 @@ SCENARIO_METHOD(IntegrationTestsFixture, "working with signals through curators"
             &reliquary->Find<DifferentiableCurator<0>>()
         };
 
-        WHEN("raising signal then working reliquary")
+        WHEN("raising signal then sending command")
         {
             struct EncounteredSignal
             {
@@ -124,7 +124,7 @@ SCENARIO_METHOD(IntegrationTestsFixture, "working with signals through curators"
 
             for(auto& curator : curatorsInOrder)
             {
-                curator->onWork = [&encounteredSignals, &basicSignals](DifferentiableCuratorBase& self)
+                curator->onCommand = [&encounteredSignals, &basicSignals](DifferentiableCuratorBase& self)
                 {
                     for (auto& signal : basicSignals[self.Differentiator()])
                         encounteredSignals.emplace_back(&self, signal);
@@ -134,7 +134,7 @@ SCENARIO_METHOD(IntegrationTestsFixture, "working with signals through curators"
             const auto value = dataGeneration.Random<int>();
             reliquary->Raise(BasicSignal{ value });
 
-            reliquary->Work();
+            reliquary->Do(BasicCommand{});
 
             THEN("curators encounter signals in order")
             {
@@ -164,7 +164,7 @@ SCENARIO_METHOD(
         std::unordered_map<int, Index<ParentRelic>> mappedParents;
 
         auto& curator = reliquary->Find<ParentChildCurator>();
-        curator.onWork = [&mappedParents, &reliquary](DifferentiableCuratorBase& self)
+        curator.onCommand = [&mappedParents, &reliquary](DifferentiableCuratorBase& self)
         {
             auto value = 100;
             auto parent = self.TheOwner().Do(Create<ParentRelic>{value});
@@ -172,9 +172,9 @@ SCENARIO_METHOD(
             mappedParents.emplace(value, parent);
         };
 
-        WHEN("working reliquary")
+        WHEN("sending command")
         {
-            reliquary->Work();
+            reliquary->Do(BasicCommand{});
 
             THEN("has created parent and child")
             {
@@ -361,13 +361,13 @@ SCENARIO_METHOD(
 
         auto setValue = dataGeneration.Random<int>();
 
-        curator.onWork = [relic, setValue](DifferentiableCuratorBase& self)
+        curator.onCommand = [relic, setValue](DifferentiableCuratorBase& self)
         {
             const auto data = self.TheData<BasicShard>(relic.ID());
             data->value = setValue;
         };
 
-        reliquary->Work();
+        reliquary->Do(BasicCommand{});
 
         WHEN("querying shard")
         {

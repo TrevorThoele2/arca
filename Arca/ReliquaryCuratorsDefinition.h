@@ -46,12 +46,6 @@ namespace Arca
     }
 
     template<class CuratorT>
-    void ReliquaryCurators::Handler<CuratorT>::Work(Curator::Stage& stage)
-    {
-        WorkImpl<CuratorT>(stage);
-    }
-
-    template<class CuratorT>
     bool ReliquaryCurators::Handler<CuratorT>::WillBinarySerialize() const
     {
         return HasScribe<CuratorT, Inscription::BinaryArchive>();
@@ -86,25 +80,6 @@ namespace Arca
     {
         return Inscription::InputTypesFor<CuratorT>(archive);
     }
-
-    template<class CuratorT>
-    template<class U, std::enable_if_t<has_empty_work_method_v<U> && !has_stage_work_method_v<U>, int>>
-    void ReliquaryCurators::Handler<CuratorT>::WorkImpl(Curator::Stage&)
-    {
-        curator.Work();
-    }
-
-    template<class CuratorT>
-    template<class U, std::enable_if_t<has_stage_work_method_v<U> && !has_empty_work_method_v<U>, int>>
-    void ReliquaryCurators::Handler<CuratorT>::WorkImpl(Curator::Stage& stage)
-    {
-        curator.Work(stage);
-    }
-
-    template<class CuratorT>
-    template<class U, std::enable_if_t<!has_empty_work_method_v<U> && !has_stage_work_method_v<U>, int>>
-    void ReliquaryCurators::Handler<CuratorT>::WorkImpl(Curator::Stage&)
-    {}
 
     template<class CuratorT, class... Args, std::enable_if_t<is_curator_v<CuratorT>, int>>
     void ReliquaryCurators::CreateHandler(Args&& ... args)

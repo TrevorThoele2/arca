@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="AllBatchTests.h" />
     <ClInclude Include="AllTests.h" />
+    <ClInclude Include="BasicCommand.h" />
     <ClInclude Include="BasicGlobalClosedTypedRelic.h" />
     <ClInclude Include="BasicLocalClosedTypedRelic.h" />
     <ClInclude Include="BasicShard.h" />

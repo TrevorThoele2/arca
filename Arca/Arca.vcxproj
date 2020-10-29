@@ -29,12 +29,14 @@
     <ClInclude Include="Command.h" />
     <ClInclude Include="CommandHandler.h" />
     <ClInclude Include="CommandHandlerDefinitions.h" />
+    <ClInclude Include="CommandHandlerException.h" />
     <ClInclude Include="CommandResult.h" />
     <ClInclude Include="Create.h" />
     <ClInclude Include="CreateChild.h" />
     <ClInclude Include="CreateChildWith.h" />
     <ClInclude Include="CreateWith.h" />
     <ClInclude Include="CuratorInit.h" />
+    <ClInclude Include="CuratorStage.h" />
     <ClInclude Include="HandleObjectType.h" />
     <ClInclude Include="HasOpennessTrait.h" />
     <ClInclude Include="HasRelicInitConstructor.h" />
@@ -49,7 +51,7 @@
     <ClInclude Include="HandledCommands.h" />
     <ClInclude Include="HasCommandResult.h" />
     <ClInclude Include="HasHandledCommands.h" />
-    <ClInclude Include="HasWorkMethod.h" />
+    <ClInclude Include="HasCommandHandleMethodWithStage.h" />
     <ClInclude Include="IdentifiedCreate.h" />
     <ClInclude Include="IdentifiedCreateChild.h" />
     <ClInclude Include="IdentifiedCreateChildWith.h" />
@@ -170,6 +172,8 @@
     <ClCompile Include="CannotFindReliquaryDependency.cpp" />
     <ClCompile Include="Clear.cpp" />
     <ClCompile Include="CommandHandler.cpp" />
+    <ClCompile Include="CommandHandlerException.cpp" />
+    <ClCompile Include="CuratorStage.cpp" />
     <ClCompile Include="Destroy.cpp" />
     <ClCompile Include="KnownMatrix.cpp" />
     <ClCompile Include="MatrixBatchSource.cpp" />

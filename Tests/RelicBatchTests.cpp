@@ -61,6 +61,14 @@ SCENARIO_METHOD(RelicBatchFixture, "default relic batch", "[RelicBatch]")
                 REQUIRE_THROWS_AS(constBatch.end(), BatchNotSetup);
             }
         }
+
+        WHEN("querying owner")
+        {
+            THEN("returns nullptr")
+            {
+                REQUIRE_THROWS_AS(batch.Owner(), BatchNotSetup);
+            }
+        }
     }
 }
 
@@ -96,6 +104,11 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch", "[RelicBatch]")
                     reliquary->Destroy(AsHandle(createdRelic));
                     REQUIRE(batch.IsEmpty());
                 }
+
+                THEN("owner is reliquary")
+                {
+                    REQUIRE(&batch.Owner() == reliquary.get());
+                }
             }
         }
 
@@ -112,6 +125,11 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch", "[RelicBatch]")
             THEN("begin is end")
             {
                 REQUIRE(batch.begin() == batch.end());
+            }
+
+            THEN("owner is reliquary")
+            {
+                REQUIRE(&batch.Owner() == reliquary.get());
             }
 
             WHEN("creating relic")

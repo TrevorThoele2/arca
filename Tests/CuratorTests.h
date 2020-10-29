@@ -5,6 +5,7 @@
 #include <Arca/Curator.h>
 #include "BasicLocalClosedTypedRelic.h"
 #include "BasicGlobalClosedTypedRelic.h"
+#include "BasicCommand.h"
 
 using namespace Arca;
 
@@ -16,6 +17,12 @@ public:
     class CuratorWithNonDefaultConstructor;
     class CuratorWithLocalRelicConstructor;
     class CuratorWithGlobalRelicConstructor;
+    class CuratorWithoutCommands;
+
+    class BaseCuratorWithCommand;
+    class DerivedCuratorWithCommand;
+
+    class BasicCommand2;
 };
 
 namespace Arca
@@ -24,35 +31,66 @@ namespace Arca
     struct Traits<CuratorTestsFixture::BasicCurator>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static inline const TypeName typeName = "BasicCurator";
+        static inline const TypeName typeName = "CuratorTestsFixture::BasicCurator";
     };
 
     template<>
     struct Traits<CuratorTestsFixture::OtherBasicCurator>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static inline const TypeName typeName = "OtherBasicCurator";
+        static inline const TypeName typeName = "CuratorTestsFixture::OtherBasicCurator";
     };
 
     template<>
     struct Traits<CuratorTestsFixture::CuratorWithNonDefaultConstructor>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static inline const TypeName typeName = "CuratorWithNonDefaultConstructor";
+        static inline const TypeName typeName = "CuratorTestsFixture::CuratorWithNonDefaultConstructor";
     };
 
     template<>
     struct Traits<CuratorTestsFixture::CuratorWithLocalRelicConstructor>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static inline const TypeName typeName = "CuratorWithLocalRelicConstructor";
+        static inline const TypeName typeName = "CuratorTestsFixture::CuratorWithLocalRelicConstructor";
     };
 
     template<>
     struct Traits<CuratorTestsFixture::CuratorWithGlobalRelicConstructor>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static inline const TypeName typeName = "CuratorWithGlobalRelicConstructor";
+        static inline const TypeName typeName = "CuratorTestsFixture::CuratorWithGlobalRelicConstructor";
+    };
+
+    template<>
+    struct Traits<CuratorTestsFixture::CuratorWithoutCommands>
+    {
+        static const ObjectType objectType = ObjectType::Curator;
+        static inline const TypeName typeName = "CuratorTestsFixture::CuratorWithoutCommands";
+    };
+
+    template<>
+    struct Traits<CuratorTestsFixture::BaseCuratorWithCommand>
+    {
+        static const ObjectType objectType = ObjectType::Curator;
+        static inline const TypeName typeName = "CuratorTestsFixture::BaseCuratorWithCommand";
+    };
+
+    template<>
+    struct Traits<CuratorTestsFixture::DerivedCuratorWithCommand>
+    {
+        static const ObjectType objectType = ObjectType::Curator;
+        static inline const TypeName typeName = "CuratorTestsFixture::DerivedCuratorWithCommand";
+        using HandledCommands = Arca::HandledCommands<
+            BasicCommand,
+            CuratorTestsFixture::BasicCommand2>;
+    };
+
+    template<>
+    struct Traits<CuratorTestsFixture::BasicCommand2>
+    {
+        static const ObjectType objectType = ObjectType::Command;
+        static inline const TypeName typeName = "CuratorTestsFixture::BasicCommand2";
     };
 }
 
@@ -60,11 +98,11 @@ class CuratorTestsFixture::BasicCurator final : public Curator
 {
 public:
     bool shouldAbort = false;
-    std::function<void()> onWork = []() {};
+    std::function<void(const BasicCommand&)> onCommand = [](const BasicCommand&) {};
 
     using Curator::Curator;
 
-    void Work();
+    void Handle(const BasicCommand& command);
 
     [[nodiscard]] Reliquary& OwnerFromOutside();
     [[nodiscard]] const Reliquary& OwnerFromOutside() const;
@@ -107,6 +145,31 @@ public:
     std::string globalRelicString;
 
     explicit CuratorWithGlobalRelicConstructor(Init init);
+};
+
+class CuratorTestsFixture::CuratorWithoutCommands final : public Curator
+{
+public:
+    explicit CuratorWithoutCommands(Init init);
+};
+
+class CuratorTestsFixture::BaseCuratorWithCommand : public Curator
+{
+public:
+    bool basicCommandIssued = false;
+
+    explicit BaseCuratorWithCommand(Init init);
+
+    void Handle(const BasicCommand& command);
+};
+
+class CuratorTestsFixture::DerivedCuratorWithCommand final : public BaseCuratorWithCommand
+{
+public:
+    explicit DerivedCuratorWithCommand(Init init);
+
+    using BaseCuratorWithCommand::Handle;
+    void Handle(const BasicCommand2& command);
 };
 
 namespace Inscription
@@ -155,7 +218,7 @@ namespace Inscription
     template <class Archive>
     std::vector<Type> Scribe<CuratorTestsFixture::OtherBasicCurator>::InputTypes(const Archive&)
     {
-        return { "BasicCurator" };
+        return { "CuratorTestsFixture::BasicCurator" };
     }
 
     template<class Archive>
@@ -224,5 +287,56 @@ namespace Inscription
     struct ScribeTraits<CuratorTestsFixture::CuratorWithGlobalRelicConstructor, Archive>
     {
         using Category = ArcaCompositeScribeCategory<CuratorTestsFixture::CuratorWithGlobalRelicConstructor>;
+    };
+
+    template<>
+    class Scribe<CuratorTestsFixture::CuratorWithoutCommands> final
+    {
+    public:
+        using ObjectT = CuratorTestsFixture::CuratorWithoutCommands;
+    public:
+        template<class Archive>
+        void Scriven(ObjectT& object, Archive& archive)
+        {}
+    };
+
+    template<class Archive>
+    struct ScribeTraits<CuratorTestsFixture::CuratorWithoutCommands, Archive>
+    {
+        using Category = ArcaNullScribeCategory<CuratorTestsFixture::CuratorWithoutCommands>;
+    };
+
+    template<>
+    class Scribe<CuratorTestsFixture::BaseCuratorWithCommand> final
+    {
+    public:
+        using ObjectT = CuratorTestsFixture::BaseCuratorWithCommand;
+    public:
+        template<class Archive>
+        void Scriven(ObjectT& object, Archive& archive)
+        {}
+    };
+
+    template<class Archive>
+    struct ScribeTraits<CuratorTestsFixture::BaseCuratorWithCommand, Archive>
+    {
+        using Category = ArcaNullScribeCategory<CuratorTestsFixture::BaseCuratorWithCommand>;
+    };
+
+    template<>
+    class Scribe<CuratorTestsFixture::DerivedCuratorWithCommand> final
+    {
+    public:
+        using ObjectT = CuratorTestsFixture::DerivedCuratorWithCommand;
+    public:
+        template<class Archive>
+        void Scriven(ObjectT& object, Archive& archive)
+        {}
+    };
+
+    template<class Archive>
+    struct ScribeTraits<CuratorTestsFixture::DerivedCuratorWithCommand, Archive>
+    {
+        using Category = ArcaNullScribeCategory<CuratorTestsFixture::DerivedCuratorWithCommand>;
     };
 }

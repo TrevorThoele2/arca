@@ -45,8 +45,6 @@ namespace Arca
         Reliquary& operator=(const Reliquary& arg) = delete;
         Reliquary& operator=(Reliquary&& arg) noexcept = delete;
     public:
-        void Work();
-    public:
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>

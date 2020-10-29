@@ -16,11 +16,6 @@ using namespace std::string_literals;
 
 namespace Arca
 {
-    void Reliquary::Work()
-    {
-        curators.Work();
-    }
-
     std::optional<Handle> Reliquary::ParentOf(RelicID childID) const
     {
         return relics.ParentOf(childID);

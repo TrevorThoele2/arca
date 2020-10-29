@@ -219,6 +219,9 @@
     <ClInclude Include="SignaledJsonSerializationTests.h">
       <Filter>Header Files\Tests\Serialization</Filter>
     </ClInclude>
+    <ClInclude Include="BasicCommand.h">
+      <Filter>Header Files\Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">

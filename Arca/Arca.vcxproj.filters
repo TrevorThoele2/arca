@@ -94,6 +94,12 @@
     <ClCompile Include="Destroy.cpp">
       <Filter>Source Files\Command\Common</Filter>
     </ClCompile>
+    <ClCompile Include="CuratorStage.cpp">
+      <Filter>Source Files\Curator</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandHandlerException.cpp">
+      <Filter>Source Files\Command</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Curator.h">
@@ -384,9 +390,6 @@
     <ClInclude Include="Clear.h">
       <Filter>Header Files\Command\Common</Filter>
     </ClInclude>
-    <ClInclude Include="HasWorkMethod.h">
-      <Filter>Header Files\Curator</Filter>
-    </ClInclude>
     <ClInclude Include="RelicInit.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
@@ -533,6 +536,15 @@
     </ClInclude>
     <ClInclude Include="HasRelicInitConstructor.h">
       <Filter>Header Files\Relic\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="HasCommandHandleMethodWithStage.h">
+      <Filter>Header Files\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="CuratorStage.h">
+      <Filter>Header Files\Curator</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandHandlerException.h">
+      <Filter>Header Files\Command</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -19,14 +19,10 @@ namespace Arca
         [[nodiscard]] RelicT* Of(RelicID id);
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int> = 0>
         [[nodiscard]] RelicT* Of(Index<RelicT> index);
-        template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int> = 0>
-        [[nodiscard]] RelicT* Of(const RelicT& relic);
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
         [[nodiscard]] RelicT* Of();
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
         [[nodiscard]] RelicT* Of(Index<RelicT> index);
-        template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
-        [[nodiscard]] RelicT* Of(const RelicT& relic);
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] ShardT* Of(RelicID id);
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>

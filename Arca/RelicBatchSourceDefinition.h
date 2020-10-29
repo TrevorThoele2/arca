@@ -12,7 +12,7 @@ namespace Arca
     template<class T>
     template<class... ConstructorArgs>
     auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Create(
-        RelicID id, Reliquary& owner, ConstructorArgs&& ... constructorArgs)
+        RelicID id, ConstructorArgs&& ... constructorArgs)
 
         -> RelicT*
     {
@@ -20,7 +20,7 @@ namespace Arca
         if (found)
             return nullptr;
 
-        return CreateImpl<T>(RelicInit{ id, owner }, std::forward<ConstructorArgs>(constructorArgs)...);
+        return CreateImpl<T>(RelicInit{ id, *owner }, std::forward<ConstructorArgs>(constructorArgs)...);
     }
 
     template<class T>
@@ -119,6 +119,12 @@ namespace Arca
     Arca::Type BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Type() const
     {
         return TypeFor<T>();
+    }
+
+    template<class T>
+    Reliquary& BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Owner() const
+    {
+        return *owner;
     }
 }
 

@@ -17,12 +17,6 @@ namespace Arca
         return Of<RelicT>(index.ID());
     }
 
-    template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int>>
-    RelicT* MutablePointer::Of(const RelicT& relic)
-    {
-        return Of<RelicT>(relic.ID());
-    }
-
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int>>
     RelicT* MutablePointer::Of()
     {
@@ -31,12 +25,6 @@ namespace Arca
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int>>
     RelicT* MutablePointer::Of(Index<RelicT>)
-    {
-        return Of<RelicT>();
-    }
-
-    template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int>>
-    RelicT* MutablePointer::Of(const RelicT&)
     {
         return Of<RelicT>();
     }

@@ -9,7 +9,8 @@ namespace Arca
     std::unique_ptr<Reliquary> ReliquaryOrigin::Actualize()
     {
         ValidateCuratorPipeline(curatorConstructionPipeline);
-        ValidateCuratorPipeline(curatorWorkPipeline);
+        for (auto& commandPipeline : curatorCommandPipelines)
+            ValidateCuratorPipeline(commandPipeline.second);
 
         auto reliquary = std::make_unique<Reliquary>();
 
@@ -24,9 +25,7 @@ namespace Arca
         for (auto& initializer : globalRelicList)
             initializer.factory(*reliquary);
 
-        PushAllCuratorsTo(*reliquary, curatorConstructionPipeline);
-
-        reliquary->curators.workPipeline = TransformCuratorPipeline(*reliquary, curatorWorkPipeline);
+        PushAllCuratorsTo(*reliquary);
 
         return reliquary;
     }
@@ -41,18 +40,16 @@ namespace Arca
         return std::move(*this);
     }
 
-    ReliquaryOrigin&& ReliquaryOrigin::CuratorPipeline(const Arca::Pipeline& pipeline)
+    ReliquaryOrigin&& ReliquaryOrigin::CuratorConstructionPipeline(const Pipeline& pipeline)
     {
         curatorConstructionPipeline = pipeline;
-        curatorWorkPipeline = pipeline;
 
         return std::move(*this);
     }
 
-    ReliquaryOrigin&& ReliquaryOrigin::CuratorPipeline(const Pipeline& construction, const Pipeline& work)
+    ReliquaryOrigin&& ReliquaryOrigin::CuratorCommandPipeline(const TypeName& commandType, const Pipeline& commandPipeline)
     {
-        curatorConstructionPipeline = construction;
-        curatorWorkPipeline = work;
+        curatorCommandPipelines.emplace(commandType, commandPipeline);
 
         return std::move(*this);
     }
@@ -72,13 +69,13 @@ namespace Arca
         return *this;
     }
 
-    void ReliquaryOrigin::PushAllCuratorsTo(Reliquary& reliquary, const Pipeline& pipeline)
+    void ReliquaryOrigin::PushAllCuratorsTo(Reliquary& reliquary)
     {
         std::unordered_set<TypeName> typesLeft;
         for (auto& initializer : curatorList)
             typesLeft.emplace(initializer.typeName);
 
-        for(auto& stage : pipeline)
+        for(auto& stage : curatorConstructionPipeline)
         {
             for(auto& typeName : stage.TypeNameList())
             {
@@ -97,6 +94,13 @@ namespace Arca
             for(auto& initializer : curatorList)
                 if (typeLeft == initializer.typeName)
                     initializer.factory(reliquary);
+
+        for(auto& curatorPipeline : curatorCommandPipelines)
+        {
+            const auto commandTypeName = curatorPipeline.first;
+            auto& commandHandler = reliquary.commands.RequiredHandler(commandTypeName);
+            commandHandler.SetupPipeline(curatorPipeline.second);
+        }
     }
 
     void ReliquaryOrigin::ValidateCuratorPipeline(const Pipeline& pipeline) const
@@ -124,58 +128,6 @@ namespace Arca
                 if (!foundInitializer)
                     throw NotRegistered("Curator", Type{ typeName });
             }
-        }
-    }
-
-    ReliquaryCurators::Pipeline ReliquaryOrigin::TransformCuratorPipeline(
-        Reliquary& reliquary,
-        const Pipeline& toTransform)
-    {
-        auto pipeline = toTransform;
-        for (auto loop = pipeline.begin(); loop != pipeline.end();)
-        {
-            if (loop->Empty())
-                loop = pipeline.erase(loop);
-            else
-                ++loop;
-        }
-
-        ReliquaryCurators::Pipeline createdPipeline;
-
-        if (pipeline.empty())
-        {
-            createdPipeline.push_back(ReliquaryCurators::Stage{});
-            for (auto& loop : reliquary.curators.handlers)
-                createdPipeline.back().push_back(loop.get());
-
-            return createdPipeline;
-        }
-        else
-        {
-            for (auto& stage : toTransform)
-            {
-                ReliquaryCurators::Stage createdStage;
-
-                for (auto& typeName : stage.TypeNameList())
-                {
-                    auto found = std::find_if(
-                        reliquary.curators.handlers.begin(),
-                        reliquary.curators.handlers.end(),
-                        [typeName](const ReliquaryCurators::HandlerPtr& ptr)
-                        {
-                            return typeName == ptr->typeName;
-                        });
-                    if (found == reliquary.curators.handlers.end())
-                        continue;
-
-                    createdStage.push_back(found->get());
-                }
-
-                if (!createdStage.empty())
-                    createdPipeline.push_back(createdStage);
-            }
-
-            return createdPipeline;
         }
     }
 }

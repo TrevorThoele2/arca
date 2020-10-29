@@ -30,6 +30,8 @@ namespace Arca
 
         [[nodiscard]] const_iterator begin() const;
         [[nodiscard]] const_iterator end() const;
+
+        [[nodiscard]] Reliquary& Owner() const;
     private:
         SourceT* source = nullptr;
         void SourceRequired() const;
@@ -100,6 +102,14 @@ namespace Arca
         SourceRequired();
 
         return const_iterator(source->end());
+    }
+
+    template<class T>
+    Reliquary& Batch<T, std::enable_if_t<is_relic_v<T>>>::Owner() const
+    {
+        SourceRequired();
+
+        return source->Owner();
     }
 
     template<class T>
