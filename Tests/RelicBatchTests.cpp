@@ -154,6 +154,33 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch", "[RelicBatch]")
                 }
             }
         }
+
+        WHEN("creating multiple relics")
+        {
+            for (size_t i = 0; i < 10; ++i)
+                reliquary->Do(Arca::Create<Relic>());
+
+            WHEN("iterating over batch and destroying current relic")
+            {
+                std::vector<RelicID> iteratedIDs;
+
+                auto batch = reliquary->Batch<Relic>();
+
+                for(auto relic = batch.begin(); relic != batch.end();)
+                {
+                    iteratedIDs.push_back(relic.ID());
+                    auto next = relic;
+                    ++next;
+                    reliquary->Do(Arca::Destroy<Relic>(relic.ID()));
+                    relic = next;
+                }
+
+                THEN("iterates over entire batch")
+                {
+                    REQUIRE(iteratedIDs.size() == 10);
+                }
+            }
+        }
     }
 }
 

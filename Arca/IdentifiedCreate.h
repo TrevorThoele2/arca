@@ -17,7 +17,7 @@ namespace Arca
     struct IdentifiedCreate
     {
         template<class... Args>
-        explicit IdentifiedCreate(RelicID id, Args&& ... args) :
+        explicit IdentifiedCreate(RelicID id, Args ... args) :
             base(std::make_unique<Derived<RelicID, Args...>>(
                 id, std::forward<Args>(args)...))
         {}
@@ -35,7 +35,7 @@ namespace Arca
             virtual Index<T> Do(ReliquaryRelics& relics) = 0;
         };
 
-        std::unique_ptr<Base> base;
+        std::shared_ptr<Base> base;
 
         template<class... Args>
         class Derived final : public Base

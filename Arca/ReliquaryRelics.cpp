@@ -182,7 +182,7 @@ namespace Arca
                 std::remove_if(
                     parentMetadata->children.begin(),
                     parentMetadata->children.end(),
-                    [id](const HandleSlim& child)
+                    [id](const SlimHandle& child)
                     {
                         return id == child.ID();
                     });

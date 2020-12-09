@@ -8,14 +8,14 @@
 
 namespace Arca
 {
-    class HandleSlim
+    class SlimHandle
     {
     public:
-        HandleSlim() = default;
-        HandleSlim(RelicID id, Type type, HandleObjectType objectType);
+        SlimHandle() = default;
+        SlimHandle(RelicID id, Type type, HandleObjectType objectType);
 
-        bool operator==(const HandleSlim& arg) const;
-        bool operator!=(const HandleSlim& arg) const;
+        bool operator==(const SlimHandle& arg) const;
+        bool operator!=(const SlimHandle& arg) const;
 
         [[nodiscard]] RelicID ID() const;
         [[nodiscard]] Type Type() const;
@@ -32,10 +32,10 @@ namespace Arca
 namespace Inscription
 {
     template<>
-    class Scribe<Arca::HandleSlim> final
+    class Scribe<Arca::SlimHandle> final
     {
     public:
-        using ObjectT = Arca::HandleSlim;
+        using ObjectT = Arca::SlimHandle;
     public:
         template<class Archive>
         void Scriven(ObjectT& object, Archive& archive)
@@ -54,8 +54,8 @@ namespace Inscription
     };
 
     template<class Archive>
-    struct ScribeTraits<Arca::HandleSlim, Archive> final
+    struct ScribeTraits<Arca::SlimHandle, Archive> final
     {
-        using Category = CompositeScribeCategory<Arca::HandleSlim>;
+        using Category = CompositeScribeCategory<Arca::SlimHandle>;
     };
 }

@@ -217,7 +217,8 @@ namespace Inscription
             Arca::has_relic_init_serialization_constructor_v<U>, int>>
     U Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::Create(Arca::RelicInit init)
     {
-        return ObjectT::RelicT{ init, Arca::Serialization{} };
+        using RelicT = typename ObjectT::RelicT;
+        return RelicT{ init, Arca::Serialization{} };
     }
 
     template<class T>
@@ -228,7 +229,8 @@ namespace Inscription
             Arca::has_relic_serialization_constructor_v<U>, int>>
     U Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::Create(Arca::RelicInit init)
     {
-        return ObjectT::RelicT{ Arca::Serialization{} };
+        using RelicT = typename ObjectT::RelicT;
+        return RelicT{ Arca::Serialization{} };
     }
 
     template<class T>
@@ -240,7 +242,8 @@ namespace Inscription
             Arca::has_relic_init_constructor_v<U>, int>>
     U Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::Create(Arca::RelicInit init)
     {
-        return ObjectT::RelicT{ init };
+        using RelicT = typename ObjectT::RelicT;
+        return RelicT{ init };
     }
 
     template<class T>
@@ -253,7 +256,8 @@ namespace Inscription
             Chroma::is_braces_default_constructible_v<U>, int>>
     U Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::Create(Arca::RelicInit init)
     {
-        return ObjectT::RelicT{};
+        using RelicT = typename ObjectT::RelicT;
+        return RelicT{};
     }
 
     template<class T>
@@ -274,6 +278,7 @@ namespace Inscription
             "(RelicInit) or"
             "()"
             "in order to be serialized. Order given is priority order.");
-        return ObjectT::RelicT{ init };
+        using RelicT = typename ObjectT::RelicT;
+        return RelicT{ init };
     }
 }

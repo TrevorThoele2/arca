@@ -568,13 +568,13 @@ namespace Inscription
             {
                 const auto parentID = *metadata.parent;
                 const auto parentType = std::get<0>(FindExtensionForLoadedMetadata(parentID, object));
-                createdMetadata.parent = Arca::HandleSlim(parentID, parentType, Arca::HandleObjectType::Relic);
+                createdMetadata.parent = Arca::SlimHandle(parentID, parentType, Arca::HandleObjectType::Relic);
             }
             for (auto& child : metadata.children)
             {
                 const auto childID = child;
                 const auto childType = std::get<0>(FindExtensionForLoadedMetadata(childID, object));
-                createdMetadata.parent = Arca::HandleSlim(childID, childType, Arca::HandleObjectType::Relic);
+                createdMetadata.parent = Arca::SlimHandle(childID, childType, Arca::HandleObjectType::Relic);
             }
 
             object.relics.metadataList.push_back(createdMetadata);

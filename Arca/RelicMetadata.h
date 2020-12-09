@@ -7,7 +7,7 @@
 #include "Openness.h"
 #include "Locality.h"
 #include "Type.h"
-#include "HandleSlim.h"
+#include "SlimHandle.h"
 
 namespace Arca
 {
@@ -19,8 +19,8 @@ namespace Arca
         Type type;
         void* storage = nullptr;
 
-        std::optional<HandleSlim> parent;
-        std::vector<HandleSlim> children;
+        std::optional<SlimHandle> parent;
+        std::vector<SlimHandle> children;
 
         bool shouldSerializeBinary = true;
         bool shouldSerializeJson = true;
