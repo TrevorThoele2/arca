@@ -22,6 +22,7 @@ public:
     class MovableOnlyRelic;
     class DefaultConstructedRelic;
     class RelicConstructedFromMovedValue;
+    class RelicWithUnorderedSet;
 };
 
 namespace Arca
@@ -97,6 +98,13 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "RelicTestsFixture::RelicConstructedFromMoveValue";
+    };
+
+    template<>
+    struct Traits<RelicTestsFixture::RelicWithUnorderedSet>
+    {
+        static const ObjectType objectType = ObjectType::Relic;
+        static inline const TypeName typeName = "RelicTestsFixture::RelicWithUnorderedSet";
     };
 }
 
@@ -174,6 +182,15 @@ public:
     RelicConstructedFromMovedValue(RelicInit init, std::unique_ptr<int>&& myInt);
 };
 
+class RelicTestsFixture::RelicWithUnorderedSet final
+{
+public:
+    std::unordered_set<int> ints;
+public:
+    explicit RelicWithUnorderedSet(RelicInit init);
+    RelicWithUnorderedSet(RelicInit init, std::unordered_set<int> ints);
+};
+
 namespace Inscription
 {
     template<class Archive>
@@ -222,5 +239,11 @@ namespace Inscription
     struct ScribeTraits<RelicTestsFixture::RelicConstructedFromMovedValue, Archive> final
     {
         using Category = ArcaNullScribeCategory<RelicTestsFixture::RelicConstructedFromMovedValue>;
+    };
+
+    template<class Archive>
+    struct ScribeTraits<RelicTestsFixture::RelicWithUnorderedSet, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<RelicTestsFixture::RelicWithUnorderedSet>;
     };
 }
