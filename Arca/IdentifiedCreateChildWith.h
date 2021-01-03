@@ -54,7 +54,7 @@ namespace Arca
             Index<T> Do(ReliquaryRelics& relics) override
             {
                 return std::apply(
-                    [&relics](auto&& ... args)
+                    [&relics](auto ... args)
                     {
                         return relics.template IdentifiedCreateChildWith<T>(std::forward<decltype(args)>(args)...);
                     }, std::move(args));

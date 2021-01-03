@@ -51,14 +51,14 @@ namespace Arca
         class Derived final : public Base
         {
         public:
-            explicit Derived(Args&& ... args) :
+            explicit Derived(Args ... args) :
                 args(std::forward<Args>(args)...)
             {}
 
             Index<T> Do(ReliquaryRelics& relics) override
             {
                 return std::apply(
-                    [&relics](auto&& ... args)
+                    [&relics](auto ... args)
                 {
                     return relics.template Create<T>(std::forward<decltype(args)>(args)...);
                 }, std::move(args));
@@ -119,14 +119,14 @@ namespace Arca
         class Derived final : public Base
         {
         public:
-            explicit Derived(Args&& ... args) :
+            explicit Derived(Args ... args) :
                 args(std::forward<Args>(args)...)
             {}
 
             Index<T> Do(ReliquaryShards& shards) override
             {
                 return std::apply(
-                    [&shards](auto&& ... args)
+                    [&shards](auto ... args)
                     {
                         return shards.template Create<T>(std::forward<decltype(args)>(args)...);
                     }, std::move(args));

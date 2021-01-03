@@ -243,12 +243,12 @@ namespace Arca
             class RelicT,
             class... ConstructorArgs,
             std::enable_if_t<is_relic_v<RelicT> && has_should_create_method_v<RelicT>, int> = 0>
-            bool ShouldCreate(ConstructorArgs&& ... constructorArgs);
+        bool ShouldCreate(ConstructorArgs& ... constructorArgs);
         template<
             class RelicT,
             class... ConstructorArgs,
             std::enable_if_t<is_relic_v<RelicT> && !has_should_create_method_v<RelicT>, int> = 0>
-            bool ShouldCreate(ConstructorArgs&& ... constructorArgs);
+        bool ShouldCreate(ConstructorArgs& ... constructorArgs);
 
         template<class RelicT, class... ConstructorArgs>
         Index<RelicT> FinishNewRelic(

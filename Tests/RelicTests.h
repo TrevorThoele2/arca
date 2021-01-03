@@ -22,7 +22,7 @@ public:
     class MovableOnlyRelic;
     class DefaultConstructedRelic;
     class RelicConstructedFromMovedValue;
-    class RelicWithUnorderedSet;
+    class RelicWithShouldCreateAndMovedValue;
 };
 
 namespace Arca
@@ -101,10 +101,11 @@ namespace Arca
     };
 
     template<>
-    struct Traits<RelicTestsFixture::RelicWithUnorderedSet>
+    struct Traits<RelicTestsFixture::RelicWithShouldCreateAndMovedValue>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "RelicTestsFixture::RelicWithUnorderedSet";
+        static inline const TypeName typeName = "RelicTestsFixture::RelicWithShouldCreateAndMovedValue";
+        static bool ShouldCreate(Reliquary& reliquary, std::unique_ptr<int>& myInt);
     };
 }
 
@@ -182,13 +183,13 @@ public:
     RelicConstructedFromMovedValue(RelicInit init, std::unique_ptr<int>&& myInt);
 };
 
-class RelicTestsFixture::RelicWithUnorderedSet final
+class RelicTestsFixture::RelicWithShouldCreateAndMovedValue final
 {
 public:
-    std::unordered_set<int> ints;
+    std::unique_ptr<int> myInt;
 public:
-    explicit RelicWithUnorderedSet(RelicInit init);
-    RelicWithUnorderedSet(RelicInit init, std::unordered_set<int> ints);
+    explicit RelicWithShouldCreateAndMovedValue(RelicInit init);
+    RelicWithShouldCreateAndMovedValue(RelicInit init, std::unique_ptr<int>&& myInt);
 };
 
 namespace Inscription
@@ -242,8 +243,8 @@ namespace Inscription
     };
 
     template<class Archive>
-    struct ScribeTraits<RelicTestsFixture::RelicWithUnorderedSet, Archive> final
+    struct ScribeTraits<RelicTestsFixture::RelicWithShouldCreateAndMovedValue, Archive> final
     {
-        using Category = ArcaNullScribeCategory<RelicTestsFixture::RelicWithUnorderedSet>;
+        using Category = ArcaNullScribeCategory<RelicTestsFixture::RelicWithShouldCreateAndMovedValue>;
     };
 }
