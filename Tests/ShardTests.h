@@ -25,7 +25,7 @@ namespace Arca
     struct Traits<ShardTestsFixture::ShardConstructedFromMovedValue>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "ShardTestsShardConstructedFromMovedValue";
+        static TypeName TypeName() { return "ShardTestsShardConstructedFromMovedValue"; }
     };
 }
 

@@ -72,7 +72,7 @@ namespace Arca
     struct Traits<CreateWith<T>>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "Arca::CreateWith<" + Traits<std::remove_const_t<T>>::typeName + ">";
+        static TypeName TypeName() { return "Arca::CreateWith<" + Traits<std::remove_const_t<T>>::TypeName() + ">"; }
         using Result = Index<T>;
         static const bool selfContained = true;
     };

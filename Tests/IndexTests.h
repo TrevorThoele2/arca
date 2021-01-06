@@ -25,21 +25,21 @@ namespace Arca
     struct Traits<IndexTestsFixture::TypedClosedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "IndexTestsTypedClosedRelic";
+        static TypeName TypeName() { return "IndexTestsTypedClosedRelic"; }
     };
 
     template<>
     struct Traits<IndexTestsFixture::TypedOpenRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "IndexTestsTypedOpenRelic";
+        static TypeName TypeName() { return "IndexTestsTypedOpenRelic"; }
     };
 
     template<>
     struct Traits<IndexTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "IndexTestsGlobalRelic";
+        static TypeName TypeName() { return "IndexTestsGlobalRelic"; }
         static const Locality locality = Locality::Global;
     };
 
@@ -47,7 +47,7 @@ namespace Arca
     struct Traits<IndexTestsFixture::RelicHolderRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "IndexTestsRelicHolderRelic";
+        static TypeName TypeName() { return "IndexTestsRelicHolderRelic"; }
     };
 }
 

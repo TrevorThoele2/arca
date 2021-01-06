@@ -28,7 +28,7 @@ namespace Arca
     struct Traits<Clear>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "Arca::Clear";
+        static TypeName TypeName() { return "Arca::Clear"; }
         static const bool selfContained = true;
     };
 }

@@ -20,7 +20,7 @@ namespace Arca
     struct Traits<::RelicParentingTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "RelicTestsGlobalRelic";
+        static TypeName TypeName() { return "RelicTestsGlobalRelic"; }
         static const Locality locality = Locality::Global;
     };
 }

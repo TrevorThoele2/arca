@@ -31,28 +31,28 @@ namespace Arca
     struct Traits<RelicTestsFixture::Shard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "RelicTestsFixture::Shard";
+        static TypeName TypeName() { return "RelicTestsFixture::Shard"; }
     };
 
     template<>
     struct Traits<RelicTestsFixture::OtherShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "RelicTestsFixture::OtherShard";
+        static TypeName TypeName() { return "RelicTestsFixture::OtherShard"; }
     };
 
     template<>
     struct Traits<RelicTestsFixture::TypedClosedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "RelicTestsFixture::TypedClosedRelic";
+        static TypeName TypeName() { return "RelicTestsFixture::TypedClosedRelic"; }
     };
 
     template<>
     struct Traits<RelicTestsFixture::TypedOpenRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "RelicTestsFixture::TypedOpenRelic";
+        static TypeName TypeName() { return "RelicTestsFixture::TypedOpenRelic"; }
         static const Openness openness = Openness::Open;
     };
 
@@ -60,7 +60,7 @@ namespace Arca
     struct Traits<RelicTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "RelicTestsFixture::GlobalRelic";
+        static TypeName TypeName() { return "RelicTestsFixture::GlobalRelic"; }
         static const Locality locality = Locality::Global;
     };
 
@@ -68,7 +68,7 @@ namespace Arca
     struct Traits<RelicTestsFixture::ShouldCreateRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "RelicTestsFixture::ShouldCreateRelic";
+        static TypeName TypeName() { return "RelicTestsFixture::ShouldCreateRelic"; }
         static bool ShouldCreate(Reliquary& reliquary, int value);
     };
 
@@ -76,35 +76,35 @@ namespace Arca
     struct Traits<RelicTestsFixture::InitializedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "RelicTestsFixture::InitializedRelic";
+        static TypeName TypeName() { return "RelicTestsFixture::InitializedRelic"; }
     };
 
     template<>
     struct Traits<RelicTestsFixture::MovableOnlyRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "RelicTestsFixture::MovableOnlyRelic";
+        static TypeName TypeName() { return "RelicTestsFixture::MovableOnlyRelic"; }
     };
 
     template<>
     struct Traits<RelicTestsFixture::DefaultConstructedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "RelicTestsFixture::DefaultConstructedRelic";
+        static TypeName TypeName() { return "RelicTestsFixture::DefaultConstructedRelic"; }
     };
 
     template<>
     struct Traits<RelicTestsFixture::RelicConstructedFromMovedValue>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "RelicTestsFixture::RelicConstructedFromMoveValue";
+        static TypeName TypeName() { return "RelicTestsFixture::RelicConstructedFromMoveValue"; }
     };
 
     template<>
     struct Traits<RelicTestsFixture::RelicWithShouldCreateAndMovedValue>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "RelicTestsFixture::RelicWithShouldCreateAndMovedValue";
+        static TypeName TypeName() { return "RelicTestsFixture::RelicWithShouldCreateAndMovedValue"; }
         static bool ShouldCreate(Reliquary& reliquary, std::unique_ptr<int>& myInt);
     };
 }

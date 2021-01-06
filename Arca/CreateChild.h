@@ -71,7 +71,7 @@ namespace Arca
     struct Traits<CreateChild<T>>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "Arca::CreateChild<" + Traits<std::remove_const_t<T>>::typeName + ">";
+        static TypeName TypeName() { return "Arca::CreateChild<" + Traits<std::remove_const_t<T>>::TypeName() + ">"; }
         using Result = Index<T>;
         static const bool selfContained = true;
     };

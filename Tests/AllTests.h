@@ -20,7 +20,7 @@ namespace Arca
     struct Traits<AllTestsFixture::BasicTypedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "ReliquaryTestsBasicTypedRelic";
+        static TypeName TypeName() { return "ReliquaryTestsBasicTypedRelic"; }
     };
 }
 

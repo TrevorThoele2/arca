@@ -328,7 +328,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
                 (
                     reliquaryOrigin.Actualize(),
                     InvalidPipeline,
-                    ::Catch::Matchers::Message("Curator (" + Traits<BasicCurator>::typeName + ") " +
+                    ::Catch::Matchers::Message("Curator (" + Traits<BasicCurator>::TypeName() + ") " +
                         "was already in the pipeline.")
                 );
             }
@@ -354,7 +354,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
                 (
                     reliquaryOrigin.Actualize(),
                     InvalidPipeline,
-                    ::Catch::Matchers::Message("Curator (" + Traits<BasicCurator>::typeName + ") " +
+                    ::Catch::Matchers::Message("Curator (" + Traits<BasicCurator>::TypeName() + ") " +
                         "was already in the pipeline.")
                 );
             }
@@ -458,8 +458,8 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
                     reliquaryOrigin.Actualize(),
                     Arca::CommandNotRegisteredInCurator,
                     ::Catch::Matchers::Message(
-                        "The command (" + Traits<BasicCommand>::typeName + ") has not been linked in the curator (" +
-                        Traits<CuratorWithoutCommands>::typeName + ").")
+                        "The command (" + Traits<BasicCommand>::TypeName() + ") has not been linked in the curator (" +
+                        Traits<CuratorWithoutCommands>::TypeName() + ").")
                 );
             }
         }

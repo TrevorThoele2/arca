@@ -19,14 +19,14 @@ namespace Arca
     struct Traits<ShardBatchFixture::UnregisteredShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "ShardBatchTestsUnregisteredShard";
+        static TypeName TypeName() { return "ShardBatchTestsUnregisteredShard"; }
     };
 
     template<>
     struct Traits<ShardBatchFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "ShardBatchTestsGlobalRelic";
+        static TypeName TypeName() { return "ShardBatchTestsGlobalRelic"; }
         static const Locality locality = Locality::Global;
     };
 }

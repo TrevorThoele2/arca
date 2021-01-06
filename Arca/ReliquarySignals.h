@@ -28,7 +28,7 @@ namespace Arca
         template<class SignalT>
         using Listener = std::function<void(const SignalT&)>;
         template<class SignalT>
-        using ListenerList = std::vector<Listener<SignalT>>;
+        using ListenerList = std::list<Listener<SignalT>>;
         using ListenerMap = std::unordered_map<TypeName, std::any>;
         ListenerMap listenerMap;
 

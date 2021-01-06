@@ -23,7 +23,7 @@ namespace Arca
     struct Traits<DifferentiableShard<i>>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "DifferentiableShard" + Chroma::ToString(i);
+        static TypeName TypeName() { return "DifferentiableShard" + Chroma::ToString(i); }
     };
 }
 

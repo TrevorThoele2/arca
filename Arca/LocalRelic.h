@@ -17,11 +17,14 @@ namespace Arca
     struct Traits<Relic<opennessValue>>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "Arca::Relic<" +
-            TypeName(opennessValue == Openness::Closed
-                ? "Closed"
-                : "Open") +
-            ">";
+        static TypeName TypeName()
+        {
+            return "Arca::Relic<" +
+                Arca::TypeName(opennessValue == Openness::Closed
+                    ? "Closed"
+                    : "Open") +
+                ">";
+        }
         static const Openness openness = opennessValue;
     };
 

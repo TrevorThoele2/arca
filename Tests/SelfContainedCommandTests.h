@@ -17,7 +17,7 @@ namespace Arca
     struct Traits<SelfContainedCommandTestsFixture::SelfContainedCommand>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "SelfContainedCommandTestsFixture::SelfContainedCommand";
+        static TypeName TypeName() { return "SelfContainedCommandTestsFixture::SelfContainedCommand"; }
         static const bool selfContained = true;
     };
 
@@ -25,7 +25,7 @@ namespace Arca
     struct Traits<SelfContainedCommandTestsFixture::SelfContainedCommandWithResult>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "SelfContainedCommandTestsFixture::SelfContainedCommandWithResult";
+        static TypeName TypeName() { return "SelfContainedCommandTestsFixture::SelfContainedCommandWithResult"; }
         using Result = int;
         static const bool selfContained = true;
     };

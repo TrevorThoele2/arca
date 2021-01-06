@@ -21,14 +21,14 @@ namespace Arca
     struct Traits<GlobalRelicTestsFixture::BasicTypedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "GlobalRelicTestsBasicTypedRelic";
+        static TypeName TypeName() { return "GlobalRelicTestsBasicTypedRelic"; }
     };
 
     template<>
     struct Traits<GlobalRelicTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "GlobalRelicTestsGlobalRelic";
+        static TypeName TypeName() { return "GlobalRelicTestsGlobalRelic"; }
         static const Locality locality = Locality::Global;
     };
 }

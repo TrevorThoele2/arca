@@ -27,21 +27,21 @@ namespace Arca
     struct Traits<::IsTypeTestsFixture::Shard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "IsTypeTestsShard";
+        static TypeName TypeName() { return "IsTypeTestsShard"; }
     };
 
     template<>
     struct Traits<::IsTypeTestsFixture::Relic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "IsTypeTestsRelic";
+        static TypeName TypeName() { return "IsTypeTestsRelic"; }
     };
 
     template<>
     struct Traits<::IsTypeTestsFixture::Curator>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static inline const TypeName typeName = "IsTypeTestsCurator";
+        static TypeName TypeName() { return "IsTypeTestsCurator"; }
     };
 }
 

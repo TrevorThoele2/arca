@@ -52,7 +52,9 @@ namespace Arca
         using Pack = typename All<Ts...>::Pack;
     public:
         static const ObjectType objectType = ObjectType::Matrix;
-        static inline const TypeName typeName =
-            "Arca::All<" + AllTypeNameIterator<Pack::count>::template Do<Pack>("") + ">";
+        static TypeName TypeName()
+        {
+            return "Arca::All<" + AllTypeNameIterator<Pack::count>::template Do<Pack>("") + ">";
+        }
     };
 }

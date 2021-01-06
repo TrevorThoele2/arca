@@ -29,35 +29,35 @@ namespace Arca
     struct Traits<ReliquaryTestsFixture::BasicShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "ReliquaryTestsBasicShard";
+        static TypeName TypeName() { return "ReliquaryTestsBasicShard"; }
     };
 
     template<>
     struct Traits<ReliquaryTestsFixture::OtherBasicShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "ReliquaryTestsOtherBasicShard";
+        static TypeName TypeName() { return "ReliquaryTestsOtherBasicShard"; }
     };
 
     template<>
     struct Traits<ReliquaryTestsFixture::OtherShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "ReliquaryTestsOtherShard";
+        static TypeName TypeName() { return "ReliquaryTestsOtherShard"; }
     };
 
     template<>
     struct Traits<ReliquaryTestsFixture::BasicTypedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "ReliquaryTestsBasicTypedRelic";
+        static TypeName TypeName() { return "ReliquaryTestsBasicTypedRelic"; }
     };
 
     template<>
     struct Traits<ReliquaryTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "ReliquaryTestsGlobalRelic";
+        static TypeName TypeName() { return "ReliquaryTestsGlobalRelic"; }
         static const Locality locality = Locality::Global;
     };
 
@@ -65,14 +65,14 @@ namespace Arca
     struct Traits<ReliquaryTestsFixture::BasicCurator>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static inline const TypeName typeName = "ReliquaryTestsBasicCurator";
+        static TypeName TypeName() { return "ReliquaryTestsBasicCurator"; }
     };
 
     template<>
     struct Traits<ReliquaryTestsFixture::BasicSignal>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static inline const TypeName typeName = "ReliquaryTestsBasicSignal";
+        static TypeName TypeName() { return "ReliquaryTestsBasicSignal"; }
     };
 }
 
