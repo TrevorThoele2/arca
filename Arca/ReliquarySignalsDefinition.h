@@ -27,32 +27,35 @@ namespace Arca
     void ReliquarySignals::On(const std::function<void(const SignalT&)>& function)
     {
         ExecuteOnCommon<SignalT>(function);
-        Owner().matrices.EnsureInteraction<typename MatrixTypeForSignal<SignalT>::Type>
-            (&KnownMatrix::InteractWithSignals);
+        Owner().matrices
+            .EnsureInteraction<typename MatrixTypeForSignal<SignalT>::Type>(&KnownMatrix::InteractWithSignals);
     }
 
     template<class SignalT>
     void ReliquarySignals::ExecuteListenersFor(const SignalT& signal)
     {
-        const auto typeName = TypeFor<SignalT>().name;
+        const auto typeName = FullTypeNameFor<SignalT>();
         auto found = listenerMap.find(typeName);
         if (found == listenerMap.end())
             return;
 
-        auto& executionList = std::any_cast<ListenerList<SignalT>&>(found->second);
-        for (auto& loop : executionList)
-            loop(signal);
+        using ListenerListDerivedT = ListenerListDerived<SignalT>;
+        auto listenerList = dynamic_cast<ListenerListDerivedT*>(found->second.get());
+        for (auto& execution : listenerList->value)
+            execution(signal);
     }
 
     template<class SignalT>
     void ReliquarySignals::ExecuteOnCommon(const std::function<void(const SignalT&)>& function)
     {
-        const auto typeName = TypeFor<SignalT>().name;
+        using ListenerListDerivedT = ListenerListDerived<SignalT>;
+
+        const auto typeName = FullTypeNameFor<SignalT>();
         auto found = listenerMap.find(typeName);
         if (found == listenerMap.end())
-            found = listenerMap.emplace(typeName, ListenerList<SignalT>()).first;
+            found = listenerMap.emplace(typeName, std::make_unique<ListenerListDerivedT>()).first;
 
-        auto& executionList = std::any_cast<ListenerList<SignalT>&>(found->second);
-        executionList.push_back(function);
+        auto listenerList = dynamic_cast<ListenerListDerivedT*>(found->second.get());
+        listenerList->value.push_back(function);
     }
 }

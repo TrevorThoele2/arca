@@ -927,7 +927,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic moving only and shouldCreate", "[relic
 
         WHEN("creating relic from unordered_set")
         {
-            const auto intValue = dataGeneration.Random<int>();
+            const auto intValue = 101;
             auto myInt = std::make_unique<int>(intValue);
 
             auto relic = reliquary->Do(Create<RelicWithShouldCreateAndMovedValue>{std::move(myInt)});

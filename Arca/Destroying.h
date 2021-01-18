@@ -34,6 +34,6 @@ namespace Arca
     struct Traits<DestroyingKnown<T>>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static TypeName TypeName() { return "Arca::DestroyingKnown<" + ::Chroma::ToString(TypeFor<T>()) + ">"; }
+        static TypeName TypeName() { return "Arca::DestroyingKnown<" + FullTypeNameFor<T>() + ">"; }
     };
 }

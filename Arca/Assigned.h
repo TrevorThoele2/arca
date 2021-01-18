@@ -24,6 +24,6 @@ namespace Arca
     struct Traits<AssignedKnown<T>>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static TypeName TypeName() { return "Arca::AssignedKnown<" + Traits<std::decay_t<T>>::TypeName() + ">"; }
+        static TypeName TypeName() { return "Arca::AssignedKnown<" + FullTypeNameFor<T>() + ">"; }
     };
 }

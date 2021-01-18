@@ -3,7 +3,6 @@
 #include "ReliquaryComponent.h"
 
 #include <functional>
-#include <any>
 
 #include "IsSignal.h"
 #include "IsMatrixSignal.h"
@@ -27,9 +26,21 @@ namespace Arca
     public:
         template<class SignalT>
         using Listener = std::function<void(const SignalT&)>;
+        class ListenerListBase
+        {
+        public:
+            virtual ~ListenerListBase() = 0;
+        };
+
         template<class SignalT>
-        using ListenerList = std::list<Listener<SignalT>>;
-        using ListenerMap = std::unordered_map<TypeName, std::any>;
+        class ListenerListDerived final : public ListenerListBase
+        {
+        public:
+            std::list<Listener<SignalT>> value;
+        };
+
+        using ListenerListPtr = std::unique_ptr<ListenerListBase>;
+        using ListenerMap = std::unordered_map<TypeName, ListenerListPtr>;
         ListenerMap listenerMap;
 
         template<class SignalT>
