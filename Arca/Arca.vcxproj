@@ -267,7 +267,7 @@
     <IncludePath>C:\Users\Trevor\Documents\ProgrammingProjects\Chroma;C:\Users\Trevor\Documents\ProgrammingProjects\Inscription;C:\Users\Trevor\Documents\ProgrammingProjects\function2\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\Trevor\Documents\ProgrammingProjects\function2\include;C:\Users\Trevor\Documents\ProgrammingProjects\Chroma;C:\Users\Trevor\Documents\ProgrammingProjects\Inscription;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\function2\include;..\..\chroma;..\..\inscription;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

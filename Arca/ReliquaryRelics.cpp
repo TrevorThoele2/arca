@@ -5,7 +5,6 @@
 #include "Reliquary.h"
 
 #include "Destroying.h"
-#include "RelicParented.h"
 
 namespace Arca
 {
@@ -68,6 +67,9 @@ namespace Arca
 
         for(auto& metadata : metadataList)
         {
+            if (!metadata.parent)
+                continue;
+
             if (metadata.parent->ID() != parentID)
                 continue;
 
