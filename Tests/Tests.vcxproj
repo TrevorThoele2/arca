@@ -161,7 +161,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>..\;..\..\function2\include;..\..\catch;..\..\testframework;..\..\chroma;..\..\inscription;$(IncludePath)</IncludePath>
+    <IncludePath>..\;..\..\function2\include;..\..\catch2;..\..\testframework;..\..\chroma;..\..\inscription;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>..\;..\..\function2\include;..\..\catch;..\..\testframework;..\..\chroma;..\..\inscription;$(IncludePath)</IncludePath>
