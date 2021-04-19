@@ -313,7 +313,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shard serialization", "[shard][co
         savedReliquary->Do(Create<const Shard>(savedRelic));
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
+            auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -325,7 +325,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shard serialization", "[shard][co
                 .Actualize();
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                 inputArchive(*loadedReliquary);
             }
 

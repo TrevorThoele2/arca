@@ -19,7 +19,7 @@ SCENARIO_METHOD(
             .Actualize();
 
         {
-            auto outputArchive = ::Inscription::OutputJsonArchive("Test.dat");
+            auto outputArchive = ::Inscription::Archive::OutputJson("Test.dat");
             outputArchive("reliquary", *savedReliquary);
         }
 
@@ -41,7 +41,7 @@ SCENARIO_METHOD(
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
             {
-                auto inputArchive = ::Inscription::InputJsonArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputJson("Test.dat");
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -77,7 +77,7 @@ SCENARIO_METHOD(
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
             {
-                auto inputArchive = ::Inscription::InputJsonArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputJson("Test.dat");
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -113,7 +113,7 @@ SCENARIO_METHOD(
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
             {
-                auto inputArchive = ::Inscription::InputJsonArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputJson("Test.dat");
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -149,7 +149,7 @@ SCENARIO_METHOD(
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
             {
-                auto inputArchive = ::Inscription::InputJsonArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputJson("Test.dat");
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -180,7 +180,7 @@ SCENARIO_METHOD(
         savedReliquary->Do(Create<BasicShard>(savedRelic.ID()));
 
         {
-            auto outputArchive = ::Inscription::OutputJsonArchive("Test.dat");
+            auto outputArchive = ::Inscription::Archive::OutputJson("Test.dat");
             outputArchive("reliquary", *savedReliquary);
         }
 
@@ -199,7 +199,7 @@ SCENARIO_METHOD(
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
             {
-                auto inputArchive = ::Inscription::InputJsonArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputJson("Test.dat");
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -229,7 +229,7 @@ SCENARIO_METHOD(
         savedReliquary->Do(CreateWith<ClosedRelic>(RelicStructure{ TypeFor<BasicShard>() }));
 
         {
-            auto outputArchive = ::Inscription::OutputJsonArchive("Test.dat");
+            auto outputArchive = ::Inscription::Archive::OutputJson("Test.dat");
             outputArchive("reliquary", *savedReliquary);
         }
 
@@ -248,7 +248,7 @@ SCENARIO_METHOD(
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
             {
-                auto inputArchive = ::Inscription::InputJsonArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputJson("Test.dat");
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -278,7 +278,7 @@ SCENARIO_METHOD(
         savedReliquary->Do(Create<TypedOpenRelic>(dataGeneration.Random<int>()));
 
         {
-            auto outputArchive = ::Inscription::OutputJsonArchive("Test.dat");
+            auto outputArchive = ::Inscription::Archive::OutputJson("Test.dat");
             outputArchive("reliquary", *savedReliquary);
         }
 
@@ -297,7 +297,7 @@ SCENARIO_METHOD(
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
             {
-                auto inputArchive = ::Inscription::InputJsonArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputJson("Test.dat");
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -327,7 +327,7 @@ SCENARIO_METHOD(
         savedReliquary->Do(Create<TypedClosedRelic>(dataGeneration.Random<int>()));
 
         {
-            auto outputArchive = ::Inscription::OutputJsonArchive("Test.dat");
+            auto outputArchive = ::Inscription::Archive::OutputJson("Test.dat");
             outputArchive("reliquary", *savedReliquary);
         }
 
@@ -346,7 +346,7 @@ SCENARIO_METHOD(
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
             {
-                auto inputArchive = ::Inscription::InputJsonArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputJson("Test.dat");
                 inputArchive("reliquary", *loadedReliquary);
             }
 

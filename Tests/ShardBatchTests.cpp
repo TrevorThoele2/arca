@@ -195,7 +195,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch serialization", "[ShardBatch][se
         savedReliquary->Do(Create<BasicShard>(savedRelic.ID()));
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
+            auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -207,7 +207,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch serialization", "[ShardBatch][se
                 .Actualize();
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                 inputArchive(*loadedReliquary);
             }
 

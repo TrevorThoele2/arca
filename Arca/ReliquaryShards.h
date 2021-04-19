@@ -96,10 +96,10 @@ namespace Arca
 
             [[nodiscard]] bool WillBinarySerialize() const override;
             [[nodiscard]] bool WillJsonSerialize() const override;
-            void Serialize(Inscription::BinaryArchive& archive) override;
-            void Serialize(const std::string& name, Inscription::JsonArchive& archive) override;
-            [[nodiscard]] std::vector<::Inscription::Type> InscriptionTypes(Inscription::BinaryArchive& archive) const override;
-            [[nodiscard]] std::vector<::Inscription::Type> InscriptionTypes(Inscription::JsonArchive& archive) const override;
+            void Serialize(Inscription::Archive::Binary& archive) override;
+            void Serialize(const std::string& name, Inscription::Archive::Json& archive) override;
+            [[nodiscard]] std::vector<::Inscription::Type> InscriptionTypes(Inscription::Archive::Binary& archive) const override;
+            [[nodiscard]] std::vector<::Inscription::Type> InscriptionTypes(Inscription::Archive::Json& archive) const override;
         };
 
         using HandlerPtr = std::unique_ptr<HandlerBase>;

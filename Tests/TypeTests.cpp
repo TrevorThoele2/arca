@@ -12,7 +12,7 @@ SCENARIO_METHOD(TypeTestsFixture, "type serialization", "[type][serialization]")
         WHEN("saving")
         {
             {
-                auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
+                auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
                 outputArchive(savedType);
             }
 
@@ -21,7 +21,7 @@ SCENARIO_METHOD(TypeTestsFixture, "type serialization", "[type][serialization]")
                 Type loadedType;
 
                 {
-                    auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                    auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                     inputArchive(loadedType);
                 }
 
@@ -38,7 +38,7 @@ SCENARIO_METHOD(TypeTestsFixture, "type serialization", "[type][serialization]")
         WHEN("saving")
         {
             {
-                auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
+                auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
                 outputArchive(savedType);
             }
 
@@ -47,7 +47,7 @@ SCENARIO_METHOD(TypeTestsFixture, "type serialization", "[type][serialization]")
                 Type loadedType;
 
                 {
-                    auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                    auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                     inputArchive(loadedType);
                 }
 

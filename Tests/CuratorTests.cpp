@@ -631,7 +631,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
         savedCurator.value = dataGeneration.Random<int>();
     
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
+            auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
             outputArchive(*savedReliquary);
         }
     
@@ -642,7 +642,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
                 .Actualize();
         
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                 inputArchive(*loadedReliquary);
             }
         
@@ -660,7 +660,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
                 .Actualize();
         
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                 inputArchive(*loadedReliquary);
             }
         
@@ -677,7 +677,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
                 .Actualize();
         
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");;
+                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");;
                 inputArchive(*loadedReliquary);
             }
         
@@ -705,7 +705,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
             .Actualize();
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
+            auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -724,7 +724,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
                 .Actualize();
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                 inputArchive(*loadedReliquary);
             }
 

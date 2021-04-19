@@ -365,7 +365,7 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all batch serialization", "[all][batch][s
         savedReliquary->Do(Create<DifferentiableShard<2>>(savedRelic));
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
+            auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -379,7 +379,7 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all batch serialization", "[all][batch][s
                 .Actualize();
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                 inputArchive(*loadedReliquary);
             }
 

@@ -276,8 +276,8 @@ namespace Arca
             id,
             OpennessFor<RelicT>(),
             LocalityFor<RelicT>(),
-            HasScribe<RelicT, Inscription::BinaryArchive>(),
-            HasScribe<RelicT, Inscription::JsonArchive>(),
+            HasScribe<RelicT, Inscription::Archive::Binary>(),
+            HasScribe<RelicT, Inscription::Archive::Json>(),
             TypeFor<RelicT>());
     }
 
@@ -372,35 +372,35 @@ namespace Arca
     template<class RelicT>
     bool ReliquaryRelics::LocalHandler<RelicT>::WillBinarySerialize() const
     {
-        return HasScribe<RelicT, Inscription::BinaryArchive>();
+        return HasScribe<RelicT, Inscription::Archive::Binary>();
     }
 
     template<class RelicT>
     bool ReliquaryRelics::LocalHandler<RelicT>::WillJsonSerialize() const
     {
-        return HasScribe<RelicT, Inscription::JsonArchive>();
+        return HasScribe<RelicT, Inscription::Archive::Json>();
     }
 
     template<class RelicT>
-    void ReliquaryRelics::LocalHandler<RelicT>::Serialize(Inscription::BinaryArchive& archive)
+    void ReliquaryRelics::LocalHandler<RelicT>::Serialize(Inscription::Archive::Binary& archive)
     {
         archive(batchSource);
     }
 
     template<class RelicT>
-    void ReliquaryRelics::LocalHandler<RelicT>::Serialize(const std::string& name, Inscription::JsonArchive& archive)
+    void ReliquaryRelics::LocalHandler<RelicT>::Serialize(const std::string& name, Inscription::Archive::Json& archive)
     {
         archive(name, batchSource);
     }
 
     template<class RelicT>
-    std::vector<::Inscription::Type> ReliquaryRelics::LocalHandler<RelicT>::InscriptionTypes(Inscription::BinaryArchive& archive) const
+    std::vector<::Inscription::Type> ReliquaryRelics::LocalHandler<RelicT>::InscriptionTypes(Inscription::Archive::Binary& archive) const
     {
         return ::Inscription::InputTypesFor<RelicT>(archive);
     }
 
     template<class RelicT>
-    std::vector<::Inscription::Type> ReliquaryRelics::LocalHandler<RelicT>::InscriptionTypes(Inscription::JsonArchive& archive) const
+    std::vector<::Inscription::Type> ReliquaryRelics::LocalHandler<RelicT>::InscriptionTypes(Inscription::Archive::Json& archive) const
     {
         return ::Inscription::InputTypesFor<RelicT>(archive);
     }
@@ -419,35 +419,35 @@ namespace Arca
     template<class RelicT>
     bool ReliquaryRelics::GlobalHandler<RelicT>::WillBinarySerialize() const
     {
-        return HasScribe<RelicT, Inscription::BinaryArchive>();
+        return HasScribe<RelicT, Inscription::Archive::Binary>();
     }
 
     template<class RelicT>
     bool ReliquaryRelics::GlobalHandler<RelicT>::WillJsonSerialize() const
     {
-        return HasScribe<RelicT, Inscription::JsonArchive>();
+        return HasScribe<RelicT, Inscription::Archive::Json>();
     }
 
     template<class RelicT>
-    void ReliquaryRelics::GlobalHandler<RelicT>::Serialize(Inscription::BinaryArchive& archive)
+    void ReliquaryRelics::GlobalHandler<RelicT>::Serialize(Inscription::Archive::Binary& archive)
     {
         archive(*reinterpret_cast<RelicT*>(storage.get()));
     }
 
     template<class RelicT>
-    void ReliquaryRelics::GlobalHandler<RelicT>::Serialize(const std::string& name, Inscription::JsonArchive& archive)
+    void ReliquaryRelics::GlobalHandler<RelicT>::Serialize(const std::string& name, Inscription::Archive::Json& archive)
     {
         archive(name, *reinterpret_cast<RelicT*>(storage.get()));
     }
 
     template<class RelicT>
-    std::vector<::Inscription::Type> ReliquaryRelics::GlobalHandler<RelicT>::InscriptionTypes(Inscription::BinaryArchive& archive) const
+    std::vector<::Inscription::Type> ReliquaryRelics::GlobalHandler<RelicT>::InscriptionTypes(Inscription::Archive::Binary& archive) const
     {
         return ::Inscription::InputTypesFor<RelicT>(archive);
     }
 
     template<class RelicT>
-    std::vector<::Inscription::Type> ReliquaryRelics::GlobalHandler<RelicT>::InscriptionTypes(Inscription::JsonArchive& archive) const
+    std::vector<::Inscription::Type> ReliquaryRelics::GlobalHandler<RelicT>::InscriptionTypes(Inscription::Archive::Json& archive) const
     {
         return ::Inscription::InputTypesFor<RelicT>(archive);
     }

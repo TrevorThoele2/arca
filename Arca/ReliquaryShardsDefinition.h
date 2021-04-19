@@ -164,24 +164,24 @@ namespace Arca
     template<class ShardT>
     bool ReliquaryShards::Handler<ShardT>::WillBinarySerialize() const
     {
-        return HasScribe<ShardT, Inscription::BinaryArchive>();
+        return HasScribe<ShardT, Inscription::Archive::Binary>();
     }
 
     template<class ShardT>
     bool ReliquaryShards::Handler<ShardT>::WillJsonSerialize() const
     {
-        return HasScribe<ShardT, Inscription::JsonArchive>();
+        return HasScribe<ShardT, Inscription::Archive::Json>();
     }
 
     template<class ShardT>
-    void ReliquaryShards::Handler<ShardT>::Serialize(Inscription::BinaryArchive& archive)
+    void ReliquaryShards::Handler<ShardT>::Serialize(Inscription::Archive::Binary& archive)
     {
         archive(batchSource);
         archive(constBatchSource);
     }
 
     template<class ShardT>
-    void ReliquaryShards::Handler<ShardT>::Serialize(const std::string& name, Inscription::JsonArchive& archive)
+    void ReliquaryShards::Handler<ShardT>::Serialize(const std::string& name, Inscription::Archive::Json& archive)
     {
         const auto constName = !name.empty() ? name + "Const" : "";
 
@@ -190,13 +190,13 @@ namespace Arca
     }
 
     template<class ShardT>
-    std::vector<::Inscription::Type> ReliquaryShards::Handler<ShardT>::InscriptionTypes(Inscription::BinaryArchive& archive) const
+    std::vector<::Inscription::Type> ReliquaryShards::Handler<ShardT>::InscriptionTypes(Inscription::Archive::Binary& archive) const
     {
         return Inscription::InputTypesFor<std::remove_const_t<ShardT>>(archive);
     }
 
     template<class ShardT>
-    std::vector<::Inscription::Type> ReliquaryShards::Handler<ShardT>::InscriptionTypes(Inscription::JsonArchive& archive) const
+    std::vector<::Inscription::Type> ReliquaryShards::Handler<ShardT>::InscriptionTypes(Inscription::Archive::Json& archive) const
     {
         return Inscription::InputTypesFor<std::remove_const_t<ShardT>>(archive);
     }

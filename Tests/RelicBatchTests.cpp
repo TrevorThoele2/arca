@@ -195,7 +195,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch serialization", "[RelicBatch][se
         savedReliquary->Do(Create<Relic>());
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
+            auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -206,7 +206,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch serialization", "[RelicBatch][se
                 .Actualize();
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                 inputArchive(*loadedReliquary);
             }
 

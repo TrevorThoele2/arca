@@ -644,7 +644,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle serialization", "[handle][serializat
         WHEN("saving handle")
         {
             {
-                auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
+                auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
                 outputArchive(*savedReliquary);
             }
 
@@ -657,7 +657,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle serialization", "[handle][serializat
                     .Actualize();
 
                 {
-                    auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                    auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                     inputArchive(*loadedReliquary);
                 }
 
@@ -687,7 +687,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle serialization", "[handle][serializat
         WHEN("saving handle")
         {
             {
-                auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
+                auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
                 outputArchive(*savedReliquary);
             }
 
@@ -703,7 +703,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle serialization", "[handle][serializat
                 Handle loadedHandle;
 
                 {
-                    auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                    auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                     inputArchive(*loadedReliquary);
                 }
 

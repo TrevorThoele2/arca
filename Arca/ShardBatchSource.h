@@ -97,8 +97,8 @@ namespace Inscription
     public:
         using ObjectT = Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive);
-        void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
+        void Scriven(ObjectT& object, Archive::Binary& archive);
+        void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
     private:
         template<class U, std::enable_if_t<Arca::has_shard_serialization_constructor_v<U>, int> = 0>
         U Create();

@@ -16,21 +16,21 @@ namespace Inscription
     public:
         static constexpr bool requiresScribe = false;
     public:
-        static void Scriven(ObjectT& object, BinaryArchive& archive);
-        static void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
+        static void Scriven(ObjectT& object, Archive::Binary& archive);
+        static void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
     public:
         template<class Archive>
         static Type OutputType(const Archive& archive);
     };
 
     template<class T>
-    void ArcaNullScribeCategory<T>::Scriven(ObjectT& object, BinaryArchive& archive)
+    void ArcaNullScribeCategory<T>::Scriven(ObjectT& object, Archive::Binary& archive)
     {
         NullScribeCategory<T>::Scriven(object, archive);
     }
 
     template<class T>
-    void ArcaNullScribeCategory<T>::Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
+    void ArcaNullScribeCategory<T>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
     {
         NullScribeCategory<T>::Scriven(name, object, archive);
     }
