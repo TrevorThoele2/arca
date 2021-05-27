@@ -587,6 +587,7 @@ namespace Inscription
         auto typesFromReliquary = ExtractTypes(fromObject, archive);
 
         std::vector<TypePair> returnValue;
+        returnValue.reserve(typesFromReliquary.size());
         for (auto& typeFromReliquary : typesFromReliquary)
             returnValue.push_back(typeFromReliquary);
 
