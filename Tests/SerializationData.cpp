@@ -10,22 +10,12 @@ SerializationData::PreferentialSerializationConstructorShard::PreferentialSerial
 SerializationData::OtherShard::OtherShard(int myValue) : myValue(myValue)
 {}
 
-SerializationData::TypedClosedRelic::TypedClosedRelic(RelicInit init, int myInt)
+SerializationData::LocalRelic::LocalRelic(RelicInit init, int myInt)
 {
     basicShard = init.Create<BasicShard>();
 }
 
-SerializationData::TypedClosedRelic::TypedClosedRelic(RelicInit init, Serialization)
-{
-    basicShard = init.Find<BasicShard>();
-}
-
-SerializationData::TypedOpenRelic::TypedOpenRelic(RelicInit init, int myInt)
-{
-    basicShard = init.Create<BasicShard>();
-}
-
-SerializationData::TypedOpenRelic::TypedOpenRelic(RelicInit init, Serialization)
+SerializationData::LocalRelic::LocalRelic(RelicInit init, Serialization)
 {
     basicShard = init.Find<BasicShard>();
 }

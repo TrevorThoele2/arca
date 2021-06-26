@@ -4,15 +4,10 @@ using namespace std::string_literals;
 #include "RelicTests.h"
 #include "SignalListener.h"
 
-#include <Arca/LocalRelic.h>
+#include <Arca/OpenRelic.h>
 #include <Arca/RelicParented.h>
 
-RelicTestsFixture::TypedClosedRelic::TypedClosedRelic(RelicInit init)
-{
-    basicShard = init.Create<Shard>();
-}
-
-RelicTestsFixture::TypedOpenRelic::TypedOpenRelic(RelicInit init)
+RelicTestsFixture::LocalRelic::LocalRelic(RelicInit init)
 {
     basicShard = init.Create<Shard>();
 }
@@ -103,10 +98,9 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
     {
         auto reliquary = ReliquaryOrigin()
             .Register<OpenRelic>()
-            .Register<ClosedRelic>()
             .Register<Shard>()
             .Register<OtherShard>()
-            .Register<TypedClosedRelic>()
+            .Register<LocalRelic>()
             .Register<GlobalRelic>()
             .Actualize();
 
@@ -181,19 +175,19 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
                 }
             }
 
-            WHEN("retrieving as closed")
+            WHEN("retrieving as local")
             {
-                auto closedRelic = Arca::Index<ClosedRelic>(openRelic.ID(), *reliquary);
+                auto localRelic = Arca::Index<LocalRelic>(openRelic.ID(), *reliquary);
 
-                THEN("closed relic is not found")
+                THEN("is not found")
                 {
-                    REQUIRE(!closedRelic);
+                    REQUIRE(!localRelic);
                 }
             }
 
             WHEN("retrieving as typed")
             {
-                const auto asTyped = Arca::Index<TypedClosedRelic>(openRelic.ID(), *reliquary);
+                const auto asTyped = Arca::Index<LocalRelic>(openRelic.ID(), *reliquary);
 
                 THEN("typed is empty")
                 {
@@ -201,88 +195,11 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
                 }
             }
         }
-
-        WHEN("creating closed relic with valid structure")
-        {
-            auto preCreateRelicCount = reliquary->RelicSize();
-            auto closedRelic = reliquary->Do(CreateWith<ClosedRelic>{RelicStructure{ TypeFor<Shard>() }});
-
-            THEN("structure has been satisfied")
-            {
-                REQUIRE(Arca::Index<Shard>(closedRelic.ID(), *reliquary));
-                REQUIRE(reliquary->Contains<Shard>(closedRelic.ID()));
-            }
-
-            THEN("reliquary relic count increments by one")
-            {
-                REQUIRE(reliquary->RelicSize() == (preCreateRelicCount + 1));
-            }
-
-            THEN("reliquary contains relic")
-            {
-                REQUIRE(reliquary->Contains<ClosedRelic>(closedRelic.ID()));
-            }
-
-            WHEN("finding open relic")
-            {
-                auto found = Arca::Index<ClosedRelic>(closedRelic.ID(), *reliquary);
-
-                THEN("found is same as created")
-                {
-                    REQUIRE(found.ID() == closedRelic.ID());
-                    REQUIRE(found.Owner() == closedRelic.Owner());
-                }
-            }
-
-            WHEN("destroying relic")
-            {
-                auto preDestroyRelicCount = reliquary->RelicSize();
-
-                auto id = closedRelic.ID();
-                auto handle = AsHandle(closedRelic);
-                reliquary->Destroy(handle);
-
-                THEN("finding relic returns empty")
-                {
-                    REQUIRE(!Arca::Index<ClosedRelic>(id, *reliquary));
-                }
-
-                THEN("destroying again does not throw")
-                {
-                    REQUIRE_NOTHROW(reliquary->Destroy(handle));
-                }
-
-                THEN("reliquary relic count decrements by one")
-                {
-                    REQUIRE(reliquary->RelicSize() == (preDestroyRelicCount - 1));
-                }
-            }
-
-            WHEN("retrieving as open")
-            {
-                const auto asOpen = Arca::Index<OpenRelic>(closedRelic.ID(), *reliquary);
-
-                THEN("open is empty")
-                {
-                    REQUIRE(!asOpen);
-                }
-            }
-
-            WHEN("retrieving as typed")
-            {
-                const auto asTyped = Arca::Index<TypedClosedRelic>(closedRelic.ID(), *reliquary);
-
-                THEN("typed is empty")
-                {
-                    REQUIRE(!asTyped);
-                }
-            }
-        }
-
+        
         WHEN("creating typed relic")
         {
             auto preCreateRelicSize = reliquary->RelicSize();
-            auto typedRelic = reliquary->Do(Create<TypedClosedRelic>());
+            auto typedRelic = reliquary->Do(Create<LocalRelic>());
 
             THEN("does not have parent")
             {
@@ -296,12 +213,12 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             THEN("reliquary contains relic")
             {
-                REQUIRE(reliquary->Contains<TypedClosedRelic>(typedRelic.ID()));
+                REQUIRE(reliquary->Contains<LocalRelic>(typedRelic.ID()));
             }
 
             WHEN("finding typed relic")
             {
-                auto found = Arca::Index<TypedClosedRelic>(typedRelic.ID(), *reliquary);
+                auto found = Arca::Index<LocalRelic>(typedRelic.ID(), *reliquary);
 
                 THEN("found is same as created")
                 {
@@ -322,16 +239,6 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
                 THEN("typed is empty")
                 {
                     REQUIRE(!asOpen);
-                }
-            }
-
-            WHEN("retrieving as closed")
-            {
-                auto closedRelic = Arca::Index<ClosedRelic>(typedRelic.ID(), *reliquary);
-
-                THEN("closed relic is not found")
-                {
-                    REQUIRE(!closedRelic);
                 }
             }
         }
@@ -436,8 +343,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
     {
         auto reliquary = ReliquaryOrigin()
             .Register<OpenRelic>()
-            .Register<ClosedRelic>()
-            .Register<TypedClosedRelic>()
+            .Register<LocalRelic>()
             .Register<Shard>()
             .Actualize();
 
@@ -499,109 +405,13 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
                 }
             }
         }
-
-        WHEN("creating closed relic")
-        {
-            auto knownCreatedSignals = SignalListener<CreatedKnown<ClosedRelic>>(*reliquary);
-            auto knownDestroyingSignals = SignalListener<DestroyingKnown<ClosedRelic>>(*reliquary);
-
-            const auto created = reliquary->Do(CreateWith<ClosedRelic>{RelicStructure{ TypeFor<Shard>() }});
-            const auto createdHandle = AsHandle(created);
-
-            THEN("generic signal is emitted for relic and shard")
-            {
-                REQUIRE(genericCreatedSignals.Executions().size() == 2);
-                REQUIRE(std::any_of(
-                    genericCreatedSignals.Executions().begin(),
-                    genericCreatedSignals.Executions().end(),
-                    [createdHandle](const Created& signal)
-                    {
-                        return signal.handle == createdHandle;
-                    }));
-            }
-
-            THEN("signal is emitted for known relic")
-            {
-                REQUIRE(knownCreatedSignals.Executions().size() == 1);
-                REQUIRE(knownCreatedSignals.Executions().begin()->index == created);
-            }
-
-            WHEN("destroying relic")
-            {
-                reliquary->Destroy(AsHandle(created));
-
-                THEN("generic signal is emitted for relic and shard")
-                {
-                    REQUIRE(genericDestroyingSignals.Executions().size() == 2);
-                    REQUIRE(std::any_of(
-                        genericDestroyingSignals.Executions().begin(),
-                        genericDestroyingSignals.Executions().end(),
-                        [createdHandle](const Destroying& signal)
-                        {
-                            return signal.handle == createdHandle;
-                        }));
-                }
-
-                THEN("signal is emitted for known relic")
-                {
-                    REQUIRE(knownDestroyingSignals.Executions().size() == 1);
-                    REQUIRE(knownDestroyingSignals.Executions().begin()->index == created);
-                }
-            }
-
-            WHEN("clearing")
-            {
-                reliquary->Do(Clear{ Chroma::TypeIdentity<ClosedRelic>{} });
-
-                THEN("generic signal is emitted for relic and shard")
-                {
-                    REQUIRE(genericDestroyingSignals.Executions().size() == 2);
-                    REQUIRE(std::any_of(
-                        genericDestroyingSignals.Executions().begin(),
-                        genericDestroyingSignals.Executions().end(),
-                        [createdHandle](const Destroying& signal)
-                        {
-                            return signal.handle == createdHandle;
-                        }));
-                }
-
-                THEN("signal is emitted for known relic")
-                {
-                    REQUIRE(knownDestroyingSignals.Executions().size() == 1);
-                    REQUIRE(knownDestroyingSignals.Executions().begin()->index == created);
-                }
-            }
-
-            WHEN("clearing by type")
-            {
-                reliquary->Do(Clear{ TypeFor<ClosedRelic>() });
-
-                THEN("generic signal is emitted for relic and shard")
-                {
-                    REQUIRE(genericDestroyingSignals.Executions().size() == 2);
-                    REQUIRE(std::any_of(
-                        genericDestroyingSignals.Executions().begin(),
-                        genericDestroyingSignals.Executions().end(),
-                        [createdHandle](const Destroying& signal)
-                        {
-                            return signal.handle == createdHandle;
-                        }));
-                }
-
-                THEN("signal is emitted for known relic")
-                {
-                    REQUIRE(knownDestroyingSignals.Executions().size() == 1);
-                    REQUIRE(knownDestroyingSignals.Executions().begin()->index == created);
-                }
-            }
-        }
-
+        
         WHEN("creating typed relic")
         {
-            auto knownCreatedSignals = SignalListener<CreatedKnown<TypedClosedRelic>>(*reliquary);
-            auto knownDestroyingSignals = SignalListener<DestroyingKnown<TypedClosedRelic>>(*reliquary);
+            auto knownCreatedSignals = SignalListener<CreatedKnown<LocalRelic>>(*reliquary);
+            auto knownDestroyingSignals = SignalListener<DestroyingKnown<LocalRelic>>(*reliquary);
 
-            const auto created = reliquary->Do(Create<TypedClosedRelic>());
+            const auto created = reliquary->Do(Create<LocalRelic>());
             const auto createdHandle = AsHandle(created);
 
             THEN("signal is emitted for relic and shard")
@@ -647,7 +457,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
             WHEN("clearing")
             {
-                reliquary->Do(Clear{ Chroma::TypeIdentity<TypedClosedRelic>{} });
+                reliquary->Do(Clear{ Chroma::TypeIdentity<LocalRelic>{} });
 
                 THEN("signal is emitted for relic and shard")
                 {
@@ -670,7 +480,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
             WHEN("clearing by type")
             {
-                reliquary->Do(Clear{ TypeFor<TypedClosedRelic>() });
+                reliquary->Do(Clear{ TypeFor<LocalRelic>() });
 
                 THEN("signal is emitted for relic and shard")
                 {
@@ -688,84 +498,6 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
                 {
                     REQUIRE(knownDestroyingSignals.Executions().size() == 1);
                     REQUIRE(knownDestroyingSignals.Executions().begin()->index == created);
-                }
-            }
-        }
-    }
-}
-
-SCENARIO_METHOD(RelicTestsFixture, "open typed relic", "[relic][open]")
-{
-    GIVEN("created open typed relic")
-    {
-        auto reliquary = ReliquaryOrigin()
-            .Register<TypedOpenRelic>()
-            .Register<Shard>()
-            .Register<OtherShard>()
-            .Actualize();
-
-        auto relic = reliquary->Do(Create<TypedOpenRelic>{});
-
-        WHEN("default created")
-        {
-            THEN("has all requested shards")
-            {
-                REQUIRE(relic->basicShard);
-            }
-        }
-
-        WHEN("creating dynamic shard")
-        {
-            auto shard = reliquary->Do(Arca::Create<OtherShard>(relic.ID()));
-
-            THEN("returned is valid")
-            {
-                REQUIRE(shard);
-            }
-
-            THEN("reliquary created shard")
-            {
-                REQUIRE(reliquary->ShardSize() == 2);
-                REQUIRE(Arca::Index<OtherShard>(relic.ID(), *reliquary));
-            }
-
-            WHEN("finding by either")
-            {
-                auto found = Arca::Index<Either<OtherShard>>(relic.ID(), *reliquary);
-
-                THEN("is same as created")
-                {
-                    REQUIRE(found == shard);
-                }
-            }
-
-            WHEN("destroying dynamic shard")
-            {
-                reliquary->Do(Arca::Destroy<OtherShard>(relic.ID()));
-
-                THEN("reliquary has destroyed shard")
-                {
-                    REQUIRE(reliquary->ShardSize() == 1);
-                    REQUIRE(!Arca::Index<OtherShard>(relic.ID(), *reliquary));
-                }
-            }
-
-            WHEN("destroying shard via handle")
-            {
-                reliquary->Destroy(AsHandle<OtherShard>(relic.ID(), *relic.Owner()));
-
-                THEN("reliquary has destroyed shard")
-                {
-                    REQUIRE(reliquary->ShardSize() == 1);
-                    REQUIRE(!Arca::Index<OtherShard>(relic.ID(), *reliquary));
-                }
-            }
-
-            WHEN("creating same shard type with const")
-            {
-                THEN("throws error")
-                {
-                    REQUIRE_THROWS_AS(reliquary->Do(Arca::Create<const OtherShard>(relic.ID())), CannotCreate);
                 }
             }
         }

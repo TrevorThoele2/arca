@@ -38,7 +38,6 @@
     <ClInclude Include="CuratorInit.h" />
     <ClInclude Include="CuratorStage.h" />
     <ClInclude Include="HandleObjectType.h" />
-    <ClInclude Include="HasOpennessTrait.h" />
     <ClInclude Include="HasRelicInitConstructor.h" />
     <ClInclude Include="HasRelicSerializationConstructor.h" />
     <ClInclude Include="HasSelfContainedTrait.h" />
@@ -58,7 +57,7 @@
     <ClInclude Include="IdentifiedCreateWith.h" />
     <ClInclude Include="Index.h" />
     <ClInclude Include="IsSelfContained.h" />
-    <ClInclude Include="LocalRelic.h" />
+    <ClInclude Include="OpenRelic.h" />
     <ClInclude Include="Relic.h" />
     <ClInclude Include="ReliquaryUserContext.h" />
     <ClInclude Include="MatrixIndexDefinition.h" />
@@ -99,15 +98,12 @@
     <ClInclude Include="HandleObjectTypeFor.h" />
     <ClInclude Include="GlobalIndex.h" />
     <ClInclude Include="HasLocalityTrait.h" />
-    <ClInclude Include="IsClosed.h" />
     <ClInclude Include="IsGlobal.h" />
     <ClInclude Include="IsLocal.h" />
-    <ClInclude Include="IsOpen.h" />
     <ClInclude Include="IsRelic.h" />
     <ClInclude Include="IsShard.h" />
     <ClInclude Include="LocalityFor.h" />
     <ClInclude Include="RelicIndex.h" />
-    <ClInclude Include="OpennessFor.h" />
     <ClInclude Include="Shard.h" />
     <ClInclude Include="ShardList.h" />
     <ClInclude Include="Signal.h" />
@@ -151,7 +147,6 @@
     <ClInclude Include="ReliquaryOrigin.h" />
     <ClInclude Include="TableScribeCategory.h" />
     <ClInclude Include="Traits.h" />
-    <ClInclude Include="Openness.h" />
     <ClInclude Include="RelicID.h" />
     <ClInclude Include="Reliquary.h" />
     <ClInclude Include="ReliquaryException.h" />

@@ -2,7 +2,7 @@
 
 #include "CommandTests.h"
 
-#include <Arca/LocalRelic.h>
+#include <Arca/OpenRelic.h>
 #include "SignalListener.h"
 
 void CommandTestsFixture::Curator::Handle(const Command& command)

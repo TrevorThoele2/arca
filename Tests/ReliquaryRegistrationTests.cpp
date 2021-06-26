@@ -3,7 +3,7 @@ using namespace std::string_literals;
 
 #include "ReliquaryRegistrationTests.h"
 
-#include <Arca/LocalRelic.h>
+#include <Arca/OpenRelic.h>
 
 ReliquaryRegistrationTestsFixture::Relic::Relic(RelicInit init)
 {
@@ -91,7 +91,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary->Do(CreateWith<ClosedRelic>{relicStructureName}),
+                    reliquary->Do(CreateWith<OpenRelic>{relicStructureName}),
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The relic structure ("s + relicStructureName + ") was not registered.")
@@ -164,7 +164,6 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
     {
         auto reliquary = ReliquaryOrigin()
             .Register<OpenRelic>()
-            .Register<ClosedRelic>()
             .Register<Relic>()
             .Register<GlobalRelic>()
             .Actualize();
@@ -190,27 +189,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
                 REQUIRE(reliquary->ObjectHandleTypeFor(typeName) == HandleObjectType::Relic);
             }
         }
-
-        WHEN("checking closed relic type")
-        {
-            const auto typeName = TypeFor<ClosedRelic>().name;
-
-            THEN("is relic type")
-            {
-                REQUIRE(reliquary->IsRelicTypeName(typeName));
-                const auto found = std::find(
-                    typeNames.begin(),
-                    typeNames.end(),
-                    typeName);
-                REQUIRE(found != typeNames.end());
-            }
-
-            THEN("is relic object handle type")
-            {
-                REQUIRE(reliquary->ObjectHandleTypeFor(typeName) == HandleObjectType::Relic);
-            }
-        }
-
+        
         WHEN("checking typed relic type")
         {
             const auto typeName = TypeFor<Relic>().name;

@@ -6,7 +6,7 @@
 
 namespace Arca
 {
-    void ReliquaryShards::Create(const Type& type, RelicID id)
+    void ReliquaryShards::Create(const Type& type, RelicID id, bool required)
     {
         const auto handler = FindHandler(type.name);
         if (handler == nullptr)
@@ -15,7 +15,7 @@ namespace Arca
         if (Contains(Handle(id, Owner(), type, HandleObjectType::Shard)))
             throw CannotCreate(type);
 
-        handler->Create(id, Owner(), type.isConst);
+        handler->Create(id, Owner(), type.isConst, required);
     }
 
     void ReliquaryShards::TransactionalDestroy(const Type& type, RelicID id)
@@ -24,7 +24,7 @@ namespace Arca
         if (handler == nullptr)
             throw NotRegistered(type);
 
-        handler->RequiredDestroy(id, Owner());
+        handler->RequiredTransactionalDestroy(id, Owner(), Owner().matrices);
     }
 
     void ReliquaryShards::Clear()

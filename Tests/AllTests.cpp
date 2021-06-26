@@ -2,7 +2,7 @@
 
 #include "AllTests.h"
 
-#include <Arca/LocalRelic.h>
+#include <Arca/OpenRelic.h>
 
 AllTestsFixture::BasicTypedRelic::BasicTypedRelic(RelicInit init)
 {
@@ -184,59 +184,6 @@ SCENARIO_METHOD(AllTestsFixture, "OpenRelic all", "[OpenRelic][all]")
             THEN("irrelevant relic does not contain all")
             {
                 auto irrelevant = reliquary->Do(Create<OpenRelic>{});
-                auto index = Arca::Index<
-                    All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(
-                        irrelevant.ID(), *reliquary);
-                REQUIRE(!index);
-            }
-        }
-    }
-}
-
-SCENARIO_METHOD(AllTestsFixture, "ClosedRelic all", "[ClosedRelic][all]")
-{
-    GIVEN("registered reliquary")
-    {
-        auto reliquary = ReliquaryOrigin()
-            .Register<ClosedRelic>()
-            .Register<DifferentiableShard<0>>()
-            .Register<DifferentiableShard<1>>()
-            .Register<DifferentiableShard<2>>()
-            .Register<BasicTypedRelic>()
-            .Actualize();
-
-        WHEN("creating shards")
-        {
-            const auto relic = reliquary->Do(CreateWith<ClosedRelic>{
-                RelicStructure
-                {
-                    TypeFor<DifferentiableShard<0>>(),
-                    TypeFor<DifferentiableShard<1>>(),
-                    TypeFor<DifferentiableShard<2>>()
-                } });
-
-            THEN("contains all")
-            {
-                auto index = Arca::Index<
-                    All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(
-                        relic.ID(), *reliquary);
-                REQUIRE(index);
-            }
-        }
-
-        WHEN("creating separate relic with shard")
-        {
-            reliquary->Do(CreateWith<ClosedRelic> {
-                RelicStructure
-                {
-                    TypeFor<DifferentiableShard<0>>(),
-                    TypeFor<DifferentiableShard<1>>(),
-                    TypeFor<DifferentiableShard<2>>()
-                } });
-
-            THEN("irrelevant relic does not contain either")
-            {
-                const auto irrelevant = reliquary->Do(CreateWith<ClosedRelic>{ RelicStructure{} });
                 auto index = Arca::Index<
                     All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(
                         irrelevant.ID(), *reliquary);

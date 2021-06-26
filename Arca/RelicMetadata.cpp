@@ -4,7 +4,6 @@ namespace Arca
 {
     RelicMetadata::RelicMetadata(
         RelicID id,
-        Openness openness,
         Locality locality,
         Type type,
         void* storage,
@@ -12,7 +11,6 @@ namespace Arca
         bool shouldSerializeJson)
         :
         id(id),
-        openness(openness),
         locality(locality),
         type(std::move(type)),
         storage(storage),

@@ -14,8 +14,7 @@ public:
     using Shard = DifferentiableShard<0>;
     using OtherShard = DifferentiableShard<1>;
 
-    class TypedClosedRelic;
-    class TypedOpenRelic;
+    class LocalRelic;
     class GlobalRelic;
     class ShouldCreateRelic;
     class InitializedRelic;
@@ -42,20 +41,12 @@ namespace Arca
     };
 
     template<>
-    struct Traits<RelicTestsFixture::TypedClosedRelic>
+    struct Traits<RelicTestsFixture::LocalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static TypeName TypeName() { return "RelicTestsFixture::TypedClosedRelic"; }
     };
-
-    template<>
-    struct Traits<RelicTestsFixture::TypedOpenRelic>
-    {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "RelicTestsFixture::TypedOpenRelic"; }
-        static const Openness openness = Openness::Open;
-    };
-
+    
     template<>
     struct Traits<RelicTestsFixture::GlobalRelic>
     {
@@ -109,20 +100,12 @@ namespace Arca
     };
 }
 
-class RelicTestsFixture::TypedClosedRelic final
+class RelicTestsFixture::LocalRelic final
 {
 public:
     Index<Shard> basicShard;
 public:
-    explicit TypedClosedRelic(RelicInit init);
-};
-
-class RelicTestsFixture::TypedOpenRelic final
-{
-public:
-    Index<Shard> basicShard;
-public:
-    explicit TypedOpenRelic(RelicInit init);
+    explicit LocalRelic(RelicInit init);
 };
 
 class RelicTestsFixture::GlobalRelic final
@@ -195,17 +178,11 @@ public:
 namespace Inscription
 {
     template<class Archive>
-    struct ScribeTraits<RelicTestsFixture::TypedClosedRelic, Archive> final
+    struct ScribeTraits<RelicTestsFixture::LocalRelic, Archive> final
     {
-        using Category = ArcaNullScribeCategory<RelicTestsFixture::TypedClosedRelic>;
+        using Category = ArcaNullScribeCategory<RelicTestsFixture::LocalRelic>;
     };
-
-    template<class Archive>
-    struct ScribeTraits<RelicTestsFixture::TypedOpenRelic, Archive> final
-    {
-        using Category = ArcaNullScribeCategory<RelicTestsFixture::TypedOpenRelic>;
-    };
-
+    
     template<class Archive>
     struct ScribeTraits<RelicTestsFixture::GlobalRelic, Archive> final
     {

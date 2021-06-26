@@ -2,7 +2,7 @@
 
 #include "GlobalRelicTests.h"
 
-#include <Arca/LocalRelic.h>
+#include <Arca/OpenRelic.h>
 
 GlobalRelicTestsFixture::BasicTypedRelic::BasicTypedRelic(RelicInit init)
 {
@@ -20,7 +20,6 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
     {
         auto reliquary = ReliquaryOrigin()
             .Register<OpenRelic>()
-            .Register<ClosedRelic>()
             .Register<BasicShard>()
             .Register<BasicTypedRelic>()
             .Register<GlobalRelic>()
@@ -50,17 +49,7 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
                     REQUIRE(!asOpen);
                 }
             }
-
-            WHEN("retrieving as closed")
-            {
-                const auto asClosed = Arca::Index<ClosedRelic>(globalRelic.ID(), *reliquary);
-
-                THEN("closed is empty")
-                {
-                    REQUIRE(!asClosed);
-                }
-            }
-
+            
             WHEN("retrieving as typed")
             {
                 const auto asTyped = Arca::Index<BasicTypedRelic>(globalRelic.ID(), *reliquary);

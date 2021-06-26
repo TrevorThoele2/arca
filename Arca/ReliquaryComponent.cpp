@@ -56,12 +56,7 @@ namespace Arca
     {
         return CreateException<Arca::CannotFind>(type, classType);
     }
-
-    CannotModifyShards ReliquaryComponent::CannotModify(RelicID id) const
-    {
-        return Arca::CannotModifyShards(objectTypeName, id);
-    }
-
+    
     Reliquary& ReliquaryComponent::Owner()
     {
         return *owner;

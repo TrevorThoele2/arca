@@ -3,7 +3,7 @@
 #include "GeneralFixture.h"
 
 #include <Arca/Shard.h>
-#include <Arca/LocalRelic.h>
+#include <Arca/OpenRelic.h>
 
 #include "BasicShard.h"
 

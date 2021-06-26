@@ -85,7 +85,6 @@ namespace Arca
         struct RelicPrototype
         {
             RelicID id;
-            Openness openness;
         };
     public:
         using RelicMetadataList = std::vector<RelicMetadata>;
@@ -97,7 +96,6 @@ namespace Arca
         RelicMetadata* SetupNewMetadata(RelicID id);
         RelicMetadata* SetupNewMetadata(
             RelicID id,
-            Openness openness,
             Locality locality,
             bool shouldSerializeBinary,
             bool shouldSerializeJson,
@@ -115,9 +113,6 @@ namespace Arca
 
         [[nodiscard]] RelicID NextID() const;
         RelicID AdvanceID();
-
-        [[nodiscard]] bool CanModifyShards(RelicID id) const;
-        void ShardModificationRequired(RelicID id) const;
 
         void ThrowIfCannotParent(const Handle& parent, RelicPrototype child);
         void Parent(const Handle& parent, const Handle& child);

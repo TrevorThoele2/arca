@@ -4,7 +4,7 @@ using namespace std::string_literals;
 #include "RelicParentingTests.h"
 #include "SignalListener.h"
 
-#include <Arca/LocalRelic.h>
+#include <Arca/OpenRelic.h>
 #include <Arca/RelicParented.h>
 
 RelicParentingTestsFixture::GlobalRelic::GlobalRelic(RelicInit init)

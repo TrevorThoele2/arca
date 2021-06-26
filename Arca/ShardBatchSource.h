@@ -28,6 +28,7 @@ namespace Arca
         virtual bool DestroyFromBase(RelicID id) = 0;
 
         [[nodiscard]] virtual bool ContainsFromBase(RelicID id) const = 0;
+        [[nodiscard]] virtual bool IsRequired(RelicID id) const = 0;
 
         [[nodiscard]] virtual SizeT Size() const = 0;
 
@@ -40,7 +41,11 @@ namespace Arca
     public:
         using ShardT = T;
     private:
-        using StoredT = std::decay_t<ShardT>;
+        struct StoredT
+        {
+            bool required;
+            std::decay_t<ShardT> shard;
+        };
 
         using Map = std::unordered_map<RelicID, StoredT>;
     public:
@@ -55,7 +60,7 @@ namespace Arca
         BatchSource& operator=(BatchSource&& arg) noexcept = default;
 
         template<class... ConstructorArgs>
-        ShardT* Add(RelicID id, ConstructorArgs&& ... constructorArgs);
+        ShardT* Add(RelicID id, bool required, ConstructorArgs&& ... constructorArgs);
 
         iterator Destroy(RelicID destroy);
         iterator Destroy(iterator destroy);
@@ -69,6 +74,7 @@ namespace Arca
         [[nodiscard]] const ShardT* Find(RelicID id) const;
 
         [[nodiscard]] bool ContainsFromBase(RelicID id) const override;
+        [[nodiscard]] bool IsRequired(RelicID id) const override;
 
         [[nodiscard]] SizeT Size() const override;
         [[nodiscard]] bool IsEmpty() const;

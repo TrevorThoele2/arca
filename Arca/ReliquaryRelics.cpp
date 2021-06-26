@@ -104,7 +104,6 @@ namespace Arca
 
     RelicMetadata* ReliquaryRelics::SetupNewMetadata(
         RelicID id,
-        Openness openness,
         Locality locality,
         bool shouldSerializeBinary,
         bool shouldSerializeJson,
@@ -112,7 +111,6 @@ namespace Arca
     {
         metadataList.emplace_back(
             id,
-            openness,
             locality,
             std::move(type),
             nullptr,
@@ -157,7 +155,7 @@ namespace Arca
     void ReliquaryRelics::SatisfyStructure(RelicID id, const RelicStructure& structure)
     {
         for (auto& entry : structure)
-            Shards().Create(entry, id);
+            Shards().Create(entry, id, true);
     }
 
     bool ReliquaryRelics::WillDestroy(RelicMetadata* metadata) const
@@ -216,18 +214,6 @@ namespace Arca
         const auto returnValue = nextRelicID;
         ++nextRelicID;
         return returnValue;
-    }
-
-    bool ReliquaryRelics::CanModifyShards(RelicID id) const
-    {
-        const auto metadata = MetadataFor(id);
-        return metadata && metadata->openness == Openness::Open;
-    }
-
-    void ReliquaryRelics::ShardModificationRequired(RelicID id) const
-    {
-        if (!CanModifyShards(id))
-            throw CannotModify(id);
     }
 
     void ReliquaryRelics::ThrowIfCannotParent(const Handle& parent, RelicPrototype child)

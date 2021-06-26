@@ -8,50 +8,38 @@ namespace Arca
     template<class ShardT, class... ConstructorArgs>
     Index<ShardT> ReliquaryShards::Create(RelicID id, ConstructorArgs&& ... constructorArgs)
     {
-        Relics().ShardModificationRequired(id);
-
-        return CreateCommon<ShardT>(id, std::forward<ConstructorArgs>(constructorArgs)...);
+        return CreateCommon<ShardT>(id, false, std::forward<ConstructorArgs>(constructorArgs)...);
     }
 
     template<class ShardT, class... ConstructorArgs>
     Index<ShardT> ReliquaryShards::CreateFromInternal(RelicID id, ConstructorArgs&& ... constructorArgs)
     {
-        return CreateCommon<ShardT>(id, std::forward<ConstructorArgs>(constructorArgs)...);
+        return CreateCommon<ShardT>(id, true, std::forward<ConstructorArgs>(constructorArgs)...);
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     void ReliquaryShards::Destroy(RelicID id)
     {
-        auto batchSource = FindBatchSource<ShardT>();
-        if (batchSource != nullptr)
+        auto handler = FindHandler<ShardT>();
+        if (handler)
         {
-            if (batchSource->ContainsFromBase(id))
-            {
-                Owner().Raise(DestroyingKnown<ShardT>{CreateIndex<ShardT>(id)});
-                Owner().Raise(Destroying{ HandleFrom(id, batchSource->Type(), HandleObjectType::Shard) });
+            if (handler->IsRequired(id))
+                throw CannotDestroy(TypeFor<ShardT>());
 
-                batchSource->DestroyFromBase(id);
-            }
+            handler->RequiredDestroy(id, Owner());
         }
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     void ReliquaryShards::TransactionalDestroy(RelicID id)
     {
-        auto batchSource = FindBatchSource<ShardT>();
-        if (batchSource != nullptr)
+        auto handler = FindHandler<ShardT>();
+        if (handler)
         {
-            auto matrixTransaction = Owner().matrices.StartDestroyingTransaction(id);
+            if (handler->IsRequired(id))
+                throw CannotDestroy(TypeFor<ShardT>());
 
-            if (batchSource->ContainsFromBase(id))
-            {
-                matrixTransaction.Finalize(TypeFor<ShardT>());
-
-                Owner().Raise(DestroyingKnown<ShardT>{CreateIndex<ShardT>(id)});
-                Owner().Raise(Destroying{ HandleFrom(id, batchSource->Type(), HandleObjectType::Shard) });
-
-                batchSource->DestroyFromBase(id); 
-            }
+            handler->RequiredTransactionalDestroy(id, Owner(), Owner().matrices);
         }
     }
 
@@ -107,25 +95,26 @@ namespace Arca
     }
 
     template<class ShardT>
-    void ReliquaryShards::Handler<ShardT>::Create(RelicID id, Reliquary& reliquary, bool isConst)
+    void ReliquaryShards::Handler<ShardT>::Create(RelicID id, Reliquary& reliquary, bool isConst, bool required)
     {
-        CreateCommon(id, reliquary, isConst);
+        CreateCommon(id, reliquary, isConst, required);
     }
 
     template<class ShardT>
     template<class... ConstructorArgs>
-    void ReliquaryShards::Handler<ShardT>::CreateCommon(RelicID id, Reliquary& reliquary, bool isConst, ConstructorArgs&& ... constructorArgs)
+    void ReliquaryShards::Handler<ShardT>::CreateCommon(
+        RelicID id, Reliquary& reliquary, bool isConst, bool required, ConstructorArgs&& ... constructorArgs)
     {
         auto matrixTransaction = reliquary.matrices.StartCreationTransaction(id);
 
         if (isConst)
             reliquary.shards
             .FindBatchSource<const ShardT>()
-            ->Add(id, std::forward<ConstructorArgs>(constructorArgs)...);
+            ->Add(id, required, std::forward<ConstructorArgs>(constructorArgs)...);
         else
             reliquary.shards
             .FindBatchSource<ShardT>()
-            ->Add(id, std::forward<ConstructorArgs>(constructorArgs)...);
+            ->Add(id, required, std::forward<ConstructorArgs>(constructorArgs)...);
 
         matrixTransaction.Finalize();
         reliquary.shards.SignalCreation(reliquary.shards.CreateIndex<ShardT>(id));
@@ -134,8 +123,15 @@ namespace Arca
     template<class ShardT>
     void ReliquaryShards::Handler<ShardT>::RequiredDestroy(RelicID id, Reliquary& reliquary)
     {
-        reliquary.shards.Destroy<ShardT>(id);
-        reliquary.shards.Destroy<const ShardT>(id);
+        DestroyCommon(id, reliquary, batchSource);
+        DestroyCommon(id, reliquary, constBatchSource);
+    }
+
+    template<class ShardT>
+    void ReliquaryShards::Handler<ShardT>::RequiredTransactionalDestroy(RelicID id, Reliquary& reliquary, ReliquaryMatrices& matrices)
+    {
+        TransactionalDestroyCommon(id, reliquary, matrices, batchSource);
+        TransactionalDestroyCommon(id, reliquary, matrices, constBatchSource);
     }
 
     template<class ShardT>
@@ -159,6 +155,12 @@ namespace Arca
     bool ReliquaryShards::Handler<ShardT>::Contains(RelicID id) const
     {
         return batchSource.ContainsFromBase(id) || constBatchSource.ContainsFromBase(id);
+    }
+
+    template<class ShardT>
+    bool ReliquaryShards::Handler<ShardT>::IsRequired(RelicID id) const
+    {
+        return batchSource.IsRequired(id) || constBatchSource.IsRequired(id);
     }
 
     template<class ShardT>
@@ -190,15 +192,50 @@ namespace Arca
     }
 
     template<class ShardT>
-    std::vector<::Inscription::Type> ReliquaryShards::Handler<ShardT>::InscriptionTypes(Inscription::Archive::Binary& archive) const
+    std::vector<Inscription::Type> ReliquaryShards::Handler<ShardT>::InscriptionTypes(Inscription::Archive::Binary& archive) const
     {
         return Inscription::InputTypesFor<std::remove_const_t<ShardT>>(archive);
     }
 
     template<class ShardT>
-    std::vector<::Inscription::Type> ReliquaryShards::Handler<ShardT>::InscriptionTypes(Inscription::Archive::Json& archive) const
+    std::vector<Inscription::Type> ReliquaryShards::Handler<ShardT>::InscriptionTypes(Inscription::Archive::Json& archive) const
     {
         return Inscription::InputTypesFor<std::remove_const_t<ShardT>>(archive);
+    }
+
+    template<class ShardT>
+    template<class BatchSourceT>
+    void ReliquaryShards::Handler<ShardT>::DestroyCommon(RelicID id, Reliquary& reliquary, BatchSourceT& batchSource)
+    {
+        using RealShardT = typename BatchSourceT::ShardT;
+
+        if (batchSource.ContainsFromBase(id))
+        {
+            reliquary.Raise(DestroyingKnown<RealShardT>{ToIndex<RealShardT>(id, &reliquary)});
+            reliquary.Raise(Destroying{ Handle{ id, &reliquary, std::move(batchSource.Type()), HandleObjectType::Shard } });
+
+            batchSource.DestroyFromBase(id);
+        }
+    }
+
+    template<class ShardT>
+    template<class BatchSourceT>
+    void ReliquaryShards::Handler<ShardT>::TransactionalDestroyCommon(
+        RelicID id, Reliquary& reliquary, ReliquaryMatrices& matrices, BatchSourceT& batchSource)
+    {
+        using RealShardT = typename BatchSourceT::ShardT;
+
+        auto matrixTransaction = matrices.StartDestroyingTransaction(id);
+
+        if (batchSource.ContainsFromBase(id))
+        {
+            matrixTransaction.Finalize(TypeFor<RealShardT>());
+
+            reliquary.Raise(DestroyingKnown<RealShardT>{ToIndex<RealShardT>(id, &reliquary)});
+            reliquary.Raise(Destroying{ Handle{ id, &reliquary, std::move(batchSource.Type()), HandleObjectType::Shard } });
+
+            batchSource.DestroyFromBase(id);
+        }
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
@@ -250,7 +287,7 @@ namespace Arca
     }
 
     template<class ShardT, class... ConstructorArgs>
-    Index<ShardT> ReliquaryShards::CreateCommon(RelicID id, ConstructorArgs&& ... constructorArgs)
+    Index<ShardT> ReliquaryShards::CreateCommon(RelicID id, bool required, ConstructorArgs&& ... constructorArgs)
     {
         const auto type = TypeFor<ShardT>();
         if (Contains(Handle(id, Owner(), { type.name, true }, HandleObjectType::Shard)) ||
@@ -260,11 +297,11 @@ namespace Arca
         auto handler = FindHandler<ShardT>();
         if (!handler)
             throw NotRegistered(type, typeid(ShardT));
-        handler->CreateCommon(id, Owner(), std::is_const_v<ShardT>, std::forward<ConstructorArgs>(constructorArgs)...);
+        handler->CreateCommon(id, Owner(), std::is_const_v<ShardT>, required, std::forward<ConstructorArgs>(constructorArgs)...);
 
         return CreateIndex<ShardT>(id);
     }
-
+    
     template<class T>
     auto ReliquaryShards::CreateIndex(RelicID id) const
     {
