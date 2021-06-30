@@ -124,6 +124,11 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
                 REQUIRE(reliquary->Contains<OpenRelic>(openRelic.ID()));
             }
 
+            THEN("relic type has size one")
+            {
+                REQUIRE(reliquary->RelicSize(TypeFor<OpenRelic>().name) == 1);
+            }
+
             WHEN("finding open relic")
             {
                 auto found = Arca::Index<OpenRelic>(openRelic.ID(), *reliquary);
@@ -155,6 +160,11 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
                     REQUIRE(Arca::Index<Shard>(openRelic.ID(), *reliquary));
                     REQUIRE(Arca::Index<Either<Shard>>(openRelic.ID(), *reliquary));
                     REQUIRE(reliquary->Contains<Shard>(openRelic.ID()));
+                }
+
+                THEN("shard type has size one")
+                {
+                    REQUIRE(reliquary->ShardSize(TypeFor<Shard>()) == preCreateShardSize + 1);
                 }
 
                 WHEN("destroying shard")

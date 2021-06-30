@@ -102,6 +102,12 @@ namespace Arca
         return returnValue;
     }
 
+    size_t ReliquaryRelics::Size(const TypeName& typeName) const
+    {
+        auto handler = FindLocalHandler(typeName);
+        return handler ? handler->BatchSource().Size() : 0;
+    }
+
     RelicMetadata* ReliquaryRelics::SetupNewMetadata(
         RelicID id,
         Locality locality,

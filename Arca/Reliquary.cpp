@@ -46,6 +46,11 @@ namespace Arca
         return relics.metadataList.size();
     }
 
+    Reliquary::SizeT Reliquary::RelicSize(const TypeName& typeName) const
+    {
+        return relics.Size(typeName);
+    }
+
     bool Reliquary::IsShardTypeName(const TypeName& typeName) const
     {
         return shards.IsShardTypeName(typeName);
@@ -64,6 +69,11 @@ namespace Arca
         for (auto& loop : shards.handlers)
             totalSize += loop->ConstBatchSource().Size();
         return totalSize;
+    }
+
+    Reliquary::SizeT Reliquary::ShardSize(const Type& type) const
+    {
+        return shards.Size(type);
     }
 
     std::optional<HandleObjectType> Reliquary::ObjectHandleTypeFor(const TypeName& typeName) const

@@ -79,6 +79,8 @@ namespace Arca
         [[nodiscard]] bool IsRelicTypeName(const TypeName& typeName) const;
         [[nodiscard]] std::vector<TypeName> AllTypeNames() const;
 
+        [[nodiscard]] size_t Size(const TypeName& typeName) const;
+
         template<class RelicT>
         void SignalCreation(const Index<RelicT>& index);
     public:

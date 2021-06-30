@@ -73,6 +73,14 @@ namespace Arca
         return returnValue;
     }
 
+    size_t ReliquaryShards::Size(const Type& type) const
+    {
+        auto handler = FindHandler(type.name);
+        return handler
+            ? !type.isConst ? handler->BatchSource().Size() : handler->ConstBatchSource().Size()
+            : 0;
+    }
+
     bool ReliquaryShards::Contains(const Handle& handle) const
     {
         assert(handle.ObjectType() == HandleObjectType::Shard);
