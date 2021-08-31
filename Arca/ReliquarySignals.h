@@ -1,7 +1,5 @@
 #pragma once
 
-#include "ReliquaryComponent.h"
-
 #include <functional>
 
 #include "IsSignal.h"
@@ -11,7 +9,7 @@
 
 namespace Arca
 {
-    class ReliquarySignals : public ReliquaryComponent
+    class ReliquarySignals
     {
     public:
         template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
@@ -51,6 +49,8 @@ namespace Arca
     private:
         template<class SignalT>
         void ExecuteOnCommon(const std::function<void(const SignalT&)>& function);
+    private:
+        Reliquary* owner;
     private:
         explicit ReliquarySignals(Reliquary& owner);
         ReliquarySignals(ReliquarySignals&& arg) noexcept = default;

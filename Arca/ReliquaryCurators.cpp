@@ -1,12 +1,14 @@
 #include "ReliquaryCurators.h"
 
+#include "ReliquaryException.h"
+
 namespace Arca
 {
     Curator& ReliquaryCurators::Find(const TypeName& type)
     {
         const auto found = FindHandler(type);
         if (found == nullptr)
-            throw this->NotRegistered(Type{ type });
+            throw NotRegistered(objectTypeName, Type{ type });
 
         return found->Value();
     }
@@ -46,6 +48,6 @@ namespace Arca
         return FindHandler(type) != nullptr;
     }
 
-    ReliquaryCurators::ReliquaryCurators(Reliquary& owner) : ReliquaryComponent(owner, "curator")
+    ReliquaryCurators::ReliquaryCurators(Reliquary& owner) : owner(&owner)
     {}
 }

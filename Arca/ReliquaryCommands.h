@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ReliquaryComponent.h"
 #include "CommandHandler.h"
 #include "CommandResult.h"
 #include "IsCommand.h"
@@ -9,7 +8,9 @@
 
 namespace Arca
 {
-    class ReliquaryCommands : public ReliquaryComponent
+    class ReliquaryCurators;
+
+    class ReliquaryCommands
     {
     public:
         template<
@@ -59,7 +60,12 @@ namespace Arca
         using HandlerMap = std::unordered_map<TypeName, HandlerPtr>;
         HandlerMap handlerMap;
     private:
-        explicit ReliquaryCommands(Reliquary& owner);
+        Reliquary* owner;
+        ReliquaryCurators* curators;
+
+        const std::string objectTypeName = "command";
+    private:
+        explicit ReliquaryCommands(Reliquary& owner, ReliquaryCurators& curators);
         ReliquaryCommands(ReliquaryCommands&& arg) noexcept = default;
         friend Reliquary;
     };

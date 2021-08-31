@@ -2,6 +2,7 @@
 
 #include "ReliquaryShards.h"
 #include "Reliquary.h"
+#include "ReliquaryException.h"
 
 namespace Arca
 {
@@ -24,9 +25,9 @@ namespace Arca
         if (handler)
         {
             if (handler->IsRequired(id))
-                throw CannotDestroy(TypeFor<ShardT>());
+                throw CannotDestroy(objectTypeName, TypeFor<ShardT>());
 
-            handler->RequiredDestroy(id, Owner());
+            handler->RequiredDestroy(id, *owner);
         }
     }
 
@@ -37,9 +38,9 @@ namespace Arca
         if (handler)
         {
             if (handler->IsRequired(id))
-                throw CannotDestroy(TypeFor<ShardT>());
+                throw CannotDestroy(objectTypeName, TypeFor<ShardT>());
 
-            handler->RequiredTransactionalDestroy(id, Owner(), Owner().matrices);
+            handler->RequiredTransactionalDestroy(id, *owner, owner->matrices);
         }
     }
 
@@ -72,8 +73,8 @@ namespace Arca
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     void ReliquaryShards::SignalCreation(const Index<ShardT>& index)
     {
-        Owner().Raise(Created{ HandleFrom(index.ID(), TypeFor<ShardT>(), HandleObjectType::Shard) });
-        Owner().Raise(CreatedKnown<ShardT>{index});
+        owner->Raise(Created{ Handle{ index.ID(), const_cast<Reliquary&>(*owner), TypeFor<ShardT>(), HandleObjectType::Shard } });
+        owner->Raise(CreatedKnown<ShardT>{index});
     }
 
     template<class ShardT>
@@ -241,7 +242,7 @@ namespace Arca
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     void ReliquaryShards::CreateHandler()
     {
-        handlers.push_back(std::make_unique<Handler<ShardT>>(Owner()));
+        handlers.push_back(std::make_unique<Handler<ShardT>>(*owner));
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
@@ -266,7 +267,7 @@ namespace Arca
         if (!found)
         {
             const auto type = TypeFor<ObjectT>();
-            throw NotRegistered(type, typeid(ObjectT));
+            throw NotRegistered(objectTypeName, type, typeid(ObjectT));
         }
 
         return *found;
@@ -283,14 +284,14 @@ namespace Arca
     Index<ShardT> ReliquaryShards::CreateCommon(RelicID id, bool required, ConstructorArgs&& ... constructorArgs)
     {
         const auto type = TypeFor<ShardT>();
-        if (Contains(Handle(id, Owner(), { type.name, true }, HandleObjectType::Shard)) ||
-            Contains(Handle(id, Owner(), { type.name, false }, HandleObjectType::Shard)))
-            throw CannotCreate(type);
+        if (Contains(Handle(id, *owner, { type.name, true }, HandleObjectType::Shard)) ||
+            Contains(Handle(id, *owner, { type.name, false }, HandleObjectType::Shard)))
+            throw CannotCreate(objectTypeName, type);
 
         auto handler = FindHandler<ShardT>();
         if (!handler)
-            throw NotRegistered(type, typeid(ShardT));
-        handler->CreateCommon(id, Owner(), std::is_const_v<ShardT>, required, std::forward<ConstructorArgs>(constructorArgs)...);
+            throw NotRegistered(objectTypeName, type, typeid(ShardT));
+        handler->CreateCommon(id, *owner, std::is_const_v<ShardT>, required, std::forward<ConstructorArgs>(constructorArgs)...);
 
         return CreateIndex<ShardT>(id);
     }
@@ -298,6 +299,6 @@ namespace Arca
     template<class T>
     auto ReliquaryShards::CreateIndex(RelicID id) const
     {
-        return ToIndex<T>(id, &const_cast<Reliquary&>(Owner()));
+        return ToIndex<T>(id, &const_cast<Reliquary&>(*owner));
     }
 }

@@ -27,7 +27,7 @@ namespace Arca
     void ReliquarySignals::On(const std::function<void(const SignalT&)>& function)
     {
         ExecuteOnCommon<SignalT>(function);
-        Owner().matrices
+        owner->matrices
             .EnsureInteraction<typename MatrixTypeForSignal<SignalT>::Type>(&KnownMatrix::InteractWithSignals);
     }
 

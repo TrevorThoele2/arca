@@ -26,7 +26,7 @@ namespace Arca
     void ReliquaryCommands::Do(const CommandT& command)
     {
         auto& handler = RequiredHandler<CommandT>();
-        handler.Handle(command, Curators());
+        handler.Handle(command, *curators);
     }
 
     template<
@@ -37,7 +37,7 @@ namespace Arca
             && is_self_contained_v<CommandT>, int>>
     void ReliquaryCommands::Do(const CommandT& command)
     {
-        command.Do(Owner());
+        command.Do(*owner);
     }
 
     template<
@@ -49,7 +49,7 @@ namespace Arca
     command_result_t<CommandT> ReliquaryCommands::Do(const CommandT& command)
     {
         auto& handler = RequiredHandler<CommandT>();
-        return handler.Handle(command, Curators());
+        return handler.Handle(command, *curators);
     }
 
     template<
@@ -60,7 +60,7 @@ namespace Arca
             && is_self_contained_v<CommandT>, int>>
         command_result_t<CommandT> ReliquaryCommands::Do(const CommandT& command)
     {
-        return command.Do(Owner());
+        return command.Do(*owner);
     }
 
     template<class CuratorT, class CommandT, std::enable_if_t<is_curator_v<CuratorT> && is_command_v<CommandT>, int>>
@@ -83,7 +83,7 @@ namespace Arca
         const auto type = TypeFor<T>();
         auto found = handlerMap.find(type.name);
         if (found == handlerMap.end())
-            throw NotRegistered(type, typeid(T));
+            throw NotRegistered(objectTypeName, type, typeid(T));
 
         return *static_cast<HandlerT<T>*>(found->second.get());
     }

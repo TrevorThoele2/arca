@@ -38,23 +38,23 @@ namespace Arca
     {
         std::vector<KnownMatrix*> knownMatrices;
         for (auto& matrix : knownList)
-            if (!matrix.value.Exists(id, Owner()))
+            if (!matrix.value.Exists(id, *owner))
                 knownMatrices.push_back(&matrix.value);
-        return CreationTransaction(std::move(knownMatrices), id, Owner());
+        return CreationTransaction(std::move(knownMatrices), id, *owner);
     }
 
     auto ReliquaryMatrices::StartDestroyingTransaction(RelicID id) -> DestroyingTransaction
     {
         std::vector<KnownMatrix*> knownMatrices;
         for (auto& matrix : knownList)
-            if (matrix.value.Exists(id, Owner()))
+            if (matrix.value.Exists(id, *owner))
                 knownMatrices.push_back(&matrix.value);
-        return DestroyingTransaction(std::move(knownMatrices), id, Owner());
+        return DestroyingTransaction(std::move(knownMatrices), id, *owner);
     }
 
     ReliquaryMatrices::BatchSources::BatchSources(ReliquaryMatrices& owner) : owner(&owner)
     {}
 
-    ReliquaryMatrices::ReliquaryMatrices(Reliquary& owner) : ReliquaryComponent(owner, "matrix")
+    ReliquaryMatrices::ReliquaryMatrices(Reliquary& owner) : owner(&owner)
     {}
 }

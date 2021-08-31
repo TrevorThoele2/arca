@@ -1,22 +1,23 @@
 #pragma once
 
-#include "ReliquaryComponent.h"
-
 #include "ShardBatch.h"
 
 #include "IsShard.h"
 
 #include "Index.h"
+#include "Handle.h"
 
 #include "RelicID.h"
 #include "Type.h"
 #include <Chroma/VariadicTemplate.h>
+#include "KnownPolymorphicSerializer.h"
 
 namespace Arca
 {
     class Reliquary;
+    class ReliquaryMatrices;
 
-    class ReliquaryShards : public ReliquaryComponent
+    class ReliquaryShards
     {
     public:
         void Create(const Type& type, RelicID id, bool required);
@@ -166,6 +167,10 @@ namespace Arca
                 return shards.Contains<T>(id);
             }
         };
+    private:
+        Reliquary* owner;
+
+        const std::string objectTypeName = "shard";
     private:
         explicit ReliquaryShards(Reliquary& owner);
         ReliquaryShards(ReliquaryShards&& arg) noexcept = default;

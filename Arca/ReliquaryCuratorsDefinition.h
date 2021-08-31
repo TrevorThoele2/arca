@@ -2,6 +2,7 @@
 
 #include "ReliquaryCurators.h"
 #include "Reliquary.h"
+#include "ReliquaryException.h"
 
 namespace Arca
 {
@@ -24,7 +25,7 @@ namespace Arca
         if (found != nullptr)
             return found->curator;
 
-        throw this->NotRegistered(TypeFor<CuratorT>(), typeid(CuratorT));
+        throw NotRegistered(objectTypeName, TypeFor<CuratorT>(), typeid(CuratorT));
     }
 
     template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int>>
@@ -84,7 +85,7 @@ namespace Arca
     template<class CuratorT, class... Args, std::enable_if_t<is_curator_v<CuratorT>, int>>
     void ReliquaryCurators::CreateHandler(Args&& ... args)
     {
-        handlers.push_back(std::make_unique<Handler<CuratorT>>(Owner(), std::forward<Args>(args)...));
+        handlers.push_back(std::make_unique<Handler<CuratorT>>(*owner, std::forward<Args>(args)...));
     }
 
     template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int>>

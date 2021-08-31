@@ -3,6 +3,7 @@
 #include <cassert>
 
 #include "Reliquary.h"
+#include "ReliquaryException.h"
 
 #include "Destroying.h"
 
@@ -12,15 +13,15 @@ namespace Arca
     {
         const auto handler = FindLocalHandler(typeName);
         if (handler == nullptr)
-            throw NotRegistered(Type(typeName));
+            throw NotRegistered(objectTypeName, Type(typeName));
 
-        handler->Destroy(id, Owner());
+        handler->Destroy(id, *owner);
     }
 
     void ReliquaryRelics::Clear()
     {
         for (auto& loop : localHandlers)
-            loop->Clear(Owner());
+            loop->Clear(*owner);
 
         for (auto loop = metadataList.begin(); loop != metadataList.end();)
         {
@@ -36,7 +37,7 @@ namespace Arca
     void ReliquaryRelics::Clear(const TypeName& typeName)
     {
         auto& batchSource = RequiredBatchSource(typeName);
-        batchSource.DestroyAllFromBase(Owner());
+        batchSource.DestroyAllFromBase(*owner);
     }
 
     bool ReliquaryRelics::Contains(RelicID id) const
@@ -56,7 +57,7 @@ namespace Arca
 
         return Handle(
             metadata->parent->ID(),
-            const_cast<Reliquary&>(Owner()),
+            const_cast<Reliquary&>(*owner),
             metadata->parent->Type(),
             HandleObjectType::Relic);
     }
@@ -75,7 +76,7 @@ namespace Arca
 
             returnValue.emplace_back(
                 metadata.id,
-                const_cast<Reliquary&>(Owner()),
+                const_cast<Reliquary&>(*owner),
                 metadata.type,
                 HandleObjectType::Relic);
         }
@@ -161,7 +162,7 @@ namespace Arca
     void ReliquaryRelics::SatisfyStructure(RelicID id, const RelicStructure& structure)
     {
         for (auto& entry : structure)
-            Shards().Create(entry, id, true);
+            shards->Create(entry, id, true);
     }
 
     bool ReliquaryRelics::WillDestroy(RelicMetadata* metadata) const
@@ -171,14 +172,14 @@ namespace Arca
 
     void ReliquaryRelics::Destroy(RelicMetadata& metadata)
     {
-        Owner().Raise(Destroying{ HandleFrom(metadata) });
+        owner->Raise(Destroying{ Handle{ metadata.id, const_cast<Reliquary&>(*owner), metadata.type, HandleObjectType::Relic } });
 
         while(!metadata.children.empty())
             Destroy(*MetadataFor(metadata.children[0].ID()));
 
         const auto id = metadata.id;
 
-        Shards().Clear(id);
+        shards->Clear(id);
 
         if (metadata.parent)
         {
@@ -233,7 +234,7 @@ namespace Arca
     {
         auto& parentMetadata = ValidateParentForParenting(parent);
 
-        assert(child.Owner() == &Owner());
+        assert(child.Owner() == owner);
 
         const auto childMetadata = MetadataFor(child.ID());
         assert(childMetadata != nullptr);
@@ -282,7 +283,7 @@ namespace Arca
     {
         const auto found = FindBatchSource(typeName);
         if (!found)
-            throw NotRegistered(Type(typeName));
+            throw NotRegistered(objectTypeName, Type(typeName));
 
         return *found;
     }
@@ -317,13 +318,13 @@ namespace Arca
 
     RelicMetadata& ReliquaryRelics::ValidateParentForParenting(const Handle& parent)
     {
-        if (parent.Owner() != &Owner())
+        if (parent.Owner() != owner)
             throw CannotParentRelic(
                 "Cannot parent a relic to a relic in a different Reliquary.");
 
         const auto parentMetadata = MetadataFor(parent.ID());
         if (!parentMetadata)
-            throw CannotFind(parent.Type());
+            throw CannotFind(objectTypeName, parent.Type());
 
         if (parentMetadata->locality == Locality::Global)
             throw CannotParentRelic(
@@ -332,6 +333,9 @@ namespace Arca
         return *parentMetadata;
     }
 
-    ReliquaryRelics::ReliquaryRelics(Reliquary& owner) : ReliquaryComponent(owner, "relic")
+    ReliquaryRelics::ReliquaryRelics(
+        Reliquary& owner, ReliquaryRelicStructures& relicStructures, ReliquaryShards& shards)
+        :
+        owner(&owner), relicStructures(&relicStructures), shards(&shards)
     {}
 }

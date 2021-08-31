@@ -8,6 +8,7 @@
 #include "HasHandledCommands.h"
 
 #include "Operation.h"
+#include "ReliquaryException.h"
 
 namespace Arca
 {
