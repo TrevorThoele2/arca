@@ -50,13 +50,13 @@ namespace Arca
             });
         if (found != knownList.end())
             return found;
+
         knownList.push_back(
             StoredKnown
             {
                 KnownMatrix(Chroma::TypeIdentity<MatrixT>{}),
                 type
             });
-
         return --knownList.end();
     }
 

@@ -87,10 +87,7 @@ namespace Arca
             [[nodiscard]] MatrixBatchSourceBase* Find(const TypeName& key) const
             {
                 const auto found = map.find(key);
-                if (found == map.end())
-                    return nullptr;
-
-                return found->second.get();
+                return found == map.end() ? nullptr : found->second.get();
             }
 
             template<class ObjectT, std::enable_if_t<is_object_v<ObjectT>, int> = 0>
@@ -98,10 +95,7 @@ namespace Arca
             {
                 const auto key = KeyFor<ObjectT>();
                 auto found = map.find(key);
-                if (found == map.end())
-                    return nullptr;
-
-                return static_cast<BatchSource<ObjectT>*>(found->second.get());
+                return found == map.end() ? nullptr : static_cast<BatchSource<ObjectT>*>(found->second.get());
             }
 
             template<class ObjectT, std::enable_if_t<is_object_v<ObjectT>, int> = 0>

@@ -36,13 +36,13 @@ namespace Arca
     {
         const auto typeName = FullTypeNameFor<SignalT>();
         auto found = listenerMap.find(typeName);
-        if (found == listenerMap.end())
-            return;
-
-        using ListenerListDerivedT = ListenerListDerived<SignalT>;
-        auto listenerList = dynamic_cast<ListenerListDerivedT*>(found->second.get());
-        for (auto& execution : listenerList->value)
-            execution(signal);
+        if (found != listenerMap.end())
+        {
+            using ListenerListDerivedT = ListenerListDerived<SignalT>;
+            auto listenerList = dynamic_cast<ListenerListDerivedT*>(found->second.get());
+            for (auto& execution : listenerList->value)
+                execution(signal);
+        }
     }
 
     template<class SignalT>
