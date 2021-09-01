@@ -13,7 +13,7 @@ namespace Arca
         if (handler == nullptr)
             throw NotRegistered(objectTypeName, Type(type.name));
 
-        if (Contains(Handle(id, *owner, type, HandleObjectType::Shard)))
+        if (Contains(Handle{ id, type }))
             throw CannotCreate(objectTypeName, type);
 
         handler->Create(id, *owner, type.isConst, required);
@@ -84,15 +84,10 @@ namespace Arca
 
     bool ReliquaryShards::Contains(const Handle& handle) const
     {
-        assert(handle.ObjectType() == HandleObjectType::Shard);
+        const auto id = handle.id;
 
-        const auto id = handle.ID();
-
-        const auto shardBatchSource = FindBatchSource(handle.Type());
-        if (shardBatchSource != nullptr)
-            return shardBatchSource->ContainsFromBase(id);
-
-        return false;
+        const auto shardBatchSource = FindBatchSource(handle.type);
+        return shardBatchSource != nullptr ? shardBatchSource->ContainsFromBase(id) : false;
     }
 
     ReliquaryShards::HandlerBase::~HandlerBase() = default;

@@ -105,7 +105,7 @@ namespace Arca
 
         const auto id = AdvanceID();
         SetupNewMetadata<RelicT>(id);
-        Parent(parent, Handle(id, *owner, TypeFor<RelicT>(), HandleObjectType::Relic));
+        Parent(parent, Handle{ id, TypeFor<RelicT>() });
         auto index = FinishNewRelic<RelicT>({}, id, std::forward<ConstructorArgs>(constructorArgs)...);
         owner->Raise(RelicParented{ parent, AsHandle(index) });
         return index;
@@ -122,7 +122,7 @@ namespace Arca
 
         const auto id = AdvanceID();
         SetupNewMetadata<RelicT>(id);
-        Parent(parent, Handle(id, *owner, TypeFor<RelicT>(), HandleObjectType::Relic));
+        Parent(parent, Handle{ id, TypeFor<RelicT>() });
         auto index = FinishNewRelic<RelicT>(structure, id, std::forward<ConstructorArgs>(constructorArgs)...);
         owner->Raise(RelicParented{ parent, AsHandle(index) });
         return index;
@@ -139,7 +139,7 @@ namespace Arca
 
         const auto id = AdvanceID();
         SetupNewMetadata<RelicT>(id);
-        Parent(parent, Handle(id, *owner, TypeFor<RelicT>(), HandleObjectType::Relic));
+        Parent(parent, Handle(id, TypeFor<RelicT>()));
         auto structure = relicStructures->RequiredRelicStructure(structureName);
         auto index = FinishNewRelic<RelicT>(structure, id, std::forward<ConstructorArgs>(constructorArgs)...);
         owner->Raise(RelicParented{ parent, AsHandle(index) });
@@ -160,7 +160,7 @@ namespace Arca
             AdvanceID();
 
         SetupNewMetadata<RelicT>(id);
-        Parent(parent, Handle(id, *owner, TypeFor<RelicT>(), HandleObjectType::Relic));
+        Parent(parent, Handle{ id, TypeFor<RelicT>() });
         auto index = FinishNewRelic<RelicT>({}, id, std::forward<ConstructorArgs>(constructorArgs)...);
         owner->Raise(RelicParented{ parent, AsHandle(index) });
         return index;
@@ -180,7 +180,7 @@ namespace Arca
             AdvanceID();
 
         SetupNewMetadata<RelicT>(id);
-        Parent(parent, Handle(id, *owner, TypeFor<RelicT>(), HandleObjectType::Relic));
+        Parent(parent, Handle{ id, TypeFor<RelicT>() });
         auto index = FinishNewRelic<RelicT>(structure, id, std::forward<ConstructorArgs>(constructorArgs)...);
         owner->Raise(RelicParented{parent, AsHandle(index)});
         return index;
@@ -200,7 +200,7 @@ namespace Arca
             AdvanceID();
 
         SetupNewMetadata<RelicT>(id);
-        Parent(parent, Handle(id, *owner, TypeFor<RelicT>(), HandleObjectType::Relic));
+        Parent(parent, Handle(id, TypeFor<RelicT>()));
         auto structure = relicStructures->RequiredRelicStructure(structureName);
         auto index = FinishNewRelic<RelicT>(structure, id, std::forward<ConstructorArgs>(constructorArgs)...);
         owner->Raise(RelicParented{ parent, AsHandle(*index) });
@@ -265,7 +265,7 @@ namespace Arca
     template<class RelicT>
     void ReliquaryRelics::SignalCreation(const Index<RelicT>& index)
     {
-        owner->Raise(Created{ Handle{ index.ID(), const_cast<Reliquary&>(*owner), TypeFor<RelicT>(), HandleObjectType::Relic } });
+        owner->Raise(Created{ Handle{ index.ID(), TypeFor<RelicT>() }});
         owner->Raise(CreatedKnown<RelicT>{index});
     }
 
@@ -312,10 +312,7 @@ namespace Arca
     {
         const auto typeName = TypeFor<ObjectT>().name;
         auto batchSource = FindBatchSource(typeName);
-        if (batchSource == nullptr)
-            return nullptr;
-
-        return static_cast<BatchSource<ObjectT>*>(batchSource);
+        return batchSource == nullptr ? nullptr : static_cast<BatchSource<ObjectT>*>(batchSource);
     }
 
     template<class ObjectT, std::enable_if_t<is_relic_v<ObjectT>, int>>
@@ -393,15 +390,15 @@ namespace Arca
     }
 
     template<class RelicT>
-    std::vector<::Inscription::Type> ReliquaryRelics::LocalHandler<RelicT>::InscriptionTypes(Inscription::Archive::Binary& archive) const
+    std::vector<Inscription::Type> ReliquaryRelics::LocalHandler<RelicT>::InscriptionTypes(Inscription::Archive::Binary& archive) const
     {
-        return ::Inscription::InputTypesFor<RelicT>(archive);
+        return Inscription::InputTypesFor<RelicT>(archive);
     }
 
     template<class RelicT>
-    std::vector<::Inscription::Type> ReliquaryRelics::LocalHandler<RelicT>::InscriptionTypes(Inscription::Archive::Json& archive) const
+    std::vector<Inscription::Type> ReliquaryRelics::LocalHandler<RelicT>::InscriptionTypes(Inscription::Archive::Json& archive) const
     {
-        return ::Inscription::InputTypesFor<RelicT>(archive);
+        return Inscription::InputTypesFor<RelicT>(archive);
     }
 
     template<class RelicT>
@@ -440,15 +437,15 @@ namespace Arca
     }
 
     template<class RelicT>
-    std::vector<::Inscription::Type> ReliquaryRelics::GlobalHandler<RelicT>::InscriptionTypes(Inscription::Archive::Binary& archive) const
+    std::vector<Inscription::Type> ReliquaryRelics::GlobalHandler<RelicT>::InscriptionTypes(Inscription::Archive::Binary& archive) const
     {
-        return ::Inscription::InputTypesFor<RelicT>(archive);
+        return Inscription::InputTypesFor<RelicT>(archive);
     }
 
     template<class RelicT>
-    std::vector<::Inscription::Type> ReliquaryRelics::GlobalHandler<RelicT>::InscriptionTypes(Inscription::Archive::Json& archive) const
+    std::vector<Inscription::Type> ReliquaryRelics::GlobalHandler<RelicT>::InscriptionTypes(Inscription::Archive::Json& archive) const
     {
-        return ::Inscription::InputTypesFor<RelicT>(archive);
+        return Inscription::InputTypesFor<RelicT>(archive);
     }
 
     template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
@@ -481,10 +478,7 @@ namespace Arca
     RelicT* ReliquaryRelics::FindGlobalStorage()
     {
         auto found = FindGlobalHandler<RelicT>();
-        if (found == nullptr)
-            return nullptr;
-
-        return static_cast<RelicT*>(found->storage.get());
+        return found == nullptr ? nullptr : static_cast<RelicT*>(found->storage.get());
     }
 
     template<

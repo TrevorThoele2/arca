@@ -3,8 +3,7 @@
 #include "Index.h"
 #include "UsableForShardIndex.h"
 
-#include "TypeFor.h"
-#include "HandleObjectTypeFor.h"
+#include "Handle.h"
 
 #include "Serialization.h"
 

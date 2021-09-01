@@ -43,9 +43,6 @@
     <ClCompile Include="ReliquaryRelicStructures.cpp">
       <Filter>Source Files\Reliquary\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Handle.cpp">
-      <Filter>Source Files\Handle</Filter>
-    </ClCompile>
     <ClCompile Include="PipelineException.cpp">
       <Filter>Source Files\Pipeline</Filter>
     </ClCompile>
@@ -94,7 +91,7 @@
     <ClCompile Include="CommandHandlerException.cpp">
       <Filter>Source Files\Command</Filter>
     </ClCompile>
-    <ClCompile Include="SlimHandle.cpp">
+    <ClCompile Include="Handle.cpp">
       <Filter>Source Files\Handle</Filter>
     </ClCompile>
   </ItemGroup>
@@ -186,9 +183,6 @@
     <ClInclude Include="ReliquaryRelicStructures.h">
       <Filter>Header Files\Reliquary\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Handle.h">
-      <Filter>Header Files\Handle</Filter>
-    </ClInclude>
     <ClInclude Include="Pipeline.h">
       <Filter>Header Files\Pipeline</Filter>
     </ClInclude>
@@ -227,9 +221,6 @@
     </ClInclude>
     <ClInclude Include="IsCurator.h">
       <Filter>Header Files\Curator</Filter>
-    </ClInclude>
-    <ClInclude Include="HandleObjectTypeFor.h">
-      <Filter>Header Files\Traits</Filter>
     </ClInclude>
     <ClInclude Include="Shard.h">
       <Filter>Header Files\Shard</Filter>
@@ -447,9 +438,6 @@
     <ClInclude Include="HasRelicSerializationConstructor.h">
       <Filter>Header Files\Relic\Traits</Filter>
     </ClInclude>
-    <ClInclude Include="HandleObjectType.h">
-      <Filter>Header Files\Handle</Filter>
-    </ClInclude>
     <ClInclude Include="Operation.h">
       <Filter>Header Files\Operation</Filter>
     </ClInclude>
@@ -516,7 +504,7 @@
     <ClInclude Include="CommandHandlerException.h">
       <Filter>Header Files\Command</Filter>
     </ClInclude>
-    <ClInclude Include="SlimHandle.h">
+    <ClInclude Include="Handle.h">
       <Filter>Header Files\Handle</Filter>
     </ClInclude>
   </ItemGroup>

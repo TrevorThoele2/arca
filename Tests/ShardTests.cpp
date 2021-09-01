@@ -285,7 +285,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
 
             const auto relic = reliquary->Do(Create<OpenRelic>());
             auto shard = reliquary->Do(Create<BasicShard>(relic.ID()));
-            auto shardHandle = AsHandle<BasicShard>(shard.ID(), *shard.Owner());
+            auto shardHandle = AsHandle<BasicShard>(shard.ID());
 
             THEN("generic signal is emitted for relic and shard")
             {
@@ -347,7 +347,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
 
             const auto relic = reliquary->Do(Create<OpenRelic>());
             auto shard = reliquary->Do(Create<const BasicShard>(relic.ID()));
-            auto shardHandle = AsHandle<const BasicShard>(shard.ID(), *shard.Owner());
+            auto shardHandle = AsHandle<const BasicShard>(shard.ID());
 
             THEN("generic signal is emitted for relic and shard")
             {
@@ -420,7 +420,7 @@ SCENARIO_METHOD(ShardTestsFixture, "either signals", "[either][signal]")
         {
             const auto relic = reliquary->Do(Create<OpenRelic>());
             auto shard = reliquary->Do(Create<BasicShard>(relic.ID()));
-            auto shardHandle = AsHandle<BasicShard>(shard.ID(), *shard.Owner());
+            auto shardHandle = AsHandle<BasicShard>(shard.ID());
 
             THEN("signal is emitted for known shard")
             {
@@ -455,7 +455,7 @@ SCENARIO_METHOD(ShardTestsFixture, "either signals", "[either][signal]")
         {
             const auto relic = reliquary->Do(Create<OpenRelic>());
             auto shard = reliquary->Do(Create<const BasicShard>(relic.ID()));
-            auto shardHandle = AsHandle<const BasicShard>(shard.ID(), *shard.Owner());
+            auto shardHandle = AsHandle<const BasicShard>(shard.ID());
 
             THEN("signal is emitted for known shard")
             {

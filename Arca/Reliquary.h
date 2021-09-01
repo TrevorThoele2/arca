@@ -84,8 +84,6 @@ namespace Arca
         [[nodiscard]] SizeT ShardSize() const;
         [[nodiscard]] SizeT ShardSize(const Type& type) const;
     public:
-        [[nodiscard]] std::optional<HandleObjectType> ObjectHandleTypeFor(const TypeName& typeName) const;
-    public:
         template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
 
@@ -157,7 +155,6 @@ namespace Arca
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] ShardT* FindStorage(RelicID id);
     private:
-        Handle HandleFrom(RelicID id, Type type, HandleObjectType objectType);
         Handle HandleFrom(const RelicMetadata& metadata);
     private:
         friend class ReliquaryOrigin;

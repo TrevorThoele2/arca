@@ -183,11 +183,6 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
                     typeName);
                 REQUIRE(found != typeNames.end());
             }
-
-            THEN("is relic object handle type")
-            {
-                REQUIRE(reliquary->ObjectHandleTypeFor(typeName) == HandleObjectType::Relic);
-            }
         }
         
         WHEN("checking typed relic type")
@@ -203,11 +198,6 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
                     typeName);
                 REQUIRE(found != typeNames.end());
             }
-
-            THEN("is relic object handle type")
-            {
-                REQUIRE(reliquary->ObjectHandleTypeFor(typeName) == HandleObjectType::Relic);
-            }
         }
 
         WHEN("checking global relic type")
@@ -222,11 +212,6 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
                     typeNames.end(),
                     typeName);
                 REQUIRE(found != typeNames.end());
-            }
-
-            THEN("is relic object handle type")
-            {
-                REQUIRE(reliquary->ObjectHandleTypeFor(typeName) == HandleObjectType::Relic);
             }
         }
     }
@@ -251,11 +236,6 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
                     typeNames.end(),
                     typeName);
                 REQUIRE(found != typeNames.end());
-            }
-
-            THEN("is shard object handle type")
-            {
-                REQUIRE(reliquary->ObjectHandleTypeFor(typeName) == HandleObjectType::Shard);
             }
         }
     }

@@ -67,7 +67,7 @@ namespace Arca
     template<class T>
     Index<T, std::enable_if_t<usable_for_shard_index_v<T> && !std::is_const_v<T>>>::operator Handle() const
     {
-        return Handle(ID(), *Owner(), TypeFor<T>(), HandleObjectTypeFor<T>());
+        return Handle{ ID(), TypeFor<T>() };
     }
 
     template<class T>
@@ -186,8 +186,7 @@ namespace Arca
         return Handle(
             ID(),
             Owner(),
-            TypeFor<T, std::enable_if_t<std::is_const_v<T>>>(),
-            HandleObjectTypeFor<T, std::enable_if_t<std::is_const_v<T>>>());
+            TypeFor<T, std::enable_if_t<std::is_const_v<T>>>());
     }
 
     template<class T>

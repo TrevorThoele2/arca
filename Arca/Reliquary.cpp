@@ -85,17 +85,7 @@ namespace Arca
     {
         return shards.Size(type);
     }
-
-    std::optional<HandleObjectType> Reliquary::ObjectHandleTypeFor(const TypeName& typeName) const
-    {
-        if (IsRelicTypeName(typeName))
-            return HandleObjectType::Relic;
-        else if (IsShardTypeName(typeName))
-            return HandleObjectType::Shard;
-        else
-            return {};
-    }
-
+    
     Reliquary::SizeT Reliquary::MatrixSize() const
     {
         return matrices.batchSources.map.size();
@@ -108,27 +98,15 @@ namespace Arca
 
     void Reliquary::Destroy(const Handle& handle)
     {
-        switch (handle.ObjectType())
-        {
-        case HandleObjectType::Relic:
-            relics.Destroy(handle.Type().name, handle.ID());
-            break;
-        case HandleObjectType::Shard:
-            shards.TransactionalDestroy(handle.Type(), handle.ID());
-            break;
-        default:
-            assert(false);
-        }
+        if (relics.IsRelicTypeName(handle.type.name))
+            relics.Destroy(handle.type.name, handle.id);
+        else if (shards.IsShardTypeName(handle.type.name))
+            shards.TransactionalDestroy(handle.type, handle.id);
     }
-
-    Handle Reliquary::HandleFrom(RelicID id, Type type, HandleObjectType objectType)
-    {
-        return Handle{ id, *this, std::move(type), objectType };
-    }
-
+    
     Handle Reliquary::HandleFrom(const RelicMetadata& metadata)
     {
-        return HandleFrom(metadata.id, metadata.type, HandleObjectType::Relic);
+        return Handle{ metadata.id, metadata.type };
     }
 }
 
@@ -350,7 +328,7 @@ namespace Inscription
 
         if (metadata.parent)
         {
-            auto parentID = metadata.parent->ID();
+            auto parentID = metadata.parent->id;
             archive(parentID);
         }
 
@@ -359,7 +337,7 @@ namespace Inscription
 
         for (auto& loop : metadata.children)
         {
-            auto id = loop.ID();
+            auto id = loop.id;
             archive(id);
         }
     }
@@ -529,13 +507,13 @@ namespace Inscription
         archive("id", metadata.id);
 
         auto parentID = static_cast<bool>(metadata.parent)
-            ? std::optional<Arca::RelicID> { metadata.parent->ID() }
+            ? std::optional<Arca::RelicID> { metadata.parent->id }
             : std::optional<Arca::RelicID>{};
         archive("parentID", parentID);
 
         std::vector<Arca::RelicID> childrenIDs;
         for (auto& child : metadata.children)
-            childrenIDs.push_back(child.ID());
+            childrenIDs.push_back(child.id);
         archive("childrenIDs", childrenIDs);
 
         archive.EndObject();
@@ -583,13 +561,13 @@ namespace Inscription
             {
                 const auto parentID = *metadata.parent;
                 const auto parentType = std::get<0>(FindExtensionForLoadedMetadata(parentID, object));
-                createdMetadata.parent = Arca::SlimHandle(parentID, parentType, Arca::HandleObjectType::Relic);
+                createdMetadata.parent = Arca::Handle{ parentID, parentType };
             }
             for (auto& child : metadata.children)
             {
                 const auto childID = child;
                 const auto childType = std::get<0>(FindExtensionForLoadedMetadata(childID, object));
-                createdMetadata.parent = Arca::SlimHandle(childID, childType, Arca::HandleObjectType::Relic);
+                createdMetadata.parent = Arca::Handle{ childID, childType };
             }
 
             object.relics.metadataList.push_back(createdMetadata);

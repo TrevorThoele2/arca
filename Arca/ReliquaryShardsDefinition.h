@@ -73,7 +73,7 @@ namespace Arca
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     void ReliquaryShards::SignalCreation(const Index<ShardT>& index)
     {
-        owner->Raise(Created{ Handle{ index.ID(), const_cast<Reliquary&>(*owner), TypeFor<ShardT>(), HandleObjectType::Shard } });
+        owner->Raise(Created{ Handle{ index.ID(), TypeFor<ShardT>() }});
         owner->Raise(CreatedKnown<ShardT>{index});
     }
 
@@ -213,7 +213,7 @@ namespace Arca
         if (batchSource.ContainsFromBase(id))
         {
             reliquary.Raise(DestroyingKnown<RealShardT>{ToIndex<RealShardT>(id, &reliquary)});
-            reliquary.Raise(Destroying{ Handle{ id, &reliquary, std::move(batchSource.Type()), HandleObjectType::Shard } });
+            reliquary.Raise(Destroying{ Handle{ id, std::move(batchSource.Type()) }});
 
             batchSource.DestroyFromBase(id);
         }
@@ -233,7 +233,7 @@ namespace Arca
             matrixTransaction.Finalize(TypeFor<RealShardT>());
 
             reliquary.Raise(DestroyingKnown<RealShardT>{ToIndex<RealShardT>(id, &reliquary)});
-            reliquary.Raise(Destroying{ Handle{ id, &reliquary, std::move(batchSource.Type()), HandleObjectType::Shard } });
+            reliquary.Raise(Destroying{ Handle{ id, std::move(batchSource.Type()) }});
 
             batchSource.DestroyFromBase(id);
         }
@@ -284,8 +284,8 @@ namespace Arca
     Index<ShardT> ReliquaryShards::CreateCommon(RelicID id, bool required, ConstructorArgs&& ... constructorArgs)
     {
         const auto type = TypeFor<ShardT>();
-        if (Contains(Handle(id, *owner, { type.name, true }, HandleObjectType::Shard)) ||
-            Contains(Handle(id, *owner, { type.name, false }, HandleObjectType::Shard)))
+        if (Contains(Handle{ id, { type.name, true }}) ||
+            Contains(Handle{ id, { type.name, false }}))
             throw CannotCreate(objectTypeName, type);
 
         auto handler = FindHandler<ShardT>();
