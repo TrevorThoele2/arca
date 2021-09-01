@@ -71,7 +71,7 @@ namespace Arca
         if (Owner() == nullptr)
             return {};
 
-        return Handle(ID(), Owner(), TypeFor<T>());
+        return Handle{ ID(), TypeFor<T>() };
     }
 
     template<class T>
