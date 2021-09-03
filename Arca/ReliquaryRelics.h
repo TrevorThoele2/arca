@@ -729,7 +729,7 @@ namespace Arca
         SetupNewMetadata<RelicT>(id);
 
         auto relic = CreateGlobalImpl<RelicT>(
-            RelicInit{ id, *owner }, std::forward<ConstructorArgs>(constructorArgs)...);
+            RelicInit{ id, *owner, *shards }, std::forward<ConstructorArgs>(constructorArgs)...);
 
         globalHandlers.push_back(
             std::make_unique<GlobalHandler<RelicT>>(*this, std::move(relic), id));

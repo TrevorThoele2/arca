@@ -9,7 +9,7 @@ namespace Arca
 
     MutablePointer Curator::MutablePointer()
     {
-        return Arca::MutablePointer(Owner());
+        return Arca::MutablePointer(Owner().relics, Owner().shards);
     }
 
     Reliquary& Curator::Owner()

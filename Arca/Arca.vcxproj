@@ -58,7 +58,6 @@
     <ClInclude Include="ReliquaryUserContext.h" />
     <ClInclude Include="MatrixIndexDefinition.h" />
     <ClInclude Include="MutablePointer.h" />
-    <ClInclude Include="MutablePointerDefinition.h" />
     <ClInclude Include="Operation.h" />
     <ClInclude Include="IsCommand.h" />
     <ClInclude Include="MatrixDissolved.h" />
@@ -78,7 +77,6 @@
     <ClInclude Include="MatrixTypeForSignal.h" />
     <ClInclude Include="RelicIndexDefinition.h" />
     <ClInclude Include="RelicInit.h" />
-    <ClInclude Include="RelicInitDefinition.h" />
     <ClInclude Include="ReliquaryCommands.h" />
     <ClInclude Include="ReliquaryMatrices.h" />
     <ClInclude Include="SaveUserContext.h" />
@@ -158,6 +156,7 @@
     <ClCompile Include="KnownMatrix.cpp" />
     <ClCompile Include="MatrixBatchSource.cpp" />
     <ClCompile Include="MutablePointer.cpp" />
+    <ClCompile Include="RelicInit.cpp" />
     <ClCompile Include="ReliquaryCommands.cpp" />
     <ClCompile Include="ReliquaryMatrices.cpp" />
     <ClCompile Include="Handle.cpp" />

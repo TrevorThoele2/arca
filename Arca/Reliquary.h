@@ -158,16 +158,7 @@ namespace Arca
         Handle HandleFrom(const RelicMetadata& metadata);
     private:
         friend class ReliquaryOrigin;
-        friend class ReliquaryComponent;
-        friend class ReliquaryRelics;
-        friend class ReliquaryRelicStructures;
-        friend class ReliquaryShards;
-        friend class ReliquaryMatrices;
-        friend class ReliquaryCurators;
-        friend class ReliquaryCommands;
-        friend class ReliquarySignals;
-
-        friend struct RelicInit;
+        
         template<class, class>
         friend class Index;
 
@@ -537,10 +528,6 @@ namespace Inscription
 #include "KnownMatrixDefinition.h"
 #include "EitherImplementation.h"
 #include "AllImplementation.h"
-
-#include "MutablePointerDefinition.h"
-
-#include "RelicInitDefinition.h"
 
 #include "Create.h"
 #include "IdentifiedCreate.h"
