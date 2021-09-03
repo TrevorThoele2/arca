@@ -3,7 +3,6 @@
 #include "Reliquary.h"
 #include "ReliquaryRelics.h"
 #include "ReliquaryException.h"
-#include <cassert>
 
 namespace Arca
 {
@@ -16,16 +15,16 @@ namespace Arca
         if (Contains(Handle{ id, type }))
             throw CannotCreate(objectTypeName, type);
 
-        handler->Create(id, *owner, type.isConst, required);
+        handler->Create(id, *this, *matrices, type.isConst, required);
     }
-
+    
     void ReliquaryShards::TransactionalDestroy(const Type& type, RelicID id)
     {
         const auto handler = FindHandler(type.name);
         if (handler == nullptr)
             throw NotRegistered(objectTypeName, type);
 
-        handler->RequiredTransactionalDestroy(id, *owner, owner->matrices);
+        handler->RequiredTransactionalDestroy(id, *owner, *signals, *matrices);
     }
 
     void ReliquaryShards::Clear()
@@ -36,25 +35,25 @@ namespace Arca
 
     void ReliquaryShards::Clear(RelicID id)
     {
-        auto matrixSnapshot = owner->matrices.StartDestroyingTransaction(id);
+        auto matrixSnapshot = matrices->StartDestroyingTransaction(id);
 
         for (auto& handler : handlers)
         {
             if (handler->BatchSource().ContainsFromBase(id))
             {
-                const Type type{ handler->typeName, false };
+                const Type type{ handler->type.name, false };
                 matrixSnapshot.Finalize(type);
             }
 
             if (handler->ConstBatchSource().ContainsFromBase(id))
             {
-                const Type type{ handler->typeName, true };
+                const Type type{ handler->type.name, true };
                 matrixSnapshot.Finalize(type);
             }
         }
 
         for (auto& handler : handlers)
-            handler->RequiredDestroy(id, *owner);
+            handler->RequiredDestroy(id, *owner, *signals);
     }
 
     bool ReliquaryShards::IsShardTypeName(const TypeName& typeName) const
@@ -71,6 +70,15 @@ namespace Arca
         std::vector<TypeName> returnValue;
         for (auto& handler : handlers)
             returnValue.push_back(handler->MainType());
+        return returnValue;
+    }
+
+    std::unordered_set<Type> ReliquaryShards::AllTypes(RelicID id) const
+    {
+        std::unordered_set<Type> returnValue;
+        for (auto& handler : handlers)
+            if (handler->Contains(id))
+                returnValue.insert(handler->type);
         return returnValue;
     }
 
@@ -94,10 +102,10 @@ namespace Arca
 
     TypeName ReliquaryShards::HandlerBase::MainType() const
     {
-        return typeName;
+        return type.name;
     }
 
-    ReliquaryShards::HandlerBase::HandlerBase(const TypeName& typeName) : typeName(typeName)
+    ReliquaryShards::HandlerBase::HandlerBase(const Type& type) : type(type)
     {}
 
     ReliquaryShards::HandlerBase* ReliquaryShards::FindHandler(const TypeName& typeName) const
@@ -107,7 +115,7 @@ namespace Arca
             handlers.end(),
             [typeName](const HandlerPtr& entry)
             {
-                return entry->typeName == typeName;
+                return entry->type.name == typeName;
             });
         if (found == handlers.end())
             return nullptr;
@@ -135,6 +143,7 @@ namespace Arca
         return *found;
     }
 
-    ReliquaryShards::ReliquaryShards(Reliquary& owner) : owner(&owner)
+    ReliquaryShards::ReliquaryShards(Reliquary& owner, ReliquarySignals& signals, ReliquaryMatrices& matrices) :
+        owner(&owner), signals(&signals), matrices(&matrices)
     {}
 }

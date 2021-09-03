@@ -134,14 +134,14 @@ namespace Arca
         RelicStructures relicStructures;
         using Curators = ReliquaryCurators;
         Curators curators;
-        using Shards = ReliquaryShards;
-        Shards shards;
         using Matrices = ReliquaryMatrices;
         Matrices matrices;
         using Signals = ReliquarySignals;
         Signals signals;
         using Commands = ReliquaryCommands;
         Commands commands;
+        using Shards = ReliquaryShards;
+        Shards shards;
         using Relics = ReliquaryRelics;
         Relics relics;
     private:
@@ -262,7 +262,7 @@ namespace Arca
     template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int>>
     bool Reliquary::Contains(RelicID id) const
     {
-        return matrices.Contains<MatrixT>(id);
+        return shards.Contains<MatrixT>(id);
     }
 
     template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int>>
@@ -526,13 +526,6 @@ namespace Inscription
     };
 }
 
-#include "ReliquaryRelicsDefinition.h"
-#include "ReliquaryShardsDefinition.h"
-#include "ReliquaryMatricesDefinition.h"
-#include "ReliquaryCuratorsDefinition.h"
-#include "ReliquarySignalsDefinition.h"
-#include "ReliquaryCommandsDefinition.h"
-
 #include "RelicIndexDefinition.h"
 #include "MatrixIndexDefinition.h"
 #include "GlobalIndexDefinition.h"
@@ -542,9 +535,21 @@ namespace Inscription
 #include "ShardBatchSourceDefinition.h"
 #include "MatrixBatchSourceDefinition.h"
 #include "KnownMatrixDefinition.h"
-#include "EitherDefinition.h"
-#include "AllDefinition.h"
+#include "EitherImplementation.h"
+#include "AllImplementation.h"
 
 #include "MutablePointerDefinition.h"
 
 #include "RelicInitDefinition.h"
+
+#include "Create.h"
+#include "IdentifiedCreate.h"
+#include "CreateWith.h"
+#include "IdentifiedCreateWith.h"
+#include "CreateChild.h"
+#include "IdentifiedCreateChild.h"
+#include "CreateChildWith.h"
+#include "IdentifiedCreateChildWith.h"
+#include "Assign.h"
+#include "Destroy.h"
+#include "Clear.h"

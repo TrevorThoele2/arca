@@ -16,7 +16,7 @@ namespace Arca
     template<class... Ts>
     struct All
     {
-        using Pack = ::Chroma::VariadicTemplate<Ts...>;
+        using Pack = Chroma::VariadicTemplate<Ts...>;
         using ReferenceTuple = typename Pack::template Transform<TransformToReference>::Type::TupleT;
     };
 

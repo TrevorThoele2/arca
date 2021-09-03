@@ -2,10 +2,17 @@
 
 #include "ShardBatch.h"
 
-#include "IsShard.h"
+#include "ReliquarySignals.h"
+#include "ReliquaryMatrices.h"
+#include "ReliquaryException.h"
 
+#include "IsShard.h"
 #include "Index.h"
+#include "ShardIndex.h"
 #include "Handle.h"
+
+#include "Created.h"
+#include "Destroying.h"
 
 #include "RelicID.h"
 #include "Type.h"
@@ -15,7 +22,6 @@
 namespace Arca
 {
     class Reliquary;
-    class ReliquaryMatrices;
 
     class ReliquaryShards
     {
@@ -28,6 +34,8 @@ namespace Arca
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         void Destroy(RelicID id);
+        template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
+        void Destroy(RelicID id);
         void TransactionalDestroy(const Type& type, RelicID id);
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         void TransactionalDestroy(RelicID id);
@@ -37,12 +45,15 @@ namespace Arca
         [[nodiscard]] bool Contains(const Handle& handle) const;
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
+        template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
+        [[nodiscard]] bool Contains(RelicID id) const;
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] RelicID IDFor(const ShardT& shard) const;
 
         [[nodiscard]] bool IsShardTypeName(const TypeName& typeName) const;
         [[nodiscard]] std::vector<TypeName> AllTypeNames() const;
+        [[nodiscard]] std::unordered_set<Type> AllTypes(RelicID id) const;
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] ShardT* FindStorage(RelicID id);
@@ -55,26 +66,28 @@ namespace Arca
         class HandlerBase : public KnownPolymorphicSerializer
         {
         public:
-            const TypeName typeName;
+            const Type type;
         public:
             virtual ~HandlerBase() = 0;
 
             virtual ShardBatchSourceBase& BatchSource() = 0;
             virtual ShardBatchSourceBase& ConstBatchSource() = 0;
 
-            virtual void Create(RelicID id, Reliquary& reliquary, bool isConst, bool required) = 0;
-            virtual void RequiredDestroy(RelicID id, Reliquary& reliquary) = 0;
-            virtual void RequiredTransactionalDestroy(RelicID id, Reliquary& reliquary, ReliquaryMatrices& matrices) = 0;
+            virtual void Create(RelicID id, ReliquaryShards& shards, ReliquaryMatrices& matrices, bool isConst, bool required) = 0;
+            virtual void RequiredDestroy(
+                RelicID id, Reliquary& reliquary, ReliquarySignals& signals) = 0;
+            virtual void RequiredTransactionalDestroy(
+                RelicID id, Reliquary& reliquary, ReliquarySignals& signals, ReliquaryMatrices& matrices) = 0;
             virtual void Clear() = 0;
 
-            virtual void SignalAllCreated(Reliquary& reliquary) = 0;
+            virtual void SignalAllCreated(Reliquary& reliquary, ReliquaryShards& shards) = 0;
 
             [[nodiscard]] virtual bool Contains(RelicID id) const = 0;
             [[nodiscard]] virtual bool IsRequired(RelicID id) const = 0;
 
             [[nodiscard]] TypeName MainType() const override;
         protected:
-            explicit HandlerBase(const TypeName& typeName);
+            explicit HandlerBase(const Type& type);
         };
 
         template<class ShardT>
@@ -89,14 +102,22 @@ namespace Arca
             ShardBatchSourceBase& BatchSource() override;
             ShardBatchSourceBase& ConstBatchSource() override;
 
-            void Create(RelicID id, Reliquary& reliquary, bool isConst, bool required) override;
+            void Create(RelicID id, ReliquaryShards& shards, ReliquaryMatrices& matrices, bool isConst, bool required) override;
             template<class... ConstructorArgs>
-            void CreateCommon(RelicID id, Reliquary& reliquary, bool isConst, bool required, ConstructorArgs&& ... constructorArgs);
-            void RequiredDestroy(RelicID id, Reliquary& reliquary) override;
-            void RequiredTransactionalDestroy(RelicID id, Reliquary& reliquary, ReliquaryMatrices& matrices) override;
+            void CreateCommon(
+                RelicID id,
+                ReliquaryShards& shards,
+                ReliquaryMatrices& matrices,
+                bool isConst,
+                bool required,
+                ConstructorArgs&& ... constructorArgs);
+            void RequiredDestroy(
+                RelicID id, Reliquary& reliquary, ReliquarySignals& signals) override;
+            void RequiredTransactionalDestroy(
+                RelicID id, Reliquary& reliquary, ReliquarySignals& signals, ReliquaryMatrices& matrices) override;
             void Clear() override;
 
-            void SignalAllCreated(Reliquary& reliquary) override;
+            void SignalAllCreated(Reliquary& reliquary, ReliquaryShards& shards) override;
 
             [[nodiscard]] bool Contains(RelicID id) const override;
             [[nodiscard]] bool IsRequired(RelicID id) const override;
@@ -109,9 +130,11 @@ namespace Arca
             [[nodiscard]] std::vector<Inscription::Type> InscriptionTypes(Inscription::Archive::Json& archive) const override;
         private:
             template<class BatchSourceT>
-            void DestroyCommon(RelicID id, Reliquary& reliquary, BatchSourceT& batchSource);
+            void DestroyCommon(
+                RelicID id, Reliquary& reliquary, ReliquarySignals& signals, BatchSourceT& batchSource);
             template<class BatchSourceT>
-            void TransactionalDestroyCommon(RelicID id, Reliquary& reliquary, ReliquaryMatrices& matrices, BatchSourceT& batchSource);
+            void TransactionalDestroyCommon(
+                RelicID id, Reliquary& reliquary, ReliquarySignals& signals, ReliquaryMatrices& matrices, BatchSourceT& batchSource);
         };
 
         using HandlerPtr = std::unique_ptr<HandlerBase>;
@@ -169,11 +192,332 @@ namespace Arca
         };
     private:
         Reliquary* owner;
+        ReliquarySignals* signals;
+        ReliquaryMatrices* matrices;
 
         const std::string objectTypeName = "shard";
     private:
-        explicit ReliquaryShards(Reliquary& owner);
+        explicit ReliquaryShards(Reliquary& owner, ReliquarySignals& signals, ReliquaryMatrices& matrices);
         ReliquaryShards(ReliquaryShards&& arg) noexcept = default;
         friend Reliquary;
     };
+
+    template<class ShardT, class... ConstructorArgs>
+    Index<ShardT> ReliquaryShards::Create(RelicID id, ConstructorArgs&& ... constructorArgs)
+    {
+        return CreateCommon<ShardT>(id, false, std::forward<ConstructorArgs>(constructorArgs)...);
+    }
+
+    template<class ShardT, class... ConstructorArgs>
+    Index<ShardT> ReliquaryShards::CreateFromInternal(RelicID id, ConstructorArgs&& ... constructorArgs)
+    {
+        return CreateCommon<ShardT>(id, true, std::forward<ConstructorArgs>(constructorArgs)...);
+    }
+
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
+    void ReliquaryShards::Destroy(RelicID id)
+    {
+        auto handler = FindHandler<ShardT>();
+        if (handler)
+        {
+            if (handler->IsRequired(id))
+                throw CannotDestroy(objectTypeName, TypeFor<ShardT>());
+
+            handler->RequiredDestroy(id, *owner);
+        }
+    }
+
+    template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int>>
+    void ReliquaryShards::Destroy(RelicID id)
+    {
+        const auto matrixTypes = MatrixImplementation<MatrixT>::Types();
+        for (auto& matrixType : matrixTypes)
+            TransactionalDestroy(matrixType, id);
+    }
+
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
+    void ReliquaryShards::TransactionalDestroy(RelicID id)
+    {
+        auto handler = FindHandler<ShardT>();
+        if (handler)
+        {
+            if (handler->IsRequired(id))
+                throw CannotDestroy(objectTypeName, TypeFor<ShardT>());
+
+            handler->RequiredTransactionalDestroy(id, *owner, *signals, *matrices);
+        }
+    }
+
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
+    bool ReliquaryShards::Contains(RelicID id) const
+    {
+        auto& batchSource = RequiredBatchSource<ShardT>();
+        auto found = batchSource.Find(id);
+        return static_cast<bool>(found);
+    }
+
+    template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int>>
+    bool ReliquaryShards::Contains(RelicID id) const
+    {
+        return MatrixImplementation<MatrixT>::IsIn(AllTypes(id));
+    }
+
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
+    RelicID ReliquaryShards::IDFor(const ShardT& shard) const
+    {
+        auto& batchSource = RequiredBatchSource<ShardT>();
+        for (auto loop = batchSource.begin(); loop != batchSource.end(); ++loop)
+            if (&loop->shard == &shard)
+                return loop->id;
+
+        return nullRelicID;
+    }
+
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
+    ShardT* ReliquaryShards::FindStorage(RelicID id)
+    {
+        auto& batchSource = RequiredBatchSource<ShardT>();
+        return batchSource.Find(id);
+    }
+
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
+    void ReliquaryShards::SignalCreation(const Index<ShardT>& index)
+    {
+        signals->Raise(Created{ Handle{ index.ID(), TypeFor<ShardT>() } });
+        signals->Raise(CreatedKnown<ShardT>{index});
+    }
+
+    template<class ShardT>
+    ReliquaryShards::Handler<ShardT>::Handler(Reliquary& reliquary) :
+        HandlerBase(TypeFor<ShardT>()),
+        batchSource(reliquary), constBatchSource(reliquary)
+    {}
+
+    template<class ShardT>
+    ShardBatchSourceBase& ReliquaryShards::Handler<ShardT>::BatchSource()
+    {
+        return batchSource;
+    }
+
+    template<class ShardT>
+    ShardBatchSourceBase& ReliquaryShards::Handler<ShardT>::ConstBatchSource()
+    {
+        return constBatchSource;
+    }
+
+    template<class ShardT>
+    void ReliquaryShards::Handler<ShardT>::Create(
+        RelicID id, ReliquaryShards& shards, ReliquaryMatrices& matrices, bool isConst, bool required)
+    {
+        CreateCommon(id, shards, matrices, isConst, required);
+    }
+
+    template<class ShardT>
+    template<class... ConstructorArgs>
+    void ReliquaryShards::Handler<ShardT>::CreateCommon(
+        RelicID id,
+        ReliquaryShards& shards,
+        ReliquaryMatrices& matrices,
+        bool isConst,
+        bool required,
+        ConstructorArgs&& ... constructorArgs)
+    {
+        auto matrixTransaction = matrices.StartCreationTransaction(id);
+
+        if (isConst)
+            shards
+                .FindBatchSource<const ShardT>()
+                ->Add(id, required, std::forward<ConstructorArgs>(constructorArgs)...);
+        else
+            shards
+                .FindBatchSource<ShardT>()
+                ->Add(id, required, std::forward<ConstructorArgs>(constructorArgs)...);
+
+        matrixTransaction.Finalize();
+        shards.SignalCreation(shards.CreateIndex<ShardT>(id));
+    }
+
+    template<class ShardT>
+    void ReliquaryShards::Handler<ShardT>::RequiredDestroy(
+        RelicID id, Reliquary& reliquary, ReliquarySignals& signals)
+    {
+        DestroyCommon(id, reliquary, signals, batchSource);
+        DestroyCommon(id, reliquary, signals, constBatchSource);
+    }
+
+    template<class ShardT>
+    void ReliquaryShards::Handler<ShardT>::RequiredTransactionalDestroy(
+        RelicID id, Reliquary& reliquary, ReliquarySignals& signals, ReliquaryMatrices& matrices)
+    {
+        TransactionalDestroyCommon(id, reliquary, signals, matrices, batchSource);
+        TransactionalDestroyCommon(id, reliquary, signals, matrices, constBatchSource);
+    }
+
+    template<class ShardT>
+    void ReliquaryShards::Handler<ShardT>::Clear()
+    {
+        batchSource.Clear();
+        constBatchSource.Clear();
+    }
+
+    template<class ShardT>
+    void ReliquaryShards::Handler<ShardT>::SignalAllCreated(Reliquary& reliquary, ReliquaryShards& shards)
+    {
+        for (auto& shard : batchSource)
+            shards.SignalCreation(Index<ShardT>(shard.first, reliquary));
+
+        for (auto& shard : constBatchSource)
+            shards.SignalCreation(Index<const ShardT>(shard.first, reliquary));
+    }
+
+    template<class ShardT>
+    bool ReliquaryShards::Handler<ShardT>::Contains(RelicID id) const
+    {
+        return batchSource.ContainsFromBase(id) || constBatchSource.ContainsFromBase(id);
+    }
+
+    template<class ShardT>
+    bool ReliquaryShards::Handler<ShardT>::IsRequired(RelicID id) const
+    {
+        return batchSource.IsRequired(id) || constBatchSource.IsRequired(id);
+    }
+
+    template<class ShardT>
+    bool ReliquaryShards::Handler<ShardT>::WillBinarySerialize() const
+    {
+        return HasScribe<ShardT, Inscription::Archive::Binary>();
+    }
+
+    template<class ShardT>
+    bool ReliquaryShards::Handler<ShardT>::WillJsonSerialize() const
+    {
+        return HasScribe<ShardT, Inscription::Archive::Json>();
+    }
+
+    template<class ShardT>
+    void ReliquaryShards::Handler<ShardT>::Serialize(Inscription::Archive::Binary& archive)
+    {
+        archive(batchSource);
+        archive(constBatchSource);
+    }
+
+    template<class ShardT>
+    void ReliquaryShards::Handler<ShardT>::Serialize(const std::string& name, Inscription::Archive::Json& archive)
+    {
+        const auto constName = !name.empty() ? name + "Const" : "";
+
+        archive(name, batchSource);
+        archive(constName, constBatchSource);
+    }
+
+    template<class ShardT>
+    std::vector<Inscription::Type> ReliquaryShards::Handler<ShardT>::InscriptionTypes(Inscription::Archive::Binary& archive) const
+    {
+        return Inscription::InputTypesFor<std::remove_const_t<ShardT>>(archive);
+    }
+
+    template<class ShardT>
+    std::vector<Inscription::Type> ReliquaryShards::Handler<ShardT>::InscriptionTypes(Inscription::Archive::Json& archive) const
+    {
+        return Inscription::InputTypesFor<std::remove_const_t<ShardT>>(archive);
+    }
+
+    template<class ShardT>
+    template<class BatchSourceT>
+    void ReliquaryShards::Handler<ShardT>::DestroyCommon(
+        RelicID id, Reliquary& reliquary, ReliquarySignals& signals, BatchSourceT& batchSource)
+    {
+        using RealShardT = typename BatchSourceT::ShardT;
+
+        if (batchSource.ContainsFromBase(id))
+        {
+            signals.Raise(DestroyingKnown<RealShardT>{ToIndex<RealShardT>(id, &reliquary)});
+            signals.Raise(Destroying{ Handle{ id, std::move(batchSource.Type()) } });
+
+            batchSource.DestroyFromBase(id);
+        }
+    }
+
+    template<class ShardT>
+    template<class BatchSourceT>
+    void ReliquaryShards::Handler<ShardT>::TransactionalDestroyCommon(
+        RelicID id, Reliquary& reliquary, ReliquarySignals& signals, ReliquaryMatrices& matrices, BatchSourceT& batchSource)
+    {
+        using RealShardT = typename BatchSourceT::ShardT;
+
+        auto matrixTransaction = matrices.StartDestroyingTransaction(id);
+
+        if (batchSource.ContainsFromBase(id))
+        {
+            matrixTransaction.Finalize(TypeFor<RealShardT>());
+
+            signals.Raise(DestroyingKnown<RealShardT>{ToIndex<RealShardT>(id, &reliquary)});
+            signals.Raise(Destroying{ Handle{ id, std::move(batchSource.Type()) } });
+
+            batchSource.DestroyFromBase(id);
+        }
+    }
+
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
+    void ReliquaryShards::CreateHandler()
+    {
+        handlers.push_back(std::make_unique<Handler<ShardT>>(*owner));
+    }
+
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
+    ReliquaryShards::Handler<ShardT>* ReliquaryShards::FindHandler() const
+    {
+        auto found = FindHandler(TypeFor<ShardT>().name);
+        return found == nullptr ? nullptr : static_cast<Handler<ShardT>*>(found);
+    }
+
+    template<class ObjectT, std::enable_if_t<is_shard_v<ObjectT>, int>>
+    BatchSource<ObjectT>* ReliquaryShards::FindBatchSource() const
+    {
+        const auto type = TypeFor<ObjectT>();
+        auto batchSource = FindBatchSource(type);
+        return batchSource == nullptr ? nullptr : static_cast<BatchSource<ObjectT>*>(batchSource);
+    }
+
+    template<class ObjectT, std::enable_if_t<is_shard_v<ObjectT>, int>>
+    BatchSource<ObjectT>& ReliquaryShards::RequiredBatchSource() const
+    {
+        auto found = FindBatchSource<ObjectT>();
+        if (!found)
+        {
+            const auto type = TypeFor<ObjectT>();
+            throw NotRegistered(objectTypeName, type, typeid(ObjectT));
+        }
+
+        return *found;
+    }
+
+    template<class ObjectT, std::enable_if_t<is_shard_v<ObjectT>, int>>
+    Arca::Batch<ObjectT> ReliquaryShards::Batch() const
+    {
+        auto& batchSource = RequiredBatchSource<ObjectT>();
+        return Arca::Batch<ObjectT>(batchSource);
+    }
+
+    template<class ShardT, class... ConstructorArgs>
+    Index<ShardT> ReliquaryShards::CreateCommon(RelicID id, bool required, ConstructorArgs&& ... constructorArgs)
+    {
+        const auto type = TypeFor<ShardT>();
+        if (Contains(Handle{ id, { type.name, true } }) ||
+            Contains(Handle{ id, { type.name, false } }))
+            throw CannotCreate(objectTypeName, type);
+
+        auto handler = FindHandler<ShardT>();
+        if (!handler)
+            throw NotRegistered(objectTypeName, type, typeid(ShardT));
+        handler->CreateCommon(id, *this, *matrices, std::is_const_v<ShardT>, required, std::forward<ConstructorArgs>(constructorArgs)...);
+
+        return CreateIndex<ShardT>(id);
+    }
+
+    template<class T>
+    auto ReliquaryShards::CreateIndex(RelicID id) const
+    {
+        return ToIndex<T>(id, &const_cast<Reliquary&>(*owner));
+    }
 }
