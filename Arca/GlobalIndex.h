@@ -2,14 +2,14 @@
 
 #include "Index.h"
 #include "TypeFor.h"
-#include "UsableForGlobalIndex.h"
+#include "IsGlobal.h"
 
 #include "Serialization.h"
 
 namespace Arca
 {
     template<class T>
-    class Index<T, std::enable_if_t<usable_for_global_index_v<T>>>
+    class Index<T, std::enable_if_t<is_global_v<T>>>
     {
     private:
         using StoredT = T*;
@@ -55,20 +55,20 @@ namespace Arca
         INSCRIPTION_ACCESS;
     };
 
-    template<class T, std::enable_if_t<usable_for_global_index_v<T>, int> = 0>
-    Index<T, std::enable_if_t<usable_for_global_index_v<T>>> ToIndex(RelicID, Reliquary* owner)
+    template<class T, std::enable_if_t<is_global_v<T>, int> = 0>
+    Index<T, std::enable_if_t<is_global_v<T>>> ToIndex(RelicID, Reliquary* owner)
     {
-        return Index<T, std::enable_if_t<usable_for_global_index_v<T>>>(owner);
+        return Index<T, std::enable_if_t<is_global_v<T>>>(owner);
     }
 }
 
 namespace Inscription
 {
     template<class T>
-    class Scribe<Arca::Index<T, std::enable_if_t<Arca::usable_for_global_index_v<T>>>>
+    class Scribe<Arca::Index<T, std::enable_if_t<Arca::is_global_v<T>>>>
     {
     public:
-        using ObjectT = Arca::Index<T, std::enable_if_t<Arca::usable_for_global_index_v<T>>>;
+        using ObjectT = Arca::Index<T, std::enable_if_t<Arca::is_global_v<T>>>;
     public:
         template<class Archive>
         void Scriven(ObjectT&, Archive&)
@@ -76,8 +76,8 @@ namespace Inscription
     };
 
     template<class T, class Archive>
-    struct ScribeTraits<Arca::Index<T, std::enable_if_t<Arca::usable_for_global_index_v<T>>>, Archive> final
+    struct ScribeTraits<Arca::Index<T, std::enable_if_t<Arca::is_global_v<T>>>, Archive> final
     {
-        using Category = CompositeScribeCategory<Arca::Index<T, std::enable_if_t<Arca::usable_for_global_index_v<T>>>>;
+        using Category = CompositeScribeCategory<Arca::Index<T, std::enable_if_t<Arca::is_global_v<T>>>>;
     };
 }

@@ -115,10 +115,7 @@ namespace Arca
     template<class T>
     auto Index<T, std::enable_if_t<usable_for_shard_index_v<T> && !std::is_const_v<T>>>::FindValueFromOwner() const -> ValueT*
     {
-        if (owner == nullptr)
-            return nullptr;
-
-        return owner->template FindStorage<T>(id);
+        return owner == nullptr ? nullptr : owner->FindStorage<T>(id);
     }
 
     template<class T>
@@ -228,9 +225,6 @@ namespace Arca
     template<class T>
     auto Index<T, std::enable_if_t<usable_for_shard_index_v<T> && std::is_const_v<T>>>::FindValueFromOwner() const -> ValueT*
     {
-        if (owner == nullptr)
-            return nullptr;
-
-        return owner->template FindStorage<T>(id);
+        return owner == nullptr ? nullptr : owner->FindStorage<T>(id);
     }
 }

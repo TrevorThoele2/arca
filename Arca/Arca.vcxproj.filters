@@ -372,12 +372,6 @@
     <ClInclude Include="GlobalIndexDefinition.h">
       <Filter>Header Files\Index\Global</Filter>
     </ClInclude>
-    <ClInclude Include="UsableForGlobalIndex.h">
-      <Filter>Header Files\Index\Global</Filter>
-    </ClInclude>
-    <ClInclude Include="UsableForMatrixIndex.h">
-      <Filter>Header Files\Index\Matrix</Filter>
-    </ClInclude>
     <ClInclude Include="UsableForRelicIndex.h">
       <Filter>Header Files\Index\Relic</Filter>
     </ClInclude>
