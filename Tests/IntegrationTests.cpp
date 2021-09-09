@@ -371,7 +371,7 @@ SCENARIO_METHOD(
 
         WHEN("querying shard")
         {
-            auto afterShard = Arca::Index<BasicShard>(relic.ID(), *reliquary);
+            auto afterShard = reliquary->Find<BasicShard>(relic.ID());
 
             THEN("data has been set")
             {
@@ -446,7 +446,7 @@ SCENARIO_METHOD(
             auto input = Inscription::Archive::InputBinary("Test.dat");
             input(*loadedReliquary);
 
-            auto globalRelic = Arca::Index<GlobalRelicCreatingNullSerializedRelic>(*loadedReliquary);
+            auto globalRelic = loadedReliquary->Find<GlobalRelicCreatingNullSerializedRelic>();
 
             THEN("local relic is setup correctly")
             {

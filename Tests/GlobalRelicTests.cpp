@@ -27,11 +27,11 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
 
         WHEN("retrieving global relic")
         {
-            const auto globalRelic = Arca::Index<GlobalRelic>(*reliquary);
+            const auto globalRelic = reliquary->Find<GlobalRelic>();
 
             THEN("structure has been satisfied")
             {
-                REQUIRE(Arca::Index<BasicShard>(globalRelic.ID(), *reliquary));
+                REQUIRE(reliquary->Find<BasicShard>(globalRelic.ID()));
                 REQUIRE(globalRelic->basicShard);
             }
 
@@ -42,7 +42,7 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
 
             WHEN("retrieving global relic as open")
             {
-                const auto asOpen = Arca::Index<OpenRelic>(globalRelic.ID(), *reliquary);
+                const auto asOpen = reliquary->Find<OpenRelic>(globalRelic.ID());
 
                 THEN("open is empty")
                 {
@@ -52,7 +52,7 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
             
             WHEN("retrieving as typed")
             {
-                const auto asTyped = Arca::Index<BasicTypedRelic>(globalRelic.ID(), *reliquary);
+                const auto asTyped = reliquary->Find<BasicTypedRelic>(globalRelic.ID());
 
                 THEN("typed is empty")
                 {

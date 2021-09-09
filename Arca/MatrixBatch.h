@@ -48,22 +48,19 @@ namespace Arca
     {}
 
     template<class T>
-    Batch<T, std::enable_if_t<is_matrix_v<T>>>::Batch(SourceT& source)
-        : source(&source)
+    Batch<T, std::enable_if_t<is_matrix_v<T>>>::Batch(SourceT& source) : source(&source)
     {
         AttemptReferenceSource();
     }
 
     template<class T>
-    Batch<T, std::enable_if_t<is_matrix_v<T>>>::Batch(const Batch& arg)
-        : source(arg.source)
+    Batch<T, std::enable_if_t<is_matrix_v<T>>>::Batch(const Batch& arg) : source(arg.source)
     {
         AttemptReferenceSource();
     }
 
     template<class T>
-    Batch<T, std::enable_if_t<is_matrix_v<T>>>::Batch(Batch&& arg) noexcept
-        : source(std::move(arg.source))
+    Batch<T, std::enable_if_t<is_matrix_v<T>>>::Batch(Batch&& arg) noexcept : source(std::move(arg.source))
     {
         arg.source = nullptr;
     }

@@ -6,26 +6,22 @@
 namespace Arca
 {
     template<class T>
-    Index<T, std::enable_if_t<is_matrix_v<T>>>::Index(RelicID id, Reliquary* owner) :
-        id(id), owner(owner)
-    {}
-
-    template<class T>
-    Index<T, std::enable_if_t<is_matrix_v<T>>>::Index(RelicID id, Reliquary& owner) :
-        Index(id, &owner)
+    Index<T, std::enable_if_t<is_matrix_v<T>>>::Index(RelicID id, Reliquary& owner, OptionalValueT value) :
+        id(id), owner(&owner), value(value)
     {}
 
     template<class T>
     Index<T, std::enable_if_t<is_matrix_v<T>>>::Index(const Index& arg) :
-        id(arg.id), owner(arg.owner)
+        id(arg.id), owner(arg.owner), value(arg.value)
     {}
 
     template<class T>
     Index<T, std::enable_if_t<is_matrix_v<T>>>::Index(Index&& arg) noexcept :
-        id(arg.id), owner(arg.owner)
+        id(arg.id), owner(arg.owner), value(std::move(arg.value))
     {
         arg.id = nullRelicID;
         arg.owner = nullptr;
+        arg.value = MatrixImplementation<T>::DefaultIndexValue();
     }
 
     template<class T>
@@ -33,6 +29,7 @@ namespace Arca
     {
         id = arg.id;
         owner = arg.owner;
+        value = arg.value;
         return *this;
     }
 
@@ -41,8 +38,10 @@ namespace Arca
     {
         id = arg.id;
         owner = arg.owner;
+        value = std::move(arg.value);
         arg.id = nullRelicID;
         arg.owner = nullptr;
+        arg.value = MatrixImplementation<T>::DefaultIndexValue();
         return *this;
     }
 
@@ -85,7 +84,7 @@ namespace Arca
     template<class T>
     auto Index<T, std::enable_if_t<is_matrix_v<T>>>::Get() const -> OptionalValueT
     {
-        return FindValueFromOwner();
+        return value;
     }
 
     template<class T>
@@ -98,11 +97,5 @@ namespace Arca
     Reliquary* Index<T, std::enable_if_t<is_matrix_v<T>>>::Owner() const
     {
         return owner;
-    }
-
-    template<class T>
-    auto Index<T, std::enable_if_t<is_matrix_v<T>>>::FindValueFromOwner() const -> OptionalValueT
-    {
-        return !owner ? MatrixImplementation<T>::DefaultIndexValue() : MatrixImplementation<T>::CreateIndexValue(id, *owner);
     }
 }

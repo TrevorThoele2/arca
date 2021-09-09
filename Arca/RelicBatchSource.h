@@ -11,7 +11,6 @@
 #include "HasRelicSerializationConstructor.h"
 
 #include "Serialization.h"
-#include "HasScribe.h"
 
 namespace Arca
 {
@@ -27,7 +26,6 @@ namespace Arca
         [[nodiscard]] virtual void* FindStorage(RelicID id) = 0;
 
         virtual void DestroyFromBase(RelicID id) = 0;
-        virtual void DestroyAllFromBase(Reliquary& reliquary) = 0;
 
         [[nodiscard]] virtual SizeT Size() const = 0;
 
@@ -41,12 +39,12 @@ namespace Arca
     public:
         using RelicT = T;
     private:
-        using Map = std::unordered_map<RelicID, RelicT>;
+        using Map = std::unordered_map<RelicID, std::shared_ptr<RelicT>>;
     public:
         using iterator = typename Map::iterator;
         using const_iterator = typename Map::const_iterator;
     public:
-        explicit BatchSource(Reliquary& owner);
+        explicit BatchSource(Reliquary& owner, ReliquaryShards& shards);
         BatchSource(const BatchSource& arg) = delete;
         BatchSource(BatchSource&& arg) = default;
 
@@ -58,12 +56,11 @@ namespace Arca
         iterator Destroy(const_iterator destroy);
 
         void DestroyFromBase(RelicID id) override;
-        void DestroyAllFromBase(Reliquary& reliquary) override;
 
         void Clear();
 
         [[nodiscard]] void* FindStorage(RelicID id) override;
-        [[nodiscard]] RelicT* Find(RelicID id);
+        [[nodiscard]] std::weak_ptr<RelicT> Find(RelicID id);
 
         [[nodiscard]] SizeT Size() const override;
         [[nodiscard]] bool IsEmpty() const;
@@ -78,40 +75,140 @@ namespace Arca
     private:
         Map map;
         Reliquary* owner;
+        ReliquaryShards* shards;
 
-        template<
-            class U,
-            class... ConstructorArgs,
-            std::enable_if_t<
-                std::is_constructible_v<U, RelicInit, ConstructorArgs...> &&
-                !std::is_constructible_v<U, ConstructorArgs...>, int> = 0>
+        template<class U, class... ConstructorArgs>
         RelicT* CreateImpl(RelicInit init, ConstructorArgs&& ... constructorArgs)
         {
-            auto emplaced = map.emplace(
-                std::piecewise_construct,
-                std::forward_as_tuple(init.id),
-                std::forward_as_tuple(init, std::forward<ConstructorArgs>(constructorArgs)...));
-            return &emplaced.first->second;
-        }
-
-        template<
-            class U,
-            class... ConstructorArgs,
-            std::enable_if_t<
-                std::is_constructible_v<U, ConstructorArgs...>, int> = 0>
-        RelicT* CreateImpl(RelicInit init, ConstructorArgs&& ... constructorArgs)
-        {
-            auto emplaced = map.emplace(
-                std::piecewise_construct,
-                std::forward_as_tuple(init.id),
-                std::forward_as_tuple(std::forward<ConstructorArgs>(constructorArgs)...));
-            return &emplaced.first->second;
+            if constexpr (std::is_constructible_v<U, RelicInit, ConstructorArgs...> && !std::is_constructible_v<U, ConstructorArgs...>)
+            {
+                auto emplaced = map.emplace(init.id, std::make_shared<RelicT>(init, std::forward<ConstructorArgs>(constructorArgs)...));
+                return emplaced.first->second.get();
+            }
+            else if constexpr (std::is_constructible_v<U, ConstructorArgs...>)
+            {
+                auto emplaced = map.emplace(init.id, std::make_shared<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...));
+                return emplaced.first->second.get();
+            }
+            else
+            {
+                static_assert("Cannot create Relic.");
+                return nullptr;
+            }
         }
     private:
         friend class Reliquary;
     private:
         INSCRIPTION_ACCESS;
     };
+
+    template<class T>
+    BatchSource<T, std::enable_if_t<is_relic_v<T>>>::BatchSource(Reliquary& owner, ReliquaryShards& shards) :
+        owner(&owner), shards(&shards)
+    {}
+
+    template<class T>
+    template<class... ConstructorArgs>
+    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Create(RelicID id, ConstructorArgs&& ... constructorArgs) -> RelicT*
+    {
+        auto found = Find(id);
+        return found.lock()
+            ? nullptr
+            : CreateImpl<T>(RelicInit{ id, *owner, *shards }, std::forward<ConstructorArgs>(constructorArgs)...);
+    }
+
+    template<class T>
+    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Destroy(RelicID destroy) -> iterator
+    {
+        auto found = map.find(destroy);
+        return found != map.end() ? map.erase(found) : map.end();
+    }
+
+    template<class T>
+    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Destroy(iterator destroy) -> iterator
+    {
+        return map.erase(destroy);
+    }
+
+    template<class T>
+    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Destroy(const_iterator destroy) -> iterator
+    {
+        return map.erase(destroy);
+    }
+
+    template<class T>
+    void BatchSource<T, std::enable_if_t<is_relic_v<T>>>::DestroyFromBase(RelicID id)
+    {
+        Destroy(id);
+    }
+
+    template<class T>
+    void BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Clear()
+    {
+        map.clear();
+    }
+
+    template<class T>
+    void* BatchSource<T, std::enable_if_t<is_relic_v<T>>>::FindStorage(RelicID id)
+    {
+        auto found = map.find(id);
+        return found == map.end() ? nullptr : found->second.get();
+    }
+
+    template<class T>
+    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Find(RelicID id) -> std::weak_ptr<RelicT>
+    {
+        auto found = map.find(id);
+        return found == map.end() ? nullptr : found->second;
+    }
+
+    template<class T>
+    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Size() const -> SizeT
+    {
+        return map.size();
+    }
+
+    template<class T>
+    bool BatchSource<T, std::enable_if_t<is_relic_v<T>>>::IsEmpty() const
+    {
+        return map.empty();
+    }
+
+    template<class T>
+    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::begin() -> iterator
+    {
+        return map.begin();
+    }
+
+    template<class T>
+    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::begin() const -> const_iterator
+    {
+        return map.begin();
+    }
+
+    template<class T>
+    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::end() -> iterator
+    {
+        return map.end();
+    }
+
+    template<class T>
+    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::end() const -> const_iterator
+    {
+        return map.end();
+    }
+
+    template<class T>
+    Arca::Type BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Type() const
+    {
+        return TypeFor<T>();
+    }
+
+    template<class T>
+    Reliquary& BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Owner() const
+    {
+        return *owner;
+    }
 }
 
 namespace Inscription
@@ -125,41 +222,112 @@ namespace Inscription
         void Scriven(ObjectT& object, Archive::Binary& archive);
         void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
     private:
-        template<
-            class U,
-            std::enable_if_t<
-                Arca::has_relic_init_serialization_constructor_v<U>, int> = 0>
-        U Create(Arca::RelicInit init);
-        template<
-            class U,
-            std::enable_if_t<
-                !Arca::has_relic_init_serialization_constructor_v<U> &&
-                Arca::has_relic_serialization_constructor_v<U>, int> = 0>
-        U Create(Arca::RelicInit init);
-        template<
-            class U,
-            std::enable_if_t<
-                !Arca::has_relic_init_serialization_constructor_v<U> &&
-                !Arca::has_relic_serialization_constructor_v<U> &&
-                Arca::has_relic_init_constructor_v<U>, int> = 0>
-        U Create(Arca::RelicInit init);
-        template<
-            class U,
-            std::enable_if_t<
-                !Arca::has_relic_init_serialization_constructor_v<U> &&
-                !Arca::has_relic_serialization_constructor_v<U> &&
-                !Arca::has_relic_init_constructor_v<U> &&
-                Chroma::is_braces_default_constructible_v<U>, int> = 0>
-        U Create(Arca::RelicInit init);
-        template<
-            class U,
-            std::enable_if_t<
-                !Arca::has_relic_init_serialization_constructor_v<U> &&
-                !Arca::has_relic_serialization_constructor_v<U> &&
-                !Arca::has_relic_init_constructor_v<U> &&
-                !Chroma::is_braces_default_constructible_v<U>, int> = 0>
-        U Create(Arca::RelicInit init);
-    private:
         using RelicT = typename ObjectT::RelicT;
+        std::shared_ptr<RelicT> Create(Arca::RelicInit init);
     };
+    template<class T>
+    void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::
+        Scriven(ObjectT& object, Archive::Binary& archive)
+    {
+        if (archive.IsOutput())
+        {
+            auto size = object.map.size();
+            archive(size);
+
+            for (auto& entry : object.map)
+            {
+                auto id = entry.first;
+                archive(id);
+                archive(*entry.second);
+            }
+        }
+        else
+        {
+            ContainerSize size;
+            archive(size);
+
+            while (size-- > 0)
+            {
+                Arca::RelicID id = 0;
+                archive(id);
+
+                auto foundRelic = object.Find(id).lock();
+                if (foundRelic)
+                    archive(*foundRelic);
+                else
+                {
+                    auto relic = Create(Arca::RelicInit{ id, *object.owner, object.owner->shards });
+                    archive(*relic);
+                    auto& emplaced = object.map.emplace(id, std::move(relic)).first->second;
+                    archive.types.AttemptReplaceTrackedObject(relic, emplaced);
+                }
+            }
+        }
+    }
+
+    template<class T>
+    void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::Scriven(
+        const std::string& name, ObjectT& object, Archive::Json& archive)
+    {
+        if (archive.IsOutput())
+        {
+            auto output = archive.AsOutput();
+            output->StartList(name);
+            for (auto& entry : object.map)
+            {
+                output->StartObject("");
+                auto id = entry.first;
+                archive("id", id);
+                archive("relic", *entry.second);
+                output->EndObject();
+            }
+            output->EndList();
+        }
+        else
+        {
+            auto input = archive.AsInput();
+            auto size = input->StartList(name);
+            while (size-- > 0)
+            {
+                input->StartObject("");
+
+                Arca::RelicID id = 0;
+                archive("id", id);
+
+                auto relic = Create(Arca::RelicInit{ id, *object.owner, object.owner->shards });
+                archive("relic", *relic);
+                auto& emplaced = object.map.emplace(id, std::move(relic)).first->second;
+                archive.types.AttemptReplaceTrackedObject(relic, emplaced);
+
+                input->EndObject();
+            }
+            input->EndList();
+        }
+    }
+
+    template<class T>
+    auto Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::Create(Arca::RelicInit init) -> std::shared_ptr<RelicT>
+    {
+        using RelicT = typename ObjectT::RelicT;
+        if constexpr (Arca::has_relic_init_serialization_constructor_v<RelicT>)
+            return std::make_shared<RelicT>(init, Arca::Serialization{});
+        else if constexpr (Arca::has_relic_serialization_constructor_v<RelicT>)
+            return std::make_shared<RelicT>(Arca::Serialization{});
+        else if constexpr (Arca::has_relic_init_constructor_v<RelicT>)
+            return std::make_shared<RelicT>(init);
+        else if constexpr (Chroma::is_braces_default_constructible_v<RelicT>)
+            return std::make_shared<RelicT>();
+        else
+        {
+            static_assert(
+                "A relic requires a constructor of form "
+                "(RelicInit, Serialization), "
+                "(Serialization), "
+                "(RelicInit) or "
+                "() "
+                "in order to be serialized. Order given is priority order.");
+            using RelicT = typename ObjectT::RelicT;
+            return std::make_shared<RelicT>(init);
+        }
+    }
 }

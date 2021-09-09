@@ -125,11 +125,11 @@ SCENARIO_METHOD(IndexTestsFixture, "Matrix Index", "[index][matrix]")
 
         WHEN("creating Index out of all")
         {
-            auto index = Index<All<
+            auto index = reliquary->Find<All<
                 DifferentiableShard<0>,
                 DifferentiableShard<1>,
                 DifferentiableShard<2>>>
-                (relic.ID(), *reliquary);
+                (relic.ID());
 
             THEN("dereferencing results in tuple of all, valid indexs")
             {
@@ -407,7 +407,7 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
 
         WHEN("move assigning from global index")
         {
-            auto index1 = Arca::Index<GlobalRelic>(*reliquary);
+            auto index1 = reliquary->Find<GlobalRelic>();
 
             auto index2 = std::move(index1);
 
@@ -444,7 +444,7 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
 
         WHEN("move constructing from global index")
         {
-            auto index1 = Arca::Index<GlobalRelic>(*reliquary);
+            auto index1 = reliquary->Find<GlobalRelic>();
 
             auto index2(std::move(index1));
 
@@ -485,7 +485,7 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
 
             reliquary->Do(Create<BasicShard>(relic));
 
-            auto index1 = Arca::Index<Either<BasicShard>>(relic.ID(), *reliquary);
+            auto index1 = reliquary->Find<Either<BasicShard>>(relic.ID());
 
             auto index2 = std::move(index1);
 
@@ -526,7 +526,7 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
 
             reliquary->Do(Create<BasicShard>(relic));
 
-            auto index1 = Arca::Index<Either<BasicShard>>(relic.ID(), *reliquary);
+            auto index1 = reliquary->Find<Either<BasicShard>>(relic.ID());
 
             auto index2(std::move(index1));
 

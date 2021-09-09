@@ -39,7 +39,7 @@ CuratorTestsFixture::CuratorWithLocalRelicConstructor::CuratorWithLocalRelicCons
 }
 
 CuratorTestsFixture::CuratorWithGlobalRelicConstructor::CuratorWithGlobalRelicConstructor(Init init) :
-    Curator(init), globalRelic(init.owner)
+    Curator(init), globalRelic(init.owner.Find<BasicGlobalClosedTypedRelic>())
 {
     globalRelicInteger = globalRelic->integer;
     globalRelicString = globalRelic->string;

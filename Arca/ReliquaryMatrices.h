@@ -96,7 +96,8 @@ namespace Arca
                     return *found;
 
                 const auto key = KeyFor<ObjectT>();
-                auto emplaced = map.emplace(key, std::make_unique<BatchSource<ObjectT>>(*owner)).first->second.get();
+                const auto onReferenceCountZero = [this]() { owner->batchSources.Destroy<ObjectT>(TypeFor<ObjectT>().name); };
+                auto emplaced = map.emplace(key, std::make_unique<BatchSource<ObjectT>>(onReferenceCountZero)).first->second.get();
                 auto& batchSource = static_cast<BatchSource<ObjectT>&>(*emplaced);
                 for (auto& stored : MatrixImplementation<ObjectT>::AllFrom(*owner->owner))
                     batchSource.Add(stored);

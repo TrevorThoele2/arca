@@ -36,7 +36,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
 
             WHEN("finding const shard")
             {
-                auto foundShard = Arca::Index<const Shard>(relic.ID(), *reliquary);
+                auto foundShard = reliquary->Find<const Shard>(relic.ID());
 
                 THEN("is occupied")
                 {
@@ -52,7 +52,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
 
             WHEN("finding non-const shard")
             {
-                auto foundShard = Arca::Index<Shard>(relic.ID(), *reliquary);
+                auto foundShard = reliquary->Find<Shard>(relic.ID());
 
                 THEN("is not occupied")
                 {
@@ -205,7 +205,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
 
         WHEN("finding const shard")
         {
-            auto foundShard = Arca::Index<const Shard>(relic.ID(), *reliquary);
+            auto foundShard = reliquary->Find<const Shard>(relic.ID());
 
             THEN("is occupied")
             {
@@ -216,7 +216,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
 
         WHEN("finding non-const shard")
         {
-            auto foundShard = Arca::Index<Shard>(relic.ID(), *reliquary);
+            auto foundShard = reliquary->Find<Shard>(relic.ID());
 
             THEN("is not occupied")
             {
@@ -329,11 +329,11 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shard serialization", "[shard][co
                 inputArchive(*loadedReliquary);
             }
 
-            auto loadedRelic = Arca::Index<OpenRelic>(savedRelic.ID(), *loadedReliquary);
+            auto loadedRelic = loadedReliquary->Find<OpenRelic>(savedRelic.ID());
 
             WHEN("finding const shard")
             {
-                auto foundShard = Arca::Index<const Shard>(loadedRelic.ID(), *loadedReliquary);
+                auto foundShard = loadedReliquary->Find<const Shard>(loadedRelic.ID());
 
                 THEN("is occupied")
                 {
@@ -344,7 +344,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shard serialization", "[shard][co
 
             WHEN("finding non-const shard")
             {
-                auto foundShard = Arca::Index<Shard>(loadedRelic.ID(), *loadedReliquary);
+                auto foundShard = loadedReliquary->Find<Shard>(loadedRelic.ID());
 
                 THEN("is not occupied")
                 {
@@ -368,7 +368,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shard serialization", "[shard][co
 
                 THEN("begin is same as loaded")
                 {
-                    REQUIRE(&*batch.begin() == static_cast<const Shard*>(Arca::Index<const Shard>(loadedRelic.ID(), *loadedReliquary)));
+                    REQUIRE(&*batch.begin() == static_cast<const Shard*>(loadedReliquary->Find<const Shard>(loadedRelic.ID())));
                 }
             }
 
