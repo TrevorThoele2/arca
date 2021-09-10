@@ -500,18 +500,15 @@ namespace Arca
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>&& is_local_v<RelicT>, int>>
     Index<RelicT> ReliquaryRelics::Find(RelicID id) const
     {
-        auto& batchSource = RequiredBatchSource<RelicT>();
-        return Index<RelicT>{ id, *owner, batchSource.Find(id) };
+        auto handler = FindLocalHandler<RelicT>();
+        return handler ? Index<RelicT>{ id, *owner, handler->batchSource.Find(id) } : Index<RelicT>{};
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int>>
     Index<RelicT> ReliquaryRelics::Find() const
     {
         const auto handler = FindGlobalHandler<RelicT>();
-        if (!handler)
-            throw NotRegistered(objectTypeName, TypeFor<RelicT>());
-
-        return Index<RelicT>{ *owner, handler->storage };
+        return handler ? Index<RelicT>{ *owner, handler->storage } : Index<RelicT>{};
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>&& is_local_v<RelicT>, int>>

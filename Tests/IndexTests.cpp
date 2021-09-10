@@ -107,6 +107,99 @@ SCENARIO_METHOD(IndexTestsFixture, "Index resets to nullptr after underlying obj
     }
 }
 
+SCENARIO_METHOD(IndexTestsFixture, "Index resets to nullptr after reliquary destroyed", "[index]")
+{
+    GIVEN("registered reliquary")
+    {
+        auto reliquary = ReliquaryOrigin()
+            .Register<BasicShard>()
+            .Register<TypedClosedRelic>()
+            .Register<GlobalRelic>()
+            .Actualize();
+        
+        WHEN("creating typed closed relic then destroying reliquary")
+        {
+            auto relic = reliquary->Do(Create<TypedClosedRelic>());
+            auto shard = relic->shard;
+
+            reliquary.reset();
+
+            THEN("relic is nullptr")
+            {
+                REQUIRE(relic.Get() == nullptr);
+                REQUIRE(!relic);
+            }
+
+            THEN("shard is nullptr")
+            {
+                REQUIRE(shard.Get() == nullptr);
+                REQUIRE(!shard);
+            }
+        }
+
+        WHEN("destroying reliquary")
+        {
+            auto relic = reliquary->Find<GlobalRelic>();
+            auto shard = relic->shard;
+
+            reliquary.reset();
+
+            THEN("global relic is nullptr")
+            {
+                REQUIRE(relic.Get() == nullptr);
+                REQUIRE(!relic);
+            }
+
+            THEN("global shard is nullptr")
+            {
+                REQUIRE(shard.Get() == nullptr);
+                REQUIRE(!shard);
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(IndexTestsFixture, "Finding a not registered index returns empty index", "[index]")
+{
+    GIVEN("registered reliquary")
+    {
+        const auto reliquary = ReliquaryOrigin().Actualize();
+
+        WHEN("finding local relic")
+        {
+            auto relic = reliquary->Find<TypedClosedRelic>(0);
+                
+            THEN("relic is nullptr")
+            {
+                REQUIRE(relic.Get() == nullptr);
+                REQUIRE(!relic);
+            }
+        }
+
+        WHEN("finding global relic")
+        {
+            auto relic = reliquary->Find<GlobalRelic>();
+
+            THEN("relic is nullptr")
+            {
+                REQUIRE(relic.Get() == nullptr);
+                REQUIRE(!relic);
+            }
+        }
+
+        WHEN("finding shard")
+        {
+            auto shard = reliquary->Find<BasicShard>(0);
+
+            THEN("shard is nullptr")
+            {
+                REQUIRE(shard.Get() == nullptr);
+                REQUIRE(!shard);
+            }
+        }
+    }
+}
+
 SCENARIO_METHOD(IndexTestsFixture, "Matrix Index", "[index][matrix]")
 {
     GIVEN("registered reliquary, open relic and three shards")

@@ -251,8 +251,8 @@ namespace Arca
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     Index<ShardT> ReliquaryShards::Find(RelicID id) const
     {
-        auto& batchSource = RequiredBatchSource<ShardT>();
-        return Index<ShardT>{ id, *owner, batchSource.Find(id) };
+        auto batchSource = FindBatchSource<ShardT>();
+        return batchSource ? Index<ShardT>{ id, *owner, batchSource->Find(id) } : Index<ShardT>{};
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
