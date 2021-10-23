@@ -60,6 +60,11 @@ namespace Arca
         return relics.Size(typeName);
     }
 
+    RelicID Reliquary::NextRelicID() const
+    {
+        return relics.nextRelicID;
+    }
+
     bool Reliquary::IsShardTypeName(const TypeName& typeName) const
     {
         return shards.IsShardTypeName(typeName);

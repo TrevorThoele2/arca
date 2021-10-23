@@ -3,6 +3,7 @@
 #include <Arca/Shard.h>
 #include <Arca/Relic.h>
 #include <Arca/Curator.h>
+#include <Arca/OpenRelic.h>
 
 using namespace Arca;
 
@@ -13,6 +14,7 @@ public:
     class BasicShardWithDifferentInputHandle;
     class OtherShard;
     class PreferentialSerializationConstructorShard;
+    class ShardWithRelicIndex;
 
     class LocalRelic;
     class GlobalRelic;
@@ -61,6 +63,13 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Shard;
         static TypeName TypeName() { return "SerializationData::PreferentialSerializationConstructorShard"; }
+    };
+
+    template<>
+    struct Traits<SerializationData::ShardWithRelicIndex>
+    {
+        static const ObjectType objectType = ObjectType::Shard;
+        static TypeName TypeName() { return "SerializationData::ShardWithRelicIndex"; }
     };
 
     template<>
@@ -219,6 +228,15 @@ public:
 public:
     OtherShard() = default;
     explicit OtherShard(int myValue);
+};
+
+class SerializationData::ShardWithRelicIndex
+{
+public:
+    Index<OpenRelic> openRelic;
+public:
+    ShardWithRelicIndex() = default;
+    explicit ShardWithRelicIndex(Index<OpenRelic> openRelic);
 };
 
 class SerializationData::LocalRelic final
@@ -482,6 +500,25 @@ namespace Inscription
     };
 
     template<>
+    class Scribe<SerializationData::OtherShard> final
+    {
+    public:
+        using ObjectT = SerializationData::OtherShard;
+    public:
+        template<class Archive>
+        void Scriven(ObjectT& object, Archive& archive)
+        {
+            archive("myValue", object.myValue);
+        }
+    };
+
+    template<class Archive>
+    struct ScribeTraits<SerializationData::OtherShard, Archive> final
+    {
+        using Category = ArcaCompositeScribeCategory<SerializationData::OtherShard>;
+    };
+
+    template<>
     class Scribe<SerializationData::PreferentialSerializationConstructorShard> final
     {
     public:
@@ -499,22 +536,22 @@ namespace Inscription
     };
 
     template<>
-    class Scribe<SerializationData::OtherShard> final
+    class Scribe<SerializationData::ShardWithRelicIndex> final
     {
     public:
-        using ObjectT = SerializationData::OtherShard;
+        using ObjectT = SerializationData::ShardWithRelicIndex;
     public:
         template<class Archive>
         void Scriven(ObjectT& object, Archive& archive)
         {
-            archive("myValue", object.myValue);
+            archive("openRelic", object.openRelic);
         }
     };
 
     template<class Archive>
-    struct ScribeTraits<SerializationData::OtherShard, Archive> final
+    struct ScribeTraits<SerializationData::ShardWithRelicIndex, Archive> final
     {
-        using Category = ArcaCompositeScribeCategory<SerializationData::OtherShard>;
+        using Category = ArcaCompositeScribeCategory<SerializationData::ShardWithRelicIndex>;
     };
 
     template<>
