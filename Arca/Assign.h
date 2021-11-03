@@ -9,9 +9,7 @@
 #include "Assigned.h"
 #include "Assigning.h"
 
-#include "ReliquaryRelics.h"
-#include "ReliquaryShards.h"
-#include "ReliquarySignals.h"
+#include "Reliquary.h"
 
 namespace Arca
 {
