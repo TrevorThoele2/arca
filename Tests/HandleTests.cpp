@@ -4,6 +4,7 @@ using namespace std::string_literals;
 #include "HandleTests.h"
 
 #include <Arca/OpenRelic.h>
+#include <Arca/Create.h>
 
 HandleTestsFixture::TypedRelic::TypedRelic(RelicInit init)
 {

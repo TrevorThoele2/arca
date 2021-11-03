@@ -6,6 +6,7 @@ using namespace std::string_literals;
 
 #include <Arca/OpenRelic.h>
 #include <Arca/RelicParented.h>
+#include <Arca/Create.h>
 
 RelicParentingTestsFixture::GlobalRelic::GlobalRelic(RelicInit init)
 {
@@ -56,7 +57,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary->Do(CreateChild<OpenRelic>{AsHandle(globalRelic)}),
+                    reliquary->Do(Create<OpenRelic>{CreateData{ .parent = AsHandle(globalRelic) }}),
                     CannotParentRelic,
                     ::Catch::Matchers::Message("Cannot parent a relic to a global relic.")
                 );
@@ -95,7 +96,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
 
         WHEN("created child")
         {
-            auto child = reliquary->Do(CreateChild<OpenRelic>{AsHandle(parent)});
+            auto child = reliquary->Do(Create<OpenRelic>{CreateData{ .parent = AsHandle(parent) }});
             reliquary->Do(Create<BasicShard>(child.ID()));
 
             THEN("parent of child from Reliquary is parent")
@@ -174,7 +175,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
             std::vector<Index<OpenRelic>> children;
             for (auto i = 0; i < 10; ++i)
             {
-                auto child = reliquary->Do(CreateChild<OpenRelic>{AsHandle(parent)});
+                auto child = reliquary->Do(Create<OpenRelic>{CreateData{ .parent = AsHandle(parent) }});
                 reliquary->Do(Create<BasicShard>(child.ID()));
                 children.push_back(child);
             }

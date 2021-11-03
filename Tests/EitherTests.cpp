@@ -2,6 +2,8 @@
 
 #include "EitherTests.h"
 #include <Arca/OpenRelic.h>
+#include <Arca/Either.h>
+#include <Arca/Create.h>
 
 EitherTestsFixture::BasicTypedRelic::BasicTypedRelic(RelicInit init)
 {

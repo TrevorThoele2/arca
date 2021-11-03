@@ -4,6 +4,7 @@ using namespace std::string_literals;
 #include "ReliquaryRegistrationTests.h"
 
 #include <Arca/OpenRelic.h>
+#include <Arca/Create.h>
 
 ReliquaryRegistrationTestsFixture::Relic::Relic(RelicInit init)
 {
@@ -91,7 +92,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary->Do(CreateWith<OpenRelic>{relicStructureName}),
+                    reliquary->Do(Create<OpenRelic>{CreateData{ .structure = relicStructureName }}),
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The relic structure ("s + relicStructureName + ") was not registered.")

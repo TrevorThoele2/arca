@@ -2,6 +2,7 @@
 
 #include "Command.h"
 
+#include "CreateData.h"
 #include "IsRelic.h"
 #include "IsShard.h"
 #include "RelicID.h"
@@ -24,6 +25,14 @@ namespace Arca
         template<class... Args>
         explicit Create(Args ... args) :
             base(std::make_unique<Derived<Args...>>(
+                CreateData{},
+                std::forward<Args>(args)...))
+        {}
+
+        template<class... Args>
+        explicit Create(CreateData createData, Args ... args) :
+            base(std::make_unique<Derived<Args...>>(
+                createData,
                 std::forward<Args>(args)...))
         {}
 
@@ -51,19 +60,21 @@ namespace Arca
         class Derived final : public Base
         {
         public:
-            explicit Derived(Args ... args) :
+            explicit Derived(CreateData createData, Args ... args) :
+                createData(createData),
                 args(std::forward<Args>(args)...)
             {}
 
             Index<T> Do(ReliquaryRelics& relics) override
             {
                 return std::apply(
-                    [&relics](auto ... args)
+                    [this, &relics](auto ... args)
                 {
-                    return relics.template Create<T>(std::forward<decltype(args)>(args)...);
+                    return relics.Create<T>(createData, std::forward<decltype(args)>(args)...);
                 }, std::move(args));
             }
         private:
+            CreateData createData;
             std::tuple<Args...> args;
         };
     };
@@ -128,7 +139,7 @@ namespace Arca
                 return std::apply(
                     [&shards](auto ... args)
                     {
-                        return shards.template Create<T>(std::forward<decltype(args)>(args)...);
+                        return shards.Create<T>(std::forward<decltype(args)>(args)...);
                     }, std::move(args));
             }
         private:

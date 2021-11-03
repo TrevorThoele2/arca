@@ -6,6 +6,8 @@ using namespace std::string_literals;
 
 #include "DifferentiableCurator.h"
 #include <Arca/OpenRelic.h>
+#include <Arca/All.h>
+#include <Arca/Create.h>
 
 IntegrationTestsFixture::ParentRelic::ParentRelic(int value) : value(value)
 {}
@@ -168,7 +170,7 @@ SCENARIO_METHOD(
         {
             auto value = 100;
             auto parent = self.TheOwner().Do(Create<ParentRelic>{value});
-            reliquary->Do(Arca::CreateChild<ChildRelic>{AsHandle(parent)});
+            reliquary->Do(Arca::Create<ChildRelic>{CreateData{ .parent = AsHandle(parent) }});
             mappedParents.emplace(value, parent);
         };
 
@@ -259,7 +261,7 @@ SCENARIO_METHOD(
 
         WHEN("creating child relic")
         {
-            reliquary->Do(CreateChild<MatrixCreatingRelic>(parent));
+            reliquary->Do(Create<MatrixCreatingRelic>(CreateData{ .parent = parent }));
 
             THEN("curator has seen both matrix and parent")
             {

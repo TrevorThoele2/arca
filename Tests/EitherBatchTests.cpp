@@ -4,6 +4,8 @@
 
 #include <Arca/Either.h>
 #include <Arca/OpenRelic.h>
+#include <Arca/Create.h>
+#include <Arca/Destroy.h>
 
 #include "BasicShard.h"
 

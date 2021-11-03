@@ -4,6 +4,9 @@ using namespace std::string_literals;
 #include "ReliquaryBinarySerializationTests.h"
 
 #include <Arca/OpenRelic.h>
+#include <Arca/Create.h>
+#include <Arca/Destroy.h>
+#include <Arca/Clear.h>
 #include "SignalListener.h"
 
 SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary serialization", "[reliquary][serialization][binary]")

@@ -3,6 +3,7 @@
 #include "ConstShardTests.h"
 
 #include <Arca/OpenRelic.h>
+#include <Arca/Create.h>
 
 ConstShardTestsFixture::Shard::Shard(int value) :
     value(value)
@@ -201,7 +202,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
 
         auto relicStructure = RelicStructure{};
         relicStructure.emplace_back(TypeFor<const Shard>());
-        auto relic = reliquary->Do(CreateWith<OpenRelic>{ relicStructure });
+        auto relic = reliquary->Do(Create<OpenRelic>{ CreateData{ .structure = relicStructure } });
 
         WHEN("finding const shard")
         {

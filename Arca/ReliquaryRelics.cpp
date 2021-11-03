@@ -25,7 +25,7 @@ namespace Arca
 
         for (auto loop = metadataList.begin(); loop != metadataList.end();)
         {
-            if (loop->locality == Arca::Locality::Global)
+            if (loop->locality == Locality::Global)
                 ++loop;
             else
                 loop = metadataList.erase(loop);
@@ -68,17 +68,10 @@ namespace Arca
         std::vector<Handle> returnValue;
 
         for(auto& metadata : metadataList)
-        {
-            if (!metadata.parent)
-                continue;
-
-            if (metadata.parent->id != parentID)
-                continue;
-
-            returnValue.push_back(Handle{
-                metadata.id,
-                metadata.type });
-        }
+            if (metadata.parent && metadata.parent->id == parentID)
+                returnValue.push_back(Handle{
+                    metadata.id,
+                    metadata.type });
 
         return returnValue;
     }
@@ -220,14 +213,7 @@ namespace Arca
         ++nextRelicID;
         return returnValue;
     }
-
-    void ReliquaryRelics::ThrowIfCannotParent(const Handle& parent, RelicPrototype child)
-    {
-        ValidateParentForParenting(parent);
-
-        assert(parent.id != child.id);
-    }
-
+    
     void ReliquaryRelics::Parent(const Handle& parent, const Handle& child)
     {
         auto& parentMetadata = ValidateParentForParenting(parent);

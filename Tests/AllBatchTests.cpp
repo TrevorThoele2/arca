@@ -5,6 +5,10 @@
 #include "DifferentiableShard.h"
 
 #include <Arca/OpenRelic.h>
+#include <Arca/All.h>
+#include <Arca/Create.h>
+#include <Arca/Destroy.h>
+#include <Arca/Either.h>
 
 AllBatchTestsFixture::Relic::Relic(RelicInit init)
 {

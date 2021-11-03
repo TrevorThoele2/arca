@@ -29,9 +29,7 @@
     <ClInclude Include="CommandHandlerException.h" />
     <ClInclude Include="CommandResult.h" />
     <ClInclude Include="Create.h" />
-    <ClInclude Include="CreateChild.h" />
-    <ClInclude Include="CreateChildWith.h" />
-    <ClInclude Include="CreateWith.h" />
+    <ClInclude Include="CreateData.h" />
     <ClInclude Include="CuratorInit.h" />
     <ClInclude Include="CuratorStage.h" />
     <ClInclude Include="HasRelicInitConstructor.h" />
@@ -45,16 +43,11 @@
     <ClInclude Include="HasCommandResult.h" />
     <ClInclude Include="HasHandledCommands.h" />
     <ClInclude Include="HasCommandHandleMethodWithStage.h" />
-    <ClInclude Include="IdentifiedCreate.h" />
-    <ClInclude Include="IdentifiedCreateChild.h" />
-    <ClInclude Include="IdentifiedCreateChildWith.h" />
-    <ClInclude Include="IdentifiedCreateWith.h" />
     <ClInclude Include="Index.h" />
     <ClInclude Include="IsSelfContained.h" />
     <ClInclude Include="OpenRelic.h" />
     <ClInclude Include="Relic.h" />
     <ClInclude Include="RelicIndexDefinition.h" />
-    <ClInclude Include="RelicInitDefinition.h" />
     <ClInclude Include="ReliquaryUserContext.h" />
     <ClInclude Include="MatrixIndexDefinition.h" />
     <ClInclude Include="MutablePointer.h" />

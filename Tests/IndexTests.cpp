@@ -3,6 +3,9 @@
 #include "IndexTests.h"
 
 #include <Arca/ReliquaryOrigin.h>
+#include <Arca/Create.h>
+#include <Arca/All.h>
+#include <Arca/Either.h>
 
 #include "DifferentiableShard.h"
 

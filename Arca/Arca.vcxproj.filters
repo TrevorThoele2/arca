@@ -279,15 +279,6 @@
     <ClInclude Include="Destroy.h">
       <Filter>Header Files\Command\Common</Filter>
     </ClInclude>
-    <ClInclude Include="CreateWith.h">
-      <Filter>Header Files\Command\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="CreateChild.h">
-      <Filter>Header Files\Command\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="CreateChildWith.h">
-      <Filter>Header Files\Command\Common</Filter>
-    </ClInclude>
     <ClInclude Include="Clear.h">
       <Filter>Header Files\Command\Common</Filter>
     </ClInclude>
@@ -369,18 +360,6 @@
     <ClInclude Include="CommandHandler.h">
       <Filter>Header Files\Command</Filter>
     </ClInclude>
-    <ClInclude Include="IdentifiedCreate.h">
-      <Filter>Header Files\Command\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="IdentifiedCreateChild.h">
-      <Filter>Header Files\Command\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="IdentifiedCreateChildWith.h">
-      <Filter>Header Files\Command\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="IdentifiedCreateWith.h">
-      <Filter>Header Files\Command\Common</Filter>
-    </ClInclude>
     <ClInclude Include="IsSelfContained.h">
       <Filter>Header Files\Command</Filter>
     </ClInclude>
@@ -441,14 +420,14 @@
     <ClInclude Include="RelicIndexDefinition.h">
       <Filter>Header Files\Index\Relic</Filter>
     </ClInclude>
-    <ClInclude Include="RelicInitDefinition.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="Either.h">
       <Filter>Header Files\Matrix\Common</Filter>
     </ClInclude>
     <ClInclude Include="All.h">
       <Filter>Header Files\Matrix\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="CreateData.h">
+      <Filter>Header Files\Relic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

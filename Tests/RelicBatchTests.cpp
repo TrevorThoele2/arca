@@ -4,6 +4,9 @@
 
 #include "BasicShard.h"
 
+#include <Arca/Create.h>
+#include <Arca/Destroy.h>
+
 SCENARIO_METHOD(RelicBatchFixture, "default relic batch", "[RelicBatch]")
 {
     GIVEN("default relic batch")

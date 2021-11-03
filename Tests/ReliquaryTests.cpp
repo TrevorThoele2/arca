@@ -4,6 +4,8 @@ using namespace std::string_literals;
 #include "ReliquaryTests.h"
 
 #include <Arca/OpenRelic.h>
+#include <Arca/Create.h>
+#include <Arca/Either.h>
 
 ReliquaryTestsFixture::BasicTypedRelic::BasicTypedRelic(RelicInit init)
 {
@@ -143,7 +145,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "creating relic from registered relic str
                 .Register<BasicShard>()
                 .Actualize();
 
-            auto relic = reliquary->Do(CreateWith<OpenRelic>{structureName});
+            auto relic = reliquary->Do(Create<OpenRelic>{CreateData{ .structure = structureName }});
 
             THEN("relic has shard")
             {
@@ -161,7 +163,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "creating relic from registered relic str
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary->Do(CreateWith<OpenRelic>{structureName}),
+                    reliquary->Do(Create<OpenRelic>{CreateData{ .structure = structureName }}),
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The shard ("s + Traits<BasicShard>::TypeName() + ") was not registered.")
