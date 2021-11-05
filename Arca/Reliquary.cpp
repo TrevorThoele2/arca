@@ -8,6 +8,7 @@
 #include <Inscription/MultimapScribe.h>
 #include <Inscription/MemoryScribe.h>
 #include <Inscription/VectorScribe.h>
+
 #include <Inscription/OptionalScribe.h>
 #include "Chroma/Contract.h"
 
@@ -52,7 +53,7 @@ namespace Arca
 
     Reliquary::SizeT Reliquary::RelicSize() const
     {
-        return relics.metadataList.size();
+        return relics.metadata.size();
     }
 
     Reliquary::SizeT Reliquary::RelicSize(const TypeName& typeName) const
@@ -171,7 +172,7 @@ namespace Inscription
         SaveUserContext saveUserContext;
 
         std::vector<Arca::RelicMetadata> metadataToSave;
-        for (auto& metadata : object.relics.metadataList)
+        for (auto& [_, metadata] : object.relics.metadata)
         {
             metadataToSave.push_back(metadata);
             if (metadata.shouldSerializeBinary)
@@ -350,7 +351,7 @@ namespace Inscription
         SaveUserContext saveUserContext;
 
         archive.StartList("relicMetadata");
-        for (auto& metadata : object.relics.metadataList)
+        for (auto& [_, metadata] : object.relics.metadata)
         {
             SaveRelicMetadata(metadata, archive);
             if (metadata.shouldSerializeJson)
@@ -503,7 +504,7 @@ namespace Inscription
                     createdMetadata.parent = Arca::Handle{ childID, childType };
                 }
 
-                object.relics.metadataList.push_back(createdMetadata);
+                object.relics.metadata.emplace(metadata.id, createdMetadata);
             }
         }
     }

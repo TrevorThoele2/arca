@@ -1,0 +1,26 @@
+{
+    "reliquary": {
+        "nextRelicId": 2,
+        "relicMetadata": [
+            {
+                "id": 1,
+                "parentID": null,
+                "childrenIDs": [
+                ]
+            }
+        ],
+        "shards": {
+        },
+        "localRelics": {
+            "SerializationData::NonDefaultConstructorRelic": [
+                {
+                    "id": 1
+                }
+            ]
+        },
+        "globalRelics": {
+        },
+        "curators": {
+        }
+    }
+}
