@@ -22,6 +22,41 @@ namespace Arca
         using ReferenceTuple = typename Pack::template Transform<TransformToReference>::Type::TupleT;
     };
 
+    template<class... Ts>
+    struct MatrixContains<All<Ts...>>
+    {
+        static bool Contains(Type type);
+    private:
+        using Pack = typename All<Ts...>::Pack;
+    };
+
+    template<Chroma::VariadicTemplateSize i>
+    struct ContainsTypeIterator
+    {
+        template<class Pack>
+        static bool Check(Pack, Type type)
+        {
+            using T = typename Pack::template Parameter<i>::Type;
+
+            if constexpr (is_shard_v<T>)
+                return TypeFor<T>() == type;
+            else
+                return MatrixContains<T>::Contains(type);
+        }
+    };
+
+    template<class... Ts>
+    bool MatrixContains<All<Ts...>>::Contains(Type type)
+    {
+        return Chroma::IterateRangeCheckStop<
+            Chroma::VariadicTemplateSize,
+            ContainsTypeIterator,
+            bool,
+            Pack::count - 1>
+
+            (true, Pack{}, type);
+    }
+
     template<Chroma::VariadicTemplateSize i>
     struct AllTypeNameIterator
     {
@@ -106,18 +141,6 @@ namespace Arca
         }
     };
 
-    template<Chroma::VariadicTemplateSize i>
-    struct ContainsTypeIterator
-    {
-        template<class Pack>
-        static bool Check(Pack, Type type)
-        {
-            using T = typename Pack::template Parameter<i>::Type;
-
-            return MatrixContains<T>::Contains(type);
-        }
-    };
-
     template<class... Ts>
     class MatrixImplementation<All<Ts...>>
     {
@@ -143,14 +166,6 @@ namespace Arca
 
         static IndexOptional CreateIndexValue(RelicID id, Reliquary& reliquary);
         static IndexOptional DefaultIndexValue();
-    private:
-        using Pack = typename All<Ts...>::Pack;
-    };
-
-    template<class... Ts>
-    struct MatrixContains<All<Ts...>>
-    {
-        static bool Contains(Type type);
     private:
         using Pack = typename All<Ts...>::Pack;
     };
@@ -221,17 +236,5 @@ namespace Arca
     auto MatrixImplementation<All<Ts...>>::DefaultIndexValue() -> IndexOptional
     {
         return {};
-    }
-
-    template<class... Ts>
-    bool MatrixContains<All<Ts...>>::Contains(Type type)
-    {
-        return Chroma::IterateRangeCheckStop<
-            Chroma::VariadicTemplateSize,
-            ContainsTypeIterator,
-            bool,
-            Pack::count - 1>
-
-            (true, Pack{}, type);
     }
 }

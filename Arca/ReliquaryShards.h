@@ -65,6 +65,9 @@ namespace Arca
         void SignalCreation(const Index<ShardT>& index);
 
         [[nodiscard]] size_t Size(const Type& type) const;
+
+        void AddType(RelicID id, const Type& type);
+        void RemoveType(RelicID id, const Type& type);
     public:
         class HandlerBase : public KnownPolymorphicSerializer
         {
@@ -78,7 +81,6 @@ namespace Arca
 
             virtual void Create(
                 RelicID id,
-                ReliquaryShards& shards,
                 ReliquaryMatrices& matrices,
                 Reliquary& reliquary,
                 bool isConst,
@@ -90,7 +92,6 @@ namespace Arca
             virtual void RequiredTransactionalDestroy(
                 RelicID id,
                 Reliquary& reliquary,
-                ReliquaryShards& shards,
                 ReliquarySignals& signals,
                 ReliquaryMatrices& matrices) = 0;
             virtual void Clear() = 0;
@@ -119,7 +120,6 @@ namespace Arca
 
             void Create(
                 RelicID id,
-                ReliquaryShards& shards,
                 ReliquaryMatrices& matrices,
                 Reliquary& reliquary,
                 bool isConst,
@@ -127,7 +127,6 @@ namespace Arca
             template<class... ConstructorArgs>
             void CreateCommon(
                 RelicID id,
-                ReliquaryShards& shards,
                 ReliquaryMatrices& matrices,
                 Reliquary& reliquary,
                 bool isConst,
@@ -140,7 +139,6 @@ namespace Arca
             void RequiredTransactionalDestroy(
                 RelicID id,
                 Reliquary& reliquary,
-                ReliquaryShards& shards,
                 ReliquarySignals& signals,
                 ReliquaryMatrices& matrices) override;
             void Clear() override;
@@ -167,10 +165,15 @@ namespace Arca
             void TransactionalDestroyCommon(
                 RelicID id,
                 Reliquary& reliquary,
-                ReliquaryShards& shards,
                 ReliquarySignals& signals,
                 ReliquaryMatrices& matrices,
                 BatchSourceT& batchSource);
+
+            void AddAllTypes();
+            template<class BatchSourceT>
+            [[nodiscard]] std::vector<RelicID> AllIDs(BatchSourceT& batchSource) const;
+        private:
+            ReliquaryShards* shards;
         };
 
         using HandlerPtr = std::unique_ptr<HandlerBase>;
@@ -199,6 +202,8 @@ namespace Arca
     private:
         template<class ShardT, class... ConstructorArgs>
         Index<ShardT> CreateCommon(RelicID id, bool required, ConstructorArgs&& ... constructorArgs);
+    private:
+        std::unordered_map<RelicID, std::unordered_set<Type>> idToTypes;
     private:
         template<Chroma::VariadicTemplateSize i>
         struct DestroyAllShardsIterator
@@ -277,7 +282,7 @@ namespace Arca
             if (handler->IsRequired(id))
                 throw CannotDestroy(objectTypeName, TypeFor<ShardT>());
 
-            handler->RequiredTransactionalDestroy(id, *owner, *this, *signals, *matrices);
+            handler->RequiredTransactionalDestroy(id, *owner, *signals, *matrices);
         }
     }
 
@@ -330,7 +335,9 @@ namespace Arca
     template<class ShardT>
     ReliquaryShards::Handler<ShardT>::Handler(Reliquary& reliquary, ReliquaryShards& shards, ReliquaryMatrices& matrices) :
         HandlerBase(TypeFor<ShardT>()),
-        batchSource(reliquary, shards, matrices), constBatchSource(reliquary, shards, matrices)
+        batchSource(reliquary, shards, matrices),
+        constBatchSource(reliquary, shards, matrices),
+        shards(&shards)
     {}
 
     template<class ShardT>
@@ -347,16 +354,15 @@ namespace Arca
 
     template<class ShardT>
     void ReliquaryShards::Handler<ShardT>::Create(
-        RelicID id, ReliquaryShards& shards, ReliquaryMatrices& matrices, Reliquary& reliquary, bool isConst, bool required)
+        RelicID id, ReliquaryMatrices& matrices, Reliquary& reliquary, bool isConst, bool required)
     {
-        CreateCommon(id, shards, matrices, reliquary, isConst, required);
+        CreateCommon(id, matrices, reliquary, isConst, required);
     }
 
     template<class ShardT>
     template<class... ConstructorArgs>
     void ReliquaryShards::Handler<ShardT>::CreateCommon(
         RelicID id,
-        ReliquaryShards& shards,
         ReliquaryMatrices& matrices,
         Reliquary& reliquary,
         bool isConst,
@@ -365,23 +371,29 @@ namespace Arca
     {
         if (isConst)
         {
-            const auto added = shards.FindBatchSource<const ShardT>()->Add(
+            const auto added = shards->FindBatchSource<const ShardT>()->Add(
                 id, required, std::forward<ConstructorArgs>(constructorArgs)...);
-            shards.SignalCreation(Index<const ShardT>{ id, reliquary, added });
-            matrices.ShardCreated(id, TypeFor<ShardT>(), shards.AllTypes(id));
+            const auto type = TypeFor<ShardT>();
+            shards->AddType(id, type);
+            shards->SignalCreation(Index<const ShardT>{ id, reliquary, added });
+            matrices.ShardCreated(id, type, shards->AllTypes(id));
         }
         else
         {
-            const auto added = shards.FindBatchSource<ShardT>()->Add(
+            const auto added = shards->FindBatchSource<ShardT>()->Add(
                 id, required, std::forward<ConstructorArgs>(constructorArgs)...);
-            shards.SignalCreation(Index<ShardT>{ id, reliquary, added });
-            matrices.ShardCreated(id, TypeFor<ShardT>(), shards.AllTypes(id));
+            const auto type = TypeFor<ShardT>();
+            shards->AddType(id, type);
+            shards->SignalCreation(Index<ShardT>{ id, reliquary, added });
+            matrices.ShardCreated(id, type, shards->AllTypes(id));
         }
     }
 
     template<class ShardT>
     void ReliquaryShards::Handler<ShardT>::RequiredDestroy(
-        RelicID id, Reliquary& reliquary, ReliquarySignals& signals)
+        RelicID id,
+        Reliquary& reliquary,
+        ReliquarySignals& signals)
     {
         DestroyCommon(id, reliquary, signals, batchSource);
         DestroyCommon(id, reliquary, signals, constBatchSource);
@@ -391,12 +403,11 @@ namespace Arca
     void ReliquaryShards::Handler<ShardT>::RequiredTransactionalDestroy(
         RelicID id,
         Reliquary& reliquary,
-        ReliquaryShards& shards,
         ReliquarySignals& signals,
         ReliquaryMatrices& matrices)
     {
-        TransactionalDestroyCommon(id, reliquary, shards, signals, matrices, batchSource);
-        TransactionalDestroyCommon(id, reliquary, shards, signals, matrices, constBatchSource);
+        TransactionalDestroyCommon(id, reliquary, signals, matrices, batchSource);
+        TransactionalDestroyCommon(id, reliquary, signals, matrices, constBatchSource);
     }
 
     template<class ShardT>
@@ -445,6 +456,8 @@ namespace Arca
     {
         archive(batchSource);
         archive(constBatchSource);
+        if (archive.IsInput())
+            AddAllTypes();
     }
 
     template<class ShardT>
@@ -454,6 +467,8 @@ namespace Arca
 
         archive(name, batchSource);
         archive(constName, constBatchSource);
+        if (archive.IsInput())
+            AddAllTypes();
     }
 
     template<class ShardT>
@@ -471,7 +486,10 @@ namespace Arca
     template<class ShardT>
     template<class BatchSourceT>
     void ReliquaryShards::Handler<ShardT>::DestroyCommon(
-        RelicID id, Reliquary& reliquary, ReliquarySignals& signals, BatchSourceT& batchSource)
+        RelicID id,
+        Reliquary& reliquary,
+        ReliquarySignals& signals,
+        BatchSourceT& batchSource)
     {
         using RealShardT = typename BatchSourceT::ShardT;
 
@@ -481,6 +499,8 @@ namespace Arca
             signals.Raise(Destroying{ Handle{ id, std::move(batchSource.Type()) } });
 
             batchSource.DestroyFromBase(id);
+
+            shards->RemoveType(id, TypeFor<ShardT>());
         }
     }
 
@@ -489,7 +509,6 @@ namespace Arca
     void ReliquaryShards::Handler<ShardT>::TransactionalDestroyCommon(
         RelicID id,
         Reliquary& reliquary,
-        ReliquaryShards& shards,
         ReliquarySignals& signals,
         ReliquaryMatrices& matrices, 
         BatchSourceT& batchSource)
@@ -498,13 +517,34 @@ namespace Arca
 
         if (batchSource.ContainsFromBase(id))
         {
-            matrices.ShardDestroying(id, TypeFor<RealShardT>(), shards.AllTypes(id));
+            matrices.ShardDestroying(id, TypeFor<RealShardT>(), shards->AllTypes(id));
 
             signals.Raise(DestroyingKnown<RealShardT>{Index<RealShardT>{id, reliquary, batchSource.Find(id)}});
             signals.Raise(Destroying{ Handle{ id, std::move(batchSource.Type()) } });
 
             batchSource.DestroyFromBase(id);
+
+            shards->RemoveType(id, TypeFor<ShardT>());
         }
+    }
+
+    template<class ShardT>
+    void ReliquaryShards::Handler<ShardT>::AddAllTypes()
+    {
+        for (auto id : AllIDs(batchSource))
+            shards->AddType(id, TypeFor<ShardT>());
+        for (auto id : AllIDs(constBatchSource))
+            shards->AddType(id, TypeFor<const ShardT>());
+    }
+
+    template<class ShardT>
+    template<class BatchSourceT>
+    std::vector<RelicID> ReliquaryShards::Handler<ShardT>::AllIDs(BatchSourceT& batchSource) const
+    {
+        std::vector<RelicID> ids;
+        for (auto& shard : batchSource)
+            ids.push_back(shard.first);
+        return ids;
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
@@ -560,7 +600,6 @@ namespace Arca
             throw NotRegistered(objectTypeName, type, typeid(ShardT));
         handler->CreateCommon(
             id,
-            *this,
             *matrices,
             *owner,
             std::is_const_v<ShardT>,

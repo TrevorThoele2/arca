@@ -27,6 +27,18 @@ namespace Arca
     };
 
     template<class T>
+    struct MatrixContains<Either<T>>
+    {
+        static bool Contains(Type type);
+    };
+
+    template<class T>
+    bool MatrixContains<Either<T>>::Contains(Type type)
+    {
+        return type == TypeFor<T>() || type == TypeFor<const T>();
+    }
+
+    template<class T>
     class MatrixImplementation<Either<T>>
     {
     public:
@@ -107,17 +119,5 @@ namespace Arca
     auto MatrixImplementation<Either<T>>::DefaultIndexValue() -> IndexOptional
     {
         return nullptr;
-    }
-
-    template<class T>
-    struct MatrixContains<Either<T>>
-    {
-        static bool Contains(Type type);
-    };
-
-    template<class T>
-    bool MatrixContains<Either<T>>::Contains(Type type)
-    {
-        return type == TypeFor<T>() || type == TypeFor<const T>();
     }
 }

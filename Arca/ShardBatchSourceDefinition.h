@@ -61,7 +61,9 @@ namespace Inscription
                     object.map.emplace(id, typename ObjectT::StoredT{ required, shard });
                 }
 
-                object.matrices->ShardCreated(id, Arca::TypeFor<T>(), object.shards->AllTypes(id));
+                const auto type = Arca::TypeFor<T>();
+                object.shards->AddType(id, type);
+                object.matrices->ShardCreated(id, type, object.shards->AllTypes(id));
             }
         }
     }
@@ -121,7 +123,9 @@ namespace Inscription
                     object.map.emplace(id, typename ObjectT::StoredT{ required, shard });
                 }
 
-                object.matrices->ShardCreated(id, Arca::TypeFor<T>(), object.shards->AllTypes(id));
+                const auto type = Arca::TypeFor<T>();
+                object.shards->AddType(id, type);
+                object.matrices->ShardCreated(id, type, object.shards->AllTypes(id));
 
                 input->EndObject();
             }

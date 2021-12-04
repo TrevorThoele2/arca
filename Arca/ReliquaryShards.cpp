@@ -15,7 +15,7 @@ namespace Arca
         if (Contains(Handle{ id, type }))
             throw CannotCreate(objectTypeName, type);
 
-        handler->Create(id, *this, *matrices, *owner, type.isConst, required);
+        handler->Create(id, *matrices, *owner, type.isConst, required);
     }
     
     void ReliquaryShards::TransactionalDestroy(const Type& type, RelicID id)
@@ -24,7 +24,7 @@ namespace Arca
         if (handler == nullptr)
             throw NotRegistered(objectTypeName, type);
 
-        handler->RequiredTransactionalDestroy(id, *owner, *this, *signals, *matrices);
+        handler->RequiredTransactionalDestroy(id, *owner, *signals, *matrices);
     }
 
     void ReliquaryShards::Clear()
@@ -73,11 +73,8 @@ namespace Arca
 
     std::unordered_set<Type> ReliquaryShards::AllTypes(RelicID id) const
     {
-        std::unordered_set<Type> returnValue;
-        for (auto& handler : handlers)
-            if (handler->Contains(id))
-                returnValue.insert(handler->type);
-        return returnValue;
+        const auto found = idToTypes.find(id);
+        return found == idToTypes.end() ? std::unordered_set<Type>{} : found->second;
     }
 
     size_t ReliquaryShards::Size(const Type& type) const
@@ -86,6 +83,26 @@ namespace Arca
         return handler
             ? !type.isConst ? handler->BatchSource().Size() : handler->ConstBatchSource().Size()
             : 0;
+    }
+
+    void ReliquaryShards::AddType(RelicID id, const Type& type)
+    {
+        auto found = idToTypes.find(id);
+        if (found == idToTypes.end())
+            idToTypes.emplace(id, std::unordered_set<Type>{ type });
+        else
+            found->second.insert(type);
+    }
+
+    void ReliquaryShards::RemoveType(RelicID id, const Type& type)
+    {
+        auto found = idToTypes.find(id);
+        if (found != idToTypes.end())
+        {
+            found->second.erase(type);
+            if (found->second.empty())
+                idToTypes.erase(found);
+        }
     }
 
     bool ReliquaryShards::Contains(const Handle& handle) const

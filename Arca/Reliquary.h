@@ -113,18 +113,10 @@ namespace Arca
 
         [[nodiscard]] SizeT CuratorSize() const;
     public:
-        template<
-            class CommandT,
-            std::enable_if_t<
-                is_command_v<CommandT>
-                && !has_command_result_v<CommandT>, int> = 0>
+        template<class CommandT, std::enable_if_t<is_command_v<CommandT> && !has_command_result_v<CommandT>, int> = 0>
         void Do(const CommandT& command);
 
-        template<
-            class CommandT,
-            std::enable_if_t<
-                is_command_v<CommandT>
-                && has_command_result_v<CommandT>, int> = 0>
+        template<class CommandT, std::enable_if_t<is_command_v<CommandT> && has_command_result_v<CommandT>, int> = 0>
         command_result_t<CommandT> Do(const CommandT& command);
     public:
         template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
@@ -316,21 +308,13 @@ namespace Arca
         return curators.Contains<CuratorT>();
     }
 
-    template<
-        class CommandT,
-        std::enable_if_t<
-            is_command_v<CommandT>
-            && !has_command_result_v<CommandT>, int>>
+    template<class CommandT, std::enable_if_t<is_command_v<CommandT> && !has_command_result_v<CommandT>, int>>
     void Reliquary::Do(const CommandT& command)
     {
         commands.Do(command);
     }
 
-    template<
-        class CommandT,
-        std::enable_if_t<
-            is_command_v<CommandT>
-            && has_command_result_v<CommandT>, int>>
+    template<class CommandT, std::enable_if_t<is_command_v<CommandT> && has_command_result_v<CommandT>, int>>
     command_result_t<CommandT> Reliquary::Do(const CommandT& command)
     {
         return commands.Do(command);
