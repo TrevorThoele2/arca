@@ -29,73 +29,73 @@ namespace Arca
     template<>
     struct Traits<RelicTestsFixture::Shard>
     {
-        static const ObjectType objectType = ObjectType::Shard;
-        static TypeName TypeName() { return "RelicTestsFixture::Shard"; }
+        static constexpr ObjectType objectType = ObjectType::Shard;
+        static const inline TypeName typeName = "RelicTestsFixture::Shard";
     };
 
     template<>
     struct Traits<RelicTestsFixture::OtherShard>
     {
-        static const ObjectType objectType = ObjectType::Shard;
-        static TypeName TypeName() { return "RelicTestsFixture::OtherShard"; }
+        static constexpr ObjectType objectType = ObjectType::Shard;
+        static const inline TypeName typeName = "RelicTestsFixture::OtherShard";
     };
 
     template<>
     struct Traits<RelicTestsFixture::LocalRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "RelicTestsFixture::TypedClosedRelic"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "RelicTestsFixture::TypedClosedRelic";
     };
     
     template<>
     struct Traits<RelicTestsFixture::GlobalRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "RelicTestsFixture::GlobalRelic"; }
-        static const Locality locality = Locality::Global;
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "RelicTestsFixture::GlobalRelic";
+        static constexpr Locality locality = Locality::Global;
     };
 
     template<>
     struct Traits<RelicTestsFixture::ShouldCreateRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "RelicTestsFixture::ShouldCreateRelic"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "RelicTestsFixture::ShouldCreateRelic";
         static bool ShouldCreate(Reliquary& reliquary, int value);
     };
 
     template<>
     struct Traits<RelicTestsFixture::InitializedRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "RelicTestsFixture::InitializedRelic"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "RelicTestsFixture::InitializedRelic";
     };
 
     template<>
     struct Traits<RelicTestsFixture::MovableOnlyRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "RelicTestsFixture::MovableOnlyRelic"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "RelicTestsFixture::MovableOnlyRelic";
     };
 
     template<>
     struct Traits<RelicTestsFixture::DefaultConstructedRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "RelicTestsFixture::DefaultConstructedRelic"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "RelicTestsFixture::DefaultConstructedRelic";
     };
 
     template<>
     struct Traits<RelicTestsFixture::RelicConstructedFromMovedValue>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "RelicTestsFixture::RelicConstructedFromMoveValue"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "RelicTestsFixture::RelicConstructedFromMoveValue";
     };
 
     template<>
     struct Traits<RelicTestsFixture::RelicWithShouldCreateAndMovedValue>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "RelicTestsFixture::RelicWithShouldCreateAndMovedValue"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "RelicTestsFixture::RelicWithShouldCreateAndMovedValue";
         static bool ShouldCreate(Reliquary& reliquary, std::unique_ptr<int>& myInt);
     };
 }

@@ -19,9 +19,9 @@ namespace Arca
     template<>
     struct Traits<::RelicParentingTestsFixture::GlobalRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "RelicTestsGlobalRelic"; }
-        static const Locality locality = Locality::Global;
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "RelicTestsGlobalRelic";
+        static constexpr Locality locality = Locality::Global;
     };
 }
 

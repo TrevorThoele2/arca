@@ -28,51 +28,51 @@ namespace Arca
     template<>
     struct Traits<HandleTestsFixture::Shard>
     {
-        static const ObjectType objectType = ObjectType::Shard;
-        static TypeName TypeName() { return "HandleTestsShard"; }
+        static constexpr ObjectType objectType = ObjectType::Shard;
+        static const inline TypeName typeName = "HandleTestsShard";
     };
 
     template<>
     struct Traits<HandleTestsFixture::OtherShard>
     {
-        static const ObjectType objectType = ObjectType::Shard;
-        static TypeName TypeName() { return "HandleTestsOtherShard"; }
+        static constexpr ObjectType objectType = ObjectType::Shard;
+        static const inline TypeName typeName = "HandleTestsOtherShard";
     };
 
     template<>
     struct Traits<HandleTestsFixture::TypedRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "HandleTestsTypedRelic"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "HandleTestsTypedRelic";
     };
 
     template<>
     struct Traits<HandleTestsFixture::GlobalRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "HandleTestsGlobalRelic"; }
-        static const Locality locality = Locality::Global;
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "HandleTestsGlobalRelic";
+        static constexpr Locality locality = Locality::Global;
     };
 
     template<>
     struct Traits<HandleTestsFixture::HandleHolder>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "HandleTestsHandleHolder"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "HandleTestsHandleHolder";
     };
 
     template<>
     struct Traits<HandleTestsFixture::Curator>
     {
-        static const ObjectType objectType = ObjectType::Curator;
-        static TypeName TypeName() { return "HandleTestsBasicCurator"; }
+        static constexpr ObjectType objectType = ObjectType::Curator;
+        static const inline TypeName typeName = "HandleTestsBasicCurator";
     };
 
     template<>
     struct Traits<HandleTestsFixture::Signal>
     {
-        static const ObjectType objectType = ObjectType::Signal;
-        static TypeName TypeName() { return "HandleTestsBasicSignal"; }
+        static constexpr ObjectType objectType = ObjectType::Signal;
+        static const inline TypeName typeName = "HandleTestsBasicSignal";
     };
 }
 

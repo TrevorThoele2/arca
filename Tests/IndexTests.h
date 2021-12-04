@@ -24,30 +24,30 @@ namespace Arca
     template<>
     struct Traits<IndexTestsFixture::TypedClosedRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "IndexTestsTypedClosedRelic"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "IndexTestsTypedClosedRelic";
     };
 
     template<>
     struct Traits<IndexTestsFixture::TypedOpenRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "IndexTestsTypedOpenRelic"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "IndexTestsTypedOpenRelic";
     };
 
     template<>
     struct Traits<IndexTestsFixture::GlobalRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "IndexTestsGlobalRelic"; }
-        static const Locality locality = Locality::Global;
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "IndexTestsGlobalRelic";
+        static constexpr Locality locality = Locality::Global;
     };
 
     template<>
     struct Traits<IndexTestsFixture::RelicHolderRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "IndexTestsRelicHolderRelic"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "IndexTestsRelicHolderRelic";
     };
 }
 

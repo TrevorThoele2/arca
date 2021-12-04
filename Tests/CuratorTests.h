@@ -30,57 +30,57 @@ namespace Arca
     template<>
     struct Traits<CuratorTestsFixture::BasicCurator>
     {
-        static const ObjectType objectType = ObjectType::Curator;
-        static TypeName TypeName() { return "CuratorTestsFixture::BasicCurator"; }
+        static constexpr ObjectType objectType = ObjectType::Curator;
+        static const inline TypeName typeName = "CuratorTestsFixture::BasicCurator";
     };
 
     template<>
     struct Traits<CuratorTestsFixture::OtherBasicCurator>
     {
-        static const ObjectType objectType = ObjectType::Curator;
-        static TypeName TypeName() { return "CuratorTestsFixture::OtherBasicCurator"; }
+        static constexpr ObjectType objectType = ObjectType::Curator;
+        static const inline TypeName typeName = "CuratorTestsFixture::OtherBasicCurator";
     };
 
     template<>
     struct Traits<CuratorTestsFixture::CuratorWithNonDefaultConstructor>
     {
-        static const ObjectType objectType = ObjectType::Curator;
-        static TypeName TypeName() { return "CuratorTestsFixture::CuratorWithNonDefaultConstructor"; }
+        static constexpr ObjectType objectType = ObjectType::Curator;
+        static const inline TypeName typeName = "CuratorTestsFixture::CuratorWithNonDefaultConstructor";
     };
 
     template<>
     struct Traits<CuratorTestsFixture::CuratorWithLocalRelicConstructor>
     {
-        static const ObjectType objectType = ObjectType::Curator;
-        static TypeName TypeName() { return "CuratorTestsFixture::CuratorWithLocalRelicConstructor"; }
+        static constexpr ObjectType objectType = ObjectType::Curator;
+        static const inline TypeName typeName = "CuratorTestsFixture::CuratorWithLocalRelicConstructor";
     };
 
     template<>
     struct Traits<CuratorTestsFixture::CuratorWithGlobalRelicConstructor>
     {
-        static const ObjectType objectType = ObjectType::Curator;
-        static TypeName TypeName() { return "CuratorTestsFixture::CuratorWithGlobalRelicConstructor"; }
+        static constexpr ObjectType objectType = ObjectType::Curator;
+        static const inline TypeName typeName = "CuratorTestsFixture::CuratorWithGlobalRelicConstructor";
     };
 
     template<>
     struct Traits<CuratorTestsFixture::CuratorWithoutCommands>
     {
-        static const ObjectType objectType = ObjectType::Curator;
-        static TypeName TypeName() { return "CuratorTestsFixture::CuratorWithoutCommands"; }
+        static constexpr ObjectType objectType = ObjectType::Curator;
+        static const inline TypeName typeName = "CuratorTestsFixture::CuratorWithoutCommands";
     };
 
     template<>
     struct Traits<CuratorTestsFixture::BaseCuratorWithCommand>
     {
-        static const ObjectType objectType = ObjectType::Curator;
-        static TypeName TypeName() { return "CuratorTestsFixture::BaseCuratorWithCommand"; }
+        static constexpr ObjectType objectType = ObjectType::Curator;
+        static const inline TypeName typeName = "CuratorTestsFixture::BaseCuratorWithCommand";
     };
 
     template<>
     struct Traits<CuratorTestsFixture::DerivedCuratorWithCommand>
     {
-        static const ObjectType objectType = ObjectType::Curator;
-        static TypeName TypeName() { return "CuratorTestsFixture::DerivedCuratorWithCommand"; }
+        static constexpr ObjectType objectType = ObjectType::Curator;
+        static const inline TypeName typeName = "CuratorTestsFixture::DerivedCuratorWithCommand";
         using HandledCommands = Arca::HandledCommands<
             BasicCommand,
             CuratorTestsFixture::BasicCommand2>;
@@ -89,8 +89,8 @@ namespace Arca
     template<>
     struct Traits<CuratorTestsFixture::BasicCommand2>
     {
-        static const ObjectType objectType = ObjectType::Command;
-        static TypeName TypeName() { return "CuratorTestsFixture::BasicCommand2"; }
+        static constexpr ObjectType objectType = ObjectType::Command;
+        static const inline TypeName typeName = "CuratorTestsFixture::BasicCommand2";
     };
 }
 

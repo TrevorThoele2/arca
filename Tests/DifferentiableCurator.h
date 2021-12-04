@@ -72,8 +72,8 @@ namespace Arca
     template<size_t differentiator>
     struct Traits<DifferentiableCurator<differentiator>>
     {
-        static const ObjectType objectType = ObjectType::Curator;
-        static TypeName TypeName() { return "DifferentiableCurator<" + Chroma::ToString(differentiator) + ">"; }
+        static constexpr ObjectType objectType = ObjectType::Curator;
+        static const inline TypeName typeName = "DifferentiableCurator<" + Chroma::ToString(differentiator) + ">";
         using HandledCommands = HandledCommands<BasicCommand>;
     };
 }

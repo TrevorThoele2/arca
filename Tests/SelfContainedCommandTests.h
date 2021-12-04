@@ -16,18 +16,18 @@ namespace Arca
     template<>
     struct Traits<SelfContainedCommandTestsFixture::SelfContainedCommand>
     {
-        static const ObjectType objectType = ObjectType::Command;
-        static TypeName TypeName() { return "SelfContainedCommandTestsFixture::SelfContainedCommand"; }
-        static const bool selfContained = true;
+        static constexpr ObjectType objectType = ObjectType::Command;
+        static const inline TypeName typeName = "SelfContainedCommandTestsFixture::SelfContainedCommand";
+        static constexpr bool selfContained = true;
     };
 
     template<>
     struct Traits<SelfContainedCommandTestsFixture::SelfContainedCommandWithResult>
     {
-        static const ObjectType objectType = ObjectType::Command;
-        static TypeName TypeName() { return "SelfContainedCommandTestsFixture::SelfContainedCommandWithResult"; }
+        static constexpr ObjectType objectType = ObjectType::Command;
+        static const inline TypeName typeName = "SelfContainedCommandTestsFixture::SelfContainedCommandWithResult";
         using Result = int;
-        static const bool selfContained = true;
+        static constexpr bool selfContained = true;
     };
 }
 

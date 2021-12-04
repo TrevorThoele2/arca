@@ -47,150 +47,150 @@ namespace Arca
     template<>
     struct Traits<SerializationData::BasicShard>
     {
-        static const ObjectType objectType = ObjectType::Shard;
-        static TypeName TypeName() { return "SerializationData::BasicShard"; }
+        static constexpr ObjectType objectType = ObjectType::Shard;
+        static const inline TypeName typeName = "SerializationData::BasicShard";
     };
 
     template<>
     struct Traits<SerializationData::BasicShardWithDifferentInputHandle>
     {
-        static const ObjectType objectType = ObjectType::Shard;
-        static TypeName TypeName() { return "SerializationData::BasicShardWithDifferentInputHandle"; }
+        static constexpr ObjectType objectType = ObjectType::Shard;
+        static const inline TypeName typeName = "SerializationData::BasicShardWithDifferentInputHandle";
     };
 
     template<>
     struct Traits<SerializationData::PreferentialSerializationConstructorShard>
     {
-        static const ObjectType objectType = ObjectType::Shard;
-        static TypeName TypeName() { return "SerializationData::PreferentialSerializationConstructorShard"; }
+        static constexpr ObjectType objectType = ObjectType::Shard;
+        static const inline TypeName typeName = "SerializationData::PreferentialSerializationConstructorShard";
     };
 
     template<>
     struct Traits<SerializationData::ShardWithRelicIndex>
     {
-        static const ObjectType objectType = ObjectType::Shard;
-        static TypeName TypeName() { return "SerializationData::ShardWithRelicIndex"; }
+        static constexpr ObjectType objectType = ObjectType::Shard;
+        static const inline TypeName typeName = "SerializationData::ShardWithRelicIndex";
     };
 
     template<>
     struct Traits<SerializationData::OtherShard>
     {
-        static const ObjectType objectType = ObjectType::Shard;
-        static TypeName TypeName() { return "SerializationData::OtherShard"; }
+        static constexpr ObjectType objectType = ObjectType::Shard;
+        static const inline TypeName typeName = "SerializationData::OtherShard";
     };
 
     template<>
     struct Traits<SerializationData::LocalRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "SerializationData::TypedClosedRelic"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "SerializationData::TypedClosedRelic";
     };
 
     template<>
     struct Traits<SerializationData::GlobalRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "SerializationData::GlobalRelic"; }
-        static const Locality locality = Locality::Global;
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "SerializationData::GlobalRelic";
+        static constexpr Locality locality = Locality::Global;
     };
 
     template<>
     struct Traits<SerializationData::NonDefaultConstructorRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "SerializationData::NonDefaultConstructorRelic"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "SerializationData::NonDefaultConstructorRelic";
     };
 
     template<>
     struct Traits<SerializationData::PreferentialSerializationConstructorRelic1>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "SerializationData::RelicPreferentialSerializationConstructor1"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "SerializationData::RelicPreferentialSerializationConstructor1";
     };
 
     template<>
     struct Traits<SerializationData::PreferentialSerializationConstructorRelic2>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "SerializationData::RelicPreferentialSerializationConstructor2"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "SerializationData::RelicPreferentialSerializationConstructor2";
     };
 
     template<>
     struct Traits<SerializationData::PreferentialSerializationConstructorRelic3>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "SerializationData::RelicPreferentialSerializationConstructor3"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "SerializationData::RelicPreferentialSerializationConstructor3";
     };
 
     template<>
     struct Traits<SerializationData::PreferentialSerializationConstructorRelic4>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "SerializationData::RelicPreferentialSerializationConstructor4"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "SerializationData::RelicPreferentialSerializationConstructor4";
     };
 
     template<>
     struct Traits<SerializationData::BasicCurator>
     {
-        static const ObjectType objectType = ObjectType::Curator;
-        static TypeName TypeName() { return "SerializationData::BasicCurator"; }
+        static constexpr ObjectType objectType = ObjectType::Curator;
+        static const inline TypeName typeName = "SerializationData::BasicCurator";
     };
 
     template<>
     struct Traits<SerializationData::BasicSignal>
     {
-        static const ObjectType objectType = ObjectType::Signal;
-        static TypeName TypeName() { return "SerializationData::BasicSignal"; }
+        static constexpr ObjectType objectType = ObjectType::Signal;
+        static const inline TypeName typeName = "SerializationData::BasicSignal";
     };
 
     template<>
     struct Traits<SerializationData::BasicShardNullInscription>
     {
-        static const ObjectType objectType = ObjectType::Shard;
-        static TypeName TypeName() { return "SerializationData::BasicShardNullInscription"; }
+        static constexpr ObjectType objectType = ObjectType::Shard;
+        static const inline TypeName typeName = "SerializationData::BasicShardNullInscription";
     };
 
     template<>
     struct Traits<SerializationData::OtherShardNullInscription>
     {
-        static const ObjectType objectType = ObjectType::Shard;
-        static TypeName TypeName() { return "SerializationData::OtherShardNullInscription"; }
+        static constexpr ObjectType objectType = ObjectType::Shard;
+        static const inline TypeName typeName = "SerializationData::OtherShardNullInscription";
     };
 
     template<class ShardT>
     struct Traits<SerializationData::LocalRelicNullInscription<ShardT>>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "SerializationData::TypedClosedRelicNullInscription<" + TypeFor<ShardT>().name + ">"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "SerializationData::TypedClosedRelicNullInscription<" + TypeFor<ShardT>().name + ">";
     };
 
     template<class ShardT>
     struct Traits<SerializationData::GlobalRelicNullInscription<ShardT>>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "SerializationData::GlobalRelicNullInscription<" + TypeFor<ShardT>().name + ">"; }
-        static const Locality locality = Locality::Global;
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "SerializationData::GlobalRelicNullInscription<" + TypeFor<ShardT>().name + ">";
+        static constexpr Locality locality = Locality::Global;
     };
 
     template<>
     struct Traits<SerializationData::MovableOnlyRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "SerializationData::MovableOnlyRelic"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "SerializationData::MovableOnlyRelic";
     };
 
     template<>
     struct Traits<SerializationData::BasicCuratorNullInscription>
     {
-        static const ObjectType objectType = ObjectType::Curator;
-        static TypeName TypeName() { return "SerializationData::BasicCuratorNullInscription"; }
+        static constexpr ObjectType objectType = ObjectType::Curator;
+        static const inline TypeName typeName = "SerializationData::BasicCuratorNullInscription";
     };
 
     template<>
     struct Traits<SerializationData::BasicSignalNullInscription>
     {
-        static const ObjectType objectType = ObjectType::Signal;
-        static TypeName TypeName() { return "SerializationData::BasicSignalNullInscription"; }
+        static constexpr ObjectType objectType = ObjectType::Signal;
+        static const inline TypeName typeName = "SerializationData::BasicSignalNullInscription";
     };
 }
 

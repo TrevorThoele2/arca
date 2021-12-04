@@ -33,52 +33,52 @@ namespace Arca
     template<>
     struct Traits<IntegrationTestsFixture::BasicSignal>
     {
-        static const ObjectType objectType = ObjectType::Signal;
-        static TypeName TypeName() { return "IntegrationTestsFixture::BasicSignal"; }
+        static constexpr ObjectType objectType = ObjectType::Signal;
+        static const inline TypeName typeName = "IntegrationTestsFixture::BasicSignal";
     };
 
     template<>
     struct Traits<IntegrationTestsFixture::ChildRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "IntegrationTestsFixture::ChildRelic"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "IntegrationTestsFixture::ChildRelic";
     };
 
     template<>
     struct Traits<IntegrationTestsFixture::ParentRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "IntegrationTestsFixture::ParentRelic"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "IntegrationTestsFixture::ParentRelic";
         static bool ShouldCreate(Reliquary& reliquary, int value);
     };
 
     template<>
     struct Traits<IntegrationTestsFixture::MatrixCreatingRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "IntegrationTestsFixture::MatrixCreatingRelic"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "IntegrationTestsFixture::MatrixCreatingRelic";
     };
 
     template<>
     struct Traits<IntegrationTestsFixture::MatrixAndParentCurator>
     {
-        static const ObjectType objectType = ObjectType::Curator;
-        static TypeName TypeName() { return "IntegrationTestsFixture::ParentAndMatrixCurator"; }
+        static constexpr ObjectType objectType = ObjectType::Curator;
+        static const inline TypeName typeName = "IntegrationTestsFixture::ParentAndMatrixCurator";
     };
 
     template<>
     struct Traits<IntegrationTestsFixture::RelicListeningToSignalFromConstructor>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "IntegrationTestsFixture::RelicListeningToSignalFromConstructor"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "IntegrationTestsFixture::RelicListeningToSignalFromConstructor";
     };
 
     template<>
     struct Traits<IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic"; }
-        static const Locality locality = Locality::Global;
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic";
+        static constexpr Locality locality = Locality::Global;
     };
 }
 

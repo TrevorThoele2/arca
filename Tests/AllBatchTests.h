@@ -28,16 +28,16 @@ namespace Arca
     template<>
     struct Traits<::AllBatchTestsFixture::Relic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "EitherShardBatchTestsRelic"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "EitherShardBatchTestsRelic";
     };
 
     template<>
     struct Traits<::AllBatchTestsFixture::GlobalRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "EitherShardBatchTestsGlobalRelic"; }
-        static const Locality locality = Locality::Global;
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "EitherShardBatchTestsGlobalRelic";
+        static constexpr Locality locality = Locality::Global;
     };
 }
 

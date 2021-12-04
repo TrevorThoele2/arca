@@ -27,13 +27,13 @@ namespace Arca
     struct Traits<Destroying>
     {
         static constexpr ObjectType objectType = ObjectType::Signal;
-        static constexpr TypeName TypeName() { return "Arca::Destroying"; }
+        static const inline TypeName typeName = "Arca::Destroying";
     };
 
     template<class T>
     struct Traits<DestroyingKnown<T>>
     {
         static constexpr ObjectType objectType = ObjectType::Signal;
-        static constexpr TypeName TypeName() { return "Arca::DestroyingKnown<" + FullTypeNameFor<T>() + ">"; }
+        static const inline TypeName typeName = "Arca::DestroyingKnown<" + FullTypeNameFor<T>() + ">";
     };
 }
