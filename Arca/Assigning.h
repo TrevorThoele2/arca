@@ -23,7 +23,7 @@ namespace Arca
     template<class T>
     struct Traits<AssigningKnown<T>>
     {
-        static const ObjectType objectType = ObjectType::Signal;
-        static TypeName TypeName() { return "Arca::AssigningKnown<" + FullTypeNameFor<T>() + ">"; }
+        static constexpr ObjectType objectType = ObjectType::Signal;
+        static constexpr TypeName TypeName() { return "Arca::AssigningKnown<" + FullTypeNameFor<T>() + ">"; }
     };
 }

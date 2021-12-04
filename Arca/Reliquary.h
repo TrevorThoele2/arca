@@ -130,19 +130,21 @@ namespace Arca
         template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
         void Raise(const SignalT& signal);
 
-        template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
+        template<class SignalT, std::enable_if_t<is_signal_v<SignalT> && !is_matrix_signal_v<SignalT>, int> = 0>
+        void On(const std::function<void(const SignalT&)>&function);
+        template<class SignalT, std::enable_if_t<is_signal_v<SignalT> && is_matrix_signal_v<SignalT>, int> = 0>
         void On(const std::function<void(const SignalT&)>& function);
     public:
         void Destroy(const Handle& handle);
     private:
         using RelicStructures = ReliquaryRelicStructures;
         RelicStructures relicStructures;
+        using Signals = ReliquarySignals;
+        Signals signals;
         using Curators = ReliquaryCurators;
         Curators curators;
         using Matrices = ReliquaryMatrices;
         Matrices matrices;
-        using Signals = ReliquarySignals;
-        Signals signals;
         using Commands = ReliquaryCommands;
         Commands commands;
         using Shards = ReliquaryShards;
@@ -340,10 +342,17 @@ namespace Arca
         signals.Raise(signal);
     }
 
-    template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int>>
+    template<class SignalT, std::enable_if_t<is_signal_v<SignalT> && !is_matrix_signal_v<SignalT>, int>>
     void Reliquary::On(const std::function<void(const SignalT&)>& function)
     {
         signals.On(function);
+    }
+
+    template<class SignalT, std::enable_if_t<is_signal_v<SignalT> && is_matrix_signal_v<SignalT>, int>>
+    void Reliquary::On(const std::function<void(const SignalT&)>& function)
+    {
+        signals.On(function);
+        matrices.EnsureInteraction<typename MatrixTypeForSignal<SignalT>::Type>(MatrixInteraction::Signal);
     }
 
     template<class ShardT, class... ConstructorArgs, std::enable_if_t<is_shard_v<ShardT>, int>>
@@ -538,4 +547,4 @@ namespace Inscription
 #include "GlobalIndexDefinition.h"
 #include "ShardIndexDefinition.h"
 
-#include "KnownMatrixDefinition.h"
+#include "ShardBatchSourceDefinition.h"

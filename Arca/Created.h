@@ -26,14 +26,14 @@ namespace Arca
     template<>
     struct Traits<Created>
     {
-        static const ObjectType objectType = ObjectType::Signal;
-        static TypeName TypeName() { return "Arca::Created"; }
+        static constexpr ObjectType objectType = ObjectType::Signal;
+        static constexpr TypeName TypeName() { return "Arca::Created"; }
     };
 
     template<class T>
     struct Traits<CreatedKnown<T>>
     {
-        static const ObjectType objectType = ObjectType::Signal;
-        static TypeName TypeName() { return "Arca::CreatedKnown<" + FullTypeNameFor<T>() + ">"; }
+        static constexpr ObjectType objectType = ObjectType::Signal;
+        static constexpr TypeName TypeName() { return "Arca::CreatedKnown<" + FullTypeNameFor<T>() + ">"; }
     };
 }

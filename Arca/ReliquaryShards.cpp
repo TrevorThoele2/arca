@@ -15,7 +15,7 @@ namespace Arca
         if (Contains(Handle{ id, type }))
             throw CannotCreate(objectTypeName, type);
 
-        handler->Create(id, *this, *matrices, type.isConst, required);
+        handler->Create(id, *this, *matrices, *owner, type.isConst, required);
     }
     
     void ReliquaryShards::TransactionalDestroy(const Type& type, RelicID id)
@@ -24,7 +24,7 @@ namespace Arca
         if (handler == nullptr)
             throw NotRegistered(objectTypeName, type);
 
-        handler->RequiredTransactionalDestroy(id, *owner, *signals, *matrices);
+        handler->RequiredTransactionalDestroy(id, *owner, *this, *signals, *matrices);
     }
 
     void ReliquaryShards::Clear()
@@ -35,20 +35,18 @@ namespace Arca
 
     void ReliquaryShards::Clear(RelicID id)
     {
-        auto matrixSnapshot = matrices->StartDestroyingTransaction(id);
-
         for (auto& handler : handlers)
         {
             if (handler->BatchSource().ContainsFromBase(id))
             {
                 const Type type{ handler->type.name, false };
-                matrixSnapshot.Finalize(type);
+                matrices->ShardDestroying(id, type, AllTypes(id));
             }
 
             if (handler->ConstBatchSource().ContainsFromBase(id))
             {
                 const Type type{ handler->type.name, true };
-                matrixSnapshot.Finalize(type);
+                matrices->ShardDestroying(id, type, AllTypes(id));
             }
         }
 

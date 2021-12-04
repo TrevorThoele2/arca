@@ -18,9 +18,9 @@ namespace Arca
 {
     Reliquary::Reliquary() :
         relicStructures(),
+        signals(),
         curators(*this),
-        matrices(*this),
-        signals(matrices),
+        matrices(*this, signals),
         commands(*this, curators),
         shards(*this, signals, matrices),
         relics(*this, relicStructures, shards, signals)
