@@ -116,7 +116,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
 
         WHEN("creating open relic with relic structure")
         {
-            const auto relic = reliquary->Do(Create<OpenRelic>(CreateData{ {}, {}, RelicStructure{ TypeFor<BasicShard>() } }));
+            const auto relic = reliquary->Do(Create<OpenRelic>(CreateData{ {}, RelicStructure{ TypeFor<BasicShard>() } }));
 
             WHEN("destroying shard")
             {

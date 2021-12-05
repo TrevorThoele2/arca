@@ -17,9 +17,6 @@ namespace Arca
         Type type;
         void* storage = nullptr;
 
-        std::optional<Handle> parent;
-        std::vector<Handle> children;
-
         bool shouldSerializeBinary = true;
         bool shouldSerializeJson = true;
 

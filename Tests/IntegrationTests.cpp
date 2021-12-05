@@ -9,23 +9,10 @@ using namespace std::string_literals;
 #include <Arca/All.h>
 #include <Arca/Create.h>
 
-IntegrationTestsFixture::ParentRelic::ParentRelic(int value) : value(value)
-{}
-
 IntegrationTestsFixture::MatrixCreatingRelic::MatrixCreatingRelic(RelicInit init)
 {
     init.Create<BasicShard>();
     init.Create<OtherShard>();
-}
-
-IntegrationTestsFixture::MatrixAndParentCurator::MatrixAndParentCurator(Init init) :
-    Curator(init)
-{
-    Owner().On<MatrixFormed<All<BasicShard, OtherShard>>>(
-        [this](const MatrixFormed<All<BasicShard, OtherShard>>& signal)
-        {
-            hadMatrixAndParent = static_cast<bool>(Owner().ParentOf(signal.index.ID()));
-        });
 }
 
 IntegrationTestsFixture::RelicListeningToSignalFromConstructor::RelicListeningToSignalFromConstructor(
@@ -47,14 +34,6 @@ IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic::GlobalRelicCrea
 IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic::GlobalRelicCreatingNullSerializedRelic(
     RelicInit init, Serialization)
 {}
-
-namespace Arca
-{
-    bool Traits<::IntegrationTestsFixture::ParentRelic>::ShouldCreate(Reliquary& reliquary, int value)
-    {
-        return value >= 100;
-    }
-}
 
 template<size_t differentiator>
 void SetupDifferentiableCurator(std::unordered_map<size_t, std::list<IntegrationTestsFixture::BasicSignal>>& basicSignals)
@@ -148,57 +127,6 @@ SCENARIO_METHOD(IntegrationTestsFixture, "working with signals through curators"
     }
 }
 
-SCENARIO_METHOD(
-    IntegrationTestsFixture,
-    "working with parent-child relics through curators",
-    "[integration][relic][curator]")
-{
-    GIVEN("registered reliquary")
-    {
-        using ParentChildCurator = DifferentiableCurator<0>;
-
-        auto reliquary = ReliquaryOrigin()
-            .Register<ChildRelic>()
-            .Register<ParentRelic>()
-            .Register<ParentChildCurator>()
-            .Actualize();
-
-        std::unordered_map<int, Index<ParentRelic>> mappedParents;
-
-        auto& curator = reliquary->Find<ParentChildCurator>();
-        curator.onCommand = [&mappedParents, &reliquary](DifferentiableCuratorBase& self)
-        {
-            auto value = 100;
-            auto parent = self.TheOwner().Do(Create<ParentRelic>{value});
-            reliquary->Do(Arca::Create<ChildRelic>{CreateData{ .parent = AsHandle(parent) }});
-            mappedParents.emplace(value, parent);
-        };
-
-        WHEN("sending command")
-        {
-            reliquary->Do(BasicCommand{});
-
-            THEN("has created parent and child")
-            {
-                auto parents = reliquary->Batch<ParentRelic>();
-                auto children = reliquary->Batch<ChildRelic>();
-
-                REQUIRE(parents.begin() != parents.end());
-                REQUIRE(children.begin() != children.end());
-
-                auto parent = &*parents.begin();
-                auto child = &*children.begin();
-
-                REQUIRE(parent != nullptr);
-                REQUIRE(child != nullptr);
-
-                REQUIRE(!mappedParents.empty());
-                REQUIRE(static_cast<const ParentRelic*>(mappedParents[100]) == parent);
-            }
-        }
-    }
-}
-
 SCENARIO_METHOD(IntegrationTestsFixture, "curators with custom signal execution", "[integration][curator][signal]")
 {
     GIVEN("registered reliquary")
@@ -216,8 +144,6 @@ SCENARIO_METHOD(IntegrationTestsFixture, "curators with custom signal execution"
         auto reliquary = ReliquaryOrigin()
             .Register<DerivedCurator>()
             .Actualize();
-
-        std::unordered_map<int, ParentRelic*> mappedParents;
 
         WHEN("raising signal many times")
         {
@@ -237,37 +163,6 @@ SCENARIO_METHOD(IntegrationTestsFixture, "curators with custom signal execution"
                         ++i;
                         return returnValue;
                     }));
-            }
-        }
-    }
-}
-
-SCENARIO_METHOD(
-    IntegrationTestsFixture,
-    "curator relying on matrix formation and parenting sees both true",
-    "[integration][matrix][signal][curator]")
-{
-    GIVEN("registered reliquary with curator, shard registered and shard created")
-    {
-        const auto reliquary = ReliquaryOrigin()
-            .Register<OpenRelic>()
-            .Register<BasicShard>()
-            .Register<OtherShard>()
-            .Register<MatrixCreatingRelic>()
-            .Register<MatrixAndParentCurator>()
-            .Actualize();
-
-        const auto parent = reliquary->Do(Create<OpenRelic>());
-
-        WHEN("creating child relic")
-        {
-            reliquary->Do(Create<MatrixCreatingRelic>(CreateData{ .parent = parent }));
-
-            THEN("curator has seen both matrix and parent")
-            {
-                auto& curator = reliquary->Find<MatrixAndParentCurator>();
-
-                REQUIRE(curator.hadMatrixAndParent);
             }
         }
     }

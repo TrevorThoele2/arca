@@ -47,33 +47,6 @@ namespace Arca
         return metadata;
     }
 
-    std::optional<Handle> ReliquaryRelics::ParentOf(RelicID childID) const
-    {
-        const auto metadata = MetadataFor(childID);
-        if (!metadata)
-            return {};
-
-        if (!metadata->parent)
-            return {};
-
-        return Handle{
-            metadata->parent->id,
-            metadata->parent->type };
-    }
-
-    std::vector<Handle> ReliquaryRelics::ChildrenOf(RelicID parentID) const
-    {
-        std::vector<Handle> returnValue;
-
-        for(auto& [_, metadata] : metadata)
-            if (metadata.parent && metadata.parent->id == parentID)
-                returnValue.push_back(Handle{
-                    metadata.id,
-                    metadata.type });
-
-        return returnValue;
-    }
-
     bool ReliquaryRelics::IsRelicTypeName(const TypeName& typeName) const
     {
         for (auto& checkTypeName : AllTypeNames())
@@ -150,28 +123,9 @@ namespace Arca
     {
         owner->Raise(Destroying{ Handle{ metadata.id, metadata.type }});
 
-        while(!metadata.children.empty())
-            Destroy(*MetadataFor(metadata.children[0].id));
-
         const auto id = metadata.id;
 
         shards->Clear(id);
-
-        if (metadata.parent)
-        {
-            const auto parent = *metadata.parent;
-            const auto parentMetadata = MetadataFor(parent.id);
-            const auto eraseChildrenItr =
-                std::remove_if(
-                    parentMetadata->children.begin(),
-                    parentMetadata->children.end(),
-                    [id](const Handle& child)
-                    {
-                        return id == child.id;
-                    });
-            if (eraseChildrenItr != parentMetadata->children.end())
-                parentMetadata->children.erase(eraseChildrenItr);
-        }
 
         auto batchSource = FindBatchSource(metadata.type.name);
         batchSource->DestroyFromBase(id);
@@ -199,14 +153,6 @@ namespace Arca
         return returnValue;
     }
     
-    void ReliquaryRelics::Parent(const Handle& parent, const Handle& child)
-    {
-        auto& parentMetadata = ValidateParentForParenting(parent);
-        const auto childMetadata = MetadataFor(child.id);
-        parentMetadata.children.push_back(child);
-        childMetadata->parent = parent;
-    }
-
     ReliquaryRelics::LocalHandlerBase::~LocalHandlerBase() = default;
 
     TypeName ReliquaryRelics::LocalHandlerBase::MainType() const
@@ -267,19 +213,6 @@ namespace Arca
                 return entry->typeName == typeName;
             });
         return found == globalHandlers.end() ? nullptr : found->get();
-    }
-
-    RelicMetadata& ReliquaryRelics::ValidateParentForParenting(const Handle& parent)
-    {
-        const auto parentMetadata = MetadataFor(parent.id);
-        if (!parentMetadata)
-            throw CannotFind(objectTypeName, parent.type);
-
-        if (parentMetadata->locality == Locality::Global)
-            throw CannotParentRelic(
-                "Cannot parent a relic to a global relic.");
-
-        return *parentMetadata;
     }
 
     ReliquaryRelics::ReliquaryRelics(

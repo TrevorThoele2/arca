@@ -26,16 +26,6 @@ namespace Arca
         relics(*this, relicStructures, shards, signals)
     {}
 
-    std::optional<Handle> Reliquary::ParentOf(RelicID childID) const
-    {
-        return relics.ParentOf(childID);
-    }
-
-    std::vector<Handle> Reliquary::ChildrenOf(RelicID parentID) const
-    {
-        return relics.ChildrenOf(parentID);
-    }
-
     bool Reliquary::IsRelicTypeName(const TypeName& typeName) const
     {
         return relics.IsRelicTypeName(typeName);
@@ -298,24 +288,6 @@ namespace Inscription
         Arca::RelicMetadata& metadata, Archive::OutputBinary& archive)
     {
         archive(metadata.id);
-
-        auto hasParent = static_cast<bool>(metadata.parent);
-        archive(hasParent);
-
-        if (metadata.parent)
-        {
-            auto parentID = metadata.parent->id;
-            archive(parentID);
-        }
-
-        ContainerSize childrenSize = metadata.children.size();
-        archive(childrenSize);
-
-        for (auto& loop : metadata.children)
-        {
-            auto id = loop.id;
-            archive(id);
-        }
     }
 
     auto Scribe<Arca::Reliquary>::LoadRelicMetadata(Archive::InputBinary& archive) -> LoadedRelicMetadata
@@ -323,25 +295,6 @@ namespace Inscription
         LoadedRelicMetadata metadata;
 
         archive(metadata.id);
-
-        auto hasParent = false;
-        archive(hasParent);
-
-        if (hasParent)
-        {
-            Arca::RelicID parentID;
-            archive(parentID);
-            metadata.parent = parentID;
-        }
-
-        ContainerSize childrenSize = 0;
-        archive(childrenSize);
-        while (childrenSize-- > 0)
-        {
-            Arca::RelicID id = Arca::nullRelicID;
-            archive(id);
-            metadata.children.push_back(id);
-        }
 
         return metadata;
     }
@@ -439,19 +392,7 @@ namespace Inscription
     void Scribe<Arca::Reliquary>::SaveRelicMetadata(Arca::RelicMetadata& metadata, Archive::OutputJson& archive)
     {
         archive.StartObject("");
-
         archive("id", metadata.id);
-
-        auto parentID = static_cast<bool>(metadata.parent)
-            ? std::optional<Arca::RelicID> { metadata.parent->id }
-            : std::optional<Arca::RelicID>{};
-        archive("parentID", parentID);
-
-        std::vector<Arca::RelicID> childrenIDs;
-        for (auto& child : metadata.children)
-            childrenIDs.push_back(child.id);
-        archive("childrenIDs", childrenIDs);
-
         archive.EndObject();
     }
 
@@ -460,19 +401,7 @@ namespace Inscription
         LoadedRelicMetadata metadata;
 
         archive.StartObject("");
-
         archive("id", metadata.id);
-
-        std::optional<Arca::RelicID> parentID;
-        archive("parentID", parentID);
-        if (parentID)
-            metadata.parent = *parentID;
-
-        std::vector<Arca::RelicID> childrenIDs;
-        archive("childrenIDs", childrenIDs);
-        for (auto& childID : childrenIDs)
-            metadata.children.push_back(childID);
-
         archive.EndObject();
 
         return metadata;
@@ -491,19 +420,6 @@ namespace Inscription
                 createdMetadata.type = type;
                 createdMetadata.locality = locality;
                 createdMetadata.storage = storage;
-                if (metadata.parent)
-                {
-                    const auto parentID = *metadata.parent;
-                    const auto parentType = std::get<0>(FindExtensionForLoadedMetadata(parentID, object));
-                    createdMetadata.parent = Arca::Handle{ parentID, parentType };
-                }
-                for (auto& child : metadata.children)
-                {
-                    const auto childID = child;
-                    const auto childType = std::get<0>(FindExtensionForLoadedMetadata(childID, object));
-                    createdMetadata.parent = Arca::Handle{ childID, childType };
-                }
-
                 object.relics.metadata.emplace(metadata.id, createdMetadata);
             }
         }

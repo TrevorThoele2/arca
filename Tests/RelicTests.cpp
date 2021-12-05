@@ -9,7 +9,6 @@ using namespace std::string_literals;
 #include <Arca/Destroy.h>
 #include <Arca/Clear.h>
 #include <Arca/Either.h>
-#include <Arca/RelicParented.h>
 
 RelicTestsFixture::LocalRelic::LocalRelic(RelicInit init)
 {
@@ -113,11 +112,6 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
             auto preCreateRelicSize = reliquary->RelicSize();
             auto openRelic = reliquary->Do(Create<OpenRelic>());
 
-            THEN("does not have parent")
-            {
-                REQUIRE(!reliquary->ParentOf(openRelic.ID()));
-            }
-
             THEN("reliquary has one more relic")
             {
                 REQUIRE(reliquary->RelicSize() == (preCreateRelicSize + 1));
@@ -214,11 +208,6 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
         {
             auto preCreateRelicSize = reliquary->RelicSize();
             auto typedRelic = reliquary->Do(Create<LocalRelic>());
-
-            THEN("does not have parent")
-            {
-                REQUIRE(!reliquary->ParentOf(typedRelic.ID()));
-            }
 
             THEN("reliquary has one more relic")
             {
@@ -615,21 +604,6 @@ SCENARIO_METHOD(RelicTestsFixture, "relic constructed from moved value", "[relic
             }
         }
 
-        WHEN("creating child relic from moved value")
-        {
-            auto parent = reliquary->Do(Create<OpenRelic>());
-
-            const auto value = dataGeneration.Random<int>();
-            auto uniquePtr = std::make_unique<int>(value);
-
-            auto relic = reliquary->Do(Create<RelicConstructedFromMovedValue>{CreateData{ .parent = parent }, std::move(uniquePtr) });
-
-            THEN("has moved value")
-            {
-                REQUIRE(*relic->myInt == value);
-            }
-        }
-
         WHEN("creating relic from moved value with structure")
         {
             auto structure = RelicStructure{};
@@ -638,23 +612,6 @@ SCENARIO_METHOD(RelicTestsFixture, "relic constructed from moved value", "[relic
             auto uniquePtr = std::make_unique<int>(value);
 
             auto relic = reliquary->Do(Create<RelicConstructedFromMovedValue>{CreateData{ .structure = structure }, std::move(uniquePtr)});
-
-            THEN("has moved value")
-            {
-                REQUIRE(*relic->myInt == value);
-            }
-        }
-
-        WHEN("creating child relic from moved value with structure")
-        {
-            auto parent = reliquary->Do(Create<OpenRelic>());
-            auto structure = RelicStructure{};
-
-            const auto value = dataGeneration.Random<int>();
-            auto uniquePtr = std::make_unique<int>(value);
-
-            auto relic = reliquary->Do(Create<RelicConstructedFromMovedValue>{
-                CreateData{ .parent = parent, .structure = structure }, std::move(uniquePtr)});
 
             THEN("has moved value")
             {

@@ -40,43 +40,7 @@ SCENARIO_METHOD(IdentifiedRelicCreationTestsFixture, "identified relic creation"
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary->Do(Create<Relic>{CreateData{ 2, {}, RelicStructure{ TypeFor<Shard>() } }}),
-                    CannotCreate,
-                    Catch::Matchers::Message(
-                        "The relic (" + TypeFor<Relic>().name + ") cannot be created. " +
-                        "The class name is: \"" + typeid(Relic).name() + "\".")
-                );
-            }
-        }
-
-        WHEN("creating identified child relic over already occupied ID")
-        {
-            auto parentRelic = reliquary->Do(Create<Relic>());
-            reliquary->Do(Create<Relic>{ 2 });
-
-            THEN("throws")
-            {
-                REQUIRE_THROWS_MATCHES
-                (
-                    reliquary->Do(Create<Relic>{ CreateData{ 2, parentRelic } }),
-                    CannotCreate,
-                    Catch::Matchers::Message(
-                        "The relic (" + TypeFor<Relic>().name + ") cannot be created. " +
-                        "The class name is: \"" + typeid(Relic).name() + "\".")
-                );
-            }
-        }
-
-        WHEN("creating identified child relic with valid structure over already occupied ID")
-        {
-            auto parentRelic = reliquary->Do(Create<Relic>());
-            reliquary->Do(Create<Relic>{ 2 });
-
-            THEN("throws")
-            {
-                REQUIRE_THROWS_MATCHES
-                (
-                    reliquary->Do(Create<Relic>{ CreateData{ 2, parentRelic, RelicStructure{ TypeFor<Shard>() } }}),
+                    reliquary->Do(Create<Relic>{CreateData{ 2, RelicStructure{ TypeFor<Shard>() } }}),
                     CannotCreate,
                     Catch::Matchers::Message(
                         "The relic (" + TypeFor<Relic>().name + ") cannot be created. " +
@@ -120,7 +84,7 @@ SCENARIO_METHOD(IdentifiedRelicCreationTestsFixture, "identified relic creation"
         WHEN("creating identified relic with valid structure")
         {
             auto preCreateRelicCount = reliquary->RelicSize();
-            auto relic = reliquary->Do(Create<Relic>{CreateData{ 2, {}, RelicStructure{ TypeFor<Shard>() } }});
+            auto relic = reliquary->Do(Create<Relic>{CreateData{ 2, RelicStructure{ TypeFor<Shard>() } }});
 
             THEN("relic id is requested id")
             {
@@ -143,65 +107,6 @@ SCENARIO_METHOD(IdentifiedRelicCreationTestsFixture, "identified relic creation"
             }
         }
         
-        WHEN("creating identified child relic")
-        {
-            auto parentRelic = reliquary->Do(Create<Relic>());
-            auto preCreateRelicSize = reliquary->RelicSize();
-            auto relic = reliquary->Do(Create<Relic>{ CreateData{ 2, parentRelic }});
-
-            THEN("relic id is requested id")
-            {
-                REQUIRE(relic.ID() == 2);
-            }
-
-            THEN("has parent")
-            {
-                REQUIRE(reliquary->ParentOf(relic.ID()));
-            }
-
-            THEN("reliquary has one more relic")
-            {
-                REQUIRE(reliquary->RelicSize() == (preCreateRelicSize + 1));
-            }
-
-            THEN("reliquary contains relic")
-            {
-                REQUIRE(reliquary->Contains<Relic>(relic.ID()));
-            }
-        }
-
-        WHEN("creating identified child relic with valid structure")
-        {
-            auto parentRelic = reliquary->Do(Create<Relic>());
-            auto preCreateRelicSize = reliquary->RelicSize();
-            auto relic = reliquary->Do(Create<Relic>{ CreateData{ 2, parentRelic, RelicStructure{ TypeFor<Shard>() } }});
-
-            THEN("relic id is requested id")
-            {
-                REQUIRE(relic.ID() == 2);
-            }
-
-            THEN("has parent")
-            {
-                REQUIRE(reliquary->ParentOf(relic.ID()));
-            }
-
-            THEN("structure has been satisfied")
-            {
-                REQUIRE(reliquary->Find<Shard>(relic.ID()));
-            }
-
-            THEN("reliquary has one more relic")
-            {
-                REQUIRE(reliquary->RelicSize() == (preCreateRelicSize + 1));
-            }
-
-            THEN("reliquary contains relic")
-            {
-                REQUIRE(reliquary->Contains<Relic>(relic.ID()));
-            }
-        }
-
         WHEN("creating identified relic over next ID")
         {
             reliquary->Do(Create<Relic>{ CreateData{ 1 } });
@@ -216,39 +121,13 @@ SCENARIO_METHOD(IdentifiedRelicCreationTestsFixture, "identified relic creation"
 
         WHEN("creating identified relic with valid structure over next ID")
         {
-            reliquary->Do(Create<Relic>{CreateData{ 1, {}, RelicStructure{ TypeFor<Shard>() } }});
+            reliquary->Do(Create<Relic>{CreateData{ 1, RelicStructure{ TypeFor<Shard>() } }});
 
             auto nextRelic = reliquary->Do(Create<Relic>());
 
             THEN("next created relic has advanced ID")
             {
                 REQUIRE(nextRelic.ID() == 2);
-            }
-        }
-
-        WHEN("creating identified child relic over next ID")
-        {
-            auto parentRelic = reliquary->Do(Create<Relic>());
-            reliquary->Do(Create<Relic>{ CreateData{ 2, parentRelic } });
-
-            auto nextRelic = reliquary->Do(Create<Relic>());
-
-            THEN("next created relic has advanced ID")
-            {
-                REQUIRE(nextRelic.ID() == 3);
-            }
-        }
-
-        WHEN("creating identified child relic with valid structure over next ID")
-        {
-            auto parentRelic = reliquary->Do(Create<Relic>());
-            reliquary->Do(Create<Relic>{ CreateData{ 2, parentRelic, RelicStructure{ TypeFor<Shard>() } }});
-
-            auto nextRelic = reliquary->Do(Create<Relic>());
-
-            THEN("next created relic has advanced ID")
-            {
-                REQUIRE(nextRelic.ID() == 3);
             }
         }
 
@@ -274,39 +153,7 @@ SCENARIO_METHOD(IdentifiedRelicCreationTestsFixture, "identified relic creation"
             auto relic2 = reliquary->Do(Create<Relic>());
             reliquary->Do(Destroy<Relic>{ relic2.ID() });
 
-            auto relic = reliquary->Do(Create<Relic>{CreateData{ 1, {}, RelicStructure{ TypeFor<Shard>() } }});
-
-            THEN("created relic has requested ID")
-            {
-                REQUIRE(relic.ID() == 1);
-            }
-        }
-
-        WHEN("creating identified child relic over next ID")
-        {
-            auto relic1 = reliquary->Do(Create<Relic>());
-            reliquary->Do(Destroy<Relic>{ relic1.ID() });
-            auto relic2 = reliquary->Do(Create<Relic>());
-            reliquary->Do(Destroy<Relic>{ relic2.ID() });
-
-            auto parentRelic = reliquary->Do(Create<Relic>());
-            auto relic = reliquary->Do(Create<Relic>{ CreateData{ 1, parentRelic }});
-
-            THEN("created relic has requested ID")
-            {
-                REQUIRE(relic.ID() == 1);
-            }
-        }
-
-        WHEN("creating identified child relic with valid structure over next ID")
-        {
-            auto relic1 = reliquary->Do(Create<Relic>());
-            reliquary->Do(Destroy<Relic>{ relic1.ID() });
-            auto relic2 = reliquary->Do(Create<Relic>());
-            reliquary->Do(Destroy<Relic>{ relic2.ID() });
-
-            auto parentRelic = reliquary->Do(Create<Relic>());
-            auto relic = reliquary->Do(Create<Relic>{ CreateData{ 1, parentRelic, RelicStructure{ TypeFor<Shard>() } }});
+            auto relic = reliquary->Do(Create<Relic>{CreateData{ 1, RelicStructure{ TypeFor<Shard>() } }});
 
             THEN("created relic has requested ID")
             {
