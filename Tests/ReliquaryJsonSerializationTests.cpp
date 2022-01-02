@@ -33,7 +33,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                     .Register<OpenRelic>()
                     .Actualize();
 
-                auto input = Inscription::Archive::InputJson("Test.dat");
+                auto input = Inscription::Archive::InputJson(Inscription::File::Path("Test.dat"));
                 input("reliquary", *loadedReliquary);
 
                 auto relic3 = loadedReliquary->Do(Create<OpenRelic>());
@@ -82,7 +82,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 .Actualize();
 
             {
-                auto inputArchive = Inscription::Archive::InputJson("Test.json");
+                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -117,7 +117,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 .Actualize();
 
             {
-                auto inputArchive = Inscription::Archive::InputJson("Test.json");
+                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -156,7 +156,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 .Actualize();
 
             {
-                auto inputArchive = Inscription::Archive::InputJson("Test.json");
+                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -188,7 +188,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 .Actualize();
 
             {
-                auto inputArchive = Inscription::Archive::InputJson("Test.json");
+                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -246,7 +246,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 .Actualize();
 
             {
-                auto inputArchive = Inscription::Archive::InputJson("Test.json");
+                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -286,7 +286,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 .Actualize();
 
             {
-                auto inputArchive = Inscription::Archive::InputJson("Test.json");
+                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -328,7 +328,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 .Actualize();
 
             {
-                auto inputArchive = Inscription::Archive::InputJson("Test.json");
+                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -367,7 +367,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 .Actualize();
 
             {
-                auto inputArchive = Inscription::Archive::InputJson("Test.json");
+                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -398,7 +398,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
             auto loadedSignals = SignalListener<BasicSignal>(*loadedReliquary);
 
             {
-                auto inputArchive = Inscription::Archive::InputJson("Test.json");
+                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -433,7 +433,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 .Actualize();
 
             {
-                auto inputArchive = Inscription::Archive::InputJson("Test.json");
+                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -477,15 +477,15 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "preferential json seria
                 .Actualize();
 
             {
-                auto inputArchive = Inscription::Archive::InputJson("Test.json");
+                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
                 inputArchive("reliquary", *loadedReliquary);
             }
 
-            auto loadedRelic = loadedReliquary->Find<PreferentialSerializationConstructorRelic1>(savedRelic.ID());
+            const auto loadedRelic = loadedReliquary->Find<PreferentialSerializationConstructorRelic1>(savedRelic.ID());
 
-            auto loadedOpenRelic = loadedReliquary->Find<OpenRelic>(openRelic.ID());
+            const auto loadedOpenRelic = loadedReliquary->Find<OpenRelic>(openRelic.ID());
 
-            auto loadedShard = loadedReliquary->Find<PreferentialSerializationConstructorShard>(loadedOpenRelic.ID());
+            const auto loadedShard = loadedReliquary->Find<PreferentialSerializationConstructorShard>(loadedOpenRelic.ID());
 
             THEN("loaded relic used preferential constructor")
             {
@@ -527,7 +527,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
                 .Actualize();
 
             {
-                auto inputArchive = Inscription::Archive::InputJson("Test.json");
+                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -574,7 +574,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
                 .Actualize();
 
             {
-                auto inputArchive = Inscription::Archive::InputJson("Test.dat");
+                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.dat"));
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -625,7 +625,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
                 .Actualize();
 
             {
-                auto inputArchive = Inscription::Archive::InputJson("Test.json");
+                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -665,7 +665,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
                 .Actualize();
 
             {
-                auto inputArchive = Inscription::Archive::InputJson("Test.json");
+                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -702,7 +702,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
             auto loadedSignals = SignalListener<BasicSignalNullInscription>(*loadedReliquary);
 
             {
-                auto inputArchive = Inscription::Archive::InputJson("Test.json");
+                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -727,7 +727,7 @@ SCENARIO_METHOD(
 {
     GIVEN("saved reliquary with non default shard")
     {
-        auto savedReliquary = ReliquaryOrigin()
+        const auto savedReliquary = ReliquaryOrigin()
             .Register<NonDefaultConstructorRelic>()
             .Actualize();
 
@@ -746,7 +746,7 @@ SCENARIO_METHOD(
                 .Actualize();
 
             {
-                auto inputArchive = Inscription::Archive::InputJson("Test.json");
+                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
                 inputArchive("reliquary", *loadedReliquary);
             }
 
