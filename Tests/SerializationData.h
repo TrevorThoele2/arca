@@ -461,15 +461,15 @@ namespace Inscription
     public:
         using ObjectT = SerializationData::BasicShard;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {
-            archive("myValue", object.myValue);
+            format("myValue", object.myValue);
         }
     };
 
-    template<class Archive>
-    struct ScribeTraits<SerializationData::BasicShard, Archive> final
+    template<class Format>
+    struct ScribeTraits<SerializationData::BasicShard, Format> final
     {
         using Category = ArcaCompositeScribeCategory<SerializationData::BasicShard>;
     };
@@ -480,21 +480,21 @@ namespace Inscription
     public:
         using ObjectT = SerializationData::BasicShardWithDifferentInputHandle;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {
-            archive("myValue", object.myValue);
+            format("myValue", object.myValue);
         }
 
-        template<class Archive>
-        static std::vector<Type> InputTypes(const Archive& archive)
+        template<class Format>
+        static std::vector<Type> InputTypes(const Format& format)
         {
             return { TypeFor<SerializationData::BasicShard>().name };
         }
     };
 
-    template<class Archive>
-    struct ScribeTraits<SerializationData::BasicShardWithDifferentInputHandle, Archive> final
+    template<class Format>
+    struct ScribeTraits<SerializationData::BasicShardWithDifferentInputHandle, Format> final
     {
         using Category = ArcaCompositeScribeCategory<SerializationData::BasicShardWithDifferentInputHandle>;
     };
@@ -505,15 +505,15 @@ namespace Inscription
     public:
         using ObjectT = SerializationData::OtherShard;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {
-            archive("myValue", object.myValue);
+            format("myValue", object.myValue);
         }
     };
 
-    template<class Archive>
-    struct ScribeTraits<SerializationData::OtherShard, Archive> final
+    template<class Format>
+    struct ScribeTraits<SerializationData::OtherShard, Format> final
     {
         using Category = ArcaCompositeScribeCategory<SerializationData::OtherShard>;
     };
@@ -524,13 +524,13 @@ namespace Inscription
     public:
         using ObjectT = SerializationData::PreferentialSerializationConstructorShard;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {}
     };
 
-    template<class Archive>
-    struct ScribeTraits<SerializationData::PreferentialSerializationConstructorShard, Archive> final
+    template<class Format>
+    struct ScribeTraits<SerializationData::PreferentialSerializationConstructorShard, Format> final
     {
         using Category = ArcaCompositeScribeCategory<SerializationData::PreferentialSerializationConstructorShard>;
     };
@@ -541,15 +541,15 @@ namespace Inscription
     public:
         using ObjectT = SerializationData::ShardWithRelicIndex;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {
-            archive("openRelic", object.openRelic);
+            format("openRelic", object.openRelic);
         }
     };
 
-    template<class Archive>
-    struct ScribeTraits<SerializationData::ShardWithRelicIndex, Archive> final
+    template<class Format>
+    struct ScribeTraits<SerializationData::ShardWithRelicIndex, Format> final
     {
         using Category = ArcaCompositeScribeCategory<SerializationData::ShardWithRelicIndex>;
     };
@@ -560,15 +560,15 @@ namespace Inscription
     public:
         using ObjectT = SerializationData::LocalRelic;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {
-            archive("myInt", object.myInt);
+            format("myInt", object.myInt);
         }
     };
 
-    template<class Archive>
-    struct ScribeTraits<SerializationData::LocalRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<SerializationData::LocalRelic, Format> final
     {
         using Category = ArcaCompositeScribeCategory<SerializationData::LocalRelic>;
     };
@@ -579,21 +579,21 @@ namespace Inscription
     public:
         using ObjectT = SerializationData::GlobalRelic;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {
-            archive("myInt", object.myInt);
+            format("myInt", object.myInt);
         }
     };
 
-    template<class Archive>
-    struct ScribeTraits<SerializationData::GlobalRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<SerializationData::GlobalRelic, Format> final
     {
         using Category = ArcaCompositeScribeCategory<SerializationData::GlobalRelic>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<SerializationData::NonDefaultConstructorRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<SerializationData::NonDefaultConstructorRelic, Format> final
     {
         using Category = ArcaNullScribeCategory<SerializationData::NonDefaultConstructorRelic>;
     };
@@ -604,13 +604,13 @@ namespace Inscription
     public:
         using ObjectT = SerializationData::PreferentialSerializationConstructorRelic1;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {}
     };
 
-    template<class Archive>
-    struct ScribeTraits<SerializationData::PreferentialSerializationConstructorRelic1, Archive> final
+    template<class Format>
+    struct ScribeTraits<SerializationData::PreferentialSerializationConstructorRelic1, Format> final
     {
         using Category = ArcaCompositeScribeCategory<SerializationData::PreferentialSerializationConstructorRelic1>;
     };
@@ -621,13 +621,13 @@ namespace Inscription
     public:
         using ObjectT = SerializationData::PreferentialSerializationConstructorRelic2;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {}
     };
 
-    template<class Archive>
-    struct ScribeTraits<SerializationData::PreferentialSerializationConstructorRelic2, Archive> final
+    template<class Format>
+    struct ScribeTraits<SerializationData::PreferentialSerializationConstructorRelic2, Format> final
     {
         using Category = ArcaCompositeScribeCategory<SerializationData::PreferentialSerializationConstructorRelic2>;
     };
@@ -638,13 +638,13 @@ namespace Inscription
     public:
         using ObjectT = SerializationData::PreferentialSerializationConstructorRelic3;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {}
     };
 
-    template<class Archive>
-    struct ScribeTraits<SerializationData::PreferentialSerializationConstructorRelic3, Archive> final
+    template<class Format>
+    struct ScribeTraits<SerializationData::PreferentialSerializationConstructorRelic3, Format> final
     {
         using Category = ArcaCompositeScribeCategory<SerializationData::PreferentialSerializationConstructorRelic3>;
     };
@@ -655,13 +655,13 @@ namespace Inscription
     public:
         using ObjectT = SerializationData::PreferentialSerializationConstructorRelic4;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {}
     };
 
-    template<class Archive>
-    struct ScribeTraits<SerializationData::PreferentialSerializationConstructorRelic4, Archive> final
+    template<class Format>
+    struct ScribeTraits<SerializationData::PreferentialSerializationConstructorRelic4, Format> final
     {
         using Category = ArcaCompositeScribeCategory<SerializationData::PreferentialSerializationConstructorRelic4>;
     };
@@ -672,33 +672,33 @@ namespace Inscription
     public:
         using ObjectT = SerializationData::BasicCurator;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {
-            archive("myInt", object.myInt);
+            format("myInt", object.myInt);
         }
     };
 
-    template<class Archive>
-    struct ScribeTraits<SerializationData::BasicCurator, Archive> final
+    template<class Format>
+    struct ScribeTraits<SerializationData::BasicCurator, Format> final
     {
         using Category = ArcaCompositeScribeCategory<SerializationData::BasicCurator>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<SerializationData::BasicShardNullInscription, Archive> final
+    template<class Format>
+    struct ScribeTraits<SerializationData::BasicShardNullInscription, Format> final
     {
         using Category = ArcaNullScribeCategory<SerializationData::BasicShardNullInscription>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<SerializationData::OtherShardNullInscription, Archive> final
+    template<class Format>
+    struct ScribeTraits<SerializationData::OtherShardNullInscription, Format> final
     {
         using Category = ArcaNullScribeCategory<SerializationData::OtherShardNullInscription>;
     };
 
-    template<class ShardT, class Archive>
-    struct ScribeTraits<SerializationData::LocalRelicNullInscription<ShardT>, Archive> final
+    template<class ShardT, class Format>
+    struct ScribeTraits<SerializationData::LocalRelicNullInscription<ShardT>, Format> final
     {
         using Category = ArcaNullScribeCategory<SerializationData::LocalRelicNullInscription<ShardT>>;
     };
@@ -709,27 +709,27 @@ namespace Inscription
     public:
         using ObjectT = SerializationData::MovableOnlyRelic;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {
-            archive("myValue", object.myValue);
+            format("myValue", object.myValue);
         }
     };
 
-    template<class Archive>
-    struct ScribeTraits<SerializationData::MovableOnlyRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<SerializationData::MovableOnlyRelic, Format> final
     {
         using Category = ArcaCompositeScribeCategory<SerializationData::MovableOnlyRelic>;
     };
 
-    template<class ShardT, class Archive>
-    struct ScribeTraits<SerializationData::GlobalRelicNullInscription<ShardT>, Archive> final
+    template<class ShardT, class Format>
+    struct ScribeTraits<SerializationData::GlobalRelicNullInscription<ShardT>, Format> final
     {
         using Category = ArcaNullScribeCategory<SerializationData::GlobalRelicNullInscription<ShardT>>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<SerializationData::BasicCuratorNullInscription, Archive> final
+    template<class Format>
+    struct ScribeTraits<SerializationData::BasicCuratorNullInscription, Format> final
     {
         using Category = ArcaNullScribeCategory<SerializationData::BasicCuratorNullInscription>;
     };

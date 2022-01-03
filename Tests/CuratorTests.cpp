@@ -8,6 +8,8 @@
 #include <Arca/Create.h>
 #include <Chroma/Iterate.h>
 
+#include <Inscription/Binary.h>
+
 void CuratorTestsFixture::BasicCurator::Handle(const BasicCommand& command)
 {
     onCommand(command);
@@ -630,22 +632,16 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
     
         auto& savedCurator = savedReliquary->Find<BasicCurator>();
         savedCurator.value = dataGeneration.Random<int>();
-    
-        {
-            auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
     
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
                 .Register<BasicCurator>()
                 .Actualize();
-        
-            {
-                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
         
             auto& loadedCurator = loadedReliquary->Find<BasicCurator>();
         
@@ -659,11 +655,8 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
         {
             auto loadedReliquary = ReliquaryOrigin()
                 .Actualize();
-        
-            {
-                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
         
             THEN("throws error")
             {
@@ -676,11 +669,8 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
             auto loadedReliquary = ReliquaryOrigin()
                 .Register<OtherBasicCurator>()
                 .Actualize();
-        
-            {
-                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");;
-                inputArchive(*loadedReliquary);
-            }
+
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
         
             auto& loadedCurator = loadedReliquary->Find<OtherBasicCurator>();
         
@@ -705,10 +695,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
             .Register<CuratorWithGlobalRelicConstructor>()
             .Actualize();
 
-        {
-            auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading reliquary")
         {
@@ -724,10 +711,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
                 .Register<CuratorWithGlobalRelicConstructor>()
                 .Actualize();
 
-            {
-                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             WHEN("querying curator with local relic's value")
             {

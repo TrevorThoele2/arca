@@ -6,6 +6,8 @@ using namespace std::string_literals;
 #include <Arca/OpenRelic.h>
 #include <Arca/Create.h>
 
+#include <Inscription/Binary.h>
+
 HandleTestsFixture::TypedRelic::TypedRelic(RelicInit init)
 {
     basicShard = init.Create<Shard>();
@@ -291,10 +293,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle serialization", "[handle][serializat
 
         WHEN("saving handle")
         {
-            {
-                auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
-                outputArchive(*savedReliquary);
-            }
+            Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
             THEN("loading handle contains same information")
             {
@@ -304,10 +303,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle serialization", "[handle][serializat
                     .Register<HandleHolder>()
                     .Actualize();
 
-                {
-                    auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
-                    inputArchive(*loadedReliquary);
-                }
+                Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
                 auto loadedHandleHolder = loadedReliquary->Find<HandleHolder>(savedHandleHolder.ID());
 
@@ -331,10 +327,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle serialization", "[handle][serializat
 
         WHEN("saving handle")
         {
-            {
-                auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
-                outputArchive(*savedReliquary);
-            }
+            Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
             THEN("loading handle contains same information")
             {
@@ -347,10 +340,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle serialization", "[handle][serializat
 
                 Handle loadedHandle;
 
-                {
-                    auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
-                    inputArchive(*loadedReliquary);
-                }
+                Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
                 auto loadedHandleHolder = loadedReliquary->Find<HandleHolder>(savedHandleHolder.ID());
 

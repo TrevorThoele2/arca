@@ -2,7 +2,7 @@
 
 #include "GeneralFixture.h"
 
-#include <Inscription/BinaryArchive.h>
+#include <Inscription/Binary.h>
 
 using namespace Arca;
 
@@ -107,38 +107,38 @@ namespace Arca
 
 namespace Inscription
 {
-    template<class Archive>
-    struct ScribeTraits<ReliquaryOriginRegistrationTestsFixture::Shard, Archive> final
+    template<class Format>
+    struct ScribeTraits<ReliquaryOriginRegistrationTestsFixture::Shard, Format> final
     {
         using Category = ArcaNullScribeCategory<ReliquaryOriginRegistrationTestsFixture::Shard>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<ReliquaryOriginRegistrationTestsFixture::Relic, Archive> final
+    template<class Format>
+    struct ScribeTraits<ReliquaryOriginRegistrationTestsFixture::Relic, Format> final
     {
         using Category = ArcaNullScribeCategory<ReliquaryOriginRegistrationTestsFixture::Relic>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<ReliquaryOriginRegistrationTestsFixture::GlobalRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<ReliquaryOriginRegistrationTestsFixture::GlobalRelic, Format> final
     {
         using Category = ArcaNullScribeCategory<ReliquaryOriginRegistrationTestsFixture::GlobalRelic>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<ReliquaryOriginRegistrationTestsFixture::GlobalRelicWithMovedValue, Archive> final
+    template<class Format>
+    struct ScribeTraits<ReliquaryOriginRegistrationTestsFixture::GlobalRelicWithMovedValue, Format> final
     {
         using Category = ArcaNullScribeCategory<ReliquaryOriginRegistrationTestsFixture::GlobalRelicWithMovedValue>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<ReliquaryOriginRegistrationTestsFixture::Curator, Archive> final
+    template<class Format>
+    struct ScribeTraits<ReliquaryOriginRegistrationTestsFixture::Curator, Format> final
     {
         using Category = ArcaNullScribeCategory<ReliquaryOriginRegistrationTestsFixture::Curator>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<ReliquaryOriginRegistrationTestsFixture::CuratorWithMovedValue, Archive> final
+    template<class Format>
+    struct ScribeTraits<ReliquaryOriginRegistrationTestsFixture::CuratorWithMovedValue, Format> final
     {
         using Category = ArcaNullScribeCategory<ReliquaryOriginRegistrationTestsFixture::CuratorWithMovedValue>;
     };

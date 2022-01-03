@@ -177,50 +177,50 @@ public:
 
 namespace Inscription
 {
-    template<class Archive>
-    struct ScribeTraits<RelicTestsFixture::LocalRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<RelicTestsFixture::LocalRelic, Format> final
     {
         using Category = ArcaNullScribeCategory<RelicTestsFixture::LocalRelic>;
     };
     
-    template<class Archive>
-    struct ScribeTraits<RelicTestsFixture::GlobalRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<RelicTestsFixture::GlobalRelic, Format> final
     {
         using Category = ArcaNullScribeCategory<RelicTestsFixture::GlobalRelic>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<RelicTestsFixture::ShouldCreateRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<RelicTestsFixture::ShouldCreateRelic, Format> final
     {
         using Category = ArcaNullScribeCategory<RelicTestsFixture::ShouldCreateRelic>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<RelicTestsFixture::InitializedRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<RelicTestsFixture::InitializedRelic, Format> final
     {
         using Category = ArcaNullScribeCategory<RelicTestsFixture::InitializedRelic>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<RelicTestsFixture::MovableOnlyRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<RelicTestsFixture::MovableOnlyRelic, Format> final
     {
         using Category = ArcaNullScribeCategory<RelicTestsFixture::MovableOnlyRelic>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<RelicTestsFixture::DefaultConstructedRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<RelicTestsFixture::DefaultConstructedRelic, Format> final
     {
         using Category = ArcaNullScribeCategory<RelicTestsFixture::DefaultConstructedRelic>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<RelicTestsFixture::RelicConstructedFromMovedValue, Archive> final
+    template<class Format>
+    struct ScribeTraits<RelicTestsFixture::RelicConstructedFromMovedValue, Format> final
     {
         using Category = ArcaNullScribeCategory<RelicTestsFixture::RelicConstructedFromMovedValue>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<RelicTestsFixture::RelicWithShouldCreateAndMovedValue, Archive> final
+    template<class Format>
+    struct ScribeTraits<RelicTestsFixture::RelicWithShouldCreateAndMovedValue, Format> final
     {
         using Category = ArcaNullScribeCategory<RelicTestsFixture::RelicWithShouldCreateAndMovedValue>;
     };

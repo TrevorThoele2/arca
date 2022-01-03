@@ -219,47 +219,47 @@ namespace Inscription
     public:
         using ObjectT = Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive);
-        void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
+        void Scriven(ObjectT& object, Format::Binary& format);
+        void Scriven(const std::string& name, ObjectT& object, Format::Json& format);
     private:
         using RelicT = typename ObjectT::RelicT;
         std::shared_ptr<RelicT> Create(Arca::RelicInit init);
     };
     template<class T>
     void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::
-        Scriven(ObjectT& object, Archive::Binary& archive)
+        Scriven(ObjectT& object, Format::Binary& format)
     {
-        if (archive.IsOutput())
+        if (format.IsOutput())
         {
             auto size = object.map.size();
-            archive(size);
+            format(size);
 
             for (auto& entry : object.map)
             {
                 auto id = entry.first;
-                archive(id);
-                archive(*entry.second);
+                format(id);
+                format(*entry.second);
             }
         }
         else
         {
             ContainerSize size;
-            archive(size);
+            format(size);
 
             while (size-- > 0)
             {
                 Arca::RelicID id = 0;
-                archive(id);
+                format(id);
 
                 auto foundRelic = object.Find(id).lock();
                 if (foundRelic)
-                    archive(*foundRelic);
+                    format(*foundRelic);
                 else
                 {
                     auto relic = Create(Arca::RelicInit{ id, *object.owner, object.owner->shards });
-                    archive(*relic);
+                    format(*relic);
                     auto& emplaced = object.map.emplace(id, std::move(relic)).first->second;
-                    archive.types.AttemptReplaceTrackedObject(relic, emplaced);
+                    format.types.AttemptReplaceTrackedObject(relic, emplaced);
                 }
             }
         }
@@ -267,39 +267,43 @@ namespace Inscription
 
     template<class T>
     void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::Scriven(
-        const std::string& name, ObjectT& object, Archive::Json& archive)
+        const std::string& name, ObjectT& object, Format::Json& format)
     {
-        if (archive.IsOutput())
+        if (format.IsOutput())
         {
-            auto output = archive.AsOutput();
+            const auto output = format.AsOutput();
             output->StartList(name);
+            size_t i = 0;
             for (auto& entry : object.map)
             {
-                output->StartObject("");
+                output->StartObject(Chroma::ToString(i));
                 auto id = entry.first;
-                archive("id", id);
-                archive("relic", *entry.second);
+                format("id", id);
+                format("relic", *entry.second);
                 output->EndObject();
             }
             output->EndList();
+            ++i;
         }
         else
         {
-            auto input = archive.AsInput();
+            const auto input = format.AsInput();
             auto size = input->StartList(name);
+            size_t i = 0;
             while (size-- > 0)
             {
-                input->StartObject("");
+                input->StartObject(Chroma::ToString(i));
 
                 Arca::RelicID id = 0;
-                archive("id", id);
+                format("id", id);
 
                 auto relic = Create(Arca::RelicInit{ id, *object.owner, object.owner->shards });
-                archive("relic", *relic);
+                format("relic", *relic);
                 auto& emplaced = object.map.emplace(id, std::move(relic)).first->second;
-                archive.types.AttemptReplaceTrackedObject(relic, emplaced);
+                format.types.AttemptReplaceTrackedObject(relic, emplaced);
 
                 input->EndObject();
+                ++i;
             }
             input->EndList();
         }

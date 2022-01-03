@@ -4,7 +4,7 @@
 
 #include "DifferentiableShard.h"
 
-#include <Inscription/BinaryArchive.h>
+#include <Inscription/Binary.h>
 
 using namespace Arca;
 
@@ -113,14 +113,14 @@ struct HandleTestsFixture::Signal
 
 namespace Inscription
 {
-    template<class Archive>
-    struct ScribeTraits<HandleTestsFixture::TypedRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<HandleTestsFixture::TypedRelic, Format> final
     {
         using Category = ArcaNullScribeCategory<HandleTestsFixture::TypedRelic>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<HandleTestsFixture::GlobalRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<HandleTestsFixture::GlobalRelic, Format> final
     {
         using Category = ArcaNullScribeCategory<HandleTestsFixture::GlobalRelic>;
     };
@@ -131,21 +131,21 @@ namespace Inscription
     public:
         using ObjectT = HandleTestsFixture::HandleHolder;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {
-            archive("handle", object.handle);
+            format("handle", object.handle);
         }
     };
 
-    template<class Archive>
-    struct ScribeTraits<HandleTestsFixture::HandleHolder, Archive> final
+    template<class Format>
+    struct ScribeTraits<HandleTestsFixture::HandleHolder, Format> final
     {
         using Category = ArcaCompositeScribeCategory<HandleTestsFixture::HandleHolder>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<HandleTestsFixture::Curator, Archive> final
+    template<class Format>
+    struct ScribeTraits<HandleTestsFixture::Curator, Format> final
     {
         using Category = ArcaNullScribeCategory<HandleTestsFixture::Curator>;
     };

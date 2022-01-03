@@ -13,8 +13,8 @@ namespace Arca
 
 namespace Inscription
 {
-    template<class Archive>
-    struct ScribeTraits<Arca::Locality, Archive>
+    template<class Format>
+    struct ScribeTraits<Arca::Locality, Format>
     {
         using Category = EnumScribeCategory<Arca::Locality>;
     };

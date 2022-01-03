@@ -35,15 +35,15 @@ namespace Inscription
     public:
         using ObjectT = DifferentiableShard<i>;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {
-            archive("value", object.value);
+            format("value", object.value);
         }
     };
 
-    template<size_t i, class Archive>
-    struct ScribeTraits<DifferentiableShard<i>, Archive> final
+    template<size_t i, class Format>
+    struct ScribeTraits<DifferentiableShard<i>, Format> final
     {
         using Category = ArcaCompositeScribeCategory<DifferentiableShard<i>>;
     };

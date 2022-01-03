@@ -26,16 +26,16 @@ namespace Inscription
     public:
         using ObjectT = Arca::Handle;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {
-            archive("id", object.id);
-            archive("type", object.type);
+            format("id", object.id);
+            format("type", object.type);
         }
     };
 
-    template<class Archive>
-    struct ScribeTraits<Arca::Handle, Archive> final
+    template<class Format>
+    struct ScribeTraits<Arca::Handle, Format> final
     {
         using Category = CompositeScribeCategory<Arca::Handle>;
     };

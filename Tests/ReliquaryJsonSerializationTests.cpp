@@ -8,6 +8,8 @@ using namespace std::string_literals;
 #include <Arca/Destroy.h>
 #include "SignalListener.h"
 
+#include <Inscription/Json.h>
+
 SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serialization", "[reliquary][serialization][json]")
 {
     GIVEN("registered reliquary with three open relics created")
@@ -22,10 +24,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
 
         WHEN("saving reliquary")
         {
-            {
-                auto output = Inscription::Archive::OutputJson("Test.dat");
-                output("reliquary", *savedReliquary);
-            }
+            Inscription::Json::ToFile(*savedReliquary, "Test.json");
 
             WHEN("loading reliquary and creating three new open relics")
             {
@@ -33,8 +32,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                     .Register<OpenRelic>()
                     .Actualize();
 
-                auto input = Inscription::Archive::InputJson(Inscription::File::Path("Test.dat"));
-                input("reliquary", *loadedReliquary);
+                Inscription::Json::FromFile(*loadedReliquary, "Test.json");
 
                 auto relic3 = loadedReliquary->Do(Create<OpenRelic>());
                 auto relic4 = loadedReliquary->Do(Create<OpenRelic>());
@@ -66,10 +64,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
             .CuratorConstructionPipeline(Pipeline())
             .Actualize();
 
-        {
-            auto outputArchive = Inscription::Archive::OutputJson("Test.json");
-            outputArchive("reliquary", *savedReliquary);
-        }
+        Inscription::Json::ToFile(*savedReliquary, "Test.json");
 
         WHEN("loading reliquary")
         {
@@ -81,10 +76,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 .CuratorConstructionPipeline(Pipeline())
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
-                inputArchive("reliquary", *loadedReliquary);
-            }
+            Inscription::Json::FromFile(*loadedReliquary, "Test.json");
 
             THEN("has only global relic")
             {
@@ -104,10 +96,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
         auto savedShard = savedReliquary->Do(
             Create<BasicShard>(savedRelic.ID(), dataGeneration.Random<std::string>()));
 
-        {
-            auto outputArchive = Inscription::Archive::OutputJson("Test.json");
-            outputArchive("reliquary", *savedReliquary);
-        }
+        Inscription::Json::ToFile(*savedReliquary, "Test.json");
 
         WHEN("loading reliquary")
         {
@@ -116,10 +105,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 .Register<BasicShard>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
-                inputArchive("reliquary", *loadedReliquary);
-            }
+            Inscription::Json::FromFile(*loadedReliquary, "Test.json");
 
             auto loadedRelic = loadedReliquary->Find<OpenRelic>(savedRelic.ID());
             auto shardFromRelic = loadedReliquary->Find<BasicShard>(loadedRelic.ID());
@@ -155,10 +141,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 .Register<OpenRelic>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
-                inputArchive("reliquary", *loadedReliquary);
-            }
+            Inscription::Json::FromFile(*loadedReliquary, "Test.json");
 
             auto loadedRelic = loadedReliquary->Find<OpenRelic>(savedRelic.ID());
 
@@ -187,10 +170,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 .Register<BasicShardWithDifferentInputHandle>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
-                inputArchive("reliquary", *loadedReliquary);
-            }
+            Inscription::Json::FromFile(*loadedReliquary, "Test.json");
 
             auto loadedRelic = loadedReliquary->Find<OpenRelic>(savedRelic.ID());
             auto shardFromRelic = loadedReliquary->Find<BasicShardWithDifferentInputHandle>(loadedRelic.ID());
@@ -233,10 +213,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
 
         auto savedRelic = savedReliquary->Find<GlobalRelic>();
 
-        {
-            auto outputArchive = Inscription::Archive::OutputJson("Test.json");
-            outputArchive("reliquary", *savedReliquary);
-        }
+        Inscription::Json::ToFile(*savedReliquary, "Test.json");
 
         WHEN("loading reliquary")
         {
@@ -245,10 +222,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 .Register<GlobalRelic>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
-                inputArchive("reliquary", *loadedReliquary);
-            }
+            Inscription::Json::FromFile(*loadedReliquary, "Test.json");
 
             auto loadedRelic = loadedReliquary->Find<GlobalRelic>();
 
@@ -273,10 +247,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
 
         auto savedRelic = savedReliquary->Do(Create<LocalRelic>{dataGeneration.Random<int>()});
 
-        {
-            auto outputArchive = Inscription::Archive::OutputJson("Test.json");
-            outputArchive("reliquary", *savedReliquary);
-        }
+        Inscription::Json::ToFile(*savedReliquary, "Test.json");
 
         WHEN("loading reliquary")
         {
@@ -285,10 +256,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 .Register<LocalRelic>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
-                inputArchive("reliquary", *loadedReliquary);
-            }
+            Inscription::Json::FromFile(*loadedReliquary, "Test.json");
 
             auto loadedRelic = loadedReliquary->Find<LocalRelic>(savedRelic.ID());
 
@@ -315,10 +283,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
             dataGeneration.Random<int>(),
             dataGeneration.Random<std::string>()});
 
-        {
-            auto outputArchive = Inscription::Archive::OutputJson("Test.json");
-            outputArchive("reliquary", *savedReliquary);
-        }
+        Inscription::Json::ToFile(*savedReliquary, "Test.json");
 
         WHEN("loading reliquary")
         {
@@ -327,10 +292,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 .Register<MovableOnlyRelic>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
-                inputArchive("reliquary", *loadedReliquary);
-            }
+            Inscription::Json::FromFile(*loadedReliquary, "Test.json");
 
             auto loadedRelic = loadedReliquary->Find<MovableOnlyRelic>(savedRelic.ID());
 
@@ -355,10 +317,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
         auto& savedCurator = savedReliquary->Find<BasicCurator>();
         savedCurator.myInt = dataGeneration.Random<int>();
 
-        {
-            auto outputArchive = Inscription::Archive::OutputJson("Test.json");
-            outputArchive("reliquary", *savedReliquary);
-        }
+        Inscription::Json::ToFile(*savedReliquary, "Test.json");
 
         WHEN("loading reliquary")
         {
@@ -366,10 +325,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 .Register<BasicCurator>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
-                inputArchive("reliquary", *loadedReliquary);
-            }
+            Inscription::Json::FromFile(*loadedReliquary, "Test.json");
 
             auto& loadedCurator = loadedReliquary->Find<BasicCurator>();
 
@@ -386,10 +342,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
 
         savedReliquary->Raise(BasicSignal());
 
-        {
-            auto outputArchive = Inscription::Archive::OutputJson("Test.json");
-            outputArchive("reliquary", *savedReliquary);
-        }
+        Inscription::Json::ToFile(*savedReliquary, "Test.json");
 
         WHEN("loading reliquary")
         {
@@ -397,10 +350,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
 
             auto loadedSignals = SignalListener<BasicSignal>(*loadedReliquary);
 
-            {
-                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
-                inputArchive("reliquary", *loadedReliquary);
-            }
+            Inscription::Json::FromFile(*loadedReliquary, "Test.json");
 
             THEN("has no signals")
             {
@@ -420,10 +370,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
         auto openRelic2 = savedReliquary->Do(Create<OpenRelic>());
         auto shard = savedReliquary->Do(Create<ShardWithRelicIndex>{openRelic1, openRelic2});
 
-        {
-            auto outputArchive = Inscription::Archive::OutputJson("Test.json");
-            outputArchive("reliquary",  * savedReliquary);
-        }
+        Inscription::Json::ToFile(*savedReliquary, "Test.json");
 
         WHEN("loading reliquary")
         {
@@ -432,10 +379,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 .Register<OpenRelic>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
-                inputArchive("reliquary", *loadedReliquary);
-            }
+            Inscription::Json::FromFile(*loadedReliquary, "Test.json");
 
             auto loadedShard = loadedReliquary->Find<ShardWithRelicIndex>(shard.ID());
 
@@ -463,10 +407,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "preferential json seria
         const auto openRelic = savedReliquary->Do(Arca::Create<OpenRelic>());
         savedReliquary->Do(Arca::Create<PreferentialSerializationConstructorShard>(openRelic));
 
-        {
-            auto outputArchive = Inscription::Archive::OutputJson("Test.json");
-            outputArchive("reliquary", *savedReliquary);
-        }
+        Inscription::Json::ToFile(*savedReliquary, "Test.json");
 
         WHEN("loading reliquary")
         {
@@ -476,10 +417,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "preferential json seria
                 .Register<PreferentialSerializationConstructorShard>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
-                inputArchive("reliquary", *loadedReliquary);
-            }
+            Inscription::Json::FromFile(*loadedReliquary, "Test.json");
 
             const auto loadedRelic = loadedReliquary->Find<PreferentialSerializationConstructorRelic1>(savedRelic.ID());
 
@@ -514,10 +452,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
 
         auto savedRelic = savedReliquary->Find<GlobalRelicNullInscription<BasicShardNullInscription>>();
 
-        {
-            auto outputArchive = Inscription::Archive::OutputJson("Test.json");
-            outputArchive("reliquary", *savedReliquary);
-        }
+        Inscription::Json::ToFile(*savedReliquary, "Test.json");
 
         WHEN("loading reliquary")
         {
@@ -526,10 +461,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
                 .Register<GlobalRelicNullInscription<BasicShardNullInscription>>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
-                inputArchive("reliquary", *loadedReliquary);
-            }
+            Inscription::Json::FromFile(*loadedReliquary, "Test.json");
 
             auto loadedRelic = loadedReliquary->Find<GlobalRelicNullInscription<BasicShardNullInscription>>();
 
@@ -558,10 +490,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
 
         auto savedRelic = savedReliquary->Find<GlobalRelicNullInscription<BasicShard>>();
 
-        {
-            auto outputArchive = Inscription::Archive::OutputJson("Test.dat");
-            outputArchive("reliquary", *savedReliquary);
-        }
+        Inscription::Json::ToFile(*savedReliquary, "Test.json");
 
         WHEN("loading reliquary with object already setup")
         {
@@ -573,10 +502,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
                 .Register<GlobalRelicNullInscription<BasicShard>>(setupRelicData, setupShardData)
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.dat"));
-                inputArchive("reliquary", *loadedReliquary);
-            }
+            Inscription::Json::FromFile(*loadedReliquary, "Test.json");
 
             auto loadedRelic = loadedReliquary->Find<GlobalRelicNullInscription<BasicShard>>();
 
@@ -612,10 +538,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
 
         auto savedRelic = savedReliquary->Do(Create<LocalRelicNullInscription<BasicShardNullInscription>>{});
 
-        {
-            auto outputArchive = Inscription::Archive::OutputJson("Test.json");
-            outputArchive("reliquary", *savedReliquary);
-        }
+        Inscription::Json::ToFile(*savedReliquary, "Test.json");
 
         WHEN("loading reliquary")
         {
@@ -624,10 +547,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
                 .Register<LocalRelicNullInscription<BasicShardNullInscription>>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
-                inputArchive("reliquary", *loadedReliquary);
-            }
+            Inscription::Json::FromFile(*loadedReliquary, "Test.json");
 
             auto loadedRelic = loadedReliquary->Find<LocalRelicNullInscription<BasicShardNullInscription>>(savedRelic.ID());
 
@@ -653,10 +573,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
         auto& savedCurator = savedReliquary->Find<BasicCuratorNullInscription>();
         savedCurator.myInt = dataGeneration.Random<int>();
 
-        {
-            auto outputArchive = Inscription::Archive::OutputJson("Test.json");
-            outputArchive("reliquary", *savedReliquary);
-        }
+        Inscription::Json::ToFile(*savedReliquary, "Test.json");
 
         WHEN("loading reliquary")
         {
@@ -664,10 +581,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
                 .Register<BasicCuratorNullInscription>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
-                inputArchive("reliquary", *loadedReliquary);
-            }
+            Inscription::Json::FromFile(*loadedReliquary, "Test.json");
 
             auto& loadedCurator = loadedReliquary->Find<BasicCuratorNullInscription>();
 
@@ -690,10 +604,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
 
         savedReliquary->Raise(BasicSignalNullInscription{});
 
-        {
-            auto outputArchive = Inscription::Archive::OutputJson("Test.json");
-            outputArchive("reliquary", *savedReliquary);
-        }
+        Inscription::Json::ToFile(*savedReliquary, "Test.json");
 
         WHEN("loading reliquary")
         {
@@ -701,10 +612,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
 
             auto loadedSignals = SignalListener<BasicSignalNullInscription>(*loadedReliquary);
 
-            {
-                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
-                inputArchive("reliquary", *loadedReliquary);
-            }
+            Inscription::Json::FromFile(*loadedReliquary, "Test.json");
 
             THEN("has no signals")
             {
@@ -734,10 +642,7 @@ SCENARIO_METHOD(
         const auto savedRelic = savedReliquary->Do(Create<NonDefaultConstructorRelic>{
             dataGeneration.Random<int>() });
 
-        {
-            auto outputArchive = Inscription::Archive::OutputJson("Test.json");
-            outputArchive("reliquary", *savedReliquary);
-        }
+        Inscription::Json::ToFile(*savedReliquary, "Test.json");
 
         WHEN("loading reliquary")
         {
@@ -745,10 +650,7 @@ SCENARIO_METHOD(
                 .Register<NonDefaultConstructorRelic>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputJson(Inscription::File::Path("Test.json"));
-                inputArchive("reliquary", *loadedReliquary);
-            }
+            Inscription::Json::FromFile(*loadedReliquary, "Test.json");
 
             const auto loadedRelic = loadedReliquary->Find<NonDefaultConstructorRelic>(savedRelic.ID());
 

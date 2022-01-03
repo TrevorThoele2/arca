@@ -33,16 +33,16 @@ namespace Inscription
     public:
         using ObjectT = BasicLocalClosedTypedRelic;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {
-            archive("integer", object.integer);
-            archive("string", object.string);
+            format("integer", object.integer);
+            format("string", object.string);
         }
     };
 
-    template<class Archive>
-    struct ScribeTraits<BasicLocalClosedTypedRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<BasicLocalClosedTypedRelic, Format> final
     {
         using Category = ArcaCompositeScribeCategory<BasicLocalClosedTypedRelic>;
     };

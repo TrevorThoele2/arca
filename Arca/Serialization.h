@@ -8,10 +8,10 @@
 #include <Inscription/ContainerSize.h>
 
 #include <Inscription/Access.h>
-#include <Inscription/OutputBinaryArchive.h>
-#include <Inscription/InputBinaryArchive.h>
-#include <Inscription/OutputJsonArchive.h>
-#include <Inscription/InputJsonArchive.h>
+#include <Inscription/OutputBinaryFormat.h>
+#include <Inscription/InputBinaryFormat.h>
+#include <Inscription/OutputJsonFormat.h>
+#include <Inscription/InputJsonFormat.h>
 
 #include "CompositeScribeCategory.h"
 #include "NullScribeCategory.h"

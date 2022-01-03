@@ -180,18 +180,18 @@ namespace Inscription
     public:
         using ObjectT = CuratorTestsFixture::BasicCurator;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive);
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format);
     };
 
-    template <class Archive>
-    void Scribe<CuratorTestsFixture::BasicCurator>::Scriven(ObjectT& object, Archive& archive)
+    template <class Format>
+    void Scribe<CuratorTestsFixture::BasicCurator>::Scriven(ObjectT& object, Format& format)
     {
-        archive("value", object.value);
+        format("value", object.value);
     }
 
-    template<class Archive>
-    struct ScribeTraits<CuratorTestsFixture::BasicCurator, Archive> final
+    template<class Format>
+    struct ScribeTraits<CuratorTestsFixture::BasicCurator, Format> final
     {
         using Category = ArcaCompositeScribeCategory<CuratorTestsFixture::BasicCurator>;
     };
@@ -202,33 +202,33 @@ namespace Inscription
     public:
         using ObjectT = CuratorTestsFixture::OtherBasicCurator;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive);
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format);
 
-        template<class Archive>
-        static std::vector<Type> InputTypes(const Archive& archive);
+        template<class Format>
+        static std::vector<Type> InputTypes(const Format& format);
     };
 
-    template<class Archive>
-    void Scribe<CuratorTestsFixture::OtherBasicCurator>::Scriven(ObjectT& object, Archive& archive)
+    template<class Format>
+    void Scribe<CuratorTestsFixture::OtherBasicCurator>::Scriven(ObjectT& object, Format& format)
     {
-        archive("value", object.value);
+        format("value", object.value);
     }
 
-    template <class Archive>
-    std::vector<Type> Scribe<CuratorTestsFixture::OtherBasicCurator>::InputTypes(const Archive&)
+    template <class Format>
+    std::vector<Type> Scribe<CuratorTestsFixture::OtherBasicCurator>::InputTypes(const Format&)
     {
         return { "CuratorTestsFixture::BasicCurator" };
     }
 
-    template<class Archive>
-    struct ScribeTraits<CuratorTestsFixture::OtherBasicCurator, Archive> final
+    template<class Format>
+    struct ScribeTraits<CuratorTestsFixture::OtherBasicCurator, Format> final
     {
         using Category = ArcaCompositeScribeCategory<CuratorTestsFixture::OtherBasicCurator>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<CuratorTestsFixture::CuratorWithNonDefaultConstructor, Archive> final
+    template<class Format>
+    struct ScribeTraits<CuratorTestsFixture::CuratorWithNonDefaultConstructor, Format> final
     {
         using Category = ArcaNullScribeCategory<CuratorTestsFixture::CuratorWithNonDefaultConstructor>;
     };
@@ -239,24 +239,24 @@ namespace Inscription
     public:
         using ObjectT = CuratorTestsFixture::CuratorWithLocalRelicConstructor;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive);
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format);
     };
 
-    template<class Archive>
-    void Scribe<CuratorTestsFixture::CuratorWithLocalRelicConstructor>::Scriven(ObjectT& object, Archive& archive)
+    template<class Format>
+    void Scribe<CuratorTestsFixture::CuratorWithLocalRelicConstructor>::Scriven(ObjectT& object, Format& format)
     {
-        archive("localRelic", object.localRelic);
+        format("localRelic", object.localRelic);
 
-        if (archive.IsInput())
+        if (format.IsInput())
         {
             object.localRelicInteger = object.localRelic->integer;
             object.localRelicString = object.localRelic->string;
         }
     }
 
-    template<class Archive>
-    struct ScribeTraits<CuratorTestsFixture::CuratorWithLocalRelicConstructor, Archive>
+    template<class Format>
+    struct ScribeTraits<CuratorTestsFixture::CuratorWithLocalRelicConstructor, Format>
     {
         using Category = ArcaCompositeScribeCategory<CuratorTestsFixture::CuratorWithLocalRelicConstructor>;
     };
@@ -267,24 +267,24 @@ namespace Inscription
     public:
         using ObjectT = CuratorTestsFixture::CuratorWithGlobalRelicConstructor;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive);
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format);
     };
 
-    template <class Archive>
-    void Scribe<CuratorTestsFixture::CuratorWithGlobalRelicConstructor>::Scriven(ObjectT& object, Archive& archive)
+    template <class Format>
+    void Scribe<CuratorTestsFixture::CuratorWithGlobalRelicConstructor>::Scriven(ObjectT& object, Format& format)
     {
-        archive("globalRelic", object.globalRelic);
+        format("globalRelic", object.globalRelic);
 
-        if (archive.IsInput())
+        if (format.IsInput())
         {
             object.globalRelicInteger = object.globalRelic->integer;
             object.globalRelicString = object.globalRelic->string;
         }
     }
 
-    template<class Archive>
-    struct ScribeTraits<CuratorTestsFixture::CuratorWithGlobalRelicConstructor, Archive>
+    template<class Format>
+    struct ScribeTraits<CuratorTestsFixture::CuratorWithGlobalRelicConstructor, Format>
     {
         using Category = ArcaCompositeScribeCategory<CuratorTestsFixture::CuratorWithGlobalRelicConstructor>;
     };
@@ -295,13 +295,13 @@ namespace Inscription
     public:
         using ObjectT = CuratorTestsFixture::CuratorWithoutCommands;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {}
     };
 
-    template<class Archive>
-    struct ScribeTraits<CuratorTestsFixture::CuratorWithoutCommands, Archive>
+    template<class Format>
+    struct ScribeTraits<CuratorTestsFixture::CuratorWithoutCommands, Format>
     {
         using Category = ArcaNullScribeCategory<CuratorTestsFixture::CuratorWithoutCommands>;
     };
@@ -312,13 +312,13 @@ namespace Inscription
     public:
         using ObjectT = CuratorTestsFixture::BaseCuratorWithCommand;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {}
     };
 
-    template<class Archive>
-    struct ScribeTraits<CuratorTestsFixture::BaseCuratorWithCommand, Archive>
+    template<class Format>
+    struct ScribeTraits<CuratorTestsFixture::BaseCuratorWithCommand, Format>
     {
         using Category = ArcaNullScribeCategory<CuratorTestsFixture::BaseCuratorWithCommand>;
     };
@@ -329,13 +329,13 @@ namespace Inscription
     public:
         using ObjectT = CuratorTestsFixture::DerivedCuratorWithCommand;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {}
     };
 
-    template<class Archive>
-    struct ScribeTraits<CuratorTestsFixture::DerivedCuratorWithCommand, Archive>
+    template<class Format>
+    struct ScribeTraits<CuratorTestsFixture::DerivedCuratorWithCommand, Format>
     {
         using Category = ArcaNullScribeCategory<CuratorTestsFixture::DerivedCuratorWithCommand>;
     };

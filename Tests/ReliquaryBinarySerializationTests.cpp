@@ -9,6 +9,8 @@ using namespace std::string_literals;
 #include <Arca/Clear.h>
 #include "SignalListener.h"
 
+#include <Inscription/Binary.h>
+
 SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary serialization", "[reliquary][serialization][binary]")
 {
     GIVEN("registered reliquary with three open relics created")
@@ -23,10 +25,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
 
         WHEN("saving reliquary")
         {
-            {
-                auto output = Inscription::Archive::OutputBinary("Test.dat");
-                output(*savedReliquary);
-            }
+            Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
             WHEN("loading reliquary and creating three new open relics")
             {
@@ -34,8 +33,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
                     .Register<OpenRelic>()
                     .Actualize();
 
-                auto input = Inscription::Archive::InputBinary("Test.dat");
-                input(*loadedReliquary);
+                Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
                 auto relic3 = loadedReliquary->Do(Create<OpenRelic>());
                 auto relic4 = loadedReliquary->Do(Create<OpenRelic>());
@@ -67,10 +65,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
             .CuratorConstructionPipeline(Pipeline())
             .Actualize();
 
-        {
-            auto outputArchive = Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading reliquary")
         {
@@ -82,10 +77,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
                 .CuratorConstructionPipeline(Pipeline())
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             THEN("has only global relic")
             {
@@ -105,10 +97,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
         auto savedShard = savedReliquary->Do(Create<BasicShard>(
             savedRelic.ID(), dataGeneration.Random<std::string>()));
 
-        {
-            auto outputArchive = Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading reliquary")
         {
@@ -117,10 +106,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
                 .Register<BasicShard>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             auto loadedRelic = loadedReliquary->Find<OpenRelic>(savedRelic.ID());
             auto shardFromRelic = loadedReliquary->Find<BasicShard>(loadedRelic.ID());
@@ -156,10 +142,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
                 .Register<OpenRelic>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             auto loadedRelic = loadedReliquary->Find<OpenRelic>(savedRelic.ID());
 
@@ -188,10 +171,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
                 .Register<BasicShardWithDifferentInputHandle>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             auto loadedRelic = loadedReliquary->Find<OpenRelic>(savedRelic.ID());
             auto shardFromRelic = loadedReliquary->Find<BasicShardWithDifferentInputHandle>(loadedRelic.ID());
@@ -234,10 +214,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
 
         auto savedRelic = savedReliquary->Find<GlobalRelic>();
 
-        {
-            auto outputArchive = Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading reliquary")
         {
@@ -246,10 +223,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
                 .Register<GlobalRelic>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             auto loadedRelic = loadedReliquary->Find<GlobalRelic>();
 
@@ -274,10 +248,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
 
         auto savedRelic = savedReliquary->Do(Create<LocalRelic>{dataGeneration.Random<int>()});
 
-        {
-            auto outputArchive = Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading reliquary")
         {
@@ -286,10 +257,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
                 .Register<LocalRelic>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             auto loadedRelic = loadedReliquary->Find<LocalRelic>(savedRelic.ID());
 
@@ -339,10 +307,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
         dataGeneration.Random<int>(),
             dataGeneration.Random<std::string>() });
 
-        {
-            auto outputArchive = Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading reliquary")
         {
@@ -351,10 +316,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
                 .Register<MovableOnlyRelic>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             auto loadedRelic = loadedReliquary->Find<MovableOnlyRelic>(savedRelic.ID());
 
@@ -379,10 +341,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
         auto& savedCurator = savedReliquary->Find<BasicCurator>();
         savedCurator.myInt = dataGeneration.Random<int>();
 
-        {
-            auto outputArchive = Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading reliquary")
         {
@@ -390,10 +349,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
                 .Register<BasicCurator>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             auto& loadedCurator = loadedReliquary->Find<BasicCurator>();
 
@@ -410,10 +366,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
 
         savedReliquary->Raise(BasicSignal());
 
-        {
-            auto outputArchive = Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading reliquary")
         {
@@ -421,10 +374,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
 
             auto loadedSignals = SignalListener<BasicSignal>(*loadedReliquary);
 
-            {
-                auto inputArchive = Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             THEN("has no signals")
             {
@@ -444,10 +394,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
         auto openRelic2 = savedReliquary->Do(Create<OpenRelic>());
         auto shard = savedReliquary->Do(Create<ShardWithRelicIndex>{openRelic1, openRelic2});
 
-        {
-            auto outputArchive = Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading reliquary")
         {
@@ -455,11 +402,8 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "reliquary binary seri
                 .Register<ShardWithRelicIndex>()
                 .Register<OpenRelic>()
                 .Actualize();
-            
-            {
-                auto inputArchive = Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             auto loadedShard = loadedReliquary->Find<ShardWithRelicIndex>(shard.ID());
 
@@ -487,10 +431,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "preferential binary s
         const auto openRelic = savedReliquary->Do(Arca::Create<OpenRelic>());
         savedReliquary->Do(Create<PreferentialSerializationConstructorShard>(openRelic.ID()));
 
-        {
-            auto outputArchive = Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading reliquary")
         {
@@ -500,10 +441,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "preferential binary s
                 .Register<PreferentialSerializationConstructorShard>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             auto loadedRelic = loadedReliquary->Find<PreferentialSerializationConstructorRelic1>(savedRelic.ID());
 
@@ -535,10 +473,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "preferential binary s
         const auto openRelic = savedReliquary->Do(Arca::Create<OpenRelic>());
         savedReliquary->Do(Create<PreferentialSerializationConstructorShard>(openRelic.ID()));
 
-        {
-            auto outputArchive = Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading reliquary")
         {
@@ -548,10 +483,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "preferential binary s
                 .Register<PreferentialSerializationConstructorShard>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             auto loadedRelic = loadedReliquary->Find<PreferentialSerializationConstructorRelic2>(savedRelic.ID());
 
@@ -583,10 +515,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "preferential binary s
         const auto openRelic = savedReliquary->Do(Arca::Create<OpenRelic>());
         savedReliquary->Do(Create<PreferentialSerializationConstructorShard>(openRelic.ID()));
 
-        {
-            auto outputArchive = Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading reliquary")
         {
@@ -596,10 +525,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "preferential binary s
                 .Register<PreferentialSerializationConstructorShard>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             auto loadedRelic = loadedReliquary->Find<PreferentialSerializationConstructorRelic3>(savedRelic.ID());
 
@@ -631,10 +557,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "preferential binary s
         const auto openRelic = savedReliquary->Do(Arca::Create<OpenRelic>());
         savedReliquary->Do(Create<PreferentialSerializationConstructorShard>(openRelic.ID()));
 
-        {
-            auto outputArchive = Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading reliquary")
         {
@@ -644,10 +567,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "preferential binary s
                 .Register<PreferentialSerializationConstructorShard>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             auto loadedRelic = loadedReliquary->Find<PreferentialSerializationConstructorRelic4>(savedRelic.ID());
 
@@ -682,10 +602,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "null reliquary binary
 
         auto savedRelic = savedReliquary->Find<GlobalRelicNullInscription<BasicShardNullInscription>>();
 
-        {
-            auto outputArchive = Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading reliquary")
         {
@@ -694,10 +611,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "null reliquary binary
                 .Register<GlobalRelicNullInscription<BasicShardNullInscription>>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             auto loadedRelic = loadedReliquary->Find<GlobalRelicNullInscription<BasicShardNullInscription>>();
 
@@ -726,10 +640,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "null reliquary binary
 
         auto savedRelic = savedReliquary->Find<GlobalRelicNullInscription<BasicShard>>();
 
-        {
-            auto outputArchive = Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading reliquary with object already setup")
         {
@@ -741,10 +652,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "null reliquary binary
                 .Register<GlobalRelicNullInscription<BasicShard>>(setupRelicData, setupShardData)
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             auto loadedRelic = loadedReliquary->Find<GlobalRelicNullInscription<BasicShard>>();
 
@@ -780,10 +688,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "null reliquary binary
 
         auto savedRelic = savedReliquary->Do(Create<LocalRelicNullInscription<BasicShardNullInscription>>());
 
-        {
-            auto outputArchive = Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading reliquary")
         {
@@ -792,10 +697,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "null reliquary binary
                 .Register<LocalRelicNullInscription<BasicShardNullInscription>>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             auto loadedRelic = loadedReliquary->Find<LocalRelicNullInscription<BasicShardNullInscription>>(savedRelic.ID());
 
@@ -821,10 +723,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "null reliquary binary
         auto& savedCurator = savedReliquary->Find<BasicCuratorNullInscription>();
         savedCurator.myInt = dataGeneration.Random<int>();
 
-        {
-            auto outputArchive = Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading reliquary")
         {
@@ -832,10 +731,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "null reliquary binary
                 .Register<BasicCuratorNullInscription>()
                 .Actualize();
 
-            {
-                auto inputArchive = Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             auto& loadedCurator = loadedReliquary->Find<BasicCuratorNullInscription>();
 
@@ -858,10 +754,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "null reliquary binary
 
         savedReliquary->Raise(BasicSignalNullInscription());
 
-        {
-            auto outputArchive = Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading reliquary")
         {
@@ -869,10 +762,7 @@ SCENARIO_METHOD(ReliquaryBinarySerializationTestsFixture, "null reliquary binary
 
             auto loadedSignals = SignalListener<BasicSignalNullInscription>(*loadedReliquary);
 
-            {
-                auto inputArchive = Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             THEN("has no signals")
             {
@@ -902,21 +792,15 @@ SCENARIO_METHOD(
         const auto savedRelic = savedReliquary->Do(Create<NonDefaultConstructorRelic>(
             dataGeneration.Random<int>()));
 
-        {
-            auto outputArchive = Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading reliquary")
         {
             const auto loadedReliquary = ReliquaryOrigin()
                 .Register<NonDefaultConstructorRelic>()
                 .Actualize();
-
-            {
-                auto inputArchive = Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             const auto loadedRelic = loadedReliquary->Find<NonDefaultConstructorRelic>(savedRelic.ID());
 

@@ -59,15 +59,15 @@ namespace Inscription
     public:
         using ObjectT = RelicBatchFixture::Relic;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {
-            archive("value", object.value);
+            format("value", object.value);
         }
     };
 
-    template<class Archive>
-    struct ScribeTraits<RelicBatchFixture::Relic, Archive> final
+    template<class Format>
+    struct ScribeTraits<RelicBatchFixture::Relic, Format> final
     {
         using Category = ArcaCompositeScribeCategory<RelicBatchFixture::Relic>;
     };
@@ -78,15 +78,15 @@ namespace Inscription
     public:
         using ObjectT = RelicBatchFixture::GlobalRelic;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {
-            archive("value", object.value);
+            format("value", object.value);
         }
     };
 
-    template<class Archive>
-    struct ScribeTraits<RelicBatchFixture::GlobalRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<RelicBatchFixture::GlobalRelic, Format> final
     {
         using Category = ArcaCompositeScribeCategory<RelicBatchFixture::GlobalRelic>;
     };

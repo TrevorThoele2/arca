@@ -153,38 +153,38 @@ public:
 
 namespace Inscription
 {
-    template<class Archive>
-    struct ScribeTraits<CommandTestsFixture::Curator, Archive> final
+    template<class Format>
+    struct ScribeTraits<CommandTestsFixture::Curator, Format> final
     {
         using Category = ArcaNullScribeCategory<CommandTestsFixture::Curator>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<CommandTestsFixture::CuratorWithSameLink, Archive> final
+    template<class Format>
+    struct ScribeTraits<CommandTestsFixture::CuratorWithSameLink, Format> final
     {
         using Category = ArcaNullScribeCategory<CommandTestsFixture::CuratorWithSameLink>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<CommandTestsFixture::CuratorWithSameResultLink, Archive> final
+    template<class Format>
+    struct ScribeTraits<CommandTestsFixture::CuratorWithSameResultLink, Format> final
     {
         using Category = ArcaNullScribeCategory<CommandTestsFixture::CuratorWithSameResultLink>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<CommandTestsFixture::ThrowingCurator, Archive> final
+    template<class Format>
+    struct ScribeTraits<CommandTestsFixture::ThrowingCurator, Format> final
     {
         using Category = ArcaNullScribeCategory<CommandTestsFixture::ThrowingCurator>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<CommandTestsFixture::Relic, Archive> final
+    template<class Format>
+    struct ScribeTraits<CommandTestsFixture::Relic, Format> final
     {
         using Category = ArcaNullScribeCategory<CommandTestsFixture::Relic>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<CommandTestsFixture::RelicWithShard, Archive> final
+    template<class Format>
+    struct ScribeTraits<CommandTestsFixture::RelicWithShard, Format> final
     {
         using Category = ArcaNullScribeCategory<CommandTestsFixture::RelicWithShard>;
     };
