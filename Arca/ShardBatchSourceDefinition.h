@@ -141,18 +141,19 @@ namespace Inscription
     template<class T>
     auto Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::Create() -> std::shared_ptr<CreateT>
     {
+        static_assert(
+            Arca::has_shard_serialization_constructor_v<ShardT>
+            || Arca::has_shard_default_constructor_v<ShardT>,
+
+            "A shard requires a serialization constructor (taking only the class Serialization) "
+            "or a default constructor in order to be serialized.");
+
         using CreateT = std::decay_t<typename ObjectT::ShardT>;
         if constexpr (Arca::has_shard_serialization_constructor_v<ShardT>)
             return std::make_shared<CreateT>(Arca::Serialization{});
         else if constexpr (Arca::has_shard_default_constructor_v<ShardT>)
             return std::make_shared<CreateT>();
         else
-        {
-            static_assert(
-                false,
-                "A shard requires a serialization constructor (taking only the class Serialization) "
-                "or a default constructor in order to be serialized.");
             return std::make_shared<CreateT>();
-        }
     }
 }
