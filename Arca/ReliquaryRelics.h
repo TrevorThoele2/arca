@@ -39,9 +39,11 @@ namespace Arca
         template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         LocalPtr<RelicT> CreateChildWith(const Handle& parent, const std::string& structureName, InitializeArgs&& ... initializeArgs);
 
-        void Destroy(const Handle& handle);
+        void Destroy(const TypeName& typeName, RelicID id);
+        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        void Destroy(RelicID id);
 
-        void AttemptClear(const Type& type);
+        void Clear(const TypeName& typeName);
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         void Clear();
 
@@ -110,6 +112,10 @@ namespace Arca
             explicit BatchSources(ReliquaryRelics& owner);
             friend ReliquaryRelics;
         } batchSources = BatchSources(*this);
+
+        using Destroyer = std::function<void(Reliquary&, RelicID)>;
+        using DestroyerMap = std::unordered_map<TypeName, Destroyer>;
+        DestroyerMap destroyerMap;
 
         KnownPolymorphicSerializerList serializers;
     public:

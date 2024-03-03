@@ -64,6 +64,12 @@
     <ClCompile Include="ReliquaryFixture.cpp">
       <Filter>Source Files\Fixtures</Filter>
     </ClCompile>
+    <ClCompile Include="PtrTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="ShardTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CompositeShardBatchTests.h">
@@ -128,6 +134,12 @@
     </ClInclude>
     <ClInclude Include="ReliquaryFixture.h">
       <Filter>Header Files\Fixtures</Filter>
+    </ClInclude>
+    <ClInclude Include="PtrTests.h">
+      <Filter>Header Files\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="ShardTests.h">
+      <Filter>Header Files\Tests</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

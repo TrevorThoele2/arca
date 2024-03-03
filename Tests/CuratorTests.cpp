@@ -36,6 +36,10 @@ void CuratorTestsFixture::BasicCurator::WorkImplementation(Stage& stage)
     onWork();
 }
 
+CuratorTestsFixture::CuratorWithNonDefaultConstructor::CuratorWithNonDefaultConstructor(int myValue) :
+    myValue(myValue)
+{}
+
 namespace Arca
 {
     template<>
@@ -50,6 +54,13 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Curator;
         static inline const TypeName typeName = "OtherBasicCurator";
+    };
+
+    template<>
+    struct Traits<CuratorTestsFixture::CuratorWithNonDefaultConstructor>
+    {
+        static const ObjectType objectType = ObjectType::Curator;
+        static inline const TypeName typeName = "CuratorWithNonDefaultConstructor";
     };
 }
 
@@ -604,6 +615,28 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
             THEN("value is loaded")
             {
                 REQUIRE(loadedCurator.value == savedCurator.value);
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(CuratorTestsFixture, "non default curator construction", "[curator]")
+{
+    GIVEN("registered reliquary")
+    {
+        auto myValue = dataGeneration.Random<int>();
+
+        auto reliquary = ReliquaryOrigin()
+            .Type<CuratorWithNonDefaultConstructor>(myValue)
+            .Actualize();
+
+        WHEN("retrieving curator")
+        {
+            auto& curator = reliquary->Find<CuratorWithNonDefaultConstructor>();
+
+            THEN("has value given to constructor")
+            {
+                REQUIRE(curator.myValue == myValue);
             }
         }
     }

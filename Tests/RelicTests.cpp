@@ -210,7 +210,8 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
                 auto preDestroyRelicCount = reliquary->RelicSize();
 
                 auto id = closedRelic->ID();
-                reliquary->Destroy(AsHandle(*closedRelic));
+                auto handle = AsHandle(*closedRelic);
+                reliquary->Destroy(handle);
 
                 THEN("finding relic returns empty")
                 {
@@ -219,7 +220,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
                 THEN("destroying again does not throw")
                 {
-                    REQUIRE_NOTHROW(reliquary->Destroy(AsHandle(*closedRelic)));
+                    REQUIRE_NOTHROW(reliquary->Destroy(handle));
                 }
 
                 THEN("reliquary relic count decrements by one")
@@ -410,25 +411,35 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
             .Type<Shard>()
             .Actualize();
 
-        auto createdSignals = reliquary->Batch<Created>();
-        auto destroyingSignals = reliquary->Batch<Destroying>();
+        auto genericCreatedSignals = reliquary->Batch<Created>();
+        auto genericDestroyingSignals = reliquary->Batch<Destroying>();
 
         WHEN("creating open relic")
         {
-            const auto created = reliquary->Create<OpenRelic>();
+            auto knownCreatedSignals = reliquary->Batch<CreatedKnown<OpenRelic>>();
+            auto knownDestroyingSignals = reliquary->Batch<DestroyingKnown<OpenRelic>>();
 
-            THEN("signal is emitted for relic and shard")
+            const auto created = reliquary->Create<OpenRelic>();
+            const auto createdHandle = AsHandle(*created);
+
+            THEN("signal is emitted for relic")
             {
-                REQUIRE(createdSignals.Size() == 1);
+                REQUIRE(genericCreatedSignals.Size() == 1);
+                REQUIRE(genericCreatedSignals.begin()->handle == createdHandle);
+                REQUIRE(knownCreatedSignals.Size() == 1);
+                REQUIRE(knownCreatedSignals.begin()->ptr == created);
             }
 
             WHEN("destroying relic")
             {
                 reliquary->Destroy(AsHandle(*created));
 
-                THEN("signal is emitted for relic and shard")
+                THEN("signal is emitted for relic")
                 {
-                    REQUIRE(destroyingSignals.Size() == 1);
+                    REQUIRE(genericDestroyingSignals.Size() == 1);
+                    REQUIRE(genericDestroyingSignals.begin()->handle == createdHandle);
+                    REQUIRE(knownDestroyingSignals.Size() == 1);
+                    REQUIRE(knownDestroyingSignals.begin()->ptr == created);
                 }
             }
 
@@ -436,9 +447,12 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
             {
                 reliquary->Clear<OpenRelic>();
 
-                THEN("signal is emitted for relic and shard")
+                THEN("signal is emitted for relic")
                 {
-                    REQUIRE(destroyingSignals.Size() == 1);
+                    REQUIRE(genericDestroyingSignals.Size() == 1);
+                    REQUIRE(genericDestroyingSignals.begin()->handle == createdHandle);
+                    REQUIRE(knownDestroyingSignals.Size() == 1);
+                    REQUIRE(knownDestroyingSignals.begin()->ptr == created);
                 }
             }
 
@@ -446,29 +460,62 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
             {
                 reliquary->Clear(TypeFor<OpenRelic>());
 
-                THEN("signal is emitted for relic and shard")
+                THEN("signal is emitted for relic")
                 {
-                    REQUIRE(destroyingSignals.Size() == 1);
+                    REQUIRE(genericDestroyingSignals.Size() == 1);
+                    REQUIRE(genericDestroyingSignals.begin()->handle == createdHandle);
+                    REQUIRE(knownDestroyingSignals.Size() == 1);
+                    REQUIRE(knownDestroyingSignals.begin()->ptr == created);
                 }
             }
         }
 
         WHEN("creating closed relic")
         {
-            const auto created = reliquary->CreateWith<ClosedRelic>(RelicStructure { TypeFor<Shard>() });
+            auto knownCreatedSignals = reliquary->Batch<CreatedKnown<ClosedRelic>>();
+            auto knownDestroyingSignals = reliquary->Batch<DestroyingKnown<ClosedRelic>>();
 
-            THEN("signal is emitted for relic and shard")
+            const auto created = reliquary->CreateWith<ClosedRelic>(RelicStructure { TypeFor<Shard>() });
+            const auto createdHandle = AsHandle(*created);
+
+            THEN("generic signal is emitted for relic and shard")
             {
-                REQUIRE(createdSignals.Size() == 2);
+                REQUIRE(genericCreatedSignals.Size() == 2);
+                REQUIRE(std::any_of(
+                    genericCreatedSignals.begin(),
+                    genericCreatedSignals.end(),
+                    [createdHandle](const Created& signal)
+                    {
+                        return signal.handle == createdHandle;
+                    }));
+            }
+
+            THEN("signal is emitted for known relic")
+            {
+                REQUIRE(knownCreatedSignals.Size() == 1);
+                REQUIRE(knownCreatedSignals.begin()->ptr == created);
             }
 
             WHEN("destroying relic")
             {
                 reliquary->Destroy(AsHandle(*created));
 
-                THEN("signal is emitted for relic and shard")
+                THEN("generic signal is emitted for relic and shard")
                 {
-                    REQUIRE(destroyingSignals.Size() == 2);
+                    REQUIRE(genericDestroyingSignals.Size() == 2);
+                    REQUIRE(std::any_of(
+                        genericDestroyingSignals.begin(),
+                        genericDestroyingSignals.end(),
+                        [createdHandle](const Destroying& signal)
+                        {
+                            return signal.handle == createdHandle;
+                        }));
+                }
+
+                THEN("signal is emitted for known relic")
+                {
+                    REQUIRE(knownDestroyingSignals.Size() == 1);
+                    REQUIRE(knownDestroyingSignals.begin()->ptr == created);
                 }
             }
 
@@ -476,9 +523,22 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
             {
                 reliquary->Clear<ClosedRelic>();
 
-                THEN("signal is emitted for relic and shard")
+                THEN("generic signal is emitted for relic and shard")
                 {
-                    REQUIRE(destroyingSignals.Size() == 2);
+                    REQUIRE(genericDestroyingSignals.Size() == 2);
+                    REQUIRE(std::any_of(
+                        genericDestroyingSignals.begin(),
+                        genericDestroyingSignals.end(),
+                        [createdHandle](const Destroying& signal)
+                        {
+                            return signal.handle == createdHandle;
+                        }));
+                }
+
+                THEN("signal is emitted for known relic")
+                {
+                    REQUIRE(knownDestroyingSignals.Size() == 1);
+                    REQUIRE(knownDestroyingSignals.begin()->ptr == created);
                 }
             }
 
@@ -486,20 +546,50 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
             {
                 reliquary->Clear(TypeFor<ClosedRelic>());
 
-                THEN("signal is emitted for relic and shard")
+                THEN("generic signal is emitted for relic and shard")
                 {
-                    REQUIRE(destroyingSignals.Size() == 2);
+                    REQUIRE(genericDestroyingSignals.Size() == 2);
+                    REQUIRE(std::any_of(
+                        genericDestroyingSignals.begin(),
+                        genericDestroyingSignals.end(),
+                        [createdHandle](const Destroying& signal)
+                        {
+                            return signal.handle == createdHandle;
+                        }));
+                }
+
+                THEN("signal is emitted for known relic")
+                {
+                    REQUIRE(knownDestroyingSignals.Size() == 1);
+                    REQUIRE(knownDestroyingSignals.begin()->ptr == created);
                 }
             }
         }
 
         WHEN("creating typed relic")
         {
+            auto knownCreatedSignals = reliquary->Batch<CreatedKnown<TypedRelic>>();
+            auto knownDestroyingSignals = reliquary->Batch<DestroyingKnown<TypedRelic>>();
+
             const auto created = reliquary->Create<TypedRelic>();
+            const auto createdHandle = AsHandle(*created);
 
             THEN("signal is emitted for relic and shard")
             {
-                REQUIRE(createdSignals.Size() == 2);
+                REQUIRE(genericCreatedSignals.Size() == 2);
+                REQUIRE(std::any_of(
+                    genericCreatedSignals.begin(),
+                    genericCreatedSignals.end(),
+                    [createdHandle](const Created& signal)
+                    {
+                        return signal.handle == createdHandle;
+                    }));
+            }
+
+            THEN("signal is emitted for known relic")
+            {
+                REQUIRE(knownCreatedSignals.Size() == 1);
+                REQUIRE(knownCreatedSignals.begin()->ptr == created);
             }
 
             WHEN("destroying relic")
@@ -508,7 +598,20 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
                 THEN("signal is emitted for relic and shard")
                 {
-                    REQUIRE(destroyingSignals.Size() == 2);
+                    REQUIRE(genericDestroyingSignals.Size() == 2);
+                    REQUIRE(std::any_of(
+                        genericDestroyingSignals.begin(),
+                        genericDestroyingSignals.end(),
+                        [createdHandle](const Destroying& signal)
+                        {
+                            return signal.handle == createdHandle;
+                        }));
+                }
+
+                THEN("signal is emitted for known relic")
+                {
+                    REQUIRE(knownDestroyingSignals.Size() == 1);
+                    REQUIRE(knownDestroyingSignals.begin()->ptr == created);
                 }
             }
 
@@ -518,7 +621,20 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
                 THEN("signal is emitted for relic and shard")
                 {
-                    REQUIRE(destroyingSignals.Size() == 2);
+                    REQUIRE(genericDestroyingSignals.Size() == 2);
+                    REQUIRE(std::any_of(
+                        genericDestroyingSignals.begin(),
+                        genericDestroyingSignals.end(),
+                        [createdHandle](const Destroying& signal)
+                        {
+                            return signal.handle == createdHandle;
+                        }));
+                }
+
+                THEN("signal is emitted for known relic")
+                {
+                    REQUIRE(knownDestroyingSignals.Size() == 1);
+                    REQUIRE(knownDestroyingSignals.begin()->ptr == created);
                 }
             }
 
@@ -528,7 +644,20 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
                 THEN("signal is emitted for relic and shard")
                 {
-                    REQUIRE(destroyingSignals.Size() == 2);
+                    REQUIRE(genericDestroyingSignals.Size() == 2);
+                    REQUIRE(std::any_of(
+                        genericDestroyingSignals.begin(),
+                        genericDestroyingSignals.end(),
+                        [createdHandle](const Destroying& signal)
+                        {
+                            return signal.handle == createdHandle;
+                        }));
+                }
+
+                THEN("signal is emitted for known relic")
+                {
+                    REQUIRE(knownDestroyingSignals.Size() == 1);
+                    REQUIRE(knownDestroyingSignals.begin()->ptr == created);
                 }
             }
         }
@@ -672,7 +801,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
                 reliquary->Destroy(AsHandle(*parent));
 
                 REQUIRE(reliquary->RelicSize() == 0);
-                REQUIRE(!Arca::LocalPtr<Shard>(child->ID(), *reliquary));
+                REQUIRE(!Arca::LocalPtr<Shard>(child.ID(), *reliquary));
             }
 
             WHEN("destroying child")
@@ -682,7 +811,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
                 THEN("does not destroy parent")
                 {
                     REQUIRE(reliquary->RelicSize() == 1);
-                    REQUIRE(Arca::LocalPtr<Shard>(parent->ID(), *reliquary));
+                    REQUIRE(Arca::LocalPtr<Shard>(parent.ID(), *reliquary));
                 }
 
                 THEN("destroying parent works")
@@ -690,7 +819,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
                     reliquary->Destroy(AsHandle(*parent));
 
                     REQUIRE(reliquary->RelicSize() == 0);
-                    REQUIRE(!Arca::LocalPtr<Shard>(parent->ID(), *reliquary));
+                    REQUIRE(!Arca::LocalPtr<Shard>(parent.ID(), *reliquary));
                 }
             }
 

@@ -2,7 +2,6 @@
 
 #include "Reliquary.h"
 #include "ReliquaryRelics.h"
-#include "Destroying.h"
 #include <cassert>
 #include <utility>
 
@@ -21,28 +20,13 @@ namespace Arca
         NotifyCompositesShardCreate(id);
     }
 
-    void ReliquaryShards::Destroy(const Handle& handle)
+    void ReliquaryShards::Destroy(const Type& type, RelicID id)
     {
-        assert(handle.ObjectType() == HandleObjectType::Shard);
+        const auto destroyer = destroyerMap.find(type.name);
+        if (destroyer == destroyerMap.end())
+            throw NotRegistered(type);
 
-        const auto id = handle.ID();
-
-        Relics().ShardModificationRequired(id);
-
-        {
-            for (auto& eitherShardBatchSource : eitherBatchSources.map)
-                eitherShardBatchSource.second->DestroyFromBase(id);
-        }
-
-        auto shardBatchSource = batchSources.map.find(handle.Type().name);
-        if (shardBatchSource != batchSources.map.end())
-        {
-            if (shardBatchSource->second->DestroyFromBase(id))
-            {
-                Owner().Raise<Destroying>(HandleFrom(id, shardBatchSource->second->Type(), HandleObjectType::Shard));
-                NotifyCompositesShardDestroy(id);
-            }
-        }
+        destroyer->second(Owner(), id, type.isConst);
     }
 
     bool ReliquaryShards::Contains(const Handle& handle) const

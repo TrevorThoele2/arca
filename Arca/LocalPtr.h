@@ -35,23 +35,18 @@ namespace Arca
         LocalPtr() = default;
 
         LocalPtr(RelicID id, Reliquary& owner) : id(id), owner(&owner)
-        {
-            value = FindValueFromOwner();
-        }
+        {}
 
         LocalPtr(const LocalPtr& arg) : id(arg.id), owner(arg.owner)
-        {
-            value = FindValueFromOwner();
-        }
+        {}
 
-        LocalPtr(LocalPtr&& arg) noexcept : id(arg.id), owner(arg.owner), value(arg.value)
+        LocalPtr(LocalPtr&& arg) noexcept : id(arg.id), owner(arg.owner)
         {}
 
         LocalPtr& operator=(const LocalPtr& arg)
         {
             id = arg.id;
             owner = arg.owner;
-            value = FindValueFromOwner();
             return *this;
         }
 
@@ -59,7 +54,6 @@ namespace Arca
         {
             id = arg.id;
             owner = arg.owner;
-            value = arg.value;
             return *this;
         }
 
@@ -75,7 +69,7 @@ namespace Arca
 
         explicit operator bool() const
         {
-            return value != nullptr;
+            return Get() != nullptr;
         }
 
         operator Handle() const
@@ -105,10 +99,7 @@ namespace Arca
 
         [[nodiscard]] ValueT* Get() const
         {
-            if (value == nullptr)
-                value = FindValueFromOwner();
-
-            return value;
+            return FindValueFromOwner();
         }
 
         [[nodiscard]] RelicID ID() const
@@ -123,7 +114,6 @@ namespace Arca
     private:
         RelicID id = 0;
         Reliquary* owner = nullptr;
-        mutable ValueT* value = nullptr;
     private:
         ValueT* FindValueFromOwner() const
         {

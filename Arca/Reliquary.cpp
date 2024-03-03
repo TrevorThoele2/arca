@@ -27,7 +27,7 @@ namespace Arca
 
     void Reliquary::Clear(const Type& type)
     {
-        relics.AttemptClear(type);
+        relics.Clear(type.name);
     }
 
     std::optional<Handle> Reliquary::ParentOf(const Handle& child) const
@@ -73,10 +73,10 @@ namespace Arca
         switch (handle.ObjectType())
         {
         case HandleObjectType::Relic:
-            relics.Destroy(handle);
+            relics.Destroy(handle.Type().name, handle.ID());
             break;
         case HandleObjectType::Shard:
-            shards.Destroy(handle);
+            shards.Destroy(handle.Type(), handle.ID());
             break;
         default:
             assert(false);

@@ -79,6 +79,18 @@ namespace Arca
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
+    void ReliquaryRelics::Destroy(RelicID id)
+    {
+        const auto metadata = MetadataFor(id);
+        if (!WillDestroy(metadata))
+            return;
+
+        auto ptr = CreatePtr<RelicT>(id);
+        Owner().Raise<DestroyingKnown<RelicT>>(ptr);
+        Destroy(*metadata);
+    }
+
+    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
     void ReliquaryRelics::Clear()
     {
         auto& batchSource = batchSources.Required<RelicT>();
@@ -211,6 +223,7 @@ namespace Arca
         Initialize(*added, std::forward<InitializeArgs>(initializeArgs)...);
 
         Owner().Raise<Created>(HandleFrom(id, TypeFor<RelicT>(), HandleObjectType::Relic));
+        Owner().Raise<CreatedKnown<RelicT>>(CreatePtr<RelicT>(id));
 
         return added;
     }

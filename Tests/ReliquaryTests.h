@@ -38,20 +38,20 @@ public:
         explicit OtherShard(int myValue);
     };
 
-    class BasicTypedRelic : public ClosedTypedRelicAutomation<BasicTypedRelic, BasicShard>
+    class BasicTypedRelic final : public ClosedTypedRelicAutomation<BasicTypedRelic, BasicShard>
     {
     public:
-        BasicShard* basicShard;
+        LocalPtr<BasicShard> basicShard;
     public:
         BasicTypedRelic() = default;
 
         void PostConstruct(ShardTuple shards);
     };
 
-    class GlobalRelic : public ClosedTypedRelicAutomation<GlobalRelic, BasicShard>
+    class GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic, BasicShard>
     {
     public:
-        BasicShard* basicShard;
+        LocalPtr<BasicShard> basicShard;
     public:
         GlobalRelic() = default;
 

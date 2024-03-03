@@ -57,6 +57,13 @@ namespace Arca
         template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         LocalPtr<RelicT> CreateChildWith(const Handle& parent, const std::string& structureName, InitializeArgs&& ... initializeArgs);
 
+        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        void Destroy(RelicID id);
+        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        void Destroy(const RelicT& relic);
+        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        void Destroy(LocalPtr<RelicT> ptr);
+
         void Clear(const Type& type);
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         void Clear();
@@ -129,10 +136,6 @@ namespace Arca
         [[nodiscard]] SizeT SignalSize() const;
     public:
         void Destroy(const Handle& handle);
-        template<class T>
-        void Destroy(const T& object);
-        template<class T>
-        void Destroy(RelicID id);
     private:
         using Relics = ReliquaryRelics;
         using RelicStructures = ReliquaryRelicStructures;
@@ -216,6 +219,24 @@ namespace Arca
         const Handle& parent, const std::string& structureName, InitializeArgs&& ... initializeArgs)
     {
         return relics.CreateChildWith<RelicT>(parent, structureName, std::forward<InitializeArgs>(initializeArgs)...);
+    }
+
+    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
+    void Reliquary::Destroy(RelicID id)
+    {
+        relics.Destroy<RelicT>(id);
+    }
+
+    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
+    void Reliquary::Destroy(const RelicT& relic)
+    {
+        Destroy<RelicT>(relic.ID());
+    }
+
+    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
+    void Reliquary::Destroy(LocalPtr<RelicT> ptr)
+    {
+        Destroy<RelicT>(ptr.ID());
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
@@ -354,18 +375,6 @@ namespace Arca
     Batch<SignalT> Reliquary::Batch() const
     {
         return signals.batchSources.Batch<SignalT>();
-    }
-
-    template<class T>
-    void Reliquary::Destroy(const T& object)
-    {
-        Destroy(AsHandle(object));
-    }
-
-    template<class T>
-    void Reliquary::Destroy(RelicID id)
-    {
-        Destroy(AsHandle<T>(id, *this));
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
