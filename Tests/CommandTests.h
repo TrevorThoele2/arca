@@ -24,14 +24,14 @@ namespace Arca
     struct Traits<CommandTestsFixture::Command>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "CommandTestsFixture::Command";
+        static TypeName TypeName() { return "CommandTestsFixture::Command"; }
     };
 
     template<>
     struct Traits<CommandTestsFixture::CommandWithResult>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "CommandTestsFixture::CommandWithResult";
+        static TypeName TypeName() { return "CommandTestsFixture::CommandWithResult"; }
         using Result = int;
     };
 
@@ -39,7 +39,7 @@ namespace Arca
     struct Traits<CommandTestsFixture::Curator>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static inline const TypeName typeName = "CommandTestsFixture::Curator";
+        static TypeName TypeName() { return "CommandTestsFixture::Curator"; }
         using HandledCommands = Arca::HandledCommands<
             CommandTestsFixture::Command,
             CommandTestsFixture::CommandWithResult>;
@@ -49,7 +49,7 @@ namespace Arca
     struct Traits<CommandTestsFixture::CuratorWithSameLink>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static inline const TypeName typeName = "CommandTestsFixture::CuratorWithSameLink";
+        static TypeName TypeName() { return "CommandTestsFixture::CuratorWithSameLink"; }
         using HandledCommands = Arca::HandledCommands<
             CommandTestsFixture::Command>;
     };
@@ -58,7 +58,7 @@ namespace Arca
     struct Traits<CommandTestsFixture::CuratorWithSameResultLink>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static inline const TypeName typeName = "CommandTestsFixture::CuratorWithSameResultLink";
+        static TypeName TypeName() { return "CommandTestsFixture::CuratorWithSameResultLink"; }
         using HandledCommands = Arca::HandledCommands<
             CommandTestsFixture::CommandWithResult>;
     };
@@ -67,7 +67,7 @@ namespace Arca
     struct Traits<CommandTestsFixture::ThrowingCurator>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static inline const TypeName typeName = "CommandTestsFixture::ThrowingCurator";
+        static TypeName TypeName() { return "CommandTestsFixture::ThrowingCurator"; }
         using HandledCommands = Arca::HandledCommands<CommandTestsFixture::Command>;
     };
 
@@ -75,14 +75,14 @@ namespace Arca
     struct Traits<CommandTestsFixture::Relic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "CommandTestsFixture::Relic";
+        static TypeName TypeName() { return "CommandTestsFixture::Relic"; }
     };
 
     template<>
     struct Traits<CommandTestsFixture::RelicWithShard>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "CommandTestsFixture::RelicWithShard";
+        static TypeName TypeName() { return "CommandTestsFixture::RelicWithShard"; }
     };
 }
 

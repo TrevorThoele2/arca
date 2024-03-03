@@ -164,7 +164,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "creating relic from registered relic str
                     reliquary->Do(CreateWith<ClosedRelic>{structureName}),
                     NotRegistered,
                     ::Catch::Matchers::Message(
-                        "The shard ("s + Traits<BasicShard>::typeName + ") was not registered.")
+                        "The shard ("s + Traits<BasicShard>::TypeName() + ") was not registered.")
                 );
             }
         }

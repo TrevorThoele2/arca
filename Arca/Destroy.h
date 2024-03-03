@@ -44,7 +44,7 @@ namespace Arca
     struct Traits<Destroy<T, std::enable_if_t<is_relic_v<T>>>>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "Arca::Destroy<" + Chroma::ToString(TypeFor<T>()) + ">";
+        static TypeName TypeName() { return "Arca::Destroy<" + Chroma::ToString(TypeFor<T>()) + ">"; }
         static const bool selfContained = true;
     };
 
@@ -77,7 +77,7 @@ namespace Arca
     struct Traits<Destroy<T, std::enable_if_t<is_shard_v<T>>>>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "Arca::Destroy<" + Chroma::ToString(TypeFor<T>()) + ">";
+        static TypeName TypeName() { return "Arca::Destroy<" + Chroma::ToString(TypeFor<T>()) + ">"; }
         static const bool selfContained = true;
     };
 
@@ -105,7 +105,7 @@ namespace Arca
     struct Traits<Destroy<T, std::enable_if_t<is_matrix_v<T>>>>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "Arca::Destroy<" + Chroma::ToString(TypeFor<T>()) + ">";
+        static TypeName TypeName() { return "Arca::Destroy<" + Chroma::ToString(TypeFor<T>()) + ">"; }
         static const bool selfContained = true;
     };
 
@@ -121,6 +121,6 @@ namespace Arca
     struct Traits<Destroy<Handle>>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "Arca::Destroy<Handle>";
+        static TypeName TypeName() { return "Arca::Destroy<Handle>"; }
     };
 }

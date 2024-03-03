@@ -34,21 +34,21 @@ namespace Arca
     struct Traits<IntegrationTestsFixture::BasicSignal>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static inline const TypeName typeName = "IntegrationTestsFixture::BasicSignal";
+        static TypeName TypeName() { return "IntegrationTestsFixture::BasicSignal"; }
     };
 
     template<>
     struct Traits<IntegrationTestsFixture::ChildRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "IntegrationTestsFixture::ChildRelic";
+        static TypeName TypeName() { return "IntegrationTestsFixture::ChildRelic"; }
     };
 
     template<>
     struct Traits<IntegrationTestsFixture::ParentRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "IntegrationTestsFixture::ParentRelic";
+        static TypeName TypeName() { return "IntegrationTestsFixture::ParentRelic"; }
         static bool ShouldCreate(Reliquary& reliquary, int value);
     };
 
@@ -56,28 +56,28 @@ namespace Arca
     struct Traits<IntegrationTestsFixture::MatrixCreatingRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "IntegrationTestsFixture::MatrixCreatingRelic";
+        static TypeName TypeName() { return "IntegrationTestsFixture::MatrixCreatingRelic"; }
     };
 
     template<>
     struct Traits<IntegrationTestsFixture::MatrixAndParentCurator>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static inline const TypeName typeName = "IntegrationTestsFixture::ParentAndMatrixCurator";
+        static TypeName TypeName() { return "IntegrationTestsFixture::ParentAndMatrixCurator"; }
     };
 
     template<>
     struct Traits<IntegrationTestsFixture::RelicListeningToSignalFromConstructor>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "IntegrationTestsFixture::RelicListeningToSignalFromConstructor";
+        static TypeName TypeName() { return "IntegrationTestsFixture::RelicListeningToSignalFromConstructor"; }
     };
 
     template<>
     struct Traits<IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic";
+        static TypeName TypeName() { return "IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic"; }
         static const Locality locality = Locality::Global;
     };
 }

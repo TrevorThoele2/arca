@@ -196,7 +196,7 @@ SCENARIO_METHOD(CommandTestsFixture, "relic copy assignment", "[command]")
                 REQUIRE_THROWS_MATCHES(
                     reliquary->Do(Arca::AssignCopy < Relic>{1, integers[1], strings[1]}),
                     Arca::CannotFind,
-                    ::Catch::Matchers::Message("The relic (" + Arca::Traits<Relic>::typeName + ") cannot be found."));
+                    ::Catch::Matchers::Message("The relic (" + Arca::Traits<Relic>::TypeName() + ") cannot be found."));
             }
         }
     }
@@ -280,7 +280,7 @@ SCENARIO_METHOD(CommandTestsFixture, "relic move assignment", "[command]")
                 REQUIRE_THROWS_MATCHES(
                     reliquary->Do(Arca::AssignMove<Relic>{1, integers[1], strings[1]}),
                     Arca::CannotFind,
-                    ::Catch::Matchers::Message("The relic (" + Arca::Traits<Relic>::typeName + ") cannot be found."));
+                    ::Catch::Matchers::Message("The relic (" + Arca::Traits<Relic>::TypeName() + ") cannot be found."));
             }
         }
     }
@@ -368,7 +368,7 @@ SCENARIO_METHOD(CommandTestsFixture, "shard copy assignment", "[command]")
                 REQUIRE_THROWS_MATCHES(
                     reliquary->Do(Arca::AssignCopy<BasicShard>{1, integers[1], strings[1]}),
                     Arca::CannotFind,
-                    ::Catch::Matchers::Message("The shard (" + Arca::Traits<BasicShard>::typeName + ") cannot be found."));
+                    ::Catch::Matchers::Message("The shard (" + Arca::Traits<BasicShard>::TypeName() + ") cannot be found."));
             }
         }
     }
@@ -422,7 +422,7 @@ SCENARIO_METHOD(CommandTestsFixture, "shard move assignment", "[command]")
                 REQUIRE_THROWS_MATCHES(
                     reliquary->Do(Arca::AssignMove < BasicShard>{1, integers[1], strings[1]}),
                     Arca::CannotFind,
-                    ::Catch::Matchers::Message("The shard (" + Arca::Traits<BasicShard>::typeName + ") cannot be found."));
+                    ::Catch::Matchers::Message("The shard (" + Arca::Traits<BasicShard>::TypeName() + ") cannot be found."));
             }
         }
     }

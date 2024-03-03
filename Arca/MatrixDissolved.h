@@ -19,6 +19,6 @@ namespace Arca
     struct Traits<MatrixDissolved<T>>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static inline const TypeName typeName = "Arca::MatrixDissolved<" + Traits<T>::typeName + ">";
+        static TypeName TypeName() { return "Arca::MatrixDissolved<" + Traits<T>::TypeName() + ">"; }
     };
 }

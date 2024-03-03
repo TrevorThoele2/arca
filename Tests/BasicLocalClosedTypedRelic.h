@@ -21,7 +21,7 @@ namespace Arca
     struct Traits<BasicLocalClosedTypedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "BasicLocalClosedTypedRelic";
+        static TypeName TypeName() { return "BasicLocalClosedTypedRelic"; }
     };
 }
 

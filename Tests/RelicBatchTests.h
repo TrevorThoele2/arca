@@ -33,21 +33,21 @@ namespace Arca
     struct Traits<::RelicBatchFixture::Relic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "RelicBatchTestsRelic";
+        static TypeName TypeName() { return "RelicBatchTestsRelic"; }
     };
 
     template<>
     struct Traits<::RelicBatchFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "RelicBatchTestsGlobalRelic";
+        static TypeName TypeName() { return "RelicBatchTestsGlobalRelic"; }
     };
 
     template<>
     struct Traits<::RelicBatchFixture::UnregisteredRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "RelicBatchTestsUnregisteredRelic";
+        static TypeName TypeName() { return "RelicBatchTestsUnregisteredRelic"; }
     };
 }
 

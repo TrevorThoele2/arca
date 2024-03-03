@@ -15,6 +15,6 @@ namespace Arca
     struct Traits<RelicParented>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static inline const TypeName typeName = "Arca::RelicParented";
+        static TypeName TypeName() { return "Arca::RelicParented"; }
     };
 }

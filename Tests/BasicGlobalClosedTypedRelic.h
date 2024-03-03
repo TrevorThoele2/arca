@@ -20,7 +20,7 @@ namespace Arca
     struct Traits<BasicGlobalClosedTypedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "BasicGlobalClosedTypedRelic";
+        static TypeName TypeName() { return "BasicGlobalClosedTypedRelic"; }
         static const Locality locality = Locality::Global;
     };
 }

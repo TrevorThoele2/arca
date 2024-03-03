@@ -13,6 +13,6 @@ namespace Arca
     struct Traits<BasicCommand>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "BasicCommand";
+        static TypeName TypeName() { return "BasicCommand"; }
     };
 }

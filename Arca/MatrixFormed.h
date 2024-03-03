@@ -19,6 +19,6 @@ namespace Arca
     struct Traits<MatrixFormed<T>>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static inline const TypeName typeName = "Arca::MatrixFormed<" + Traits<T>::typeName + ">";
+        static TypeName TypeName() { return "Arca::MatrixFormed<" + Traits<T>::TypeName() + ">"; }
     };
 }

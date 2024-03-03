@@ -27,13 +27,13 @@ namespace Arca
     struct Traits<Created>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static inline const TypeName typeName = "Arca::Created";
+        static TypeName TypeName() { return "Arca::Created"; }
     };
 
     template<class T>
     struct Traits<CreatedKnown<T>>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static inline const TypeName typeName = "Arca::CreatedKnown<" + Traits<std::decay_t<T>>::typeName + ">";
+        static TypeName TypeName() { return "Arca::CreatedKnown<" + Traits<std::decay_t<T>>::TypeName() + ">"; }
     };
 }

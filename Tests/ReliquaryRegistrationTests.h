@@ -23,21 +23,21 @@ namespace Arca
     struct Traits<ReliquaryRegistrationTestsFixture::Shard>
     {
         static constexpr ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "ReliquaryTestsShard";
+        static TypeName TypeName() { return "ReliquaryTestsShard"; }
     };
 
     template<>
     struct Traits<ReliquaryRegistrationTestsFixture::Relic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "ReliquaryTestsRelic";
+        static TypeName TypeName() { return "ReliquaryTestsRelic"; }
     };
 
     template<>
     struct Traits<ReliquaryRegistrationTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "ReliquaryTestsGlobalRelic";
+        static TypeName TypeName() { return "ReliquaryTestsGlobalRelic"; }
         static const Locality locality = Locality::Global;
     };
 
@@ -45,21 +45,21 @@ namespace Arca
     struct Traits<ReliquaryRegistrationTestsFixture::Curator>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static inline const TypeName typeName = "ReliquaryTestsCurator";
+        static TypeName TypeName() { return "ReliquaryTestsCurator"; }
     };
 
     template<>
     struct Traits<ReliquaryRegistrationTestsFixture::Command>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "ReliquaryTestsCommand";
+        static TypeName TypeName() { return "ReliquaryTestsCommand"; }
     };
 
     template<>
     struct Traits<ReliquaryRegistrationTestsFixture::Signal>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static inline const TypeName typeName = "ReliquaryTestsSignal";
+        static TypeName TypeName() { return "ReliquaryTestsSignal"; }
     };
 }
 
