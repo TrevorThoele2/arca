@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<analyzerinfo checksum="6340222">
-        <error id="preprocessorErrorDirective" severity="error" msg="failed to expand &apos;REQUIRE&apos;, Invalid ## usage when expanding &apos;INTERNAL_CATCH_TEST&apos;." verbose="failed to expand &apos;REQUIRE&apos;, Invalid ## usage when expanding &apos;INTERNAL_CATCH_TEST&apos;.">
-            <location file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="2683" column="0"/>
-        </error>
-</analyzerinfo>

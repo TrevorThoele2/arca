@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<analyzerinfo checksum="751797121">
-  <FileInfo check="CheckUnusedFunctions">
-    <functioncall functionName="Exception"/>
-    <functioncall functionName="InvalidSignature"/>
-  </FileInfo>
-</analyzerinfo>
