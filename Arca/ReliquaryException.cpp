@@ -185,4 +185,8 @@ namespace Arca
     IncorrectRegisteredCuratorType::IncorrectRegisteredCuratorType() :
         Exception("The type given does not match the runtime type.")
     {}
+
+    CommandAlreadyLinked::CommandAlreadyLinked(const Type& type) :
+        Exception("The command (" + type.name + ") has already been linked.")
+    {}
 }
