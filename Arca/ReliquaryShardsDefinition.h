@@ -146,6 +146,16 @@ namespace Arca
     }
 
     template<class ShardT>
+    void ReliquaryShards::Handler<ShardT>::SignalAllCreated(Reliquary& reliquary)
+    {
+        for (auto& shard : batchSource)
+            reliquary.shards.SignalCreation(Index<ShardT>(shard.id, reliquary));
+
+        for (auto& shard : constBatchSource)
+            reliquary.shards.SignalCreation(Index<const ShardT>(shard.id, reliquary));
+    }
+
+    template<class ShardT>
     bool ReliquaryShards::Handler<ShardT>::Contains(RelicID id) const
     {
         return batchSource.ContainsFromBase(id) || constBatchSource.ContainsFromBase(id);

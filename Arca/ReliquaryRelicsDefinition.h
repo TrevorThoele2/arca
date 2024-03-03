@@ -363,6 +363,13 @@ namespace Arca
     }
 
     template<class RelicT>
+    void ReliquaryRelics::LocalHandler<RelicT>::SignalAllCreated(Reliquary& reliquary)
+    {
+        for (auto& relic : batchSource)
+            reliquary.relics.SignalCreation(Index<RelicT>(relic.ID(), reliquary));
+    }
+
+    template<class RelicT>
     bool ReliquaryRelics::LocalHandler<RelicT>::WillBinarySerialize() const
     {
         return HasScribe<RelicT, Inscription::BinaryArchive>();

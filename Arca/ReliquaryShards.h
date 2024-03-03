@@ -63,6 +63,8 @@ namespace Arca
             virtual void RequiredDestroy(RelicID id, Reliquary& reliquary) = 0;
             virtual void Clear() = 0;
 
+            virtual void SignalAllCreated(Reliquary& reliquary) = 0;
+
             [[nodiscard]] virtual bool Contains(RelicID id) const = 0;
 
             [[nodiscard]] TypeName MainType() const override;
@@ -87,6 +89,8 @@ namespace Arca
             void CreateCommon(RelicID id, Reliquary& reliquary, bool isConst, ConstructorArgs&& ... constructorArgs);
             void RequiredDestroy(RelicID id, Reliquary& reliquary) override;
             void Clear() override;
+
+            void SignalAllCreated(Reliquary& reliquary) override;
 
             [[nodiscard]] bool Contains(RelicID id) const override;
 

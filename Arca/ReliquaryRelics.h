@@ -137,6 +137,8 @@ namespace Arca
 
             virtual void Destroy(RelicID id, Reliquary& reliquary) = 0;
             virtual void Clear(Reliquary& reliquary) = 0;
+
+            virtual void SignalAllCreated(Reliquary& reliquary) = 0;
         public:
             [[nodiscard]] TypeName MainType() const override;
         protected:
@@ -155,6 +157,8 @@ namespace Arca
 
             void Destroy(RelicID id, Reliquary& reliquary) override;
             void Clear(Reliquary& reliquary) override;
+
+            void SignalAllCreated(Reliquary& reliquary) override;
 
             [[nodiscard]] bool WillBinarySerialize() const override;
             [[nodiscard]] bool WillJsonSerialize() const override;

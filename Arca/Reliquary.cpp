@@ -643,4 +643,13 @@ namespace Inscription
         }
         return returnValue;
     }
+
+    void Scribe<Arca::Reliquary>::SignalCreation(ObjectT& object)
+    {
+        for (auto& relicHandler : object.relics.localHandlers)
+            relicHandler->SignalAllCreated(object);
+
+        for (auto& shardHandler : object.shards.handlers)
+            shardHandler->SignalAllCreated(object);
+    }
 }

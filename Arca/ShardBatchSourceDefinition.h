@@ -182,8 +182,6 @@ namespace Inscription
         }
         else
         {
-            auto& reliquary = *archive.UserContext<ReliquaryUserContext>()->reliquary;
-
             ContainerSize size;
             archive(size);
 
@@ -203,8 +201,6 @@ namespace Inscription
                     archive(shard);
                     object.list.emplace_back(id, std::move(shard));
                 }
-
-                reliquary.shards.SignalCreation(Arca::Index<ShardT>(id, reliquary));
 
                 matrixSnapshot.Finalize();
             }
@@ -249,8 +245,6 @@ namespace Inscription
         }
         else
         {
-            auto& reliquary = *archive.UserContext<ReliquaryUserContext>()->reliquary;
-
             auto input = archive.AsInput();
             auto size = input->StartList(name);
             while (size-- > 0)
@@ -271,8 +265,6 @@ namespace Inscription
                     archive("shard", shard);
                     object.list.emplace_back(id, std::move(shard));
                 }
-
-                reliquary.shards.SignalCreation(Arca::Index<ShardT>(id, reliquary));
 
                 matrixSnapshot.Finalize();
 
