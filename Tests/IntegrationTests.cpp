@@ -32,6 +32,16 @@ IntegrationTestsFixture::MatrixAndParentCurator::MatrixAndParentCurator(Init ini
         });
 }
 
+IntegrationTestsFixture::RelicListeningToSignalFromConstructor::RelicListeningToSignalFromConstructor(Init init) :
+    ClosedTypedRelic(init)
+{
+    Owner().On<BasicSignal>(
+        [this](const BasicSignal& signal)
+        {
+            signalExecutions.push_back(signal.value);
+        });
+}
+
 namespace Arca
 {
     bool Traits<::IntegrationTestsFixture::ParentRelic>::ShouldCreate(Reliquary& reliquary, int value)
@@ -416,6 +426,34 @@ SCENARIO_METHOD(
             THEN("data has been set")
             {
                 REQUIRE(shard->value == setValue);
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(
+    IntegrationTestsFixture,
+    "relic can listen to signal from constructor",
+    "[integration][relic][signal]")
+{
+    GIVEN("registered reliquary with relic")
+    {
+        const auto reliquary = ReliquaryOrigin()
+            .Register<RelicListeningToSignalFromConstructor>()
+            .Actualize();
+
+        auto relic = reliquary->Do<Create<RelicListeningToSignalFromConstructor>>();
+
+        WHEN("emitting signal")
+        {
+            const auto value = dataGeneration.Random<int>();
+
+            reliquary->Raise(BasicSignal{ value });
+
+            THEN("relic has captured execution")
+            {
+                REQUIRE(relic->signalExecutions.size() == 1);
+                REQUIRE(relic->signalExecutions[0] == value);
             }
         }
     }

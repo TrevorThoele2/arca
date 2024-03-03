@@ -50,7 +50,8 @@ namespace Arca
         BatchSource(const BatchSource& arg) = delete;
         BatchSource(BatchSource&& arg) = default;
 
-        RelicT* Add(RelicT&& relic);
+        template<class... ConstructorArgs>
+        RelicT* Add(RelicInit init, ConstructorArgs&& ... constructorArgs);
 
         iterator Destroy(RelicID destroy);
         iterator Destroy(iterator destroy);

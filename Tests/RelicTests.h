@@ -31,82 +31,82 @@ public:
 namespace Arca
 {
     template<>
-    struct Traits<::RelicTestsFixture::Shard>
+    struct Traits<RelicTestsFixture::Shard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "RelicTestsShard";
+        static inline const TypeName typeName = "RelicTestsFixture::Shard";
     };
 
     template<>
-    struct Traits<::RelicTestsFixture::OtherShard>
+    struct Traits<RelicTestsFixture::OtherShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "RelicTestsOtherShard";
+        static inline const TypeName typeName = "RelicTestsFixture::OtherShard";
     };
 
     template<>
-    struct Traits<::RelicTestsFixture::TypedClosedRelic>
+    struct Traits<RelicTestsFixture::TypedClosedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "RelicTestsTypedClosedRelic";
+        static inline const TypeName typeName = "RelicTestsFixture::TypedClosedRelic";
     };
 
     template<>
-    struct Traits<::RelicTestsFixture::TypedOpenRelic>
+    struct Traits<RelicTestsFixture::TypedOpenRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "RelicTestsTypedOpenRelic";
+        static inline const TypeName typeName = "RelicTestsFixture::TypedOpenRelic";
     };
 
     template<>
-    struct Traits<::RelicTestsFixture::GlobalRelic>
+    struct Traits<RelicTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "RelicTestsGlobalRelic";
+        static inline const TypeName typeName = "RelicTestsFixture::GlobalRelic";
         static const Locality locality = Locality::Global;
     };
 
     template<>
-    struct Traits<::RelicTestsFixture::ShouldCreateRelic>
+    struct Traits<RelicTestsFixture::ShouldCreateRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "ReliquaryTestsShouldCreateRelic";
+        static inline const TypeName typeName = "RelicTestsFixture::ShouldCreateRelic";
         static bool ShouldCreate(Reliquary& reliquary, int value);
     };
 
     template<>
-    struct Traits<::RelicTestsFixture::InitializedRelic>
+    struct Traits<RelicTestsFixture::InitializedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "ReliquaryTestsInitializedRelic";
+        static inline const TypeName typeName = "RelicTestsFixture::InitializedRelic";
     };
 
     template<>
-    struct Traits<::RelicTestsFixture::MovableOnlyRelic>
+    struct Traits<RelicTestsFixture::MovableOnlyRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "ReliquaryTestsMovableOnlyRelic";
+        static inline const TypeName typeName = "RelicTestsFixture::MovableOnlyRelic";
     };
 
     template<>
-    struct Traits<::RelicTestsFixture::RelicConstructedFromMovedValue>
+    struct Traits<RelicTestsFixture::RelicConstructedFromMovedValue>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "ReliquaryTestsRelicConstructedFromMoveValue";
+        static inline const TypeName typeName = "RelicTestsFixture::RelicConstructedFromMoveValue";
     };
 
     template<>
-    struct Traits<::RelicTestsFixture::ClosedTypedRelicWithUsingConstructor>
+    struct Traits<RelicTestsFixture::ClosedTypedRelicWithUsingConstructor>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "ReliquaryTestsClosedTypedRelicWithUsingConstructor";
+        static inline const TypeName typeName = "RelicTestsFixture::ClosedTypedRelicWithUsingConstructor";
     };
 
     template<>
-    struct Traits<::RelicTestsFixture::OpenTypedRelicWithUsingConstructor>
+    struct Traits<RelicTestsFixture::OpenTypedRelicWithUsingConstructor>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "ReliquaryTestsOpenTypedRelicWithUsingConstructor";
+        static inline const TypeName typeName = "RelicTestsFixture::OpenTypedRelicWithUsingConstructor";
     };
 }
 
@@ -181,13 +181,15 @@ public:
     RelicConstructedFromMovedValue(Init init, std::unique_ptr<int>&& myInt);
 };
 
-class RelicTestsFixture::ClosedTypedRelicWithUsingConstructor final : public ClosedTypedRelic<ClosedTypedRelicWithUsingConstructor>
+class RelicTestsFixture::ClosedTypedRelicWithUsingConstructor final :
+    public ClosedTypedRelic<ClosedTypedRelicWithUsingConstructor>
 {
 public:
     using ClosedTypedRelic::ClosedTypedRelic;
 };
 
-class RelicTestsFixture::OpenTypedRelicWithUsingConstructor final : public OpenTypedRelic<OpenTypedRelicWithUsingConstructor>
+class RelicTestsFixture::OpenTypedRelicWithUsingConstructor final :
+    public OpenTypedRelic<OpenTypedRelicWithUsingConstructor>
 {
 public:
     using OpenTypedRelic::OpenTypedRelic;

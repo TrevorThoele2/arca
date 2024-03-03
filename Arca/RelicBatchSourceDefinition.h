@@ -10,13 +10,15 @@ namespace Arca
     {}
 
     template<class T>
-    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Add(RelicT&& relic) -> RelicT*
+    template<class... ConstructorArgs>
+    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Add(RelicInit init, ConstructorArgs&& ... constructorArgs)
+        -> RelicT*
     {
-        auto found = Find(relic.ID());
+        auto found = Find(init.id);
         if (found)
             return nullptr;
 
-        list.push_back(std::move(relic));
+        list.emplace_back(init, std::forward<ConstructorArgs>(constructorArgs)...);
         return &list.back();
     }
 
