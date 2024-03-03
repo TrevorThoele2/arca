@@ -16,12 +16,9 @@ public:
     using OtherShard = DifferentiableShard<1>;
 
     struct BasicSignal;
-    class ChildRelic;
-    class ParentRelic;
     class BasicCuratorBase;
 
     class MatrixCreatingRelic;
-    class MatrixAndParentCurator;
 
     class RelicListeningToSignalFromConstructor;
 
@@ -38,32 +35,10 @@ namespace Arca
     };
 
     template<>
-    struct Traits<IntegrationTestsFixture::ChildRelic>
-    {
-        static constexpr ObjectType objectType = ObjectType::Relic;
-        static const inline TypeName typeName = "IntegrationTestsFixture::ChildRelic";
-    };
-
-    template<>
-    struct Traits<IntegrationTestsFixture::ParentRelic>
-    {
-        static constexpr ObjectType objectType = ObjectType::Relic;
-        static const inline TypeName typeName = "IntegrationTestsFixture::ParentRelic";
-        static bool ShouldCreate(Reliquary& reliquary, int value);
-    };
-
-    template<>
     struct Traits<IntegrationTestsFixture::MatrixCreatingRelic>
     {
         static constexpr ObjectType objectType = ObjectType::Relic;
         static const inline TypeName typeName = "IntegrationTestsFixture::MatrixCreatingRelic";
-    };
-
-    template<>
-    struct Traits<IntegrationTestsFixture::MatrixAndParentCurator>
-    {
-        static constexpr ObjectType objectType = ObjectType::Curator;
-        static const inline TypeName typeName = "IntegrationTestsFixture::ParentAndMatrixCurator";
     };
 
     template<>
@@ -87,36 +62,10 @@ struct IntegrationTestsFixture::BasicSignal
     int value = 0;
 };
 
-class IntegrationTestsFixture::ChildRelic final
-{
-public:
-    int value = 0;
-public:
-    ChildRelic() = default;
-};
-
-class IntegrationTestsFixture::ParentRelic final
-{
-public:
-    int value = 0;
-public:
-    explicit ParentRelic() = default;
-
-    ParentRelic(int value);
-};
-
 class IntegrationTestsFixture::MatrixCreatingRelic final
 {
 public:
     explicit MatrixCreatingRelic(RelicInit init);
-};
-
-class IntegrationTestsFixture::MatrixAndParentCurator final : public Curator
-{
-public:
-    bool hadMatrixAndParent = false;
-public:
-    MatrixAndParentCurator(Init init);
 };
 
 class IntegrationTestsFixture::RelicListeningToSignalFromConstructor final
@@ -141,27 +90,9 @@ public:
 namespace Inscription
 {
     template<class Archive>
-    struct ScribeTraits<IntegrationTestsFixture::ChildRelic, Archive> final
-    {
-        using Category = ArcaNullScribeCategory<IntegrationTestsFixture::ChildRelic>;
-    };
-
-    template<class Archive>
-    struct ScribeTraits<IntegrationTestsFixture::ParentRelic, Archive> final
-    {
-        using Category = ArcaNullScribeCategory<IntegrationTestsFixture::ParentRelic>;
-    };
-
-    template<class Archive>
     struct ScribeTraits<IntegrationTestsFixture::MatrixCreatingRelic, Archive> final
     {
         using Category = ArcaNullScribeCategory<IntegrationTestsFixture::MatrixCreatingRelic>;
-    };
-
-    template<class Archive>
-    struct ScribeTraits<IntegrationTestsFixture::MatrixAndParentCurator, Archive> final
-    {
-        using Category = ArcaNullScribeCategory<IntegrationTestsFixture::MatrixAndParentCurator>;
     };
 
     template<class Archive>

@@ -170,9 +170,6 @@ namespace Arca
         return "The " + objectType + " (" + Chroma::ToString(type) + ") cannot be found.";
     }
     
-    CannotParentRelic::CannotParentRelic(const std::string& message) : Exception(message)
-    {}
-
     IncorrectRegisteredCuratorType::IncorrectRegisteredCuratorType() :
         Exception("The type given does not match the runtime type.")
     {}

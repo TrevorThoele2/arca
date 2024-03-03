@@ -12,8 +12,6 @@
 #include "HasShouldCreateMethod.h"
 #include "Index.h"
 
-#include "RelicParented.h"
-
 #include "CreateData.h"
 #include "IsRelic.h"
 #include "IsLocal.h"
@@ -51,9 +49,6 @@ namespace Arca
         [[nodiscard]] bool Contains(RelicID id) const;
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
         [[nodiscard]] bool Contains() const;
-
-        [[nodiscard]] std::optional<Handle> ParentOf(RelicID childID) const;
-        [[nodiscard]] std::vector<Handle> ChildrenOf(RelicID parentID) const;
 
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int> = 0>
         [[nodiscard]] RelicID IDFor(const RelicT& relic) const;
@@ -95,8 +90,6 @@ namespace Arca
         [[nodiscard]] RelicID NextID() const;
         RelicID AdvanceID();
         
-        void Parent(const Handle& parent, const Handle& child);
-
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         RelicT* FindStorage(RelicID id);
     public:
@@ -223,8 +216,6 @@ namespace Arca
         template<class T, class... ConstructorArgs>
         std::shared_ptr<T> CreateGlobalImpl(RelicInit init, ConstructorArgs&& ... constructorArgs);
     private:
-        RelicMetadata& ValidateParentForParenting(const Handle& parent);
-    private:
         Reliquary* owner;
         ReliquaryRelicStructures* relicStructures;
         ReliquaryShards* shards;
@@ -266,8 +257,6 @@ namespace Arca
             : relicStructures->RequiredRelicStructure(std::get<std::string>(*createData.structure));
 
         const auto metadata = SetupNewMetadata<RelicT>(id);
-        if (createData.parent)
-            Parent(*createData.parent, Handle{ id, TypeFor<RelicT>() });
 
         auto& batchSource = RequiredBatchSource<RelicT>();
         auto added = batchSource.Create(id, std::forward<ConstructorArgs>(constructorArgs)...);
@@ -280,9 +269,6 @@ namespace Arca
 
         SignalCreation(index);
         
-        if (createData.parent)
-            signals->Raise(RelicParented{ *createData.parent, AsHandle(index) });
-
         return index;
     }
     
@@ -580,9 +566,6 @@ namespace Arca
         if (createData.id)
             if (Contains(*createData.id))
                 throw CannotCreate(objectTypeName, TypeFor<RelicT>(), typeid(RelicT));
-
-        if (createData.parent)
-            ValidateParentForParenting(*createData.parent);
     }
 
     template<class T, class... ConstructorArgs>

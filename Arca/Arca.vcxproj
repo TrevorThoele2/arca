@@ -104,7 +104,6 @@
     <ClInclude Include="RelicBatchIterator.h" />
     <ClInclude Include="RelicBatchSource.h" />
     <ClInclude Include="Created.h" />
-    <ClInclude Include="RelicParented.h" />
     <ClInclude Include="ReliquaryCurators.h" />
     <ClInclude Include="ReliquaryRelics.h" />
     <ClInclude Include="ReliquaryRelicStructures.h" />

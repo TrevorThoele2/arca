@@ -135,9 +135,6 @@
     <ClInclude Include="RelicBatchSource.h">
       <Filter>Header Files\Relic\Batch</Filter>
     </ClInclude>
-    <ClInclude Include="RelicParented.h">
-      <Filter>Header Files\Signal\Common</Filter>
-    </ClInclude>
     <ClInclude Include="Batch.h">
       <Filter>Header Files\Batch</Filter>
     </ClInclude>
