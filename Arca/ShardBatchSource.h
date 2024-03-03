@@ -9,6 +9,7 @@
 #include "TypeFor.h"
 
 #include "Serialization.h"
+#include "HasScribe.h"
 
 namespace Arca
 {
@@ -232,18 +233,31 @@ namespace Inscription
         using BaseT::Scriven;
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+    private:
+        template<class U, std::enable_if_t<Arca::HasScribe<U>(), int> = 0>
+        void DoScriven(ObjectT& object, ArchiveT& archive);
+        template<class U, std::enable_if_t<!Arca::HasScribe<U>(), int> = 0>
+        void DoScriven(ObjectT& object, ArchiveT& archive);
     };
 
     template<class T>
     void Scribe<::Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>, BinaryArchive>::
         ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
+        DoScriven<typename ObjectT::ShardT>(object, archive);
+    }
+
+    template<class T>
+    template<class U, std::enable_if_t<Arca::HasScribe<U>(), int>>
+    void Scribe<::Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>, BinaryArchive>::
+        DoScriven(ObjectT& object, ArchiveT& archive)
+    {
         if (archive.IsOutput())
         {
             auto size = object.list.size();
             archive(size);
 
-            for(auto& loop : object.list)
+            for (auto& loop : object.list)
             {
                 archive(loop.id);
                 archive(loop.shard);
@@ -254,7 +268,7 @@ namespace Inscription
             ContainerSize size;
             archive(size);
 
-            while(size-- > 0)
+            while (size-- > 0)
             {
                 ::Arca::RelicID id;
                 archive(id);
@@ -275,4 +289,10 @@ namespace Inscription
             }
         }
     }
+
+    template<class T>
+    template<class U, std::enable_if_t<!Arca::HasScribe<U>(), int>>
+    void Scribe<::Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>, BinaryArchive>::
+        DoScriven(ObjectT&, ArchiveT&)
+    {}
 }
