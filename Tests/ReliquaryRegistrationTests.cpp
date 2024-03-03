@@ -67,7 +67,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
                     reliquary->Static<StaticRelic>(),
                     NotRegistered,
                     ::Catch::Matchers::Message(
-                        "The static relic ("s + TypeHandleFor<StaticRelic>().name + ") was not registered. " +
+                        "The relic ("s + TypeHandleFor<StaticRelic>().name + ") was not registered. " +
                         "The class name is: \"" + typeid(StaticRelic).name() + "\".")
                 );
             }

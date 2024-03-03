@@ -63,3 +63,9 @@ namespace Arca
     void Curator::StopStepImplementation()
     {}
 }
+
+namespace Inscription
+{
+    void Scribe<Arca::Curator, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    {}
+}

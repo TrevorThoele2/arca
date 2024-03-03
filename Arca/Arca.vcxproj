@@ -27,6 +27,7 @@
     <ClInclude Include="CuratorHandle.h" />
     <ClInclude Include="HasFactoryMethod.h" />
     <ClInclude Include="IsType.h" />
+    <ClInclude Include="KnownPolymorphicSerializer.h" />
     <ClInclude Include="ObjectType.h" />
     <ClInclude Include="PipelineException.h" />
     <ClInclude Include="Ptr.h" />
@@ -39,6 +40,16 @@
     <ClInclude Include="RelicHandleActualization.h" />
     <ClInclude Include="RelicParented.h" />
     <ClInclude Include="RelicScribe.h" />
+    <ClInclude Include="ReliquaryComponent.h" />
+    <ClInclude Include="ReliquaryCurators.h" />
+    <ClInclude Include="ReliquaryCuratorsDefinition.h" />
+    <ClInclude Include="ReliquaryRelics.h" />
+    <ClInclude Include="ReliquaryRelicsDefinition.h" />
+    <ClInclude Include="ReliquaryRelicStructures.h" />
+    <ClInclude Include="ReliquaryShards.h" />
+    <ClInclude Include="ReliquaryShardsDefinition.h" />
+    <ClInclude Include="ReliquarySignals.h" />
+    <ClInclude Include="ReliquarySignalsDefinition.h" />
     <ClInclude Include="Shard.h" />
     <ClInclude Include="ShardBatchIterator.h" />
     <ClInclude Include="Exception.h" />
@@ -78,12 +89,19 @@
   <ItemGroup>
     <ClCompile Include="CuratorHandle.cpp" />
     <ClCompile Include="FixedRelic.cpp" />
+    <ClCompile Include="KnownPolymorphicSerializer.cpp" />
     <ClCompile Include="ObjectType.cpp" />
     <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="BatchException.cpp" />
     <ClCompile Include="PipelineException.cpp" />
     <ClCompile Include="RelicBatchSource.cpp" />
     <ClCompile Include="Handle.cpp" />
+    <ClCompile Include="ReliquaryComponent.cpp" />
+    <ClCompile Include="ReliquaryCurators.cpp" />
+    <ClCompile Include="ReliquaryRelics.cpp" />
+    <ClCompile Include="ReliquaryRelicStructures.cpp" />
+    <ClCompile Include="ReliquaryShards.cpp" />
+    <ClCompile Include="ReliquarySignals.cpp" />
     <ClCompile Include="ShardBatchSource.cpp" />
     <ClCompile Include="Exception.cpp" />
     <ClCompile Include="Reliquary.cpp" />

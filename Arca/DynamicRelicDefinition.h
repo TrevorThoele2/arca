@@ -1,19 +1,20 @@
 #pragma once
 
 #include "DynamicRelic.h"
+#include "Reliquary.h"
 
 namespace Arca
 {
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     Ptr<ShardT> DynamicRelic::Create()
     {
-        return owner->CreateShard<ShardT>(id);
+        return owner->shards.Create<ShardT>(id);
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     void DynamicRelic::Destroy()
     {
-        owner->DestroyShard<ShardT>(id);
+        owner->shards.Destroy<ShardT>(id);
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>

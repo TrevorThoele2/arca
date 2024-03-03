@@ -2,6 +2,7 @@
 
 #include <unordered_set>
 
+#include "Destroying.h"
 #include "RelicParented.h"
 #include "PipelineException.h"
 
@@ -57,7 +58,7 @@ namespace Arca
         for (auto& initializer : relicList)
             initializer.factory(*reliquary);
 
-        reliquary->namedRelicStructureList = namedRelicStructureList;
+        reliquary->relicStructures.namedList = namedRelicStructureList;
 
         const auto allCurators = PushAllCuratorsTo(*reliquary);
 
@@ -66,7 +67,7 @@ namespace Arca
                 *reliquary,
                 curatorInitializationPipeline,
                 allCurators);
-        reliquary->curatorWorkPipeline =
+        reliquary->curators.workPipeline =
             TransformCuratorPipeline(
                 *reliquary,
                 curatorWorkPipeline,
@@ -130,7 +131,7 @@ namespace Arca
 
         for (auto& loop : provided)
         {
-            Reliquary::CuratorHandlePtr handle;
+            ReliquaryCurators::HandlePtr handle;
 
             if (loop.curator.index() == 0)
                 handle = std::make_unique<OwnedCuratorHandle>(std::move(std::get<0>(loop.curator)), loop.typeHandle);
@@ -139,7 +140,7 @@ namespace Arca
 
             returnValue.push_back(handle->Get());
 
-            reliquary.curators.emplace(handle->typeHandle.name, std::move(handle));
+            reliquary.curators.map.emplace(handle->typeHandle.name, std::move(handle));
         }
 
         for (auto& loop : curatorSerializationTypeHandlesFactoryList)
@@ -148,7 +149,7 @@ namespace Arca
         return returnValue;
     }
 
-    Reliquary::CuratorPipeline ReliquaryOrigin::TransformCuratorPipeline(
+    ReliquaryCurators::Pipeline ReliquaryOrigin::TransformCuratorPipeline(
         Reliquary& reliquary,
         const Pipeline& toTransform,
         const std::vector<Arca::Curator*>& allCurators)
@@ -162,11 +163,11 @@ namespace Arca
                 ++loop;
         }
 
-        Reliquary::CuratorPipeline createdPipeline;
+        ReliquaryCurators::Pipeline createdPipeline;
 
         if (pipeline.empty())
         {
-            createdPipeline.push_back(Reliquary::CuratorStage{});
+            createdPipeline.push_back(ReliquaryCurators::Stage{});
             for (auto& loop : allCurators)
                 createdPipeline.back().push_back(loop);
 
@@ -177,7 +178,7 @@ namespace Arca
 
         for(auto& stage : toTransform)
         {
-            Reliquary::CuratorStage createdStage;
+            ReliquaryCurators::Stage createdStage;
 
             auto typeHandleNames = stage.TypeHandleNameList();
             for(auto& typeHandleName : typeHandleNames)
@@ -201,6 +202,6 @@ namespace Arca
     }
 
     ReliquaryOrigin::SignalConstructor::SignalConstructor(std::type_index type, void(*factory)(Reliquary&))
-        : type(std::move(type)), factory(factory)
+        : type(type), factory(factory)
     {}
 }
