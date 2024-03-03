@@ -204,6 +204,11 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
                 REQUIRE(index1.Owner() == nullptr);
             }
 
+            THEN("index1 is false")
+            {
+                REQUIRE(static_cast<bool>(index1) == false);
+            }
+
             THEN("index2 is not nullptr")
             {
                 REQUIRE(index2.Get() != nullptr);
@@ -212,6 +217,11 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
             THEN("index2 owner is reliquary")
             {
                 REQUIRE(index2.Owner() == reliquary.get());
+            }
+
+            THEN("index2 is true")
+            {
+                REQUIRE(static_cast<bool>(index2) == true);
             }
         }
 
@@ -231,6 +241,11 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
                 REQUIRE(index1.Owner() == nullptr);
             }
 
+            THEN("index1 is false")
+            {
+                REQUIRE(static_cast<bool>(index1) == false);
+            }
+
             THEN("index2 is not nullptr")
             {
                 REQUIRE(index2.Get() != nullptr);
@@ -239,6 +254,11 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
             THEN("index2 owner is reliquary")
             {
                 REQUIRE(index2.Owner() == reliquary.get());
+            }
+
+            THEN("index2 is true")
+            {
+                REQUIRE(static_cast<bool>(index2) == true);
             }
         }
 
@@ -260,6 +280,11 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
                 REQUIRE(index1.Owner() == nullptr);
             }
 
+            THEN("index1 is false")
+            {
+                REQUIRE(static_cast<bool>(index1) == false);
+            }
+
             THEN("index2 is not nullptr")
             {
                 REQUIRE(index2.Get() != nullptr);
@@ -268,6 +293,11 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
             THEN("index2 owner is reliquary")
             {
                 REQUIRE(index2.Owner() == reliquary.get());
+            }
+
+            THEN("index2 is true")
+            {
+                REQUIRE(static_cast<bool>(index2) == true);
             }
         }
 
@@ -289,6 +319,11 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
                 REQUIRE(index1.Owner() == nullptr);
             }
 
+            THEN("index1 is false")
+            {
+                REQUIRE(static_cast<bool>(index1) == false);
+            }
+
             THEN("index2 is not nullptr")
             {
                 REQUIRE(index2.Get() != nullptr);
@@ -297,6 +332,11 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
             THEN("index2 owner is reliquary")
             {
                 REQUIRE(index2.Owner() == reliquary.get());
+            }
+
+            THEN("index2 is true")
+            {
+                REQUIRE(static_cast<bool>(index2) == true);
             }
         }
 
@@ -318,6 +358,11 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
                 REQUIRE(index1.Owner() == nullptr);
             }
 
+            THEN("index1 is false")
+            {
+                REQUIRE(static_cast<bool>(index1) == false);
+            }
+
             THEN("index2 is not nullptr")
             {
                 REQUIRE(index2.Get() != nullptr);
@@ -326,6 +371,11 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
             THEN("index2 owner is reliquary")
             {
                 REQUIRE(index2.Owner() == reliquary.get());
+            }
+
+            THEN("index2 is true")
+            {
+                REQUIRE(static_cast<bool>(index2) == true);
             }
         }
 
@@ -347,6 +397,11 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
                 REQUIRE(index1.Owner() == nullptr);
             }
 
+            THEN("index1 is false")
+            {
+                REQUIRE(static_cast<bool>(index1) == false);
+            }
+
             THEN("index2 is not nullptr")
             {
                 REQUIRE(index2.Get() != nullptr);
@@ -355,6 +410,11 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
             THEN("index2 owner is reliquary")
             {
                 REQUIRE(index2.Owner() == reliquary.get());
+            }
+
+            THEN("index2 is true")
+            {
+                REQUIRE(static_cast<bool>(index2) == true);
             }
         }
 
@@ -374,6 +434,11 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
                 REQUIRE(index1.Owner() == nullptr);
             }
 
+            THEN("index1 is false")
+            {
+                REQUIRE(static_cast<bool>(index1) == false);
+            }
+
             THEN("index2 is not nullptr")
             {
                 REQUIRE(index2.Get() != nullptr);
@@ -382,6 +447,11 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
             THEN("index2 owner is reliquary")
             {
                 REQUIRE(index2.Owner() == reliquary.get());
+            }
+
+            THEN("index2 is true")
+            {
+                REQUIRE(static_cast<bool>(index2) == true);
             }
         }
 
@@ -401,6 +471,11 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
                 REQUIRE(index1.Owner() == nullptr);
             }
 
+            THEN("index1 is false")
+            {
+                REQUIRE(static_cast<bool>(index1) == false);
+            }
+
             THEN("index2 is not nullptr")
             {
                 REQUIRE(index2.Get() != nullptr);
@@ -409,6 +484,11 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
             THEN("index2 owner is reliquary")
             {
                 REQUIRE(index2.Owner() == reliquary.get());
+            }
+
+            THEN("index2 is true")
+            {
+                REQUIRE(static_cast<bool>(index2) == true);
             }
         }
 
@@ -432,6 +512,11 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
                 REQUIRE(index1.Owner() == nullptr);
             }
 
+            THEN("index1 is false")
+            {
+                REQUIRE(static_cast<bool>(index1) == false);
+            }
+
             THEN("index2 is not nullptr")
             {
                 REQUIRE(index2.Get() != nullptr);
@@ -440,6 +525,11 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
             THEN("index2 owner is reliquary")
             {
                 REQUIRE(index2.Owner() == reliquary.get());
+            }
+
+            THEN("index2 is true")
+            {
+                REQUIRE(static_cast<bool>(index2) == true);
             }
         }
 
@@ -463,6 +553,11 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
                 REQUIRE(index1.Owner() == nullptr);
             }
 
+            THEN("index1 is false")
+            {
+                REQUIRE(static_cast<bool>(index1) == false);
+            }
+
             THEN("index2 is not nullptr")
             {
                 REQUIRE(index2.Get() != nullptr);
@@ -471,6 +566,11 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
             THEN("index2 owner is reliquary")
             {
                 REQUIRE(index2.Owner() == reliquary.get());
+            }
+
+            THEN("index2 is true")
+            {
+                REQUIRE(static_cast<bool>(index2) == true);
             }
         }
     }
