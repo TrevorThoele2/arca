@@ -4,20 +4,20 @@
 
 #include <Arca/ReliquaryOrigin.h>
 
-IndexTestsFixture::TypedClosedRelic::TypedClosedRelic(Initialization initialization) :
-    ClosedTypedRelic(initialization)
+IndexTestsFixture::TypedClosedRelic::TypedClosedRelic(Init init) :
+    ClosedTypedRelic(init)
 {
     shard = FindOrCreate<Shard>();
 }
 
-IndexTestsFixture::TypedOpenRelic::TypedOpenRelic(Initialization initialization) :
-    OpenTypedRelic(initialization)
+IndexTestsFixture::TypedOpenRelic::TypedOpenRelic(Init init) :
+    OpenTypedRelic(init)
 {
     shard = FindOrCreate<Shard>();
 }
 
-IndexTestsFixture::GlobalRelic::GlobalRelic(Initialization initialization) :
-    ClosedTypedRelic(initialization)
+IndexTestsFixture::GlobalRelic::GlobalRelic(Init init) :
+    ClosedTypedRelic(init)
 {
     shard = FindOrCreate<Shard>();
 }

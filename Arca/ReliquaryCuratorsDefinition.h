@@ -36,7 +36,7 @@ namespace Arca
     template<class CuratorT>
     template<class... Args>
     ReliquaryCurators::Handler<CuratorT>::Handler(Reliquary& owner, Args&& ... args) :
-        HandlerBase(TypeFor<CuratorT>().name), curator(owner, std::forward<Args>(args)...)
+        HandlerBase(TypeFor<CuratorT>().name), curator(CuratorInit{ owner }, std::forward<Args>(args)...)
     {}
 
     template<class CuratorT>

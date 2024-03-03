@@ -6,7 +6,7 @@ namespace Arca
 {
     class Reliquary;
 
-    struct RelicInitialization
+    struct RelicInit
     {
         RelicID id;
         Reliquary& owner;

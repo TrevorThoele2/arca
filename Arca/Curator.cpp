@@ -14,7 +14,7 @@ namespace Arca
         return isAborted;
     }
 
-    Curator::Curator(Reliquary& owner) : owner(&owner)
+    Curator::Curator(Init init) : owner(&init.owner)
     {}
 
     Reliquary& Curator::Owner()

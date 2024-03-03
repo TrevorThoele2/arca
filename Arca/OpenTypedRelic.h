@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RelicInitialization.h"
+#include "RelicInit.h"
 #include "Reliquary.h"
 #include "TypeFor.h"
 
@@ -77,10 +77,10 @@ namespace Arca
             return *owner;
         }
     protected:
-        using Initialization = RelicInitialization;
+        using Init = RelicInit;
 
-        explicit OpenTypedRelic(Initialization initialization) :
-            id(initialization.id), owner(&initialization.owner)
+        explicit OpenTypedRelic(Init init) :
+            id(init.id), owner(&init.owner)
         {}
 
         OpenTypedRelic(const OpenTypedRelic& arg) = default;

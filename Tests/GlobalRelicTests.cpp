@@ -2,19 +2,17 @@
 
 #include "GlobalRelicTests.h"
 
-#include <Arca/RelicParented.h>
-
 GlobalRelicTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std::move(myValue))
 {}
 
-GlobalRelicTestsFixture::BasicTypedRelic::BasicTypedRelic(Initialization initialization)
-    : ClosedTypedRelic(initialization)
+GlobalRelicTestsFixture::BasicTypedRelic::BasicTypedRelic(Init init)
+    : ClosedTypedRelic(init)
 {
     basicShard = FindOrCreate<BasicShard>();
 }
 
-GlobalRelicTestsFixture::GlobalRelic::GlobalRelic(Initialization initialization)
-    : ClosedTypedRelic(initialization)
+GlobalRelicTestsFixture::GlobalRelic::GlobalRelic(Init init)
+    : ClosedTypedRelic(init)
 {
     basicShard = FindOrCreate<BasicShard>();
 }

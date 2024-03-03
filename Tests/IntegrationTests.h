@@ -6,8 +6,6 @@
 
 #include <Inscription/BinaryArchive.h>
 
-#include <Chroma/StringUtility.h>
-
 using namespace Arca;
 
 class IntegrationTestsFixture : public GeneralFixture
@@ -88,7 +86,7 @@ class IntegrationTestsFixture::ChildRelic final : public ClosedTypedRelic<ChildR
 public:
     int value = 0;
 public:
-    explicit ChildRelic(Initialization initialization) : ClosedTypedRelic(initialization)
+    explicit ChildRelic(Init init) : ClosedTypedRelic(init)
     {}
 };
 
@@ -97,10 +95,10 @@ class IntegrationTestsFixture::ParentRelic final : public ClosedTypedRelic<Paren
 public:
     int value = 0;
 public:
-    explicit ParentRelic(Initialization initialization) : ClosedTypedRelic(initialization)
+    explicit ParentRelic(Init init) : ClosedTypedRelic(init)
     {}
 
-    ParentRelic(Initialization initialization, int value);
+    ParentRelic(Init init, int value);
 
     void CreateChild() const;
 };

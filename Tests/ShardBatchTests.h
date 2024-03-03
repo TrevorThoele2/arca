@@ -31,7 +31,7 @@ class ShardBatchFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic
 public:
     ShardIndex<Shard> shard;
 
-    explicit GlobalRelic(Initialization initialization);
+    explicit GlobalRelic(Init init);
 };
 
 namespace Arca

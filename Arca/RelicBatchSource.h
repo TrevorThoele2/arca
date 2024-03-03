@@ -5,7 +5,7 @@
 #include "BatchSource.h"
 #include "RelicID.h"
 #include "IsRelic.h"
-#include "RelicInitialization.h"
+#include "RelicInit.h"
 
 #include "Serialization.h"
 
@@ -131,7 +131,7 @@ namespace Inscription
                     archive(*foundRelic);
                 else
                 {
-                    typename ObjectT::RelicT relic{ Arca::RelicInitialization{id, *object.owner} };
+                    typename ObjectT::RelicT relic{ Arca::RelicInit{id, *object.owner} };
                     archive(relic);
                     object.list.push_back(std::move(relic));
                     archive.AttemptReplaceTrackedObject(relic, object.list.back());

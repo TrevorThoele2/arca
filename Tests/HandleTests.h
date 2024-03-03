@@ -34,7 +34,7 @@ public:
     public:
         ShardIndex<Shard> basicShard;
     public:
-        explicit TypedRelic(Initialization initialization);
+        explicit TypedRelic(Init init);
     };
 
     class GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
@@ -42,7 +42,7 @@ public:
     public:
         ShardIndex<Shard> basicShard;
     public:
-        explicit GlobalRelic(Initialization initialization);
+        explicit GlobalRelic(Init init);
     };
 
     class Curator final : public Arca::Curator

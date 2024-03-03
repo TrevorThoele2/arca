@@ -28,6 +28,7 @@
     <ClInclude Include="CreateChild.h" />
     <ClInclude Include="CreateChildWith.h" />
     <ClInclude Include="CreateWith.h" />
+    <ClInclude Include="CuratorInit.h" />
     <ClInclude Include="Destroy.h" />
     <ClInclude Include="EitherDefinition.h" />
     <ClInclude Include="EitherImplementation.h" />
@@ -53,7 +54,7 @@
     <ClInclude Include="MatrixBatchSourceDefinition.h" />
     <ClInclude Include="IsMatrixSignal.h" />
     <ClInclude Include="MatrixTypeForSignal.h" />
-    <ClInclude Include="RelicInitialization.h" />
+    <ClInclude Include="RelicInit.h" />
     <ClInclude Include="ReliquaryCommands.h" />
     <ClInclude Include="ReliquaryCommandsDefinition.h" />
     <ClInclude Include="ReliquaryMatrices.h" />

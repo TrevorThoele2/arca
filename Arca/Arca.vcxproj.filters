@@ -468,10 +468,13 @@
     <ClInclude Include="OpenTypedRelic.h">
       <Filter>Header Files\Relic\Open</Filter>
     </ClInclude>
-    <ClInclude Include="RelicInitialization.h">
+    <ClInclude Include="HasWorkMethod.h">
+      <Filter>Header Files\Curator</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicInit.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
-    <ClInclude Include="HasWorkMethod.h">
+    <ClInclude Include="CuratorInit.h">
       <Filter>Header Files\Curator</Filter>
     </ClInclude>
   </ItemGroup>

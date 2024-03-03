@@ -10,14 +10,14 @@ ReliquaryTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std
 ReliquaryTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
 {}
 
-ReliquaryTestsFixture::BasicTypedRelic::BasicTypedRelic(Initialization initialization)
-    : ClosedTypedRelic(initialization)
+ReliquaryTestsFixture::BasicTypedRelic::BasicTypedRelic(Init init)
+    : ClosedTypedRelic(init)
 {
     basicShard = FindOrCreate<BasicShard>();
 }
 
-ReliquaryTestsFixture::GlobalRelic::GlobalRelic(Initialization initialization)
-    : ClosedTypedRelic(initialization)
+ReliquaryTestsFixture::GlobalRelic::GlobalRelic(Init init)
+    : ClosedTypedRelic(init)
 {
     basicShard = FindOrCreate<BasicShard>();
 }

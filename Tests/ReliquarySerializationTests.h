@@ -45,8 +45,8 @@ public:
         int myInt = 0;
         ShardIndex<BasicShard> basicShard;
     public:
-        explicit TypedClosedRelic(Initialization initialization);
-        TypedClosedRelic(Initialization initialization, int myInt);
+        explicit TypedClosedRelic(Init init);
+        TypedClosedRelic(Init init, int myInt);
     };
 
     class TypedOpenRelic final : public OpenTypedRelic<TypedOpenRelic>
@@ -55,8 +55,8 @@ public:
         int myInt = 0;
         ShardIndex<BasicShard> basicShard;
     public:
-        explicit TypedOpenRelic(Initialization initialization);
-        TypedOpenRelic(Initialization initialization, int myInt);
+        explicit TypedOpenRelic(Init init);
+        TypedOpenRelic(Init init, int myInt);
     };
 
     class GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
@@ -65,8 +65,8 @@ public:
         int myInt = 0;
         ShardIndex<BasicShard> basicShard;
     public:
-        explicit GlobalRelic(Initialization initialization);
-        GlobalRelic(Initialization initialization, int myInt, std::string shardData);
+        explicit GlobalRelic(Init init);
+        GlobalRelic(Init init, int myInt, std::string shardData);
     };
 
     class BasicCurator final : public Curator
@@ -104,8 +104,8 @@ public:
         int myInt = 0;
         ShardIndex<BasicShardNullInscription> basicShard;
     public:
-        explicit TypedClosedRelicNullInscription(Initialization initialization);
-        TypedClosedRelicNullInscription(Initialization initialization, int myInt);
+        explicit TypedClosedRelicNullInscription(Init init);
+        TypedClosedRelicNullInscription(Init init, int myInt);
     };
 
     class TypedOpenRelicNullInscription final :
@@ -115,8 +115,8 @@ public:
         int myInt = 0;
         ShardIndex<BasicShardNullInscription> basicShard;
     public:
-        explicit TypedOpenRelicNullInscription(Initialization initialization);
-        TypedOpenRelicNullInscription(Initialization initialization, int myInt);
+        explicit TypedOpenRelicNullInscription(Init init);
+        TypedOpenRelicNullInscription(Init init, int myInt);
     };
 
     class GlobalRelicNullInscription final :
@@ -126,8 +126,8 @@ public:
         int myInt = 0;
         ShardIndex<BasicShardNullInscription> basicShard;
     public:
-        explicit GlobalRelicNullInscription(Initialization initialization);
-        GlobalRelicNullInscription(Initialization initialization, int myInt, std::string shardData);
+        explicit GlobalRelicNullInscription(Init init);
+        GlobalRelicNullInscription(Init init, int myInt, std::string shardData);
     };
 
     class MovableOnlyRelic final : public ClosedTypedRelic<MovableOnlyRelic>
@@ -137,8 +137,8 @@ public:
 
         int myValue = 0;
     public:
-        explicit MovableOnlyRelic(Initialization initialization);
-        MovableOnlyRelic(Initialization initialization, int myInt, std::string shardData);
+        explicit MovableOnlyRelic(Init init);
+        MovableOnlyRelic(Init init, int myInt, std::string shardData);
         MovableOnlyRelic(const MovableOnlyRelic& arg) = delete;
         MovableOnlyRelic(MovableOnlyRelic&& arg) noexcept = default;
         MovableOnlyRelic& operator=(const MovableOnlyRelic& arg) = delete;

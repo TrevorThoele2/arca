@@ -35,7 +35,7 @@ public:
     public:
         ShardIndex<Shard> basicShard;
     public:
-        explicit TypedClosedRelic(Initialization initialization);
+        explicit TypedClosedRelic(Init init);
     };
 
     class TypedOpenRelic final : public OpenTypedRelic<TypedOpenRelic>
@@ -43,7 +43,7 @@ public:
     public:
         ShardIndex<Shard> basicShard;
     public:
-        explicit TypedOpenRelic(Initialization initialization);
+        explicit TypedOpenRelic(Init init);
     };
 
     class GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
@@ -51,7 +51,7 @@ public:
     public:
         ShardIndex<Shard> basicShard;
     public:
-        explicit GlobalRelic(Initialization initialization);
+        explicit GlobalRelic(Init init);
     };
 
     class ShouldCreateRelic final : public ClosedTypedRelic<ShouldCreateRelic>
@@ -59,9 +59,9 @@ public:
     public:
         int value = 0;
     public:
-        explicit ShouldCreateRelic(Initialization initialization) : ClosedTypedRelic(initialization)
+        explicit ShouldCreateRelic(Init init) : ClosedTypedRelic(init)
         {}
-        ShouldCreateRelic(Initialization initialization, int value);
+        ShouldCreateRelic(Init init, int value);
     };
 
     class InitializedRelic final : public ClosedTypedRelic<InitializedRelic>
@@ -71,8 +71,8 @@ public:
 
         int myValue = 0;
     public:
-        explicit InitializedRelic(Initialization initialization);
-        InitializedRelic(Initialization initialization, int value);
+        explicit InitializedRelic(Init init);
+        InitializedRelic(Init init, int value);
     };
 
     class MovableOnlyRelic final : public ClosedTypedRelic<MovableOnlyRelic>
@@ -82,8 +82,8 @@ public:
 
         int myValue = 0;
     public:
-        explicit MovableOnlyRelic(Initialization initialization);
-        MovableOnlyRelic(Initialization initialization, int myInt);
+        explicit MovableOnlyRelic(Init init);
+        MovableOnlyRelic(Init init, int myInt);
         MovableOnlyRelic(const MovableOnlyRelic& arg) = delete;
         MovableOnlyRelic(MovableOnlyRelic&& arg) noexcept = default;
         MovableOnlyRelic& operator=(const MovableOnlyRelic& arg) = delete;

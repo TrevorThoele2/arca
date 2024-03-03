@@ -28,7 +28,7 @@ public:
         ShardIndex<Shard<1>> shard1;
         ShardIndex<Shard<2>> shard2;
     public:
-        explicit BasicTypedRelic(Initialization initialization);
+        explicit BasicTypedRelic(Init init);
     };
 };
 
