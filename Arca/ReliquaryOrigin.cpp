@@ -10,6 +10,9 @@ namespace Arca
 {
     ReliquaryOrigin::ReliquaryOrigin()
     {
+        Type<OpenRelic>();
+        Type<ClosedRelic>();
+
         Type<Created>();
         Type<Destroying>();
         Type<RelicParented>();

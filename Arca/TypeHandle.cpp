@@ -16,7 +16,7 @@ namespace Arca
 
     bool TypeHandle::operator!=(const TypeHandle& arg) const
     {
-        return name == arg.name && isConst == arg.isConst;
+        return !(*this == arg);
     }
 }
 

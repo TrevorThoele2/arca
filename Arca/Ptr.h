@@ -333,6 +333,9 @@ namespace Arca
     template<class T>
     Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::operator bool() const
     {
+        if (id == 0)
+            return false;
+
         return Get() != nullptr;
     }
 

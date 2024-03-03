@@ -46,6 +46,16 @@ namespace Arca
         return owner->relics;
     }
 
+    ReliquaryRelicStructures& ReliquaryComponent::RelicStructures()
+    {
+        return owner->relicStructures;
+    }
+
+    const ReliquaryRelicStructures& ReliquaryComponent::RelicStructures() const
+    {
+        return owner->relicStructures;
+    }
+
     ReliquaryShards& ReliquaryComponent::Shards()
     {
         return owner->shards;

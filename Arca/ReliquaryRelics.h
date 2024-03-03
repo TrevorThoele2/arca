@@ -10,6 +10,7 @@
 #include "RelicTraits.h"
 #include "RelicMetadata.h"
 #include "RelicBatchSource.h"
+#include "HasFactoryMethod.h"
 
 #include "KnownPolymorphicSerializer.h"
 
@@ -18,10 +19,29 @@ namespace Arca
     class ReliquaryRelics : public ReliquaryComponent
     {
     public:
+        template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        Ptr<RelicT> Create(CreationArgs&& ... creationArgs);
+        template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        Ptr<RelicT> CreateWith(const RelicStructure& structure, CreationArgs&& ... creationArgs);
+        template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        Ptr<RelicT> CreateWith(const std::string& structureName, CreationArgs&& ... creationArgs);
+
+        template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        Ptr<RelicT> CreateChild(const Handle& parent, CreationArgs&& ... creationArgs);
+        template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        Ptr<RelicT> CreateChildWith(const Handle& parent, const RelicStructure& structure, CreationArgs&& ... creationArgs);
+        template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        Ptr<RelicT> CreateChildWith(const Handle& parent, const std::string& structureName, CreationArgs&& ... creationArgs);
+
+        template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int> = 0>
+        [[nodiscard]] Ptr<RelicT> Find(RelicID id) const;
+        template<class RelicT, std::enable_if_t<is_global_relic_v<RelicT>, int> = 0>
+        [[nodiscard]] Ptr<RelicT> Find() const;
+    public:
         struct RelicPrototype
         {
             RelicID id;
-            RelicOpenness openness;
+            Openness openness;
         };
     public:
         using RelicMetadataList = std::vector<RelicMetadata>;
@@ -31,7 +51,8 @@ namespace Arca
 
         void SetupNewInternals(
             RelicID id,
-            RelicOpenness openness,
+            Openness openness,
+            Locality locality,
             TypeHandle typeHandle = {},
             void* storage = nullptr);
         void DestroyMetadata(RelicID id);
@@ -48,8 +69,8 @@ namespace Arca
         [[nodiscard]] RelicID NextID() const;
         [[nodiscard]] RelicID AdvanceID();
 
-        [[nodiscard]] bool CanModify(RelicID id) const;
-        void ModificationRequired(RelicID id) const;
+        [[nodiscard]] bool CanModifyShards(RelicID id) const;
+        void ShardModificationRequired(RelicID id) const;
 
         void ThrowIfCannotParent(const Handle& parent, RelicPrototype child);
         void Parent(const Handle& parent, const Handle& child);
@@ -79,13 +100,32 @@ namespace Arca
 
         KnownPolymorphicSerializerList serializers;
     public:
-        using GlobalMap = std::unordered_map<TypeHandleName, std::any>;
+        struct StoredGlobal
+        {
+            std::shared_ptr<void> storage;
+            RelicID id;
+        };
+
+        using GlobalMap = std::unordered_map<TypeHandleName, StoredGlobal>;
         GlobalMap globalMap;
 
         KnownPolymorphicSerializerList globalSerializers;
 
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         RelicT* FindGlobalStorage();
+    private:
+        template<
+            class RelicT,
+            class... CreationArgs,
+            std::enable_if_t<is_relic_v<RelicT> && has_factory_method_v<RelicT>, int> = 0>
+        std::optional<RelicT> CreateRelic(CreationArgs&& ... creationArgs);
+        template<
+            class RelicT,
+            class... CreationArgs,
+            std::enable_if_t<is_relic_v<RelicT> && !has_factory_method_v<RelicT>, int> = 0>
+        std::optional<RelicT> CreateRelic(CreationArgs&& ... creationArgs);
+        template<class RelicT>
+        Ptr<RelicT> PushNewRelic(RelicT&& relic, RelicStructure additionalStructure);
     private:
         RelicMetadata& ValidateParentForParenting(const Handle& parent);
     private:

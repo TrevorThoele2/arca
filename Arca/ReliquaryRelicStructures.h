@@ -13,6 +13,8 @@ namespace Arca
     {
     public:
         explicit ReliquaryRelicStructures(Reliquary& owner);
+
+        [[nodiscard]] RelicStructure RequiredRelicStructure(const std::string& name) const;
     public:
         struct Named
         {
@@ -22,6 +24,6 @@ namespace Arca
             Named(std::string name, RelicStructure value);
         };
         using NamedList = std::vector<Named>;
-        NamedList namedList;
+        NamedList namedList{};
     };
 }

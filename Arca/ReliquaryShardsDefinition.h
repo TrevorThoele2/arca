@@ -8,7 +8,7 @@ namespace Arca
     template<class ShardT>
     Ptr<ShardT> ReliquaryShards::Create(RelicID id)
     {
-        Relics().ModificationRequired(id);
+        Relics().ShardModificationRequired(id);
 
         auto& batch = batchSources.Required<ShardT>();
         auto added = batch.Add(id);
@@ -23,7 +23,7 @@ namespace Arca
     template<class ShardT>
     void ReliquaryShards::Destroy(RelicID id)
     {
-        Relics().ModificationRequired(id);
+        Relics().ShardModificationRequired(id);
 
         {
             auto eitherBatchSource = eitherBatchSources.Find<Either<std::decay_t<ShardT>>>();

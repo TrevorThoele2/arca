@@ -181,19 +181,20 @@ namespace Inscription
             Arca::RelicMetadata createdMetadata;
             createdMetadata.id = metadata.id;
             createdMetadata.openness = metadata.openness;
-            auto [typeHandle, storage] = FindRelic(metadata.id, object);
+            auto [typeHandle, locality, storage] = FindExtensionForLoadedMetadata(metadata.id, object);
             createdMetadata.typeHandle = typeHandle;
+            createdMetadata.locality = locality;
             createdMetadata.storage = storage;
             if (metadata.parent)
             {
                 const auto parentID = *metadata.parent;
-                const auto parentTypeHandle = std::get<0>(FindRelic(parentID, object));
+                const auto parentTypeHandle = std::get<0>(FindExtensionForLoadedMetadata(parentID, object));
                 createdMetadata.parent = Arca::HandleSlim(parentID, parentTypeHandle);
             }
             for(auto& child : metadata.children)
             {
                 const auto childID = child;
-                const auto childTypeHandle = std::get<0>(FindRelic(childID, object));
+                const auto childTypeHandle = std::get<0>(FindExtensionForLoadedMetadata(childID, object));
                 createdMetadata.parent = Arca::HandleSlim(childID, childTypeHandle);
             }
 
@@ -297,17 +298,23 @@ namespace Inscription
         return metadata;
     }
 
-    std::tuple<Arca::TypeHandle, void*> Scribe<::Arca::Reliquary, BinaryArchive>::FindRelic(
+    auto Scribe<::Arca::Reliquary, BinaryArchive>::FindExtensionForLoadedMetadata(
         Arca::RelicID id, ObjectT& object)
+
+        -> MetadataExtension
     {
         for (auto& relicBatchSource : object.relics.batchSources.map)
         {
             auto found = relicBatchSource.second->FindStorage(id);
             if (found)
-                return { relicBatchSource.second->TypeHandle(), found };
+                return { relicBatchSource.second->TypeHandle(), Arca::Locality::Local, found };
         }
 
-        return { TypeHandle(), nullptr };
+        for(auto& global : object.relics.globalMap)
+            if (global.second.id == id)
+                return { TypeHandle(global.first, false), Arca::Locality::Global, global.second.storage.get() };
+
+        return { TypeHandle(), Arca::Locality::Local, nullptr };
     }
 
     auto Scribe<::Arca::Reliquary, BinaryArchive>::PruneTypesToLoad(

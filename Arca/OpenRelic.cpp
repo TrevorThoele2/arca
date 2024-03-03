@@ -32,9 +32,10 @@ namespace Arca
         return *owner;
     }
 
-    OpenRelic::OpenRelic(RelicID id, Reliquary& owner)
-        : id(id), owner(&owner)
-    {}
+    void OpenRelic::Initialize(Reliquary& owner)
+    {
+        this->owner = &owner;
+    }
 
     const TypeHandleName Traits<OpenRelic>::typeName = "OpenRelic";
 }
@@ -42,8 +43,5 @@ namespace Arca
 namespace Inscription
 {
     void Scribe<Arca::OpenRelic, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
-    {
-        archive(object.id);
-        archive(object.owner);
-    }
+    {}
 }
