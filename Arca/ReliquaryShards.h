@@ -26,12 +26,14 @@ namespace Arca
 
         void Create(const TypeHandle& typeHandle, RelicID id);
         template<class ShardT>
-        LocalPtr<ShardT> Create(RelicID id);
+        Ptr<ShardT> Create(RelicID id);
         template<class ShardT>
         void Destroy(RelicID id);
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] LocalPtr<ShardT> Find(RelicID id) const;
+        [[nodiscard]] Ptr<ShardT> Find(RelicID id) const;
+        template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
+        [[nodiscard]] Ptr<EitherT> Find(RelicID id) const;
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
@@ -144,7 +146,7 @@ namespace Arca
             {
                 using T = typename ShardPack::template Parameter<i>::Type;
 
-                return  shards.Contains<T>(id);
+                return shards.Contains<T>(id);
             }
         };
     private:

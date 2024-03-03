@@ -24,7 +24,7 @@ public:
     class BasicTypedRelic : public TypedRelicAutomation<BasicTypedRelic, BasicShard>
     {
     public:
-        LocalPtr<BasicShard> basicShard;
+        Ptr<BasicShard> basicShard;
     public:
         BasicTypedRelic() = default;
     protected:
@@ -34,7 +34,7 @@ public:
     class GlobalRelic : public TypedRelicAutomation<GlobalRelic, BasicShard>
     {
     public:
-        LocalPtr<BasicShard> basicShard;
+        Ptr<BasicShard> basicShard;
     public:
         GlobalRelic() = default;
     protected:
@@ -63,6 +63,7 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandleName typeName;
+        static const bool isGlobal = true;
     };
 }
 

@@ -15,6 +15,9 @@ namespace Arca
 
     const TypeHandleName Traits<EitherShardBatchFixture::Relic>::typeName
         = "EitherShardBatchTestsRelic";
+
+    const TypeHandleName Traits<EitherShardBatchFixture::GlobalRelic>::typeName
+        = "EitherShardBatchTestsGlobalRelic";
 }
 
 SCENARIO_METHOD(EitherShardBatchFixture, "default either shard batch", "[EitherBatch]")
@@ -81,7 +84,7 @@ SCENARIO_METHOD(EitherShardBatchFixture, "either shard batch", "[EitherShardBatc
 {
     GIVEN("registered reliquary and relic")
     {
-        auto reliquary = ReliquaryOrigin().Shard<Shard>().Actualize();
+        auto reliquary = ReliquaryOrigin().Type<Shard>().Actualize();
         auto relic = reliquary->Create<OpenRelic>();
 
         WHEN("creating shard")
@@ -335,8 +338,8 @@ SCENARIO_METHOD(EitherShardBatchFixture, "either shard batch", "[EitherShardBatc
     GIVEN("registered reliquary with global relic")
     {
         auto reliquary = ReliquaryOrigin()
-            .Shard<Shard>()
-            .GlobalRelic<Relic>()
+            .Type<Shard>()
+            .Type<GlobalRelic>()
             .Actualize();
 
         WHEN("starting batch")

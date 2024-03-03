@@ -21,11 +21,11 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "reliquary composite shards", "[reli
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
-            .Shard<Shard<0>>()
-            .Shard<Shard<1>>()
-            .Shard<Shard<2>>()
-            .Shard<Shard<3>>()
-            .Relic<BasicTypedRelic>()
+            .Type<Shard<0>>()
+            .Type<Shard<1>>()
+            .Type<Shard<2>>()
+            .Type<Shard<3>>()
+            .Type<BasicTypedRelic>()
             .Actualize();
 
         WHEN("not creating anything")
@@ -100,11 +100,11 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "OpenRelic composite shards", "[Open
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
-            .Shard<Shard<0>>()
-            .Shard<Shard<1>>()
-            .Shard<Shard<2>>()
-            .Shard<Shard<3>>()
-            .Relic<BasicTypedRelic>()
+            .Type<Shard<0>>()
+            .Type<Shard<1>>()
+            .Type<Shard<2>>()
+            .Type<Shard<3>>()
+            .Type<BasicTypedRelic>()
             .Actualize();
 
         WHEN("creating composite shards")
@@ -166,15 +166,15 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "OpenRelic composite shards", "[Open
     }
 }
 
-SCENARIO_METHOD(CompositeShardTestsFixture, "FixedRelic composite shards", "[FixedRelic][shard][composite]")
+SCENARIO_METHOD(CompositeShardTestsFixture, "ClosedRelic composite shards", "[ClosedRelic][shard][composite]")
 {
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
-            .Shard<Shard<0>>()
-            .Shard<Shard<1>>()
-            .Shard<Shard<2>>()
-            .Relic<BasicTypedRelic>()
+            .Type<Shard<0>>()
+            .Type<Shard<1>>()
+            .Type<Shard<2>>()
+            .Type<BasicTypedRelic>()
             .Actualize();
 
         WHEN("creating const shard")

@@ -12,7 +12,7 @@ namespace Arca
     void ReliquaryRelics::SetupNewInternals(
         RelicID id,
         RelicOpenness openness,
-        std::optional<TypeHandle> typeHandle,
+        TypeHandle typeHandle,
         void* storage)
     {
         metadataList.emplace_back(id, openness, std::move(typeHandle), storage);
@@ -67,7 +67,7 @@ namespace Arca
         Owner().Raise<Destroying>(HandleFrom(metadata));
 
         for (auto& child : metadata.children)
-            Destroy(*MetadataFor(child));
+            Destroy(*MetadataFor(child.ID()));
 
         auto& id = metadata.id;
 
@@ -77,28 +77,28 @@ namespace Arca
         for (auto& shardBatchSource : Shards().batchSources.map)
         {
             if (shardBatchSource.second->DestroyFromBase(id))
-                Owner().Raise<Destroying>(HandleFrom(id));
+                Owner().Raise<Destroying>(HandleFrom(id, shardBatchSource.second->TypeHandle()));
         }
 
         if (metadata.parent)
         {
             const auto parent = *metadata.parent;
-            const auto parentMetadata = MetadataFor(parent);
+            const auto parentMetadata = MetadataFor(parent.ID());
             const auto eraseChildrenItr =
                 std::remove_if(
                     parentMetadata->children.begin(),
                     parentMetadata->children.end(),
-                    [id](const RelicID& childId)
+                    [id](const HandleSlim& child)
                     {
-                        return id == childId;
+                        return id == child.ID();
                     });
             if (eraseChildrenItr != parentMetadata->children.end())
                 parentMetadata->children.erase(eraseChildrenItr);
         }
 
-        if (metadata.typeHandle)
+        if (metadata.openness == RelicOpenness::Typed)
         {
-            auto batchSource = batchSources.Find(metadata.typeHandle->name);
+            auto batchSource = batchSources.Find(metadata.typeHandle.name);
             batchSource->DestroyFromBase(id);
         }
 
@@ -156,8 +156,8 @@ namespace Arca
         assert(childMetadata->openness != RelicOpenness::Global);
         assert(!childMetadata->parent.has_value());
 
-        parentMetadata.children.push_back(child.ID());
-        childMetadata->parent = parent.ID();
+        parentMetadata.children.push_back(child);
+        childMetadata->parent = parent;
 
         Owner().Raise<RelicParented>({ parent, child });
     }

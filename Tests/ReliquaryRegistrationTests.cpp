@@ -82,7 +82,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary->Find<Global<GlobalRelic>>(),
+                    reliquary->Find<GlobalRelic>(),
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The relic ("s + ::Chroma::ToString(TypeHandleFor<GlobalRelic>()) + ") was not registered. " +
@@ -192,7 +192,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
     GIVEN("only typed relic registered to reliquary")
     {
         auto reliquary = ReliquaryOrigin()
-            .Relic<Relic>()
+            .Type<Relic>()
             .Actualize();
 
         WHEN("creating typed relic with unregistered shard")

@@ -6,7 +6,7 @@ namespace Arca
 {
     ClosedRelic::operator Handle() const
     {
-        return Handle(ID(), Owner());
+        return Handle(ID(), Owner(), TypeHandle(Traits<ClosedRelic>::typeName, false));
     }
 
     ClosedRelic::operator bool() const
@@ -34,6 +34,8 @@ namespace Arca
 
     ClosedRelic::ClosedRelic(RelicID id, Reliquary& owner) : id(id), owner(&owner)
     {}
+
+    const TypeHandleName Traits<ClosedRelic>::typeName = "ClosedRelic";
 }
 
 namespace Inscription

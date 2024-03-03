@@ -47,14 +47,12 @@ namespace Arca
         [[nodiscard]] ReliquarySignals& Signals();
         [[nodiscard]] const ReliquarySignals& Signals() const;
     protected:
-        Handle HandleFrom(RelicID id);
+        Handle HandleFrom(RelicID id, TypeHandle typeHandle);
         Handle HandleFrom(const RelicMetadata& metadata);
         template<class T>
-        LocalPtr<T> LocalPtrFrom(RelicID id) const;
+        Ptr<T> PtrFrom(RelicID id) const;
         template<class T>
-        LocalPtr<T> LocalPtrFrom(const RelicMetadata& metadata) const;
-        template<class T>
-        GlobalPtr<T> GlobalPtrFrom(RelicID id) const;
+        Ptr<T> PtrFrom(const RelicMetadata& metadata) const;
     protected:
         template<class BatchSourceBaseT, class Owner, class Derived>
         class StorageBatchSources
@@ -204,20 +202,14 @@ namespace Arca
     };
 
     template<class T>
-    LocalPtr<T> ReliquaryComponent::LocalPtrFrom(RelicID id) const
+    Ptr<T> ReliquaryComponent::PtrFrom(RelicID id) const
     {
-        return LocalPtr<T>(id, const_cast<Reliquary&>(Owner()));
+        return Ptr<T>(id, const_cast<Reliquary&>(Owner()));
     }
 
     template<class T>
-    LocalPtr<T> ReliquaryComponent::LocalPtrFrom(const RelicMetadata& metadata) const
+    Ptr<T> ReliquaryComponent::PtrFrom(const RelicMetadata& metadata) const
     {
-        return LocalPtr<T>(metadata.id, const_cast<Reliquary&>(Owner()));
-    }
-
-    template<class T>
-    GlobalPtr<T> ReliquaryComponent::GlobalPtrFrom(RelicID id) const
-    {
-        return GlobalPtr<T>(const_cast<Reliquary&>(Owner()));
+        return Ptr<T>(metadata.id, const_cast<Reliquary&>(Owner()));
     }
 }

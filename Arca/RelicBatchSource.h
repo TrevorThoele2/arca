@@ -19,9 +19,13 @@ namespace Arca
     public:
         virtual ~RelicBatchSourceBase() = 0;
 
+        [[nodiscard]] virtual void* FindStorage(RelicID id) = 0;
+
         virtual void DestroyFromBase(RelicID id) = 0;
 
         [[nodiscard]] virtual SizeT Size() const = 0;
+
+        [[nodiscard]] virtual TypeHandle TypeHandle() const = 0;
     };
 
     template<class T>
@@ -45,7 +49,8 @@ namespace Arca
 
         void DestroyFromBase(RelicID id) override;
 
-        RelicT* Find(RelicID id);
+        [[nodiscard]] void* FindStorage(RelicID id) override;
+        [[nodiscard]] RelicT* Find(RelicID id);
 
         [[nodiscard]] SizeT Size() const override;
         [[nodiscard]] bool IsEmpty() const;
@@ -54,6 +59,8 @@ namespace Arca
         [[nodiscard]] const_iterator begin() const;
         [[nodiscard]] iterator end();
         [[nodiscard]] const_iterator end() const;
+
+        [[nodiscard]] Arca::TypeHandle TypeHandle() const override;
     private:
         List list;
         Reliquary* owner;
@@ -109,7 +116,7 @@ namespace Arca
     }
 
     template<class T>
-    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Find(RelicID id) -> RelicT*
+    void* BatchSource<T, std::enable_if_t<is_relic_v<T>>>::FindStorage(RelicID id)
     {
         auto found = std::find_if(
             list.begin(),
@@ -119,6 +126,12 @@ namespace Arca
             return {};
 
         return &*found;
+    }
+
+    template<class T>
+    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Find(RelicID id) -> RelicT*
+    {
+        return static_cast<RelicT*>(FindStorage(id));
     }
 
     template<class T>
@@ -155,6 +168,12 @@ namespace Arca
     auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::end() const -> const_iterator
     {
         return list.end();
+    }
+
+    template<class T>
+    Arca::TypeHandle BatchSource<T, std::enable_if_t<is_relic_v<T>>>::TypeHandle() const
+    {
+        return TypeHandleFor<T>();
     }
 }
 

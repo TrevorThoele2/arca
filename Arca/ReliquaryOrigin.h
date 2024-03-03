@@ -22,24 +22,24 @@ namespace Arca
     public:
         [[nodiscard]] std::unique_ptr<Reliquary> Actualize() const;
     public:
-        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        ReliquaryOrigin& Relic();
-        template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        ReliquaryOrigin& GlobalRelic(CreationArgs&& ... creationArgs);
+        template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && !is_global_relic_v<RelicT>, int> = 0>
+        ReliquaryOrigin& Type();
+        template<class RelicT, class... CreationArgs, std::enable_if_t<is_global_relic_v<RelicT>, int> = 0>
+        ReliquaryOrigin& Type(CreationArgs&& ... creationArgs);
         ReliquaryOrigin& RelicStructure(const std::string& name, const RelicStructure& structure);
     public:
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        ReliquaryOrigin& Shard();
+        ReliquaryOrigin& Type();
     public:
-        template<class CuratorT, class... Args>
-        ReliquaryOrigin& Curator(Args&& ... args);
-        template<class AsT, class ProvidedT, typename std::enable_if<std::is_base_of_v<ProvidedT, Arca::Curator>, int>::type = 0>
-        ReliquaryOrigin& Curator(ProvidedT* use);
+        template<class CuratorT, class... Args, std::enable_if_t<is_curator_v<CuratorT>, int> = 0>
+        ReliquaryOrigin& Type(Args&& ... args);
+        template<class AsT, class ProvidedT, std::enable_if_t<is_curator_v<ProvidedT> && std::is_base_of_v<ProvidedT, Arca::Curator>, int> = 0>
+        ReliquaryOrigin& Type(ProvidedT* use);
         ReliquaryOrigin& CuratorPipeline(const Pipeline& pipeline);
         ReliquaryOrigin& CuratorPipeline(const Pipeline& initialization, const Pipeline& work);
     public:
         template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
-        ReliquaryOrigin& Signal();
+        ReliquaryOrigin& Type();
     private:
         struct TypeConstructor
         {
@@ -109,8 +109,8 @@ namespace Arca
         [[nodiscard]] bool IsSignalRegistered() const;
     };
 
-    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
-    ReliquaryOrigin& ReliquaryOrigin::Relic()
+    template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && !is_global_relic_v<RelicT>, int>>
+    ReliquaryOrigin& ReliquaryOrigin::Type()
     {
         const auto typeHandle = TypeHandleFor<RelicT>();
 
@@ -131,22 +131,18 @@ namespace Arca
                     {
                         auto batchSource = reliquary.relics.batchSources.Find<RelicT>();
                         archive(*batchSource);
-
-                        if (archive.IsInput())
-                        {
-                            for(auto& loop : *batchSource)
-                            {
-                                loop.Initialize(reliquary);
-
-                                auto metadata = reliquary.relics.MetadataFor(loop.ID());
-                                metadata->storage = &loop;
-                            }
-                        }
                     },
                     [](::Inscription::BinaryArchive& archive)
                     {
                         return ::Inscription::InputTypeHandlesFor<RelicT>(archive);
                     }
+                });
+            reliquary.relics.initializers.push_back(
+                [](Reliquary& reliquary)
+                {
+                    auto batchSource = reliquary.relics.batchSources.Find<RelicT>();
+                    for (auto& loop : *batchSource)
+                        loop.Initialize(reliquary);
                 });
         };
         relicList.emplace_back(typeHandle.name, factory);
@@ -161,8 +157,8 @@ namespace Arca
         return *this;
     }
 
-    template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    ReliquaryOrigin& ReliquaryOrigin::GlobalRelic(CreationArgs&& ... creationArgs)
+    template<class RelicT, class... CreationArgs, std::enable_if_t<is_global_relic_v<RelicT>, int>>
+    ReliquaryOrigin& ReliquaryOrigin::Type(CreationArgs&& ... creationArgs)
     {
         const auto typeHandle = TypeHandleFor<RelicT>();
 
@@ -192,7 +188,7 @@ namespace Arca
                             typeHandle.name,
                             [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
                             {
-                                auto relic = reliquary.Find<Global<RelicT>>();
+                                auto relic = reliquary.Find<RelicT>();
                                 archive(*relic);
                             },
                             [](::Inscription::BinaryArchive& archive)
@@ -206,7 +202,7 @@ namespace Arca
 
         typedRelicInitializerList.push_back([](Reliquary& reliquary)
             {
-                auto relic = reliquary.Find<Global<RelicT>>();
+                auto relic = reliquary.Find<RelicT>();
                 relic->Initialize(reliquary);
             });
 
@@ -214,7 +210,7 @@ namespace Arca
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    ReliquaryOrigin& ReliquaryOrigin::Shard()
+    ReliquaryOrigin& ReliquaryOrigin::Type()
     {
         const auto typeHandle = TypeHandleFor<ShardT>();
 
@@ -238,7 +234,7 @@ namespace Arca
                     {
                         auto added = found->Add(id);
                         reliquary.shards.AttemptAddToEitherBatches(id, *added);
-                        reliquary.Raise<Created>(Handle(id, reliquary));
+                        reliquary.Raise<Created>(Handle(id, reliquary, TypeHandleFor<ShardT>()));
                     };
 
                     isConst
@@ -269,16 +265,16 @@ namespace Arca
         return *this;
     }
 
-    template<class CuratorT, class... Args>
-    ReliquaryOrigin& ReliquaryOrigin::Curator(Args&& ... args)
+    template<class CuratorT, class... Args, std::enable_if_t<is_curator_v<CuratorT>, int>>
+    ReliquaryOrigin& ReliquaryOrigin::Type(Args&& ... args)
     {
         CuratorCommon<CuratorT, CuratorProvider<CuratorT, Args...>>(std::make_tuple(std::forward<Args>(args)...));
 
         return *this;
     }
 
-    template<class AsT, class ProvidedT, typename std::enable_if<std::is_base_of_v<ProvidedT, Curator>, int>::type>
-    ReliquaryOrigin& ReliquaryOrigin::Curator(ProvidedT* use)
+    template<class AsT, class ProvidedT, std::enable_if_t<is_curator_v<ProvidedT> && std::is_base_of_v<ProvidedT, Curator>, int>>
+    ReliquaryOrigin& ReliquaryOrigin::Type(ProvidedT* use)
     {
         if (!dynamic_cast<AsT>(use))
             throw IncorrectRegisteredCuratorType();
@@ -289,7 +285,7 @@ namespace Arca
     }
 
     template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int>>
-    ReliquaryOrigin& ReliquaryOrigin::Signal()
+    ReliquaryOrigin& ReliquaryOrigin::Type()
     {
         const auto type = std::type_index(typeid(SignalT));
 

@@ -17,6 +17,17 @@ namespace Arca
     template<class T>
     static constexpr bool is_relic_v = is_relic<T>::value;
 
+    template <class T, class = void>
+    struct is_global_relic : std::false_type
+    {};
+
+    template <class T>
+    struct is_global_relic<T, std::enable_if_t<is_relic_v<T> && Traits<T>::isGlobal>> : std::true_type
+    {};
+
+    template<class T>
+    static constexpr bool is_global_relic_v = is_global_relic<T>::value;
+
     template<class... Args>
     using ShardList = Chroma::VariadicTemplate<Args...>;
 

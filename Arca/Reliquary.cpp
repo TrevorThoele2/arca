@@ -43,7 +43,7 @@ namespace Arca
         if (!metadata->parent)
             return {};
 
-        return Handle(*metadata->parent, const_cast<Reliquary&>(*this));
+        return Handle(metadata->parent->ID(), const_cast<Reliquary&>(*this), metadata->parent->Type());
     }
 
     std::vector<RelicID> Reliquary::AllIDs() const
@@ -79,14 +79,14 @@ namespace Arca
         return totalSize;
     }
 
-    Handle Reliquary::HandleFrom(RelicID id)
+    Handle Reliquary::HandleFrom(RelicID id, TypeHandle typeHandle)
     {
-        return Handle{ id, *this };
+        return Handle{ id, *this, typeHandle };
     }
 
     Handle Reliquary::HandleFrom(const RelicMetadata& metadata)
     {
-        return HandleFrom(metadata.id);
+        return HandleFrom(metadata.id, metadata.typeHandle);
     }
 }
 
@@ -103,8 +103,6 @@ namespace Inscription
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
-        archive(object.relics.metadataList);
-
         if (archive.IsOutput())
             Save(object, archive);
         else
@@ -113,6 +111,12 @@ namespace Inscription
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::Save(ObjectT& object, ArchiveT& archive)
     {
+        ContainerSize metadataSize = object.relics.metadataList.size();
+        archive(metadataSize);
+
+        for (auto& loop : object.relics.metadataList)
+            SaveRelicMetadata(loop, archive);
+
         JumpSaveAll(
             object,
             archive,
@@ -144,6 +148,14 @@ namespace Inscription
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::Load(ObjectT& object, ArchiveT& archive)
     {
+        object.relics.metadataList.clear();
+
+        ContainerSize metadataSize = 0;
+        archive(metadataSize);
+
+        while (metadataSize-- > 0)
+            loadedRelicMetadata.push_back(LoadRelicMetadata(object, archive));
+
         JumpLoadAll(
             object,
             archive,
@@ -163,6 +175,33 @@ namespace Inscription
             object,
             archive,
             object.curators.serializers);
+
+        for(auto& metadata : loadedRelicMetadata)
+        {
+            Arca::RelicMetadata createdMetadata;
+            createdMetadata.id = metadata.id;
+            createdMetadata.openness = metadata.openness;
+            auto [typeHandle, storage] = FindRelic(metadata.id, object);
+            createdMetadata.typeHandle = typeHandle;
+            createdMetadata.storage = storage;
+            if (metadata.parent)
+            {
+                const auto parentID = *metadata.parent;
+                const auto parentTypeHandle = std::get<0>(FindRelic(parentID, object));
+                createdMetadata.parent = Arca::HandleSlim(parentID, parentTypeHandle);
+            }
+            for(auto& child : metadata.children)
+            {
+                const auto childID = child;
+                const auto childTypeHandle = std::get<0>(FindRelic(childID, object));
+                createdMetadata.parent = Arca::HandleSlim(childID, childTypeHandle);
+            }
+
+            object.relics.metadataList.push_back(createdMetadata);
+        }
+
+        for (auto& relicInitializer : object.relics.initializers)
+            relicInitializer(object);
     }
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::JumpLoadAll(
@@ -201,6 +240,74 @@ namespace Inscription
         return found != list.end()
             ? &*found
             : static_cast<Arca::KnownPolymorphicSerializer*>(nullptr);
+    }
+
+    void Scribe<Arca::Reliquary, BinaryArchive>::SaveRelicMetadata(
+        Arca::RelicMetadata& metadata, ArchiveT& archive)
+    {
+        archive(metadata.id);
+        archive(metadata.openness);
+
+        auto hasParent = static_cast<bool>(metadata.parent);
+        archive(hasParent);
+
+        if (metadata.parent)
+        {
+            auto parentID = metadata.parent->ID();
+            archive(parentID);
+        }
+
+        ContainerSize childrenSize = metadata.children.size();
+        archive(childrenSize);
+
+        for (auto& loop : metadata.children)
+        {
+            auto id = loop.ID();
+            archive(id);
+        }
+    }
+
+    auto Scribe<Arca::Reliquary, BinaryArchive>::LoadRelicMetadata(ObjectT& object, ArchiveT& archive)
+        -> LoadedRelicMetadata
+    {
+        LoadedRelicMetadata metadata;
+
+        archive(metadata.id);
+        archive(metadata.openness);
+
+        auto hasParent = false;
+        archive(hasParent);
+
+        if (hasParent)
+        {
+            Arca::RelicID parentID;
+            archive(parentID);
+            metadata.parent = parentID;
+        }
+
+        ContainerSize childrenSize = 0;
+        archive(childrenSize);
+        while (childrenSize-- > 0)
+        {
+            Arca::RelicID id = 0;
+            archive(id);
+            metadata.children.push_back(id);
+        }
+
+        return metadata;
+    }
+
+    std::tuple<Arca::TypeHandle, void*> Scribe<::Arca::Reliquary, BinaryArchive>::FindRelic(
+        Arca::RelicID id, ObjectT& object)
+    {
+        for (auto& relicBatchSource : object.relics.batchSources.map)
+        {
+            auto found = relicBatchSource.second->FindStorage(id);
+            if (found)
+                return { relicBatchSource.second->TypeHandle(), found };
+        }
+
+        return { TypeHandle(), nullptr };
     }
 
     auto Scribe<::Arca::Reliquary, BinaryArchive>::PruneTypesToLoad(

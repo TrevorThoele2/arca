@@ -8,7 +8,7 @@ namespace Arca
     template<class ShardT>
     struct ShardListToTuple
     {
-        using Type = LocalPtr<ShardT>;
+        using Type = Ptr<ShardT>;
     };
 
     template<class Shards>

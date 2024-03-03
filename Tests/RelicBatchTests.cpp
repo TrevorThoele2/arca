@@ -85,7 +85,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch", "[RelicBatch]")
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
-            .Relic<Relic>()
+            .Type<Relic>()
             .Actualize();
 
         WHEN("creating relic")
@@ -160,7 +160,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch serialization", "[RelicBatch][se
     GIVEN("saved reliquary")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Relic<Relic>()
+            .Type<Relic>()
             .Actualize();
 
         savedReliquary->Create<Relic>();
@@ -173,7 +173,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch serialization", "[RelicBatch][se
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Relic<Relic>()
+                .Type<Relic>()
                 .Actualize();
 
             {

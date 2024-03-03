@@ -76,13 +76,13 @@ namespace Arca
         return owner->signals;
     }
 
-    Handle ReliquaryComponent::HandleFrom(RelicID id)
+    Handle ReliquaryComponent::HandleFrom(RelicID id, TypeHandle typeHandle)
     {
-        return Handle{ id, Owner() };
+        return Handle{ id, Owner(), typeHandle };
     }
 
     Handle ReliquaryComponent::HandleFrom(const RelicMetadata& metadata)
     {
-        return HandleFrom(metadata.id);
+        return HandleFrom(metadata.id, metadata.typeHandle);
     }
 }

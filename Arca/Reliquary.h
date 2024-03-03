@@ -16,7 +16,6 @@
 #include "StructureFrom.h"
 #include "Either.h"
 #include "AreAllShards.h"
-#include "Global.h"
 
 #include "Created.h"
 #include "Destroying.h"
@@ -52,12 +51,12 @@ namespace Arca
             class RelicT,
             class... CreationArgs,
             std::enable_if_t<is_relic_v<RelicT> && has_factory_method_v<RelicT>, int> = 0>
-        LocalPtr<RelicT> Create(CreationArgs&& ... creationArgs);
+        Ptr<RelicT> Create(CreationArgs&& ... creationArgs);
         template<
             class RelicT,
             class... CreationArgs,
             std::enable_if_t<is_relic_v<RelicT> && !has_factory_method_v<RelicT>, int> = 0>
-        LocalPtr<RelicT> Create(CreationArgs&& ... creationArgs);
+        Ptr<RelicT> Create(CreationArgs&& ... creationArgs);
 
         template<class RelicT, std::enable_if_t<std::is_same_v<RelicT, OpenRelic>, int> = 0>
         OpenRelic CreateChild(const Handle& parent);
@@ -69,7 +68,7 @@ namespace Arca
             class RelicT,
             class... CreationArgs,
             std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        LocalPtr<RelicT> CreateChild(const Handle& parent, CreationArgs&& ... creationArgs);
+        Ptr<RelicT> CreateChild(const Handle& parent, CreationArgs&& ... creationArgs);
 
         void Destroy(const Handle& handle);
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
@@ -80,9 +79,9 @@ namespace Arca
         template<class RelicT, std::enable_if_t<std::is_same_v<RelicT, ClosedRelic>, int> = 0>
         [[nodiscard]] std::optional<ClosedRelic> Find(RelicID id) const;
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        [[nodiscard]] LocalPtr<RelicT> Find(RelicID id) const;
-        template<class GlobalT, std::enable_if_t<is_global_v<GlobalT>, int> = 0>
-        [[nodiscard]] GlobalPtr<typename GlobalT::RelicT> Find() const;
+        [[nodiscard]] Ptr<RelicT> Find(RelicID id) const;
+        template<class RelicT, std::enable_if_t<is_global_relic_v<RelicT>, int> = 0>
+        [[nodiscard]] Ptr<RelicT> Find() const;
 
         template<class RelicT, std::enable_if_t<std::is_same_v<RelicT, OpenRelic>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
@@ -101,7 +100,9 @@ namespace Arca
         [[nodiscard]] SizeT RelicSize() const;
     public:
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] LocalPtr<ShardT> Find(RelicID id) const;
+        [[nodiscard]] Ptr<ShardT> Find(RelicID id) const;
+        template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
+        [[nodiscard]] Ptr<EitherT> Find(RelicID id) const;
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
@@ -168,14 +169,12 @@ namespace Arca
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] ShardT* FindStorage(RelicID id);
     private:
-        Handle HandleFrom(RelicID id);
+        Handle HandleFrom(RelicID id, TypeHandle typeHandle);
         Handle HandleFrom(const RelicMetadata& metadata);
         template<class T>
-        LocalPtr<T> LocalPtrFrom(RelicID id) const;
+        Ptr<T> PtrFrom(RelicID id) const;
         template<class T>
-        LocalPtr<T> LocalPtrFrom(const RelicMetadata& metadata) const;
-        template<class T>
-        GlobalPtr<T> GlobalPtrFrom(RelicID id) const;
+        Ptr<T> PtrFrom(const RelicMetadata& metadata) const;
     private:
         friend class ReliquaryOrigin;
         friend class ReliquaryComponent;
@@ -187,10 +186,8 @@ namespace Arca
 
         friend class OpenRelic;
         friend class TypedRelic;
-        template<class>
-        friend class LocalPtr;
-        template<class>
-        friend class GlobalPtr;
+        template<class, class>
+        friend class Ptr;
     private:
         INSCRIPTION_ACCESS;
     };
@@ -203,7 +200,7 @@ namespace Arca
         relics.SetupNewInternals(id, RelicOpenness::Open);
         shards.NotifyCompositesRelicCreate(id, {});
 
-        Raise<Created>(HandleFrom(id));
+        Raise<Created>(HandleFrom(id, TypeHandleFor<RelicT>()));
 
         return OpenRelic(id, *this);
     }
@@ -217,7 +214,7 @@ namespace Arca
         relics.SatisfyStructure(id, structure);
         shards.NotifyCompositesRelicCreate(id, structure);
 
-        Raise<Created>(HandleFrom(id));
+        Raise<Created>(HandleFrom(id, TypeHandleFor<RelicT>()));
 
         return ClosedRelic(id, *this);
     }
@@ -236,7 +233,7 @@ namespace Arca
         class RelicT,
         class... CreationArgs,
         std::enable_if_t<is_relic_v<RelicT> && has_factory_method_v<RelicT>, int>>
-    LocalPtr<RelicT> Reliquary::Create(CreationArgs&& ... creationArgs)
+    Ptr<RelicT> Reliquary::Create(CreationArgs&& ... creationArgs)
     {
         const auto id = relics.AdvanceID();
         std::optional<RelicT> relic = Traits<RelicT>::Factory(*this, std::forward<CreationArgs>(creationArgs)...);
@@ -253,16 +250,16 @@ namespace Arca
         added->Initialize(*this);
         shards.NotifyCompositesRelicCreate(id, structure);
 
-        Raise<Created>(HandleFrom(id));
+        Raise<Created>(HandleFrom(id, TypeHandleFor<RelicT>()));
 
-        return LocalPtrFrom<RelicT>(id);
+        return PtrFrom<RelicT>(id);
     }
 
     template<
         class RelicT,
         class... CreationArgs,
         std::enable_if_t<is_relic_v<RelicT> && !has_factory_method_v<RelicT>, int>>
-    LocalPtr<RelicT> Reliquary::Create(CreationArgs&& ... creationArgs)
+    Ptr<RelicT> Reliquary::Create(CreationArgs&& ... creationArgs)
     {
         const auto id = relics.AdvanceID();
         RelicT relic(std::forward<CreationArgs>(creationArgs)...);
@@ -277,9 +274,9 @@ namespace Arca
         added->Initialize(*this);
         shards.NotifyCompositesRelicCreate(id, structure);
 
-        Raise<Created>(HandleFrom(id));
+        Raise<Created>(HandleFrom(id, TypeHandleFor<RelicT>()));
 
-        return LocalPtrFrom<RelicT>(id);
+        return PtrFrom<RelicT>(id);
     }
 
     template<class RelicT, std::enable_if_t<std::is_same_v<RelicT, OpenRelic>, int>>
@@ -313,7 +310,7 @@ namespace Arca
         class RelicT,
         class... CreationArgs,
         std::enable_if_t<is_relic_v<RelicT>, int>>
-    LocalPtr<RelicT> Reliquary::CreateChild(const Handle& parent, CreationArgs&& ... creationArgs)
+    Ptr<RelicT> Reliquary::CreateChild(const Handle& parent, CreationArgs&& ... creationArgs)
     {
         relics.ThrowIfCannotParent(parent, Relics::RelicPrototype{ relics.NextID(), RelicOpenness::Typed });
         auto child = Create<RelicT>(std::forward<CreationArgs>(creationArgs)...);
@@ -352,7 +349,7 @@ namespace Arca
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
-    LocalPtr<RelicT> Reliquary::Find(RelicID id) const
+    Ptr<RelicT> Reliquary::Find(RelicID id) const
     {
         const auto metadata = relics.MetadataFor(id);
         if (!metadata || metadata->openness != RelicOpenness::Typed)
@@ -363,21 +360,19 @@ namespace Arca
         if (found == nullptr)
             return {};
 
-        return LocalPtrFrom<RelicT>(id);
+        return PtrFrom<RelicT>(id);
     }
 
-    template<class GlobalT, std::enable_if_t<is_global_v<GlobalT>, int>>
-    GlobalPtr<typename GlobalT::RelicT> Reliquary::Find() const
+    template<class RelicT, std::enable_if_t<is_global_relic_v<RelicT>, int>>
+    Ptr<RelicT> Reliquary::Find() const
     {
-        using RelicT = typename GlobalT::RelicT;
-
         const auto typeHandle = TypeHandleFor<RelicT>();
         const auto found = relics.globalMap.find(typeHandle.name);
         if (found == relics.globalMap.end())
             throw relics.NotRegistered(typeHandle, typeid(RelicT));
 
         auto relic = std::any_cast<RelicT>(&found->second);
-        return GlobalPtrFrom<RelicT>(relic->ID());
+        return PtrFrom<RelicT>(relic->ID());
     }
 
     template<class RelicT, std::enable_if_t<std::is_same_v<RelicT, OpenRelic>, int>>
@@ -405,9 +400,15 @@ namespace Arca
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    LocalPtr<ShardT> Reliquary::Find(RelicID id) const
+    Ptr<ShardT> Reliquary::Find(RelicID id) const
     {
         return shards.Find<ShardT>(id);
+    }
+
+    template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int>>
+    Ptr<EitherT> Reliquary::Find(RelicID id) const
+    {
+        return shards.Find<EitherT>(id);
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
@@ -558,21 +559,15 @@ namespace Arca
     }
 
     template<class T>
-    LocalPtr<T> Reliquary::LocalPtrFrom(RelicID id) const
+    Ptr<T> Reliquary::PtrFrom(RelicID id) const
     {
-        return LocalPtr<T>(id, const_cast<Reliquary&>(*this));
+        return Ptr<T>(id, const_cast<Reliquary&>(*this));
     }
 
     template<class T>
-    LocalPtr<T> Reliquary::LocalPtrFrom(const RelicMetadata& metadata) const
+    Ptr<T> Reliquary::PtrFrom(const RelicMetadata& metadata) const
     {
-        return LocalPtr<T>(metadata.id, const_cast<Reliquary&>(*this));
-    }
-
-    template<class T>
-    GlobalPtr<T> Reliquary::GlobalPtrFrom(RelicID id) const
-    {
-        return GlobalPtr<T>(id, const_cast<Reliquary&>(*this));
+        return Ptr<T>(metadata.id, const_cast<Reliquary&>(*this));
     }
 }
 
@@ -608,8 +603,8 @@ namespace Inscription
     private:
         using KnownPolymorphicSerializerList = Arca::ReliquaryComponent::KnownPolymorphicSerializerList;
     private:
-        static void Save(ObjectT& object, ArchiveT& archive);
-        static void Load(ObjectT& object, ArchiveT& archive);
+        void Save(ObjectT& object, ArchiveT& archive);
+        void Load(ObjectT& object, ArchiveT& archive);
 
         template<class ObjectContainer, class ValueToID>
         static void JumpSaveAll(
@@ -627,6 +622,21 @@ namespace Inscription
         static Arca::KnownPolymorphicSerializer* FindFrom(
             TypeHandle mainTypeHandle,
             KnownPolymorphicSerializerList& list);
+    private:
+        struct LoadedRelicMetadata
+        {
+            Arca::RelicID id = 0;
+            Arca::RelicOpenness openness = Arca::RelicOpenness::Open;
+
+            std::optional<Arca::RelicID> parent;
+            std::vector<Arca::RelicID> children;
+        };
+        std::vector<LoadedRelicMetadata> loadedRelicMetadata;
+
+        static void SaveRelicMetadata(Arca::RelicMetadata& metadata, ArchiveT& archive);
+        static LoadedRelicMetadata LoadRelicMetadata(ObjectT& object, ArchiveT& archive);
+
+        static std::tuple<Arca::TypeHandle, void*> FindRelic(Arca::RelicID id, ObjectT& object);
     private:
         struct TypeHandlePair
         {
