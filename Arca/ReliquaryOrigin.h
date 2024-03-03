@@ -120,14 +120,14 @@ namespace Arca
         const auto factory = [](Reliquary& reliquary)
         {
             const auto typeHandle = TypeHandleFor<RelicT>();
-            reliquary.relics.batchSources.emplace(typeHandle.name, std::make_unique<BatchSource<RelicT>>());
+            reliquary.relics.batchSources.map.emplace(typeHandle.name, std::make_unique<BatchSource<RelicT>>());
             reliquary.relics.serializers.push_back(
                 KnownPolymorphicSerializer
                 {
                     typeHandle.name,
                     [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
                     {
-                        auto batchSource = reliquary.relics.FindBatchSource<RelicT>();
+                        auto batchSource = reliquary.relics.batchSources.Find<RelicT>();
                         archive(*batchSource);
 
                         if (archive.IsInput())
@@ -151,7 +151,7 @@ namespace Arca
 
         typedRelicInitializerList.push_back([](Reliquary& reliquary)
             {
-                auto& relicBatchSource = reliquary.relics.RequiredBatchSource<RelicT>();
+                auto& relicBatchSource = reliquary.relics.batchSources.Required<RelicT>();
                 for (auto& loop : relicBatchSource)
                     loop.Initialize(reliquary);
             });
@@ -221,10 +221,10 @@ namespace Arca
 
         const auto factory = [typeHandle](Reliquary& reliquary)
         {
-            reliquary.shards.batchSources.emplace(
+            reliquary.shards.batchSources.map.emplace(
                 typeHandle.name,
                 std::make_unique<BatchSource<ShardT>>());
-            reliquary.shards.constBatchSources.emplace(
+            reliquary.shards.batchSources.constMap.emplace(
                 typeHandle.name,
                 std::make_unique<BatchSource<const ShardT>>());
 
@@ -234,13 +234,13 @@ namespace Arca
                 {
                     if (isConst)
                     {
-                        auto found = reliquary.shards.FindBatchSource<const ShardT>();
+                        auto found = reliquary.shards.batchSources.Find<const ShardT>();
                         auto added = found->Add(id);
                         reliquary.Raise<Created>(Handle(id, reliquary));
                     }
                     else
                     {
-                        auto found = reliquary.shards.FindBatchSource<ShardT>();
+                        auto found = reliquary.shards.batchSources.Find<ShardT>();
                         auto added = found->Add(id);
                         reliquary.Raise<Created>(Handle(id, reliquary));
                     }
@@ -251,10 +251,10 @@ namespace Arca
                     typeHandle.name,
                     [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
                     {
-                        auto batchSource = reliquary.shards.FindBatchSource<ShardT>();
+                        auto batchSource = reliquary.shards.batchSources.Find<ShardT>();
                         archive(*batchSource);
 
-                        auto constBatchSource = reliquary.shards.FindBatchSource<const ShardT>();
+                        auto constBatchSource = reliquary.shards.batchSources.Find<const ShardT>();
                         archive(*constBatchSource);
                     },
                     [](::Inscription::BinaryArchive& archive)
@@ -298,8 +298,8 @@ namespace Arca
 
         const auto factory = [](Reliquary& reliquary)
         {
-            reliquary.signals.batchSources.emplace(
-                reliquary.signals.KeyForBatchSource<SignalT>(),
+            reliquary.signals.batchSources.map.emplace(
+                TypeHandleFor<SignalT>().name,
                 std::make_unique<BatchSource<SignalT>>());
         };
         signalList.emplace_back(type, factory);

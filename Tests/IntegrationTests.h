@@ -37,6 +37,7 @@ namespace Arca
     struct Traits<::IntegrationTestsFixture::BasicSignal>
     {
         static const ObjectType objectType = ObjectType::Signal;
+        static const TypeHandleName typeName;
     };
 
     template<>

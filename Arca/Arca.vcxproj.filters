@@ -82,6 +82,15 @@
     <ClCompile Include="ReliquaryRelicStructures.cpp">
       <Filter>Source Files\Reliquary\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Destroying.cpp">
+      <Filter>Source Files\Signal\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Created.cpp">
+      <Filter>Source Files\Signal\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="RelicParented.cpp">
+      <Filter>Source Files\Signal\Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Exception.h">
@@ -364,6 +373,9 @@
     </Filter>
     <Filter Include="Header Files\Reliquary\Components\Definitions">
       <UniqueIdentifier>{6ef96acf-a18d-423e-86b9-391775f0d4e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Signal\Common">
+      <UniqueIdentifier>{f92fb2f0-e8eb-4662-bf5e-2c887368d9b8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

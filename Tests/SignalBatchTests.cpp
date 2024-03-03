@@ -2,6 +2,12 @@
 
 #include "SignalBatchTests.h"
 
+namespace Arca
+{
+    const TypeHandleName Traits<::SignalBatchFixture::BasicSignal>::typeName =
+        "SignalBatchBasicSignal";
+}
+
 SCENARIO_METHOD(SignalBatchFixture, "default signal batch", "[SignalBatch]")
 {
     GIVEN("default signal batch")

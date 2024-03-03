@@ -24,5 +24,6 @@ namespace Arca
     struct Traits<::SignalBatchFixture::BasicSignal>
     {
         static const ObjectType objectType = ObjectType::Signal;
+        static const TypeHandleName typeName;
     };
 }

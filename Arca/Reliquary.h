@@ -196,7 +196,7 @@ namespace Arca
             return {};
         relic->id = id;
 
-        auto& batchSource = relics.RequiredBatchSource<RelicT>();
+        auto& batchSource = relics.batchSources.Required<RelicT>();
         auto added = batchSource.Add(*relic);
 
         relics.SetupNewInternals(id, RelicDynamism::Fixed, TypeHandleFor<RelicT>(), added);
@@ -218,7 +218,7 @@ namespace Arca
         RelicT relic(std::forward<CreationArgs>(creationArgs)...);
         relic.id = id;
 
-        auto& batchSource = relics.RequiredBatchSource<RelicT>();
+        auto& batchSource = relics.batchSources.Required<RelicT>();
         auto added = batchSource.Add(relic);
 
         relics.SetupNewInternals(id, RelicDynamism::Fixed, TypeHandleFor<RelicT>(), added);
@@ -267,7 +267,7 @@ namespace Arca
         if (!metadata)
             return {};
 
-        auto& batchSource = relics.RequiredBatchSource<RelicT>();
+        auto& batchSource = relics.batchSources.Required<RelicT>();
         auto found = batchSource.Find(id);
         if (found == nullptr)
             return {};
@@ -290,14 +290,13 @@ namespace Arca
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
     Arca::Batch<RelicT> Reliquary::Batch()
     {
-        auto& batchSource = relics.RequiredBatchSource<RelicT>();
-        return Arca::Batch<RelicT>(batchSource);
+        return relics.batchSources.Batch<RelicT>();
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     Ptr<ShardT> Reliquary::Find(RelicID id)
     {
-        auto& batchSource = shards.RequiredBatchSource<ShardT>();
+        auto& batchSource = shards.batchSources.Required<ShardT>();
         auto found = batchSource.Find(id);
         if (!found)
             return {};
@@ -308,8 +307,7 @@ namespace Arca
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     Arca::Batch<ShardT> Reliquary::Batch()
     {
-        auto& batchSource = shards.RequiredBatchSource<ShardT>();
-        return Arca::Batch<ShardT>(batchSource);
+        return shards.batchSources.Batch<ShardT>();
     }
 
     template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int>>
@@ -346,9 +344,12 @@ namespace Arca
     template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int>>
     void Reliquary::Raise(const SignalT& signal)
     {
-        auto batchSource = signals.FindBatchSource<SignalT>();
+        auto batchSource = signals.batchSources.Find<SignalT>();
         if (!batchSource)
-            throw signals.NotRegistered({ typeid(SignalT).name(), std::is_const_v<SignalT> });
+        {
+            const auto typeHandle = TypeHandleFor<SignalT>();
+            throw signals.NotRegistered(typeHandle, typeid(SignalT));
+        }
 
         batchSource->Raise(signal);
         signals.ExecuteAllFor(signal);
@@ -363,10 +364,10 @@ namespace Arca
     template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int>>
     void Reliquary::ExecuteOn(const std::function<void(const SignalT&)>& function)
     {
-        const auto typeIndex = std::type_index(typeid(SignalT));
-        auto found = signals.executionMap.find(typeIndex);
+        const auto typeHandleName = TypeHandleFor<SignalT>().name;
+        auto found = signals.executionMap.find(typeHandleName);
         if (found == signals.executionMap.end())
-            found = signals.executionMap.emplace(typeIndex, Signals::ExecutionList<SignalT>()).first;
+            found = signals.executionMap.emplace(typeHandleName, Signals::ExecutionList<SignalT>()).first;
 
         auto& executionList = std::any_cast<Signals::ExecutionList<SignalT>&>(found->second);
         executionList.push_back(function);
@@ -375,8 +376,7 @@ namespace Arca
     template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int>>
     Arca::Batch<SignalT> Reliquary::Batch()
     {
-        auto& batchSource = signals.RequiredBatchSource<SignalT>();
-        return Arca::Batch<SignalT>(batchSource);
+        return signals.batchSources.Batch<SignalT>();
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>

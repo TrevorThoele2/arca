@@ -10,7 +10,6 @@
 #include "RelicID.h"
 #include "TypeHandle.h"
 #include "Ptr.h"
-#include "Created.h"
 
 #include "KnownPolymorphicSerializer.h"
 
@@ -20,8 +19,6 @@ namespace Arca
 
     class ReliquaryShards : public ReliquaryComponent
     {
-    public:
-        explicit ReliquaryShards(Reliquary& owner);
     public:
         using Factory = void(*)(Reliquary&, RelicID, bool);
         using FactoryMap = std::unordered_map<TypeHandleName, Factory>;
@@ -39,23 +36,29 @@ namespace Arca
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] ShardT* FindStorage(RelicID id);
     public:
-        using BatchSourcePtr = std::unique_ptr<ShardBatchSourceBase>;
-        using BatchSourceMap = std::unordered_map<TypeHandleName, BatchSourcePtr>;
-        BatchSourceMap batchSources;
-        BatchSourceMap constBatchSources;
+        class BatchSources : public BatchSourcesBase<ShardBatchSourceBase, ReliquaryShards, BatchSources>
+        {
+        public:
+            Map constMap;
+
+            [[nodiscard]] ShardBatchSourceBase* FindConst(const TypeHandleName& typeHandle);
+
+            template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && !std::is_const_v<ShardT>, int> = 0>
+            [[nodiscard]] Map& MapFor();
+            template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && std::is_const_v<ShardT>, int> = 0>
+            [[nodiscard]] Map& MapFor();
+        private:
+            explicit BatchSources(ReliquaryShards& owner);
+            friend ReliquaryShards;
+        private:
+            template<class ShardT>
+            constexpr static bool is_object_v = is_shard_v<ShardT>;
+            friend BatchSourcesBase<ShardBatchSourceBase, ReliquaryShards, BatchSources>;
+        } batchSources = BatchSources(*this);
 
         KnownPolymorphicSerializerList serializers;
-
-        [[nodiscard]] ShardBatchSourceBase* FindBatchSource(const TypeHandleName& typeHandle);
-        [[nodiscard]] ShardBatchSourceBase* FindConstBatchSource(const TypeHandleName& typeHandle);
-        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] BatchSource<ShardT>* FindBatchSource();
-        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] BatchSource<ShardT>& RequiredBatchSource();
-
-        template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && !std::is_const_v<ShardT>, int> = 0>
-        [[nodiscard]] BatchSourceMap& ShardSourceMapFor();
-        template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && std::is_const_v<ShardT>, int> = 0>
-        [[nodiscard]] BatchSourceMap& ShardSourceMapFor();
+    private:
+        explicit ReliquaryShards(Reliquary& owner);
+        friend Reliquary;
     };
 }

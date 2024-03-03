@@ -2,9 +2,6 @@
 
 namespace Arca
 {
-    ReliquaryShards::ReliquaryShards(Reliquary& owner) : ReliquaryComponent(owner, "shard")
-    {}
-
     void ReliquaryShards::Create(const TypeHandle& typeHandle, RelicID id)
     {
         const auto factory = factoryMap.find(typeHandle.name);
@@ -14,21 +11,18 @@ namespace Arca
         factory->second(Owner(), id, typeHandle.isConst);
     }
 
-    ShardBatchSourceBase* ReliquaryShards::FindBatchSource(const TypeHandleName& typeHandle)
+    ShardBatchSourceBase* ReliquaryShards::BatchSources::FindConst(const TypeHandleName& typeHandle)
     {
-        const auto found = batchSources.find(typeHandle);
-        if (found == batchSources.end())
+        const auto found = constMap.find(typeHandle);
+        if (found == constMap.end())
             return nullptr;
 
         return found->second.get();
     }
 
-    ShardBatchSourceBase* ReliquaryShards::FindConstBatchSource(const TypeHandleName& typeHandle)
-    {
-        const auto found = constBatchSources.find(typeHandle);
-        if (found == constBatchSources.end())
-            return nullptr;
+    ReliquaryShards::BatchSources::BatchSources(ReliquaryShards& owner) : BatchSourcesBase(owner)
+    {}
 
-        return found->second.get();
-    }
+    ReliquaryShards::ReliquaryShards(Reliquary& owner) : ReliquaryComponent(owner, "shard")
+    {}
 }

@@ -64,6 +64,7 @@ namespace Arca
     struct Traits<::ReliquaryRegistrationTestsFixture::Signal>
     {
         static const ObjectType objectType = ObjectType::Signal;
+        static const TypeHandleName typeName;
     };
 }
 

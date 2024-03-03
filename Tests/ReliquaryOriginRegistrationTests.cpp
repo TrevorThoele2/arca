@@ -6,16 +6,19 @@ using namespace std::string_literals;
 namespace Arca
 {
     const TypeHandleName Traits<::ReliquaryOriginRegistrationTestsFixture::Shard>::typeName =
-        "ReliquaryTestsBasicShard";
+        "ReliquaryTestsShard";
 
     const TypeHandleName Traits<::ReliquaryOriginRegistrationTestsFixture::Relic>::typeName =
-        "ReliquaryTestsBasicTypedRelic";
+        "ReliquaryTestsRelic";
 
     const TypeHandleName Traits<::ReliquaryOriginRegistrationTestsFixture::StaticRelic>::typeName =
         "ReliquaryTestsStaticRelic";
 
     const TypeHandleName Traits<::ReliquaryOriginRegistrationTestsFixture::Curator>::typeName =
-        "ReliquaryTestsBasicCurator";
+        "ReliquaryTestsCurator";
+
+    const TypeHandleName Traits<::ReliquaryOriginRegistrationTestsFixture::Signal>::typeName =
+        "ReliquaryTestsSignal";
 }
 
 SCENARIO_METHOD(ReliquaryOriginRegistrationTestsFixture, "registering types multiple times", "[reliquaryorigin]")

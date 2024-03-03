@@ -6,9 +6,6 @@
 
 namespace Arca
 {
-    ReliquaryRelics::ReliquaryRelics(Reliquary& owner) : ReliquaryComponent(owner, "relic")
-    {}
-
     void ReliquaryRelics::SetupNewInternals(
         RelicID id,
         RelicDynamism dynamism,
@@ -73,7 +70,7 @@ namespace Arca
 
         auto& id = metadata.id;
 
-        for (auto& shardBatchSource : Shards().batchSources)
+        for (auto& shardBatchSource : Shards().batchSources.map)
         {
             if (shardBatchSource.second->DestroyFromBase(id))
                 Owner().Raise<Destroying>(HandleFrom(id));
@@ -97,7 +94,7 @@ namespace Arca
 
         if (metadata.typeHandle)
         {
-            auto batchSource = FindBatchSource(metadata.typeHandle->name);
+            auto batchSource = batchSources.Find(metadata.typeHandle->name);
             batchSource->DestroyFromBase(id);
         }
 
@@ -124,12 +121,9 @@ namespace Arca
             throw CannotModify(id);
     }
 
-    RelicBatchSourceBase* ReliquaryRelics::FindBatchSource(const TypeHandleName& typeHandle)
-    {
-        const auto found = batchSources.find(typeHandle);
-        if (found == batchSources.end())
-            return nullptr;
+    ReliquaryRelics::BatchSources::BatchSources(ReliquaryRelics& owner) : BatchSourcesBase(owner)
+    {}
 
-        return found->second.get();
-    }
+    ReliquaryRelics::ReliquaryRelics(Reliquary& owner) : ReliquaryComponent(owner, "relic")
+    {}
 }
