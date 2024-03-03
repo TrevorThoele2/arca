@@ -19,6 +19,7 @@ public:
     class TypedClosedRelic;
     class TypedOpenRelic;
     class GlobalRelic;
+    class NonDefaultConstructorRelic;
 
     class BasicCurator;
 
@@ -43,92 +44,99 @@ namespace Arca
     struct Traits<::ReliquarySerializationTestsFixture::BasicShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "ReliquarySerializationTestsBasicShard";
+        static inline const TypeName typeName = "ReliquarySerializationTests_BasicShard";
     };
 
     template<>
     struct Traits<::ReliquarySerializationTestsFixture::BasicShardWithDifferentInputHandle>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "ReliquarySerializationTestsBasicShardWithDifferentInputHandle";
+        static inline const TypeName typeName = "ReliquarySerializationTests_BasicShardWithDifferentInputHandle";
     };
 
     template<>
     struct Traits<::ReliquarySerializationTestsFixture::OtherShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "ReliquarySerializationTestsOtherShard";
+        static inline const TypeName typeName = "ReliquarySerializationTests_OtherShard";
     };
 
     template<>
     struct Traits<::ReliquarySerializationTestsFixture::TypedClosedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "ReliquarySerializationTestsTypedClosedRelic";
+        static inline const TypeName typeName = "ReliquarySerializationTests_TypedClosedRelic";
     };
 
     template<>
     struct Traits<::ReliquarySerializationTestsFixture::TypedOpenRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "ReliquarySerializationTestsTypedOpenRelic";
+        static inline const TypeName typeName = "ReliquarySerializationTests_TypedOpenRelic";
     };
 
     template<>
     struct Traits<::ReliquarySerializationTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "ReliquarySerializationTestsGlobalRelic";
+        static inline const TypeName typeName = "ReliquarySerializationTests_GlobalRelic";
         static const Locality locality = Locality::Global;
+    };
+
+    template<>
+    struct Traits<::ReliquarySerializationTestsFixture::NonDefaultConstructorRelic>
+    {
+        static const ObjectType objectType = ObjectType::Relic;
+        static inline const TypeName typeName = "ReliquarySerializationTests_NonDefaultConstructorRelic";
     };
 
     template<>
     struct Traits<::ReliquarySerializationTestsFixture::BasicCurator>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static inline const TypeName typeName = "ReliquarySerializationTestsBasicCurator";
+        static inline const TypeName typeName = "ReliquarySerializationTests_BasicCurator";
     };
 
     template<>
     struct Traits<::ReliquarySerializationTestsFixture::BasicSignal>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static inline const TypeName typeName = "ReliquarySerializationTestsBasicSignal";
+        static inline const TypeName typeName = "ReliquarySerializationTests_BasicSignal";
     };
 
     template<>
     struct Traits<::ReliquarySerializationTestsFixture::BasicShardNullInscription>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "ReliquarySerializationTestsBasicShardNullInscription";
+        static inline const TypeName typeName = "ReliquarySerializationTests_BasicShardNullInscription";
     };
 
     template<>
     struct Traits<::ReliquarySerializationTestsFixture::OtherShardNullInscription>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "ReliquarySerializationTestsOtherShardNullInscription";
+        static inline const TypeName typeName = "ReliquarySerializationTests_OtherShardNullInscription";
     };
 
     template<>
     struct Traits<::ReliquarySerializationTestsFixture::TypedClosedRelicNullInscription>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "ReliquarySerializationTestsTypedClosedRelicNullInscription";
+        static inline const TypeName typeName = "ReliquarySerializationTests_TypedClosedRelicNullInscription";
     };
 
     template<>
     struct Traits<::ReliquarySerializationTestsFixture::TypedOpenRelicNullInscription>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "ReliquarySerializationTestsTypedOpenRelicNullInscription";
+        static inline const TypeName typeName = "ReliquarySerializationTests_TypedOpenRelicNullInscription";
     };
 
     template<>
     struct Traits<::ReliquarySerializationTestsFixture::GlobalRelicNullInscription>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "ReliquarySerializationTestsGlobalRelicNullInscription";
+        static inline const TypeName typeName = "ReliquarySerializationTests_GlobalRelicNullInscription";
         static const Locality locality = Locality::Global;
     };
 
@@ -136,21 +144,21 @@ namespace Arca
     struct Traits<::ReliquarySerializationTestsFixture::MovableOnlyRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "ReliquarySerializationTestsMovableOnlyRelic";
+        static inline const TypeName typeName = "ReliquarySerializationTests_MovableOnlyRelic";
     };
 
     template<>
     struct Traits<::ReliquarySerializationTestsFixture::BasicCuratorNullInscription>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static inline const TypeName typeName = "ReliquarySerializationTestsBasicCuratorNullInscription";
+        static inline const TypeName typeName = "ReliquarySerializationTests_BasicCuratorNullInscription";
     };
 
     template<>
     struct Traits<::ReliquarySerializationTestsFixture::BasicSignalNullInscription>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static inline const TypeName typeName = "ReliquarySerializationTestsBasicSignalNullInscription";
+        static inline const TypeName typeName = "ReliquarySerializationTests_BasicSignalNullInscription";
     };
 }
 
@@ -209,6 +217,15 @@ public:
 public:
     explicit GlobalRelic(Init init);
     GlobalRelic(Init init, int myInt, std::string shardData);
+};
+
+class ReliquarySerializationTestsFixture::NonDefaultConstructorRelic final
+    : public ClosedTypedRelic<NonDefaultConstructorRelic>
+{
+public:
+    int myInt = 0;
+public:
+    NonDefaultConstructorRelic(Init init, int myInt);
 };
 
 class ReliquarySerializationTestsFixture::BasicCurator final : public Curator
@@ -318,7 +335,7 @@ namespace Inscription
     public:
         static std::vector<Type> InputTypes(const ArchiveT& archive)
         {
-            return { "ReliquarySerializationTestsBasicShard" };
+            return { TypeFor<ReliquarySerializationTestsFixture::BasicShard>().name };
         }
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
@@ -370,6 +387,11 @@ namespace Inscription
             archive(object.myInt);
         }
     };
+
+    template<>
+    class Scribe<::ReliquarySerializationTestsFixture::NonDefaultConstructorRelic, BinaryArchive> final
+        : public ArcaNullScribe<::ReliquarySerializationTestsFixture::NonDefaultConstructorRelic, BinaryArchive>
+    {};
 
     template<>
     class Scribe<::ReliquarySerializationTestsFixture::BasicCurator, BinaryArchive> final :

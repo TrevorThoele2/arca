@@ -46,6 +46,11 @@ ReliquarySerializationTestsFixture::GlobalRelic::GlobalRelic(Init init, int myIn
     basicShard = Create<BasicShard>(std::move(shardData));
 }
 
+ReliquarySerializationTestsFixture::NonDefaultConstructorRelic::NonDefaultConstructorRelic(
+    Init init, int myInt)
+    : ClosedTypedRelic(init), myInt(myInt)
+{}
+
 ReliquarySerializationTestsFixture::BasicShardNullInscription::BasicShardNullInscription(std::string myValue)
     : myValue(std::move(myValue))
 {}
@@ -907,6 +912,46 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
             THEN("input size is default output size")
             {
                 REQUIRE(inputArchiveSize == defaultOutputArchiveSize);
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(
+    ReliquarySerializationTestsFixture,
+    "null reliquary serialization with non default constructor",
+    "[reliquary][serialization]")
+{
+    GIVEN("saved reliquary with non default shard")
+    {
+        auto savedReliquary = ReliquaryOrigin()
+            .Register<NonDefaultConstructorRelic>()
+            .Actualize();
+
+        const auto& savedRelic = *savedReliquary->Do<Create<NonDefaultConstructorRelic>>(
+            dataGeneration.Random<int>());
+
+        {
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            outputArchive(*savedReliquary);
+        }
+
+        WHEN("loading reliquary")
+        {
+            const auto loadedReliquary = ReliquaryOrigin()
+                .Register<NonDefaultConstructorRelic>()
+                .Actualize();
+
+            {
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                inputArchive(*loadedReliquary);
+            }
+
+            const auto loadedRelic = Arca::Index<NonDefaultConstructorRelic>(savedRelic.ID(), *loadedReliquary);
+
+            THEN("has no loaded relic")
+            {
+                REQUIRE(!loadedRelic);
             }
         }
     }
