@@ -275,8 +275,8 @@ namespace Inscription
             "A relic requires a constructor of form "
             "(RelicInit, Serialization), "
             "(Serialization), "
-            "(RelicInit) or"
-            "()"
+            "(RelicInit) or "
+            "() "
             "in order to be serialized. Order given is priority order.");
         using RelicT = typename ObjectT::RelicT;
         return RelicT{ init };
