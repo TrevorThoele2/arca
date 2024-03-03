@@ -1,7 +1,7 @@
 #pragma once
 
 #include "RelicID.h"
-#include "RelicHandle.h"
+#include "Handle.h"
 
 #include "Serialization.h"
 
@@ -23,7 +23,7 @@ namespace Arca
 
         explicit operator bool() const;
 
-        operator RelicHandle() const;
+        operator Handle() const;
 
         explicit operator T* ();
         explicit operator const T* () const;
@@ -69,9 +69,9 @@ namespace Arca
     }
 
     template<class T>
-    Static<T>::operator RelicHandle() const
+    Static<T>::operator Handle() const
     {
-        return RelicHandle(ID(), Owner());
+        return Handle(ID(), Owner());
     }
 
     template<class T>

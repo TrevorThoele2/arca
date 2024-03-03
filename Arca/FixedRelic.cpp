@@ -4,17 +4,17 @@
 
 namespace Arca
 {
-    FixedRelic::operator RelicHandle() const
+    FixedRelic::operator Handle() const
     {
-        return RelicHandle(ID(), Owner());
+        return Handle(ID(), Owner());
     }
 
-    void FixedRelic::ParentTo(const RelicHandle& parent) const
+    void FixedRelic::ParentTo(const Handle& parent) const
     {
         owner->ParentRelicTo(parent, *this);
     }
 
-    std::optional<RelicHandle> FixedRelic::Parent() const
+    std::optional<Handle> FixedRelic::Parent() const
     {
         return owner->ParentOf(*this);
     }

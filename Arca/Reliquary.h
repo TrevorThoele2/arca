@@ -74,7 +74,7 @@ namespace Arca
             std::enable_if_t<is_relic_v<RelicT> && !has_factory_method_v<RelicT>, int> = 0>
         Ptr<RelicT> Create(CreationArgs&& ... creationArgs);
 
-        void Destroy(const RelicHandle& handle);
+        void Destroy(const Handle& handle);
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         void Destroy(RelicT& relic);
 
@@ -90,8 +90,8 @@ namespace Arca
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         [[nodiscard]] Arca::Batch<RelicT> Batch();
 
-        void ParentRelicTo(const RelicHandle& parent, const RelicHandle& child);
-        std::optional<RelicHandle> ParentOf(const RelicHandle& child);
+        void ParentRelicTo(const Handle& parent, const Handle& child);
+        std::optional<Handle> ParentOf(const Handle& child);
 
         [[nodiscard]] SizeT RelicSize() const;
     public:
@@ -165,7 +165,7 @@ namespace Arca
 
         [[nodiscard]] RelicID NextRelicID() const;
 
-        void SignalRelicParented(const RelicHandle& parent, const RelicHandle& child);
+        void SignalRelicParented(const Handle& parent, const Handle& child);
 
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         RelicT* FindStorage(RelicID id);
@@ -290,7 +290,7 @@ namespace Arca
         const auto dynamism = RelicDynamism::Dynamic;
         const auto id = NextRelicID();
         SetupNewRelicInternals(id, dynamism);
-        Raise<CreatedRelic>(RelicHandle(id, *this));
+        Raise<Created>(Handle(id, *this));
         return DynamicRelic(id, *this);
     }
 
@@ -301,7 +301,7 @@ namespace Arca
         const auto id = NextRelicID();
         SetupNewRelicInternals(id, dynamism);
         SatisfyRelicStructure(structure, id);
-        Raise<CreatedRelic>(RelicHandle(id, *this));
+        Raise<Created>(Handle(id, *this));
         return FixedRelic(id, *this);
     }
 
@@ -332,7 +332,7 @@ namespace Arca
 
         SetupNewRelicInternals(id, RelicDynamism::Fixed, TypeHandleFor<RelicT>(), added);
         SatisfyRelicStructure(StructureFrom<shards_for_t<RelicT>>(), id);
-        Raise<Created<RelicT>>(Ptr<RelicT>(id, *this));
+        Raise<Created>(Handle(id, *this));
 
         added->Initialize(*this);
 
@@ -354,8 +354,7 @@ namespace Arca
 
         SetupNewRelicInternals(id, RelicDynamism::Fixed, TypeHandleFor<RelicT>(), added);
         SatisfyRelicStructure(StructureFrom<shards_for_t<RelicT>>(), id);
-        Raise<Created<RelicT>>(Ptr<RelicT>(id, *this));
-        Raise<CreatedRelic>(RelicHandle(id, *this));
+        Raise<Created>(Handle(id, *this));
 
         added->Initialize(*this);
 
@@ -369,7 +368,6 @@ namespace Arca
         if (!WillDestroyRelic(metadata))
             return;
 
-        Raise<Destroying<RelicT>>(Ptr<RelicT>(relic.ID(), *this));
         DestroyRelic(*metadata);
     }
 
@@ -584,7 +582,7 @@ namespace Arca
 
         auto& batch = RequiredBatchSource<ShardT>();
         auto added = batch.Add(id);
-        Raise<Created<ShardT>>(Ptr<ShardT>(id, *this));
+        Raise<Created>(Handle(id, *this));
         return Ptr<ShardT>(id, *this);
     }
 

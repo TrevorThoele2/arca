@@ -9,8 +9,8 @@ namespace Arca
 {
     ReliquaryOrigin::ReliquaryOrigin()
     {
-        Signal<CreatedRelic>();
-        Signal<DestroyingRelic>();
+        Signal<Created>();
+        Signal<Destroying>();
         Signal<RelicParented>();
     }
 

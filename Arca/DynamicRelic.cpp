@@ -4,17 +4,17 @@
 
 namespace Arca
 {
-    DynamicRelic::operator RelicHandle() const
+    DynamicRelic::operator Handle() const
     {
-        return RelicHandle(id, *owner);
+        return Handle(id, *owner);
     }
 
-    void DynamicRelic::ParentTo(const RelicHandle& parent) const
+    void DynamicRelic::ParentTo(const Handle& parent) const
     {
         owner->ParentRelicTo(parent, *this);
     }
 
-    std::optional<RelicHandle> DynamicRelic::Parent() const
+    std::optional<Handle> DynamicRelic::Parent() const
     {
         return owner->ParentOf(*this);
     }
