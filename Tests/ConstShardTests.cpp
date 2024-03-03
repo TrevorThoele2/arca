@@ -2,7 +2,7 @@
 
 #include "ConstShardTests.h"
 
-#include <Arca/LocalRelic.h>
+#include <Arca/OpenRelic.h>
 
 ConstShardTestsFixture::Shard::Shard(int value) :
     value(value)
@@ -195,13 +195,13 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
     GIVEN("relic created from relic structure")
     {
         auto reliquary = ReliquaryOrigin()
-            .Register<ClosedRelic>()
+            .Register<OpenRelic>()
             .Register<Shard>()
             .Actualize();
 
         auto relicStructure = RelicStructure{};
         relicStructure.emplace_back(TypeFor<const Shard>());
-        auto relic = reliquary->Do(CreateWith<ClosedRelic>{ relicStructure });
+        auto relic = reliquary->Do(CreateWith<OpenRelic>{ relicStructure });
 
         WHEN("finding const shard")
         {

@@ -3,7 +3,7 @@
 #include "EitherBatchTests.h"
 
 #include <Arca/Either.h>
-#include <Arca/LocalRelic.h>
+#include <Arca/OpenRelic.h>
 
 #include "BasicShard.h"
 
@@ -246,11 +246,11 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either shard batch serialization", "[E
     GIVEN("saved reliquary")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Register<TypedClosedRelic>()
+            .Register<LocalRelic>()
             .Register<BasicShard>()
             .Actualize();
 
-        savedReliquary->Do(Create<TypedClosedRelic>{ dataGeneration.Random<int>() });
+        savedReliquary->Do(Create<LocalRelic>{ dataGeneration.Random<int>() });
 
         {
             auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
@@ -260,7 +260,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either shard batch serialization", "[E
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Register<TypedClosedRelic>()
+                .Register<LocalRelic>()
                 .Register<BasicShard>()
                 .Actualize();
 

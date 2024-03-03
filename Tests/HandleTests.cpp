@@ -3,7 +3,7 @@ using namespace std::string_literals;
 
 #include "HandleTests.h"
 
-#include <Arca/LocalRelic.h>
+#include <Arca/OpenRelic.h>
 
 HandleTestsFixture::TypedRelic::TypedRelic(RelicInit init)
 {
@@ -67,7 +67,6 @@ SCENARIO_METHOD(HandleTestsFixture, "handle comparison combinations", "[handle]"
     {
         auto reliquary = ReliquaryOrigin()
             .Register<OpenRelic>()
-            .Register<ClosedRelic>()
             .Register<Shard>()
             .Register<OtherShard>()
             .Register<TypedRelic>()
@@ -82,14 +81,10 @@ SCENARIO_METHOD(HandleTestsFixture, "handle comparison combinations", "[handle]"
 
         auto typedRelic1 = reliquary->Do(Create<TypedRelic>());
         auto typedRelicHandle1 = AsHandle(typedRelic1);
-        auto typedRelicShardHandle1 = AsHandle<Shard>(typedRelic1.ID(), *reliquary);;
+        auto typedRelicShardHandle1 = AsHandle<Shard>(typedRelic1.ID(), *reliquary);
 
         auto globalRelic1 = Arca::Index<GlobalRelic>(*reliquary);
         auto globalRelicHandle1 = AsHandle(globalRelic1);
-
-        auto closedRelic1 = reliquary->Do(CreateWith<ClosedRelic>{RelicStructure{ TypeFor<Shard>() }});
-        auto closedRelicHandle1 = AsHandle(closedRelic1);
-        auto closedRelicShardHandle1 = AsHandle<Shard>(closedRelic1.ID(), *reliquary);
 
         auto openRelic2 = reliquary->Do(Create<OpenRelic>());
         auto openRelicHandle2 = AsHandle(openRelic2);
@@ -98,14 +93,10 @@ SCENARIO_METHOD(HandleTestsFixture, "handle comparison combinations", "[handle]"
 
         auto typedRelic2 = reliquary->Do(Create<TypedRelic>());
         auto typedRelicHandle2 = AsHandle(typedRelic2);
-        auto typedRelicShardHandle2 = AsHandle<Shard>(typedRelic2.ID(), *reliquary);;
+        auto typedRelicShardHandle2 = AsHandle<Shard>(typedRelic2.ID(), *reliquary);
 
         auto globalRelic2 = Arca::Index<GlobalRelic>(*reliquary);
         auto globalRelicHandle2 = AsHandle(globalRelic2);
-
-        auto closedRelic2 = reliquary->Do(CreateWith<ClosedRelic>{RelicStructure{ TypeFor<Shard>() }});
-        auto closedRelicHandle2 = AsHandle(closedRelic2);
-        auto closedRelicShardHandle2 = AsHandle<Shard>(closedRelic2.ID(), *reliquary);
 
         WHEN("comparing open relic")
         {
@@ -139,11 +130,6 @@ SCENARIO_METHOD(HandleTestsFixture, "handle comparison combinations", "[handle]"
             THEN("is not equal to global relic")
             {
                 REQUIRE(handle != globalRelicHandle1);
-            }
-
-            THEN("is not equal to closed relic")
-            {
-                REQUIRE(handle != closedRelicHandle1);
             }
         }
 
@@ -180,11 +166,6 @@ SCENARIO_METHOD(HandleTestsFixture, "handle comparison combinations", "[handle]"
             {
                 REQUIRE(handle != globalRelicHandle1);
             }
-
-            THEN("is not equal to closed relic")
-            {
-                REQUIRE(handle != closedRelicHandle1);
-            }
         }
 
         WHEN("comparing typed relic")
@@ -219,11 +200,6 @@ SCENARIO_METHOD(HandleTestsFixture, "handle comparison combinations", "[handle]"
             THEN("is not equal to global relic")
             {
                 REQUIRE(handle != globalRelicHandle1);
-            }
-
-            THEN("is not equal to closed relic")
-            {
-                REQUIRE(handle != closedRelicHandle1);
             }
         }
 
@@ -260,11 +236,6 @@ SCENARIO_METHOD(HandleTestsFixture, "handle comparison combinations", "[handle]"
             {
                 REQUIRE(handle != globalRelicHandle1);
             }
-
-            THEN("is not equal to closed relic")
-            {
-                REQUIRE(handle != closedRelicHandle1);
-            }
         }
 
         WHEN("comparing global relic")
@@ -299,51 +270,6 @@ SCENARIO_METHOD(HandleTestsFixture, "handle comparison combinations", "[handle]"
             THEN("is equal to global relic")
             {
                 REQUIRE(handle == globalRelicHandle2);
-            }
-
-            THEN("is not equal to closed relic")
-            {
-                REQUIRE(handle != closedRelicHandle1);
-            }
-        }
-
-        WHEN("comparing closed relic")
-        {
-            const auto& handle = closedRelicHandle1;
-
-            THEN("is equal to self")
-            {
-                REQUIRE(handle == closedRelicHandle1);
-            }
-
-            THEN("is not equal to open relic")
-            {
-                REQUIRE(handle != openRelicHandle1);
-            }
-
-            THEN("is not equal to other shard")
-            {
-                REQUIRE(handle != openRelicOtherShardHandle1);
-            }
-
-            THEN("is not equal to typed relic")
-            {
-                REQUIRE(handle != typedRelicHandle1);
-            }
-
-            THEN("is not equal to shard")
-            {
-                REQUIRE(handle != typedRelicShardHandle1);
-            }
-
-            THEN("is not equal to global relic")
-            {
-                REQUIRE(handle != globalRelicHandle1);
-            }
-
-            THEN("is not equal to closed relic")
-            {
-                REQUIRE(handle != closedRelicHandle2);
             }
         }
     }

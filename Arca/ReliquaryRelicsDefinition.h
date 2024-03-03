@@ -6,7 +6,6 @@
 #include "Destroy.h"
 #include "Created.h"
 
-#include "OpennessFor.h"
 #include "LocalityFor.h"
 
 #include "AsHandle.h"
@@ -101,7 +100,7 @@ namespace Arca
         if (!ShouldCreate<RelicT>(constructorArgs...))
             return {};
 
-        ThrowIfCannotParent(parent, RelicPrototype{ NextID(), OpennessFor<RelicT>() });
+        ThrowIfCannotParent(parent, RelicPrototype{ NextID() });
 
         const auto id = AdvanceID();
         SetupNewMetadata<RelicT>(id);
@@ -118,7 +117,7 @@ namespace Arca
         if (!ShouldCreate<RelicT>(constructorArgs...))
             return {};
 
-        ThrowIfCannotParent(parent, RelicPrototype{ NextID(), OpennessFor<RelicT>() });
+        ThrowIfCannotParent(parent, RelicPrototype{ NextID() });
 
         const auto id = AdvanceID();
         SetupNewMetadata<RelicT>(id);
@@ -135,7 +134,7 @@ namespace Arca
         if (!ShouldCreate<RelicT>(constructorArgs...))
             return {};
 
-        ThrowIfCannotParent(parent, RelicPrototype{ NextID(), OpennessFor<RelicT>() });
+        ThrowIfCannotParent(parent, RelicPrototype{ NextID() });
 
         const auto id = AdvanceID();
         SetupNewMetadata<RelicT>(id);
@@ -152,7 +151,7 @@ namespace Arca
         if (!ShouldCreate<RelicT>(constructorArgs...))
             return {};
 
-        ThrowIfCannotParent(parent, RelicPrototype{ NextID(), OpennessFor<RelicT>() });
+        ThrowIfCannotParent(parent, RelicPrototype{ NextID() });
 
         if (Contains(id))
             throw CannotCreate(TypeFor<RelicT>(), typeid(RelicT));
@@ -172,7 +171,7 @@ namespace Arca
         if (!ShouldCreate<RelicT>(constructorArgs...))
             return {};
 
-        ThrowIfCannotParent(parent, RelicPrototype{ NextID(), OpennessFor<RelicT>() });
+        ThrowIfCannotParent(parent, RelicPrototype{ NextID() });
 
         if (Contains(id))
             throw CannotCreate(TypeFor<RelicT>(), typeid(RelicT));
@@ -192,7 +191,7 @@ namespace Arca
         if (!ShouldCreate<RelicT>(constructorArgs...))
             return {};
 
-        ThrowIfCannotParent(parent, RelicPrototype{ NextID(), OpennessFor<RelicT>() });
+        ThrowIfCannotParent(parent, RelicPrototype{ NextID() });
 
         if (Contains(id))
             throw CannotCreate(TypeFor<RelicT>(), typeid(RelicT));
@@ -274,7 +273,6 @@ namespace Arca
     {
         return SetupNewMetadata(
             id,
-            OpennessFor<RelicT>(),
             LocalityFor<RelicT>(),
             HasScribe<RelicT, Inscription::Archive::Binary>(),
             HasScribe<RelicT, Inscription::Archive::Json>(),

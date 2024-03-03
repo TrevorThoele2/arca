@@ -5,7 +5,7 @@ using namespace std::string_literals;
 #include "IntegrationTests.h"
 
 #include "DifferentiableCurator.h"
-#include <Arca/LocalRelic.h>
+#include <Arca/OpenRelic.h>
 
 IntegrationTestsFixture::ParentRelic::ParentRelic(int value) : value(value)
 {}

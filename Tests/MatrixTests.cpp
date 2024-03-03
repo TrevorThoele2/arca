@@ -1,7 +1,7 @@
 #include <catch.hpp>
 
 #include "MatrixTests.h"
-#include <Arca/LocalRelic.h>
+#include <Arca/OpenRelic.h>
 
 SCENARIO_METHOD(MatrixTestsFixture, "matrix signals", "[matrix][signal]")
 {

@@ -69,13 +69,13 @@ namespace Arca
     template<class ReturnT, class WrapT>
     ReturnT& ShardBatchIteratorBase<ReturnT, WrapT>::operator*()
     {
-        return wrapped->second;
+        return wrapped->second.shard;
     }
 
     template<class ReturnT, class WrapT>
     ReturnT* ShardBatchIteratorBase<ReturnT, WrapT>::operator->()
     {
-        return &wrapped->second;
+        return &wrapped->second.shard;
     }
 
     template<class ReturnT, class WrapT>

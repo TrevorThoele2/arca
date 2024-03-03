@@ -324,7 +324,6 @@ namespace Inscription
         Arca::RelicMetadata& metadata, Archive::OutputBinary& archive)
     {
         archive(metadata.id);
-        archive(metadata.openness);
 
         auto hasParent = static_cast<bool>(metadata.parent);
         archive(hasParent);
@@ -351,7 +350,6 @@ namespace Inscription
         LoadedRelicMetadata metadata;
 
         archive(metadata.id);
-        archive(metadata.openness);
 
         auto hasParent = false;
         archive(hasParent);
@@ -509,7 +507,6 @@ namespace Inscription
         archive.StartObject("");
 
         archive("id", metadata.id);
-        archive("openness", metadata.openness);
 
         auto parentID = static_cast<bool>(metadata.parent)
             ? std::optional<Arca::RelicID> { metadata.parent->ID() }
@@ -532,7 +529,6 @@ namespace Inscription
         archive.StartObject("");
 
         archive("id", metadata.id);
-        archive("openness", metadata.openness);
 
         std::optional<Arca::RelicID> parentID;
         archive("parentID", parentID);
@@ -560,7 +556,6 @@ namespace Inscription
 
             Arca::RelicMetadata createdMetadata;
             createdMetadata.id = metadata.id;
-            createdMetadata.openness = metadata.openness;
             createdMetadata.type = type;
             createdMetadata.locality = locality;
             createdMetadata.storage = storage;

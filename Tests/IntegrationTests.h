@@ -131,7 +131,7 @@ class IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic final
 {
 public:
     using LocalShard = SerializationData::BasicShardNullInscription;
-    using LocalRelic = SerializationData::TypedClosedRelicNullInscription<LocalShard>;
+    using LocalRelic = SerializationData::LocalRelicNullInscription<LocalShard>;
     Index<LocalRelic> localRelic;
 public:
     GlobalRelicCreatingNullSerializedRelic(RelicInit init);

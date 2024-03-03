@@ -3,11 +3,15 @@
 #include "ShardTests.h"
 #include "SignalListener.h"
 
-#include <Arca/LocalRelic.h>
+#include <Arca/OpenRelic.h>
 #include <Arca/AsHandle.h>
 
 #include "BasicShard.h"
 #include "DifferentiableShard.h"
+
+ShardTestsFixture::RelicConstructingShard::RelicConstructingShard(RelicInit init) :
+    shard(init.Create<BasicShard>())
+{}
 
 ShardTestsFixture::ShardConstructedFromMovedValue::ShardConstructedFromMovedValue(std::unique_ptr<int>&& myInt) :
     myInt(std::move(myInt))
@@ -19,7 +23,9 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
     {
         auto reliquary = ReliquaryOrigin()
             .Register<OpenRelic>()
+            .Register<RelicConstructingShard>()
             .Register<BasicShard>()
+            .Register<DifferentiableShard<0>>()
             .Actualize();
 
         WHEN("creating open relic and non-const shard")
@@ -31,14 +37,10 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
             {
                 reliquary->Do(Destroy<Either<BasicShard>>(relic.ID()));
 
-                THEN("shard is nullptr")
+                THEN("shard is destroyed")
                 {
                     REQUIRE(shard.Get() == nullptr);
                     REQUIRE(shard == nullptr);
-                }
-
-                THEN("shard is false")
-                {
                     REQUIRE(!shard);
                 }
             }
@@ -53,15 +55,101 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
             {
                 reliquary->Do(Destroy<Either<BasicShard>>(relic.ID()));
 
-                THEN("shard is nullptr")
+                THEN("shard is destroyed")
                 {
                     REQUIRE(shard.Get() == nullptr);
                     REQUIRE(shard == nullptr);
-                }
-
-                THEN("shard is false")
-                {
                     REQUIRE(!shard);
+                }
+            }
+        }
+
+        WHEN("creating relic with creating shard")
+        {
+            const auto relic = reliquary->Do(Create<RelicConstructingShard>());
+
+            WHEN("destroying shard")
+            {
+                THEN("throws error")
+                {
+                    REQUIRE_THROWS_MATCHES(
+                        reliquary->Do(Destroy<BasicShard>(relic.ID())),
+                        Arca::CannotDestroy,
+                        ::Catch::Matchers::Message("The shard (" + Chroma::ToString(TypeFor<BasicShard>()) + ") cannot be destroyed."));
+                }
+            }
+
+            WHEN("clearing relics")
+            {
+                reliquary->Do(Clear(TypeFor<RelicConstructingShard>()));
+
+                THEN("shard is destroyed")
+                {
+                    auto shard = Arca::Index<BasicShard>(relic.ID(), *reliquary);
+                    REQUIRE(shard == nullptr);
+                    REQUIRE(!shard);
+                }
+            }
+
+            WHEN("creating optional shard")
+            {
+                reliquary->Do(Create<DifferentiableShard<0>>(relic.ID()));
+
+                WHEN("destroying optional shard")
+                {
+                    reliquary->Do(Destroy<DifferentiableShard<0>>(relic.ID()));
+
+                    THEN("shard is destroyed")
+                    {
+                        auto shard = Arca::Index<DifferentiableShard<0>>(relic.ID(), *reliquary);
+                        REQUIRE(shard == nullptr);
+                        REQUIRE(!shard);
+                    }
+                }
+            }
+        }
+
+        WHEN("creating open relic with relic structure")
+        {
+            const auto relic = reliquary->Do(CreateWith<OpenRelic>(RelicStructure{ TypeFor<BasicShard>() }));
+
+            WHEN("destroying shard")
+            {
+                THEN("throws error")
+                {
+                    REQUIRE_THROWS_MATCHES(
+                        reliquary->Do(Destroy<BasicShard>(relic.ID())),
+                        Arca::CannotDestroy,
+                        ::Catch::Matchers::Message("The shard (" + Chroma::ToString(TypeFor<BasicShard>()) + ") cannot be destroyed."));
+                }
+            }
+
+            WHEN("clearing relics")
+            {
+                reliquary->Do(Clear(TypeFor<OpenRelic>()));
+
+                THEN("shard is destroyed")
+                {
+                    auto shard = Arca::Index<BasicShard>(relic.ID(), *reliquary);
+                    REQUIRE(shard == nullptr);
+                    REQUIRE(!shard);
+                }
+            }
+
+            WHEN("creating optional shard")
+            {
+                reliquary->Do(Create<DifferentiableShard<0>>(relic.ID()));
+
+                WHEN("destroying optional shard")
+                {
+                    reliquary->Do(Destroy<DifferentiableShard<0>>(relic.ID()));
+
+                    THEN("shard is destroyed")
+                    {
+                        auto shard = Arca::Index<DifferentiableShard<0>>(relic.ID(), *reliquary);
+                        REQUIRE(shard == nullptr);
+                        REQUIRE(!shard);
+                    }
                 }
             }
         }

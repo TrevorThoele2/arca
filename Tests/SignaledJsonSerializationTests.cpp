@@ -3,7 +3,7 @@ using namespace std::string_literals;
 
 #include "SignaledJsonSerializationTests.h"
 
-#include <Arca/LocalRelic.h>
+#include <Arca/OpenRelic.h>
 #include "SignalListener.h"
 
 SCENARIO_METHOD(
@@ -59,93 +59,21 @@ SCENARIO_METHOD(
                 REQUIRE(specificShardDestroying.Executions().size() == 1);
             }
         }
-
-        WHEN("loading with closed relic with shards")
-        {
-            auto loadedReliquary = ReliquaryOrigin()
-                .Register<ClosedRelic>()
-                .Register<BasicShard>()
-                .Actualize();
-
-            loadedReliquary->Do(CreateWith<ClosedRelic>(RelicStructure { TypeFor<BasicShard>() }));
-
-            auto generalCreated = SignalListener<Created>(*loadedReliquary);
-            auto specificRelicCreated = SignalListener<CreatedKnown<ClosedRelic>>(*loadedReliquary);
-            auto specificShardCreated = SignalListener<CreatedKnown<BasicShard>>(*loadedReliquary);
-            auto generalDestroying = SignalListener<Destroying>(*loadedReliquary);
-            auto specificRelicDestroying = SignalListener<DestroyingKnown<ClosedRelic>>(*loadedReliquary);
-            auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
-
-            {
-                auto inputArchive = ::Inscription::Archive::InputJson("Test.dat");
-                inputArchive("reliquary", *loadedReliquary);
-            }
-
-            THEN("does not signal creation")
-            {
-                REQUIRE(generalCreated.Executions().empty());
-                REQUIRE(specificRelicCreated.Executions().empty());
-                REQUIRE(specificShardCreated.Executions().empty());
-            }
-
-            THEN("signals destruction")
-            {
-                REQUIRE(generalDestroying.Executions().size() == 2);
-                REQUIRE(specificRelicDestroying.Executions().size() == 1);
-                REQUIRE(specificShardDestroying.Executions().size() == 1);
-            }
-        }
-
-        WHEN("loading with typed open relic with shards")
-        {
-            auto loadedReliquary = ReliquaryOrigin()
-                .Register<TypedOpenRelic>()
-                .Register<BasicShard>()
-                .Actualize();
-
-            loadedReliquary->Do(Create<TypedOpenRelic>(dataGeneration.Random<int>()));
-
-            auto generalCreated = SignalListener<Created>(*loadedReliquary);
-            auto specificRelicCreated = SignalListener<CreatedKnown<TypedOpenRelic>>(*loadedReliquary);
-            auto specificShardCreated = SignalListener<CreatedKnown<BasicShard>>(*loadedReliquary);
-            auto generalDestroying = SignalListener<Destroying>(*loadedReliquary);
-            auto specificRelicDestroying = SignalListener<DestroyingKnown<TypedOpenRelic>>(*loadedReliquary);
-            auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
-
-            {
-                auto inputArchive = ::Inscription::Archive::InputJson("Test.dat");
-                inputArchive("reliquary", *loadedReliquary);
-            }
-
-            THEN("does not signal creation")
-            {
-                REQUIRE(generalCreated.Executions().empty());
-                REQUIRE(specificRelicCreated.Executions().empty());
-                REQUIRE(specificShardCreated.Executions().empty());
-            }
-
-            THEN("signals destruction")
-            {
-                REQUIRE(generalDestroying.Executions().size() == 2);
-                REQUIRE(specificRelicDestroying.Executions().size() == 1);
-                REQUIRE(specificShardDestroying.Executions().size() == 1);
-            }
-        }
-
+        
         WHEN("loading with typed closed relic with shards")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Register<TypedClosedRelic>()
+                .Register<LocalRelic>()
                 .Register<BasicShard>()
                 .Actualize();
 
-            loadedReliquary->Do(Create<TypedClosedRelic>(dataGeneration.Random<int>()));
+            loadedReliquary->Do(Create<LocalRelic>(dataGeneration.Random<int>()));
 
             auto generalCreated = SignalListener<Created>(*loadedReliquary);
-            auto specificRelicCreated = SignalListener<CreatedKnown<TypedClosedRelic>>(*loadedReliquary);
+            auto specificRelicCreated = SignalListener<CreatedKnown<LocalRelic>>(*loadedReliquary);
             auto specificShardCreated = SignalListener<CreatedKnown<BasicShard>>(*loadedReliquary);
             auto generalDestroying = SignalListener<Destroying>(*loadedReliquary);
-            auto specificRelicDestroying = SignalListener<DestroyingKnown<TypedClosedRelic>>(*loadedReliquary);
+            auto specificRelicDestroying = SignalListener<DestroyingKnown<LocalRelic>>(*loadedReliquary);
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
             {
@@ -218,15 +146,15 @@ SCENARIO_METHOD(
             }
         }
     }
-
+    
     GIVEN("saved closed relic with shards")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Register<ClosedRelic>()
+            .Register<LocalRelic>()
             .Register<BasicShard>()
             .Actualize();
 
-        savedReliquary->Do(CreateWith<ClosedRelic>(RelicStructure{ TypeFor<BasicShard>() }));
+        savedReliquary->Do(Create<LocalRelic>(dataGeneration.Random<int>()));
 
         {
             auto outputArchive = ::Inscription::Archive::OutputJson("Test.dat");
@@ -236,113 +164,15 @@ SCENARIO_METHOD(
         WHEN("loading")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Register<ClosedRelic>()
+                .Register<LocalRelic>()
                 .Register<BasicShard>()
                 .Actualize();
 
             auto generalCreated = SignalListener<Created>(*loadedReliquary);
-            auto specificRelicCreated = SignalListener<CreatedKnown<ClosedRelic>>(*loadedReliquary);
+            auto specificRelicCreated = SignalListener<CreatedKnown<LocalRelic>>(*loadedReliquary);
             auto specificShardCreated = SignalListener<CreatedKnown<BasicShard>>(*loadedReliquary);
             auto generalDestroying = SignalListener<Destroying>(*loadedReliquary);
-            auto specificRelicDestroying = SignalListener<DestroyingKnown<ClosedRelic>>(*loadedReliquary);
-            auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
-
-            {
-                auto inputArchive = ::Inscription::Archive::InputJson("Test.dat");
-                inputArchive("reliquary", *loadedReliquary);
-            }
-
-            THEN("signals creation")
-            {
-                REQUIRE(generalCreated.Executions().size() == 2);
-                REQUIRE(specificRelicCreated.Executions().size() == 1);
-                REQUIRE(specificShardCreated.Executions().size() == 1);
-            }
-
-            THEN("does not signal destruction")
-            {
-                REQUIRE(generalDestroying.Executions().empty());
-                REQUIRE(specificRelicDestroying.Executions().empty());
-                REQUIRE(specificShardDestroying.Executions().empty());
-            }
-        }
-    }
-
-    GIVEN("saved typed open relic with shards")
-    {
-        auto savedReliquary = ReliquaryOrigin()
-            .Register<TypedOpenRelic>()
-            .Register<BasicShard>()
-            .Actualize();
-
-        savedReliquary->Do(Create<TypedOpenRelic>(dataGeneration.Random<int>()));
-
-        {
-            auto outputArchive = ::Inscription::Archive::OutputJson("Test.dat");
-            outputArchive("reliquary", *savedReliquary);
-        }
-
-        WHEN("loading")
-        {
-            auto loadedReliquary = ReliquaryOrigin()
-                .Register<TypedOpenRelic>()
-                .Register<BasicShard>()
-                .Actualize();
-
-            auto generalCreated = SignalListener<Created>(*loadedReliquary);
-            auto specificRelicCreated = SignalListener<CreatedKnown<TypedOpenRelic>>(*loadedReliquary);
-            auto specificShardCreated = SignalListener<CreatedKnown<BasicShard>>(*loadedReliquary);
-            auto generalDestroying = SignalListener<Destroying>(*loadedReliquary);
-            auto specificRelicDestroying = SignalListener<DestroyingKnown<TypedOpenRelic>>(*loadedReliquary);
-            auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
-
-            {
-                auto inputArchive = ::Inscription::Archive::InputJson("Test.dat");
-                inputArchive("reliquary", *loadedReliquary);
-            }
-
-            THEN("signals creation for both relic and shard")
-            {
-                REQUIRE(generalCreated.Executions().size() == 2);
-                REQUIRE(specificRelicCreated.Executions().size() == 1);
-                REQUIRE(specificShardCreated.Executions().size() == 1);
-            }
-
-            THEN("does not signal destruction")
-            {
-                REQUIRE(generalDestroying.Executions().empty());
-                REQUIRE(specificRelicDestroying.Executions().empty());
-                REQUIRE(specificShardDestroying.Executions().empty());
-            }
-        }
-    }
-
-    GIVEN("saved closed relic with shards")
-    {
-        auto savedReliquary = ReliquaryOrigin()
-            .Register<TypedClosedRelic>()
-            .Register<BasicShard>()
-            .Actualize();
-
-        savedReliquary->Do(Create<TypedClosedRelic>(dataGeneration.Random<int>()));
-
-        {
-            auto outputArchive = ::Inscription::Archive::OutputJson("Test.dat");
-            outputArchive("reliquary", *savedReliquary);
-        }
-
-        WHEN("loading")
-        {
-            auto loadedReliquary = ReliquaryOrigin()
-                .Register<TypedClosedRelic>()
-                .Register<BasicShard>()
-                .Actualize();
-
-            auto generalCreated = SignalListener<Created>(*loadedReliquary);
-            auto specificRelicCreated = SignalListener<CreatedKnown<TypedClosedRelic>>(*loadedReliquary);
-            auto specificShardCreated = SignalListener<CreatedKnown<BasicShard>>(*loadedReliquary);
-            auto generalDestroying = SignalListener<Destroying>(*loadedReliquary);
-            auto specificRelicDestroying = SignalListener<DestroyingKnown<TypedClosedRelic>>(*loadedReliquary);
+            auto specificRelicDestroying = SignalListener<DestroyingKnown<LocalRelic>>(*loadedReliquary);
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
             {

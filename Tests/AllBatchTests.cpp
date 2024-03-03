@@ -4,7 +4,7 @@
 
 #include "DifferentiableShard.h"
 
-#include <Arca/LocalRelic.h>
+#include <Arca/OpenRelic.h>
 
 AllBatchTestsFixture::Relic::Relic(RelicInit init)
 {

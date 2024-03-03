@@ -11,17 +11,16 @@ namespace Arca
 
     template<class T>
     template<class... ConstructorArgs>
-    auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Add(RelicID id, ConstructorArgs&& ... constructorArgs) -> ShardT*
+    auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Add(RelicID id, bool required, ConstructorArgs&& ... constructorArgs) -> ShardT*
     {
         auto found = Find(id);
         if (found)
             return found;
 
         return &map.emplace(
-            std::piecewise_construct,
-            std::forward_as_tuple(id),
-            std::forward_as_tuple(std::forward<ConstructorArgs>(constructorArgs)...))
-                .first->second;
+            id,
+            StoredT{ required, std::decay_t<ShardT>{std::forward<ConstructorArgs>(constructorArgs)...} })
+            .first->second.shard;
     }
 
     template<class T>
@@ -64,10 +63,7 @@ namespace Arca
     auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Find(RelicID id) -> ShardT*
     {
         auto found = map.find(id);
-        if (found == map.end())
-            return {};
-
-        return &found->second;
+        return found != map.end() ? &found->second.shard : nullptr;
     }
 
     template<class T>
@@ -80,6 +76,13 @@ namespace Arca
     bool BatchSource<T, std::enable_if_t<is_shard_v<T>>>::ContainsFromBase(RelicID id) const
     {
         return Find(id) != nullptr;
+    }
+
+    template<class T>
+    bool BatchSource<T, std::enable_if_t<is_shard_v<T>>>::IsRequired(RelicID id) const
+    {
+        auto found = map.find(id);
+        return found != map.end() ? found->second.required : false;
     }
 
     template<class T>
@@ -148,11 +151,12 @@ namespace Inscription
 
             for (auto& stored : save)
             {
-                if (saveIDs.find(stored->first) == saveIDs.end())
-                    continue;
-
-                archive(stored->first);
-                archive(stored->second);
+                if (saveIDs.find(stored->first) != saveIDs.end())
+                {
+                    archive(stored->first);
+                    archive(stored->second.shard);
+                    archive(stored->second.required);
+                }
             }
         }
         else
@@ -174,7 +178,9 @@ namespace Inscription
                 {
                     auto shard = Create<ShardT>();
                     archive(shard);
-                    object.map.emplace(id, std::move(shard));
+                    bool required = false;
+                    archive(required);
+                    object.map.emplace(id, typename ObjectT::StoredT{ required, std::move(shard) });
                 }
 
                 matrixSnapshot.Finalize();
@@ -204,7 +210,8 @@ namespace Inscription
             {
                 output->StartObject("");
                 archive("id", stored->first);
-                archive("shard", stored->second);
+                archive("shard", stored->second.shard);
+                archive("required", stored->second.required);
                 output->EndObject();
             }
             output->EndList();
@@ -229,7 +236,9 @@ namespace Inscription
                 {
                     auto shard = Create<ShardT>();
                     archive("shard", shard);
-                    object.map.emplace(id, std::move(shard));
+                    bool required = false;
+                    archive("required", required);
+                    object.map.emplace(id, typename ObjectT::StoredT{ required, std::move(shard) });
                 }
 
                 matrixSnapshot.Finalize();
@@ -244,16 +253,14 @@ namespace Inscription
     template<class U, std::enable_if_t<Arca::has_shard_serialization_constructor_v<U>, int>>
     U Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::Create()
     {
-        using StoredT = typename ObjectT::StoredT;
-        return StoredT{ Arca::Serialization{} };
+        return std::decay_t<typename ObjectT::ShardT>{ Arca::Serialization{} };
     }
 
     template<class T>
     template<class U, std::enable_if_t<!Arca::has_shard_serialization_constructor_v<U> && Arca::has_shard_default_constructor_v<U>, int>>
     U Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::Create()
     {
-        using StoredT = typename ObjectT::StoredT;
-        return StoredT{};
+        return std::decay_t<typename ObjectT::ShardT>{};
     }
 
     template<class T>
@@ -263,7 +270,6 @@ namespace Inscription
         static_assert(
             "A shard requires a serialization constructor (taking only the class Serialization) "
             "or a default constructor in order to be serialized.");
-        using StoredT = typename ObjectT::StoredT;
-        return StoredT{};
+        return std::decay_t<typename ObjectT::ShardT>{};
     }
 }

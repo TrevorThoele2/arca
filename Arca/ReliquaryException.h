@@ -98,15 +98,7 @@ namespace Arca
         [[nodiscard]] std::string BaseMessage(const std::string& objectType, const std::type_index& classType) const;
         [[nodiscard]] std::string BaseMessage(const std::string& objectType, const Type& type) const;
     };
-
-    class CannotModifyShards final : public Exception
-    {
-    public:
-        CannotModifyShards(
-            const std::string& objectType,
-            RelicID id);
-    };
-
+    
     class CannotParentRelic final : public Exception
     {
     public:

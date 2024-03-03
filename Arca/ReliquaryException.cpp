@@ -169,16 +169,7 @@ namespace Arca
     {
         return "The " + objectType + " (" + Chroma::ToString(type) + ") cannot be found.";
     }
-
-    CannotModifyShards::CannotModifyShards(
-        const std::string& objectType,
-        RelicID id)
-        :
-        Exception(
-            "The " + objectType + " with ID (" + Chroma::ToString(id) + ") " +
-            "needs to be able to have its shards modified but cannot. Is the object closed?")
-    {}
-
+    
     CannotParentRelic::CannotParentRelic(const std::string& message) : Exception(message)
     {}
 

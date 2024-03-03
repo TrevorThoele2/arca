@@ -19,7 +19,7 @@ namespace Arca
     class ReliquaryShards : public ReliquaryComponent
     {
     public:
-        void Create(const Type& type, RelicID id);
+        void Create(const Type& type, RelicID id, bool required);
         template<class ShardT, class... ConstructorArgs>
         Index<ShardT> Create(RelicID id, ConstructorArgs&& ... constructorArgs);
         template<class ShardT, class... ConstructorArgs>
@@ -59,13 +59,15 @@ namespace Arca
             virtual ShardBatchSourceBase& BatchSource() = 0;
             virtual ShardBatchSourceBase& ConstBatchSource() = 0;
 
-            virtual void Create(RelicID id, Reliquary& reliquary, bool isConst) = 0;
+            virtual void Create(RelicID id, Reliquary& reliquary, bool isConst, bool required) = 0;
             virtual void RequiredDestroy(RelicID id, Reliquary& reliquary) = 0;
+            virtual void RequiredTransactionalDestroy(RelicID id, Reliquary& reliquary, ReliquaryMatrices& matrices) = 0;
             virtual void Clear() = 0;
 
             virtual void SignalAllCreated(Reliquary& reliquary) = 0;
 
             [[nodiscard]] virtual bool Contains(RelicID id) const = 0;
+            [[nodiscard]] virtual bool IsRequired(RelicID id) const = 0;
 
             [[nodiscard]] TypeName MainType() const override;
         protected:
@@ -84,22 +86,29 @@ namespace Arca
             ShardBatchSourceBase& BatchSource() override;
             ShardBatchSourceBase& ConstBatchSource() override;
 
-            void Create(RelicID id, Reliquary& reliquary, bool isConst) override;
+            void Create(RelicID id, Reliquary& reliquary, bool isConst, bool required) override;
             template<class... ConstructorArgs>
-            void CreateCommon(RelicID id, Reliquary& reliquary, bool isConst, ConstructorArgs&& ... constructorArgs);
+            void CreateCommon(RelicID id, Reliquary& reliquary, bool isConst, bool required, ConstructorArgs&& ... constructorArgs);
             void RequiredDestroy(RelicID id, Reliquary& reliquary) override;
+            void RequiredTransactionalDestroy(RelicID id, Reliquary& reliquary, ReliquaryMatrices& matrices) override;
             void Clear() override;
 
             void SignalAllCreated(Reliquary& reliquary) override;
 
             [[nodiscard]] bool Contains(RelicID id) const override;
+            [[nodiscard]] bool IsRequired(RelicID id) const override;
 
             [[nodiscard]] bool WillBinarySerialize() const override;
             [[nodiscard]] bool WillJsonSerialize() const override;
             void Serialize(Inscription::Archive::Binary& archive) override;
             void Serialize(const std::string& name, Inscription::Archive::Json& archive) override;
-            [[nodiscard]] std::vector<::Inscription::Type> InscriptionTypes(Inscription::Archive::Binary& archive) const override;
-            [[nodiscard]] std::vector<::Inscription::Type> InscriptionTypes(Inscription::Archive::Json& archive) const override;
+            [[nodiscard]] std::vector<Inscription::Type> InscriptionTypes(Inscription::Archive::Binary& archive) const override;
+            [[nodiscard]] std::vector<Inscription::Type> InscriptionTypes(Inscription::Archive::Json& archive) const override;
+        private:
+            template<class BatchSourceT>
+            void DestroyCommon(RelicID id, Reliquary& reliquary, BatchSourceT& batchSource);
+            template<class BatchSourceT>
+            void TransactionalDestroyCommon(RelicID id, Reliquary& reliquary, ReliquaryMatrices& matrices, BatchSourceT& batchSource);
         };
 
         using HandlerPtr = std::unique_ptr<HandlerBase>;
@@ -127,12 +136,12 @@ namespace Arca
         ReliquaryShards& operator=(const ReliquaryShards& arg) = delete;
     private:
         template<class ShardT, class... ConstructorArgs>
-        Index<ShardT> CreateCommon(RelicID id, ConstructorArgs&& ... constructorArgs);
+        Index<ShardT> CreateCommon(RelicID id, bool required, ConstructorArgs&& ... constructorArgs);
     private:
         template<class T>
         [[nodiscard]] auto CreateIndex(RelicID id) const;
     private:
-        template<::Chroma::VariadicTemplateSize i>
+        template<Chroma::VariadicTemplateSize i>
         struct DestroyAllShardsIterator
         {
             template<class ShardPack>
@@ -144,7 +153,7 @@ namespace Arca
             }
         };
 
-        template<::Chroma::VariadicTemplateSize i>
+        template<Chroma::VariadicTemplateSize i>
         struct ContainsAllShardsIterator
         {
             template<class ShardPack>

@@ -2,7 +2,7 @@
 
 #include "ShardBatchTests.h"
 
-#include <Arca/LocalRelic.h>
+#include <Arca/OpenRelic.h>
 
 ShardBatchFixture::GlobalRelic::GlobalRelic(RelicInit init)
 {

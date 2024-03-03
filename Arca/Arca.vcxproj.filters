@@ -243,18 +243,6 @@
     <ClInclude Include="UsableInAll.h">
       <Filter>Header Files\Matrix\All</Filter>
     </ClInclude>
-    <ClInclude Include="IsOpen.h">
-      <Filter>Header Files\Relic\Traits\Openness</Filter>
-    </ClInclude>
-    <ClInclude Include="Openness.h">
-      <Filter>Header Files\Relic\Traits\Openness</Filter>
-    </ClInclude>
-    <ClInclude Include="OpennessFor.h">
-      <Filter>Header Files\Relic\Traits\Openness</Filter>
-    </ClInclude>
-    <ClInclude Include="IsClosed.h">
-      <Filter>Header Files\Relic\Traits\Openness</Filter>
-    </ClInclude>
     <ClInclude Include="IsGlobal.h">
       <Filter>Header Files\Relic\Traits\Locality</Filter>
     </ClInclude>
@@ -516,10 +504,7 @@
     <ClInclude Include="ShardBatchSourceDefinition.h">
       <Filter>Header Files\Shard\Batch</Filter>
     </ClInclude>
-    <ClInclude Include="HasOpennessTrait.h">
-      <Filter>Header Files\Relic\Traits\Openness</Filter>
-    </ClInclude>
-    <ClInclude Include="LocalRelic.h">
+    <ClInclude Include="OpenRelic.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
     <ClInclude Include="Relic.h">
@@ -637,9 +622,6 @@
     </Filter>
     <Filter Include="Header Files\Relic\Traits">
       <UniqueIdentifier>{8ee29fed-0593-482e-9bed-165183532f75}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Relic\Traits\Openness">
-      <UniqueIdentifier>{d0948f78-8c6b-4759-9d96-e3e19e1b3685}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Relic\Traits\Locality">
       <UniqueIdentifier>{d2a34d83-bb1a-4ea5-b655-437789a7974b}</UniqueIdentifier>

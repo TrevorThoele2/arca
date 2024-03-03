@@ -34,7 +34,6 @@ SCENARIO_METHOD(IndexTestsFixture, "Index resets to nullptr after underlying obj
     {
         auto reliquary = ReliquaryOrigin()
             .Register<OpenRelic>()
-            .Register<ClosedRelic>()
             .Register<BasicShard>()
             .Register<TypedClosedRelic>()
             .Register<TypedOpenRelic>()
@@ -61,29 +60,7 @@ SCENARIO_METHOD(IndexTestsFixture, "Index resets to nullptr after underlying obj
                 REQUIRE(relic.Owner() == reliquary.get());
             }
         }
-
-        WHEN("creating closed relic then destroying relic")
-        {
-            auto relic = reliquary->Do(Create<ClosedRelic>());
-
-            reliquary->Destroy(relic);
-
-            THEN("relic is nullptr")
-            {
-                REQUIRE(relic.Get() == nullptr);
-            }
-
-            THEN("ID is 1")
-            {
-                REQUIRE(relic.ID() == 1);
-            }
-
-            THEN("owner is reliquary")
-            {
-                REQUIRE(relic.Owner() == reliquary.get());
-            }
-        }
-
+        
         WHEN("creating typed closed relic then destroying relic")
         {
             auto relic = reliquary->Do(Create<TypedClosedRelic>());

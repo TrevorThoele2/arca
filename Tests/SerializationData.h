@@ -14,8 +14,7 @@ public:
     class OtherShard;
     class PreferentialSerializationConstructorShard;
 
-    class TypedClosedRelic;
-    class TypedOpenRelic;
+    class LocalRelic;
     class GlobalRelic;
     class NonDefaultConstructorRelic;
     class PreferentialSerializationConstructorRelic1;
@@ -31,9 +30,7 @@ public:
     class OtherShardNullInscription;
 
     template<class ShardT>
-    class TypedClosedRelicNullInscription;
-    template<class ShardT>
-    class TypedOpenRelicNullInscription;
+    class LocalRelicNullInscription;
     template<class ShardT>
     class GlobalRelicNullInscription;
     class MovableOnlyRelic;
@@ -74,18 +71,10 @@ namespace Arca
     };
 
     template<>
-    struct Traits<SerializationData::TypedClosedRelic>
+    struct Traits<SerializationData::LocalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static TypeName TypeName() { return "SerializationData::TypedClosedRelic"; }
-    };
-
-    template<>
-    struct Traits<SerializationData::TypedOpenRelic>
-    {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "SerializationData::TypedOpenRelic"; }
-        static const Openness openness = Openness::Open;
     };
 
     template<>
@@ -160,18 +149,10 @@ namespace Arca
     };
 
     template<class ShardT>
-    struct Traits<SerializationData::TypedClosedRelicNullInscription<ShardT>>
+    struct Traits<SerializationData::LocalRelicNullInscription<ShardT>>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static TypeName TypeName() { return "SerializationData::TypedClosedRelicNullInscription<" + TypeFor<ShardT>().name + ">"; }
-    };
-
-    template<class ShardT>
-    struct Traits<SerializationData::TypedOpenRelicNullInscription<ShardT>>
-    {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "SerializationData::TypedOpenRelicNullInscription<" + TypeFor<ShardT>().name + ">"; }
-        static const Openness openness = Openness::Open;
     };
 
     template<class ShardT>
@@ -240,24 +221,14 @@ public:
     explicit OtherShard(int myValue);
 };
 
-class SerializationData::TypedClosedRelic final
+class SerializationData::LocalRelic final
 {
 public:
     int myInt = 0;
     Index<BasicShard> basicShard;
 public:
-    TypedClosedRelic(RelicInit init, int myInt);
-    TypedClosedRelic(RelicInit init, Serialization);
-};
-
-class SerializationData::TypedOpenRelic final
-{
-public:
-    int myInt = 0;
-    Index<BasicShard> basicShard;
-public:
-    TypedOpenRelic(RelicInit init, int myInt);
-    TypedOpenRelic(RelicInit init, Serialization);
+    LocalRelic(RelicInit init, int myInt);
+    LocalRelic(RelicInit init, Serialization);
 };
 
 class SerializationData::GlobalRelic final
@@ -365,82 +336,42 @@ public:
 };
 
 template<class ShardT>
-class SerializationData::TypedClosedRelicNullInscription final
+class SerializationData::LocalRelicNullInscription final
 {
 public:
     int myInt = 0;
     Index<ShardT> shard;
 public:
     template<class... ShardArgs>
-    TypedClosedRelicNullInscription(RelicInit init, ShardArgs&& ... shardArgs);
+    LocalRelicNullInscription(RelicInit init, ShardArgs&& ... shardArgs);
     template<class... ShardArgs>
-    TypedClosedRelicNullInscription(RelicInit init, int myInt, ShardArgs&& ... shardArgs);
-    TypedClosedRelicNullInscription(RelicInit init, Serialization);
+    LocalRelicNullInscription(RelicInit init, int myInt, ShardArgs&& ... shardArgs);
+    LocalRelicNullInscription(RelicInit init, Serialization);
 };
 
 template<class ShardT>
 template<class... ShardArgs>
-SerializationData::TypedClosedRelicNullInscription<ShardT>::TypedClosedRelicNullInscription(
+SerializationData::LocalRelicNullInscription<ShardT>::LocalRelicNullInscription(
     RelicInit init,
     ShardArgs&& ... shardArgs)
 {
-    shard = init.template Create<ShardT>(std::forward<ShardArgs>(shardArgs)...);
+    shard = init.Create<ShardT>(std::forward<ShardArgs>(shardArgs)...);
 }
 
 template<class ShardT>
 template<class... ShardArgs>
-SerializationData::TypedClosedRelicNullInscription<ShardT>::TypedClosedRelicNullInscription(
+SerializationData::LocalRelicNullInscription<ShardT>::LocalRelicNullInscription(
     RelicInit init,
     int myInt,
     ShardArgs&& ... shardArgs)
     :
     myInt(myInt)
 {
-    shard = init.template Create<ShardT>(std::forward<ShardArgs>(shardArgs)...);
+    shard = init.Create<ShardT>(std::forward<ShardArgs>(shardArgs)...);
 }
 
 template<class ShardT>
-SerializationData::TypedClosedRelicNullInscription<ShardT>::TypedClosedRelicNullInscription(
-    RelicInit init, Serialization)
-{}
-
-template<class ShardT>
-class SerializationData::TypedOpenRelicNullInscription final
-{
-public:
-    int myInt = 0;
-    Index<ShardT> shard;
-public:
-    template<class... ShardArgs>
-    TypedOpenRelicNullInscription(RelicInit init, ShardArgs&& ... shardArgs);
-    template<class... ShardArgs>
-    TypedOpenRelicNullInscription(RelicInit init, int myInt, ShardArgs&& ... shardArgs);
-    TypedOpenRelicNullInscription(RelicInit init, Serialization);
-};
-
-template<class ShardT>
-template<class... ShardArgs>
-SerializationData::TypedOpenRelicNullInscription<ShardT>::TypedOpenRelicNullInscription(
-    RelicInit init,
-    ShardArgs&& ... shardArgs)
-{
-    shard = init.template Create<ShardT>(std::forward<ShardArgs>(shardArgs)...);
-}
-
-template<class ShardT>
-template<class... ShardArgs>
-SerializationData::TypedOpenRelicNullInscription<ShardT>::TypedOpenRelicNullInscription(
-    RelicInit init,
-    int myInt,
-    ShardArgs&& ... shardArgs)
-    :
-    myInt(myInt)
-{
-    shard = init.template Create<ShardT>(std::forward<ShardArgs>(shardArgs)...);
-}
-
-template<class ShardT>
-SerializationData::TypedOpenRelicNullInscription<ShardT>::TypedOpenRelicNullInscription(
+SerializationData::LocalRelicNullInscription<ShardT>::LocalRelicNullInscription(
     RelicInit init, Serialization)
 {}
 
@@ -463,7 +394,7 @@ SerializationData::GlobalRelicNullInscription<ShardT>::GlobalRelicNullInscriptio
     RelicInit init,
     ShardArgs&& ... shardArgs)
 {
-    shard = init.template Create<ShardT>(std::forward<ShardArgs>(shardArgs)...);
+    shard = init.Create<ShardT>(std::forward<ShardArgs>(shardArgs)...);
 }
 
 template<class ShardT>
@@ -475,7 +406,7 @@ SerializationData::GlobalRelicNullInscription<ShardT>::GlobalRelicNullInscriptio
     :
     myInt(myInt)
 {
-    shard = init.template Create<ShardT>(std::forward<ShardArgs>(shardArgs)...);
+    shard = init.Create<ShardT>(std::forward<ShardArgs>(shardArgs)...);
 }
 
 class SerializationData::MovableOnlyRelic final
@@ -587,29 +518,10 @@ namespace Inscription
     };
 
     template<>
-    class Scribe<SerializationData::TypedClosedRelic> final
+    class Scribe<SerializationData::LocalRelic> final
     {
     public:
-        using ObjectT = SerializationData::TypedClosedRelic;
-    public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
-        {
-            archive("myInt", object.myInt);
-        }
-    };
-
-    template<class Archive>
-    struct ScribeTraits<SerializationData::TypedClosedRelic, Archive> final
-    {
-        using Category = ArcaCompositeScribeCategory<SerializationData::TypedClosedRelic>;
-    };
-
-    template<>
-    class Scribe<SerializationData::TypedOpenRelic> final
-    {
-    public:
-        using ObjectT = SerializationData::TypedOpenRelic;
+        using ObjectT = SerializationData::LocalRelic;
     public:
         template<class Archive>
         void Scriven(ObjectT& object, Archive& archive)
@@ -619,11 +531,11 @@ namespace Inscription
     };
 
     template<class Archive>
-    struct ScribeTraits<SerializationData::TypedOpenRelic, Archive> final
+    struct ScribeTraits<SerializationData::LocalRelic, Archive> final
     {
-        using Category = ArcaCompositeScribeCategory<SerializationData::TypedOpenRelic>;
+        using Category = ArcaCompositeScribeCategory<SerializationData::LocalRelic>;
     };
-
+    
     template<>
     class Scribe<SerializationData::GlobalRelic> final
     {
@@ -749,17 +661,11 @@ namespace Inscription
     };
 
     template<class ShardT, class Archive>
-    struct ScribeTraits<SerializationData::TypedClosedRelicNullInscription<ShardT>, Archive> final
+    struct ScribeTraits<SerializationData::LocalRelicNullInscription<ShardT>, Archive> final
     {
-        using Category = ArcaNullScribeCategory<SerializationData::TypedClosedRelicNullInscription<ShardT>>;
+        using Category = ArcaNullScribeCategory<SerializationData::LocalRelicNullInscription<ShardT>>;
     };
-
-    template<class ShardT, class Archive>
-    struct ScribeTraits<SerializationData::TypedOpenRelicNullInscription<ShardT>, Archive> final
-    {
-        using Category = ArcaNullScribeCategory<SerializationData::TypedOpenRelicNullInscription<ShardT>>;
-    };
-
+    
     template<>
     class Scribe<SerializationData::MovableOnlyRelic> final
     {

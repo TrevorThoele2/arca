@@ -50,7 +50,6 @@ namespace Arca
         [[nodiscard]] Arca::CannotFind CannotFind(
             const Type& type,
             const std::type_index& classType) const;
-        [[nodiscard]] CannotModifyShards CannotModify(RelicID id) const;
     public:
         [[nodiscard]] Reliquary& Owner();
         [[nodiscard]] const Reliquary& Owner() const;
