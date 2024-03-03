@@ -133,6 +133,12 @@ namespace Arca
     }
 
     template<class... Ts>
+    auto MatrixImplementation<All<Ts...>>::DefaultIndexValue() -> IndexOptional
+    {
+        return {};
+    }
+
+    template<class... Ts>
     bool MatrixContains<All<Ts...>>::Contains(Type type)
     {
         return ::Chroma::IterateRangeCheckStop<

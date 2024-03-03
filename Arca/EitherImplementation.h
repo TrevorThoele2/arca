@@ -31,6 +31,7 @@ namespace Arca
         using IndexOptional = const T*;
 
         static IndexOptional CreateIndexValue(RelicID id, Reliquary& reliquary);
+        static IndexOptional DefaultIndexValue();
     };
 
     template<class T>

@@ -33,6 +33,7 @@ namespace Arca
         using IndexOptional = std::optional<Tuple>;
 
         static IndexOptional CreateIndexValue(RelicID id, Reliquary& reliquary);
+        static IndexOptional DefaultIndexValue();
     private:
         using Pack = typename All<Ts...>::Pack;
     };

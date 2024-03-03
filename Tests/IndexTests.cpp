@@ -176,3 +176,302 @@ SCENARIO_METHOD(IndexTestsFixture, "Matrix Index", "[index][matrix]")
         }
     }
 }
+
+SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
+{
+    GIVEN("registered reliquary")
+    {
+        auto reliquary = ReliquaryOrigin()
+            .Register<Shard>()
+            .Register<TypedClosedRelic>()
+            .Register<TypedOpenRelic>()
+            .Register<GlobalRelic>()
+            .Actualize();
+
+        WHEN("creating open relic then move assigning from index")
+        {
+            auto index1 = reliquary->Do<Create<OpenRelic>>();
+
+            auto index2 = std::move(index1);
+
+            THEN("index1 is nullptr")
+            {
+                REQUIRE(index1.Get() == nullptr);
+            }
+
+            THEN("index1 owner is nullptr")
+            {
+                REQUIRE(index1.Owner() == nullptr);
+            }
+
+            THEN("index2 is not nullptr")
+            {
+                REQUIRE(index2.Get() != nullptr);
+            }
+
+            THEN("index2 owner is reliquary")
+            {
+                REQUIRE(index2.Owner() == reliquary.get());
+            }
+        }
+
+        WHEN("creating open relic then move constructing from index")
+        {
+            auto index1 = reliquary->Do<Create<OpenRelic>>();
+
+            auto index2(std::move(index1));
+
+            THEN("index1 is nullptr")
+            {
+                REQUIRE(index1.Get() == nullptr);
+            }
+
+            THEN("index1 owner is nullptr")
+            {
+                REQUIRE(index1.Owner() == nullptr);
+            }
+
+            THEN("index2 is not nullptr")
+            {
+                REQUIRE(index2.Get() != nullptr);
+            }
+
+            THEN("index2 owner is reliquary")
+            {
+                REQUIRE(index2.Owner() == reliquary.get());
+            }
+        }
+
+        WHEN("creating shard then move assigning from index")
+        {
+            auto relic = reliquary->Do<Create<OpenRelic>>();
+
+            auto index1 = relic->Create<Shard>();
+
+            auto index2 = std::move(index1);
+
+            THEN("index1 is nullptr")
+            {
+                REQUIRE(index1.Get() == nullptr);
+            }
+
+            THEN("index1 owner is nullptr")
+            {
+                REQUIRE(index1.Owner() == nullptr);
+            }
+
+            THEN("index2 is not nullptr")
+            {
+                REQUIRE(index2.Get() != nullptr);
+            }
+
+            THEN("index2 owner is reliquary")
+            {
+                REQUIRE(index2.Owner() == reliquary.get());
+            }
+        }
+
+        WHEN("creating shard then move constructing from index")
+        {
+            auto relic = reliquary->Do<Create<OpenRelic>>();
+
+            auto index1 = relic->Create<Shard>();
+
+            auto index2(std::move(index1));
+
+            THEN("index1 is nullptr")
+            {
+                REQUIRE(index1.Get() == nullptr);
+            }
+
+            THEN("index1 owner is nullptr")
+            {
+                REQUIRE(index1.Owner() == nullptr);
+            }
+
+            THEN("index2 is not nullptr")
+            {
+                REQUIRE(index2.Get() != nullptr);
+            }
+
+            THEN("index2 owner is reliquary")
+            {
+                REQUIRE(index2.Owner() == reliquary.get());
+            }
+        }
+
+        WHEN("creating const shard then move assigning from index")
+        {
+            auto relic = reliquary->Do<Create<OpenRelic>>();
+
+            auto index1 = relic->Create<const Shard>();
+
+            auto index2 = std::move(index1);
+
+            THEN("index1 is nullptr")
+            {
+                REQUIRE(index1.Get() == nullptr);
+            }
+
+            THEN("index1 owner is nullptr")
+            {
+                REQUIRE(index1.Owner() == nullptr);
+            }
+
+            THEN("index2 is not nullptr")
+            {
+                REQUIRE(index2.Get() != nullptr);
+            }
+
+            THEN("index2 owner is reliquary")
+            {
+                REQUIRE(index2.Owner() == reliquary.get());
+            }
+        }
+
+        WHEN("creating const shard then move constructing from index")
+        {
+            auto relic = reliquary->Do<Create<OpenRelic>>();
+
+            auto index1 = relic->Create<const Shard>();
+
+            auto index2(std::move(index1));
+
+            THEN("index1 is nullptr")
+            {
+                REQUIRE(index1.Get() == nullptr);
+            }
+
+            THEN("index1 owner is nullptr")
+            {
+                REQUIRE(index1.Owner() == nullptr);
+            }
+
+            THEN("index2 is not nullptr")
+            {
+                REQUIRE(index2.Get() != nullptr);
+            }
+
+            THEN("index2 owner is reliquary")
+            {
+                REQUIRE(index2.Owner() == reliquary.get());
+            }
+        }
+
+        WHEN("move assigning from global index")
+        {
+            auto index1 = Arca::Index<GlobalRelic>(*reliquary);
+
+            auto index2 = std::move(index1);
+
+            THEN("index1 is nullptr")
+            {
+                REQUIRE(index1.Get() == nullptr);
+            }
+
+            THEN("index1 owner is nullptr")
+            {
+                REQUIRE(index1.Owner() == nullptr);
+            }
+
+            THEN("index2 is not nullptr")
+            {
+                REQUIRE(index2.Get() != nullptr);
+            }
+
+            THEN("index2 owner is reliquary")
+            {
+                REQUIRE(index2.Owner() == reliquary.get());
+            }
+        }
+
+        WHEN("move constructing from global index")
+        {
+            auto index1 = Arca::Index<GlobalRelic>(*reliquary);
+
+            auto index2(std::move(index1));
+
+            THEN("index1 is nullptr")
+            {
+                REQUIRE(index1.Get() == nullptr);
+            }
+
+            THEN("index1 owner is nullptr")
+            {
+                REQUIRE(index1.Owner() == nullptr);
+            }
+
+            THEN("index2 is not nullptr")
+            {
+                REQUIRE(index2.Get() != nullptr);
+            }
+
+            THEN("index2 owner is reliquary")
+            {
+                REQUIRE(index2.Owner() == reliquary.get());
+            }
+        }
+
+        WHEN("creating shard then move assigning from matrix index")
+        {
+            auto relic = reliquary->Do<Create<OpenRelic>>();
+
+            relic->Create<Shard>();
+
+            auto index1 = Arca::Index<Either<Shard>>(relic->ID(), *reliquary);
+
+            auto index2 = std::move(index1);
+
+            THEN("index1 is nullptr")
+            {
+                REQUIRE(index1.Get() == nullptr);
+            }
+
+            THEN("index1 owner is nullptr")
+            {
+                REQUIRE(index1.Owner() == nullptr);
+            }
+
+            THEN("index2 is not nullptr")
+            {
+                REQUIRE(index2.Get() != nullptr);
+            }
+
+            THEN("index2 owner is reliquary")
+            {
+                REQUIRE(index2.Owner() == reliquary.get());
+            }
+        }
+
+        WHEN("creating shard then move constructing from matrix index")
+        {
+            auto relic = reliquary->Do<Create<OpenRelic>>();
+
+            relic->Create<Shard>();
+
+            auto index1 = Arca::Index<Either<Shard>>(relic->ID(), *reliquary);
+
+            auto index2(std::move(index1));
+
+            THEN("index1 is nullptr")
+            {
+                REQUIRE(index1.Get() == nullptr);
+            }
+
+            THEN("index1 owner is nullptr")
+            {
+                REQUIRE(index1.Owner() == nullptr);
+            }
+
+            THEN("index2 is not nullptr")
+            {
+                REQUIRE(index2.Get() != nullptr);
+            }
+
+            THEN("index2 owner is reliquary")
+            {
+                REQUIRE(index2.Owner() == reliquary.get());
+            }
+        }
+    }
+}

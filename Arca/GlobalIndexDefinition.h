@@ -20,7 +20,10 @@ namespace Arca
     template<class T>
     Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::Index(Index&& arg) noexcept :
         owner(arg.owner), value(arg.value)
-    {}
+    {
+        arg.value = nullptr;
+        arg.owner = nullptr;
+    }
 
     template<class T>
     auto Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::operator=(const Index& arg) -> Index&
@@ -35,6 +38,8 @@ namespace Arca
     {
         owner = arg.owner;
         value = arg.value;
+        arg.owner = nullptr;
+        arg.value = nullptr;
         return *this;
     }
 
