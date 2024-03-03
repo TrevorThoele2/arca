@@ -16,6 +16,7 @@ namespace Arca
         RelicID id = 0;
         RelicDynamism dynamism = RelicDynamism::Dynamic;
         std::optional<TypeHandle> typeHandle;
+        void* storage = nullptr;
 
         std::optional<RelicID> parent;
         std::vector<RelicID> children;
@@ -24,7 +25,8 @@ namespace Arca
         RelicMetadata(
             RelicID id,
             RelicDynamism dynamism,
-            std::optional<TypeHandle> typeHandle = {});
+            std::optional<TypeHandle> typeHandle = {},
+            void* storage = nullptr);
     };
 }
 

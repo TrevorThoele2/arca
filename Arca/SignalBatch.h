@@ -32,9 +32,7 @@ namespace Arca
         [[nodiscard]] SizeT Size() const;
         [[nodiscard]] bool IsEmpty() const;
 
-        [[nodiscard]] iterator begin();
         [[nodiscard]] const_iterator begin() const;
-        [[nodiscard]] iterator end();
         [[nodiscard]] const_iterator end() const;
     private:
         SourceT* source = nullptr;
@@ -98,27 +96,11 @@ namespace Arca
     }
 
     template<class Signal>
-    auto SignalBatch<Signal>::begin() -> iterator
-    {
-        SourceRequired();
-
-        return source->begin();
-    }
-
-    template<class Signal>
     auto SignalBatch<Signal>::begin() const -> const_iterator
     {
         SourceRequired();
 
         return source->begin();
-    }
-
-    template<class Signal>
-    auto SignalBatch<Signal>::end() -> iterator
-    {
-        SourceRequired();
-
-        return source->end();
     }
 
     template<class Signal>

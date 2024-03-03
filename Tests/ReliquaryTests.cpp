@@ -4,44 +4,42 @@ using namespace std::string_literals;
 
 #include "ReliquaryTests.h"
 
+#include <Arca/ExtractShards.h>
+
 ReliquaryTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std::move(myValue))
 {}
 
 ReliquaryTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
 {}
 
-ReliquaryTestsFixture::BasicTypedRelic::BasicTypedRelic(RelicID id, Reliquary& owner) :
-    TypedRelicWithShards(id, owner)
-{
-    Setup();
-}
-
 ReliquaryTestsFixture::BasicTypedRelic::BasicTypedRelic(const ::Inscription::BinaryTableData<BasicTypedRelic>& data) :
-    TypedRelicWithShards(data.base)
+    TypedRelic(data.base)
+{}
+
+void ReliquaryTestsFixture::BasicTypedRelic::Initialize(Reliquary& reliquary)
 {
-    Setup();
+    auto tuple = ExtractShards<Shards>(ID(), reliquary);
+    basicShard = std::get<0>(tuple);
 }
 
-void ReliquaryTestsFixture::BasicTypedRelic::Setup()
+RelicStructure ReliquaryTestsFixture::BasicTypedRelic::Structure() const
 {
-    ExtractShards(ShardTuple(basicShard));
-}
-
-ReliquaryTestsFixture::StaticRelic::StaticRelic(RelicID id, Reliquary& owner) :
-    TypedRelicWithShards(id, owner)
-{
-    Setup();
+    return StructureFrom<Shards>();
 }
 
 ReliquaryTestsFixture::StaticRelic::StaticRelic(const ::Inscription::BinaryTableData<StaticRelic>& data) :
-    TypedRelicWithShards(data.base)
+    TypedRelic(data.base)
+{}
+
+void ReliquaryTestsFixture::StaticRelic::Initialize(Reliquary& reliquary)
 {
-    Setup();
+    auto tuple = ExtractShards<Shards>(ID(), reliquary);
+    basicShard = std::get<0>(tuple);
 }
 
-void ReliquaryTestsFixture::StaticRelic::Setup()
+RelicStructure ReliquaryTestsFixture::StaticRelic::Structure() const
 {
-    ExtractShards(ShardTuple(basicShard));
+    return StructureFrom<Shards>();
 }
 
 ReliquaryTestsFixture::BasicCurator::BasicCurator(Reliquary& owner) : Curator(owner)
@@ -270,7 +268,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "registered reliquary with every type", "
     }
 }
 
-SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][serialization]")
+SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][serialization][focused]")
 {
     GIVEN("saved empty reliquary with every type registered")
     {

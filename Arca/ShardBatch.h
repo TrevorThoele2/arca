@@ -104,7 +104,7 @@ namespace Arca
     {
         SourceRequired();
 
-        return iterator(source->begin());
+        return const_iterator(source->begin());
     }
 
     template<class T>
@@ -120,7 +120,7 @@ namespace Arca
     {
         SourceRequired();
 
-        return iterator(source->end());
+        return const_iterator(source->end());
     }
 
     template<class T>

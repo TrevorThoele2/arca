@@ -1,7 +1,7 @@
 #pragma once
 
-#include "RelicBatchSource.h"
-#include "RelicBatchIterator.h"
+#include "ChildRelicBatchSource.h"
+#include "ChildRelicBatchIterator.h"
 #include "BatchException.h"
 
 namespace Arca
@@ -9,24 +9,24 @@ namespace Arca
     using RelicBatchSizeT = size_t;
 
     template<class T>
-    class RelicBatch
+    class ChildRelicBatch
     {
     private:
-        using SourceT = RelicBatchSource<T>;
+        using SourceT = ChildRelicBatchSource<T>;
     public:
         using RelicT = typename SourceT::RelicT;
 
         using SizeT = RelicBatchSizeT;
-        using iterator = RelicBatchIteratorBase<RelicT, typename SourceT::iterator>;
-        using const_iterator = RelicBatchIteratorBase<const RelicT, typename SourceT::const_iterator>;
+        using iterator = ChildRelicBatchIteratorBase<RelicT, typename SourceT::iterator>;
+        using const_iterator = ChildRelicBatchIteratorBase<const RelicT, typename SourceT::const_iterator>;
     public:
-        RelicBatch();
-        explicit RelicBatch(SourceT& source);
-        RelicBatch(const RelicBatch& arg);
-        RelicBatch(RelicBatch&& arg) noexcept;
+        ChildRelicBatch();
+        explicit ChildRelicBatch(SourceT& source);
+        ChildRelicBatch(const ChildRelicBatch& arg);
+        ChildRelicBatch(ChildRelicBatch&& arg) noexcept;
 
-        RelicBatch& operator=(const RelicBatch& arg);
-        RelicBatch& operator=(RelicBatch&& arg) noexcept;
+        ChildRelicBatch& operator=(const ChildRelicBatch& arg);
+        ChildRelicBatch& operator=(ChildRelicBatch&& arg) noexcept;
 
         [[nodiscard]] SizeT Size() const;
         [[nodiscard]] bool IsEmpty() const;
@@ -41,25 +41,25 @@ namespace Arca
     };
 
     template<class T>
-    RelicBatch<T>::RelicBatch()
+    ChildRelicBatch<T>::ChildRelicBatch()
     {}
 
     template<class T>
-    RelicBatch<T>::RelicBatch(SourceT& source) : source(&source)
+    ChildRelicBatch<T>::ChildRelicBatch(SourceT& source) : source(&source)
     {}
 
     template<class T>
-    RelicBatch<T>::RelicBatch(const RelicBatch& arg) : source(arg.source)
+    ChildRelicBatch<T>::ChildRelicBatch(const ChildRelicBatch& arg) : source(arg.source)
     {}
 
     template<class T>
-    RelicBatch<T>::RelicBatch(RelicBatch&& arg) noexcept : source(std::move(arg.source))
+    ChildRelicBatch<T>::ChildRelicBatch(ChildRelicBatch&& arg) noexcept : source(std::move(arg.source))
     {
         arg.source = nullptr;
     }
 
     template<class T>
-    RelicBatch<T>& RelicBatch<T>::operator=(const RelicBatch& arg)
+    ChildRelicBatch<T>& ChildRelicBatch<T>::operator=(const ChildRelicBatch& arg)
     {
         source = arg.source;
 
@@ -67,7 +67,7 @@ namespace Arca
     }
 
     template<class T>
-    RelicBatch<T>& RelicBatch<T>::operator=(RelicBatch&& arg) noexcept
+    ChildRelicBatch<T>& ChildRelicBatch<T>::operator=(ChildRelicBatch&& arg) noexcept
     {
         source = std::move(arg.source);
         arg.source = nullptr;
@@ -76,7 +76,7 @@ namespace Arca
     }
 
     template<class T>
-    auto RelicBatch<T>::Size() const -> SizeT
+    auto ChildRelicBatch<T>::Size() const -> SizeT
     {
         SourceRequired();
 
@@ -84,7 +84,7 @@ namespace Arca
     }
 
     template<class T>
-    bool RelicBatch<T>::IsEmpty() const
+    bool ChildRelicBatch<T>::IsEmpty() const
     {
         SourceRequired();
 
@@ -92,7 +92,7 @@ namespace Arca
     }
 
     template<class T>
-    auto RelicBatch<T>::begin() -> iterator
+    auto ChildRelicBatch<T>::begin() -> iterator
     {
         SourceRequired();
 
@@ -100,7 +100,7 @@ namespace Arca
     }
 
     template<class T>
-    auto RelicBatch<T>::begin() const -> const_iterator
+    auto ChildRelicBatch<T>::begin() const -> const_iterator
     {
         SourceRequired();
 
@@ -108,7 +108,7 @@ namespace Arca
     }
 
     template<class T>
-    auto RelicBatch<T>::end() -> iterator
+    auto ChildRelicBatch<T>::end() -> iterator
     {
         SourceRequired();
 
@@ -116,7 +116,7 @@ namespace Arca
     }
 
     template<class T>
-    auto RelicBatch<T>::end() const -> const_iterator
+    auto ChildRelicBatch<T>::end() const -> const_iterator
     {
         SourceRequired();
 
@@ -124,7 +124,7 @@ namespace Arca
     }
 
     template<class T>
-    void RelicBatch<T>::SourceRequired() const
+    void ChildRelicBatch<T>::SourceRequired() const
     {
         if (!source)
             throw BatchNotSetup();

@@ -19,23 +19,29 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BeforeRelicDestroyed.h" />
+    <ClInclude Include="ChildRelicBatch.h" />
+    <ClInclude Include="ChildRelicBatchSource.h" />
+    <ClInclude Include="ChildRelicBatchIterator.h" />
     <ClInclude Include="CuratorDependencyList.h" />
     <ClInclude Include="CuratorHandle.h" />
     <ClInclude Include="CuratorTypeDescription.h" />
     <ClInclude Include="RelicBatch.h" />
     <ClInclude Include="RelicBatchIterator.h" />
     <ClInclude Include="RelicBatchSource.h" />
+    <ClInclude Include="RelicCreated.h" />
+    <ClInclude Include="ExtractShards.h" />
     <ClInclude Include="RelicScribe.h" />
     <ClInclude Include="Shard.h" />
     <ClInclude Include="ShardBatchIterator.h" />
     <ClInclude Include="ShardCreated.h" />
     <ClInclude Include="Exception.h" />
     <ClInclude Include="ShardExtension.h" />
+    <ClInclude Include="StructureFrom.h" />
     <ClInclude Include="ShardScribe.h" />
     <ClInclude Include="ReliquaryOrigin.h" />
     <ClInclude Include="TypedRelic.h" />
-    <ClInclude Include="TypedRelicWithShards.h" />
-    <ClInclude Include="RelicDefinition.h" />
+    <ClInclude Include="DynamicRelicDefinition.h" />
     <ClInclude Include="RelicDynamism.h" />
     <ClInclude Include="RelicID.h" />
     <ClInclude Include="IntervalList.h" />
@@ -58,7 +64,7 @@
     <ClInclude Include="BatchException.h" />
     <ClInclude Include="ShardBatchSource.h" />
     <ClInclude Include="StaticAssert.h" />
-    <ClInclude Include="Relic.h" />
+    <ClInclude Include="DynamicRelic.h" />
     <ClInclude Include="RelicMetadata.h" />
     <ClInclude Include="RelicStructure.h" />
     <ClInclude Include="RelicTraits.h" />
@@ -68,6 +74,7 @@
     <ClCompile Include="CuratorPipeline.cpp" />
     <ClCompile Include="CuratorTypeDescription.cpp" />
     <ClCompile Include="BatchException.cpp" />
+    <ClCompile Include="ChildRelicBatchSource.cpp" />
     <ClCompile Include="RelicBatchSource.cpp" />
     <ClCompile Include="ShardBatchSource.cpp" />
     <ClCompile Include="Exception.cpp" />
@@ -78,9 +85,9 @@
     <ClCompile Include="Curator.cpp" />
     <ClCompile Include="CuratorDependencyNotFound.cpp" />
     <ClCompile Include="CuratorProvider.cpp" />
-    <ClCompile Include="TypedRelic.cpp" />
-    <ClCompile Include="Relic.cpp" />
+    <ClCompile Include="DynamicRelic.cpp" />
     <ClCompile Include="RelicMetadata.cpp" />
+    <ClCompile Include="TypedRelic.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

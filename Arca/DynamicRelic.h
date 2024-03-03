@@ -10,7 +10,7 @@ namespace Arca
 {
     class Reliquary;
 
-    class Relic
+    class DynamicRelic
     {
     public:
         template<class ShardT>
@@ -34,7 +34,7 @@ namespace Arca
         RelicID id;
         RelicDynamism dynamism;
     private:
-        Relic(RelicID id, RelicDynamism dynamism, Reliquary& owner);
+        DynamicRelic(RelicID id, RelicDynamism dynamism, Reliquary& owner);
     private:
         friend Reliquary;
     private:
@@ -45,8 +45,8 @@ namespace Arca
 namespace Inscription
 {
     template<>
-    class Scribe<::Arca::Relic, BinaryArchive> final :
-        public CompositeScribe<::Arca::Relic, BinaryArchive>
+    class Scribe<::Arca::DynamicRelic, BinaryArchive> final :
+        public CompositeScribe<::Arca::DynamicRelic, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;

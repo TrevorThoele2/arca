@@ -3,7 +3,7 @@
 #include "ReliquaryFixture.h"
 
 #include <Arca/Shard.h>
-#include <Arca/TypedRelicWithShards.h>
+#include <Arca/TypedRelic.h>
 
 using namespace Arca;
 
@@ -27,14 +27,15 @@ public:
 class ShardBatchFixture::UnregisteredShard
 {};
 
-class ShardBatchFixture::StaticRelic : public TypedRelicWithShards<Shard>
+class ShardBatchFixture::StaticRelic : public TypedRelic
 {
 public:
     Shard* shard = nullptr;
 public:
-    StaticRelic() = default;
+    void Initialize(Reliquary& reliquary) override;
+    [[nodiscard]] RelicStructure Structure() const override;
 private:
-    void Setup();
+    using Shards = ::Chroma::VariadicTemplate<Shard>;
 };
 
 namespace Arca
@@ -72,13 +73,16 @@ namespace Inscription
     };
 
     template<>
+    struct TableData<::ShardBatchFixture::StaticRelic, BinaryArchive> final
+        : TableDataBase<::ShardBatchFixture::StaticRelic, BinaryArchive>
+    {};
+
+    template<>
     class Scribe<::ShardBatchFixture::StaticRelic, BinaryArchive> final
-        : public ShardScribe<::ShardBatchFixture::StaticRelic, BinaryArchive>
+        : public RelicScribe<::ShardBatchFixture::StaticRelic, BinaryArchive>
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {
-            archive(object.shard);
-        }
+    public:
+        class Table : public TableBase
+        {};
     };
 }

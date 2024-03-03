@@ -45,14 +45,3 @@ namespace Arca
         friend Reliquary;
     };
 }
-
-namespace Inscription
-{
-    template<>
-    class Scribe<::Arca::Curator, BinaryArchive> final :
-        public CompositeScribe<::Arca::Curator, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-    };
-}

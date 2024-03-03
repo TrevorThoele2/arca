@@ -1,5 +1,7 @@
 #pragma once
 
+#include <list>
+
 #include "RelicID.h"
 
 #include "Serialization.h"
@@ -16,8 +18,6 @@ namespace Arca
         virtual void DestroyFromBase(RelicID id) = 0;
 
         [[nodiscard]] virtual SizeT Size() const = 0;
-    protected:
-        friend class Reliquary;
     };
 
     template<class T>
@@ -26,14 +26,14 @@ namespace Arca
     public:
         using RelicT = T;
     private:
-        using List = std::vector<RelicT>;
+        using List = std::list<RelicT>;
     public:
         using iterator = typename List::iterator;
         using const_iterator = typename List::const_iterator;
     public:
         RelicBatchSource() = default;
 
-        void Add(RelicT relic);
+        RelicT* Add(RelicT relic);
 
         iterator Destroy(RelicID destroy);
         iterator Destroy(iterator destroy);
@@ -59,13 +59,14 @@ namespace Arca
     };
 
     template<class T>
-    void RelicBatchSource<T>::Add(RelicT relic)
+    auto RelicBatchSource<T>::Add(RelicT relic) -> RelicT*
     {
         auto found = Find(relic.ID());
         if (found)
-            return;
+            return nullptr;
 
         list.push_back(std::move(relic));
+        return &list.back();
     }
 
     template<class T>

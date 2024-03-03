@@ -51,7 +51,7 @@ SCENARIO_METHOD(SignalBatchFixture, "default signal batch", "[SignalBatch]")
 
             THEN("throws error")
             {
-                REQUIRE_THROWS_AS(signalBatch.begin(), BatchNotSetup);
+                REQUIRE_THROWS_AS(constSignalBatch.begin(), BatchNotSetup);
             }
         }
 
@@ -69,7 +69,7 @@ SCENARIO_METHOD(SignalBatchFixture, "default signal batch", "[SignalBatch]")
 
             THEN("throws error")
             {
-                REQUIRE_THROWS_AS(signalBatch.end(), BatchNotSetup);
+                REQUIRE_THROWS_AS(constSignalBatch.end(), BatchNotSetup);
             }
         }
     }
