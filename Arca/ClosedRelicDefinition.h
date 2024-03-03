@@ -6,15 +6,15 @@
 namespace Arca
 {
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    ShardIndex<ShardT> ClosedRelic::Find() const
+    Index<ShardT> ClosedRelic::Find() const
     {
-        return Arca::ShardIndex<ShardT>(id, Owner());
+        return Arca::Index<ShardT>(id, Owner());
     }
 
     template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int>>
-    MatrixIndex<MatrixT> ClosedRelic::Find() const
+    Index<MatrixT> ClosedRelic::Find() const
     {
-        return Arca::MatrixIndex<MatrixT>(id, Owner());
+        return Arca::Index<MatrixT>(id, Owner());
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>

@@ -12,7 +12,7 @@ namespace Arca
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int>>
-    RelicT* Curator::MutablePointer(RelicIndex<RelicT> index)
+    RelicT* Curator::MutablePointer(Index<RelicT> index)
     {
         return MutablePointer<RelicT>(index.ID());
     }
@@ -30,7 +30,7 @@ namespace Arca
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int>>
-    RelicT* Curator::MutablePointer(GlobalIndex<RelicT>)
+    RelicT* Curator::MutablePointer(Index<RelicT>)
     {
         return MutablePointer<RelicT>();
     }
@@ -48,7 +48,7 @@ namespace Arca
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    ShardT* Curator::MutablePointer(ShardIndex<ShardT> index)
+    ShardT* Curator::MutablePointer(Index<ShardT> index)
     {
         return MutablePointer<ShardT>(index.ID());
     }

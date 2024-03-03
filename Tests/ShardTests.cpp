@@ -202,7 +202,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
             THEN("signal is emitted for known shard")
             {
                 REQUIRE(knownCreatedSignals.Size() == 1);
-                REQUIRE(knownCreatedSignals.begin()->index == shard);
+                REQUIRE(knownCreatedSignals.begin()->reference == shard);
             }
 
             WHEN("destroying shard")
@@ -218,7 +218,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
                 THEN("signal is emitted for known relic")
                 {
                     REQUIRE(knownDestroyingSignals.Size() == 1);
-                    REQUIRE(knownDestroyingSignals.begin()->index == shard);
+                    REQUIRE(knownDestroyingSignals.begin()->reference == shard);
                 }
             }
 
@@ -235,7 +235,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
                 THEN("signal is emitted for known relic")
                 {
                     REQUIRE(knownDestroyingSignals.Size() == 1);
-                    REQUIRE(knownDestroyingSignals.begin()->index == shard);
+                    REQUIRE(knownDestroyingSignals.begin()->reference == shard);
                 }
             }
         }
@@ -264,7 +264,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
             THEN("signal is emitted for known shard")
             {
                 REQUIRE(knownCreatedSignals.Size() == 1);
-                REQUIRE(knownCreatedSignals.begin()->index == shard);
+                REQUIRE(knownCreatedSignals.begin()->reference == shard);
             }
 
             WHEN("destroying shard")
@@ -280,7 +280,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
                 THEN("signal is emitted for known relic")
                 {
                     REQUIRE(knownDestroyingSignals.Size() == 1);
-                    REQUIRE(knownDestroyingSignals.begin()->index == shard);
+                    REQUIRE(knownDestroyingSignals.begin()->reference == shard);
                 }
             }
 
@@ -297,7 +297,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
                 THEN("signal is emitted for known relic")
                 {
                     REQUIRE(knownDestroyingSignals.Size() == 1);
-                    REQUIRE(knownDestroyingSignals.begin()->index == shard);
+                    REQUIRE(knownDestroyingSignals.begin()->reference == shard);
                 }
             }
         }

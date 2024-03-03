@@ -195,7 +195,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 inputArchiveSize = inputArchive.TellStream();
             }
 
-            auto loadedRelic = Arca::RelicIndex<OpenRelic>(savedRelic->ID(), *loadedReliquary);
+            auto loadedRelic = Arca::Index<OpenRelic>(savedRelic->ID(), *loadedReliquary);
             auto shardFromRelic = loadedRelic->Find<BasicShard>();
 
             THEN("has relic")
@@ -207,7 +207,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
 
             THEN("relic has shard")
             {
-                auto shardFromReliquary = Arca::ShardIndex<BasicShard>(loadedRelic->ID(), *loadedReliquary);
+                auto shardFromReliquary = Arca::Index<BasicShard>(loadedRelic->ID(), *loadedReliquary);
                 REQUIRE(shardFromReliquary);
                 REQUIRE(shardFromRelic);
                 REQUIRE(loadedRelic->Contains<BasicShard>());
@@ -244,7 +244,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 inputArchive(*loadedReliquary);
             }
 
-            auto loadedRelic = Arca::RelicIndex<OpenRelic>(savedRelic->ID(), *loadedReliquary);
+            auto loadedRelic = Arca::Index<OpenRelic>(savedRelic->ID(), *loadedReliquary);
 
             THEN("has relic")
             {
@@ -256,7 +256,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             THEN("relic does not have shard")
             {
                 REQUIRE_THROWS_AS(loadedRelic->Find<BasicShard>().Get(), NotRegistered);
-                REQUIRE_THROWS_AS(Arca::ShardIndex<BasicShard>(loadedRelic->ID(), *loadedReliquary).Get(), NotRegistered);
+                REQUIRE_THROWS_AS(Arca::Index<BasicShard>(loadedRelic->ID(), *loadedReliquary).Get(), NotRegistered);
             }
 
             THEN("relic owner is loaded reliquary")
@@ -281,7 +281,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 inputArchive(*loadedReliquary);
             }
 
-            auto loadedRelic = Arca::RelicIndex<OpenRelic>(savedRelic->ID(), *loadedReliquary);
+            auto loadedRelic = Arca::Index<OpenRelic>(savedRelic->ID(), *loadedReliquary);
             auto shardFromRelic = loadedRelic->Find<BasicShardWithDifferentInputHandle>();
 
             THEN("has relic")
@@ -294,7 +294,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             THEN("relic has shard")
             {
                 auto shardFromReliquary =
-                    Arca::ShardIndex<BasicShardWithDifferentInputHandle>(loadedRelic->ID(), *loadedReliquary);
+                    Arca::Index<BasicShardWithDifferentInputHandle>(loadedRelic->ID(), *loadedReliquary);
                 REQUIRE(shardFromReliquary);
                 REQUIRE(shardFromRelic);
                 REQUIRE(loadedRelic->Contains<BasicShardWithDifferentInputHandle>());
@@ -327,7 +327,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             .Register<GlobalRelic>(relicData, shardData)
             .Actualize();
 
-        auto savedRelic = Arca::GlobalIndex<GlobalRelic>(*savedReliquary);
+        auto savedRelic = Arca::Index<GlobalRelic>(*savedReliquary);
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
@@ -349,7 +349,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 inputArchiveSize = inputArchive.TellStream();
             }
 
-            auto loadedRelic = Arca::GlobalIndex<GlobalRelic>(*loadedReliquary);
+            auto loadedRelic = Arca::Index<GlobalRelic>(*loadedReliquary);
 
             THEN("loaded relic has value of saved")
             {
@@ -397,7 +397,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 inputArchiveSize = inputArchive.TellStream();
             }
 
-            auto loadedRelic = Arca::RelicIndex<TypedClosedRelic>(savedRelic->ID(), *loadedReliquary);
+            auto loadedRelic = Arca::Index<TypedClosedRelic>(savedRelic->ID(), *loadedReliquary);
 
             THEN("loaded relic has value of saved")
             {
@@ -448,7 +448,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 inputArchiveSize = inputArchive.TellStream();
             }
 
-            auto loadedRelic = Arca::RelicIndex<TypedOpenRelic>(savedRelic->ID(), *loadedReliquary);
+            auto loadedRelic = Arca::Index<TypedOpenRelic>(savedRelic->ID(), *loadedReliquary);
             auto loadedOtherShard = loadedRelic->Find<OtherShard>();
 
             THEN("loaded relic has value of saved")
@@ -504,7 +504,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 inputArchiveSize = inputArchive.TellStream();
             }
 
-            auto loadedRelic = Arca::RelicIndex<MovableOnlyRelic>(savedRelic->ID(), *loadedReliquary);
+            auto loadedRelic = Arca::Index<MovableOnlyRelic>(savedRelic->ID(), *loadedReliquary);
 
             THEN("loaded relic has value of saved")
             {
@@ -613,7 +613,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "postulate serialization", "
             .Postulate<int>(
                 [](Reliquary& reliquary)
                 {
-                    const GlobalIndex<GlobalRelic> backing(reliquary);
+                    const Index<GlobalRelic> backing(reliquary);
                     return backing->myInt;
                 })
             .Actualize();
@@ -633,7 +633,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "postulate serialization", "
                 .Postulate<int>(
                     [](Reliquary& reliquary)
                     {
-                        const GlobalIndex<GlobalRelic> backing(reliquary);
+                        const Index<GlobalRelic> backing(reliquary);
                         return backing->myInt;
                     })
                 .Actualize();
@@ -672,7 +672,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
             .Register<GlobalRelicNullInscription>(relicData, shardData)
             .Actualize();
 
-        auto savedRelic = Arca::GlobalIndex<GlobalRelicNullInscription>(*savedReliquary);
+        auto savedRelic = Arca::Index<GlobalRelicNullInscription>(*savedReliquary);
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
@@ -694,7 +694,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
                 inputArchiveSize = inputArchive.TellStream();
             }
 
-            auto loadedRelic = Arca::GlobalIndex<GlobalRelicNullInscription>(*loadedReliquary);
+            auto loadedRelic = Arca::Index<GlobalRelicNullInscription>(*loadedReliquary);
 
             THEN("loaded relic does not have saved value")
             {
@@ -744,7 +744,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
                 inputArchiveSize = inputArchive.TellStream();
             }
 
-            auto loadedRelic = Arca::RelicIndex<TypedClosedRelicNullInscription>(savedRelic->ID(), *loadedReliquary);
+            auto loadedRelic = Arca::Index<TypedClosedRelicNullInscription>(savedRelic->ID(), *loadedReliquary);
 
             THEN("loaded relic does not exist")
             {
@@ -797,7 +797,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
                 inputArchiveSize = inputArchive.TellStream();
             }
 
-            auto loadedRelic = Arca::RelicIndex<TypedOpenRelicNullInscription>(savedRelic->ID(), *loadedReliquary);
+            auto loadedRelic = Arca::Index<TypedOpenRelicNullInscription>(savedRelic->ID(), *loadedReliquary);
 
             THEN("loaded relic does not exist")
             {

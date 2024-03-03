@@ -1,6 +1,7 @@
 #pragma once
 
-#include "IndexTypeFor.h"
+#include "Index.h"
+#include "ReferenceTypeFor.h"
 #include "TypeFor.h"
 #include "UsableForGlobalIndex.h"
 
@@ -11,23 +12,23 @@
 namespace Arca
 {
     template<class T>
-    class GlobalIndex
+    class Index<T, std::enable_if_t<usable_for_global_index_v<T>>>
     {
     private:
         using StoredT = T*;
     public:
         using ValueT = T;
     public:
-        GlobalIndex() = default;
-        explicit GlobalIndex(Reliquary& owner);
-        GlobalIndex(const GlobalIndex& arg);
-        GlobalIndex(GlobalIndex&& arg) noexcept;
+        Index() = default;
+        explicit Index(Reliquary& owner);
+        Index(const Index& arg);
+        Index(Index&& arg) noexcept;
 
-        GlobalIndex& operator=(const GlobalIndex& arg);
-        GlobalIndex& operator=(GlobalIndex&& arg) noexcept;
+        Index& operator=(const Index& arg);
+        Index& operator=(Index&& arg) noexcept;
 
-        bool operator==(const GlobalIndex& arg) const;
-        bool operator!=(const GlobalIndex& arg) const;
+        bool operator==(const Index& arg) const;
+        bool operator!=(const Index& arg) const;
 
         explicit operator bool() const;
 
@@ -35,7 +36,7 @@ namespace Arca
 
         operator const ValueT* () const;
 
-        operator GlobalIndex<const T>() const;
+        operator Index<const T>() const;
 
         [[nodiscard]] const ValueT& operator*() const;
         [[nodiscard]] const ValueT* operator->() const;
@@ -56,24 +57,24 @@ namespace Arca
     };
 
     template<class T>
-    GlobalIndex<T>::GlobalIndex(Reliquary& owner) : owner(&owner)
+    Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::Index(Reliquary& owner) : owner(&owner)
     {
         value = FindValueFromOwner();
     }
 
     template<class T>
-    GlobalIndex<T>::GlobalIndex(const GlobalIndex& arg) : owner(arg.owner)
+    Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::Index(const Index& arg) : owner(arg.owner)
     {
         value = FindValueFromOwner();
     }
 
     template<class T>
-    GlobalIndex<T>::GlobalIndex(GlobalIndex&& arg) noexcept :
+    Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::Index(Index&& arg) noexcept :
         owner(arg.owner), value(arg.value)
     {}
 
     template<class T>
-    auto GlobalIndex<T>::operator=(const GlobalIndex& arg) -> GlobalIndex&
+    auto Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::operator=(const Index& arg) -> Index&
     {
         owner = arg.owner;
         value = FindValueFromOwner();
@@ -81,7 +82,7 @@ namespace Arca
     }
 
     template<class T>
-    auto GlobalIndex<T>::operator=(GlobalIndex&& arg) noexcept -> GlobalIndex&
+    auto Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::operator=(Index&& arg) noexcept -> Index&
     {
         owner = arg.owner;
         value = arg.value;
@@ -89,25 +90,25 @@ namespace Arca
     }
 
     template<class T>
-    bool GlobalIndex<T>::operator==(const GlobalIndex& arg) const
+    bool Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::operator==(const Index& arg) const
     {
         return owner == arg.owner;
     }
 
     template<class T>
-    bool GlobalIndex<T>::operator!=(const GlobalIndex& arg) const
+    bool Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::operator!=(const Index& arg) const
     {
         return !(*this == arg);
     }
 
     template<class T>
-    GlobalIndex<T>::operator bool() const
+    Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::operator bool() const
     {
         return IsSetup();
     }
 
     template<class T>
-    GlobalIndex<T>::operator Handle() const
+    Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::operator Handle() const
     {
         if (Owner() == nullptr)
             return {};
@@ -116,31 +117,31 @@ namespace Arca
     }
 
     template<class T>
-    GlobalIndex<T>::operator const ValueT* () const
+    Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::operator const ValueT* () const
     {
         return Get();
     }
 
     template<class T>
-    GlobalIndex<T>::operator GlobalIndex<const T>() const
+    Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::operator Index<const T>() const
     {
-        return GlobalIndex<const T>(*owner);
+        return Index<const T>(*owner);
     }
 
     template<class T>
-    auto GlobalIndex<T>::operator*() const -> const ValueT&
+    auto Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::operator*() const -> const ValueT&
     {
         return *Get();
     }
 
     template<class T>
-    auto GlobalIndex<T>::operator->() const -> const ValueT*
+    auto Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::operator->() const -> const ValueT*
     {
         return Get();
     }
 
     template<class T>
-    auto GlobalIndex<T>::Get() const -> const ValueT*
+    auto Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::Get() const -> const ValueT*
     {
         if (!IsSetup())
             value = FindValueFromOwner();
@@ -149,7 +150,7 @@ namespace Arca
     }
 
     template<class T>
-    RelicID GlobalIndex<T>::ID() const
+    RelicID Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::ID() const
     {
         if (!Owner())
             return 0;
@@ -158,13 +159,13 @@ namespace Arca
     }
 
     template<class T>
-    Reliquary* GlobalIndex<T>::Owner() const
+    Reliquary* Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::Owner() const
     {
         return owner;
     }
 
     template<class T>
-    auto GlobalIndex<T>::FindValueFromOwner() const -> StoredT
+    auto Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::FindValueFromOwner() const -> StoredT
     {
         if (owner == nullptr)
             return EmptyValue();
@@ -173,38 +174,38 @@ namespace Arca
     }
 
     template<class T>
-    bool GlobalIndex<T>::IsSetup() const
+    bool Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::IsSetup() const
     {
         return value != nullptr;
     }
 
     template<class T>
-    constexpr auto GlobalIndex<T>::EmptyValue() -> StoredT
+    constexpr auto Index<T, std::enable_if_t<usable_for_global_index_v<T>>>::EmptyValue() -> StoredT
     {
         return nullptr;
     }
 
     template<class T>
-    struct IndexTypeFor<T, std::enable_if_t<usable_for_global_index_v<T>>>
+    struct ReferenceTypeFor<T, std::enable_if_t<usable_for_global_index_v<T>>>
     {
-        using Type = GlobalIndex<T>;
+        using Type = Index<T, std::enable_if_t<usable_for_global_index_v<T>>>;
     };
 
     template<class T, std::enable_if_t<usable_for_global_index_v<T>, int> = 0>
-    GlobalIndex<T> ToReference(RelicID, Reliquary& owner)
+    Index<T, std::enable_if_t<usable_for_global_index_v<T>>> ToReference(RelicID, Reliquary& owner)
     {
-        return GlobalIndex<T>(owner);
+        return Index<T, std::enable_if_t<usable_for_global_index_v<T>>>(owner);
     }
 }
 
 namespace Inscription
 {
     template<class T>
-    class Scribe<Arca::GlobalIndex<T>, BinaryArchive>
-        : public CompositeScribe<Arca::GlobalIndex<T>, BinaryArchive>
+    class Scribe<Arca::Index<T, std::enable_if_t<Arca::usable_for_global_index_v<T>>>, BinaryArchive>
+        : public CompositeScribe<Arca::Index<T, std::enable_if_t<Arca::usable_for_global_index_v<T>>>, BinaryArchive>
     {
     private:
-        using BaseT = CompositeScribe<Arca::GlobalIndex<T>, BinaryArchive>;
+        using BaseT = CompositeScribe<Arca::Index<T, std::enable_if_t<Arca::usable_for_global_index_v<T>>>, BinaryArchive>;
     public:
         using ObjectT = typename BaseT::ObjectT;
         using ArchiveT = typename BaseT::ArchiveT;

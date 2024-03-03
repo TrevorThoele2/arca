@@ -11,57 +11,16 @@ using namespace Arca;
 class ReliquaryTestsFixture : public GeneralFixture
 {
 public:
-    class BasicShard
-    {
-    public:
-        std::string myValue;
-    public:
-        BasicShard() = default;
-        explicit BasicShard(std::string myValue);
-    };
+    class BasicShard;
+    class OtherBasicShard;
+    class OtherShard;
 
-    class OtherBasicShard
-    {
-    public:
-        std::string myValue;
-    public:
-        OtherBasicShard() = default;
-        explicit OtherBasicShard(int myValue);
-    };
+    class BasicTypedRelic;
+    class GlobalRelic;
 
-    class OtherShard
-    {
-    public:
-        int myValue;
-    public:
-        OtherShard() = default;
-        explicit OtherShard(int myValue);
-    };
+    class BasicCurator;
 
-    class BasicTypedRelic final : public ClosedTypedRelic<BasicTypedRelic>
-    {
-    public:
-        ShardIndex<BasicShard> basicShard;
-    public:
-        explicit BasicTypedRelic(Init init);
-    };
-
-    class GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
-    {
-    public:
-        ShardIndex<BasicShard> basicShard;
-    public:
-        explicit GlobalRelic(Init init);
-    };
-
-    class BasicCurator final : public Curator
-    {
-    public:
-        using Curator::Curator;
-    };
-
-    struct BasicSignal
-    {};
+    struct BasicSignal;
 };
 
 namespace Arca
@@ -116,6 +75,58 @@ namespace Arca
         static inline const TypeName typeName = "ReliquaryTestsBasicSignal";
     };
 }
+
+class ReliquaryTestsFixture::BasicShard
+{
+public:
+    std::string myValue;
+public:
+    BasicShard() = default;
+    explicit BasicShard(std::string myValue);
+};
+
+class ReliquaryTestsFixture::OtherBasicShard
+{
+public:
+    std::string myValue;
+public:
+    OtherBasicShard() = default;
+    explicit OtherBasicShard(int myValue);
+};
+
+class ReliquaryTestsFixture::OtherShard
+{
+public:
+    int myValue;
+public:
+    OtherShard() = default;
+    explicit OtherShard(int myValue);
+};
+
+class ReliquaryTestsFixture::BasicTypedRelic final : public ClosedTypedRelic<BasicTypedRelic>
+{
+public:
+    Index<BasicShard> basicShard;
+public:
+    explicit BasicTypedRelic(Init init);
+};
+
+class ReliquaryTestsFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
+{
+public:
+    Index<BasicShard> basicShard;
+public:
+    explicit GlobalRelic(Init init);
+};
+
+class ReliquaryTestsFixture::BasicCurator final : public Curator
+{
+public:
+    using Curator::Curator;
+};
+
+struct ReliquaryTestsFixture::BasicSignal
+{};
 
 namespace Inscription
 {

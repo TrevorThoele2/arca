@@ -77,7 +77,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle comparison combinations", "[handle]"
         auto typedRelicHandle1 = AsHandle(*typedRelic1);
         auto typedRelicShardHandle1 = AsHandle<Shard>(typedRelic1->ID(), *reliquary);;
 
-        auto globalRelic1 = Arca::GlobalIndex<GlobalRelic>(*reliquary);
+        auto globalRelic1 = Arca::Index<GlobalRelic>(*reliquary);
         auto globalRelicHandle1 = AsHandle(*globalRelic1);
 
         auto closedRelic1 = reliquary->Do<CreateWith<ClosedRelic>>(RelicStructure { TypeFor<Shard>() });
@@ -93,7 +93,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle comparison combinations", "[handle]"
         auto typedRelicHandle2 = AsHandle(*typedRelic2);
         auto typedRelicShardHandle2 = AsHandle<Shard>(typedRelic2->ID(), *reliquary);;
 
-        auto globalRelic2 = Arca::GlobalIndex<GlobalRelic>(*reliquary);
+        auto globalRelic2 = Arca::Index<GlobalRelic>(*reliquary);
         auto globalRelicHandle2 = AsHandle(*globalRelic2);
 
         auto closedRelic2 = reliquary->Do<CreateWith<ClosedRelic>>(RelicStructure{ TypeFor<Shard>() });
@@ -363,7 +363,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle actualizations combinations", "[hand
         auto typedRelicHandle = AsHandle(*typedRelic);
         auto typedRelicShardHandle = AsHandle<Shard>(typedRelic->ID(), *reliquary);;
 
-        auto globalRelic = Arca::GlobalIndex<GlobalRelic>(*reliquary);
+        auto globalRelic = Arca::Index<GlobalRelic>(*reliquary);
         auto globalRelicHandle = AsHandle(*globalRelic);
 
         auto closedRelic = reliquary->Do<CreateWith<ClosedRelic>>(RelicStructure{ TypeFor<Shard>() });

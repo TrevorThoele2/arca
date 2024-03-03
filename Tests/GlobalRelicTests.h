@@ -11,31 +11,9 @@ using namespace Arca;
 class GlobalRelicTestsFixture : public GeneralFixture
 {
 public:
-    class BasicShard
-    {
-    public:
-        std::string myValue;
-    public:
-        BasicShard() = default;
-        explicit BasicShard(std::string myValue);
-    };
-
-    class BasicTypedRelic final : public ClosedTypedRelic<BasicTypedRelic>
-    {
-    public:
-        ShardIndex<BasicShard> basicShard;
-    public:
-        explicit BasicTypedRelic(Init init);
-    };
-
-    class GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
-    {
-    public:
-        int myValue = 0;
-        ShardIndex<BasicShard> basicShard;
-    public:
-        explicit GlobalRelic(Init init);
-    };
+    class BasicShard;
+    class BasicTypedRelic;
+    class GlobalRelic;
 };
 
 namespace Arca
@@ -62,6 +40,32 @@ namespace Arca
         static const Locality locality = Locality::Global;
     };
 }
+
+class GlobalRelicTestsFixture::BasicShard
+{
+public:
+    std::string myValue;
+public:
+    BasicShard() = default;
+    explicit BasicShard(std::string myValue);
+};
+
+class GlobalRelicTestsFixture::BasicTypedRelic final : public ClosedTypedRelic<BasicTypedRelic>
+{
+public:
+    Index<BasicShard> basicShard;
+public:
+    explicit BasicTypedRelic(Init init);
+};
+
+class GlobalRelicTestsFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
+{
+public:
+    int myValue = 0;
+    Index<BasicShard> basicShard;
+public:
+    explicit GlobalRelic(Init init);
+};
 
 namespace Inscription
 {

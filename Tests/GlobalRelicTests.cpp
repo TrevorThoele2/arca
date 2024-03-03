@@ -29,11 +29,11 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
 
         WHEN("retrieving global relic")
         {
-            const auto globalRelic = Arca::GlobalIndex<GlobalRelic>(*reliquary);
+            const auto globalRelic = Arca::Index<GlobalRelic>(*reliquary);
 
             THEN("structure has been satisfied")
             {
-                REQUIRE(Arca::ShardIndex<BasicShard>(globalRelic->ID(), globalRelic->Owner()));
+                REQUIRE(Arca::Index<BasicShard>(globalRelic->ID(), globalRelic->Owner()));
                 REQUIRE(globalRelic->basicShard);
             }
 
@@ -44,7 +44,7 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
 
             WHEN("retrieving global relic as open")
             {
-                const auto asOpen = Arca::RelicIndex<OpenRelic>(globalRelic->ID(), globalRelic->Owner());
+                const auto asOpen = Arca::Index<OpenRelic>(globalRelic->ID(), globalRelic->Owner());
 
                 THEN("open is empty")
                 {
@@ -54,7 +54,7 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
 
             WHEN("retrieving as closed")
             {
-                const auto asClosed = Arca::RelicIndex<ClosedRelic>(globalRelic->ID(), globalRelic->Owner());
+                const auto asClosed = Arca::Index<ClosedRelic>(globalRelic->ID(), globalRelic->Owner());
 
                 THEN("closed is empty")
                 {
@@ -64,7 +64,7 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
 
             WHEN("retrieving as typed")
             {
-                const auto asTyped = Arca::RelicIndex<BasicTypedRelic>(globalRelic->ID(), globalRelic->Owner());
+                const auto asTyped = Arca::Index<BasicTypedRelic>(globalRelic->ID(), globalRelic->Owner());
 
                 THEN("typed is empty")
                 {
@@ -87,7 +87,7 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
                 REQUIRE_NOTHROW(origin.Postulate<int>(
                     [](Reliquary& reliquary)
                     {
-                        const GlobalIndex<GlobalRelic> backing(reliquary);
+                        const Index<GlobalRelic> backing(reliquary);
                         return backing->myValue;
                     }));
             }
@@ -103,14 +103,14 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
             .Postulate<int>(
                 [](Reliquary& reliquary)
                 {
-                    const GlobalIndex<GlobalRelic> backing(reliquary);
+                    const Index<GlobalRelic> backing(reliquary);
                     return backing->myValue;
                 })
             .Actualize();
 
         WHEN("retrieving backing relic type")
         {
-            GlobalIndex<GlobalRelic> global(*reliquary);
+            Index<GlobalRelic> global(*reliquary);
 
             THEN("is retrieved")
             {

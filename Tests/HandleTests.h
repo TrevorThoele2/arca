@@ -11,48 +11,15 @@ using namespace Arca;
 class HandleTestsFixture : public GeneralFixture
 {
 public:
-    class Shard
-    {
-    public:
-        std::string myValue;
-    public:
-        Shard() = default;
-        explicit Shard(std::string myValue);
-    };
+    class Shard;
+    class OtherShard;
 
-    class OtherShard
-    {
-    public:
-        std::string myValue;
-    public:
-        OtherShard() = default;
-        explicit OtherShard(std::string myValue);
-    };
+    class TypedRelic;
+    class GlobalRelic;
 
-    class TypedRelic final : public ClosedTypedRelic<TypedRelic>
-    {
-    public:
-        ShardIndex<Shard> basicShard;
-    public:
-        explicit TypedRelic(Init init);
-    };
+    class Curator;
 
-    class GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
-    {
-    public:
-        ShardIndex<Shard> basicShard;
-    public:
-        explicit GlobalRelic(Init init);
-    };
-
-    class Curator final : public Arca::Curator
-    {
-    public:
-        using Arca::Curator::Curator;
-    };
-
-    struct Signal
-    {};
+    struct Signal;
 };
 
 namespace Arca
@@ -100,6 +67,49 @@ namespace Arca
         static inline const TypeName typeName = "HandleTestsBasicSignal";
     };
 }
+
+class HandleTestsFixture::Shard
+{
+public:
+    std::string myValue;
+public:
+    Shard() = default;
+    explicit Shard(std::string myValue);
+};
+
+class HandleTestsFixture::OtherShard
+{
+public:
+    std::string myValue;
+public:
+    OtherShard() = default;
+    explicit OtherShard(std::string myValue);
+};
+
+class HandleTestsFixture::TypedRelic final : public ClosedTypedRelic<TypedRelic>
+{
+public:
+    Index<Shard> basicShard;
+public:
+    explicit TypedRelic(Init init);
+};
+
+class HandleTestsFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
+{
+public:
+    Index<Shard> basicShard;
+public:
+    explicit GlobalRelic(Init init);
+};
+
+class HandleTestsFixture::Curator final : public Arca::Curator
+{
+public:
+    using Arca::Curator::Curator;
+};
+
+struct HandleTestsFixture::Signal
+{};
 
 namespace Inscription
 {

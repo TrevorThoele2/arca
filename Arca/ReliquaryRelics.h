@@ -27,18 +27,18 @@ namespace Arca
     {
     public:
         template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicIndex<RelicT> Create(ConstructorArgs&& ... constructorArgs);
+        Index<RelicT> Create(ConstructorArgs&& ... constructorArgs);
         template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicIndex<RelicT> CreateWith(const RelicStructure& structure, ConstructorArgs&& ... constructorArgs);
+        Index<RelicT> CreateWith(const RelicStructure& structure, ConstructorArgs&& ... constructorArgs);
         template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicIndex<RelicT> CreateWith(const std::string& structureName, ConstructorArgs&& ... constructorArgs);
+        Index<RelicT> CreateWith(const std::string& structureName, ConstructorArgs&& ... constructorArgs);
 
         template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicIndex<RelicT> CreateChild(const Handle& parent, ConstructorArgs&& ... constructorArgs);
+        Index<RelicT> CreateChild(const Handle& parent, ConstructorArgs&& ... constructorArgs);
         template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicIndex<RelicT> CreateChildWith(const Handle& parent, const RelicStructure& structure, ConstructorArgs&& ... constructorArgs);
+        Index<RelicT> CreateChildWith(const Handle& parent, const RelicStructure& structure, ConstructorArgs&& ... constructorArgs);
         template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicIndex<RelicT> CreateChildWith(const Handle& parent, const std::string& structureName, ConstructorArgs&& ... constructorArgs);
+        Index<RelicT> CreateChildWith(const Handle& parent, const std::string& structureName, ConstructorArgs&& ... constructorArgs);
 
         void Destroy(const TypeName& typeName, RelicID id);
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>

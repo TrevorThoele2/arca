@@ -13,23 +13,6 @@ public:
     class Relic;
 };
 
-class ConstShardTestsFixture::Shard
-{
-public:
-    int value = 100;
-public:
-    Shard() = default;
-    explicit Shard(int value);
-};
-
-class ConstShardTestsFixture::Relic final : public ClosedTypedRelic<Relic>
-{
-public:
-    ShardIndex<const Shard> shard;
-
-    explicit Relic(Init init);
-};
-
 namespace Arca
 {
     template<>
@@ -46,6 +29,23 @@ namespace Arca
         static inline const TypeName typeName = "ConstShardTestsRelic";
     };
 }
+
+class ConstShardTestsFixture::Shard
+{
+public:
+    int value = 100;
+public:
+    Shard() = default;
+    explicit Shard(int value);
+};
+
+class ConstShardTestsFixture::Relic final : public ClosedTypedRelic<Relic>
+{
+public:
+    Index<const Shard> shard;
+
+    explicit Relic(Init init);
+};
 
 namespace Inscription
 {

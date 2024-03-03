@@ -1,6 +1,7 @@
 #pragma once
 
-#include "IndexTypeFor.h"
+#include "Index.h"
+#include "ReferenceTypeFor.h"
 #include "UsableForRelicIndex.h"
 
 #include "TypeFor.h"
@@ -11,21 +12,21 @@
 namespace Arca
 {
     template<class T>
-    class RelicIndex
+    class Index<T, std::enable_if_t<usable_for_relic_index_v<T>>>
     {
     public:
         using ValueT = T;
     public:
-        RelicIndex() = default;
-        RelicIndex(RelicID id, Reliquary& owner);
-        RelicIndex(const RelicIndex& arg);
-        RelicIndex(RelicIndex&& arg) noexcept;
+        Index() = default;
+        Index(RelicID id, Reliquary& owner);
+        Index(const Index& arg);
+        Index(Index&& arg) noexcept;
 
-        RelicIndex& operator=(const RelicIndex& arg);
-        RelicIndex& operator=(RelicIndex&& arg) noexcept;
+        Index& operator=(const Index& arg);
+        Index& operator=(Index&& arg) noexcept;
 
-        bool operator==(const RelicIndex& arg) const;
-        bool operator!=(const RelicIndex& arg) const;
+        bool operator==(const Index& arg) const;
+        bool operator!=(const Index& arg) const;
 
         explicit operator bool() const;
 
@@ -33,7 +34,7 @@ namespace Arca
 
         operator const ValueT* () const;
 
-        operator RelicIndex<const T>() const;
+        operator Index<const T>() const;
 
         [[nodiscard]] const ValueT& operator*() const;
         [[nodiscard]] const ValueT* operator->() const;
@@ -52,22 +53,22 @@ namespace Arca
     };
 
     template<class T>
-    RelicIndex<T>::RelicIndex(RelicID id, Reliquary& owner) :
+    Index<T, std::enable_if_t<usable_for_relic_index_v<T>>>::Index(RelicID id, Reliquary& owner) :
         id(id), owner(&owner)
     {}
 
     template<class T>
-    RelicIndex<T>::RelicIndex(const RelicIndex& arg) :
+    Index<T, std::enable_if_t<usable_for_relic_index_v<T>>>::Index(const Index& arg) :
         id(arg.id), owner(arg.owner)
     {}
 
     template<class T>
-    RelicIndex<T>::RelicIndex(RelicIndex&& arg) noexcept :
+    Index<T, std::enable_if_t<usable_for_relic_index_v<T>>>::Index(Index&& arg) noexcept :
         id(arg.id), owner(arg.owner)
     {}
 
     template<class T>
-    auto RelicIndex<T>::operator=(const RelicIndex& arg) -> RelicIndex&
+    auto Index<T, std::enable_if_t<usable_for_relic_index_v<T>>>::operator=(const Index& arg) -> Index&
     {
         id = arg.id;
         owner = arg.owner;
@@ -75,7 +76,7 @@ namespace Arca
     }
 
     template<class T>
-    auto RelicIndex<T>::operator=(RelicIndex&& arg) noexcept -> RelicIndex&
+    auto Index<T, std::enable_if_t<usable_for_relic_index_v<T>>>::operator=(Index&& arg) noexcept -> Index&
     {
         id = arg.id;
         owner = arg.owner;
@@ -83,73 +84,73 @@ namespace Arca
     }
 
     template<class T>
-    bool RelicIndex<T>::operator==(const RelicIndex& arg) const
+    bool Index<T, std::enable_if_t<usable_for_relic_index_v<T>>>::operator==(const Index& arg) const
     {
         return id == arg.id && owner == arg.owner;
     }
 
     template<class T>
-    bool RelicIndex<T>::operator!=(const RelicIndex& arg) const
+    bool Index<T, std::enable_if_t<usable_for_relic_index_v<T>>>::operator!=(const Index& arg) const
     {
         return !(*this == arg);
     }
 
     template<class T>
-    RelicIndex<T>::operator bool() const
+    Index<T, std::enable_if_t<usable_for_relic_index_v<T>>>::operator bool() const
     {
         return Get() != nullptr;
     }
 
     template<class T>
-    RelicIndex<T>::operator Handle() const
+    Index<T, std::enable_if_t<usable_for_relic_index_v<T>>>::operator Handle() const
     {
         return Handle(ID(), *Owner(), TypeFor<T>(), HandleObjectTypeFor<T>());
     }
 
     template<class T>
-    RelicIndex<T>::operator const ValueT* () const
+    Index<T, std::enable_if_t<usable_for_relic_index_v<T>>>::operator const ValueT* () const
     {
         return Get();
     }
 
     template<class T>
-    RelicIndex<T>::operator RelicIndex<const T>() const
+    Index<T, std::enable_if_t<usable_for_relic_index_v<T>>>::operator Index<const T>() const
     {
-        return RelicIndex<const T>(id, *owner);
+        return Index<const T>(id, *owner);
     }
 
     template<class T>
-    auto RelicIndex<T>::operator*() const -> const ValueT&
+    auto Index<T, std::enable_if_t<usable_for_relic_index_v<T>>>::operator*() const -> const ValueT&
     {
         return *Get();
     }
 
     template<class T>
-    auto RelicIndex<T>::operator->() const -> const ValueT*
+    auto Index<T, std::enable_if_t<usable_for_relic_index_v<T>>>::operator->() const -> const ValueT*
     {
         return Get();
     }
 
     template<class T>
-    auto RelicIndex<T>::Get() const -> const ValueT*
+    auto Index<T, std::enable_if_t<usable_for_relic_index_v<T>>>::Get() const -> const ValueT*
     {
         return FindValueFromOwner();
     }
 
     template<class T>
-    RelicID RelicIndex<T>::ID() const
+    RelicID Index<T, std::enable_if_t<usable_for_relic_index_v<T>>>::ID() const
     {
         return id;
     }
 
     template<class T>
-    Reliquary* RelicIndex<T>::Owner() const
+    Reliquary* Index<T, std::enable_if_t<usable_for_relic_index_v<T>>>::Owner() const
     {
         return owner;
     }
 
     template<class T>
-    auto RelicIndex<T>::FindValueFromOwner() const -> ValueT*
+    auto Index<T, std::enable_if_t<usable_for_relic_index_v<T>>>::FindValueFromOwner() const -> ValueT*
     {
         if (owner == nullptr)
             return nullptr;
@@ -158,26 +159,26 @@ namespace Arca
     }
 
     template<class T>
-    struct IndexTypeFor<T, std::enable_if_t<usable_for_relic_index_v<T>>>
+    struct ReferenceTypeFor<T, std::enable_if_t<usable_for_relic_index_v<T>>>
     {
-        using Type = RelicIndex<T>;
+        using Type = Index<T, std::enable_if_t<usable_for_relic_index_v<T>>>;
     };
 
     template<class T, std::enable_if_t<usable_for_relic_index_v<T>, int> = 0>
-    RelicIndex<T> ToReference(RelicID id, Reliquary& owner)
+    Index<T, std::enable_if_t<usable_for_relic_index_v<T>>> ToReference(RelicID id, Reliquary& owner)
     {
-        return RelicIndex<T>(id, owner);
+        return Index<T, std::enable_if_t<usable_for_relic_index_v<T>>>(id, owner);
     }
 }
 
 namespace Inscription
 {
     template<class T>
-    class Scribe<Arca::RelicIndex<T>, BinaryArchive>
-        : public CompositeScribe<Arca::RelicIndex<T>, BinaryArchive>
+    class Scribe<Arca::Index<T, std::enable_if_t<Arca::usable_for_relic_index_v<T>>>, BinaryArchive>
+        : public CompositeScribe<Arca::Index<T, std::enable_if_t<Arca::usable_for_relic_index_v<T>>>, BinaryArchive>
     {
     private:
-        using BaseT = CompositeScribe<Arca::RelicIndex<T>, BinaryArchive>;
+        using BaseT = CompositeScribe<Arca::Index<T, std::enable_if_t<Arca::usable_for_relic_index_v<T>>>, BinaryArchive>;
     public:
         using ObjectT = typename BaseT::ObjectT;
         using ArchiveT = typename BaseT::ArchiveT;

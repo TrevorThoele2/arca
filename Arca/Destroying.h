@@ -19,7 +19,7 @@ namespace Arca
     template<class T>
     struct DestroyingKnown
     {
-        typename IndexTypeFor<T>::Type index;
+        typename ReferenceTypeFor<T>::Type reference;
 
         static_assert(is_relic_v<T> || is_shard_v<T>, "CreatedKnown must be used for relics or shards.");
     };

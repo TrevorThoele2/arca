@@ -28,7 +28,7 @@ namespace Arca
                 std::forward<Args>(args)...))
         {}
 
-        RelicIndex<T> Do(ReliquaryRelics& relics) const
+        Index<T> Do(ReliquaryRelics& relics) const
         {
             return base->Do(relics);
         }
@@ -38,7 +38,7 @@ namespace Arca
         public:
             virtual ~Base() = 0;
 
-            virtual RelicIndex<T> Do(ReliquaryRelics& relics) = 0;
+            virtual Index<T> Do(ReliquaryRelics& relics) = 0;
         };
 
         std::unique_ptr<Base> base;
@@ -51,7 +51,7 @@ namespace Arca
                 args(std::forward<Args>(args)...)
             {}
 
-            RelicIndex<T> Do(ReliquaryRelics& relics) override
+            Index<T> Do(ReliquaryRelics& relics) override
             {
                 return std::apply(
                     [&relics](auto&& ... args)
@@ -72,7 +72,7 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Command;
         static inline const TypeName typeName = "Create<Relic>";
-        using Result = RelicIndex<T>;
+        using Result = Index<T>;
     };
 
     template<class T>
@@ -84,7 +84,7 @@ namespace Arca
                 std::forward<Args>(args)...))
         {}
 
-        ShardIndex<T> Do(ReliquaryShards& shards) const
+        Index<T> Do(ReliquaryShards& shards) const
         {
             return base->Do(shards);
         }
@@ -94,7 +94,7 @@ namespace Arca
         public:
             virtual ~Base() = 0;
 
-            virtual ShardIndex<T> Do(ReliquaryShards& shards) = 0;
+            virtual Index<T> Do(ReliquaryShards& shards) = 0;
         };
 
         std::unique_ptr<Base> base;
@@ -107,7 +107,7 @@ namespace Arca
                 args(std::forward<Args>(args)...)
             {}
 
-            ShardIndex<T> Do(ReliquaryShards& shards) override
+            Index<T> Do(ReliquaryShards& shards) override
             {
                 return std::apply(
                     [&shards](auto&& ... args)
@@ -128,6 +128,6 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Command;
         static inline const TypeName typeName = "Create<Shard>";
-        using Result = ShardIndex<T>;
+        using Result = Index<T>;
     };
 }

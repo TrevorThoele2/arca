@@ -37,7 +37,8 @@
     <ClInclude Include="HasCommandResult.h" />
     <ClInclude Include="HasHandledCommands.h" />
     <ClInclude Include="HasWorkMethod.h" />
-    <ClInclude Include="IndexTypeFor.h" />
+    <ClInclude Include="Index.h" />
+    <ClInclude Include="ReferenceTypeFor.h" />
     <ClInclude Include="IsCommand.h" />
     <ClInclude Include="MatrixDissolved.h" />
     <ClInclude Include="MatrixFormed.h" />

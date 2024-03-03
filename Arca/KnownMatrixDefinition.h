@@ -80,12 +80,12 @@ namespace Arca
     template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int>>
     void KnownMatrix::SignalCreated(RelicID relicID, Reliquary& reliquary)
     {
-        reliquary.Raise<MatrixFormed<MatrixT>>(MatrixIndex<MatrixT>(relicID, reliquary));
+        reliquary.Raise<MatrixFormed<MatrixT>>(Index<MatrixT>(relicID, reliquary));
     }
 
     template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int>>
     void KnownMatrix::SignalDestroying(RelicID relicID, Reliquary& reliquary)
     {
-        reliquary.Raise<MatrixDissolved<MatrixT>>(MatrixIndex<MatrixT>(relicID, reliquary));
+        reliquary.Raise<MatrixDissolved<MatrixT>>(Index<MatrixT>(relicID, reliquary));
     }
 }

@@ -11,13 +11,13 @@ namespace Arca
     {
     public:
         template<class ShardT, class... ConstructorArgs, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        ShardIndex<ShardT> Create(ConstructorArgs&& ... constructorArgs) const
+        Index<ShardT> Create(ConstructorArgs&& ... constructorArgs) const
         {
             return owner->Do<Arca::Create<ShardT>>(id, std::forward<ConstructorArgs>(constructorArgs)...);
         }
 
         template<class ShardT, class... ConstructorArgs, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        ShardIndex<ShardT> FindOrCreate(ConstructorArgs&& ... constructorArgs) const
+        Index<ShardT> FindOrCreate(ConstructorArgs&& ... constructorArgs) const
         {
             auto found = Find<ShardT>();
             if (found)
@@ -39,15 +39,15 @@ namespace Arca
         }
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] ShardIndex<ShardT> Find() const
+        [[nodiscard]] Index<ShardT> Find() const
         {
-            return Arca::ShardIndex<ShardT>(id, *owner);
+            return Arca::Index<ShardT>(id, *owner);
         }
 
         template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
-        [[nodiscard]] MatrixIndex<MatrixT> Find() const
+        [[nodiscard]] Index<MatrixT> Find() const
         {
-            return Arca::MatrixIndex<MatrixT>(id, *owner);
+            return Arca::Index<MatrixT>(id, *owner);
         }
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
