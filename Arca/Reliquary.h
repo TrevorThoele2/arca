@@ -57,6 +57,9 @@ namespace Arca
         template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         Ptr<RelicT> CreateChildWith(const Handle& parent, const std::string& structureName, InitializeArgs&& ... initializeArgs);
 
+        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        void Clear();
+
         template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int> = 0>
         [[nodiscard]] Ptr<RelicT> Find(RelicID id) const;
         template<class RelicT, std::enable_if_t<is_global_relic_v<RelicT>, int> = 0>
@@ -210,6 +213,12 @@ namespace Arca
         const Handle& parent, const std::string& structureName, InitializeArgs&& ... initializeArgs)
     {
         return relics.CreateChildWith<RelicT>(parent, structureName, std::forward<InitializeArgs>(initializeArgs)...);
+    }
+
+    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
+    void Reliquary::Clear()
+    {
+        relics.Clear<RelicT>();
     }
 
     template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int>>

@@ -360,10 +360,21 @@ SCENARIO_METHOD(RelicTestsFixture, "many relics", "[relic]")
                 REQUIRE(shard->myValue == ::Chroma::ToString(99));
             }
         }
+
+        WHEN("clearing")
+        {
+            reliquary->Clear<OpenRelic>();
+
+            THEN("reliquary is empty")
+            {
+                REQUIRE(reliquary->RelicSize() == 0);
+                REQUIRE(reliquary->ShardSize() == 0);
+            }
+        }
     }
 }
 
-SCENARIO_METHOD(RelicTestsFixture, "custom factory relic", "[relic][factory]")
+SCENARIO_METHOD(RelicTestsFixture, "custom should create relic", "[relic][shouldcreate]")
 {
     GIVEN("should create relic registered")
     {
@@ -404,25 +415,35 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
             .Type<Shard>()
             .Actualize();
 
-        auto createdRelicSignals = reliquary->Batch<Created>();
-        auto destroyingRelicSignals = reliquary->Batch<Destroying>();
+        auto createdSignals = reliquary->Batch<Created>();
+        auto destroyingSignals = reliquary->Batch<Destroying>();
 
         WHEN("creating open relic")
         {
             const auto created = reliquary->Create<OpenRelic>();
 
-            THEN("signal is emitted for relic")
+            THEN("signal is emitted for relic and shard")
             {
-                REQUIRE(createdRelicSignals.Size() == 1);
+                REQUIRE(createdSignals.Size() == 1);
             }
 
             WHEN("destroying relic")
             {
                 reliquary->Destroy(AsHandle(*created));
 
-                THEN("signal is emitted for relic")
+                THEN("signal is emitted for relic and shard")
                 {
-                    REQUIRE(destroyingRelicSignals.Size() == 1);
+                    REQUIRE(destroyingSignals.Size() == 1);
+                }
+            }
+
+            WHEN("clearing")
+            {
+                reliquary->Clear<OpenRelic>();
+
+                THEN("signal is emitted for relic and shard")
+                {
+                    REQUIRE(destroyingSignals.Size() == 1);
                 }
             }
         }
@@ -431,18 +452,28 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
         {
             const auto created = reliquary->CreateWith<ClosedRelic>(RelicStructure { TypeFor<Shard>() });
 
-            THEN("signal is emitted for relic")
+            THEN("signal is emitted for relic and shard")
             {
-                REQUIRE(createdRelicSignals.Size() == 2);
+                REQUIRE(createdSignals.Size() == 2);
             }
 
             WHEN("destroying relic")
             {
                 reliquary->Destroy(AsHandle(*created));
 
-                THEN("signal is emitted for relic")
+                THEN("signal is emitted for relic and shard")
                 {
-                    REQUIRE(destroyingRelicSignals.Size() == 2);
+                    REQUIRE(destroyingSignals.Size() == 2);
+                }
+            }
+
+            WHEN("clearing")
+            {
+                reliquary->Clear<ClosedRelic>();
+
+                THEN("signal is emitted for relic and shard")
+                {
+                    REQUIRE(destroyingSignals.Size() == 2);
                 }
             }
         }
@@ -453,7 +484,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
             THEN("signal is emitted for relic and shard")
             {
-                REQUIRE(createdRelicSignals.Size() == 2);
+                REQUIRE(createdSignals.Size() == 2);
             }
 
             WHEN("destroying relic")
@@ -462,7 +493,17 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
                 THEN("signal is emitted for relic and shard")
                 {
-                    REQUIRE(destroyingRelicSignals.Size() == 2);
+                    REQUIRE(destroyingSignals.Size() == 2);
+                }
+            }
+
+            WHEN("clearing")
+            {
+                reliquary->Clear<TypedRelic>();
+
+                THEN("signal is emitted for relic and shard")
+                {
+                    REQUIRE(destroyingSignals.Size() == 2);
                 }
             }
         }
