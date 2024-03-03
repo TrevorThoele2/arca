@@ -245,10 +245,8 @@ namespace Inscription
 
             for(auto& loop : object.list)
             {
-                auto id = loop.id;
-                archive(id);
-                auto shard = loop.shard;
-                archive(shard);
+                archive(loop.id);
+                archive(loop.shard);
             }
         }
         else

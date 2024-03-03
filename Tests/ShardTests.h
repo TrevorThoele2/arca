@@ -19,6 +19,14 @@ public:
     {
         int myInt;
     };
+
+    struct ShardConstructedFromMovedValue
+    {
+        std::unique_ptr<int> myInt;
+
+        ShardConstructedFromMovedValue() = default;
+        explicit ShardConstructedFromMovedValue(std::unique_ptr<int>&& myInt);
+    };
 };
 
 namespace Arca
@@ -36,6 +44,13 @@ namespace Arca
         static const ObjectType objectType = ObjectType::Shard;
         static inline const TypeName typeName = "ShardTestsDifferentiableShard" + Chroma::ToString(i);
     };
+
+    template<>
+    struct Traits<ShardTestsFixture::ShardConstructedFromMovedValue>
+    {
+        static const ObjectType objectType = ObjectType::Shard;
+        static inline const TypeName typeName = "ShardTestsShardConstructedFromMovedValue";
+    };
 }
 
 namespace Inscription
@@ -48,5 +63,10 @@ namespace Inscription
     template<size_t i>
     class Scribe<ShardTestsFixture::DifferentiableShard<i>, BinaryArchive> final :
         public ArcaNullScribe<ShardTestsFixture::DifferentiableShard<i>, BinaryArchive>
+    {};
+
+    template<>
+    class Scribe<ShardTestsFixture::ShardConstructedFromMovedValue, BinaryArchive> final :
+        public ArcaNullScribe<ShardTestsFixture::ShardConstructedFromMovedValue, BinaryArchive>
     {};
 }
