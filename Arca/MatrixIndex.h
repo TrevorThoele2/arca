@@ -146,7 +146,7 @@ namespace Arca
     };
 
     template<class T, std::enable_if_t<usable_for_matrix_index_v<T>, int> = 0>
-    MatrixIndex<T> ToIndex(RelicID id, Reliquary& owner)
+    MatrixIndex<T> ToReference(RelicID id, Reliquary& owner)
     {
         return MatrixIndex<T>(id, owner);
     }

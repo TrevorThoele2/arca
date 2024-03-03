@@ -16,8 +16,8 @@
 #include "RelicIndex.h"
 #include "ShardIndex.h"
 #include "GlobalIndex.h"
-#include "ComputedIndex.h"
 #include "MatrixIndex.h"
+#include "Postulate.h"
 #include "AsHandle.h"
 
 #include "Create.h"
@@ -158,7 +158,7 @@ namespace Arca
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         [[nodiscard]] RelicT* FindGlobalStorage();
         template<class T>
-        [[nodiscard]] T FindGlobalComputation();
+        [[nodiscard]] T FindPostulate();
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] ShardT* FindStorage(RelicID id);
     private:
@@ -177,7 +177,7 @@ namespace Arca
 
         friend class OpenRelic;
         template<class>
-        friend class ComputedIndex;
+        friend class Postulate;
         template<class>
         friend class GlobalIndex;
         template<class>
@@ -365,9 +365,9 @@ namespace Arca
     }
 
     template<class T>
-    T Reliquary::FindGlobalComputation()
+    T Reliquary::FindPostulate()
     {
-        return relics.FindGlobalComputation<T>();
+        return relics.FindPostulate<T>();
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>

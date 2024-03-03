@@ -603,14 +603,14 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
     }
 }
 
-SCENARIO_METHOD(ReliquarySerializationTestsFixture, "global computation serialization", "[global][computation][serialization]")
+SCENARIO_METHOD(ReliquarySerializationTestsFixture, "postulate serialization", "[global][postulate][serialization]")
 {
-    GIVEN("saved reliquary with global computation")
+    GIVEN("saved reliquary with postulate")
     {
         const auto savedReliquary = ReliquaryOrigin()
             .Register<BasicShard>()
             .Register<GlobalRelic>(dataGeneration.Random<int>(), dataGeneration.Random<std::string>())
-            .Compute<int>(
+            .Postulate<int>(
                 [](Reliquary& reliquary)
                 {
                     const GlobalIndex<GlobalRelic> backing(reliquary);
@@ -618,7 +618,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "global computation serializ
                 })
             .Actualize();
 
-        auto savedComputation = Arca::ComputedIndex<int>(*savedReliquary);
+        auto savedPostulate = Arca::Postulate<int>(*savedReliquary);
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
@@ -630,7 +630,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "global computation serializ
             auto loadedReliquary = ReliquaryOrigin()
                 .Register<BasicShard>()
                 .Register<GlobalRelic>()
-                .Compute<int>(
+                .Postulate<int>(
                     [](Reliquary& reliquary)
                     {
                         const GlobalIndex<GlobalRelic> backing(reliquary);
@@ -643,11 +643,11 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "global computation serializ
                 inputArchive(*loadedReliquary);
             }
 
-            auto loadedComputation = Arca::ComputedIndex<int>(*loadedReliquary);
+            auto loadedPostulate = Arca::Postulate<int>(*loadedReliquary);
 
             THEN("loaded relic has saved value")
             {
-                REQUIRE(*loadedComputation == *savedComputation);
+                REQUIRE(*loadedPostulate == *savedPostulate);
             }
 
             THEN("reliquary has global, shard for global, and created signal")

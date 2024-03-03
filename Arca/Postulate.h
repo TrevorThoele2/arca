@@ -1,30 +1,30 @@
 #pragma once
 
 #include "IndexTypeFor.h"
-#include "UsableForComputedIndex.h"
+#include "UsableForPostulate.h"
 
 #include "Serialization.h"
 
 namespace Arca
 {
     template<class T>
-    class ComputedIndex
+    class Postulate
     {
     private:
         using StoredT = std::optional<T>;
     public:
         using ValueT = T;
     public:
-        ComputedIndex() = default;
-        explicit ComputedIndex(Reliquary& owner);
-        ComputedIndex(const ComputedIndex& arg);
-        ComputedIndex(ComputedIndex&& arg) noexcept;
+        Postulate() = default;
+        explicit Postulate(Reliquary& owner);
+        Postulate(const Postulate& arg);
+        Postulate(Postulate&& arg) noexcept;
 
-        ComputedIndex& operator=(const ComputedIndex& arg);
-        ComputedIndex& operator=(ComputedIndex&& arg) noexcept;
+        Postulate& operator=(const Postulate& arg);
+        Postulate& operator=(Postulate&& arg) noexcept;
 
-        bool operator==(const ComputedIndex& arg) const;
-        bool operator!=(const ComputedIndex& arg) const;
+        bool operator==(const Postulate& arg) const;
+        bool operator!=(const Postulate& arg) const;
 
         explicit operator bool() const;
 
@@ -33,7 +33,7 @@ namespace Arca
             return Get();
         }
 
-        operator ComputedIndex<const T>() const;
+        operator Postulate<const T>() const;
 
         [[nodiscard]] ValueT& operator*() const;
         [[nodiscard]] ValueT* operator->() const;
@@ -53,24 +53,24 @@ namespace Arca
     };
 
     template<class T>
-    ComputedIndex<T>::ComputedIndex(Reliquary& owner) : owner(&owner)
+    Postulate<T>::Postulate(Reliquary& owner) : owner(&owner)
     {
         value = FindValueFromOwner();
     }
 
     template<class T>
-    ComputedIndex<T>::ComputedIndex(const ComputedIndex& arg) : owner(arg.owner)
+    Postulate<T>::Postulate(const Postulate& arg) : owner(arg.owner)
     {
         value = FindValueFromOwner();
     }
 
     template<class T>
-    ComputedIndex<T>::ComputedIndex(ComputedIndex&& arg) noexcept :
+    Postulate<T>::Postulate(Postulate&& arg) noexcept :
         owner(arg.owner), value(arg.value)
     {}
 
     template<class T>
-    auto ComputedIndex<T>::operator=(const ComputedIndex& arg) -> ComputedIndex&
+    auto Postulate<T>::operator=(const Postulate& arg) -> Postulate&
     {
         owner = arg.owner;
         value = FindValueFromOwner();
@@ -78,7 +78,7 @@ namespace Arca
     }
 
     template<class T>
-    auto ComputedIndex<T>::operator=(ComputedIndex&& arg) noexcept -> ComputedIndex&
+    auto Postulate<T>::operator=(Postulate&& arg) noexcept -> Postulate&
     {
         owner = arg.owner;
         value = arg.value;
@@ -86,43 +86,43 @@ namespace Arca
     }
 
     template<class T>
-    bool ComputedIndex<T>::operator==(const ComputedIndex& arg) const
+    bool Postulate<T>::operator==(const Postulate& arg) const
     {
         return owner == arg.owner;
     }
 
     template<class T>
-    bool ComputedIndex<T>::operator!=(const ComputedIndex& arg) const
+    bool Postulate<T>::operator!=(const Postulate& arg) const
     {
         return !(*this == arg);
     }
 
     template<class T>
-    ComputedIndex<T>::operator bool() const
+    Postulate<T>::operator bool() const
     {
         return IsSetup();
     }
 
     template<class T>
-    ComputedIndex<T>::operator ComputedIndex<const T>() const
+    Postulate<T>::operator Postulate<const T>() const
     {
-        return ComputedIndex<const T>(*owner);
+        return Postulate<const T>(*owner);
     }
 
     template<class T>
-    auto ComputedIndex<T>::operator*() const -> ValueT&
+    auto Postulate<T>::operator*() const -> ValueT&
     {
         return *Get();
     }
 
     template<class T>
-    auto ComputedIndex<T>::operator->() const -> ValueT*
+    auto Postulate<T>::operator->() const -> ValueT*
     {
         return Get();
     }
 
     template<class T>
-    auto ComputedIndex<T>::Get() const -> ValueT*
+    auto Postulate<T>::Get() const -> ValueT*
     {
         if (!IsSetup())
             value = FindValueFromOwner();
@@ -131,53 +131,53 @@ namespace Arca
     }
 
     template<class T>
-    Reliquary* ComputedIndex<T>::Owner() const
+    Reliquary* Postulate<T>::Owner() const
     {
         return owner;
     }
 
     template<class T>
-    auto ComputedIndex<T>::FindValueFromOwner() const -> StoredT
+    auto Postulate<T>::FindValueFromOwner() const -> StoredT
     {
         if (owner == nullptr)
             return EmptyValue();
 
-        return owner->template FindGlobalComputation<T>();
+        return owner->template FindPostulate<T>();
     }
 
     template<class T>
-    bool ComputedIndex<T>::IsSetup() const
+    bool Postulate<T>::IsSetup() const
     {
         return static_cast<bool>(value);
     }
 
     template<class T>
-    constexpr auto ComputedIndex<T>::EmptyValue() -> StoredT
+    constexpr auto Postulate<T>::EmptyValue() -> StoredT
     {
         return {};
     }
 
     template<class T>
-    struct IndexTypeFor<T, std::enable_if_t<usable_for_computed_index_v<T>>>
+    struct IndexTypeFor<T, std::enable_if_t<usable_for_postulate_v<T>>>
     {
-        using Type = ComputedIndex<T>;
+        using Type = Postulate<T>;
     };
 
-    template<class T, std::enable_if_t<usable_for_computed_index_v<T>, int> = 0>
-    ComputedIndex<T> ToIndex(RelicID id, Reliquary& owner)
+    template<class T, std::enable_if_t<usable_for_postulate_v<T>, int> = 0>
+    Postulate<T> ToReference(RelicID id, Reliquary& owner)
     {
-        return ComputedIndex<T>(id, owner);
+        return Postulate<T>(id, owner);
     }
 }
 
 namespace Inscription
 {
     template<class T>
-    class Scribe<Arca::ComputedIndex<T>, BinaryArchive>
-        : public CompositeScribe<Arca::ComputedIndex<T>, BinaryArchive>
+    class Scribe<Arca::Postulate<T>, BinaryArchive>
+        : public CompositeScribe<Arca::Postulate<T>, BinaryArchive>
     {
     private:
-        using BaseT = CompositeScribe<Arca::ComputedIndex<T>, BinaryArchive>;
+        using BaseT = CompositeScribe<Arca::Postulate<T>, BinaryArchive>;
     public:
         using ObjectT = typename BaseT::ObjectT;
         using ArchiveT = typename BaseT::ArchiveT;

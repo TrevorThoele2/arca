@@ -29,13 +29,13 @@ public:
 template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
 RelicT* DifferentiableCuratorBase::TheData(RelicID id)
 {
-    return Data<RelicT>(id);
+    return MutablePointer<RelicT>(id);
 }
 
 template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
 ShardT* DifferentiableCuratorBase::TheData(RelicID id)
 {
-    return Data<ShardT>(id);
+    return MutablePointer<ShardT>(id);
 }
 
 template<size_t differentiator>

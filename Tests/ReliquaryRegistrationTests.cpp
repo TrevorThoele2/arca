@@ -63,16 +63,16 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             }
         }
 
-        WHEN("retrieving unregistered global computation")
+        WHEN("retrieving unregistered derivation")
         {
             THEN("throws error")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    Arca::ComputedIndex<int>(*reliquary),
+                    Arca::Postulate<int>(*reliquary),
                     NotRegistered,
                     ::Catch::Matchers::Message(
-                        "The global computation ("s + typeid(int).name() + ") was not registered.")
+                        "The postulate ("s + typeid(int).name() + ") was not registered.")
                 );
             }
         }

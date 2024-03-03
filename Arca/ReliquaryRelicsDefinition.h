@@ -294,13 +294,13 @@ namespace Arca
     }
 
     template<class T>
-    T ReliquaryRelics::FindGlobalComputation()
+    T ReliquaryRelics::FindPostulate()
     {
-        const auto computationFound = globalComputationMap.find(typeid(T));
-        if (computationFound != globalComputationMap.end())
-            return std::any_cast<T>(computationFound->second(Owner()));
+        const auto found = postulateMap.find(typeid(T));
+        if (found != postulateMap.end())
+            return std::any_cast<T>(found->second(Owner()));
 
-        throw Arca::NotRegistered("global computation", typeid(T));
+        throw Arca::NotRegistered("postulate", typeid(T));
     }
 
     template<
@@ -348,6 +348,6 @@ namespace Arca
     template<class T>
     auto ReliquaryRelics::CreateIndex(RelicID id) const
     {
-        return ToIndex<T>(id, const_cast<Reliquary&>(Owner()));
+        return ToReference<T>(id, const_cast<Reliquary&>(Owner()));
     }
 }

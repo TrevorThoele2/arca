@@ -27,7 +27,7 @@ namespace Arca
         template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
         ReliquaryOrigin&& Register(ConstructorArgs&& ... constructorArgs);
         template<class InterfaceT>
-        ReliquaryOrigin&& Compute(std::function<InterfaceT(Reliquary&)> computation);
+        ReliquaryOrigin&& Postulate(std::function<InterfaceT(Reliquary&)> function);
         ReliquaryOrigin&& RelicStructure(const std::string& name, const RelicStructure& structure);
     public:
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
@@ -58,9 +58,9 @@ namespace Arca
     private:
         TypeConstructorList globalRelicList;
 
-        using GlobalComputationInitializer = std::function<void(Reliquary&)>;
-        using GlobalComputationInitializerMap = std::unordered_map<std::type_index, GlobalComputationInitializer>;
-        GlobalComputationInitializerMap globalComputationInitializerMap;
+        using PostulateInitializer = std::function<void(Reliquary&)>;
+        using PostulateInitializerMap = std::unordered_map<std::type_index, PostulateInitializer>;
+        PostulateInitializerMap postulateInitializerMap;
 
         template<class RelicT, class... ConstructorArgs>
         void GlobalRelicCommon(ConstructorArgs&& ... constructorArgs);
@@ -68,7 +68,7 @@ namespace Arca
         template<class RelicT>
         [[nodiscard]] bool IsGlobalRelicRegistered() const;
         template<class T>
-        [[nodiscard]] bool IsGlobalComputationRegistered() const;
+        [[nodiscard]] bool IsPostulateRegistered() const;
     private:
         using NamedRelicStructure = ReliquaryRelicStructures::Named;
         using NamedRelicStructureList = std::vector<NamedRelicStructure>;
@@ -136,22 +136,22 @@ namespace Arca
     }
 
     template<class InterfaceT>
-    ReliquaryOrigin&& ReliquaryOrigin::Compute(std::function<InterfaceT(Reliquary&)> computation)
+    ReliquaryOrigin&& ReliquaryOrigin::Postulate(std::function<InterfaceT(Reliquary&)> function)
     {
         const std::type_index interfaceType = typeid(InterfaceT);
 
-        if (IsGlobalComputationRegistered<InterfaceT>())
-            throw AlreadyRegistered("global computation", interfaceType);
+        if (IsPostulateRegistered<InterfaceT>())
+            throw AlreadyRegistered("postulate", interfaceType);
 
-        globalComputationInitializerMap.emplace(
+        postulateInitializerMap.emplace(
             interfaceType,
-            [interfaceType, computation](Reliquary& reliquary)
+            [interfaceType, function](Reliquary& reliquary)
             {
-                reliquary.relics.globalComputationMap.emplace(
+                reliquary.relics.postulateMap.emplace(
                     interfaceType,
-                    [computation](Reliquary& reliquary) -> std::any
+                    [function](Reliquary& reliquary) -> std::any
                     {
-                        auto transformed = computation(reliquary);
+                        auto transformed = function(reliquary);
                         return transformed;
                     });
             });
@@ -249,11 +249,11 @@ namespace Arca
     }
 
     template<class T>
-    bool ReliquaryOrigin::IsGlobalComputationRegistered() const
+    bool ReliquaryOrigin::IsPostulateRegistered() const
     {
         const std::type_index type(typeid(T));
-        const auto found = globalComputationInitializerMap.find(type);
-        return found != globalComputationInitializerMap.end();
+        const auto found = postulateInitializerMap.find(type);
+        return found != postulateInitializerMap.end();
     }
 
     template<class ShardT>

@@ -191,7 +191,7 @@ namespace Arca
     };
 
     template<class T, std::enable_if_t<usable_for_global_index_v<T>, int> = 0>
-    GlobalIndex<T> ToIndex(RelicID, Reliquary& owner)
+    GlobalIndex<T> ToReference(RelicID, Reliquary& owner)
     {
         return GlobalIndex<T>(owner);
     }

@@ -16,7 +16,6 @@
 #include "IsGlobal.h"
 
 #include "RelicIndex.h"
-#include "ComputedIndex.h"
 
 #include "KnownPolymorphicSerializer.h"
 
@@ -195,14 +194,14 @@ namespace Arca
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         [[nodiscard]] GlobalHandler<RelicT>* FindGlobalHandler() const;
 
-        using GlobalComputationTransformation = std::function<std::any(Reliquary&)>;
-        using GlobalComputationMap = std::unordered_map<std::type_index, GlobalComputationTransformation>;
-        GlobalComputationMap globalComputationMap;
+        using PostulateTransformation = std::function<std::any(Reliquary&)>;
+        using PostulateMap = std::unordered_map<std::type_index, PostulateTransformation>;
+        PostulateMap postulateMap;
 
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         RelicT* FindGlobalStorage();
         template<class T>
-        T FindGlobalComputation();
+        T FindPostulate();
     public:
         ReliquaryRelics(const ReliquaryRelics& arg) = delete;
         ReliquaryRelics& operator=(const ReliquaryRelics& arg) = delete;

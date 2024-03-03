@@ -80,11 +80,11 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
             .Register<BasicShard>()
             .Register<GlobalRelic>();
 
-        WHEN("registering int computation with global relic backing")
+        WHEN("registering int postulate with global relic backing")
         {
             THEN("not throws error")
             {
-                REQUIRE_NOTHROW(origin.Compute<int>(
+                REQUIRE_NOTHROW(origin.Postulate<int>(
                     [](Reliquary& reliquary)
                     {
                         const GlobalIndex<GlobalRelic> backing(reliquary);
@@ -94,13 +94,13 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
         }
     }
 
-    GIVEN("global computation registered")
+    GIVEN("postulate registered")
     {
         auto reliquary = ReliquaryOrigin()
             .Register<BasicShard>()
             .Register<BasicTypedRelic>()
             .Register<GlobalRelic>()
-            .Compute<int>(
+            .Postulate<int>(
                 [](Reliquary& reliquary)
                 {
                     const GlobalIndex<GlobalRelic> backing(reliquary);

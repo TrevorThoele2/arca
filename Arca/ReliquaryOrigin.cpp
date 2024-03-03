@@ -32,7 +32,7 @@ namespace Arca
         for (auto& initializer : globalRelicList)
             initializer.factory(*reliquary);
 
-        for (auto& initializer : globalComputationInitializerMap)
+        for (auto& initializer : postulateInitializerMap)
             initializer.second(*reliquary);
 
         PushAllCuratorsTo(*reliquary, curatorConstructionPipeline);

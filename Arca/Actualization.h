@@ -13,6 +13,6 @@ namespace Arca
         if (handle.Type() != TypeFor<T>())
             return typename IndexTypeFor<T>::Type{};
 
-        return ToIndex<T>(handle.ID(), handle.Owner());
+        return ToReference<T>(handle.ID(), handle.Owner());
     }
 }
