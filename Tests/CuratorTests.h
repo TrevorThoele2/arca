@@ -12,8 +12,6 @@ using namespace Arca;
 class CuratorTestsFixture : public GeneralFixture
 {
 public:
-    CuratorTestsFixture();
-
     enum class CuratorState
     {
         Started,

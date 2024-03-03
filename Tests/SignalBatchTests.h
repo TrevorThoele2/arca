@@ -7,8 +7,6 @@ using namespace Arca;
 class SignalBatchFixture : public ReliquaryFixture
 {
 public:
-    SignalBatchFixture();
-
     class BasicSignal;
     class UnregisteredSignal;
 };

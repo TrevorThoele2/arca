@@ -5,6 +5,7 @@
 namespace Arca
 {
     ReliquaryOrigin::ReliquaryOrigin(const ReliquaryOrigin& arg) :
+        relicList(arg.relicList),
         staticRelicList(arg.staticRelicList),
         shardList(arg.shardList),
         curatorPipeline(arg.curatorPipeline),
@@ -17,6 +18,7 @@ namespace Arca
 
     ReliquaryOrigin& ReliquaryOrigin::operator=(const ReliquaryOrigin& arg)
     {
+        relicList = arg.relicList;
         staticRelicList = arg.staticRelicList;
         shardList = arg.shardList;
         for (auto& provider : arg.curatorProviders)
@@ -36,6 +38,9 @@ namespace Arca
             initializer.factory(reliquary);
 
         for (auto& initializer : shardList)
+            initializer.factory(reliquary);
+
+        for (auto& initializer : relicList)
             initializer.factory(reliquary);
 
         for (auto& initializer : staticRelicList)

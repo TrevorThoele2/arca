@@ -4,12 +4,6 @@ using namespace std::string_literals;
 
 #include "ReliquaryTests.h"
 
-ReliquaryTestsFixture::ReliquaryTestsFixture()
-{
-    auto typeGroup = typeRegistration.CreateGroup();
-    typeGroup->RegisterShard<BasicShard>();
-}
-
 ReliquaryTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std::move(myValue))
 {}
 
@@ -17,7 +11,13 @@ ReliquaryTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
 {}
 
 ReliquaryTestsFixture::BasicTypedRelic::BasicTypedRelic(RelicID id, Reliquary& owner) :
-    TypedRelic(id, owner)
+    TypedRelicWithShards(id, owner)
+{
+    Setup();
+}
+
+ReliquaryTestsFixture::BasicTypedRelic::BasicTypedRelic(const ::Inscription::BinaryTableData<BasicTypedRelic>& data) :
+    TypedRelicWithShards(data.base)
 {
     Setup();
 }
@@ -27,7 +27,14 @@ void ReliquaryTestsFixture::BasicTypedRelic::Setup()
     ExtractShards(ShardTuple(basicShard));
 }
 
-ReliquaryTestsFixture::StaticRelic::StaticRelic(RelicID id, Reliquary& owner) : TypedRelic(id, owner)
+ReliquaryTestsFixture::StaticRelic::StaticRelic(RelicID id, Reliquary& owner) :
+    TypedRelicWithShards(id, owner)
+{
+    Setup();
+}
+
+ReliquaryTestsFixture::StaticRelic::StaticRelic(const ::Inscription::BinaryTableData<StaticRelic>& data) :
+    TypedRelicWithShards(data.base)
 {
     Setup();
 }

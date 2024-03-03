@@ -3,15 +3,13 @@
 #include "ReliquaryFixture.h"
 
 #include <Arca/Shard.h>
-#include <Arca/TypedRelic.h>
+#include <Arca/TypedRelicWithShards.h>
 
 using namespace Arca;
 
 class ShardBatchFixture : public ReliquaryFixture
 {
 public:
-    ShardBatchFixture();
-
     class Shard;
     class UnregisteredShard;
     class StaticRelic;
@@ -29,12 +27,12 @@ public:
 class ShardBatchFixture::UnregisteredShard
 {};
 
-class ShardBatchFixture::StaticRelic : public TypedRelic<Shard>
+class ShardBatchFixture::StaticRelic : public TypedRelicWithShards<Shard>
 {
 public:
     Shard* shard = nullptr;
 public:
-    StaticRelic(RelicID id, Reliquary& owner);
+    StaticRelic() = default;
 private:
     void Setup();
 };

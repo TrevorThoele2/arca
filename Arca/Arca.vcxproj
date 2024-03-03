@@ -22,6 +22,10 @@
     <ClInclude Include="CuratorDependencyList.h" />
     <ClInclude Include="CuratorHandle.h" />
     <ClInclude Include="CuratorTypeDescription.h" />
+    <ClInclude Include="RelicBatch.h" />
+    <ClInclude Include="RelicBatchIterator.h" />
+    <ClInclude Include="RelicBatchSource.h" />
+    <ClInclude Include="RelicScribe.h" />
     <ClInclude Include="Shard.h" />
     <ClInclude Include="ShardBatchIterator.h" />
     <ClInclude Include="ShardCreated.h" />
@@ -30,6 +34,7 @@
     <ClInclude Include="ShardScribe.h" />
     <ClInclude Include="ReliquaryOrigin.h" />
     <ClInclude Include="TypedRelic.h" />
+    <ClInclude Include="TypedRelicWithShards.h" />
     <ClInclude Include="RelicDefinition.h" />
     <ClInclude Include="RelicDynamism.h" />
     <ClInclude Include="RelicID.h" />
@@ -49,10 +54,9 @@
     <ClInclude Include="CuratorTraits.h" />
     <ClInclude Include="ShardTraits.h" />
     <ClInclude Include="TypeHandle.h" />
-    <ClInclude Include="TypeRegistration.h" />
     <ClInclude Include="TypeValidation.h" />
     <ClInclude Include="ShardBatch.h" />
-    <ClInclude Include="ShardBatchException.h" />
+    <ClInclude Include="BatchException.h" />
     <ClInclude Include="ShardBatchSource.h" />
     <ClInclude Include="StaticAssert.h" />
     <ClInclude Include="Relic.h" />
@@ -64,7 +68,8 @@
     <ClCompile Include="CuratorHandle.cpp" />
     <ClCompile Include="CuratorPipeline.cpp" />
     <ClCompile Include="CuratorTypeDescription.cpp" />
-    <ClCompile Include="ShardBatchException.cpp" />
+    <ClCompile Include="BatchException.cpp" />
+    <ClCompile Include="RelicBatchSource.cpp" />
     <ClCompile Include="ShardBatchSource.cpp" />
     <ClCompile Include="Exception.cpp" />
     <ClCompile Include="Reliquary.cpp" />
@@ -75,7 +80,7 @@
     <ClCompile Include="Curator.cpp" />
     <ClCompile Include="CuratorDependencyNotFound.cpp" />
     <ClCompile Include="CuratorProvider.cpp" />
-    <ClCompile Include="TypeRegistration.cpp" />
+    <ClCompile Include="TypedRelic.cpp" />
     <ClCompile Include="Relic.cpp" />
     <ClCompile Include="RelicMetadata.cpp" />
   </ItemGroup>

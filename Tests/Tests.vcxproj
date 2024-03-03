@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="CuratorTests.h" />
     <ClInclude Include="GeneralFixture.h" />
+    <ClInclude Include="RelicBatchTests.h" />
     <ClInclude Include="ShardBatchTests.h" />
     <ClInclude Include="ReliquaryFixture.h" />
     <ClInclude Include="ReliquaryTests.h" />
@@ -31,6 +32,7 @@
     <ClCompile Include="CuratorTests.cpp" />
     <ClCompile Include="GeneralFixture.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="RelicBatchTests.cpp" />
     <ClCompile Include="ShardBatchTests.cpp" />
     <ClCompile Include="ReliquaryFixture.cpp" />
     <ClCompile Include="ReliquaryTests.cpp" />

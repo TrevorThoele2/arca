@@ -13,6 +13,8 @@ namespace Arca
     Reliquary::Reliquary(Reliquary&& arg) noexcept :
         relicMetadataList(std::move(arg.relicMetadataList)),
         occupiedRelicIDs(std::move(arg.occupiedRelicIDs)),
+        relicBatchSources(std::move(arg.relicBatchSources)),
+        relicSerializerMap(std::move(arg.relicSerializerMap)),
         staticRelicIDMap(std::move(arg.staticRelicIDMap)),
         shardFactoryMap(std::move(arg.shardFactoryMap)),
         shardBatchSources(std::move(arg.shardBatchSources)),
@@ -30,6 +32,8 @@ namespace Arca
     {
         relicMetadataList = std::move(arg.relicMetadataList);
         occupiedRelicIDs = std::move(arg.occupiedRelicIDs);
+        relicBatchSources = std::move(arg.relicBatchSources);
+        relicSerializerMap = std::move(arg.relicSerializerMap);
         staticRelicIDMap = std::move(arg.staticRelicIDMap);
         shardFactoryMap = std::move(arg.shardFactoryMap);
         shardBatchSources = std::move(arg.shardBatchSources);
@@ -123,6 +127,13 @@ namespace Arca
         return returnValue;
     }
 
+    Reliquary::KnownPolymorphicSerializer::KnownPolymorphicSerializer(
+        Serializer&& serializer,
+        InscriptionTypeHandleProvider&& inscriptionTypeProvider)
+        :
+        serializer(std::move(serializer)), inscriptionTypeProvider(std::move(inscriptionTypeProvider))
+    {}
+
     RelicID Reliquary::SetupNewRelicInternals(RelicDynamism dynamism, std::optional<TypeHandle> typeHandle)
     {
         const auto id = NextRelicID();
@@ -186,6 +197,12 @@ namespace Arca
                 parentMetadata->children.erase(eraseChildrenItr);
         }
 
+        if (metadata->typeHandle)
+        {
+            auto batchSource = FindRelicBatchSource(*metadata->typeHandle);
+            batchSource->DestroyFromBase(id);
+        }
+
         DestroyRelicMetadata(id);
     }
 
@@ -197,6 +214,15 @@ namespace Arca
             : itr->Start() + 1;
     }
 
+    RelicBatchSourceBase* Reliquary::FindRelicBatchSource(const TypeHandle& typeHandle)
+    {
+        const auto found = relicBatchSources.find(typeHandle);
+        if (found == relicBatchSources.end())
+            return nullptr;
+
+        return found->second.get();
+    }
+
     void Reliquary::CreateShard(const TypeHandle& typeHandle, RelicID id)
     {
         const auto factory = shardFactoryMap.find(typeHandle);
@@ -205,13 +231,6 @@ namespace Arca
 
         factory->second(*this, id);
     }
-
-    Reliquary::KnownPolymorphicSerializer::KnownPolymorphicSerializer(
-        Serializer&& serializer,
-        InscriptionTypeHandleProvider&& inscriptionTypeProvider)
-        :
-        serializer(std::move(serializer)), inscriptionTypeProvider(std::move(inscriptionTypeProvider))
-    {}
 
     ShardBatchSourceBase* Reliquary::FindShardBatchSource(const TypeHandle& typeHandle)
     {
@@ -266,6 +285,14 @@ namespace Inscription
         JumpSaveAll(
             object,
             archive,
+            object.relicSerializerMap,
+            object.relicBatchSources,
+            [](const ObjectT::RelicBatchSourceMap::value_type& entry) { return entry.second.get(); },
+            [](const ObjectT::RelicBatchSourceMap::value_type& entry) { return entry.first; });
+
+        JumpSaveAll(
+            object,
+            archive,
             object.curatorSerializerMap,
             object.curators,
             [](const ObjectT::CuratorMap::value_type& entry) { return entry.second->Get(); },
@@ -283,6 +310,15 @@ namespace Inscription
             [](ObjectT& object, const ::Arca::TypeHandle& typeHandle)
             {
                 return object.FindShardBatchSource(typeHandle);
+            });
+
+        JumpLoadAll(
+            object,
+            archive,
+            object.relicSerializerMap,
+            [](ObjectT& object, const ::Arca::TypeHandle& typeHandle)
+            {
+                return object.FindRelicBatchSource(typeHandle);
             });
 
         JumpLoadAll(

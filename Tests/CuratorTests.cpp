@@ -4,12 +4,6 @@
 
 #include <Chroma/Iterate.h>
 
-CuratorTestsFixture::CuratorTestsFixture()
-{
-    auto group = typeRegistration.CreateGroup();
-    group->RegisterCurator<BasicCurator>();
-}
-
 CuratorTestsFixture::CuratorCheckpoint::CuratorCheckpoint(Curator* curator, CuratorState state) :
     curator(curator), state(state)
 {}
@@ -221,12 +215,16 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
                     (checkpoints.begin(), reliquary, output);
 
                 REQUIRE(output.size() == 100);
-                for (auto& currentOutput : output)
-                    REQUIRE(currentOutput);
+                REQUIRE(std::all_of(
+                    output.begin(),
+                    output.end(),
+                    [](const bool& entry) { return entry; }));
                 output.clear();
 
-                for (auto itr = checkpoints.begin(); itr != checkpoints.begin() + 100; ++itr)
-                    REQUIRE(itr->state == CuratorState::Started);
+                REQUIRE(std::all_of(
+                    checkpoints.begin(),
+                    checkpoints.begin() + 100,
+                    [](const CuratorCheckpoint& checkpoint) { return checkpoint.state == CuratorState::Started; }));
 
                 ::Chroma::IterateRange<
                     size_t,
@@ -237,12 +235,16 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
                     (checkpoints.begin() + 100, reliquary, output);
 
                 REQUIRE(output.size() == 100);
-                for (auto& currentOutput : output)
-                    REQUIRE(currentOutput);
+                REQUIRE(std::all_of(
+                    output.begin(),
+                    output.end(),
+                    [](const bool& entry) { return entry; }));
                 output.clear();
 
-                for (auto itr = checkpoints.begin() + 100; itr != checkpoints.begin() + 200; ++itr)
-                    REQUIRE(itr->state == CuratorState::Worked);
+                REQUIRE(std::all_of(
+                    checkpoints.begin() + 100,
+                    checkpoints.begin() + 200,
+                    [](const CuratorCheckpoint& checkpoint) { return checkpoint.state == CuratorState::Worked; }));
 
                 ::Chroma::IterateRange<
                     size_t,
@@ -253,12 +255,16 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
                     (checkpoints.begin() + 200, reliquary, output);
 
                 REQUIRE(output.size() == 100);
-                for (auto& currentOutput : output)
-                    REQUIRE(currentOutput);
+                REQUIRE(std::all_of(
+                    output.begin(),
+                    output.end(),
+                    [](const bool& entry) { return entry; }));
                 output.clear();
 
-                for (auto itr = checkpoints.begin() + 200; itr != checkpoints.begin() + 300; ++itr)
-                    REQUIRE(itr->state == CuratorState::Stopped);
+                REQUIRE(std::all_of(
+                    checkpoints.begin() + 200,
+                    checkpoints.end(),
+                    [](const CuratorCheckpoint& checkpoint) { return checkpoint.state == CuratorState::Stopped; }));
             }
         }
     }
@@ -342,7 +348,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
         savedCurator->value = dataGeneration.Random<int>();
 
         {
-            auto outputArchive = CreateRegistered<::Inscription::OutputBinaryArchive>();
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
             outputArchive(savedReliquary);
         }
 
@@ -353,7 +359,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
                 .Actualize();
 
             {
-                auto inputArchive = CreateRegistered<::Inscription::InputBinaryArchive>();
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
                 inputArchive(loadedReliquary);
             }
 
@@ -376,7 +382,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
                 .Actualize();
 
             {
-                auto inputArchive = CreateRegistered<::Inscription::InputBinaryArchive>();
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
                 inputArchive(loadedReliquary);
             }
 
@@ -395,7 +401,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
                 .Actualize();
 
             {
-                auto inputArchive = CreateRegistered<::Inscription::InputBinaryArchive>();
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");;
                 inputArchive(loadedReliquary);
             }
 
