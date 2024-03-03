@@ -30,16 +30,16 @@ namespace Inscription
     public:
         using ObjectT = BasicShard;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {
-            archive("integer", object.integer);
-            archive("string", object.string);
+            format("integer", object.integer);
+            format("string", object.string);
         }
     };
 
-    template<class Archive>
-    struct ScribeTraits<BasicShard, Archive>
+    template<class Format>
+    struct ScribeTraits<BasicShard, Format>
     {
         using Category = ArcaCompositeScribeCategory<BasicShard>;
     };

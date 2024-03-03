@@ -6,6 +6,8 @@
 #include <Arca/Create.h>
 #include <Arca/Destroy.h>
 
+#include <Inscription/Binary.h>
+
 ShardBatchFixture::GlobalRelic::GlobalRelic(RelicInit init)
 {
     shard = init.Create<BasicShard>();
@@ -196,10 +198,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch serialization", "[ShardBatch][se
         auto savedRelic = savedReliquary->Do(Create<OpenRelic>());
         savedReliquary->Do(Create<BasicShard>(savedRelic.ID()));
 
-        {
-            auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading reliquary")
         {
@@ -208,10 +207,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch serialization", "[ShardBatch][se
                 .Register<BasicShard>()
                 .Actualize();
 
-            {
-                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             auto batch = loadedReliquary->Batch<BasicShard>();
 

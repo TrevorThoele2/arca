@@ -7,6 +7,8 @@
 #include <Arca/Create.h>
 #include <Arca/Destroy.h>
 
+#include <Inscription/Binary.h>
+
 SCENARIO_METHOD(RelicBatchFixture, "default relic batch", "[RelicBatch]")
 {
     GIVEN("default relic batch")
@@ -197,10 +199,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch serialization", "[RelicBatch][se
 
         savedReliquary->Do(Create<Relic>());
 
-        {
-            auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading reliquary")
         {
@@ -208,10 +207,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch serialization", "[RelicBatch][se
                 .Register<Relic>()
                 .Actualize();
 
-            {
-                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             auto batch = loadedReliquary->Batch<Relic>();
 

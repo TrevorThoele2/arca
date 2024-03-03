@@ -9,6 +9,8 @@ using namespace std::string_literals;
 #include <Arca/All.h>
 #include <Arca/Create.h>
 
+#include <Inscription/Binary.h>
+
 IntegrationTestsFixture::MatrixCreatingRelic::MatrixCreatingRelic(RelicInit init)
 {
     init.Create<BasicShard>();
@@ -201,10 +203,7 @@ SCENARIO_METHOD(
 
         WHEN("saving reliquary")
         {
-            {
-                auto output = Inscription::Archive::OutputBinary("Test.dat");
-                output(*savedReliquary);
-            }
+            Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
             WHEN("loading reliquary and taking batch in constructor")
             {
@@ -220,8 +219,7 @@ SCENARIO_METHOD(
                     .Register<DerivedCurator>()
                     .Actualize();
 
-                auto input = Inscription::Archive::InputBinary("Test.dat");
-                input(*loadedReliquary);
+                Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
                 THEN("batch is occupied")
                 {
@@ -324,10 +322,7 @@ SCENARIO_METHOD(
 
         WHEN("saving and loading")
         {
-            {
-                auto output = Inscription::Archive::OutputBinary("Test.dat");
-                output(*savedReliquary);
-            }
+            Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
             const auto loadedReliquary = ReliquaryOrigin()
                 .Register<GlobalRelicCreatingNullSerializedRelic>()
@@ -335,8 +330,7 @@ SCENARIO_METHOD(
                 .Register<GlobalRelicCreatingNullSerializedRelic::LocalRelic>()
                 .Actualize();
 
-            auto input = Inscription::Archive::InputBinary("Test.dat");
-            input(*loadedReliquary);
+            Inscription::Binary::ToFile(*loadedReliquary, "Test.dat");
 
             auto globalRelic = loadedReliquary->Find<GlobalRelicCreatingNullSerializedRelic>();
 

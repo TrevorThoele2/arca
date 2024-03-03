@@ -3,7 +3,7 @@
 #include <string>
 
 #include <Inscription/CompositeScribeCategory.h>
-#include <Inscription/BinaryArchive.h>
+#include <Inscription/BinaryFormat.h>
 
 namespace Arca
 {
@@ -58,12 +58,12 @@ namespace Inscription
     public:
         using ObjectT = Arca::Type;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive);
-        void Scriven(ObjectT& object, Archive::Json& archive);
+        void Scriven(ObjectT& object, Format::Binary& format);
+        void Scriven(ObjectT& object, Format::Json& format);
     };
 
-    template<class Archive>
-    struct ScribeTraits<Arca::Type, Archive> final
+    template<class Format>
+    struct ScribeTraits<Arca::Type, Format> final
     {
         using Category = CompositeScribeCategory<Arca::Type>;
     };

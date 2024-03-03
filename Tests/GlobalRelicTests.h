@@ -52,14 +52,14 @@ public:
 
 namespace Inscription
 {
-    template<class Archive>
-    struct ScribeTraits<GlobalRelicTestsFixture::BasicTypedRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<GlobalRelicTestsFixture::BasicTypedRelic, Format> final
     {
         using Category = ArcaNullScribeCategory<GlobalRelicTestsFixture::BasicTypedRelic>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<GlobalRelicTestsFixture::GlobalRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<GlobalRelicTestsFixture::GlobalRelic, Format> final
     {
         using Category = ArcaNullScribeCategory<GlobalRelicTestsFixture::GlobalRelic>;
     };

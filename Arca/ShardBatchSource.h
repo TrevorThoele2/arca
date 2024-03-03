@@ -222,8 +222,8 @@ namespace Inscription
     public:
         using ObjectT = Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>;
     public:
-        void Scriven(ObjectT& object, Archive::Binary& archive);
-        void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
+        void Scriven(ObjectT& object, Format::Binary& format);
+        void Scriven(const std::string& name, ObjectT& object, Format::Json& format);
     private:
         using ShardT = typename ObjectT::ShardT;
         using CreateT = std::decay_t<ShardT>;

@@ -53,21 +53,21 @@ namespace Inscription
     public:
         using ObjectT = ConstShardTestsFixture::Shard;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {
-            archive("value", object.value);
+            format("value", object.value);
         }
     };
 
-    template<class Archive>
-    struct ScribeTraits<ConstShardTestsFixture::Shard, Archive> final
+    template<class Format>
+    struct ScribeTraits<ConstShardTestsFixture::Shard, Format> final
     {
         using Category = ArcaCompositeScribeCategory<ConstShardTestsFixture::Shard>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<ConstShardTestsFixture::Relic, Archive> final
+    template<class Format>
+    struct ScribeTraits<ConstShardTestsFixture::Relic, Format> final
     {
         using Category = ArcaNullScribeCategory<ConstShardTestsFixture::Relic>;
     };

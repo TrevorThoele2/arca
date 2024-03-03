@@ -7,6 +7,8 @@ using namespace std::string_literals;
 #include <Arca/Create.h>
 #include "SignalListener.h"
 
+#include <Inscription/Json.h>
+
 SCENARIO_METHOD(
     SignaledJsonSerializationTestsFixture,
     "signaled reliquary json serialization",
@@ -19,10 +21,7 @@ SCENARIO_METHOD(
             .Register<BasicShard>()
             .Actualize();
 
-        {
-            auto outputArchive = ::Inscription::Archive::OutputJson("Test.dat");
-            outputArchive("reliquary", *savedReliquary);
-        }
+        Inscription::Json::ToFile(*savedReliquary, "Test.json");
 
         WHEN("loading with open relic with shards")
         {
@@ -41,10 +40,7 @@ SCENARIO_METHOD(
             auto specificRelicDestroying = SignalListener<DestroyingKnown<OpenRelic>>(*loadedReliquary);
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
-            {
-                auto inputArchive = ::Inscription::Archive::InputJson(Inscription::File::Path("Test.dat"));
-                inputArchive("reliquary", *loadedReliquary);
-            }
+            Inscription::Json::FromFile(*loadedReliquary, "Test.json");
 
             THEN("does not signal creation")
             {
@@ -77,10 +73,7 @@ SCENARIO_METHOD(
             auto specificRelicDestroying = SignalListener<DestroyingKnown<LocalRelic>>(*loadedReliquary);
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
-            {
-                auto inputArchive = ::Inscription::Archive::InputJson(Inscription::File::Path("Test.dat"));
-                inputArchive("reliquary", *loadedReliquary);
-            }
+            Inscription::Json::FromFile(*loadedReliquary, "Test.json");
 
             THEN("does not signal creation")
             {
@@ -108,10 +101,7 @@ SCENARIO_METHOD(
         auto savedRelic = savedReliquary->Do(Create<OpenRelic>());
         savedReliquary->Do(Create<BasicShard>(savedRelic.ID()));
 
-        {
-            auto outputArchive = ::Inscription::Archive::OutputJson("Test.dat");
-            outputArchive("reliquary", *savedReliquary);
-        }
+        Inscription::Json::ToFile(*savedReliquary, "Test.json");
 
         WHEN("loading")
         {
@@ -127,10 +117,7 @@ SCENARIO_METHOD(
             auto specificRelicDestroying = SignalListener<DestroyingKnown<OpenRelic>>(*loadedReliquary);
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
-            {
-                auto inputArchive = ::Inscription::Archive::InputJson(Inscription::File::Path("Test.dat"));
-                inputArchive("reliquary", *loadedReliquary);
-            }
+            Inscription::Json::FromFile(*loadedReliquary, "Test.json");
 
             THEN("signals creation")
             {
@@ -157,10 +144,7 @@ SCENARIO_METHOD(
 
         savedReliquary->Do(Create<LocalRelic>(dataGeneration.Random<int>()));
 
-        {
-            auto outputArchive = ::Inscription::Archive::OutputJson("Test.dat");
-            outputArchive("reliquary", *savedReliquary);
-        }
+        Inscription::Json::ToFile(*savedReliquary, "Test.json");
 
         WHEN("loading")
         {
@@ -176,10 +160,7 @@ SCENARIO_METHOD(
             auto specificRelicDestroying = SignalListener<DestroyingKnown<LocalRelic>>(*loadedReliquary);
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
-            {
-                auto inputArchive = ::Inscription::Archive::InputJson(Inscription::File::Path("Test.dat"));
-                inputArchive("reliquary", *loadedReliquary);
-            }
+            Inscription::Json::FromFile(*loadedReliquary, "Test.json");
 
             THEN("signals creation")
             {

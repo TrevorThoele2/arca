@@ -17,28 +17,28 @@ namespace Inscription
         static constexpr bool requiresScribe = true;
         using ScribeT = Scribe<ObjectT>;
     public:
-        static void Scriven(ObjectT& object, Archive::Binary& archive, ScribeT& scribe);
-        static void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive, ScribeT& scribe);
+        static void Scriven(ObjectT& object, Format::Binary& format, ScribeT& scribe);
+        static void Scriven(const std::string& name, ObjectT& object, Format::Json& format, ScribeT& scribe);
     public:
-        template<class Archive>
-        static Type OutputType(const Archive& archive);
+        template<class Format>
+        static Type OutputType(const Format& format);
     };
 
     template<class T>
-    void ArcaTableScribeCategory<T>::Scriven(ObjectT& object, Archive::Binary& archive, ScribeT& scribe)
+    void ArcaTableScribeCategory<T>::Scriven(ObjectT& object, Format::Binary& format, ScribeT& scribe)
     {
-        CompositeScribeCategory<T>::Scriven(object, archive, scribe);
+        CompositeScribeCategory<T>::Scriven(object, format, scribe);
     }
 
     template<class T>
-    void ArcaTableScribeCategory<T>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive, ScribeT& scribe)
+    void ArcaTableScribeCategory<T>::Scriven(const std::string& name, ObjectT& object, Format::Json& format, ScribeT& scribe)
     {
-        CompositeScribeCategory<T>::Scriven(name, object, archive, scribe);
+        CompositeScribeCategory<T>::Scriven(name, object, format, scribe);
     }
 
     template<class T>
-    template<class Archive>
-    Type ArcaTableScribeCategory<T>::OutputType(const Archive&)
+    template<class Format>
+    Type ArcaTableScribeCategory<T>::OutputType(const Format&)
     {
         return Arca::TypeFor<T>().name;
     }

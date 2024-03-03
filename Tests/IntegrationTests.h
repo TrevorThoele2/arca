@@ -89,14 +89,14 @@ public:
 
 namespace Inscription
 {
-    template<class Archive>
-    struct ScribeTraits<IntegrationTestsFixture::MatrixCreatingRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<IntegrationTestsFixture::MatrixCreatingRelic, Format> final
     {
         using Category = ArcaNullScribeCategory<IntegrationTestsFixture::MatrixCreatingRelic>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<IntegrationTestsFixture::RelicListeningToSignalFromConstructor, Archive> final
+    template<class Format>
+    struct ScribeTraits<IntegrationTestsFixture::RelicListeningToSignalFromConstructor, Format> final
     {
         using Category = ArcaNullScribeCategory<IntegrationTestsFixture::RelicListeningToSignalFromConstructor>;
     };
@@ -107,15 +107,15 @@ namespace Inscription
     public:
         using ObjectT = IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {
-            archive("localRelic", object.localRelic);
+            format("localRelic", object.localRelic);
         }
     };
 
-    template<class Archive>
-    struct ScribeTraits<IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic, Format> final
     {
         using Category = ArcaCompositeScribeCategory<IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic>;
     };

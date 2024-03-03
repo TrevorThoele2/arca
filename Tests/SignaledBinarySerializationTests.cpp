@@ -7,6 +7,8 @@ using namespace std::string_literals;
 #include <Arca/Create.h>
 #include "SignalListener.h"
 
+#include <Inscription/Binary.h>
+
 SCENARIO_METHOD(
     SignaledBinarySerializationTestsFixture,
     "signaled binary serialization",
@@ -19,10 +21,7 @@ SCENARIO_METHOD(
             .Register<BasicShard>()
             .Actualize();
 
-        {
-            auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading with open relic with shards")
         {
@@ -41,10 +40,7 @@ SCENARIO_METHOD(
             auto specificRelicDestroying = SignalListener<DestroyingKnown<OpenRelic>>(*loadedReliquary);
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
-            {
-                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             THEN("does not signal creation")
             {
@@ -78,10 +74,7 @@ SCENARIO_METHOD(
             auto specificRelicDestroying = SignalListener<DestroyingKnown<LocalRelic>>(*loadedReliquary);
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
-            {
-                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             THEN("does not signal creation")
             {
@@ -109,10 +102,7 @@ SCENARIO_METHOD(
         auto savedRelic = savedReliquary->Do(Create<OpenRelic>());
         savedReliquary->Do(Create<BasicShard>(savedRelic.ID()));
 
-        {
-            auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading")
         {
@@ -127,10 +117,7 @@ SCENARIO_METHOD(
             auto specificRelicDestroying = SignalListener<DestroyingKnown<OpenRelic>>(*loadedReliquary);
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
-            {
-                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             THEN("signals creation")
             {
@@ -154,11 +141,8 @@ SCENARIO_METHOD(
             .Actualize();
 
         savedReliquary->Do(Create<LocalRelic>(dataGeneration.Random<int>()));
-
-        {
-            auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading")
         {
@@ -174,10 +158,7 @@ SCENARIO_METHOD(
             auto specificRelicDestroying = SignalListener<DestroyingKnown<LocalRelic>>(*loadedReliquary);
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
-            {
-                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             THEN("signals creation")
             {

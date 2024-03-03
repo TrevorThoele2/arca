@@ -8,11 +8,11 @@ namespace Inscription
 {
     template<class T>
     void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::Scriven(
-        ObjectT& object, Archive::Binary& archive)
+        ObjectT& object, Format::Binary& format)
     {
-        if (archive.IsOutput())
+        if (format.IsOutput())
         {
-            auto& saveIDs = archive.UserContext<SaveUserContext>()->ids;
+            auto& saveIDs = format.UserContext<SaveUserContext>()->ids;
 
             std::vector<typename ObjectT::iterator> save;
             for (auto& id : saveIDs)
@@ -23,41 +23,41 @@ namespace Inscription
             }
 
             auto size = save.size();
-            archive(size);
+            format(size);
 
             for (auto& stored : save)
             {
                 if (saveIDs.find(stored->first) != saveIDs.end())
                 {
-                    archive(stored->first);
-                    archive(*stored->second.shard);
-                    archive(stored->second.required);
+                    format(stored->first);
+                    format(*stored->second.shard);
+                    format(stored->second.required);
                 }
             }
         }
         else
         {
             ContainerSize size;
-            archive(size);
+            format(size);
 
             while (size-- > 0)
             {
                 Arca::RelicID id;
-                archive(id);
+                format(id);
 
                 auto foundShard = object.Find(id).lock();
                 if (foundShard)
                 {
-                    archive(*foundShard);
+                    format(*foundShard);
                     bool required = false;
-                    archive(required);
+                    format(required);
                 }
                 else
                 {
                     auto shard = Create();
-                    archive(*shard);
+                    format(*shard);
                     bool required = false;
-                    archive(required);
+                    format(required);
                     object.map.emplace(id, typename ObjectT::StoredT{ required, shard });
                 }
 
@@ -70,11 +70,11 @@ namespace Inscription
 
     template<class T>
     void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::Scriven(
-        const std::string& name, ObjectT& object, Archive::Json& archive)
+        const std::string& name, ObjectT& object, Format::Json& format)
     {
-        if (archive.IsOutput())
+        if (format.IsOutput())
         {
-            auto& saveIDs = archive.UserContext<SaveUserContext>()->ids;
+            auto& saveIDs = format.UserContext<SaveUserContext>()->ids;
 
             std::vector<typename ObjectT::iterator> save;
             for (auto& id : saveIDs)
@@ -84,42 +84,45 @@ namespace Inscription
                     save.push_back(found);
             }
 
-            auto output = archive.AsOutput();
+            const auto output = format.AsOutput();
             output->StartList(name);
+            size_t i = 0;
             for (auto& stored : save)
             {
-                output->StartObject("");
-                archive("id", stored->first);
-                archive("shard", *stored->second.shard);
-                archive("required", stored->second.required);
+                output->StartObject(Chroma::ToString(i));
+                format("id", stored->first);
+                format("shard", *stored->second.shard);
+                format("required", stored->second.required);
                 output->EndObject();
+                ++i;
             }
             output->EndList();
         }
         else
         {
-            auto input = archive.AsInput();
+            const auto input = format.AsInput();
             auto size = input->StartList(name);
+            size_t i = 0;
             while (size-- > 0)
             {
-                input->StartObject("");
+                input->StartObject(Chroma::ToString(i));
 
                 Arca::RelicID id = Arca::nullRelicID;
-                archive("id", id);
+                format("id", id);
 
                 auto foundShard = object.Find(id).lock();
                 if (foundShard)
                 {
-                    archive("shard", *foundShard);
+                    format("shard", *foundShard);
                     bool required = false;
-                    archive("required", required);
+                    format("required", required);
                 }
                 else
                 {
                     auto shard = Create();
-                    archive("shard", *shard);
+                    format("shard", *shard);
                     bool required = false;
-                    archive("required", required);
+                    format("required", required);
                     object.map.emplace(id, typename ObjectT::StoredT{ required, shard });
                 }
 
@@ -128,6 +131,8 @@ namespace Inscription
                 object.matrices->ShardCreated(id, type, object.shards->AllTypes(id));
 
                 input->EndObject();
+
+                ++i;
             }
             input->EndList();
         }

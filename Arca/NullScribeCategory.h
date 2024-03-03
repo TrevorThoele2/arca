@@ -16,28 +16,28 @@ namespace Inscription
     public:
         static constexpr bool requiresScribe = false;
     public:
-        static void Scriven(ObjectT& object, Archive::Binary& archive);
-        static void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
+        static void Scriven(ObjectT& object, Format::Binary& format);
+        static void Scriven(const std::string& name, ObjectT& object, Format::Json& format);
     public:
-        template<class Archive>
-        static Type OutputType(const Archive& archive);
+        template<class Format>
+        static Type OutputType(const Format& format);
     };
 
     template<class T>
-    void ArcaNullScribeCategory<T>::Scriven(ObjectT& object, Archive::Binary& archive)
+    void ArcaNullScribeCategory<T>::Scriven(ObjectT& object, Format::Binary& format)
     {
-        NullScribeCategory<T>::Scriven(object, archive);
+        NullScribeCategory<T>::Scriven(object, format);
     }
 
     template<class T>
-    void ArcaNullScribeCategory<T>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
+    void ArcaNullScribeCategory<T>::Scriven(const std::string& name, ObjectT& object, Format::Json& format)
     {
-        NullScribeCategory<T>::Scriven(name, object, archive);
+        NullScribeCategory<T>::Scriven(name, object, format);
     }
 
     template<class T>
-    template<class Archive>
-    Type ArcaNullScribeCategory<T>::OutputType(const Archive&)
+    template<class Format>
+    Type ArcaNullScribeCategory<T>::OutputType(const Format&)
     {
         return Arca::TypeFor<T>().name;
     }

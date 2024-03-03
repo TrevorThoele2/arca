@@ -35,15 +35,15 @@ namespace Chroma
 
 namespace Inscription
 {
-    void Scribe<Arca::Type>::Scriven(ObjectT& object, Archive::Binary& archive)
+    void Scribe<Arca::Type>::Scriven(ObjectT& object, Format::Binary& format)
     {
-        archive(object.name);
-        archive(object.isConst);
+        format(object.name);
+        format(object.isConst);
     }
 
-    void Scribe<Arca::Type>::Scriven(ObjectT& object, Archive::Json& archive)
+    void Scribe<Arca::Type>::Scriven(ObjectT& object, Format::Json& format)
     {
-        archive("name", object.name);
-        archive("isConst", object.isConst);
+        format("name", object.name);
+        format("isConst", object.isConst);
     }
 }

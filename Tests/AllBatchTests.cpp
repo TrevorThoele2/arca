@@ -10,6 +10,8 @@
 #include <Arca/Destroy.h>
 #include <Arca/Either.h>
 
+#include <Inscription/Binary.h>
+
 AllBatchTestsFixture::Relic::Relic(RelicInit init)
 {
     init.Create<DifferentiableShard<0>>();
@@ -368,10 +370,7 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all batch serialization", "[all][batch][s
         savedReliquary->Do(Create<DifferentiableShard<1>>(savedRelic));
         savedReliquary->Do(Create<DifferentiableShard<2>>(savedRelic));
 
-        {
-            auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading reliquary")
         {
@@ -382,10 +381,7 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all batch serialization", "[all][batch][s
                 .Register<DifferentiableShard<2>>()
                 .Actualize();
 
-            {
-                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             auto batch = loadedReliquary->Batch<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>();
 

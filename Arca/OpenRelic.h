@@ -26,13 +26,13 @@ namespace Inscription
     public:
         using ObjectT = Arca::OpenRelic;
     public:
-        template<class Archive>
-        void Scriven(ObjectT&, Archive&)
+        template<class Format>
+        void Scriven(ObjectT&, Format&)
         {}
     };
 
-    template<class Archive>
-    struct ScribeTraits<Arca::OpenRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<Arca::OpenRelic, Format> final
     {
         using Category = ArcaCompositeScribeCategory<Arca::OpenRelic>;
     };

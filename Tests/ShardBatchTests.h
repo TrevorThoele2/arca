@@ -44,8 +44,8 @@ public:
 
 namespace Inscription
 {
-    template<class Archive>
-    struct ScribeTraits<ShardBatchFixture::GlobalRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<ShardBatchFixture::GlobalRelic, Format> final
     {
         using Category = ArcaNullScribeCategory<ShardBatchFixture::GlobalRelic>;
     };

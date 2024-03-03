@@ -53,10 +53,10 @@ namespace Arca
 
             [[nodiscard]] bool WillBinarySerialize() const override;
             [[nodiscard]] bool WillJsonSerialize() const override;
-            void Serialize(Inscription::Archive::Binary& archive) override;
-            void Serialize(const std::string& name, Inscription::Archive::Json& archive) override;
-            [[nodiscard]] std::vector<Inscription::Type> InscriptionTypes(Inscription::Archive::Binary& archive) const override;
-            [[nodiscard]] std::vector<Inscription::Type> InscriptionTypes(Inscription::Archive::Json& archive) const override;
+            void Serialize(Inscription::Format::Binary& format) override;
+            void Serialize(const std::string& name, Inscription::Format::Json& format) override;
+            [[nodiscard]] std::vector<Inscription::Type> InscriptionTypes(Inscription::Format::Binary& format) const override;
+            [[nodiscard]] std::vector<Inscription::Type> InscriptionTypes(Inscription::Format::Json& format) const override;
         };
 
         using HandlerPtr = std::unique_ptr<HandlerBase>;
@@ -128,37 +128,37 @@ namespace Arca
     template<class CuratorT>
     bool ReliquaryCurators::Handler<CuratorT>::WillBinarySerialize() const
     {
-        return HasScribe<CuratorT, Inscription::Archive::Binary>();
+        return HasScribe<CuratorT, Inscription::Format::Binary>();
     }
 
     template<class CuratorT>
     bool ReliquaryCurators::Handler<CuratorT>::WillJsonSerialize() const
     {
-        return HasScribe<CuratorT, Inscription::Archive::Json>();
+        return HasScribe<CuratorT, Inscription::Format::Json>();
     }
 
     template<class CuratorT>
-    void ReliquaryCurators::Handler<CuratorT>::Serialize(Inscription::Archive::Binary& archive)
+    void ReliquaryCurators::Handler<CuratorT>::Serialize(Inscription::Format::Binary& format)
     {
-        archive(curator);
+        format(curator);
     }
 
     template<class CuratorT>
-    void ReliquaryCurators::Handler<CuratorT>::Serialize(const std::string& name, Inscription::Archive::Json& archive)
+    void ReliquaryCurators::Handler<CuratorT>::Serialize(const std::string& name, Inscription::Format::Json& format)
     {
-        archive(name, curator);
+        format(name, curator);
     }
 
     template<class CuratorT>
-    std::vector<Inscription::Type> ReliquaryCurators::Handler<CuratorT>::InscriptionTypes(Inscription::Archive::Binary& archive) const
+    std::vector<Inscription::Type> ReliquaryCurators::Handler<CuratorT>::InscriptionTypes(Inscription::Format::Binary& format) const
     {
-        return Inscription::InputTypesFor<CuratorT>(archive);
+        return Inscription::InputTypesFor<CuratorT>(format);
     }
 
     template<class CuratorT>
-    std::vector<Inscription::Type> ReliquaryCurators::Handler<CuratorT>::InscriptionTypes(Inscription::Archive::Json& archive) const
+    std::vector<Inscription::Type> ReliquaryCurators::Handler<CuratorT>::InscriptionTypes(Inscription::Format::Json& format) const
     {
-        return Inscription::InputTypesFor<CuratorT>(archive);
+        return Inscription::InputTypesFor<CuratorT>(format);
     }
 
     template<class CuratorT, class... Args, std::enable_if_t<is_curator_v<CuratorT>, int>>

@@ -47,20 +47,20 @@ namespace Arca
 
 namespace Inscription
 {
-    template<class Archive>
-    struct ScribeTraits<IsTypeTestsFixture::Shard, Archive> final
+    template<class Format>
+    struct ScribeTraits<IsTypeTestsFixture::Shard, Format> final
     {
         using Category = ArcaNullScribeCategory<IsTypeTestsFixture::Shard>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<IsTypeTestsFixture::Relic, Archive> final
+    template<class Format>
+    struct ScribeTraits<IsTypeTestsFixture::Relic, Format> final
     {
         using Category = ArcaNullScribeCategory<IsTypeTestsFixture::Relic>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<IsTypeTestsFixture::Curator, Archive> final
+    template<class Format>
+    struct ScribeTraits<IsTypeTestsFixture::Curator, Format> final
     {
         using Category = ArcaNullScribeCategory<IsTypeTestsFixture::Curator>;
     };

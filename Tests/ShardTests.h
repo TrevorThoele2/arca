@@ -47,14 +47,14 @@ namespace Arca
 
 namespace Inscription
 {
-    template<class Archive>
-    struct ScribeTraits<ShardTestsFixture::RelicConstructingShard, Archive> final
+    template<class Format>
+    struct ScribeTraits<ShardTestsFixture::RelicConstructingShard, Format> final
     {
         using Category = ArcaNullScribeCategory<ShardTestsFixture::RelicConstructingShard>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<ShardTestsFixture::ShardConstructedFromMovedValue, Archive> final
+    template<class Format>
+    struct ScribeTraits<ShardTestsFixture::ShardConstructedFromMovedValue, Format> final
     {
         using Category = ArcaNullScribeCategory<ShardTestsFixture::ShardConstructedFromMovedValue>;
     };

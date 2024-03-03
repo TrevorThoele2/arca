@@ -5,6 +5,8 @@
 #include <Arca/OpenRelic.h>
 #include <Arca/Create.h>
 
+#include <Inscription/Binary.h>
+
 ConstShardTestsFixture::Shard::Shard(int value) :
     value(value)
 {}
@@ -313,10 +315,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shard serialization", "[shard][co
         auto savedRelic = savedReliquary->Do(Create<OpenRelic>());
         savedReliquary->Do(Create<const Shard>(savedRelic));
 
-        {
-            auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading reliquary")
         {
@@ -325,10 +324,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shard serialization", "[shard][co
                 .Register<Shard>()
                 .Actualize();
 
-            {
-                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             auto loadedRelic = loadedReliquary->Find<OpenRelic>(savedRelic.ID());
 

@@ -62,27 +62,27 @@ namespace Inscription
     public:
         using ObjectT = Arca::Index<T, std::enable_if_t<Arca::is_matrix_v<T>>>;
     protected:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {
-            if (archive.IsOutput())
+            if (format.IsOutput())
             {
                 auto id = object.ID();
-                archive("id", id);
+                format("id", id);
             }
             else
             {
                 Arca::RelicID id;
-                archive("id", id);
+                format("id", id);
                 object.id = id;
 
-                object.owner = archive.template UserContext<ReliquaryUserContext>()->reliquary;
+                object.owner = format.template UserContext<ReliquaryUserContext>()->reliquary;
             }
         }
     };
 
-    template<class T, class Archive>
-    struct ScribeTraits<Arca::Index<T, std::enable_if_t<Arca::is_matrix_v<T>>>, Archive> final
+    template<class T, class Format>
+    struct ScribeTraits<Arca::Index<T, std::enable_if_t<Arca::is_matrix_v<T>>>, Format> final
     {
         using Category = CompositeScribeCategory<Arca::Index<T, std::enable_if_t<Arca::is_matrix_v<T>>>>;
     };

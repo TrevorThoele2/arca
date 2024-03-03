@@ -80,8 +80,8 @@ namespace Arca
 
 namespace Inscription
 {
-    template<size_t differentiator, class Archive>
-    struct ScribeTraits<DifferentiableCurator<differentiator>, Archive> final
+    template<size_t differentiator, class Format>
+    struct ScribeTraits<DifferentiableCurator<differentiator>, Format> final
     {
         using Category = ArcaNullScribeCategory<DifferentiableCurator<differentiator>>;
     };

@@ -86,20 +86,20 @@ public:
 
 namespace Inscription
 {
-    template<class Archive>
-    struct ScribeTraits<IndexTestsFixture::TypedClosedRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<IndexTestsFixture::TypedClosedRelic, Format> final
     {
         using Category = ArcaNullScribeCategory<IndexTestsFixture::TypedClosedRelic>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<IndexTestsFixture::TypedOpenRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<IndexTestsFixture::TypedOpenRelic, Format> final
     {
         using Category = ArcaNullScribeCategory<IndexTestsFixture::TypedOpenRelic>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<IndexTestsFixture::GlobalRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<IndexTestsFixture::GlobalRelic, Format> final
     {
         using Category = ArcaNullScribeCategory<IndexTestsFixture::GlobalRelic>;
     };
@@ -110,15 +110,15 @@ namespace Inscription
     public:
         using ObjectT = IndexTestsFixture::RelicHolderRelic;
     public:
-        template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
+        template<class Format>
+        void Scriven(ObjectT& object, Format& format)
         {
-            archive("held", object.held);
+            format("held", object.held);
         }
     };
 
-    template<class Archive>
-    struct ScribeTraits<IndexTestsFixture::RelicHolderRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<IndexTestsFixture::RelicHolderRelic, Format> final
     {
         using Category = ArcaCompositeScribeCategory<IndexTestsFixture::RelicHolderRelic>;
     };

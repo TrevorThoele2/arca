@@ -36,8 +36,8 @@ public:
 
 namespace Inscription
 {
-    template<class Archive>
-    struct ScribeTraits<AllTestsFixture::BasicTypedRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<AllTestsFixture::BasicTypedRelic, Format> final
     {
         using Category = ArcaNullScribeCategory<AllTestsFixture::BasicTypedRelic>;
     };

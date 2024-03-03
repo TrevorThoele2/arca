@@ -2,7 +2,7 @@
 
 #include "GeneralFixture.h"
 
-#include <Inscription/BinaryArchive.h>
+#include <Inscription/Binary.h>
 
 using namespace Arca;
 
@@ -41,14 +41,14 @@ class TypeTestsFixture::TypedRelic final
 
 namespace Inscription
 {
-    template<class Archive>
-    struct ScribeTraits<TypeTestsFixture::Shard, Archive> final
+    template<class Format>
+    struct ScribeTraits<TypeTestsFixture::Shard, Format> final
     {
         using Category = ArcaNullScribeCategory<TypeTestsFixture::Shard>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<TypeTestsFixture::TypedRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<TypeTestsFixture::TypedRelic, Format> final
     {
         using Category = ArcaNullScribeCategory<TypeTestsFixture::TypedRelic>;
     };

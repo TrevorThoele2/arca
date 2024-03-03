@@ -43,14 +43,14 @@ namespace Arca
 
 namespace Inscription
 {
-    template<class Archive>
-    struct ScribeTraits<AllBatchTestsFixture::Relic, Archive> final
+    template<class Format>
+    struct ScribeTraits<AllBatchTestsFixture::Relic, Format> final
     {
         using Category = ArcaNullScribeCategory<AllBatchTestsFixture::Relic>;
     };
 
-    template<class Archive>
-    struct ScribeTraits<AllBatchTestsFixture::GlobalRelic, Archive> final
+    template<class Format>
+    struct ScribeTraits<AllBatchTestsFixture::GlobalRelic, Format> final
     {
         using Category = ArcaNullScribeCategory<AllBatchTestsFixture::GlobalRelic>;
     };

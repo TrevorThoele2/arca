@@ -9,6 +9,8 @@
 
 #include "BasicShard.h"
 
+#include <Inscription/Binary.h>
+
 SCENARIO_METHOD(EitherBatchTestsFixture, "default either batch", "[either][batch]")
 {
     GIVEN("default either batch")
@@ -254,10 +256,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either shard batch serialization", "[E
 
         savedReliquary->Do(Create<LocalRelic>{ dataGeneration.Random<int>() });
 
-        {
-            auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
-            outputArchive(*savedReliquary);
-        }
+        Inscription::Binary::ToFile(*savedReliquary, "Test.dat");
 
         WHEN("loading reliquary")
         {
@@ -266,10 +265,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either shard batch serialization", "[E
                 .Register<BasicShard>()
                 .Actualize();
 
-            {
-                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
-                inputArchive(*loadedReliquary);
-            }
+            Inscription::Binary::FromFile(*loadedReliquary, "Test.dat");
 
             auto batch = loadedReliquary->Batch<Either<BasicShard>>();
 

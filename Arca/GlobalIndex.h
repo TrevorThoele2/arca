@@ -62,13 +62,13 @@ namespace Inscription
     public:
         using ObjectT = Arca::Index<T, std::enable_if_t<Arca::is_global_v<T>>>;
     public:
-        template<class Archive>
-        void Scriven(ObjectT&, Archive&)
+        template<class Format>
+        void Scriven(ObjectT&, Format&)
         {}
     };
 
-    template<class T, class Archive>
-    struct ScribeTraits<Arca::Index<T, std::enable_if_t<Arca::is_global_v<T>>>, Archive> final
+    template<class T, class Format>
+    struct ScribeTraits<Arca::Index<T, std::enable_if_t<Arca::is_global_v<T>>>, Format> final
     {
         using Category = CompositeScribeCategory<Arca::Index<T, std::enable_if_t<Arca::is_global_v<T>>>>;
     };
