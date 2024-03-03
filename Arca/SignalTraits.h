@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Traits.h"
+#include "ObjectType.h"
 
 namespace Arca
 {

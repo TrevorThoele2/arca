@@ -82,7 +82,11 @@ namespace Arca
         {
             for (auto& stage : transformedCuratorInitializationPipeline)
                 for (auto& curator : stage)
-                    curator->Initialize(*reliquary);
+                    curator->PostConstruct(*reliquary);
+
+            for (auto& stage : transformedCuratorInitializationPipeline)
+                for (auto& curator : stage)
+                    curator->Initialize();
         }
 
         for (auto& initializer : globalRelicInitializerList)

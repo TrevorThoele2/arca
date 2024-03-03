@@ -14,7 +14,6 @@
 #include "ClosedRelic.h"
 #include "StructureFrom.h"
 #include "Either.h"
-#include "AreAllShards.h"
 #include "Ptr.h"
 
 #include "Destroying.h"
@@ -76,8 +75,10 @@ namespace Arca
 
         [[nodiscard]] std::optional<Handle> ParentOf(const Handle& child) const;
 
-        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int> = 0>
         [[nodiscard]] RelicID IDFor(const RelicT& relic) const;
+        template<class RelicT, std::enable_if_t<is_global_relic_v<RelicT>, int> = 0>
+        [[nodiscard]] RelicID IDFor() const;
 
         [[nodiscard]] std::vector<RelicID> AllIDs() const;
 
@@ -91,8 +92,6 @@ namespace Arca
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
         template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
-        [[nodiscard]] bool Contains(RelicID id) const;
-        template<class... ShardsT, std::enable_if_t<are_all_shards_v<ShardsT...> && (sizeof...(ShardsT) > 1), int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
         template<class ShardsT, std::enable_if_t<is_composite_v<ShardsT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
@@ -252,10 +251,16 @@ namespace Arca
         return relics.batchSources.Batch<RelicT>();
     }
 
-    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
+    template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int>>
     RelicID Reliquary::IDFor(const RelicT& relic) const
     {
         return relics.IDFor(relic);
+    }
+
+    template<class RelicT, std::enable_if_t<is_global_relic_v<RelicT>, int>>
+    RelicID Reliquary::IDFor() const
+    {
+        return relics.IDFor<RelicT>();
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
@@ -280,12 +285,6 @@ namespace Arca
     bool Reliquary::Contains(RelicID id) const
     {
         return shards.Contains<EitherT>(id);
-    }
-
-    template<class... ShardsT, std::enable_if_t<are_all_shards_v<ShardsT...> && (sizeof...(ShardsT) > 1), int>>
-    bool Reliquary::Contains(RelicID id) const
-    {
-        return shards.Contains<ShardsT...>(id);
     }
 
     template<class ShardsT, std::enable_if_t<is_composite_v<ShardsT>, int>>

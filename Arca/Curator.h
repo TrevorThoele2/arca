@@ -29,7 +29,8 @@ namespace Arca
         Curator& operator=(const Curator& arg) = delete;
         Curator& operator=(Curator&& arg) = delete;
 
-        void Initialize(Reliquary& owner);
+        void PostConstruct(Reliquary& owner);
+        void Initialize();
 
         void Work(Stage& stage);
     protected:
@@ -38,6 +39,7 @@ namespace Arca
         [[nodiscard]] Reliquary& Owner();
         [[nodiscard]] const Reliquary& Owner() const;
     protected:
+        virtual void PostConstructImplementation();
         virtual void InitializeImplementation();
 
         virtual void WorkImplementation(Stage& stage);

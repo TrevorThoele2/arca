@@ -12,26 +12,21 @@ using namespace Arca;
 class CuratorTestsFixture : public GeneralFixture
 {
 public:
-    struct CuratorCheckpoint
-    {
-        Curator* curator;
-
-        explicit CuratorCheckpoint(Curator* curator);
-    };
-
     class BasicCurator final : public Curator
     {
     public:
         bool isInitialized = false;
 
         bool shouldAbort = false;
-        std::function<void()> onWork;
+        std::function<void()> onPostConstruct = [](){};
+        std::function<void()> onWork = [](){};
 
         [[nodiscard]] Reliquary& OwnerFromOutside();
         [[nodiscard]] const Reliquary& OwnerFromOutside() const;
     public:
         int value = 0;
     protected:
+        void PostConstructImplementation() override;
         void InitializeImplementation() override;
         void WorkImplementation(Stage& stage) override;
     };
@@ -46,11 +41,18 @@ public:
     class DifferentiableCurator final : public Curator
     {
     public:
+        static std::vector<Curator*>* postConstructCheckpoints;
         static std::vector<Curator*>* initializationCheckpoints;
-        static std::vector<CuratorCheckpoint>* checkpoints;
+        static std::vector<Curator*>* workCheckpoints;
 
         bool shouldAbort = false;
     public:
+        void PostConstructImplementation() override
+        {
+            if (postConstructCheckpoints)
+                postConstructCheckpoints->push_back(this);
+        }
+
         void InitializeImplementation() override
         {
             if (initializationCheckpoints)
@@ -59,22 +61,23 @@ public:
 
         void WorkImplementation(Stage& stage) override
         {
-            checkpoints->emplace_back(this);
+            if (workCheckpoints)
+                workCheckpoints->push_back(this);
 
             if (shouldAbort)
-            {
                 stage.Abort();
-                return;
-            }
         }
     };
 };
 
 template<size_t id>
-std::vector<Curator*>* CuratorTestsFixture::DifferentiableCurator<id>::initializationCheckpoints;
+std::vector<Curator*>* CuratorTestsFixture::DifferentiableCurator<id>::postConstructCheckpoints = nullptr;
 
 template<size_t id>
-std::vector<CuratorTestsFixture::CuratorCheckpoint>* CuratorTestsFixture::DifferentiableCurator<id>::checkpoints;
+std::vector<Curator*>* CuratorTestsFixture::DifferentiableCurator<id>::initializationCheckpoints = nullptr;
+
+template<size_t id>
+std::vector<Curator*>* CuratorTestsFixture::DifferentiableCurator<id>::workCheckpoints = nullptr;
 
 namespace Arca
 {

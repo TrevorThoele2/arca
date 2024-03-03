@@ -49,8 +49,10 @@ namespace Arca
 
         [[nodiscard]] std::optional<Handle> ParentOf(const Handle& child) const;
 
-        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int> = 0>
         [[nodiscard]] RelicID IDFor(const RelicT& relic) const;
+        template<class RelicT, std::enable_if_t<is_global_relic_v<RelicT>, int> = 0>
+        [[nodiscard]] RelicID IDFor() const;
     public:
         struct RelicPrototype
         {

@@ -125,12 +125,12 @@ namespace Inscription
                 Arca::RelicID id = 0;
                 archive(id);
 
-                ScopeConstructor<typename ObjectT::RelicT> constructor(archive);
-                object.list.push_back(std::move(constructor.GetMove()));
-                archive.AttemptReplaceTrackedObject(*constructor.Get(), object.list.back());
-
-                object.list.back().id = id;
-                object.list.back().owner = object.owner;
+                typename ObjectT::RelicT relic;
+                relic.id = id;
+                relic.owner = object.owner;
+                archive(relic);
+                object.list.push_back(std::move(relic));
+                archive.AttemptReplaceTrackedObject(relic, object.list.back());
             }
         }
     }

@@ -7,6 +7,7 @@
 #include <Inscription/MultimapScribe.h>
 #include <Inscription/MemoryScribe.h>
 #include <Inscription/VectorScribe.h>
+#include "Chroma/Contract.h"
 
 using namespace std::string_literals;
 
@@ -14,7 +15,11 @@ namespace Arca
 {
     void Reliquary::Work()
     {
-        curators.DoOn([](Curator& curator, Curator::Stage& stage) { curator.Work(stage); });
+        curators.DoOn(
+            [](Curator& curator, Curator::Stage& stage)
+            {
+                curator.Work(stage);
+            });
 
         for (auto& batchSource : signals.batchSources.map)
             batchSource.second->Clear();
@@ -175,12 +180,7 @@ namespace Inscription
             archive,
             object.relics.globalSerializers);
 
-        JumpLoadAll(
-            object,
-            archive,
-            object.curators.serializers);
-
-        for(auto& metadata : loadedRelicMetadata)
+        for (auto& metadata : loadedRelicMetadata)
         {
             Arca::RelicMetadata createdMetadata;
             createdMetadata.id = metadata.id;
@@ -196,7 +196,7 @@ namespace Inscription
                 const auto parentType = std::get<0>(FindExtensionForLoadedMetadata(parentID, object));
                 createdMetadata.parent = Arca::HandleSlim(parentID, parentType, Arca::HandleObjectType::Relic);
             }
-            for(auto& child : metadata.children)
+            for (auto& child : metadata.children)
             {
                 const auto childID = child;
                 const auto childType = std::get<0>(FindExtensionForLoadedMetadata(childID, object));
@@ -206,11 +206,19 @@ namespace Inscription
             object.relics.metadataList.push_back(createdMetadata);
         }
 
+        JumpLoadAll(
+            object,
+            archive,
+            object.curators.serializers);
+
         for (auto& loop : object.relics.globalConstructList)
             loop(object);
 
         for (auto& loop : object.relics.batchSources.map)
             loop.second->Construct(object);
+
+        for (auto& loop : object.curators.map)
+            loop.second->Get()->PostConstruct(object);
     }
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::JumpSaveAll(
@@ -342,7 +350,7 @@ namespace Inscription
             if (global.second.id == id)
                 return { Arca::Type(global.first, false), Arca::Locality::Global, global.second.storage.get() };
 
-        return { Arca::Type(), Arca::Locality::Local, nullptr };
+        DEBUG_ASSERT(false);
     }
 
     auto Scribe<::Arca::Reliquary, BinaryArchive>::PruneTypesToLoad(

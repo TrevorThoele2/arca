@@ -3,8 +3,8 @@
 #include <vector>
 
 #include "BatchSource.h"
-#include "AreAllShards.h"
-#include "All.h"
+#include "CompositeTraits.h"
+#include "Ptr.h"
 #include "RelicStructure.h"
 
 namespace Arca
@@ -20,26 +20,9 @@ namespace Arca
 
         virtual void NotifyShardCreated(RelicID id) = 0;
         virtual void NotifyShardDestroyed(RelicID id) = 0;
-        virtual void NotifyRelicCreated(RelicID id, const RelicStructure& structure) = 0;
-        virtual void NotifyRelicDestroyed(RelicID id) = 0;
 
         [[nodiscard]] virtual SizeT Size() const = 0;
     };
-
-    template<class ShardsT, class = void>
-    struct is_composite : std::false_type
-    {};
-
-    template<class ShardsT>
-    struct is_composite<ShardsT, std::enable_if_t<
-        is_all_v<ShardsT>
-        && (ShardsT::Pack::count > 1)
-        && ShardsT::Pack::template ForwardArguments<are_all_shards>::Type::value>>
-        : std::true_type
-    {};
-
-    template<class ShardsT>
-    static constexpr bool is_composite_v = is_composite<ShardsT>::value;
 
     template<class T>
     class BatchSource<T, std::enable_if_t<is_composite_v<T>>>
@@ -51,7 +34,7 @@ namespace Arca
         template<class U>
         struct ToPtr
         {
-            using Type = U*;
+            using Type = Ptr<U>;
         };
     public:
         using TupleT = typename Pack::template Transform<ToPtr>::Type::TupleT;
@@ -75,8 +58,6 @@ namespace Arca
 
         void NotifyShardCreated(RelicID id) override;
         void NotifyShardDestroyed(RelicID id) override;
-        void NotifyRelicCreated(RelicID id, const RelicStructure& structure) override;
-        void NotifyRelicDestroyed(RelicID id) override;
 
         [[nodiscard]] SizeT Size() const override;
         [[nodiscard]] bool IsEmpty() const;
@@ -93,9 +74,6 @@ namespace Arca
         ReliquaryShards* owner;
         size_t referenceCount = 0;
     private:
-        RelicStructure structure;
-        [[nodiscard]] bool StructureContains(Type type) const;
-    private:
         void CreateEntry(RelicID id);
         void DestroyEntry(RelicID id);
         [[nodiscard]] bool ContainsEntry(RelicID id) const;
@@ -105,12 +83,6 @@ namespace Arca
         struct CreateTupleIterator
         {
             static void Do(TupleT& tuple, RelicID id, ReliquaryShards& shards);
-        };
-
-        template<::Chroma::VariadicTemplateSize i>
-        struct ToStructure
-        {
-            static void Do(RelicStructure& structure);
         };
     private:
         friend class Reliquary;

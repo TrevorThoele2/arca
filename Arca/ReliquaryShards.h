@@ -9,6 +9,7 @@
 #include "ShardBatch.h"
 #include "EitherShardBatchSource.h"
 #include "CompositeShardBatchSource.h"
+#include "Either.h"
 
 #include "Ptr.h"
 
@@ -42,8 +43,6 @@ namespace Arca
         [[nodiscard]] bool Contains(RelicID id) const;
         template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
-        template<class... ShardsT, std::enable_if_t<are_all_shards_v<ShardsT...> && (sizeof...(ShardsT) > 1), int> = 0>
-        [[nodiscard]] bool Contains(RelicID id) const;
         template<class ShardsT, std::enable_if_t<is_composite_v<ShardsT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
 
@@ -52,9 +51,6 @@ namespace Arca
 
         template<class ShardT>
         void AttemptAddToEitherBatches(RelicID id, ShardT& shard);
-
-        void NotifyCompositesRelicCreate(RelicID id, const RelicStructure& structure);
-        void NotifyCompositesRelicDestroy(RelicID id);
 
         template<class ShardT>
         Factory FindFactory();
@@ -86,7 +82,12 @@ namespace Arca
         } batchSources = BatchSources(*this);
 
         class EitherBatchSources
-            : public MetaBatchSources<TypeName, EitherShardBatchSourceBase, ReliquaryShards, EitherBatchSources>
+            : public MetaBatchSources<
+                TypeName,
+                EitherShardBatchSourceBase,
+                ReliquaryShards,
+                EitherBatchSources,
+                is_either>
         {
         public:
             template<class T, std::enable_if_t<is_either_v<T>, int> = 0>
@@ -105,10 +106,7 @@ namespace Arca
 
             template<class T>
             [[nodiscard]] static TypeName KeyFor();
-
-            template<class T>
-            constexpr static bool should_accept = is_either_v<T>;
-            friend MetaBatchSources<TypeName, EitherShardBatchSourceBase, ReliquaryShards, EitherBatchSources>;
+            friend MetaBatchSources<TypeName, EitherShardBatchSourceBase, ReliquaryShards, EitherBatchSources, is_either>;
         } eitherBatchSources = EitherBatchSources(*this);
 
         class CompositeBatchSources
@@ -116,7 +114,8 @@ namespace Arca
                 std::type_index,
                 CompositeShardBatchSourceBase,
                 ReliquaryShards,
-                CompositeBatchSources>
+                CompositeBatchSources,
+                is_composite>
         {
         public:
             template<class T, std::enable_if_t<is_composite_v<T>, int> = 0>
@@ -132,10 +131,7 @@ namespace Arca
 
             template<class T>
             [[nodiscard]] static std::type_index KeyFor();
-
-            template<class T>
-            constexpr static bool should_accept = is_composite_v<T>;
-            friend MetaBatchSources<std::type_index, CompositeShardBatchSourceBase, ReliquaryShards, CompositeBatchSources>;
+            friend MetaBatchSources<std::type_index, CompositeShardBatchSourceBase, ReliquaryShards, CompositeBatchSources, is_composite>;
         } compositeBatchSources = CompositeBatchSources(*this);
 
         KnownPolymorphicSerializerList serializers;

@@ -9,7 +9,7 @@
 #include "Curator.h"
 #include "CuratorProvider.h"
 
-#include "InitializeRelic.h"
+#include "Initialize.h"
 
 namespace Arca
 {
@@ -203,7 +203,7 @@ namespace Arca
                     {
                         auto relic = reliquary.Find<RelicT>();
                         relic->owner = &reliquary;
-                        PostConstructRelic(*relic);
+                        PostConstruct(*relic);
                     });
             }
         };
@@ -216,8 +216,8 @@ namespace Arca
                 [&reliquary](auto&& ... initializeArgs)
                 {
                     auto relic = reliquary.Find<RelicT>();
-                    PostConstructRelic(*relic);
-                    InitializeRelic(*relic, std::forward<InitializeArgs>(initializeArgs)...);
+                    PostConstruct(*relic);
+                    Initialize(*relic, std::forward<InitializeArgs>(initializeArgs)...);
                 }, args);
         });
 
