@@ -1,55 +1,55 @@
 #pragma once
 
-#include "Curator.h"
+#include "MutablePointer.h"
 #include "Reliquary.h"
 
 namespace Arca
 {
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int>>
-    RelicT* Curator::MutablePointer(RelicID id)
+    RelicT* MutablePointer::Of(RelicID id)
     {
-        return Owner().template FindStorage<RelicT>(id);
+        return reliquary->template FindStorage<RelicT>(id);
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int>>
-    RelicT* Curator::MutablePointer(Index<RelicT> index)
+    RelicT* MutablePointer::Of(Index<RelicT> index)
     {
-        return MutablePointer<RelicT>(index.ID());
+        return Of<RelicT>(index.ID());
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int>>
-    RelicT* Curator::MutablePointer(const RelicT& relic)
+    RelicT* MutablePointer::Of(const RelicT& relic)
     {
-        return MutablePointer<RelicT>(relic.ID());
+        return Of<RelicT>(relic.ID());
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int>>
-    RelicT* Curator::MutablePointer()
+    RelicT* MutablePointer::Of()
     {
-        return Owner().template FindGlobalStorage<RelicT>();
+        return reliquary->template FindGlobalStorage<RelicT>();
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int>>
-    RelicT* Curator::MutablePointer(Index<RelicT>)
+    RelicT* MutablePointer::Of(Index<RelicT>)
     {
-        return MutablePointer<RelicT>();
+        return Of<RelicT>();
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int>>
-    RelicT* Curator::MutablePointer(const RelicT&)
+    RelicT* MutablePointer::Of(const RelicT&)
     {
-        return MutablePointer<RelicT>();
+        return Of<RelicT>();
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    ShardT* Curator::MutablePointer(RelicID id)
+    ShardT* MutablePointer::Of(RelicID id)
     {
-        return Owner().template FindStorage<ShardT>(id);
+        return reliquary->template FindStorage<ShardT>(id);
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    ShardT* Curator::MutablePointer(Index<ShardT> index)
+    ShardT* MutablePointer::Of(Index<ShardT> index)
     {
-        return MutablePointer<ShardT>(index.ID());
+        return Of<ShardT>(index.ID());
     }
 }

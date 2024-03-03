@@ -17,6 +17,11 @@ namespace Arca
     Curator::Curator(Init init) : owner(&init.owner)
     {}
 
+    MutablePointer Curator::MutablePointer()
+    {
+        return Arca::MutablePointer(Owner());
+    }
+
     Reliquary& Curator::Owner()
     {
         return *owner;
