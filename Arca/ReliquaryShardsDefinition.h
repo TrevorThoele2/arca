@@ -27,20 +27,11 @@ namespace Arca
         auto batchSource = FindBatchSource<ShardT>();
         if (batchSource != nullptr)
         {
-            auto matrices = Owner().matrices.AllKnown();
-            for (auto matrix = matrices.begin(); matrix != matrices.end();)
-            {
-                if (!matrix->Exists(id, Owner()))
-                    matrix = matrices.erase(matrix);
-                else
-                    ++matrix;
-            }
+            auto matrixSnapshot = Owner().matrices.DestroyingSnapshot(id);
 
             if (batchSource->DestroyFromBase(id))
             {
-                for (auto& matrix : matrices)
-                    if (!matrix.Exists(id, Owner()))
-                        matrix.Destroying(id, Owner());
+                matrixSnapshot.Finalize();
 
                 Owner().Raise<DestroyingKnown<ShardT>>(CreateIndex<ShardT>(id));
                 Owner().Raise<Destroying>(HandleFrom(id, batchSource->Type(), HandleObjectType::Shard));
@@ -102,14 +93,7 @@ namespace Arca
     template<class... ConstructorArgs>
     void ReliquaryShards::Handler<ShardT>::CreateCommon(RelicID id, Reliquary& reliquary, bool isConst, ConstructorArgs&& ... constructorArgs)
     {
-        auto matrices = reliquary.matrices.AllKnown();
-        for(auto matrix = matrices.begin(); matrix != matrices.end();)
-        {
-            if (matrix->Exists(id, reliquary))
-                matrix = matrices.erase(matrix);
-            else
-                ++matrix;
-        }
+        auto matrixSnapshot = reliquary.matrices.CreationSnapshot(id);
 
         if (isConst)
             reliquary.shards
@@ -120,10 +104,7 @@ namespace Arca
             .FindBatchSource<ShardT>()
             ->Add(id, std::forward<ConstructorArgs>(constructorArgs)...);
 
-        for (auto& matrix : matrices)
-            if (matrix.Exists(id, reliquary))
-                matrix.Created(id, reliquary);
-
+        matrixSnapshot.Finalize();
         reliquary.Raise<Created>(reliquary.shards.HandleFrom(id, TypeFor<ShardT>(), HandleObjectType::Shard));
         reliquary.Raise<CreatedKnown<ShardT>>(reliquary.shards.CreateIndex<ShardT>(id));
     }

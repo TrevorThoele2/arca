@@ -264,10 +264,13 @@ namespace Inscription
                     archive(*foundShard);
                 else
                 {
+                    auto matrixSnapshot = object.owner->matrices.CreationSnapshot(id);
+
                     typename ObjectT::StoredT shard;
                     archive(shard);
                     object.list.emplace_back(id, std::move(shard));
-                    object.owner->matrices.NotifyCreated(id);
+
+                    matrixSnapshot.Finalize();
                 }
             }
         }
