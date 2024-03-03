@@ -25,9 +25,7 @@ std::function<void(IntegrationTestsFixture::BasicCuratorBase&)>
 
 IntegrationTestsFixture::BasicCuratorBase::BasicCuratorBase()
 {
-    onStartStep = [](BasicCuratorBase&) {};
     onWork = [](BasicCuratorBase&) {};
-    onStopStep = [](BasicCuratorBase&) {};
 }
 
 void IntegrationTestsFixture::BasicCuratorBase::InitializeImplementation()
@@ -37,20 +35,15 @@ void IntegrationTestsFixture::BasicCuratorBase::InitializeImplementation()
     onInitialize = [](BasicCuratorBase&) {};
 }
 
-bool IntegrationTestsFixture::BasicCuratorBase::StartStepImplementation()
+void IntegrationTestsFixture::BasicCuratorBase::WorkImplementation(Stage& stage)
 {
-    onStartStep(*this);
-    return shouldStart;
-}
+    if (shouldAbort)
+    {
+        stage.Abort();
+        return;
+    }
 
-void IntegrationTestsFixture::BasicCuratorBase::WorkImplementation()
-{
     onWork(*this);
-}
-
-void IntegrationTestsFixture::BasicCuratorBase::StopStepImplementation()
-{
-    onStopStep(*this);
 }
 
 namespace Arca
@@ -170,7 +163,7 @@ SCENARIO_METHOD(
         std::unordered_map<int, ParentRelic*> mappedParents;
 
         auto curator = reliquary->Find<ParentChildCurator>();
-        curator->onStartStep = [&mappedParents](BasicCuratorBase& self)
+        curator->onWork = [&mappedParents](BasicCuratorBase& self)
         {
             auto value = 100;
             auto parent = self.Owner().Create<ParentRelic>(value);

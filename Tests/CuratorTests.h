@@ -12,19 +12,11 @@ using namespace Arca;
 class CuratorTestsFixture : public GeneralFixture
 {
 public:
-    enum class CuratorState
-    {
-        Started,
-        Worked,
-        Stopped
-    };
-
     struct CuratorCheckpoint
     {
         Curator* curator;
-        CuratorState state;
 
-        CuratorCheckpoint(Curator* curator, CuratorState state);
+        explicit CuratorCheckpoint(Curator* curator);
     };
 
     class BasicCurator final : public Curator
@@ -32,10 +24,8 @@ public:
     public:
         bool isInitialized = false;
 
-        bool shouldStart = true;
-        std::function<void()> onStartStep;
+        bool shouldAbort = false;
         std::function<void()> onWork;
-        std::function<void()> onStopStep;
 
         [[nodiscard]] Reliquary& OwnerFromOutside();
         [[nodiscard]] const Reliquary& OwnerFromOutside() const;
@@ -43,9 +33,7 @@ public:
         int value = 0;
     protected:
         void InitializeImplementation() override;
-        bool StartStepImplementation() override;
-        void WorkImplementation() override;
-        void StopStepImplementation() override;
+        void WorkImplementation(Stage& stage) override;
     };
 
     class OtherBasicCurator final : public Curator
@@ -60,6 +48,8 @@ public:
     public:
         static std::vector<Curator*>* initializationCheckpoints;
         static std::vector<CuratorCheckpoint>* checkpoints;
+
+        bool shouldAbort = false;
     public:
         void InitializeImplementation() override
         {
@@ -67,20 +57,15 @@ public:
                 initializationCheckpoints->push_back(this);
         }
 
-        bool StartStepImplementation() override
+        void WorkImplementation(Stage& stage) override
         {
-            checkpoints->emplace_back(this, CuratorState::Started);
-            return true;
-        }
+            checkpoints->emplace_back(this);
 
-        void WorkImplementation() override
-        {
-            checkpoints->emplace_back(this, CuratorState::Worked);
-        }
-
-        void StopStepImplementation() override
-        {
-            checkpoints->emplace_back(this, CuratorState::Stopped);
+            if (shouldAbort)
+            {
+                stage.Abort();
+                return;
+            }
         }
     };
 };
