@@ -2,8 +2,15 @@
 
 #include "CuratorTests.h"
 
+#include "DifferentiableCurator.h"
+
 #include <Arca/PipelineException.h>
 #include <Chroma/Iterate.h>
+
+void CuratorTestsFixture::BasicCurator::Work()
+{
+    onWork();
+}
 
 Reliquary& CuratorTestsFixture::BasicCurator::OwnerFromOutside()
 {
@@ -15,29 +22,10 @@ const Reliquary& CuratorTestsFixture::BasicCurator::OwnerFromOutside() const
     return Owner();
 }
 
-void CuratorTestsFixture::BasicCurator::PostConstructImplementation()
-{
-    onPostConstruct();
-}
-
-void CuratorTestsFixture::BasicCurator::InitializeImplementation()
-{
-    isInitialized = true;
-}
-
-void CuratorTestsFixture::BasicCurator::WorkImplementation(Stage& stage)
-{
-    if (shouldAbort)
-    {
-        stage.Abort();
-        return;
-    }
-
-    onWork();
-}
-
-CuratorTestsFixture::CuratorWithNonDefaultConstructor::CuratorWithNonDefaultConstructor(int myValue) :
-    myValue(myValue)
+CuratorTestsFixture::CuratorWithNonDefaultConstructor::CuratorWithNonDefaultConstructor(
+    Reliquary& owner, int myValue)
+    :
+    Curator(owner), myValue(myValue)
 {}
 
 namespace Arca
@@ -70,7 +58,7 @@ struct StagePerCuratorIterator
     static void Do(Pipeline& pipeline)
     {
         pipeline.emplace_back();
-        pipeline.back().Add<CuratorTestsFixture::DifferentiableCurator<id>>();
+        pipeline.back().Add<DifferentiableCurator<id>>();
     }
 };
 
@@ -79,7 +67,7 @@ struct StageIterator
 {
     static void Do(Stage& stage)
     {
-        stage.Add<CuratorTestsFixture::DifferentiableCurator<id>>();
+        stage.Add<DifferentiableCurator<id>>();
     }
 };
 
@@ -88,7 +76,7 @@ struct ReliquaryOriginIterator
 {
     static void Do(ReliquaryOrigin& reliquaryOrigin)
     {
-        reliquaryOrigin.Register<CuratorTestsFixture::DifferentiableCurator<id>>();
+        reliquaryOrigin.Register<DifferentiableCurator<id>>();
     }
 };
 
@@ -97,25 +85,18 @@ struct SetupDifferentiableCurator
 {
     static void Do(std::vector<Curator*>& workCheckpoints)
     {
-        CuratorTestsFixture::DifferentiableCurator<id>::workCheckpoints = &workCheckpoints;
+        DifferentiableCurator<id>::onConstructor = [&workCheckpoints](DifferentiableCurator<id>& curator)
+        {
+            workCheckpoints.push_back(&curator);
+        };
     }
 
-    static void Do(
-        std::vector<Curator*>& workCheckpoints,
-        std::vector<Curator*>& initializationCheckpoints)
+    static void Do(Reliquary& reliquary, std::vector<Curator*>& workCheckpoints)
     {
-        CuratorTestsFixture::DifferentiableCurator<id>::workCheckpoints = &workCheckpoints;
-        CuratorTestsFixture::DifferentiableCurator<id>::initializationCheckpoints = &initializationCheckpoints;
-    }
-
-    static void Do(
-        std::vector<Curator*>& workCheckpoints,
-        std::vector<Curator*>& initializationCheckpoints,
-        std::vector<Curator*>& postConstructCheckpoints)
-    {
-        CuratorTestsFixture::DifferentiableCurator<id>::workCheckpoints = &workCheckpoints;
-        CuratorTestsFixture::DifferentiableCurator<id>::initializationCheckpoints = &initializationCheckpoints;
-        CuratorTestsFixture::DifferentiableCurator<id>::postConstructCheckpoints = &postConstructCheckpoints;
+        reliquary.Find<DifferentiableCurator<id>>().onWork = [&workCheckpoints](DifferentiableCuratorBase& curator)
+        {
+            workCheckpoints.push_back(&curator);
+        };
     }
 };
 
@@ -130,7 +111,7 @@ struct RequireDifferentiableCuratorCheckpointVerification
         if (curators.size() < id + 1)
             return;
 
-        const auto& curator = reliquary.Find<CuratorTestsFixture::DifferentiableCurator<id>>();
+        const auto& curator = reliquary.Find<DifferentiableCurator<id>>();
 
         output.push_back(curators[id] == &curator);
     }
@@ -157,14 +138,6 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator", "[curator]")
             THEN("has one curator")
             {
                 REQUIRE(reliquary->CuratorSize() == 1);
-            }
-        }
-
-        WHEN("checking is initialized")
-        {
-            THEN("is initialized")
-            {
-                REQUIRE(curator.isInitialized == true);
             }
         }
 
@@ -304,26 +277,23 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator split pipeline", "[curator][pipeli
 {
     GIVEN("reliquary with pipeline with one hundred stages with one curator in each")
     {
+        std::vector<Curator*> constructorCheckpoints;
         std::vector<Curator*> workCheckpoints;
-        std::vector<Curator*> initializationCheckpoints;
-        std::vector<Curator*> postConstructCheckpoints;
-        ::Chroma::IterateRange<size_t, SetupDifferentiableCurator, 99, 0>(
-            workCheckpoints,
-            initializationCheckpoints,
-            postConstructCheckpoints);
+        ::Chroma::IterateRange<size_t, SetupDifferentiableCurator, 99, 0>(constructorCheckpoints);
 
-        auto initializationPipeline = Pipeline();
-        ::Chroma::IterateRangeBackward<size_t, StagePerCuratorIterator, 99, 0>(initializationPipeline);
+        auto constructorPipeline = Pipeline();
+        ::Chroma::IterateRangeBackward<size_t, StagePerCuratorIterator, 99, 0>(constructorPipeline);
         auto workPipeline = Pipeline();
         ::Chroma::IterateRange<size_t, StagePerCuratorIterator, 99, 0>(workPipeline);
 
         auto reliquaryOrigin = ReliquaryOrigin()
-            .CuratorPipeline(initializationPipeline, workPipeline);
+            .CuratorPipeline(constructorPipeline, workPipeline);
         ::Chroma::IterateRange<size_t, ReliquaryOriginIterator, 99, 0>(reliquaryOrigin);
 
         auto reliquary = reliquaryOrigin.Actualize();
+        ::Chroma::IterateRange<size_t, SetupDifferentiableCurator, 99, 0>(*reliquary, workCheckpoints);
 
-        THEN("executed post construct in backwards order")
+        THEN("executed construction in backwards order")
         {
             std::list<bool> output;
             ::Chroma::IterateRangeBackward<
@@ -332,19 +302,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator split pipeline", "[curator][pipeli
                 99,
                 0
             >
-                (postConstructCheckpoints, *reliquary, output);
-        }
-
-        THEN("executed initialization in backwards order")
-        {
-            std::list<bool> output;
-            ::Chroma::IterateRangeBackward<
-                size_t,
-                RequireDifferentiableCuratorCheckpointVerification,
-                99,
-                0
-            >
-                (workCheckpoints, *reliquary, output);
+                (constructorCheckpoints, *reliquary, output);
         }
 
         WHEN("working reliquary")
@@ -440,13 +398,9 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator aborts pipeline", "[curator][pipel
 {
     GIVEN("reliquary with pipeline with one hundred stages with one curator in each")
     {
+        std::vector<Curator*> constructorCheckpoints;
         std::vector<Curator*> workCheckpoints;
-        std::vector<Curator*> initializationCheckpoints;
-        std::vector<Curator*> postConstructCheckpoints;
-        ::Chroma::IterateRange<size_t, SetupDifferentiableCurator, 99, 0>(
-            workCheckpoints,
-            initializationCheckpoints,
-            postConstructCheckpoints);
+        ::Chroma::IterateRange<size_t, SetupDifferentiableCurator, 99, 0>(constructorCheckpoints);
 
         auto pipeline = Pipeline();
         ::Chroma::IterateRange<size_t, StagePerCuratorIterator, 99, 0>(pipeline);
@@ -456,6 +410,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator aborts pipeline", "[curator][pipel
         ::Chroma::IterateRange<size_t, ReliquaryOriginIterator, 99, 0>(reliquaryOrigin);
 
         auto reliquary = reliquaryOrigin.Actualize();
+        ::Chroma::IterateRange<size_t, SetupDifferentiableCurator, 99, 0>(*reliquary, workCheckpoints);
 
         WHEN("working reliquary when middle curator will abort")
         {
@@ -489,13 +444,9 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator aborts pipeline", "[curator][pipel
 
     GIVEN("nine curators in three stages")
     {
+        std::vector<Curator*> constructorCheckpoints;
         std::vector<Curator*> workCheckpoints;
-        std::vector<Curator*> initializationCheckpoints;
-        std::vector<Curator*> postConstructCheckpoints;
-        ::Chroma::IterateRange<size_t, SetupDifferentiableCurator, 8, 0>(
-            workCheckpoints,
-            initializationCheckpoints,
-            postConstructCheckpoints);
+        ::Chroma::IterateRange<size_t, SetupDifferentiableCurator, 8, 0>(constructorCheckpoints);
 
         auto pipeline = Pipeline();
         auto stage1 = pipeline.emplace_back();
@@ -510,6 +461,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator aborts pipeline", "[curator][pipel
         ::Chroma::IterateRange<size_t, ReliquaryOriginIterator, 8, 0>(reliquaryOrigin);
 
         auto reliquary = reliquaryOrigin.Actualize();
+        ::Chroma::IterateRange<size_t, SetupDifferentiableCurator, 8, 0>(*reliquary, workCheckpoints);
 
         WHEN("working reliquary when middle stage will abort")
         {

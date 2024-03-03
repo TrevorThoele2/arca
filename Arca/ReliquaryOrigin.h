@@ -37,7 +37,7 @@ namespace Arca
         template<class CuratorT, class... Args, std::enable_if_t<is_curator_v<CuratorT>, int> = 0>
         ReliquaryOrigin& Register(Args&& ... args);
         ReliquaryOrigin& CuratorPipeline(const Pipeline& pipeline);
-        ReliquaryOrigin& CuratorPipeline(const Pipeline& initialization, const Pipeline& work);
+        ReliquaryOrigin& CuratorPipeline(const Pipeline& construction, const Pipeline& work);
     private:
         struct TypeConstructor
         {
@@ -78,18 +78,18 @@ namespace Arca
     private:
         TypeConstructorList curatorList;
 
-        Pipeline curatorInitializationPipeline;
+        Pipeline curatorConstructionPipeline;
         Pipeline curatorWorkPipeline;
 
-        std::vector<Curator*> PushAllCuratorsTo(Reliquary& reliquary) const;
+        void PushAllCuratorsTo(Reliquary& reliquary, const Pipeline& pipeline) const;
 
         template<class Curator>
         [[nodiscard]] bool IsCuratorRegistered() const;
 
+        void ValidateCuratorPipeline(const Pipeline& pipeline) const;
         static ReliquaryCurators::Pipeline TransformCuratorPipeline(
             Reliquary& reliquary,
-            const Pipeline& toTransform,
-            const std::vector<Arca::Curator*>& allCurators);
+            const Pipeline& toTransform);
 
         template<Chroma::VariadicTemplateSize i>
         struct LinkHandledCommandIterator

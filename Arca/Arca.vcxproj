@@ -34,6 +34,7 @@
     <ClInclude Include="HandledCommands.h" />
     <ClInclude Include="HasCommandReturn.h" />
     <ClInclude Include="HasHandledCommands.h" />
+    <ClInclude Include="HasWorkMethod.h" />
     <ClInclude Include="IndexTypeFor.h" />
     <ClInclude Include="IsCommand.h" />
     <ClInclude Include="MatrixDissolved.h" />
@@ -90,7 +91,6 @@
     <ClInclude Include="BatchSource.h" />
     <ClInclude Include="Destroying.h" />
     <ClInclude Include="HandleSlim.h" />
-    <ClInclude Include="HasPostConstructMethod.h" />
     <ClInclude Include="HasShouldCreateMethod.h" />
     <ClInclude Include="IsType.h" />
     <ClInclude Include="KnownPolymorphicSerializer.h" />

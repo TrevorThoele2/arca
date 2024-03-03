@@ -19,8 +19,6 @@ public:
     class ChildRelic;
     class ParentRelic;
     class BasicCuratorBase;
-    template<size_t differentiator>
-    class BasicCurator;
 };
 
 namespace Arca
@@ -60,14 +58,6 @@ namespace Arca
         static inline const TypeName typeName = "IntegrationTestsParentRelic";
         static bool ShouldCreate(Reliquary& reliquary, int value);
     };
-
-    template<size_t differentiator>
-    struct Traits<::IntegrationTestsFixture::BasicCurator<differentiator>>
-    {
-        static const ObjectType objectType = ObjectType::Curator;
-        static inline const TypeName typeName =
-            "IntegrationTestsBasicCurator" + ::Chroma::ToString(differentiator);
-    };
 }
 
 class IntegrationTestsFixture::BasicShard
@@ -105,7 +95,7 @@ public:
 class IntegrationTestsFixture::ParentRelic final : public ClosedTypedRelic<ParentRelic>
 {
 public:
-    int value;
+    int value = 0;
 public:
     explicit ParentRelic(Initialization initialization) : ClosedTypedRelic(initialization)
     {}
@@ -113,49 +103,6 @@ public:
     ParentRelic(Initialization initialization, int value);
 
     void CreateChild() const;
-};
-
-class IntegrationTestsFixture::BasicCuratorBase : public Curator
-{
-public:
-    bool shouldAbort = false;
-    static std::function<void(BasicCuratorBase&)> onPostConstruct;
-    static std::function<void(BasicCuratorBase&)> onInitialize;
-    std::function<void(BasicCuratorBase&)> onWork;
-
-    Batch<BasicSignal> basicSignals;
-
-    Reliquary& TheOwner();
-
-    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-    RelicT* TheData(RelicID id);
-    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-    ShardT* TheData(RelicID id);
-public:
-    BasicCuratorBase();
-protected:
-    void PostConstructImplementation() override;
-    void InitializeImplementation() override;
-    void WorkImplementation(Stage& stage) override;
-};
-
-template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
-RelicT* IntegrationTestsFixture::BasicCuratorBase::TheData(RelicID id)
-{
-    return Data<RelicT>(id);
-}
-
-template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-ShardT* IntegrationTestsFixture::BasicCuratorBase::TheData(RelicID id)
-{
-    return Data<ShardT>(id);
-}
-
-template<size_t differentiator>
-class IntegrationTestsFixture::BasicCurator final : public BasicCuratorBase
-{
-public:
-    BasicCurator() = default;
 };
 
 namespace Inscription
@@ -191,17 +138,4 @@ namespace Inscription
     class Scribe<::IntegrationTestsFixture::ParentRelic, BinaryArchive> final
         : public ArcaNullScribe<::IntegrationTestsFixture::ParentRelic, BinaryArchive>
     {};
-
-    template<size_t differentiator>
-    class Scribe<::IntegrationTestsFixture::BasicCurator<differentiator>, BinaryArchive> final :
-        public ArcaNullScribe<::IntegrationTestsFixture::BasicCurator<differentiator>, BinaryArchive>
-    {
-    private:
-        using BaseT = ArcaNullScribe<::IntegrationTestsFixture::BasicCurator<differentiator>, BinaryArchive>;
-    public:
-        using ObjectT = typename BaseT::ObjectT;
-        using ArchiveT = typename BaseT::ArchiveT;
-
-        using BaseT::Scriven;
-    };
 }

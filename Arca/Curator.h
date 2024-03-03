@@ -18,7 +18,7 @@ namespace Arca
 
     class Curator
     {
-    protected:
+    public:
         class Stage
         {
         public:
@@ -32,43 +32,30 @@ namespace Arca
         Curator(const Curator& arg) = delete;
         Curator(Curator&& arg) = delete;
         
-        virtual ~Curator() = 0;
-
         Curator& operator=(const Curator& arg) = delete;
         Curator& operator=(Curator&& arg) = delete;
-
-        void PostConstruct(Reliquary& owner);
-        void Initialize();
-
-        void Work(Stage& stage);
     protected:
-        Curator() = default;
+        explicit Curator(Reliquary& owner);
     protected:
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int> = 0>
-        RelicT* Data(RelicID id);
+        [[nodiscard]] RelicT* Data(RelicID id);
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int> = 0>
-        RelicT* Data(RelicIndex<RelicT> index);
+        [[nodiscard]] RelicT* Data(RelicIndex<RelicT> index);
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
-        RelicT* Data();
+        [[nodiscard]] RelicT* Data();
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
-        RelicT* Data(GlobalIndex<RelicT> index);
+        [[nodiscard]] RelicT* Data(GlobalIndex<RelicT> index);
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        ShardT* Data(RelicID id);
+        [[nodiscard]] ShardT* Data(RelicID id);
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        ShardT* Data(ShardIndex<ShardT> index);
+        [[nodiscard]] ShardT* Data(ShardIndex<ShardT> index);
     protected:
         [[nodiscard]] Reliquary& Owner();
         [[nodiscard]] const Reliquary& Owner() const;
-    protected:
-        virtual void PostConstructImplementation();
-        virtual void InitializeImplementation();
-
-        virtual void WorkImplementation(Stage& stage);
     private:
         Reliquary* owner = nullptr;
     private:
         INSCRIPTION_ACCESS;
-        friend Reliquary;
         friend class ReliquaryCurators;
     };
 

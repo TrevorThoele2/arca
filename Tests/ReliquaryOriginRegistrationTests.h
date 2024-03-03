@@ -29,7 +29,10 @@ public:
     };
 
     class Curator final : public Arca::Curator
-    {};
+    {
+    public:
+        using Arca::Curator::Curator;
+    };
 
     struct Signal
     {};

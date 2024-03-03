@@ -24,6 +24,7 @@
     <ClInclude Include="CommandTests.h" />
     <ClInclude Include="ConstShardTests.h" />
     <ClInclude Include="CuratorTests.h" />
+    <ClInclude Include="DifferentiableCurator.h" />
     <ClInclude Include="EitherBatchTests.h" />
     <ClInclude Include="EitherTests.h" />
     <ClInclude Include="GeneralFixture.h" />
@@ -51,6 +52,7 @@
     <ClCompile Include="CommandTests.cpp" />
     <ClCompile Include="ConstShardTests.cpp" />
     <ClCompile Include="CuratorTests.cpp" />
+    <ClCompile Include="DifferentiableCurator.cpp" />
     <ClCompile Include="EitherBatchTests.cpp" />
     <ClCompile Include="EitherTests.cpp" />
     <ClCompile Include="HandleTests.cpp" />
@@ -163,6 +165,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

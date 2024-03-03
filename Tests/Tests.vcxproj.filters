@@ -76,6 +76,9 @@
     <ClCompile Include="CommandTests.cpp">
       <Filter>Source Files\Tests</Filter>
     </ClCompile>
+    <ClCompile Include="DifferentiableCurator.cpp">
+      <Filter>Source Files\Data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConstShardTests.h">
@@ -153,6 +156,9 @@
     <ClInclude Include="CommandTests.h">
       <Filter>Header Files\Tests</Filter>
     </ClInclude>
+    <ClInclude Include="DifferentiableCurator.h">
+      <Filter>Header Files\Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
@@ -172,6 +178,12 @@
     </Filter>
     <Filter Include="Source Files\Fixtures">
       <UniqueIdentifier>{8d1fce1c-d196-4be9-97d5-2d46a1fa693a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Data">
+      <UniqueIdentifier>{0591e954-9db4-4661-861d-cc208bc11fdf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Data">
+      <UniqueIdentifier>{68d3f7b4-7e6c-41ac-91cd-2b1e64de84e4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

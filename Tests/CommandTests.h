@@ -18,10 +18,10 @@ class CommandTestsFixture::Curator final : public Arca::Curator
 {
 public:
     std::vector<Command> handledCommands;
-public:
     using HandledCommands = Arca::HandledCommands<Command>;
-
     void Handle(const Command& command);
+public:
+    using Arca::Curator::Curator;
 };
 
 namespace Arca

@@ -73,6 +73,8 @@ public:
     {
     public:
         int myInt = 0;
+
+        using Curator::Curator;
     };
 
     struct BasicSignal
@@ -147,6 +149,8 @@ public:
     {
     public:
         int myInt = 0;
+
+        using Curator::Curator;
     };
 
     struct BasicSignalNullInscription
