@@ -6,8 +6,9 @@ namespace Arca
 {
     Curator::~Curator() = default;
 
-    void Curator::Initialize()
+    void Curator::Initialize(Reliquary& owner)
     {
+        this->owner = &owner;
         InitializeImplementation();
     }
 
@@ -37,9 +38,6 @@ namespace Arca
     {
         return isStarted;
     }
-
-    Curator::Curator(Reliquary& owner) : owner(&owner)
-    {}
 
     Reliquary& Curator::Owner()
     {

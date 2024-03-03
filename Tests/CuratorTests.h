@@ -41,8 +41,6 @@ public:
         [[nodiscard]] const Reliquary& OwnerFromOutside() const;
     public:
         int value = 0;
-
-        explicit BasicCurator(Reliquary& owner);
     protected:
         void InitializeImplementation() override;
         bool StartStepImplementation() override;
@@ -54,8 +52,6 @@ public:
     {
     public:
         int value = 0;
-
-        explicit OtherBasicCurator(Reliquary& owner);
     };
 
     template<size_t id>
@@ -64,9 +60,6 @@ public:
     public:
         static std::vector<CuratorCheckpoint>* checkpoints;
     public:
-        explicit DifferentiableCurator(Reliquary& owner) : Curator(owner)
-        {}
-
         bool StartStepImplementation() override
         {
             checkpoints->emplace_back(this, CuratorState::Started);

@@ -29,7 +29,7 @@ Reliquary& IntegrationTestsFixture::BasicCuratorBase::Owner()
 std::function<void(IntegrationTestsFixture::BasicCuratorBase&)>
     IntegrationTestsFixture::BasicCuratorBase::onInitialize = [](BasicCuratorBase&){};
 
-IntegrationTestsFixture::BasicCuratorBase::BasicCuratorBase(Reliquary& owner) : Curator(owner)
+IntegrationTestsFixture::BasicCuratorBase::BasicCuratorBase()
 {
     onStartStep = [](BasicCuratorBase&) {};
     onWork = [](BasicCuratorBase&) {};

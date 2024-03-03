@@ -63,7 +63,7 @@ namespace Arca
 
         {
             for (auto& loop : reliquary.curators)
-                loop.second->Get()->Initialize();
+                loop.second->Get()->Initialize(reliquary);
 
             for (auto& loop : typedRelicInitializerList)
                 loop(reliquary);
@@ -94,7 +94,7 @@ namespace Arca
         std::vector<CuratorProviderBase::Provided> provided;
 
         for (auto& loop : curatorProviders)
-            provided.push_back(loop.second->Provide(reliquary));
+            provided.push_back(loop.second->Provide());
 
         for (auto& loop : provided)
         {

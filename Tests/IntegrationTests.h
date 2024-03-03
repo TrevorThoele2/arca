@@ -70,7 +70,7 @@ public:
 
         Reliquary& Owner();
     public:
-        explicit BasicCuratorBase(Reliquary& owner);
+        BasicCuratorBase();
     protected:
         void InitializeImplementation() override;
         bool StartStepImplementation() override;
@@ -82,13 +82,9 @@ public:
     class BasicCurator final : public BasicCuratorBase
     {
     public:
-        explicit BasicCurator(Reliquary& owner);
+        BasicCurator() = default;
     };
 };
-
-template<size_t differentiator>
-IntegrationTestsFixture::BasicCurator<differentiator>::BasicCurator(Reliquary& owner) : BasicCuratorBase(owner)
-{}
 
 namespace Arca
 {

@@ -4,11 +4,11 @@ namespace Arca
 {
     CuratorProviderBase::~CuratorProviderBase() = default;
 
-    auto CuratorProviderBase::Provide(Reliquary& reliquary) -> Provided
+    auto CuratorProviderBase::Provide() -> Provided
     {
         return
         {
-            ProvideImpl(reliquary),
+            ProvideImpl(),
             typeHandle
         };
     }
@@ -26,7 +26,7 @@ namespace Arca
         return std::make_unique<ExternalCuratorProvider>(*this);
     }
 
-    auto ExternalCuratorProvider::ProvideImpl(Reliquary& reliquary) -> ProvidedCurator
+    auto ExternalCuratorProvider::ProvideImpl() -> ProvidedCurator
     {
         return external;
     }

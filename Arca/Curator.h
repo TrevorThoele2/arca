@@ -20,14 +20,14 @@ namespace Arca
         Curator& operator=(const Curator& arg) = delete;
         Curator& operator=(Curator&& arg) = delete;
 
-        void Initialize();
+        void Initialize(Reliquary& owner);
         void StartStep();
         void Work();
         void StopStep();
 
         [[nodiscard]] bool IsStarted() const;
     protected:
-        explicit Curator(Reliquary& owner);
+        Curator() = default;
     protected:
         [[nodiscard]] Reliquary& Owner();
         [[nodiscard]] const Reliquary& Owner() const;
@@ -37,7 +37,7 @@ namespace Arca
         virtual void WorkImplementation();
         virtual void StopStepImplementation();
     private:
-        Reliquary* owner;
+        Reliquary* owner = nullptr;
 
         bool isStarted = false;
     private:

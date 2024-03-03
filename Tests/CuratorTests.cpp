@@ -18,9 +18,6 @@ const Reliquary& CuratorTestsFixture::BasicCurator::OwnerFromOutside() const
     return Owner();
 }
 
-CuratorTestsFixture::BasicCurator::BasicCurator(Reliquary& owner) : Curator(owner)
-{}
-
 void CuratorTestsFixture::BasicCurator::InitializeImplementation()
 {
     isInitialized = true;
@@ -41,9 +38,6 @@ void CuratorTestsFixture::BasicCurator::StopStepImplementation()
 {
     onStopStep();
 }
-
-CuratorTestsFixture::OtherBasicCurator::OtherBasicCurator(Reliquary& owner) : Curator(owner)
-{}
 
 namespace Arca
 {
