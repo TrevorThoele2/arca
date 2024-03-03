@@ -4,16 +4,6 @@
 
 namespace Arca
 {
-    void Curator::Stage::Abort()
-    {
-        isAborted = true;
-    }
-
-    bool Curator::Stage::IsAborted() const
-    {
-        return isAborted;
-    }
-
     Curator::Curator(Init init) : owner(&init.owner)
     {}
 

@@ -12,7 +12,7 @@ namespace Arca
     class Stage
     {
     private:
-        template<::Chroma::VariadicTemplateSize i>
+        template<Chroma::VariadicTemplateSize i>
         struct AddIterator
         {
             template<class Template>
@@ -31,12 +31,12 @@ namespace Arca
         {
             Stage stage;
 
-            ::Chroma::IterateRange<
-                ::Chroma::VariadicTemplateSize,
+            Chroma::IterateRange<
+                Chroma::VariadicTemplateSize,
                 AddIterator,
                 sizeof...(Ts) - 1
             >(
-                ::Chroma::VariadicTemplate<Ts...>{}, stage
+                Chroma::VariadicTemplate<Ts...>{}, stage
             );
 
             return stage;

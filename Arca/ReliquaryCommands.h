@@ -46,18 +46,18 @@ namespace Arca
     public:
         ReliquaryCommands(const ReliquaryCommands& arg) = delete;
         ReliquaryCommands& operator=(const ReliquaryCommands& arg) = delete;
-    private:
-        using HandlerBase = CommandHandlerBase;
-        using HandlerPtr = std::unique_ptr<HandlerBase>;
-        using HandlerMap = std::unordered_map<TypeName, HandlerPtr>;
-        HandlerMap handlerMap;
-
     public:
         template<class T>
         using HandlerT = CommandHandler<T, !std::is_void_v<command_result_t<T>>>;
 
         template<class T>
         HandlerT<T>& RequiredHandler();
+        CommandHandlerBase& RequiredHandler(const TypeName& typeName);
+    private:
+        using HandlerBase = CommandHandlerBase;
+        using HandlerPtr = std::unique_ptr<HandlerBase>;
+        using HandlerMap = std::unordered_map<TypeName, HandlerPtr>;
+        HandlerMap handlerMap;
     private:
         explicit ReliquaryCommands(Reliquary& owner);
         ReliquaryCommands(ReliquaryCommands&& arg) noexcept = default;

@@ -9,12 +9,12 @@ Reliquary& DifferentiableCuratorBase::TheOwner()
 
 DifferentiableCuratorBase::DifferentiableCuratorBase(Init init) : Curator(init)
 {
-    onWork = [](DifferentiableCuratorBase&) {};
+    onCommand = [](DifferentiableCuratorBase&) {};
 }
 
-void DifferentiableCuratorBase::Work(Stage& stage)
+void DifferentiableCuratorBase::Handle(const BasicCommand& command, Stage& stage)
 {
-    onWork(*this);
+    onCommand(*this);
 
     if (shouldAbort)
         stage.Abort();

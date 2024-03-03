@@ -2,13 +2,15 @@
 
 #include <Arca/Curator.h>
 
+#include "BasicCommand.h"
+
 using namespace Arca;
 
 class DifferentiableCuratorBase : public Curator
 {
 public:
     bool shouldAbort = false;
-    std::function<void(DifferentiableCuratorBase&)> onWork;
+    std::function<void(DifferentiableCuratorBase&)> onCommand;
 
     virtual ~DifferentiableCuratorBase() = 0;
 
@@ -23,7 +25,7 @@ public:
 public:
     explicit DifferentiableCuratorBase(Init init);
 
-    void Work(Stage& stage);
+    void Handle(const BasicCommand& command, Stage& stage);
 };
 
 template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
@@ -71,7 +73,8 @@ namespace Arca
     struct Traits<DifferentiableCurator<differentiator>>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static inline const TypeName typeName = "DifferentiableCurator<" + ::Chroma::ToString(differentiator) + ">";
+        static inline const TypeName typeName = "DifferentiableCurator<" + Chroma::ToString(differentiator) + ">";
+        using HandledCommands = HandledCommands<BasicCommand>;
     };
 }
 

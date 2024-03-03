@@ -1,9 +1,10 @@
 #pragma once
 
 #include "CuratorInit.h"
-#include "HandledCommands.h"
+#include "CuratorStage.h"
 
 #include "MutablePointer.h"
+#include "HandledCommands.h"
 
 #include "RelicIndex.h"
 #include "ShardIndex.h"
@@ -19,15 +20,7 @@ namespace Arca
     class Curator
     {
     public:
-        class Stage
-        {
-        public:
-            Stage() = default;
-            void Abort();
-            [[nodiscard]] bool IsAborted() const;
-        private:
-            bool isAborted = false;
-        };
+        using Stage = CuratorStage;
     public:
         Curator(const Curator& arg) = delete;
         Curator(Curator&& arg) = delete;

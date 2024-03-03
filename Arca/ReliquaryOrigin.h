@@ -33,8 +33,10 @@ namespace Arca
     public:
         template<class CuratorT, class... Args, std::enable_if_t<is_curator_v<CuratorT>, int> = 0>
         ReliquaryOrigin&& Register(Args&& ... args);
-        ReliquaryOrigin&& CuratorPipeline(const Pipeline& pipeline);
-        ReliquaryOrigin&& CuratorPipeline(const Pipeline& construction, const Pipeline& work);
+        ReliquaryOrigin&& CuratorConstructionPipeline(const Pipeline& constructionPipeline);
+        template<class CommandT, std::enable_if_t<is_command_v<CommandT>, int> = 0>
+        ReliquaryOrigin&& CuratorCommandPipeline(const Pipeline& commandPipeline);
+        ReliquaryOrigin&& CuratorCommandPipeline(const TypeName& commandType, const Pipeline& commandPipeline);
     private:
         struct TypeConstructor
         {
@@ -74,17 +76,16 @@ namespace Arca
         TypeConstructorList curatorList;
 
         Pipeline curatorConstructionPipeline;
-        Pipeline curatorWorkPipeline;
 
-        void PushAllCuratorsTo(Reliquary& reliquary, const Pipeline& pipeline);
+        using PipelineMap = std::unordered_map<TypeName, Pipeline>;
+        PipelineMap curatorCommandPipelines;
+
+        void PushAllCuratorsTo(Reliquary& reliquary);
 
         template<class Curator>
         [[nodiscard]] bool IsCuratorRegistered() const;
 
         void ValidateCuratorPipeline(const Pipeline& pipeline) const;
-        static ReliquaryCurators::Pipeline TransformCuratorPipeline(
-            Reliquary& reliquary,
-            const Pipeline& toTransform);
 
         template<Chroma::VariadicTemplateSize i>
         struct LinkHandledCommandIterator
@@ -166,6 +167,12 @@ namespace Arca
                 std::forward<Args>(args)...) });
 
         return std::move(*this);
+    }
+
+    template<class CommandT, std::enable_if_t<is_command_v<CommandT>, int>>
+    ReliquaryOrigin&& ReliquaryOrigin::CuratorCommandPipeline(const Pipeline& commandPipeline)
+    {
+        return CuratorCommandPipeline(TypeFor<CommandT>().name, commandPipeline);
     }
 
     template<class RelicT>

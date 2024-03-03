@@ -181,7 +181,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "registered reliquary with every type", "
             .RelicStructure(dataGeneration.Random<std::string>(), RelicStructure())
             .Register<BasicShard>()
             .Register<BasicCurator>()
-            .CuratorPipeline(Pipeline())
+            .CuratorConstructionPipeline(Pipeline())
             .Actualize();
 
         WHEN("checking relic size")

@@ -46,21 +46,6 @@ namespace Arca
         return FindHandler(type) != nullptr;
     }
 
-    void ReliquaryCurators::Work()
-    {
-        Curator::Stage stageHandle;
-
-        for (auto& stage : workPipeline)
-        {
-            for (auto& handler : stage)
-            {
-                handler->Work(stageHandle);
-                if (stageHandle.IsAborted())
-                    return;
-            }
-        }
-    }
-
     ReliquaryCurators::ReliquaryCurators(Reliquary& owner) : ReliquaryComponent(owner, "curator")
     {}
 }

@@ -32,6 +32,7 @@ namespace Arca
         [[nodiscard]] virtual SizeT Size() const = 0;
 
         [[nodiscard]] virtual Type Type() const = 0;
+        [[nodiscard]] virtual Reliquary& Owner() const = 0;
     };
 
     template<class T>
@@ -50,7 +51,7 @@ namespace Arca
         BatchSource(BatchSource&& arg) = default;
 
         template<class... ConstructorArgs>
-        RelicT* Create(RelicID id, Reliquary& owner, ConstructorArgs&& ... constructorArgs);
+        RelicT* Create(RelicID id, ConstructorArgs&& ... constructorArgs);
 
         iterator Destroy(RelicID destroy);
         iterator Destroy(iterator destroy);
@@ -73,6 +74,7 @@ namespace Arca
         [[nodiscard]] const_iterator end() const;
 
         [[nodiscard]] Arca::Type Type() const override;
+        [[nodiscard]] Reliquary& Owner() const override;
     private:
         Map map;
         Reliquary* owner;

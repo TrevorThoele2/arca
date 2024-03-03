@@ -63,7 +63,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
             .Register<BasicShard>()
             .Register<GlobalRelic>()
             .Register<BasicCurator>()
-            .CuratorPipeline(Pipeline())
+            .CuratorConstructionPipeline(Pipeline())
             .Actualize();
 
         {
@@ -79,7 +79,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 .Register<BasicShard>()
                 .Register<GlobalRelic>()
                 .Register<BasicCurator>()
-                .CuratorPipeline(Pipeline())
+                .CuratorConstructionPipeline(Pipeline())
                 .Actualize();
 
             {

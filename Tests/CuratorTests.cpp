@@ -7,9 +7,9 @@
 #include <Arca/PipelineException.h>
 #include <Chroma/Iterate.h>
 
-void CuratorTestsFixture::BasicCurator::Work()
+void CuratorTestsFixture::BasicCurator::Handle(const BasicCommand& command)
 {
-    onWork();
+    onCommand(command);
 }
 
 Reliquary& CuratorTestsFixture::BasicCurator::OwnerFromOutside()
@@ -45,6 +45,23 @@ CuratorTestsFixture::CuratorWithGlobalRelicConstructor::CuratorWithGlobalRelicCo
     globalRelicString = globalRelic->string;
 }
 
+CuratorTestsFixture::CuratorWithoutCommands::CuratorWithoutCommands(Init init) : Curator(init)
+{}
+
+CuratorTestsFixture::BaseCuratorWithCommand::BaseCuratorWithCommand(Init init) : Curator(init)
+{}
+
+void CuratorTestsFixture::BaseCuratorWithCommand::Handle(const BasicCommand& command)
+{
+    basicCommandIssued = true;
+}
+
+CuratorTestsFixture::DerivedCuratorWithCommand::DerivedCuratorWithCommand(Init init) : BaseCuratorWithCommand(init)
+{}
+
+void CuratorTestsFixture::DerivedCuratorWithCommand::Handle(const BasicCommand2& command)
+{}
+
 template<size_t id>
 struct StagePerCuratorIterator
 {
@@ -76,19 +93,19 @@ struct ReliquaryOriginIterator
 template<size_t id>
 struct SetupDifferentiableCurator
 {
-    static void Do(std::vector<Curator*>& workCheckpoints)
+    static void Do(std::vector<Curator*>& commandCheckpoints)
     {
-        DifferentiableCurator<id>::onConstructor = [&workCheckpoints](DifferentiableCurator<id>& curator)
+        DifferentiableCurator<id>::onConstructor = [&commandCheckpoints](DifferentiableCurator<id>& curator)
         {
-            workCheckpoints.push_back(&curator);
+            commandCheckpoints.push_back(&curator);
         };
     }
 
-    static void Do(Reliquary& reliquary, std::vector<Curator*>& workCheckpoints)
+    static void Do(Reliquary& reliquary, std::vector<Curator*>& commandCheckpoints)
     {
-        reliquary.Find<DifferentiableCurator<id>>().onWork = [&workCheckpoints](DifferentiableCuratorBase& curator)
+        reliquary.Find<DifferentiableCurator<id>>().onCommand = [&commandCheckpoints](DifferentiableCuratorBase& curator)
         {
-            workCheckpoints.push_back(&curator);
+            commandCheckpoints.push_back(&curator);
         };
     }
 };
@@ -114,17 +131,11 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator", "[curator]")
 {
     GIVEN("reliquary registered and initialized with curator without pipeline")
     {
-        std::vector<Curator*> worked;
-
         auto reliquary = ReliquaryOrigin()
             .Register<BasicCurator>()
             .Actualize();
 
         auto& curator = reliquary->Find<BasicCurator>();
-        curator.onWork = [&curator, &worked]()
-        {
-            worked.push_back(&curator);
-        };
 
         WHEN("checking reliquary curator size")
         {
@@ -145,16 +156,6 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator", "[curator]")
             {
                 const auto& constCurator = curator;
                 REQUIRE(&constCurator.OwnerFromOutside() == reliquary.get());
-            }
-        }
-
-        WHEN("working reliquary")
-        {
-            reliquary->Work();
-
-            THEN("curator was worked")
-            {
-                REQUIRE(worked.size() == 1);
             }
         }
     }
@@ -216,127 +217,22 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
 {
     GIVEN("reliquary with pipeline with one hundred stages with one curator in each")
     {
-        std::vector<Curator*> checkpoints;
-        ::Chroma::IterateRange<size_t, SetupDifferentiableCurator, 99, 0>(checkpoints);
-
-        auto pipeline = Pipeline();
-        ::Chroma::IterateRange<size_t, StagePerCuratorIterator, 99, 0>(pipeline);
-
-        auto reliquaryOrigin = ReliquaryOrigin()
-            .CuratorPipeline(pipeline);
-        ::Chroma::IterateRange<size_t, ReliquaryOriginIterator, 99, 0>(reliquaryOrigin);
-
-        auto reliquary = reliquaryOrigin.Actualize();
-
-        WHEN("working reliquary")
-        {
-            reliquary->Work();
-
-            THEN("executes all in order")
-            {
-                REQUIRE(checkpoints.size() == 100);
-
-                std::list<bool> output;
-
-                ::Chroma::IterateRange<
-                    size_t,
-                    RequireDifferentiableCuratorCheckpointVerification,
-                    99,
-                    0
-                >
-                    (checkpoints, *reliquary, output);
-
-                REQUIRE(output.size() == 100);
-                REQUIRE(std::all_of(
-                    output.begin(),
-                    output.end(),
-                    [](const bool& entry) { return entry; }));
-                output.clear();
-            }
-        }
-    }
-
-    GIVEN("reliquary origin with pipeline that contains nonexistent curator")
-    {
-        auto pipeline = Pipeline();
-        pipeline.emplace_back();
-        pipeline.back().Add<BasicCurator>();
-
-        auto reliquaryOrigin = ReliquaryOrigin()
-            .CuratorPipeline(pipeline);
-
-        WHEN("actualized")
-        {
-            THEN("throws error")
-            {
-                REQUIRE_THROWS_AS(reliquaryOrigin.Actualize(), NotRegistered);
-            }
-        }
-    }
-
-    GIVEN("reliquary origin with pipeline that contains curator multiple times")
-    {
-        auto pipeline = Pipeline();
-        pipeline.emplace_back();
-        pipeline.back().Add<BasicCurator>();
-        pipeline.back().Add<BasicCurator>();
-
-        auto reliquaryOrigin = ReliquaryOrigin()
-            .CuratorPipeline(pipeline)
-            .Register<BasicCurator>();
-
-        WHEN("actualized")
-        {
-            THEN("throws error")
-            {
-                REQUIRE_THROWS_MATCHES
-                (
-                    reliquaryOrigin.Actualize(),
-                    InvalidPipeline,
-                    ::Catch::Matchers::Message("Curator (" + Traits<BasicCurator>::typeName + ") " +
-                        "was already in the pipeline.")
-                );
-            }
-        }
-    }
-
-    GIVEN("reliquary origin with pipeline that contains only empty stage")
-    {
-        auto pipeline = Pipeline();
-        pipeline.emplace_back();
-
-        auto reliquaryOrigin = ReliquaryOrigin()
-            .CuratorPipeline(pipeline);
-
-        WHEN("actualized")
-        {
-            THEN("no throw")
-            {
-                REQUIRE_NOTHROW(reliquaryOrigin.Actualize());
-            }
-        }
-    }
-}
-
-SCENARIO_METHOD(CuratorTestsFixture, "curator split pipeline", "[curator][pipeline]")
-{
-    GIVEN("reliquary with pipeline with one hundred stages with one curator in each")
-    {
         std::vector<Curator*> constructorCheckpoints;
-        std::vector<Curator*> workCheckpoints;
+        std::vector<Curator*> commandCheckpoints;
         ::Chroma::IterateRange<size_t, SetupDifferentiableCurator, 99, 0>(constructorCheckpoints);
 
         auto constructorPipeline = Pipeline();
         ::Chroma::IterateRangeBackward<size_t, StagePerCuratorIterator, 99, 0>(constructorPipeline);
-        auto workPipeline = Pipeline();
-        ::Chroma::IterateRange<size_t, StagePerCuratorIterator, 99, 0>(workPipeline);
+        auto commandPipeline = Pipeline();
+        ::Chroma::IterateRange<size_t, StagePerCuratorIterator, 99, 0>(commandPipeline);
 
         auto reliquaryOrigin = ReliquaryOrigin()
-            .CuratorPipeline(constructorPipeline, workPipeline);
+            .CuratorConstructionPipeline(constructorPipeline)
+            .CuratorCommandPipeline(TypeFor<BasicCommand>().name, commandPipeline);
         ::Chroma::IterateRange<size_t, ReliquaryOriginIterator, 99, 0>(reliquaryOrigin);
 
         auto reliquary = reliquaryOrigin.Actualize();
-        ::Chroma::IterateRange<size_t, SetupDifferentiableCurator, 99, 0>(*reliquary, workCheckpoints);
+        ::Chroma::IterateRange<size_t, SetupDifferentiableCurator, 99, 0>(*reliquary, commandCheckpoints);
 
         THEN("executed construction in backwards order")
         {
@@ -350,13 +246,13 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator split pipeline", "[curator][pipeli
                 (constructorCheckpoints, *reliquary, output);
         }
 
-        WHEN("working reliquary")
+        WHEN("sending command")
         {
-            reliquary->Work();
+            reliquary->Do(BasicCommand{});
 
             THEN("executes all in order")
             {
-                REQUIRE(workCheckpoints.size() == 100);
+                REQUIRE(commandCheckpoints.size() == 100);
 
                 std::list<bool> output;
 
@@ -366,7 +262,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator split pipeline", "[curator][pipeli
                     99,
                     0
                 >
-                    (workCheckpoints, *reliquary, output);
+                    (commandCheckpoints, *reliquary, output);
 
                 REQUIRE(output.size() == 100);
                 REQUIRE(std::all_of(
@@ -377,14 +273,14 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator split pipeline", "[curator][pipeli
         }
     }
 
-    GIVEN("reliquary origin with pipeline that contains nonexistent curator")
+    GIVEN("reliquary origin with construction pipeline that contains nonexistent curator")
     {
         auto pipeline = Pipeline();
         pipeline.emplace_back();
         pipeline.back().Add<BasicCurator>();
 
         auto reliquaryOrigin = ReliquaryOrigin()
-            .CuratorPipeline(pipeline);
+            .CuratorConstructionPipeline(pipeline);
 
         WHEN("actualized")
         {
@@ -395,7 +291,25 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator split pipeline", "[curator][pipeli
         }
     }
 
-    GIVEN("reliquary origin with pipeline that contains curator multiple times")
+    GIVEN("reliquary origin with command pipeline that contains nonexistent curator")
+    {
+        auto pipeline = Pipeline();
+        pipeline.emplace_back();
+        pipeline.back().Add<BasicCurator>();
+
+        auto reliquaryOrigin = ReliquaryOrigin()
+            .CuratorCommandPipeline<BasicCommand>(pipeline);
+
+        WHEN("actualized")
+        {
+            THEN("throws error")
+            {
+                REQUIRE_THROWS_AS(reliquaryOrigin.Actualize(), NotRegistered);
+            }
+        }
+    }
+
+    GIVEN("reliquary origin with construction pipeline that contains curator multiple times")
     {
         auto pipeline = Pipeline();
         pipeline.emplace_back();
@@ -403,7 +317,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator split pipeline", "[curator][pipeli
         pipeline.back().Add<BasicCurator>();
 
         auto reliquaryOrigin = ReliquaryOrigin()
-            .CuratorPipeline(pipeline)
+            .CuratorConstructionPipeline(pipeline)
             .Register<BasicCurator>();
 
         WHEN("actualized")
@@ -421,19 +335,132 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator split pipeline", "[curator][pipeli
         }
     }
 
-    GIVEN("reliquary origin with pipeline that contains only empty stage")
+    GIVEN("reliquary origin with command pipeline that contains curator multiple times")
+    {
+        auto pipeline = Pipeline();
+        pipeline.emplace_back();
+        pipeline.back().Add<BasicCurator>();
+        pipeline.back().Add<BasicCurator>();
+
+        auto reliquaryOrigin = ReliquaryOrigin()
+            .CuratorCommandPipeline<BasicCommand>(pipeline)
+            .Register<BasicCurator>();
+
+        WHEN("actualized")
+        {
+            THEN("throws error")
+            {
+                REQUIRE_THROWS_MATCHES
+                (
+                    reliquaryOrigin.Actualize(),
+                    InvalidPipeline,
+                    ::Catch::Matchers::Message("Curator (" + Traits<BasicCurator>::typeName + ") " +
+                        "was already in the pipeline.")
+                );
+            }
+        }
+    }
+
+    GIVEN("reliquary origin with construction pipeline that contains only empty stage")
     {
         auto pipeline = Pipeline();
         pipeline.emplace_back();
 
         auto reliquaryOrigin = ReliquaryOrigin()
-            .CuratorPipeline(pipeline);
+            .CuratorConstructionPipeline(pipeline);
 
         WHEN("actualized")
         {
             THEN("no throw")
             {
                 REQUIRE_NOTHROW(reliquaryOrigin.Actualize());
+            }
+        }
+    }
+
+    GIVEN("reliquary origin with command pipeline that contains only empty stage")
+    {
+        auto pipeline = Pipeline();
+        pipeline.emplace_back();
+
+        auto reliquaryOrigin = ReliquaryOrigin()
+            .CuratorCommandPipeline<BasicCommand>(pipeline)
+            .Register<DifferentiableCurator<0>>();
+
+        WHEN("actualized")
+        {
+            THEN("no throw")
+            {
+                REQUIRE_NOTHROW(reliquaryOrigin.Actualize());
+            }
+        }
+    }
+
+    GIVEN("reliquary origin with command pipeline that contains multiple stages")
+    {
+        std::vector<Curator*> commandCheckpoints;
+
+        auto commandPipeline = Pipeline();
+        commandPipeline.emplace_back();
+        commandPipeline.back().Add<DifferentiableCurator<0>>();
+        commandPipeline.emplace_back();
+        commandPipeline.back().Add<DifferentiableCurator<1>>();
+        commandPipeline.back().Add<DifferentiableCurator<2>>();
+        commandPipeline.emplace_back();
+        commandPipeline.back().Add<DifferentiableCurator<3>>();
+
+        auto reliquaryOrigin = ReliquaryOrigin()
+            .CuratorCommandPipeline<BasicCommand>(commandPipeline);
+
+        ::Chroma::IterateRange<size_t, ReliquaryOriginIterator, 3, 0>(reliquaryOrigin);
+
+        auto reliquary = reliquaryOrigin.Actualize();
+
+        ::Chroma::IterateRange<size_t, SetupDifferentiableCurator, 3, 0>(*reliquary, commandCheckpoints);
+
+        WHEN("sending command")
+        {
+            reliquary->Do(BasicCommand{});
+
+            THEN("executed first curator then second curator")
+            {
+                REQUIRE(commandCheckpoints.size() == 4);
+
+                REQUIRE(commandCheckpoints[0] == &reliquary->Find<DifferentiableCurator<0>>());
+                REQUIRE(commandCheckpoints[1] == &reliquary->Find<DifferentiableCurator<1>>());
+                REQUIRE(commandCheckpoints[2] == &reliquary->Find<DifferentiableCurator<2>>());
+                REQUIRE(commandCheckpoints[3] == &reliquary->Find<DifferentiableCurator<3>>());
+            }
+        }
+    }
+
+    GIVEN("reliquary origin with command pipeline that contains curators with command and without command")
+    {
+        std::vector<Curator*> commandCheckpoints;
+
+        auto commandPipeline = Pipeline();
+        commandPipeline.emplace_back();
+        commandPipeline.back().Add<DifferentiableCurator<0>>();
+        commandPipeline.back().Add<CuratorWithoutCommands>();
+
+        auto reliquaryOrigin = ReliquaryOrigin()
+            .Register<CuratorWithoutCommands>()
+            .CuratorCommandPipeline<BasicCommand>(commandPipeline);
+
+        ::Chroma::IterateRange<size_t, ReliquaryOriginIterator, 0, 0>(reliquaryOrigin);
+
+        WHEN("actualizing")
+        {
+            THEN("throws error")
+            {
+                REQUIRE_THROWS_MATCHES
+                (
+                    reliquaryOrigin.Actualize(),
+                    Arca::CommandNotRegisteredInCurator,
+                    ::Catch::Matchers::Message(
+                        "The command (" + Traits<BasicCommand>::typeName + ") has not been linked in the curator (" +
+                        Traits<CuratorWithoutCommands>::typeName + ").")
+                );
             }
         }
     }
@@ -444,29 +471,30 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator aborts pipeline", "[curator][pipel
     GIVEN("reliquary with pipeline with one hundred stages with one curator in each")
     {
         std::vector<Curator*> constructorCheckpoints;
-        std::vector<Curator*> workCheckpoints;
+        std::vector<Curator*> commandCheckpoints;
         ::Chroma::IterateRange<size_t, SetupDifferentiableCurator, 99, 0>(constructorCheckpoints);
 
         auto pipeline = Pipeline();
         ::Chroma::IterateRange<size_t, StagePerCuratorIterator, 99, 0>(pipeline);
 
         auto reliquaryOrigin = ReliquaryOrigin()
-            .CuratorPipeline(pipeline);
+            .CuratorConstructionPipeline(pipeline)
+            .CuratorCommandPipeline<BasicCommand>(pipeline);
         ::Chroma::IterateRange<size_t, ReliquaryOriginIterator, 99, 0>(reliquaryOrigin);
 
         auto reliquary = reliquaryOrigin.Actualize();
-        ::Chroma::IterateRange<size_t, SetupDifferentiableCurator, 99, 0>(*reliquary, workCheckpoints);
+        ::Chroma::IterateRange<size_t, SetupDifferentiableCurator, 99, 0>(*reliquary, commandCheckpoints);
 
-        WHEN("working reliquary when middle curator will abort")
+        WHEN("sending command when middle curator will abort")
         {
             auto& middleCurator = reliquary->Find<DifferentiableCurator<49>>();
             middleCurator.shouldAbort = true;
 
-            reliquary->Work();
+            reliquary->Do(BasicCommand{});
 
             THEN("executed up until 51st")
             {
-                REQUIRE(workCheckpoints.size() == 50);
+                REQUIRE(commandCheckpoints.size() == 50);
 
                 std::list<bool> output;
 
@@ -476,7 +504,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator aborts pipeline", "[curator][pipel
                     99,
                     0
                 >
-                    (workCheckpoints, *reliquary, output);
+                    (commandCheckpoints, *reliquary, output);
 
                 REQUIRE(output.size() == 50);
                 REQUIRE(std::all_of(
@@ -490,34 +518,36 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator aborts pipeline", "[curator][pipel
     GIVEN("nine curators in three stages")
     {
         std::vector<Curator*> constructorCheckpoints;
-        std::vector<Curator*> workCheckpoints;
+        std::vector<Curator*> commandCheckpoints;
         ::Chroma::IterateRange<size_t, SetupDifferentiableCurator, 8, 0>(constructorCheckpoints);
 
         auto pipeline = Pipeline();
-        auto stage1 = pipeline.emplace_back();
-        auto stage2 = pipeline.emplace_back();
-        auto stage3 = pipeline.emplace_back();
+        pipeline.resize(3);
+        auto& stage1 = pipeline[0];
+        auto& stage2 = pipeline[1];
+        auto& stage3 = pipeline[2];
         ::Chroma::IterateRange<size_t, StageIterator, 2, 0>(stage1);
         ::Chroma::IterateRange<size_t, StageIterator, 5, 3>(stage2);
         ::Chroma::IterateRange<size_t, StageIterator, 8, 6>(stage3);
 
         auto reliquaryOrigin = ReliquaryOrigin()
-            .CuratorPipeline(pipeline);
+            .CuratorConstructionPipeline(pipeline)
+            .CuratorCommandPipeline<BasicCommand>(pipeline);
         ::Chroma::IterateRange<size_t, ReliquaryOriginIterator, 8, 0>(reliquaryOrigin);
 
         auto reliquary = reliquaryOrigin.Actualize();
-        ::Chroma::IterateRange<size_t, SetupDifferentiableCurator, 8, 0>(*reliquary, workCheckpoints);
+        ::Chroma::IterateRange<size_t, SetupDifferentiableCurator, 8, 0>(*reliquary, commandCheckpoints);
 
-        WHEN("working reliquary when middle stage will abort")
+        WHEN("sending command when middle stage will abort")
         {
             auto& middleCurator = reliquary->Find<DifferentiableCurator<4>>();
             middleCurator.shouldAbort = true;
 
-            reliquary->Work();
+            reliquary->Do(BasicCommand{});
 
             THEN("executed all up to and including aborting curator")
             {
-                REQUIRE(workCheckpoints.size() == 5);
+                REQUIRE(commandCheckpoints.size() == 5);
 
                 std::list<bool> output;
 
@@ -527,7 +557,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator aborts pipeline", "[curator][pipel
                     8,
                     0
                 >
-                    (workCheckpoints, *reliquary, output);
+                    (commandCheckpoints, *reliquary, output);
 
                 auto outputMiddle = std::next(output.begin(), 5);
 
@@ -562,6 +592,28 @@ SCENARIO_METHOD(CuratorTestsFixture, "non default curator construction", "[curat
             THEN("has value given to constructor")
             {
                 REQUIRE(curator.myValue == myValue);
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(CuratorTestsFixture, "curator command from base class", "[curator][command]")
+{
+    GIVEN("registered reliquary")
+    {
+        auto reliquary = ReliquaryOrigin()
+            .Register<DerivedCuratorWithCommand>()
+            .Actualize();
+
+        auto& derivedCurator = reliquary->Find<DerivedCuratorWithCommand>();
+
+        WHEN("issuing command")
+        {
+            THEN("value is loaded")
+            {
+                reliquary->Do(BasicCommand{});
+
+                REQUIRE(derivedCurator.basicCommandIssued);
             }
         }
     }
@@ -629,7 +681,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
                 inputArchive(*loadedReliquary);
             }
         
-            auto & loadedCurator = loadedReliquary->Find<OtherBasicCurator>();
+            auto& loadedCurator = loadedReliquary->Find<OtherBasicCurator>();
         
             THEN("value is loaded")
             {
