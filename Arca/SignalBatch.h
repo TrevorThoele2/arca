@@ -5,8 +5,6 @@
 #include "BatchException.h"
 #include "SignalTraits.h"
 
-#include "StaticAssert.h"
-
 #include "Serialization.h"
 
 namespace Arca

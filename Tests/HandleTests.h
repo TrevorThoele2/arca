@@ -3,7 +3,7 @@
 #include "GeneralFixture.h"
 
 #include <Arca/ClosedTypedRelicAutomation.h>
-#include <Arca/Shard.h>
+#include <Arca/ShardTraits.h>
 
 #include <Inscription/BinaryArchive.h>
 
@@ -107,7 +107,7 @@ namespace Inscription
 {
     template<>
     class Scribe<::HandleTestsFixture::Shard, BinaryArchive> final
-        : public ShardScribe<::HandleTestsFixture::Shard, BinaryArchive>
+        : public ArcaCompositeScribe<::HandleTestsFixture::Shard, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
@@ -118,7 +118,7 @@ namespace Inscription
 
     template<>
     class Scribe<::HandleTestsFixture::OtherShard, BinaryArchive> final
-        : public ShardScribe<::HandleTestsFixture::OtherShard, BinaryArchive>
+        : public ArcaCompositeScribe<::HandleTestsFixture::OtherShard, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
@@ -129,28 +129,16 @@ namespace Inscription
 
     template<>
     class Scribe<::HandleTestsFixture::TypedRelic, BinaryArchive> final
-        : public CompositeRelicScribe<::HandleTestsFixture::TypedRelic, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        : public ArcaNullScribe<::HandleTestsFixture::TypedRelic, BinaryArchive>
+    {};
 
     template<>
     class Scribe<::HandleTestsFixture::GlobalRelic, BinaryArchive> final
-        : public CompositeRelicScribe<::HandleTestsFixture::GlobalRelic, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        : public ArcaNullScribe<::HandleTestsFixture::GlobalRelic, BinaryArchive>
+    {};
 
     template<>
     class Scribe<::HandleTestsFixture::Curator, BinaryArchive> final :
-        public CuratorScribe<::HandleTestsFixture::Curator, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        public ArcaNullScribe<::HandleTestsFixture::Curator, BinaryArchive>
+    {};
 }

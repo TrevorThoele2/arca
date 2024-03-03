@@ -71,7 +71,7 @@ namespace Inscription
 {
     template<>
     class Scribe<::GlobalRelicTestsFixture::BasicShard, BinaryArchive> final
-        : public ShardScribe<::GlobalRelicTestsFixture::BasicShard, BinaryArchive>
+        : public ArcaCompositeScribe<::GlobalRelicTestsFixture::BasicShard, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
@@ -82,19 +82,11 @@ namespace Inscription
 
     template<>
     class Scribe<::GlobalRelicTestsFixture::BasicTypedRelic, BinaryArchive> final
-        : public CompositeRelicScribe<::GlobalRelicTestsFixture::BasicTypedRelic, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        : public ArcaNullScribe<::GlobalRelicTestsFixture::BasicTypedRelic, BinaryArchive>
+    {};
 
     template<>
     class Scribe<::GlobalRelicTestsFixture::GlobalRelic, BinaryArchive> final
-        : public CompositeRelicScribe<::GlobalRelicTestsFixture::GlobalRelic, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        : public ArcaNullScribe<::GlobalRelicTestsFixture::GlobalRelic, BinaryArchive>
+    {};
 }

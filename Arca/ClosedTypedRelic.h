@@ -2,7 +2,6 @@
 
 #include "RelicID.h"
 #include "RelicStructure.h"
-#include "RelicScribe.h"
 #include "RelicTraits.h"
 #include "Handle.h"
 

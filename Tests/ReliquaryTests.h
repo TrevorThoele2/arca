@@ -123,7 +123,7 @@ namespace Inscription
 {
     template<>
     class Scribe<::ReliquaryTestsFixture::BasicShard, BinaryArchive> final
-        : public ShardScribe<::ReliquaryTestsFixture::BasicShard, BinaryArchive>
+        : public ArcaCompositeScribe<::ReliquaryTestsFixture::BasicShard, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
@@ -134,7 +134,7 @@ namespace Inscription
 
     template<>
     class Scribe<::ReliquaryTestsFixture::OtherBasicShard, BinaryArchive> final
-        : public ShardScribe<::ReliquaryTestsFixture::OtherBasicShard, BinaryArchive>
+        : public ArcaCompositeScribe<::ReliquaryTestsFixture::OtherBasicShard, BinaryArchive>
     {
     public:
         static std::vector<TypeHandle> InputTypeHandles(const ArchiveT& archive)
@@ -150,7 +150,7 @@ namespace Inscription
 
     template<>
     class Scribe<::ReliquaryTestsFixture::OtherShard, BinaryArchive> final
-        : public ShardScribe<::ReliquaryTestsFixture::OtherShard, BinaryArchive>
+        : public ArcaCompositeScribe<::ReliquaryTestsFixture::OtherShard, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
@@ -161,28 +161,16 @@ namespace Inscription
 
     template<>
     class Scribe<::ReliquaryTestsFixture::BasicTypedRelic, BinaryArchive> final
-        : public CompositeRelicScribe<::ReliquaryTestsFixture::BasicTypedRelic, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        : public ArcaNullScribe<::ReliquaryTestsFixture::BasicTypedRelic, BinaryArchive>
+    {};
 
     template<>
     class Scribe<::ReliquaryTestsFixture::GlobalRelic, BinaryArchive> final
-        : public CompositeRelicScribe<::ReliquaryTestsFixture::GlobalRelic, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        : public ArcaNullScribe<::ReliquaryTestsFixture::GlobalRelic, BinaryArchive>
+    {};
 
     template<>
     class Scribe<::ReliquaryTestsFixture::BasicCurator, BinaryArchive> final :
-        public CuratorScribe<::ReliquaryTestsFixture::BasicCurator, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        public ArcaNullScribe<::ReliquaryTestsFixture::BasicCurator, BinaryArchive>
+    {};
 }

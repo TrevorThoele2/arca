@@ -20,6 +20,7 @@
 #include "RelicParented.h"
 
 #include "Serialization.h"
+#include "TypeHandleSerialization.h"
 #include <Inscription/OutputJumpTable.h>
 #include <Inscription/InputJumpTable.h>
 
@@ -321,8 +322,6 @@ namespace Arca
     template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int>>
     CuratorT* Reliquary::Find()
     {
-        STATIC_ASSERT_TYPE_DERIVED_FROM_CURATOR(CuratorT);
-
         for (auto& loop : curators.map)
         {
             auto casted = dynamic_cast<CuratorT*>(loop.second->Get());

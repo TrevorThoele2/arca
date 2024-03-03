@@ -109,7 +109,7 @@ namespace Inscription
 {
     template<>
     class Scribe<CuratorTestsFixture::BasicCurator, BinaryArchive> final :
-        public CuratorScribe<CuratorTestsFixture::BasicCurator, BinaryArchive>
+        public ArcaCompositeScribe<CuratorTestsFixture::BasicCurator, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
@@ -117,7 +117,7 @@ namespace Inscription
 
     template<>
     class Scribe<CuratorTestsFixture::OtherBasicCurator, BinaryArchive> final :
-        public CuratorScribe<CuratorTestsFixture::OtherBasicCurator, BinaryArchive>
+        public ArcaCompositeScribe<CuratorTestsFixture::OtherBasicCurator, BinaryArchive>
     {
     public:
         static std::vector<TypeHandle> InputTypeHandles(const ArchiveT& archive);
@@ -127,17 +127,14 @@ namespace Inscription
 
     template<size_t id>
     class Scribe<CuratorTestsFixture::DifferentiableCurator<id>, BinaryArchive> final :
-        public CuratorScribe<CuratorTestsFixture::DifferentiableCurator<id>, BinaryArchive>
+        public ArcaNullScribe<CuratorTestsFixture::DifferentiableCurator<id>, BinaryArchive>
     {
     private:
-        using BaseT = CuratorScribe<CuratorTestsFixture::DifferentiableCurator<id>, BinaryArchive>;
+        using BaseT = ArcaNullScribe<CuratorTestsFixture::DifferentiableCurator<id>, BinaryArchive>;
     public:
         using ObjectT = typename BaseT::ObjectT;
         using ArchiveT = typename BaseT::ArchiveT;
 
         using BaseT::Scriven;
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
     };
 }

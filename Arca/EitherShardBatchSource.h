@@ -1,9 +1,13 @@
 #pragma once
 
+#include <vector>
+
 #include "BatchSource.h"
 
 #include "RelicID.h"
 #include "Either.h"
+
+#include "Serialization.h"
 
 namespace Arca
 {

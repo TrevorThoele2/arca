@@ -2,7 +2,7 @@
 
 #include "ReliquaryFixture.h"
 
-#include <Arca/Shard.h>
+#include <Arca/ShardTraits.h>
 #include <Arca/ClosedTypedRelicAutomation.h>
 
 using namespace Arca;
@@ -31,10 +31,12 @@ CompositeShardBatchFixture::Shard<i>::Shard(int value) :
     value(value)
 {}
 
-class CompositeShardBatchFixture::Relic : public ClosedTypedRelicAutomation<Relic, Shard<0>, Shard<1>, Shard<2>>
+class CompositeShardBatchFixture::Relic final :
+    public ClosedTypedRelicAutomation<Relic, Shard<0>, Shard<1>, Shard<2>>
 {};
 
-class CompositeShardBatchFixture::GlobalRelic : public ClosedTypedRelicAutomation<Relic, Shard<0>, Shard<1>, Shard<2>>
+class CompositeShardBatchFixture::GlobalRelic final :
+    public ClosedTypedRelicAutomation<GlobalRelic, Shard<0>, Shard<1>, Shard<2>>
 {};
 
 namespace Arca
@@ -70,10 +72,10 @@ namespace Inscription
 {
     template<size_t i>
     class Scribe<::CompositeShardBatchFixture::Shard<i>, BinaryArchive> final
-        : public ShardScribe<::CompositeShardBatchFixture::Shard<i>, BinaryArchive>
+        : public ArcaCompositeScribe<::CompositeShardBatchFixture::Shard<i>, BinaryArchive>
     {
     private:
-        using BaseT = ShardScribe<::CompositeShardBatchFixture::Shard<i>, BinaryArchive>;
+        using BaseT = ArcaCompositeScribe<::CompositeShardBatchFixture::Shard<i>, BinaryArchive>;
     public:
         using ObjectT = typename BaseT::ObjectT;
         using ArchiveT = typename BaseT::ArchiveT;
@@ -88,19 +90,11 @@ namespace Inscription
 
     template<>
     class Scribe<::CompositeShardBatchFixture::Relic, BinaryArchive> final
-        : public CompositeRelicScribe<::CompositeShardBatchFixture::Relic, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        : public ArcaNullScribe<::CompositeShardBatchFixture::Relic, BinaryArchive>
+    {};
 
     template<>
     class Scribe<::CompositeShardBatchFixture::GlobalRelic, BinaryArchive> final
-        : public CompositeRelicScribe<::CompositeShardBatchFixture::GlobalRelic, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
+        : public ArcaNullScribe<::CompositeShardBatchFixture::GlobalRelic, BinaryArchive>
+    {};
 }

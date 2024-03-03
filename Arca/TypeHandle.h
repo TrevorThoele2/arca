@@ -2,8 +2,6 @@
 
 #include <string>
 
-#include "Serialization.h"
-
 namespace Arca
 {
     using TypeHandleName = std::string;
@@ -29,15 +27,4 @@ namespace Arca
 namespace Chroma
 {
     std::string ToString(Arca::TypeHandle typeHandle);
-}
-
-namespace Inscription
-{
-    template<>
-    class Scribe<Arca::TypeHandle, BinaryArchive> final
-        : public CompositeScribe<Arca::TypeHandle, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-    };
 }

@@ -3,7 +3,7 @@
 #include "GeneralFixture.h"
 
 #include <Arca/ClosedTypedRelicAutomation.h>
-#include <Arca/Shard.h>
+#include <Arca/ShardTraits.h>
 
 #include <Inscription/BinaryArchive.h>
 
@@ -93,9 +93,9 @@ protected:
 class IntegrationTestsFixture::ParentRelic : public ClosedTypedRelicAutomation<ParentRelic>
 {
 public:
-    int value = 0;
+    int value;
 public:
-    ParentRelic(int value);
+    ParentRelic(int value = 0);
 
     void CreateChild();
 };
@@ -132,7 +132,7 @@ namespace Inscription
 {
     template<>
     class Scribe<::IntegrationTestsFixture::BasicShard, BinaryArchive> final
-        : public ShardScribe<::IntegrationTestsFixture::BasicShard, BinaryArchive>
+        : public ArcaCompositeScribe<::IntegrationTestsFixture::BasicShard, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
@@ -143,44 +143,24 @@ namespace Inscription
 
     template<>
     class Scribe<::IntegrationTestsFixture::ChildRelic, BinaryArchive> final
-        : public CompositeRelicScribe<::IntegrationTestsFixture::ChildRelic, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
-    };
-
-    template<>
-    struct TableData<::IntegrationTestsFixture::ParentRelic, BinaryArchive> final
-        : TableDataBase<::IntegrationTestsFixture::ParentRelic, BinaryArchive>
+        : public ArcaNullScribe<::IntegrationTestsFixture::ChildRelic, BinaryArchive>
     {};
 
     template<>
     class Scribe<::IntegrationTestsFixture::ParentRelic, BinaryArchive> final
-        : public TableRelicScribe<::IntegrationTestsFixture::ParentRelic, BinaryArchive>
-    {
-    public:
-        class Table final : public TableBase
-        {
-        public:
-            Table()
-            {}
-        };
-    };
+        : public ArcaNullScribe<::IntegrationTestsFixture::ParentRelic, BinaryArchive>
+    {};
 
     template<size_t differentiator>
     class Scribe<::IntegrationTestsFixture::BasicCurator<differentiator>, BinaryArchive> final :
-        public CuratorScribe<::IntegrationTestsFixture::BasicCurator<differentiator>, BinaryArchive>
+        public ArcaNullScribe<::IntegrationTestsFixture::BasicCurator<differentiator>, BinaryArchive>
     {
     private:
-        using BaseT = CuratorScribe<::IntegrationTestsFixture::BasicCurator<differentiator>, BinaryArchive>;
+        using BaseT = ArcaNullScribe<::IntegrationTestsFixture::BasicCurator<differentiator>, BinaryArchive>;
     public:
         using ObjectT = typename BaseT::ObjectT;
         using ArchiveT = typename BaseT::ArchiveT;
 
         using BaseT::Scriven;
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {}
     };
 }

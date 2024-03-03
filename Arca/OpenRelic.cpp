@@ -39,9 +39,3 @@ namespace Arca
 
     const TypeHandleName Traits<OpenRelic>::typeName = "OpenRelic";
 }
-
-namespace Inscription
-{
-    void Scribe<Arca::OpenRelic, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
-    {}
-}

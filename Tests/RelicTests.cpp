@@ -519,6 +519,7 @@ SCENARIO_METHOD(RelicTestsFixture, "open typed relic", "[relic][open]")
             THEN("reliquary created shard")
             {
                 REQUIRE(reliquary->ShardSize() == 2);
+                REQUIRE(reliquary->Find<OtherShard>(relic->ID()));
             }
 
             WHEN("destroying dynamic shard")
@@ -533,6 +534,7 @@ SCENARIO_METHOD(RelicTestsFixture, "open typed relic", "[relic][open]")
                 THEN("reliquary has destroyed shard")
                 {
                     REQUIRE(reliquary->ShardSize() == 1);
+                    REQUIRE(!reliquary->Find<OtherShard>(relic->ID()));
                 }
             }
         }
