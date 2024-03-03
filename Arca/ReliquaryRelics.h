@@ -199,14 +199,8 @@ namespace Arca
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         [[nodiscard]] GlobalHandler<RelicT>* FindGlobalHandler() const;
 
-        using PostulateTransformation = std::function<std::any(Reliquary&)>;
-        using PostulateMap = std::unordered_map<std::type_index, PostulateTransformation>;
-        PostulateMap postulateMap;
-
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         RelicT* FindGlobalStorage();
-        template<class T>
-        T FindPostulateValue();
     public:
         ReliquaryRelics(const ReliquaryRelics& arg) = delete;
         ReliquaryRelics& operator=(const ReliquaryRelics& arg) = delete;
