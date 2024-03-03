@@ -48,6 +48,8 @@ namespace Arca
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         void SignalCreation(const Index<ShardT>& index);
+
+        [[nodiscard]] size_t Size(const Type& type) const;
     public:
         class HandlerBase : public KnownPolymorphicSerializer
         {
