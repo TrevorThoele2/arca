@@ -22,6 +22,8 @@
     <ClInclude Include="AllDefinition.h" />
     <ClInclude Include="AllImplementation.h" />
     <ClInclude Include="Assign.h" />
+    <ClInclude Include="Assigned.h" />
+    <ClInclude Include="Assigning.h" />
     <ClInclude Include="CannotFindReliquaryDependency.h" />
     <ClInclude Include="Clear.h" />
     <ClInclude Include="Command.h" />
@@ -31,6 +33,10 @@
     <ClInclude Include="CreateChildWith.h" />
     <ClInclude Include="CreateWith.h" />
     <ClInclude Include="CuratorInit.h" />
+    <ClInclude Include="HasRelicDefaultConstructor.h" />
+    <ClInclude Include="HasRelicSerializationConstructor.h" />
+    <ClInclude Include="HasShardDefaultConstructor.h" />
+    <ClInclude Include="HasShardSerializationConstructor.h" />
     <ClInclude Include="ReliquaryDependencies.h" />
     <ClInclude Include="Destroy.h" />
     <ClInclude Include="EitherDefinition.h" />
@@ -72,10 +78,9 @@
     <ClInclude Include="ReliquaryDependencyAlreadyAdded.h" />
     <ClInclude Include="ReliquaryMatrices.h" />
     <ClInclude Include="ReliquaryMatricesDefinition.h" />
+    <ClInclude Include="SerializationConstructorMarker.h" />
     <ClInclude Include="ShardIndex.h" />
     <ClInclude Include="ShardIndexDefinition.h" />
-    <ClInclude Include="TransferableSignal.h" />
-    <ClInclude Include="TransferableSignalDefinition.h" />
     <ClInclude Include="AsHandle.h" />
     <ClInclude Include="CompositeScribe.h" />
     <ClInclude Include="HandleObjectTypeFor.h" />
@@ -145,8 +150,6 @@
     <ClInclude Include="Reliquary.h" />
     <ClInclude Include="ReliquaryException.h" />
     <ClInclude Include="Serialization.h" />
-    <ClInclude Include="SignalBatch.h" />
-    <ClInclude Include="SignalBatchSource.h" />
     <ClInclude Include="Curator.h" />
     <ClInclude Include="Pipeline.h" />
     <ClInclude Include="IsCurator.h" />
@@ -171,7 +174,6 @@
     <ClCompile Include="ReliquaryCommands.cpp" />
     <ClCompile Include="ReliquaryDependencyAlreadyAdded.cpp" />
     <ClCompile Include="ReliquaryMatrices.cpp" />
-    <ClCompile Include="TransferableSignal.cpp" />
     <ClCompile Include="ClosedRelic.cpp" />
     <ClCompile Include="HandleSlim.cpp" />
     <ClCompile Include="KnownPolymorphicSerializer.cpp" />
@@ -192,7 +194,6 @@
     <ClCompile Include="Reliquary.cpp" />
     <ClCompile Include="ReliquaryOrigin.cpp" />
     <ClCompile Include="ReliquaryException.cpp" />
-    <ClCompile Include="SignalBatchSource.cpp" />
     <ClCompile Include="Curator.cpp" />
     <ClCompile Include="OpenRelic.cpp" />
     <ClCompile Include="RelicMetadata.cpp" />

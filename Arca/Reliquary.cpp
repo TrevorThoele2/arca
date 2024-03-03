@@ -17,7 +17,6 @@ namespace Arca
     void Reliquary::Work()
     {
         curators.Work();
-        signals.Clear();
     }
 
     std::optional<Handle> Reliquary::ParentOf(const Handle& child) const
@@ -53,14 +52,6 @@ namespace Arca
     Reliquary::SizeT Reliquary::CuratorSize() const
     {
         return curators.handlers.size();
-    }
-
-    Reliquary::SizeT Reliquary::SignalSize() const
-    {
-        SizeT totalSize = 0;
-        for (auto& loop : signals.batchSources.map)
-            totalSize += loop.second->Size();
-        return totalSize;
     }
 
     void Reliquary::Destroy(const Handle& handle)

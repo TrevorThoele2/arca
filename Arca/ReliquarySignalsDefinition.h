@@ -8,14 +8,7 @@ namespace Arca
     template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int>>
     void ReliquarySignals::Raise(const SignalT& signal)
     {
-        auto& batchSource = batchSources.Required<SignalT>();
-
-        batchSource.Raise(signal);
-        ExecuteExecutionsFor(signal);
-
-        const TransferableSignal transferableSignal(signal);
-        batchSources.transferableSignals->Raise(transferableSignal);
-        ExecuteExecutionsFor(transferableSignal);
+        ExecuteListenersFor(signal);
     }
 
     template<class SignalT, class... Args, std::enable_if_t<is_signal_v<SignalT>, int>>
@@ -25,13 +18,13 @@ namespace Arca
     }
 
     template<class SignalT, std::enable_if_t<is_signal_v<SignalT> && !is_matrix_signal_v<SignalT>, int>>
-    void ReliquarySignals::ExecuteOn(const std::function<void(const SignalT&)>& function)
+    void ReliquarySignals::On(const std::function<void(const SignalT&)>& function)
     {
         ExecuteOnCommon<SignalT>(function);
     }
 
     template<class SignalT, std::enable_if_t<is_signal_v<SignalT> && is_matrix_signal_v<SignalT>, int>>
-    void ReliquarySignals::ExecuteOn(const std::function<void(const SignalT&)>& function)
+    void ReliquarySignals::On(const std::function<void(const SignalT&)>& function)
     {
         ExecuteOnCommon<SignalT>(function);
         Owner().matrices.EnsureInteraction<typename MatrixTypeForSignal<SignalT>::Type>
@@ -39,36 +32,27 @@ namespace Arca
     }
 
     template<class SignalT>
-    void ReliquarySignals::ExecuteExecutionsFor(const SignalT& signal)
+    void ReliquarySignals::ExecuteListenersFor(const SignalT& signal)
     {
         const auto typeName = TypeFor<SignalT>().name;
-        auto found = executionMap.find(typeName);
-        if (found == executionMap.end())
+        auto found = listenerMap.find(typeName);
+        if (found == listenerMap.end())
             return;
 
-        auto& executionList = std::any_cast<ExecutionList<SignalT>&>(found->second);
+        auto& executionList = std::any_cast<ListenerList<SignalT>&>(found->second);
         for (auto& loop : executionList)
             loop(signal);
-    }
-
-    template<class ObjectT, std::enable_if_t<is_signal_v<ObjectT> && is_matrix_signal_v<ObjectT>, int>>
-    BatchSource<ObjectT>& ReliquarySignals::BatchSources::Required() const
-    {
-        auto& batchSource = RequiredCommon<ObjectT>();
-        owner->Owner().matrices.EnsureInteraction<typename MatrixTypeForSignal<ObjectT>::Type>
-            (&KnownMatrix::InteractWithSignals);
-        return batchSource;
     }
 
     template<class SignalT>
     void ReliquarySignals::ExecuteOnCommon(const std::function<void(const SignalT&)>& function)
     {
         const auto typeName = TypeFor<SignalT>().name;
-        auto found = executionMap.find(typeName);
-        if (found == executionMap.end())
-            found = executionMap.emplace(typeName, ExecutionList<SignalT>()).first;
+        auto found = listenerMap.find(typeName);
+        if (found == listenerMap.end())
+            found = listenerMap.emplace(typeName, ListenerList<SignalT>()).first;
 
-        auto& executionList = std::any_cast<ExecutionList<SignalT>&>(found->second);
+        auto& executionList = std::any_cast<ListenerList<SignalT>&>(found->second);
         executionList.push_back(function);
     }
 }

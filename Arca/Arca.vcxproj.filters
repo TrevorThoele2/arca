@@ -10,9 +10,6 @@
     <ClCompile Include="ReliquaryException.cpp">
       <Filter>Source Files\Reliquary</Filter>
     </ClCompile>
-    <ClCompile Include="SignalBatchSource.cpp">
-      <Filter>Source Files\Signal\Batch</Filter>
-    </ClCompile>
     <ClCompile Include="ReliquaryOrigin.cpp">
       <Filter>Source Files\Reliquary</Filter>
     </ClCompile>
@@ -76,9 +73,6 @@
     <ClCompile Include="OpenRelic.cpp">
       <Filter>Source Files\Relic\Open</Filter>
     </ClCompile>
-    <ClCompile Include="TransferableSignal.cpp">
-      <Filter>Source Files\Signal</Filter>
-    </ClCompile>
     <ClCompile Include="MatrixBatchSource.cpp">
       <Filter>Source Files\Matrix\Batch</Filter>
     </ClCompile>
@@ -119,12 +113,6 @@
     </ClInclude>
     <ClInclude Include="ReliquaryException.h">
       <Filter>Header Files\Reliquary</Filter>
-    </ClInclude>
-    <ClInclude Include="SignalBatch.h">
-      <Filter>Header Files\Signal\Batch</Filter>
-    </ClInclude>
-    <ClInclude Include="SignalBatchSource.h">
-      <Filter>Header Files\Signal\Batch</Filter>
     </ClInclude>
     <ClInclude Include="Serialization.h">
       <Filter>Header Files\Serialization</Filter>
@@ -325,12 +313,6 @@
       <Filter>Header Files\Relic\Traits</Filter>
     </ClInclude>
     <ClInclude Include="Signal.h">
-      <Filter>Header Files\Signal</Filter>
-    </ClInclude>
-    <ClInclude Include="TransferableSignal.h">
-      <Filter>Header Files\Signal</Filter>
-    </ClInclude>
-    <ClInclude Include="TransferableSignalDefinition.h">
       <Filter>Header Files\Signal</Filter>
     </ClInclude>
     <ClInclude Include="All.h">
@@ -534,6 +516,27 @@
     <ClInclude Include="ReliquaryDependencyAlreadyAdded.h">
       <Filter>Header Files\Reliquary\Dependencies</Filter>
     </ClInclude>
+    <ClInclude Include="Assigned.h">
+      <Filter>Header Files\Signal\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="SerializationConstructorMarker.h">
+      <Filter>Header Files\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="Assigning.h">
+      <Filter>Header Files\Signal\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="HasRelicDefaultConstructor.h">
+      <Filter>Header Files\Relic\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="HasShardDefaultConstructor.h">
+      <Filter>Header Files\Shard</Filter>
+    </ClInclude>
+    <ClInclude Include="HasShardSerializationConstructor.h">
+      <Filter>Header Files\Shard</Filter>
+    </ClInclude>
+    <ClInclude Include="HasRelicSerializationConstructor.h">
+      <Filter>Header Files\Relic\Traits</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
@@ -544,9 +547,6 @@
     </Filter>
     <Filter Include="Header Files\Signal">
       <UniqueIdentifier>{30ff5c2d-4d02-41dc-9f5b-fba84c33964d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Signal">
-      <UniqueIdentifier>{b7a2aa65-2c14-448b-ac2d-132ea6da6267}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Curator">
       <UniqueIdentifier>{36834c0c-c900-4819-8422-4c3541f667f8}</UniqueIdentifier>
@@ -559,12 +559,6 @@
     </Filter>
     <Filter Include="Header Files\Reliquary">
       <UniqueIdentifier>{2967c371-6dff-49cb-9bae-294e1b175214}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Signal\Batch">
-      <UniqueIdentifier>{d7034a81-7396-4ed9-81f7-1acbd6d3c6f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Signal\Batch">
-      <UniqueIdentifier>{9568fc45-0ac8-481b-881e-adf17f4b5dce}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Signal\Common">
       <UniqueIdentifier>{7dde23e0-1c87-454c-a219-2c243f6fe070}</UniqueIdentifier>

@@ -6,6 +6,8 @@
 #include "RelicID.h"
 #include "IsRelic.h"
 #include "RelicInit.h"
+#include "HasRelicDefaultConstructor.h"
+#include "HasRelicSerializationConstructor.h"
 
 #include "Serialization.h"
 #include "HasScribe.h"
@@ -104,6 +106,13 @@ namespace Inscription
         void DoScriven(ObjectT& object, ArchiveT& archive);
         template<class U, std::enable_if_t<!Arca::HasScribe<U>(), int> = 0>
         void DoScriven(ObjectT& object, ArchiveT& archive);
+
+        template<class U, std::enable_if_t<Arca::has_relic_serialization_constructor_v<U>, int> = 0>
+        U Create(Arca::RelicInit init);
+        template<class U, std::enable_if_t<!Arca::has_relic_serialization_constructor_v<U> && Arca::has_relic_default_constructor_v<U>, int> = 0>
+        U Create(Arca::RelicInit init);
+        template<class U, std::enable_if_t<!Arca::has_relic_serialization_constructor_v<U> && !Arca::has_relic_default_constructor_v<U>, int> = 0>
+        U Create(Arca::RelicInit init);
     };
 
     template<class T>
@@ -145,7 +154,7 @@ namespace Inscription
                     archive(*foundRelic);
                 else
                 {
-                    typename ObjectT::RelicT relic{ Arca::RelicInit{id, *object.owner} };
+                    auto relic = Create<typename ObjectT::RelicT>(Arca::RelicInit{id, *object.owner});
                     archive(relic);
                     object.list.push_back(std::move(relic));
                     archive.AttemptReplaceTrackedObject(relic, object.list.back());
@@ -159,4 +168,28 @@ namespace Inscription
     void Scribe<::Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>, BinaryArchive>::
         DoScriven(ObjectT&, ArchiveT&)
     {}
+
+    template<class T>
+    template<class U, std::enable_if_t<Arca::has_relic_serialization_constructor_v<U>, int>>
+    U Scribe<::Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>, BinaryArchive>::Create(Arca::RelicInit init)
+    {
+        return ObjectT::RelicT{ init, Arca::Serialization{} };
+    }
+
+    template<class T>
+    template<class U, std::enable_if_t<!Arca::has_relic_serialization_constructor_v<U> && Arca::has_relic_default_constructor_v<U>, int>>
+    U Scribe<::Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>, BinaryArchive>::Create(Arca::RelicInit init)
+    {
+        return ObjectT::RelicT{ init };
+    }
+
+    template<class T>
+    template<class U, std::enable_if_t<!Arca::has_relic_serialization_constructor_v<U> && !Arca::has_relic_default_constructor_v<U>, int>>
+    U Scribe<::Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>, BinaryArchive>::Create(Arca::RelicInit init)
+    {
+        static_assert(
+            "A relic requires a serialization constructor (taking a RelicInit and Serialization) "
+            "or a constructor taking only RelicInit in order to be serialized.");
+        return ObjectT::RelicT{ init };
+    }
 }

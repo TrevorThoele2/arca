@@ -19,8 +19,6 @@ namespace Arca
 
         auto reliquary = std::make_unique<Reliquary>();
 
-        reliquary->signals.batchSources.transferableSignals.emplace();
-
         for (auto& initializer : shardList)
             initializer.factory(*reliquary);
 

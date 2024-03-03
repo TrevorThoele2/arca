@@ -34,9 +34,6 @@
     <ClCompile Include="ShardBatchTests.cpp">
       <Filter>Source Files\Tests</Filter>
     </ClCompile>
-    <ClCompile Include="SignalBatchTests.cpp">
-      <Filter>Source Files\Tests</Filter>
-    </ClCompile>
     <ClCompile Include="ReliquaryTests.cpp">
       <Filter>Source Files\Tests</Filter>
     </ClCompile>
@@ -126,9 +123,6 @@
     <ClInclude Include="ShardBatchTests.h">
       <Filter>Header Files\Tests</Filter>
     </ClInclude>
-    <ClInclude Include="SignalBatchTests.h">
-      <Filter>Header Files\Tests</Filter>
-    </ClInclude>
     <ClInclude Include="SignalTests.h">
       <Filter>Header Files\Tests</Filter>
     </ClInclude>
@@ -171,6 +165,9 @@
     <ClInclude Include="ReliquaryDependenciesTests.h">
       <Filter>Header Files\Tests</Filter>
     </ClInclude>
+    <ClInclude Include="SignalListener.h">
+      <Filter>Header Files\Automation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
@@ -196,6 +193,9 @@
     </Filter>
     <Filter Include="Source Files\Data">
       <UniqueIdentifier>{68d3f7b4-7e6c-41ac-91cd-2b1e64de84e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Automation">
+      <UniqueIdentifier>{16e78be9-de02-48f3-b901-fa35e62aafc9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

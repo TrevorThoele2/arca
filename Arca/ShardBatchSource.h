@@ -4,6 +4,8 @@
 
 #include "BatchSource.h"
 #include "IsShard.h"
+#include "HasShardDefaultConstructor.h"
+#include "HasShardSerializationConstructor.h"
 
 #include "RelicID.h"
 #include "TypeFor.h"
@@ -238,6 +240,13 @@ namespace Inscription
         void DoScriven(ObjectT& object, ArchiveT& archive);
         template<class U, std::enable_if_t<!Arca::HasScribe<U>(), int> = 0>
         void DoScriven(ObjectT& object, ArchiveT& archive);
+
+        template<class U, std::enable_if_t<Arca::has_shard_serialization_constructor_v<U>, int> = 0>
+        U Create();
+        template<class U, std::enable_if_t<!Arca::has_shard_serialization_constructor_v<U> && Arca::has_shard_default_constructor_v<U>, int> = 0>
+        U Create();
+        template<class U, std::enable_if_t<!Arca::has_shard_serialization_constructor_v<U> && !Arca::has_shard_default_constructor_v<U>, int> = 0>
+        U Create();
     };
 
     template<class T>
@@ -280,7 +289,7 @@ namespace Inscription
                 {
                     auto matrixSnapshot = object.owner->matrices.CreationSnapshot(id);
 
-                    typename ObjectT::StoredT shard;
+                    auto shard = Create<typename ObjectT::ShardT>();
                     archive(shard);
                     object.list.emplace_back(id, std::move(shard));
 
@@ -295,4 +304,28 @@ namespace Inscription
     void Scribe<::Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>, BinaryArchive>::
         DoScriven(ObjectT&, ArchiveT&)
     {}
+
+    template<class T>
+    template<class U, std::enable_if_t<Arca::has_shard_serialization_constructor_v<U>, int>>
+    U Scribe<::Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>, BinaryArchive>::Create()
+    {
+        return ObjectT::StoredT{ Arca::Serialization{} };
+    }
+
+    template<class T>
+    template<class U, std::enable_if_t<!Arca::has_shard_serialization_constructor_v<U> && Arca::has_shard_default_constructor_v<U>, int>>
+    U Scribe<::Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>, BinaryArchive>::Create()
+    {
+        return ObjectT::StoredT{};
+    }
+
+    template<class T>
+    template<class U, std::enable_if_t<!Arca::has_shard_serialization_constructor_v<U> && !Arca::has_shard_default_constructor_v<U>, int>>
+    U Scribe<::Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>, BinaryArchive>::Create()
+    {
+        static_assert(
+            "A shard requires a serialization constructor (taking only the class Serialization) "
+            "or a default constructor in order to be serialized.");
+        return ObjectT::StoredT{};
+    }
 }

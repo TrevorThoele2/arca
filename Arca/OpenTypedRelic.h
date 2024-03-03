@@ -16,16 +16,6 @@ namespace Arca
             return owner->Do<Arca::Create<ShardT>>(id, std::forward<ConstructorArgs>(constructorArgs)...);
         }
 
-        template<class ShardT, class... ConstructorArgs, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        Index<ShardT> FindOrCreate(ConstructorArgs&& ... constructorArgs) const
-        {
-            auto found = Find<ShardT>();
-            if (found)
-                return found;
-
-            return Create<ShardT>(std::forward<ConstructorArgs>(constructorArgs)...);
-        }
-
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         void Destroy() const
         {

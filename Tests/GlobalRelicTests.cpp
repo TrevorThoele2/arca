@@ -8,13 +8,13 @@ GlobalRelicTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(s
 GlobalRelicTestsFixture::BasicTypedRelic::BasicTypedRelic(Init init)
     : ClosedTypedRelic(init)
 {
-    basicShard = FindOrCreate<BasicShard>();
+    basicShard = Create<BasicShard>();
 }
 
 GlobalRelicTestsFixture::GlobalRelic::GlobalRelic(Init init)
     : ClosedTypedRelic(init)
 {
-    basicShard = FindOrCreate<BasicShard>();
+    basicShard = Create<BasicShard>();
 }
 
 SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")

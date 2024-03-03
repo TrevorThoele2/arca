@@ -51,25 +51,25 @@ namespace Arca
     template<class T, std::enable_if_t<is_relic_v<T>, int>>
     command_result_t<AssignCopy<T>> ReliquaryCommands::Do(const AssignCopy<T>& command)
     {
-        return command.Do(Relics());
+        return command.Do(Relics(), Shards(), Signals());
     }
 
     template<class T, std::enable_if_t<is_shard_v<T>, int>>
     command_result_t<AssignCopy<T>> ReliquaryCommands::Do(const AssignCopy<T>& command)
     {
-        return command.Do(Shards());
+        return command.Do(Shards(), Signals());
     }
 
     template<class T, std::enable_if_t<is_relic_v<T>, int>>
     command_result_t<AssignMove<T>> ReliquaryCommands::Do(const AssignMove<T>& command)
     {
-        return command.Do(Relics());
+        return command.Do(Relics(), Shards(), Signals());
     }
 
     template<class T, std::enable_if_t<is_shard_v<T>, int>>
     command_result_t<AssignMove<T>> ReliquaryCommands::Do(const AssignMove<T>& command)
     {
-        return command.Do(Shards());
+        return command.Do(Shards(), Signals());
     }
 
     template<class T, std::enable_if_t<is_relic_v<T>, int>>

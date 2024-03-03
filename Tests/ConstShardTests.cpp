@@ -8,7 +8,7 @@ ConstShardTestsFixture::Shard::Shard(int value) :
 
 ConstShardTestsFixture::Relic::Relic(Init init) : ClosedTypedRelic(init)
 {
-    shard = FindOrCreate<const Shard>();
+    shard = Create<const Shard>();
 }
 
 SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")

@@ -19,7 +19,7 @@ class EitherBatchTestsFixture::Shard
 public:
     int value = 0;
 public:
-    Shard() = default;
+    explicit Shard() = default;
     explicit Shard(int value);
 };
 
