@@ -217,12 +217,6 @@ namespace Inscription
             object.relics.metadataList.push_back(createdMetadata);
         }
 
-        for (auto& loop : object.relics.globalHandlers)
-            loop->PostConstruct();
-
-        for (auto& loop : object.relics.localHandlers)
-            loop->BatchSource().Construct(object);
-
         for (auto& loop : object.curators.handlers)
             loop->Value().PostConstruct(object);
     }

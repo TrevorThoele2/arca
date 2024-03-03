@@ -73,12 +73,6 @@
     <ClCompile Include="ClosedRelic.cpp">
       <Filter>Source Files\Relic\Closed</Filter>
     </ClCompile>
-    <ClCompile Include="ClosedTypedRelic.cpp">
-      <Filter>Source Files\Relic\Closed</Filter>
-    </ClCompile>
-    <ClCompile Include="OpenTypedRelic.cpp">
-      <Filter>Source Files\Relic\Open</Filter>
-    </ClCompile>
     <ClCompile Include="OpenRelic.cpp">
       <Filter>Source Files\Relic\Open</Filter>
     </ClCompile>
@@ -243,9 +237,6 @@
     <ClInclude Include="RelicBatchSourceDefinition.h">
       <Filter>Header Files\Relic\Batch</Filter>
     </ClInclude>
-    <ClInclude Include="PostConstruct.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="TypeFor.h">
       <Filter>Header Files\Type</Filter>
     </ClInclude>
@@ -312,25 +303,10 @@
     <ClInclude Include="ClosedRelicDefinition.h">
       <Filter>Header Files\Relic\Closed</Filter>
     </ClInclude>
-    <ClInclude Include="ClosedTypedRelic.h">
-      <Filter>Header Files\Relic\Closed</Filter>
-    </ClInclude>
-    <ClInclude Include="ClosedTypedRelicAutomation.h">
-      <Filter>Header Files\Relic\Closed</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenTypedRelicDefinition.h">
-      <Filter>Header Files\Relic\Open</Filter>
-    </ClInclude>
     <ClInclude Include="OpenRelic.h">
       <Filter>Header Files\Relic\Open</Filter>
     </ClInclude>
     <ClInclude Include="OpenRelicDefinition.h">
-      <Filter>Header Files\Relic\Open</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenTypedRelic.h">
-      <Filter>Header Files\Relic\Open</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenTypedRelicAutomation.h">
       <Filter>Header Files\Relic\Open</Filter>
     </ClInclude>
     <ClInclude Include="ShardList.h">
@@ -489,11 +465,14 @@
     <ClInclude Include="HasCommandReturn.h">
       <Filter>Header Files\Command</Filter>
     </ClInclude>
-    <ClInclude Include="Initialize.h">
-      <Filter>Header Files\Data</Filter>
+    <ClInclude Include="ClosedTypedRelic.h">
+      <Filter>Header Files\Relic\Closed</Filter>
     </ClInclude>
-    <ClInclude Include="HasBareInitializeMethod.h">
-      <Filter>Header Files\Data</Filter>
+    <ClInclude Include="OpenTypedRelic.h">
+      <Filter>Header Files\Relic\Open</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicInitialization.h">
+      <Filter>Header Files\Relic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -655,9 +634,6 @@
     </Filter>
     <Filter Include="Header Files\Command\Common">
       <UniqueIdentifier>{ed6bbebe-a81c-40d8-a01a-0e131925b3da}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Data">
-      <UniqueIdentifier>{eb0a4366-bad0-4342-9b29-16eb35d79952}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

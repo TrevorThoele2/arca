@@ -11,24 +11,14 @@ HandleTestsFixture::Shard::Shard(std::string myValue) : myValue(std::move(myValu
 HandleTestsFixture::OtherShard::OtherShard(std::string myValue) : myValue(std::move(myValue))
 {}
 
-void HandleTestsFixture::TypedRelic::PostConstruct()
+HandleTestsFixture::TypedRelic::TypedRelic(Initialization initialization) : ClosedTypedRelic(initialization)
 {
-    basicShard = Find<Shard>();
+    basicShard = FindOrCreate<Shard>();
 }
 
-void HandleTestsFixture::TypedRelic::Initialize()
+HandleTestsFixture::GlobalRelic::GlobalRelic(Initialization initialization) : ClosedTypedRelic(initialization)
 {
-    basicShard = Create<Shard>();
-}
-
-void HandleTestsFixture::GlobalRelic::PostConstruct()
-{
-    basicShard = Find<Shard>();
-}
-
-void HandleTestsFixture::GlobalRelic::Initialize()
-{
-    basicShard = Create<Shard>();
+    basicShard = FindOrCreate<Shard>();
 }
 
 SCENARIO_METHOD(HandleTestsFixture, "basic handle", "[handle]")

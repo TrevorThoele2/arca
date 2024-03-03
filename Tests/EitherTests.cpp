@@ -6,14 +6,9 @@
 EitherTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std::move(myValue))
 {}
 
-void EitherTestsFixture::BasicTypedRelic::PostConstruct()
+EitherTestsFixture::BasicTypedRelic::BasicTypedRelic(Initialization initialization) : ClosedTypedRelic(initialization)
 {
-    basicShard = Find<BasicShard>();
-}
-
-void EitherTestsFixture::BasicTypedRelic::Initialize()
-{
-    basicShard = Create<BasicShard>();
+    basicShard = FindOrCreate<BasicShard>();
 }
 
 SCENARIO_METHOD(EitherTestsFixture, "reliquary either", "[reliquary][either][shard]")

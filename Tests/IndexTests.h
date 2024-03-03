@@ -3,8 +3,8 @@
 #include "GeneralFixture.h"
 
 #include <Arca/Shard.h>
-#include <Arca/ClosedTypedRelicAutomation.h>
-#include <Arca/OpenTypedRelicAutomation.h>
+#include <Arca/ClosedTypedRelic.h>
+#include <Arca/OpenTypedRelic.h>
 
 using namespace Arca;
 
@@ -22,31 +22,28 @@ public:
         int myInt;
     };
 
-    class TypedClosedRelic final : public ClosedTypedRelicAutomation<TypedClosedRelic>
+    class TypedClosedRelic final : public ClosedTypedRelic<TypedClosedRelic>
     {
     public:
         ShardIndex<Shard> shard;
     public:
-        void PostConstruct();
-        void Initialize();
+        explicit TypedClosedRelic(Initialization initialization);
     };
 
-    class TypedOpenRelic final : public ClosedTypedRelicAutomation<TypedOpenRelic>
+    class TypedOpenRelic final : public OpenTypedRelic<TypedOpenRelic>
     {
     public:
         ShardIndex<Shard> shard;
     public:
-        void PostConstruct();
-        void Initialize();
+        explicit TypedOpenRelic(Initialization initialization);
     };
 
-    class GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic>
+    class GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
     {
     public:
         ShardIndex<Shard> shard;
     public:
-        void PostConstruct();
-        void Initialize();
+        explicit GlobalRelic(Initialization initialization);
     };
 };
 

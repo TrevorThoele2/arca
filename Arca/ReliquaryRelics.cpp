@@ -57,15 +57,15 @@ namespace Arca
             HandleObjectType::Relic);
     }
 
-    void ReliquaryRelics::SetupNewInternals(
+    RelicMetadata* ReliquaryRelics::SetupNewInternals(
         RelicID id,
         Openness openness,
         Locality locality,
         bool shouldSerialize,
-        Type type,
-        void* storage)
+        Type type)
     {
-        metadataList.emplace_back(id, openness, locality, std::move(type), storage, shouldSerialize);
+        metadataList.emplace_back(id, openness, locality, std::move(type), nullptr, shouldSerialize);
+        return &metadataList.back();
     }
 
     void ReliquaryRelics::DestroyMetadata(RelicID id)

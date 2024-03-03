@@ -2,7 +2,7 @@
 
 #include "ReliquaryFixture.h"
 
-#include <Arca/ClosedTypedRelicAutomation.h>
+#include <Arca/ClosedTypedRelic.h>
 
 using namespace Arca;
 
@@ -22,13 +22,12 @@ public:
     explicit Shard(int value);
 };
 
-class ConstShardTestsFixture::Relic final : public ClosedTypedRelicAutomation<Relic>
+class ConstShardTestsFixture::Relic final : public ClosedTypedRelic<Relic>
 {
 public:
     ShardIndex<const Shard> shard;
 
-    void PostConstruct();
-    void Initialize();
+    explicit Relic(Initialization initialization);
 };
 
 namespace Arca

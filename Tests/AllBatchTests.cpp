@@ -2,14 +2,14 @@
 
 #include "AllBatchTests.h"
 
-void AllBatchTestsFixture::Relic::Initialize()
+AllBatchTestsFixture::Relic::Relic(Initialization initialization) : ClosedTypedRelic(initialization)
 {
     Create<Shard<0>>();
     Create<Shard<1>>();
     Create<Shard<2>>();
 }
 
-void AllBatchTestsFixture::GlobalRelic::Initialize()
+AllBatchTestsFixture::GlobalRelic::GlobalRelic(Initialization initialization) : ClosedTypedRelic(initialization)
 {
     Create<Shard<0>>();
     Create<Shard<1>>();

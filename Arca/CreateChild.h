@@ -16,16 +16,16 @@ namespace Arca
     {
         std::function<RelicIndex<T>(ReliquaryRelics&)> function;
 
-        template<class... InitializeArgs>
-        explicit CreateChild(const Handle& parent, InitializeArgs&& ... initializeArgs)
+        template<class... ConstructorArgs>
+        explicit CreateChild(const Handle& parent, ConstructorArgs&& ... constructorArgs)
         {
             function =
-                [parent, args = std::make_tuple(std::forward<InitializeArgs>(initializeArgs)...)](ReliquaryRelics& relics) mutable
+                [parent, args = std::make_tuple(std::forward<ConstructorArgs>(constructorArgs)...)](ReliquaryRelics& relics) mutable
             {
                 return std::apply(
                     [parent, &relics](auto&& ... args)
                     {
-                        return relics.template CreateChild<T>(parent, std::forward<InitializeArgs>(args)...);
+                        return relics.template CreateChild<T>(parent, std::forward<ConstructorArgs>(args)...);
                     },
                     args);
             };

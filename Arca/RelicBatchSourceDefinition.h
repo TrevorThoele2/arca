@@ -2,7 +2,6 @@
 
 #include "RelicBatchSource.h"
 #include "Reliquary.h"
-#include "PostConstruct.h"
 
 namespace Arca
 {
@@ -62,13 +61,10 @@ namespace Arca
     }
 
     template<class T>
-    void BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Construct(Reliquary& owner)
+    void BatchSource<T, std::enable_if_t<is_relic_v<T>>>::SetOwner(Reliquary& owner)
     {
         for (auto& loop : list)
-        {
             loop.owner = &owner;
-            PostConstruct(loop);
-        }
     }
 
     template<class T>

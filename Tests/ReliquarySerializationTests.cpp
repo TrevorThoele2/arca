@@ -4,127 +4,115 @@ using namespace std::string_literals;
 
 #include "ReliquarySerializationTests.h"
 
-void ReliquarySerializationTestsFixture::BasicShard::Initialize()
+ReliquarySerializationTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(myValue)
 {}
-
-void ReliquarySerializationTestsFixture::BasicShard::Initialize(std::string myValue)
-{
-    this->myValue = std::move(myValue);
-}
 
 ReliquarySerializationTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
 {}
 
-void ReliquarySerializationTestsFixture::TypedClosedRelic::PostConstruct()
+ReliquarySerializationTestsFixture::TypedClosedRelic::TypedClosedRelic(Initialization initialization) :
+    ClosedTypedRelic(initialization)
 {
-    basicShard = Find<BasicShard>();
+    basicShard = FindOrCreate<BasicShard>();
 }
 
-void ReliquarySerializationTestsFixture::TypedClosedRelic::Initialize()
+ReliquarySerializationTestsFixture::TypedClosedRelic::TypedClosedRelic(Initialization initialization, int myInt) :
+    ClosedTypedRelic(initialization), myInt(myInt)
 {
     basicShard = Create<BasicShard>();
 }
 
-void ReliquarySerializationTestsFixture::TypedClosedRelic::Initialize(int myInt)
+ReliquarySerializationTestsFixture::TypedOpenRelic::TypedOpenRelic(Initialization initialization) :
+    OpenTypedRelic(initialization)
 {
-    Initialize();
-    this->myInt = myInt;
+    basicShard = FindOrCreate<BasicShard>();
 }
 
-void ReliquarySerializationTestsFixture::TypedOpenRelic::PostConstruct()
-{
-    basicShard = Find<BasicShard>();
-}
-
-void ReliquarySerializationTestsFixture::TypedOpenRelic::Initialize()
+ReliquarySerializationTestsFixture::TypedOpenRelic::TypedOpenRelic(Initialization initialization, int myInt) :
+    OpenTypedRelic(initialization), myInt(myInt)
 {
     basicShard = Create<BasicShard>();
 }
 
-void ReliquarySerializationTestsFixture::TypedOpenRelic::Initialize(int myInt)
+ReliquarySerializationTestsFixture::GlobalRelic::GlobalRelic(Initialization initialization) :
+    ClosedTypedRelic(initialization)
 {
-    Initialize();
-    this->myInt = myInt;
+    basicShard = FindOrCreate<BasicShard>();
 }
 
-void ReliquarySerializationTestsFixture::GlobalRelic::PostConstruct()
+ReliquarySerializationTestsFixture::GlobalRelic::GlobalRelic(Initialization initialization, int myInt, std::string shardData)
+    : ClosedTypedRelic(initialization), myInt(myInt)
 {
-    basicShard = Find<BasicShard>();
-}
-
-void ReliquarySerializationTestsFixture::GlobalRelic::Initialize()
-{
-    basicShard = Create<BasicShard>();
-}
-
-void ReliquarySerializationTestsFixture::GlobalRelic::Initialize(int myInt, std::string shardData)
-{
-    this->myInt = myInt;
     basicShard = Create<BasicShard>(std::move(shardData));
 }
 
-void ReliquarySerializationTestsFixture::BasicShardNullInscription::Initialize()
+ReliquarySerializationTestsFixture::BasicShardNullInscription::BasicShardNullInscription(std::string myValue)
+    : myValue(std::move(myValue))
 {}
 
-void ReliquarySerializationTestsFixture::BasicShardNullInscription::Initialize(std::string myValue)
+ReliquarySerializationTestsFixture::OtherShardNullInscription::OtherShardNullInscription(int myValue)
+    : myValue(myValue)
+{}
+
+ReliquarySerializationTestsFixture::TypedClosedRelicNullInscription::TypedClosedRelicNullInscription(
+    Initialization initialization)
+    :
+    ClosedTypedRelic(initialization)
 {
-    this->myValue = myValue;
+    basicShard = FindOrCreate<BasicShardNullInscription>();
 }
 
-void ReliquarySerializationTestsFixture::OtherShardNullInscription::Initialize(int myValue)
-{
-    this->myValue = myValue;
-}
-
-void ReliquarySerializationTestsFixture::TypedClosedRelicNullInscription::PostConstruct()
-{
-    basicShard = Find<BasicShardNullInscription>();
-}
-
-void ReliquarySerializationTestsFixture::TypedClosedRelicNullInscription::Initialize()
+ReliquarySerializationTestsFixture::TypedClosedRelicNullInscription::TypedClosedRelicNullInscription(
+    Initialization initialization, int myInt)
+    :
+    ClosedTypedRelic(initialization), myInt(myInt)
 {
     basicShard = Create<BasicShardNullInscription>();
 }
 
-void ReliquarySerializationTestsFixture::TypedOpenRelicNullInscription::PostConstruct()
+ReliquarySerializationTestsFixture::TypedOpenRelicNullInscription::TypedOpenRelicNullInscription(
+    Initialization initialization)
+    :
+    OpenTypedRelic(initialization)
 {
-    basicShard = Find<BasicShardNullInscription>();
+    basicShard = FindOrCreate<BasicShardNullInscription>();
 }
 
-void ReliquarySerializationTestsFixture::TypedOpenRelicNullInscription::Initialize()
+ReliquarySerializationTestsFixture::TypedOpenRelicNullInscription::TypedOpenRelicNullInscription(
+    Initialization initialization, int myInt)
+    :
+    OpenTypedRelic(initialization), myInt(myInt)
 {
     basicShard = Create<BasicShardNullInscription>();
 }
 
-void ReliquarySerializationTestsFixture::GlobalRelicNullInscription::PostConstruct()
+ReliquarySerializationTestsFixture::GlobalRelicNullInscription::GlobalRelicNullInscription(
+    Initialization initialization)
+    :
+    ClosedTypedRelic(initialization)
 {
-    basicShard = Find<BasicShardNullInscription>();
+    basicShard = FindOrCreate<BasicShardNullInscription>();
 }
 
-void ReliquarySerializationTestsFixture::GlobalRelicNullInscription::Initialize()
+ReliquarySerializationTestsFixture::GlobalRelicNullInscription::GlobalRelicNullInscription(
+    Initialization initialization, int myInt, std::string shardData)
+    :
+    ClosedTypedRelic(initialization), myInt(myInt)
 {
-    basicShard = Create<BasicShardNullInscription>();
-}
-
-void ReliquarySerializationTestsFixture::GlobalRelicNullInscription::Initialize(int myInt, std::string shardData)
-{
-    this->myInt = myInt;
     basicShard = Create<BasicShardNullInscription>(std::move(shardData));
 }
 
-void ReliquarySerializationTestsFixture::MovableOnlyRelic::PostConstruct()
+ReliquarySerializationTestsFixture::MovableOnlyRelic::MovableOnlyRelic(Initialization initialization)
+    : ClosedTypedRelic(initialization)
 {
-    basicShard = Find<BasicShard>();
+    basicShard = FindOrCreate<BasicShard>();
 }
 
-void ReliquarySerializationTestsFixture::MovableOnlyRelic::Initialize()
+ReliquarySerializationTestsFixture::MovableOnlyRelic::MovableOnlyRelic(
+    Initialization initialization, int myInt, std::string shardData)
+    :
+    ClosedTypedRelic(initialization), myValue(myInt)
 {
-    basicShard = Create<BasicShard>();
-}
-
-void ReliquarySerializationTestsFixture::MovableOnlyRelic::Initialize(int myInt, std::string shardData)
-{
-    this->myValue = myInt;
     basicShard = Create<BasicShard>(std::move(shardData));
 }
 

@@ -4,6 +4,7 @@
 
 namespace Arca
 {
+    template<class Derived>
     class OpenTypedRelic;
     class OpenRelic;
 
@@ -14,7 +15,7 @@ namespace Arca
     template <class T>
     struct is_open<
         T,
-        std::enable_if_t<(std::is_base_of_v<OpenTypedRelic, T> || std::is_same_v<OpenRelic, T>)>> : std::true_type
+        std::enable_if_t<(std::is_base_of_v<OpenTypedRelic<T>, T> || std::is_same_v<OpenRelic, T>)>> : std::true_type
     {};
 
     template<class T>

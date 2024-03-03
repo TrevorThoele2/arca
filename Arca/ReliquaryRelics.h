@@ -27,19 +27,19 @@ namespace Arca
     class ReliquaryRelics : public ReliquaryComponent
     {
     public:
-        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicIndex<RelicT> Create(InitializeArgs&& ... initializeArgs);
-        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicIndex<RelicT> CreateWith(const RelicStructure& structure, InitializeArgs&& ... initializeArgs);
-        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicIndex<RelicT> CreateWith(const std::string& structureName, InitializeArgs&& ... initializeArgs);
+        template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        RelicIndex<RelicT> Create(ConstructorArgs&& ... constructorArgs);
+        template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        RelicIndex<RelicT> CreateWith(const RelicStructure& structure, ConstructorArgs&& ... constructorArgs);
+        template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        RelicIndex<RelicT> CreateWith(const std::string& structureName, ConstructorArgs&& ... constructorArgs);
 
-        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicIndex<RelicT> CreateChild(const Handle& parent, InitializeArgs&& ... initializeArgs);
-        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicIndex<RelicT> CreateChildWith(const Handle& parent, const RelicStructure& structure, InitializeArgs&& ... initializeArgs);
-        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicIndex<RelicT> CreateChildWith(const Handle& parent, const std::string& structureName, InitializeArgs&& ... initializeArgs);
+        template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        RelicIndex<RelicT> CreateChild(const Handle& parent, ConstructorArgs&& ... constructorArgs);
+        template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        RelicIndex<RelicT> CreateChildWith(const Handle& parent, const RelicStructure& structure, ConstructorArgs&& ... constructorArgs);
+        template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        RelicIndex<RelicT> CreateChildWith(const Handle& parent, const std::string& structureName, ConstructorArgs&& ... constructorArgs);
 
         void Destroy(const TypeName& typeName, RelicID id);
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
@@ -73,13 +73,12 @@ namespace Arca
 
         RelicID nextRelicID = 1;
 
-        void SetupNewInternals(
+        RelicMetadata* SetupNewInternals(
             RelicID id,
             Openness openness,
             Locality locality,
             bool shouldSerialize,
-            Type type = {},
-            void* storage = nullptr);
+            Type type = {});
         void DestroyMetadata(RelicID id);
         [[nodiscard]] RelicMetadata* MetadataFor(RelicID id);
         [[nodiscard]] const RelicMetadata* MetadataFor(RelicID id) const;
@@ -167,8 +166,6 @@ namespace Arca
             RelicID id;
         public:
             virtual ~GlobalHandlerBase() = 0;
-
-            virtual void PostConstruct() = 0;
         public:
             [[nodiscard]] TypeName MainType() const override;
         protected:
@@ -181,8 +178,6 @@ namespace Arca
         public:
             explicit GlobalHandler(ReliquaryRelics& owner, std::shared_ptr<void>&& storage, RelicID id);
 
-            void PostConstruct() override;
-
             [[nodiscard]] bool WillSerialize() const override;
             void Serialize(Inscription::BinaryArchive& archive) override;
             [[nodiscard]] std::vector<::Inscription::Type> InscriptionTypes(Inscription::BinaryArchive& archive) const override;
@@ -194,8 +189,8 @@ namespace Arca
         using GlobalHandlerList = std::vector<GlobalHandlerPtr>;
         GlobalHandlerList globalHandlers;
 
-        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        void CreateGlobalHandler(InitializeArgs&& ... initializeArgs);
+        template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        void CreateGlobalHandler(ConstructorArgs&& ... constructorArgs);
         [[nodiscard]] GlobalHandlerBase* FindGlobalHandler(const TypeName& typeName) const;
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         [[nodiscard]] GlobalHandler<RelicT>* FindGlobalHandler() const;
@@ -214,17 +209,17 @@ namespace Arca
     private:
         template<
             class RelicT,
-            class... InitializeArgs,
+            class... ConstructorArgs,
             std::enable_if_t<is_relic_v<RelicT> && has_should_create_method_v<RelicT>, int> = 0>
-            bool ShouldCreate(InitializeArgs&& ... initializeArgs);
+            bool ShouldCreate(ConstructorArgs&& ... constructorArgs);
         template<
             class RelicT,
-            class... InitializeArgs,
+            class... ConstructorArgs,
             std::enable_if_t<is_relic_v<RelicT> && !has_should_create_method_v<RelicT>, int> = 0>
-            bool ShouldCreate(InitializeArgs&& ... initializeArgs);
+            bool ShouldCreate(ConstructorArgs&& ... constructorArgs);
 
-        template<class RelicT, class... InitializeArgs>
-        RelicT* PushNewRelic(RelicT&& relic, RelicStructure structure, InitializeArgs&& ... initializeArgs);
+        template<class RelicT, class... ConstructorArgs>
+        RelicT* PushNewRelic(RelicStructure structure, ConstructorArgs&& ... constructorArgs);
     private:
         RelicMetadata& ValidateParentForParenting(const Handle& parent);
     private:

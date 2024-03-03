@@ -1,65 +1,98 @@
 #pragma once
 
-#include "RelicID.h"
-
-#include "IsShard.h"
-#include "IsMatrix.h"
-
-#include "ShardIndex.h"
-#include "MatrixIndex.h"
-#include "Handle.h"
+#include "RelicInitialization.h"
+#include "Reliquary.h"
+#include "TypeFor.h"
 
 namespace Arca
 {
-    class Reliquary;
-    class ReliquaryRelics;
-    class OpenTypedRelic;
-
+    template<class Derived>
     class OpenTypedRelic
     {
     public:
-        explicit operator bool() const;
+        template<class ShardT, class... ConstructorArgs, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        ShardIndex<ShardT> Create(ConstructorArgs&& ... constructorArgs) const
+        {
+            return owner->Do<Arca::Create<ShardT>>(id, std::forward<ConstructorArgs>(constructorArgs)...);
+        }
 
-        template<class ShardT, class... InitializeArgs, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        ShardIndex<ShardT> Create(InitializeArgs&& ... initializeArgs) const;
-        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        void Destroy() const;
-        template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
-        void Destroy() const;
-        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] ShardIndex<ShardT> Find() const;
-        template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
-        [[nodiscard]] MatrixIndex<MatrixT> Find() const;
-        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] bool Contains() const;
-        template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
-        [[nodiscard]] bool Contains() const;
+        template<class ShardT, class... ConstructorArgs, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        ShardIndex<ShardT> FindOrCreate(ConstructorArgs&& ... constructorArgs) const
+        {
+            auto found = Find<ShardT>();
+            if (found)
+                return found;
 
-        [[nodiscard]] std::optional<Handle> Parent() const;
+            return Create<ShardT>(std::forward<ConstructorArgs>(constructorArgs)...);
+        }
 
-        [[nodiscard]] RelicID ID() const;
-        [[nodiscard]] Reliquary& Owner() const;
-    public:
-        virtual ~OpenTypedRelic() = 0;
+        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        void Destroy() const
+        {
+            owner->Do<Arca::Destroy<ShardT>>(id);
+        }
+
+        template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
+        void Destroy() const
+        {
+            owner->Do<Arca::Destroy<MatrixT>>(id);
+        }
+
+        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        [[nodiscard]] ShardIndex<ShardT> Find() const
+        {
+            return Arca::ShardIndex<ShardT>(id, *owner);
+        }
+
+        template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
+        [[nodiscard]] MatrixIndex<MatrixT> Find() const
+        {
+            return Arca::MatrixIndex<MatrixT>(id, *owner);
+        }
+
+        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        [[nodiscard]] bool Contains() const
+        {
+            return static_cast<bool>(Find<ShardT>());
+        }
+
+        template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
+        [[nodiscard]] bool Contains() const
+        {
+            return owner->Contains<MatrixT>(id);
+        }
+
+        [[nodiscard]] std::optional<Handle> Parent() const
+        {
+            return owner->ParentOf(Handle(ID(), Owner(), TypeFor<Derived>(), HandleObjectType::Relic));
+        }
+
+        [[nodiscard]] RelicID ID() const
+        {
+            return id;
+        }
+
+        [[nodiscard]] Reliquary& Owner() const
+        {
+            return *owner;
+        }
     protected:
-        OpenTypedRelic() = default;
+        using Initialization = RelicInitialization;
+
+        explicit OpenTypedRelic(Initialization initialization) :
+            id(initialization.id), owner(&initialization.owner)
+        {}
+
         OpenTypedRelic(const OpenTypedRelic& arg) = default;
         OpenTypedRelic(OpenTypedRelic&& arg) noexcept = default;
 
         OpenTypedRelic& operator=(const OpenTypedRelic& arg) = default;
         OpenTypedRelic& operator=(OpenTypedRelic&& arg) noexcept = default;
-
-        [[nodiscard]] virtual bool ReliquaryContainsSelf() const = 0;
-        [[nodiscard]] virtual Type Type() const = 0;
     private:
-        RelicID id = 0;
-        Reliquary* owner = nullptr;
+        RelicID id;
+        Reliquary* owner;
     private:
-        friend class ReliquaryRelics;
-        friend class ReliquaryOrigin;
         template<class, class>
         friend class BatchSource;
-    private:
-        INSCRIPTION_ACCESS;
     };
 }

@@ -6,14 +6,9 @@ ConstShardTestsFixture::Shard::Shard(int value) :
     value(value)
 {}
 
-void ConstShardTestsFixture::Relic::PostConstruct()
+ConstShardTestsFixture::Relic::Relic(Initialization initialization) : ClosedTypedRelic(initialization)
 {
-    shard = Find<const Shard>();
-}
-
-void ConstShardTestsFixture::Relic::Initialize()
-{
-    shard = Create<const Shard>();
+    shard = FindOrCreate<const Shard>();
 }
 
 SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")

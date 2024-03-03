@@ -2,8 +2,8 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/ClosedTypedRelicAutomation.h>
-#include <Arca/OpenTypedRelicAutomation.h>
+#include <Arca/ClosedTypedRelic.h>
+#include <Arca/OpenTypedRelic.h>
 
 #include <Inscription/BinaryArchive.h>
 
@@ -18,9 +18,7 @@ public:
         std::string myValue;
     public:
         BasicShard() = default;
-
-        void Initialize();
-        void Initialize(std::string myValue);
+        explicit BasicShard(std::string myValue);
     };
 
     class BasicShardWithDifferentInputHandle
@@ -41,43 +39,34 @@ public:
         explicit OtherShard(int myValue);
     };
 
-    class TypedClosedRelic final : public ClosedTypedRelicAutomation<TypedClosedRelic>
+    class TypedClosedRelic final : public ClosedTypedRelic<TypedClosedRelic>
     {
     public:
         int myInt = 0;
         ShardIndex<BasicShard> basicShard;
     public:
-        TypedClosedRelic() = default;
-
-        void PostConstruct();
-        void Initialize();
-        void Initialize(int myInt);
+        explicit TypedClosedRelic(Initialization initialization);
+        TypedClosedRelic(Initialization initialization, int myInt);
     };
 
-    class TypedOpenRelic final : public OpenTypedRelicAutomation<TypedOpenRelic>
+    class TypedOpenRelic final : public OpenTypedRelic<TypedOpenRelic>
     {
     public:
         int myInt = 0;
         ShardIndex<BasicShard> basicShard;
     public:
-        TypedOpenRelic() = default;
-
-        void PostConstruct();
-        void Initialize();
-        void Initialize(int myInt);
+        explicit TypedOpenRelic(Initialization initialization);
+        TypedOpenRelic(Initialization initialization, int myInt);
     };
 
-    class GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic>
+    class GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
     {
     public:
         int myInt = 0;
         ShardIndex<BasicShard> basicShard;
     public:
-        GlobalRelic() = default;
-
-        void PostConstruct();
-        void Initialize();
-        void Initialize(int myInt, std::string shardData);
+        explicit GlobalRelic(Initialization initialization);
+        GlobalRelic(Initialization initialization, int myInt, std::string shardData);
     };
 
     class BasicCurator final : public Curator
@@ -95,9 +84,7 @@ public:
         std::string myValue;
     public:
         BasicShardNullInscription() = default;
-
-        void Initialize();
-        void Initialize(std::string myValue);
+        explicit BasicShardNullInscription(std::string myValue);
     };
 
     class OtherShardNullInscription
@@ -105,67 +92,55 @@ public:
     public:
         int myValue;
     public:
-        OtherShardNullInscription() = default;
-
-        void Initialize(int myValue = 0);
+        explicit OtherShardNullInscription(int myValue = 0);
     };
 
     class TypedClosedRelicNullInscription final :
-        public ClosedTypedRelicAutomation<TypedClosedRelicNullInscription>
+        public ClosedTypedRelic<TypedClosedRelicNullInscription>
     {
     public:
         int myInt = 0;
         ShardIndex<BasicShardNullInscription> basicShard;
     public:
-        TypedClosedRelicNullInscription() = default;
-
-        void PostConstruct();
-        void Initialize();
+        explicit TypedClosedRelicNullInscription(Initialization initialization);
+        TypedClosedRelicNullInscription(Initialization initialization, int myInt);
     };
 
     class TypedOpenRelicNullInscription final :
-        public OpenTypedRelicAutomation<TypedOpenRelicNullInscription>
+        public OpenTypedRelic<TypedOpenRelicNullInscription>
     {
     public:
         int myInt = 0;
         ShardIndex<BasicShardNullInscription> basicShard;
     public:
-        TypedOpenRelicNullInscription() = default;
-
-        void PostConstruct();
-        void Initialize();
+        explicit TypedOpenRelicNullInscription(Initialization initialization);
+        TypedOpenRelicNullInscription(Initialization initialization, int myInt);
     };
 
     class GlobalRelicNullInscription final :
-        public ClosedTypedRelicAutomation<GlobalRelicNullInscription>
+        public ClosedTypedRelic<GlobalRelicNullInscription>
     {
     public:
         int myInt = 0;
         ShardIndex<BasicShardNullInscription> basicShard;
     public:
-        GlobalRelicNullInscription() = default;
-
-        void PostConstruct();
-        void Initialize();
-        void Initialize(int myInt, std::string shardData);
+        explicit GlobalRelicNullInscription(Initialization initialization);
+        GlobalRelicNullInscription(Initialization initialization, int myInt, std::string shardData);
     };
 
-    class MovableOnlyRelic final : public ClosedTypedRelicAutomation<MovableOnlyRelic>
+    class MovableOnlyRelic final : public ClosedTypedRelic<MovableOnlyRelic>
     {
     public:
         ShardIndex<BasicShard> basicShard;
 
         int myValue = 0;
     public:
-        MovableOnlyRelic() = default;
+        explicit MovableOnlyRelic(Initialization initialization);
+        MovableOnlyRelic(Initialization initialization, int myInt, std::string shardData);
         MovableOnlyRelic(const MovableOnlyRelic& arg) = delete;
         MovableOnlyRelic(MovableOnlyRelic&& arg) noexcept = default;
         MovableOnlyRelic& operator=(const MovableOnlyRelic& arg) = delete;
         MovableOnlyRelic& operator=(MovableOnlyRelic&& arg) noexcept = default;
-
-        void PostConstruct();
-        void Initialize();
-        void Initialize(int myInt, std::string shardData);
     };
 
     class BasicCuratorNullInscription final : public Curator

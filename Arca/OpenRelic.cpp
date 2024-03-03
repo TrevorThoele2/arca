@@ -4,14 +4,6 @@
 
 namespace Arca
 {
-    OpenRelic::operator bool() const
-    {
-        if (!owner)
-            return false;
-
-        return owner->Contains<OpenRelic>(id);
-    }
-
     std::optional<Handle> OpenRelic::Parent() const
     {
         return owner->ParentOf(AsHandle(*this));
@@ -26,4 +18,8 @@ namespace Arca
     {
         return *owner;
     }
+
+    OpenRelic::OpenRelic(RelicInitialization initialization) :
+        id(initialization.id), owner(&initialization.owner)
+    {}
 }

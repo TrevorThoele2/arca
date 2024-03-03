@@ -150,8 +150,8 @@ namespace Arca
         Commands commands = Commands(*this);
         Signals signals = Signals(*this);
     private:
-        template<class ShardT, class... InitializeArgs, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        ShardIndex<ShardT> CreateFromInternal(RelicID id, InitializeArgs&& ... initializeArgs);
+        template<class ShardT, class... ConstructorArgs, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        ShardIndex<ShardT> CreateFromInternal(RelicID id, ConstructorArgs&& ... constructorArgs);
     private:
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         [[nodiscard]] RelicT* FindStorage(RelicID id);
@@ -176,8 +176,6 @@ namespace Arca
         friend class ReliquarySignals;
 
         friend class OpenRelic;
-        friend class ClosedTypedRelic;
-        friend class OpenTypedRelic;
         template<class>
         friend class ComputedIndex;
         template<class>
@@ -194,7 +192,7 @@ namespace Arca
         friend class MatrixImplementation;
 
         template<class Derived>
-        friend class ClosedTypedRelicAutomation;
+        friend class ClosedTypedRelic;
 
         template<class, class>
         friend class BatchSource;
@@ -348,10 +346,10 @@ namespace Arca
         return signals.batchSources.Batch<SignalT>();
     }
 
-    template<class ShardT, class... InitializeArgs, std::enable_if_t<is_shard_v<ShardT>, int>>
-    ShardIndex<ShardT> Reliquary::CreateFromInternal(RelicID id, InitializeArgs&& ... initializeArgs)
+    template<class ShardT, class... ConstructorArgs, std::enable_if_t<is_shard_v<ShardT>, int>>
+    ShardIndex<ShardT> Reliquary::CreateFromInternal(RelicID id, ConstructorArgs&& ... constructorArgs)
     {
-        return shards.CreateFromInternal<ShardT>(id, std::forward<InitializeArgs>(initializeArgs)...);
+        return shards.CreateFromInternal<ShardT>(id, std::forward<ConstructorArgs>(constructorArgs)...);
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
@@ -481,7 +479,6 @@ namespace Inscription
 
 #include "OpenRelicDefinition.h"
 #include "ClosedRelicDefinition.h"
-#include "OpenTypedRelicDefinition.h"
 
 #include "ReliquaryRelicsDefinition.h"
 #include "ReliquaryShardsDefinition.h"

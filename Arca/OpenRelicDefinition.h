@@ -6,10 +6,10 @@
 
 namespace Arca
 {
-    template<class ShardT, class... InitializeArgs, std::enable_if_t<is_shard_v<ShardT>, int>>
-    ShardIndex<ShardT> OpenRelic::Create(InitializeArgs&& ... initializeArgs) const
+    template<class ShardT, class... ConstructorArgs, std::enable_if_t<is_shard_v<ShardT>, int>>
+    ShardIndex<ShardT> OpenRelic::Create(ConstructorArgs&& ... constructorArgs) const
     {
-        return owner->Do<Arca::Create<ShardT>>(id, std::forward<InitializeArgs>(initializeArgs)...);
+        return owner->Do<Arca::Create<ShardT>>(id, std::forward<ConstructorArgs>(constructorArgs)...);
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>

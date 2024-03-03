@@ -8,7 +8,6 @@
 
 #include "Curator.h"
 
-#include "Initialize.h"
 #include "HasHandledCommands.h"
 
 namespace Arca
@@ -26,8 +25,8 @@ namespace Arca
     public:
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int> = 0>
         ReliquaryOrigin& Register();
-        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
-        ReliquaryOrigin& Register(InitializeArgs&& ... initializeArgs);
+        template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
+        ReliquaryOrigin& Register(ConstructorArgs&& ... constructorArgs);
         template<class InterfaceT>
         ReliquaryOrigin& Compute(std::function<InterfaceT(Reliquary&)> computation);
         ReliquaryOrigin& RelicStructure(const std::string& name, const RelicStructure& structure);
@@ -60,8 +59,8 @@ namespace Arca
         using GlobalComputationInitializerMap = std::unordered_map<std::type_index, GlobalComputationInitializer>;
         GlobalComputationInitializerMap globalComputationInitializerMap;
 
-        template<class RelicT, class... InitializeArgs>
-        void GlobalRelicCommon(InitializeArgs&& ... initializeArgs);
+        template<class RelicT, class... ConstructorArgs>
+        void GlobalRelicCommon(ConstructorArgs&& ... constructorArgs);
 
         template<class RelicT>
         [[nodiscard]] bool IsGlobalRelicRegistered() const;
@@ -123,13 +122,13 @@ namespace Arca
         return *this;
     }
 
-    template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int>>
-    ReliquaryOrigin& ReliquaryOrigin::Register(InitializeArgs&& ... initializeArgs)
+    template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int>>
+    ReliquaryOrigin& ReliquaryOrigin::Register(ConstructorArgs&& ... constructorArgs)
     {
         if (IsGlobalRelicRegistered<RelicT>())
             throw AlreadyRegistered("global relic", TypeFor<RelicT>(), typeid(RelicT));
 
-        GlobalRelicCommon<RelicT>(std::forward<InitializeArgs>(initializeArgs)...);
+        GlobalRelicCommon<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...);
         return *this;
     }
 
@@ -214,15 +213,15 @@ namespace Arca
         return found != relicList.end();
     }
 
-    template<class RelicT, class... InitializeArgs>
-    void ReliquaryOrigin::GlobalRelicCommon(InitializeArgs&& ... initializeArgs)
+    template<class RelicT, class... ConstructorArgs>
+    void ReliquaryOrigin::GlobalRelicCommon(ConstructorArgs&& ... constructorArgs)
     {
-        const auto factory = [args = std::make_tuple(std::forward<InitializeArgs>(initializeArgs) ...)](Reliquary& reliquary) mutable
+        const auto factory = [args = std::make_tuple(std::forward<ConstructorArgs>(constructorArgs) ...)](Reliquary& reliquary) mutable
         {
             return std::apply(
-                [&reliquary](auto ... initializeArgs)
+                [&reliquary](auto ... constructorArgs)
                 {
-                    reliquary.relics.CreateGlobalHandler<RelicT>(std::forward<InitializeArgs>(initializeArgs)...);
+                    reliquary.relics.CreateGlobalHandler<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...);
                 },
                 args);
         };

@@ -7,24 +7,16 @@
 GlobalRelicTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std::move(myValue))
 {}
 
-void GlobalRelicTestsFixture::BasicTypedRelic::PostConstruct()
+GlobalRelicTestsFixture::BasicTypedRelic::BasicTypedRelic(Initialization initialization)
+    : ClosedTypedRelic(initialization)
 {
-    basicShard = Find<BasicShard>();
+    basicShard = FindOrCreate<BasicShard>();
 }
 
-void GlobalRelicTestsFixture::BasicTypedRelic::Initialize()
+GlobalRelicTestsFixture::GlobalRelic::GlobalRelic(Initialization initialization)
+    : ClosedTypedRelic(initialization)
 {
-    basicShard = Create<BasicShard>();
-}
-
-void GlobalRelicTestsFixture::GlobalRelic::PostConstruct()
-{
-    basicShard = Find<BasicShard>();
-}
-
-void GlobalRelicTestsFixture::GlobalRelic::Initialize()
-{
-    basicShard = Create<BasicShard>();
+    basicShard = FindOrCreate<BasicShard>();
 }
 
 SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")

@@ -10,24 +10,16 @@ ReliquaryTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std
 ReliquaryTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
 {}
 
-void ReliquaryTestsFixture::BasicTypedRelic::PostConstruct()
+ReliquaryTestsFixture::BasicTypedRelic::BasicTypedRelic(Initialization initialization)
+    : ClosedTypedRelic(initialization)
 {
-    basicShard = Find<BasicShard>();
+    basicShard = FindOrCreate<BasicShard>();
 }
 
-void ReliquaryTestsFixture::BasicTypedRelic::Initialize()
+ReliquaryTestsFixture::GlobalRelic::GlobalRelic(Initialization initialization)
+    : ClosedTypedRelic(initialization)
 {
-    basicShard = Create<BasicShard>();
-}
-
-void ReliquaryTestsFixture::GlobalRelic::PostConstruct()
-{
-    basicShard = Find<BasicShard>();
-}
-
-void ReliquaryTestsFixture::GlobalRelic::Initialize()
-{
-    basicShard = Create<BasicShard>();
+    basicShard = FindOrCreate<BasicShard>();
 }
 
 SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")

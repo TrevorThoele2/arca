@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RelicID.h"
+#include "RelicInitialization.h"
 
 #include "IsShard.h"
 #include "IsMatrix.h"
@@ -13,11 +14,9 @@
 
 namespace Arca
 {
-    class ClosedRelic
+    class ClosedRelic final
     {
     public:
-        explicit operator bool() const;
-
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] ShardIndex<ShardT> Find() const;
         template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
@@ -35,11 +34,9 @@ namespace Arca
         RelicID id = 0;
         Reliquary* owner = nullptr;
     private:
-        ClosedRelic() = default;
+        explicit ClosedRelic(RelicInitialization initialization);
     private:
-        friend Reliquary;
         friend class ReliquaryRelics;
-        friend class ReliquaryOrigin;
         template<class, class>
         friend class BatchSource;
     private:
