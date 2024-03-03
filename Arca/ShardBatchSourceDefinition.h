@@ -149,6 +149,7 @@ namespace Inscription
         else
         {
             static_assert(
+                false,
                 "A shard requires a serialization constructor (taking only the class Serialization) "
                 "or a default constructor in order to be serialized.");
             return std::make_shared<CreateT>();

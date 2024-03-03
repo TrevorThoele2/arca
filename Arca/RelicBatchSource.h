@@ -92,7 +92,7 @@ namespace Arca
             }
             else
             {
-                static_assert("Cannot create Relic.");
+                static_assert(false, "Cannot create Relic.");
                 return nullptr;
             }
         }
@@ -324,6 +324,7 @@ namespace Inscription
         else
         {
             static_assert(
+                false,
                 "A relic requires a constructor of form "
                 "(RelicInit, Serialization), "
                 "(Serialization), "
