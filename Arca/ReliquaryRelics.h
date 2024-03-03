@@ -68,15 +68,10 @@ namespace Arca
         template<class RelicT>
         void SignalCreation(const Index<RelicT>& index);
     public:
-        struct RelicPrototype
-        {
-            RelicID id;
-        };
-    public:
-        using RelicMetadataList = std::vector<RelicMetadata>;
-        RelicMetadataList metadataList;
-
         RelicID nextRelicID = 1;
+
+        using RelicMetadataMap = std::unordered_map<RelicID, RelicMetadata>;
+        RelicMetadataMap metadata;
 
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         RelicMetadata* SetupNewMetadata(RelicID id);
@@ -219,24 +214,12 @@ namespace Arca
         ReliquaryRelics(const ReliquaryRelics& arg) = delete;
         ReliquaryRelics& operator=(const ReliquaryRelics& arg) = delete;
     private:
-        template<
-            class RelicT,
-            class... ConstructorArgs,
-            std::enable_if_t<is_relic_v<RelicT> && has_should_create_method_v<RelicT>, int> = 0>
-        bool ShouldCreate(ConstructorArgs& ... constructorArgs);
-        template<
-            class RelicT,
-            class... ConstructorArgs,
-            std::enable_if_t<is_relic_v<RelicT> && !has_should_create_method_v<RelicT>, int> = 0>
+        template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         bool ShouldCreate(ConstructorArgs& ... constructorArgs);
 
         template<class RelicT>
         void ValidateCreate(CreateData createData);
-
-        template<class RelicT, class... ConstructorArgs>
-        Index<RelicT> FinishNewRelic(
-            RelicStructure structure, RelicID id, ConstructorArgs&& ... constructorArgs);
-
+        
         template<class T, class... ConstructorArgs>
         std::shared_ptr<T> CreateGlobalImpl(RelicInit init, ConstructorArgs&& ... constructorArgs);
     private:
@@ -282,12 +265,24 @@ namespace Arca
             ? std::get<RelicStructure>(*createData.structure)
             : relicStructures->RequiredRelicStructure(std::get<std::string>(*createData.structure));
 
-        SetupNewMetadata<RelicT>(id);
+        const auto metadata = SetupNewMetadata<RelicT>(id);
         if (createData.parent)
             Parent(*createData.parent, Handle{ id, TypeFor<RelicT>() });
-        auto index = FinishNewRelic<RelicT>(structure, id, std::forward<ConstructorArgs>(constructorArgs)...);
+
+        auto& batchSource = RequiredBatchSource<RelicT>();
+        auto added = batchSource.Create(id, std::forward<ConstructorArgs>(constructorArgs)...);
+
+        metadata->storage = added;
+
+        SatisfyStructure(id, structure);
+
+        const auto index = Find<RelicT>(id);
+
+        SignalCreation(index);
+        
         if (createData.parent)
             signals->Raise(RelicParented{ *createData.parent, AsHandle(index) });
+
         return index;
     }
     
@@ -545,7 +540,7 @@ namespace Arca
     {
         const auto id = AdvanceID();
 
-        SetupNewMetadata<RelicT>(id);
+        const auto metadata = SetupNewMetadata<RelicT>(id);
 
         auto relic = CreateGlobalImpl<RelicT>(
             RelicInit{ id, *owner, *shards }, std::forward<ConstructorArgs>(constructorArgs)...);
@@ -553,7 +548,7 @@ namespace Arca
         globalHandlers.push_back(
             std::make_unique<GlobalHandler<RelicT>>(*this, std::move(relic), id));
 
-        MetadataFor(id)->storage = relic.get();
+        metadata->storage = relic.get();
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
@@ -570,24 +565,15 @@ namespace Arca
         return found == nullptr ? nullptr : static_cast<RelicT*>(found->storage.get());
     }
 
-    template<
-        class RelicT,
-        class... ConstructorArgs,
-        std::enable_if_t<is_relic_v<RelicT>&& has_should_create_method_v<RelicT>, int>>
-        bool ReliquaryRelics::ShouldCreate(ConstructorArgs& ... constructorArgs)
+    template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
+    bool ReliquaryRelics::ShouldCreate(ConstructorArgs& ... constructorArgs)
     {
-        return Traits<RelicT>::ShouldCreate(*owner, constructorArgs...);
+        if constexpr (has_should_create_method_v<RelicT>)
+            return Traits<RelicT>::ShouldCreate(*owner, constructorArgs...);
+        else
+            return true;
     }
-
-    template<
-        class RelicT,
-        class... ConstructorArgs,
-        std::enable_if_t<is_relic_v<RelicT> && !has_should_create_method_v<RelicT>, int>>
-        bool ReliquaryRelics::ShouldCreate(ConstructorArgs& ...)
-    {
-        return true;
-    }
-
+    
     template<class RelicT>
     void ReliquaryRelics::ValidateCreate(CreateData createData)
     {
@@ -597,24 +583,6 @@ namespace Arca
 
         if (createData.parent)
             ValidateParentForParenting(*createData.parent);
-    }
-
-    template<class RelicT, class... ConstructorArgs>
-    Index<RelicT> ReliquaryRelics::FinishNewRelic(
-        RelicStructure structure, RelicID id, ConstructorArgs&& ... constructorArgs)
-    {
-        auto& batchSource = RequiredBatchSource<RelicT>();
-        auto added = batchSource.Create(id, std::forward<ConstructorArgs>(constructorArgs)...);
-
-        MetadataFor(id)->storage = added;
-
-        SatisfyStructure(id, structure);
-
-        const auto index = Find<RelicT>(id);
-
-        SignalCreation(index);
-
-        return index;
     }
 
     template<class T, class... ConstructorArgs>

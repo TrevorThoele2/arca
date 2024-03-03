@@ -1,7 +1,5 @@
 #include "ReliquaryRelics.h"
 
-#include <cassert>
-
 #include "Reliquary.h"
 #include "ReliquaryException.h"
 
@@ -23,12 +21,12 @@ namespace Arca
         for (auto& loop : localHandlers)
             loop->Clear(*this);
 
-        for (auto loop = metadataList.begin(); loop != metadataList.end();)
+        for (auto loop = metadata.begin(); loop != metadata.end();)
         {
-            if (loop->locality == Locality::Global)
+            if (loop->second.locality == Locality::Global)
                 ++loop;
             else
-                loop = metadataList.erase(loop);
+                loop = metadata.erase(loop);
         }
 
         nextRelicID = 1;
@@ -67,7 +65,7 @@ namespace Arca
     {
         std::vector<Handle> returnValue;
 
-        for(auto& metadata : metadataList)
+        for(auto& [_, metadata] : metadata)
             if (metadata.parent && metadata.parent->id == parentID)
                 returnValue.push_back(Handle{
                     metadata.id,
@@ -108,41 +106,28 @@ namespace Arca
         bool shouldSerializeJson,
         Type type)
     {
-        metadataList.emplace_back(
+        return &metadata.emplace(
             id,
-            locality,
-            std::move(type),
-            nullptr,
-            shouldSerializeBinary,
-            shouldSerializeJson);
-        return &metadataList.back();
+            RelicMetadata
+            {
+                id,
+                locality,
+                std::move(type),
+                nullptr,
+                shouldSerializeBinary,
+                shouldSerializeJson
+            }).first->second;
     }
 
     void ReliquaryRelics::DestroyMetadata(RelicID id)
     {
-        const auto itr = std::remove_if(
-            metadataList.begin(),
-            metadataList.end(),
-            [id](const RelicMetadata& metadata)
-            {
-                return metadata.id == id;
-            });
-        if (itr != metadataList.end())
-            metadataList.erase(itr);
+        metadata.erase(id);
     }
 
     auto ReliquaryRelics::MetadataFor(RelicID id) -> RelicMetadata*
     {
-        const auto found = std::find_if(
-            metadataList.begin(),
-            metadataList.end(),
-            [id](const RelicMetadata& metadata)
-            {
-                return metadata.id == id;
-            });
-        return found != metadataList.end()
-            ? &*found
-            : nullptr;
+        const auto found = metadata.find(id);
+        return found != metadata.end() ? &found->second : nullptr;
     }
 
     auto ReliquaryRelics::MetadataFor(RelicID id) const -> const RelicMetadata*
@@ -197,8 +182,8 @@ namespace Arca
     std::vector<RelicID> ReliquaryRelics::AllIDs() const
     {
         std::vector<RelicID> returnValue;
-        for (auto& loop : metadataList)
-            returnValue.push_back(loop.id);
+        for (auto& [id, _] : metadata)
+            returnValue.push_back(id);
         return returnValue;
     }
 
@@ -217,12 +202,7 @@ namespace Arca
     void ReliquaryRelics::Parent(const Handle& parent, const Handle& child)
     {
         auto& parentMetadata = ValidateParentForParenting(parent);
-        
         const auto childMetadata = MetadataFor(child.id);
-        assert(childMetadata != nullptr);
-        assert(childMetadata->locality != Locality::Global);
-        assert(!childMetadata->parent.has_value());
-
         parentMetadata.children.push_back(child);
         childMetadata->parent = parent;
     }

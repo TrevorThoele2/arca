@@ -501,7 +501,7 @@ namespace Inscription
 
         if (archive.IsInput())
             object.relics.Clear();
-
+        
         archive("nextRelicId", object.relics.nextRelicID);
 
         if (archive.IsOutput())
