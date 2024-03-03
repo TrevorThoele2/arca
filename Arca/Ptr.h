@@ -75,7 +75,7 @@ namespace Arca
     template<class T>
     Ptr<T, std::enable_if_t<!is_global_relic_v<T> && !is_either_v<T>>>::operator Handle() const
     {
-        return Handle(ID(), Owner(), TypeHandleFor<T>());
+        return Handle(ID(), Owner(), TypeFor<T>());
     }
 
     template<class T>
@@ -208,7 +208,7 @@ namespace Arca
     template<class T>
     Ptr<T, std::enable_if_t<is_either_v<T>>>::operator Handle() const
     {
-        return Handle(ID(), Owner(), TypeHandleFor<T>());
+        return Handle(ID(), Owner(), TypeFor<T>());
     }
 
     template<class T>
@@ -342,7 +342,7 @@ namespace Arca
     template<class T>
     Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::operator Handle() const
     {
-        return Handle(id, Owner(), TypeHandleFor<T>());
+        return Handle(id, Owner(), TypeFor<T>());
     }
 
     template<class T>

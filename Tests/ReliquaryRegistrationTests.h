@@ -3,7 +3,7 @@
 #include "GeneralFixture.h"
 
 #include <Arca/ClosedTypedRelicAutomation.h>
-#include <Arca/Shard.h>
+#include <Arca/ShardTraits.h>
 
 #include <Inscription/BinaryArchive.h>
 
@@ -34,21 +34,21 @@ namespace Arca
     struct Traits<::ReliquaryRegistrationTestsFixture::Shard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 
     template<>
     struct Traits<::ReliquaryRegistrationTestsFixture::Relic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 
     template<>
     struct Traits<::ReliquaryRegistrationTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
         static const Locality locality = Locality::Global;
     };
 
@@ -56,14 +56,14 @@ namespace Arca
     struct Traits<::ReliquaryRegistrationTestsFixture::Curator>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 
     template<>
     struct Traits<::ReliquaryRegistrationTestsFixture::Signal>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 }
 

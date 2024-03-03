@@ -30,7 +30,7 @@ namespace Arca
 
         virtual void InitializeImplementation() {}
         [[nodiscard]] virtual bool ReliquaryContainsSelf() const = 0;
-        [[nodiscard]] virtual TypeHandle TypeHandle() const = 0;
+        [[nodiscard]] virtual Type Type() const = 0;
     private:
         RelicID id = 0;
         Reliquary* owner = nullptr;

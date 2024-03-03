@@ -13,10 +13,10 @@ void EitherTestsFixture::BasicTypedRelic::InitializeImplementation()
 
 namespace Arca
 {
-    const TypeHandleName Traits<EitherTestsFixture::BasicShard>::typeName =
+    const TypeName Traits<EitherTestsFixture::BasicShard>::typeName =
         "RelicTestsBasicShard";
 
-    const TypeHandleName Traits<EitherTestsFixture::BasicTypedRelic>::typeName =
+    const TypeName Traits<EitherTestsFixture::BasicTypedRelic>::typeName =
         "ReliquaryTestsBasicTypedRelic";
 }
 
@@ -153,7 +153,7 @@ SCENARIO_METHOD(EitherTestsFixture, "ClosedRelic either", "[ClosedRelic][either]
 
         WHEN("creating const shard")
         {
-            auto relic = reliquary->CreateWith<ClosedRelic>(RelicStructure { TypeHandleFor<const BasicShard>() });
+            auto relic = reliquary->CreateWith<ClosedRelic>(RelicStructure { TypeFor<const BasicShard>() });
 
             THEN("contains either")
             {
@@ -163,7 +163,7 @@ SCENARIO_METHOD(EitherTestsFixture, "ClosedRelic either", "[ClosedRelic][either]
 
         WHEN("creating non-const shard")
         {
-            auto relic = reliquary->CreateWith<ClosedRelic>(RelicStructure{ TypeHandleFor<BasicShard>() });
+            auto relic = reliquary->CreateWith<ClosedRelic>(RelicStructure{ TypeFor<BasicShard>() });
 
             THEN("contains either")
             {
@@ -176,8 +176,8 @@ SCENARIO_METHOD(EitherTestsFixture, "ClosedRelic either", "[ClosedRelic][either]
             auto relic = reliquary->CreateWith<ClosedRelic>(
                 RelicStructure
                 {
-                    TypeHandleFor<const BasicShard>(),
-                    TypeHandleFor<BasicShard>()
+                    TypeFor<const BasicShard>(),
+                    TypeFor<BasicShard>()
                 }
             );
 
@@ -189,7 +189,7 @@ SCENARIO_METHOD(EitherTestsFixture, "ClosedRelic either", "[ClosedRelic][either]
 
         WHEN("creating separate relic with shard")
         {
-            reliquary->CreateWith<ClosedRelic>(RelicStructure{ TypeHandleFor<BasicShard>() });
+            reliquary->CreateWith<ClosedRelic>(RelicStructure{ TypeFor<BasicShard>() });
 
             THEN("irrelevant relic does not contain either")
             {

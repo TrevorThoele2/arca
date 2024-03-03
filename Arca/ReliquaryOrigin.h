@@ -43,10 +43,10 @@ namespace Arca
     private:
         struct TypeConstructor
         {
-            TypeHandleName typeHandleName;
+            TypeName typeName;
             std::function<void(Reliquary&)> factory;
 
-            TypeConstructor(TypeHandleName typeHandleName, std::function<void(Reliquary&)>&& factory);
+            TypeConstructor(TypeName typeName, std::function<void(Reliquary&)>&& factory);
         };
         using TypeConstructorList = std::vector<TypeConstructor>;
     private:
@@ -74,7 +74,7 @@ namespace Arca
         [[nodiscard]] bool IsShardRegistered() const;
     private:
         using CuratorProviderPtr = std::unique_ptr<CuratorProviderBase>;
-        using CuratorProviderMap = std::unordered_map<TypeHandleName, CuratorProviderPtr>;
+        using CuratorProviderMap = std::unordered_map<TypeName, CuratorProviderPtr>;
         CuratorProviderMap curatorProviders;
 
         Pipeline curatorInitializationPipeline;
@@ -112,21 +112,21 @@ namespace Arca
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && !is_global_relic_v<RelicT>, int>>
     ReliquaryOrigin& ReliquaryOrigin::Type()
     {
-        const auto typeHandle = TypeHandleFor<RelicT>();
+        const auto type = TypeFor<RelicT>();
 
         if (IsRelicRegistered<RelicT>())
-            throw AlreadyRegistered("relic", typeHandle, typeid(RelicT));
+            throw AlreadyRegistered("relic", type, typeid(RelicT));
 
         const auto factory = [](Reliquary& reliquary)
         {
-            const auto typeHandle = TypeHandleFor<RelicT>();
+            const auto type = TypeFor<RelicT>();
             reliquary.relics.batchSources.map.emplace(
-                typeHandle.name,
+                type.name,
                 std::make_unique<BatchSource<RelicT>>(reliquary));
             reliquary.relics.serializers.push_back(
                 KnownPolymorphicSerializer
                 {
-                    typeHandle.name,
+                    type.name,
                     [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
                     {
                         auto batchSource = reliquary.relics.batchSources.Find<RelicT>();
@@ -145,7 +145,7 @@ namespace Arca
                         loop.Initialize(reliquary);
                 });
         };
-        relicList.emplace_back(typeHandle.name, factory);
+        relicList.emplace_back(type.name, factory);
 
         typedRelicInitializerList.push_back([](Reliquary& reliquary)
             {
@@ -160,21 +160,21 @@ namespace Arca
     template<class RelicT, class... CreationArgs, std::enable_if_t<is_global_relic_v<RelicT>, int>>
     ReliquaryOrigin& ReliquaryOrigin::Type(CreationArgs&& ... creationArgs)
     {
-        const auto typeHandle = TypeHandleFor<RelicT>();
+        const auto type = TypeFor<RelicT>();
 
         if (IsGlobalRelicRegistered<RelicT>())
-            throw AlreadyRegistered("global relic", typeHandle, typeid(RelicT));
+            throw AlreadyRegistered("global relic", type, typeid(RelicT));
 
         const auto factory = [args = std::make_tuple(std::forward<CreationArgs>(creationArgs) ...)](Reliquary& reliquary)
         {
             return std::apply([&reliquary](auto&& ... creationArgs)
                 {
-                    const auto typeHandle = TypeHandleFor<RelicT>();
+                    const auto type = TypeFor<RelicT>();
                     const auto id = reliquary.relics.AdvanceID();
                     auto relic = std::make_shared<RelicT>(std::forward<CreationArgs>(creationArgs)...);
                     relic->id = id;
                     auto emplaced = reliquary.relics.globalMap.emplace(
-                        typeHandle.name,
+                        type.name,
                         ReliquaryRelics::StoredGlobal
                         {
                             std::move(relic),
@@ -186,14 +186,14 @@ namespace Arca
                         id,
                         OpennessFor<RelicT>(),
                         LocalityFor<RelicT>(),
-                        typeHandle.name,
+                        Arca::Type(type.name),
                         relic.get());
                     reliquary.relics.SatisfyStructure(id, StructureFrom<shards_for_t<RelicT>>());
 
                     reliquary.relics.globalSerializers.push_back(
                         KnownPolymorphicSerializer
                         {
-                            typeHandle.name,
+                            type.name,
                             [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
                             {
                                 auto relic = reliquary.Find<RelicT>();
@@ -206,7 +206,7 @@ namespace Arca
                         });
                 }, args);
         };
-        globalRelicList.emplace_back(typeHandle.name, factory);
+        globalRelicList.emplace_back(type.name, factory);
 
         typedRelicInitializerList.push_back([](Reliquary& reliquary)
             {
@@ -220,29 +220,29 @@ namespace Arca
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     ReliquaryOrigin& ReliquaryOrigin::Type()
     {
-        const auto typeHandle = TypeHandleFor<ShardT>();
+        const auto type = TypeFor<ShardT>();
 
         if (IsShardRegistered<ShardT>())
-            throw AlreadyRegistered("shard", typeHandle, typeid(ShardT));
+            throw AlreadyRegistered("shard", type, typeid(ShardT));
 
-        const auto factory = [typeHandle](Reliquary& reliquary)
+        const auto factory = [type](Reliquary& reliquary)
         {
             reliquary.shards.batchSources.map.emplace(
-                typeHandle.name,
+                type.name,
                 std::make_unique<BatchSource<ShardT>>());
             reliquary.shards.batchSources.constMap.emplace(
-                typeHandle.name,
+                type.name,
                 std::make_unique<BatchSource<const ShardT>>());
 
             reliquary.shards.factoryMap.emplace(
-                typeHandle.name,
+                type.name,
                 [](Reliquary& reliquary, RelicID id, bool isConst)
                 {
                     const auto creator = [id, &reliquary](auto found)
                     {
                         auto added = found->Add(id);
                         reliquary.shards.AttemptAddToEitherBatches(id, *added);
-                        reliquary.Raise<Created>(Handle(id, reliquary, TypeHandleFor<ShardT>()));
+                        reliquary.Raise<Created>(Handle(id, reliquary, TypeFor<ShardT>()));
                     };
 
                     isConst
@@ -252,7 +252,7 @@ namespace Arca
             reliquary.shards.serializers.push_back(
                 KnownPolymorphicSerializer
                 {
-                    typeHandle.name,
+                    type.name,
                     [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
                     {
                         auto batchSource = reliquary.shards.batchSources.Find<ShardT>();
@@ -268,7 +268,7 @@ namespace Arca
                 });
         };
 
-        shardList.emplace_back(typeHandle.name, std::move(factory));
+        shardList.emplace_back(type.name, std::move(factory));
 
         return *this;
     }
@@ -287,7 +287,7 @@ namespace Arca
         if (!dynamic_cast<AsT>(use))
             throw IncorrectRegisteredCuratorType();
 
-        CuratorCommon<AsT, ExternalCuratorProvider>(use, TypeHandleFor<ProvidedT>());
+        CuratorCommon<AsT, ExternalCuratorProvider>(use, TypeFor<ProvidedT>());
 
         return *this;
     }
@@ -298,12 +298,12 @@ namespace Arca
         const auto type = std::type_index(typeid(SignalT));
 
         if (IsSignalRegistered<SignalT>())
-            throw AlreadyRegistered("signal", { type.name() });
+            throw AlreadyRegistered("signal", Arca::Type(type.name()));
 
         const auto factory = [](Reliquary& reliquary)
         {
             reliquary.signals.batchSources.map.emplace(
-                TypeHandleFor<SignalT>().name,
+                TypeFor<SignalT>().name,
                 std::make_unique<BatchSource<SignalT>>());
         };
         signalList.emplace_back(type, factory);
@@ -314,13 +314,13 @@ namespace Arca
     template<class RelicT>
     [[nodiscard]] bool ReliquaryOrigin::IsRelicRegistered() const
     {
-        const auto typeHandle = TypeHandleFor<RelicT>();
+        const auto type = TypeFor<RelicT>();
         const auto found = std::find_if(
             relicList.begin(),
             relicList.end(),
-            [typeHandle](const TypeConstructor& constructor)
+            [type](const TypeConstructor& constructor)
             {
-                return constructor.typeHandleName == typeHandle.name;
+                return constructor.typeName == type.name;
             });
         return found != relicList.end();
     }
@@ -328,13 +328,13 @@ namespace Arca
     template<class RelicT>
     bool ReliquaryOrigin::IsGlobalRelicRegistered() const
     {
-        const auto typeHandle = TypeHandleFor<RelicT>();
+        const auto type = TypeFor<RelicT>();
         const auto found = std::find_if(
             globalRelicList.begin(),
             globalRelicList.end(),
-            [typeHandle](const TypeConstructor& constructor)
+            [type](const TypeConstructor& constructor)
             {
-                return constructor.typeHandleName == typeHandle.name;
+                return constructor.typeName == type.name;
             });
         return found != globalRelicList.end();
     }
@@ -342,13 +342,13 @@ namespace Arca
     template<class ShardT>
     bool ReliquaryOrigin::IsShardRegistered() const
     {
-        const auto typeHandle = TypeHandleFor<ShardT>();
+        const auto type = TypeFor<ShardT>();
         const auto found = std::find_if(
             shardList.begin(),
             shardList.end(),
-            [typeHandle](const TypeConstructor& constructor)
+            [type](const TypeConstructor& constructor)
             {
-                return constructor.typeHandleName == typeHandle.name;
+                return constructor.typeName == type.name;
             });
         return found != shardList.end();
     }
@@ -356,19 +356,19 @@ namespace Arca
     template<class CuratorT, class CuratorProvider, class... Args>
     void ReliquaryOrigin::CuratorCommon(Args&& ... args)
     {
-        const auto typeHandle = TypeHandleFor<CuratorT>();
+        const auto type = TypeFor<CuratorT>();
 
         if (IsCuratorRegistered<CuratorT>())
-            throw AlreadyRegistered("curator", typeHandle, typeid(CuratorT));
+            throw AlreadyRegistered("curator", type, typeid(CuratorT));
 
-        curatorProviders.emplace(typeHandle.name, std::make_unique<CuratorProvider>(std::forward<Args>(args)...));
+        curatorProviders.emplace(type.name, std::make_unique<CuratorProvider>(std::forward<Args>(args)...));
         const auto curatorSerializationTypeHandlesFactory = [](Reliquary& reliquary)
         {
-            const auto typeHandle = TypeHandleFor<CuratorT>();
+            const auto type = TypeFor<CuratorT>();
             reliquary.curators.serializers.push_back(
                 KnownPolymorphicSerializer
                 {
-                    typeHandle.name,
+                    type.name,
                     [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
                     {
                         auto curator = reliquary.Find<CuratorT>();
@@ -387,8 +387,8 @@ namespace Arca
     template<class CuratorT>
     bool ReliquaryOrigin::IsCuratorRegistered() const
     {
-        auto typeHandle = TypeHandleFor<CuratorT>();
-        return curatorProviders.find(typeHandle.name) != curatorProviders.end();
+        auto type = TypeFor<CuratorT>();
+        return curatorProviders.find(type.name) != curatorProviders.end();
     }
 
     template<class SignalT>

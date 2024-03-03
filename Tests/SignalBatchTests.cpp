@@ -4,7 +4,7 @@
 
 namespace Arca
 {
-    const TypeHandleName Traits<::SignalBatchFixture::BasicSignal>::typeName =
+    const TypeName Traits<::SignalBatchFixture::BasicSignal>::typeName =
         "SignalBatchBasicSignal";
 }
 

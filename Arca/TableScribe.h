@@ -25,6 +25,6 @@ namespace Inscription
     template<class T, class Archive>
     TypeHandle ArcaTableScribe<T, Archive>::OutputTypeHandle(const ArchiveT& archive)
     {
-        return ::Arca::TypeHandleFor<T>().name;
+        return ::Arca::TypeFor<T>().name;
     }
 }

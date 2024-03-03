@@ -2,7 +2,7 @@
 
 #include <vector>
 #include "CuratorTraits.h"
-#include "TypeHandle.h"
+#include "Type.h"
 #include <Chroma/Iterate.h>
 
 namespace Arca
@@ -43,14 +43,14 @@ namespace Arca
         template<class T>
         void Add()
         {
-            typeHandleNames.push_back(TypeHandleFor<T>().name);
+            typeNames.push_back(TypeFor<T>().name);
         }
 
-        [[nodiscard]] std::vector<TypeHandleName> TypeHandleNameList() const;
+        [[nodiscard]] std::vector<TypeName> TypeNameList() const;
 
         [[nodiscard]] bool Empty() const;
     private:
-        std::vector<TypeHandleName> typeHandleNames;
+        std::vector<TypeName> typeNames;
     };
 
     using Pipeline = std::vector<Stage>;

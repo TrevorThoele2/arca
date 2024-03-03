@@ -6,27 +6,27 @@
 
 namespace Arca
 {
-    const TypeHandleName Traits<IsTypeTestsFixture::Shard>::typeName =
+    const TypeName Traits<IsTypeTestsFixture::Shard>::typeName =
         "IsTypeTestsShard";
 
-    const TypeHandleName Traits<IsTypeTestsFixture::Relic>::typeName =
+    const TypeName Traits<IsTypeTestsFixture::Relic>::typeName =
         "IsTypeTestsRelic";
 
-    const TypeHandleName Traits<IsTypeTestsFixture::Curator>::typeName =
+    const TypeName Traits<IsTypeTestsFixture::Curator>::typeName =
         "IsTypeTestsCurator";
 }
 
 SCENARIO_METHOD(IsTypeTestsFixture, "is type", "[IsType]")
 {
-    GIVEN("shard type handle name")
+    GIVEN("shard type name")
     {
-        auto typeHandleName = TypeHandleFor<Shard>().name;
+        auto typeName = TypeFor<Shard>().name;
 
         WHEN("checking is shard")
         {
             THEN("returns true")
             {
-                REQUIRE(IsType<Shard>(typeHandleName));
+                REQUIRE(IsType<Shard>(typeName));
             }
         }
 
@@ -34,7 +34,7 @@ SCENARIO_METHOD(IsTypeTestsFixture, "is type", "[IsType]")
         {
             THEN("returns false")
             {
-                REQUIRE(!IsType<Relic>(typeHandleName));
+                REQUIRE(!IsType<Relic>(typeName));
             }
         }
 
@@ -42,20 +42,20 @@ SCENARIO_METHOD(IsTypeTestsFixture, "is type", "[IsType]")
         {
             THEN("returns false")
             {
-                REQUIRE(!IsType<Curator>(typeHandleName));
+                REQUIRE(!IsType<Curator>(typeName));
             }
         }
     }
 
-    GIVEN("relic type handle name")
+    GIVEN("relic type name")
     {
-        auto typeHandleName = TypeHandleFor<Relic>().name;
+        auto typeName = TypeFor<Relic>().name;
 
         WHEN("checking is shard")
         {
             THEN("returns false")
             {
-                REQUIRE(!IsType<Shard>(typeHandleName));
+                REQUIRE(!IsType<Shard>(typeName));
             }
         }
 
@@ -63,7 +63,7 @@ SCENARIO_METHOD(IsTypeTestsFixture, "is type", "[IsType]")
         {
             THEN("returns true")
             {
-                REQUIRE(IsType<Relic>(typeHandleName));
+                REQUIRE(IsType<Relic>(typeName));
             }
         }
 
@@ -71,20 +71,20 @@ SCENARIO_METHOD(IsTypeTestsFixture, "is type", "[IsType]")
         {
             THEN("returns false")
             {
-                REQUIRE(!IsType<Curator>(typeHandleName));
+                REQUIRE(!IsType<Curator>(typeName));
             }
         }
     }
 
-    GIVEN("curator type handle name")
+    GIVEN("curator type name")
     {
-        auto typeHandleName = TypeHandleFor<Curator>().name;
+        auto typeName = TypeFor<Curator>().name;
 
         WHEN("checking is shard")
         {
             THEN("returns false")
             {
-                REQUIRE(!IsType<Shard>(typeHandleName));
+                REQUIRE(!IsType<Shard>(typeName));
             }
         }
 
@@ -92,7 +92,7 @@ SCENARIO_METHOD(IsTypeTestsFixture, "is type", "[IsType]")
         {
             THEN("returns false")
             {
-                REQUIRE(!IsType<Relic>(typeHandleName));
+                REQUIRE(!IsType<Relic>(typeName));
             }
         }
 
@@ -100,7 +100,7 @@ SCENARIO_METHOD(IsTypeTestsFixture, "is type", "[IsType]")
         {
             THEN("returns true")
             {
-                REQUIRE(IsType<Curator>(typeHandleName));
+                REQUIRE(IsType<Curator>(typeName));
             }
         }
     }

@@ -2,13 +2,13 @@
 
 namespace Arca
 {
-    void ReliquaryShards::Create(const TypeHandle& typeHandle, RelicID id)
+    void ReliquaryShards::Create(const Type& type, RelicID id)
     {
-        const auto factory = factoryMap.find(typeHandle.name);
+        const auto factory = factoryMap.find(type.name);
         if (factory == factoryMap.end())
-            throw NotRegistered(typeHandle.name);
+            throw NotRegistered(Type(type.name));
 
-        factory->second(Owner(), id, typeHandle.isConst);
+        factory->second(Owner(), id, type.isConst);
         NotifyCompositesShardCreate(id);
     }
 
@@ -24,9 +24,9 @@ namespace Arca
             loop.second->NotifyRelicDestroyed(id);
     }
 
-    ShardBatchSourceBase* ReliquaryShards::BatchSources::FindConst(const TypeHandleName& typeHandle)
+    ShardBatchSourceBase* ReliquaryShards::BatchSources::FindConst(const TypeName& typeName)
     {
-        const auto found = constMap.find(typeHandle);
+        const auto found = constMap.find(typeName);
         if (found == constMap.end())
             return nullptr;
 

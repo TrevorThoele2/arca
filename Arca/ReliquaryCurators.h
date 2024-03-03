@@ -15,7 +15,7 @@ namespace Arca
     {
     public:
         using HandlePtr = std::unique_ptr<CuratorHandle>;
-        using Map = std::unordered_map<TypeHandleName, HandlePtr>;
+        using Map = std::unordered_map<TypeName, HandlePtr>;
         Map map;
 
         using Stage = std::vector<Curator*>;

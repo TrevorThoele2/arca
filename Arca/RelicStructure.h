@@ -1,9 +1,9 @@
 #pragma once
 
 #include <vector>
-#include "TypeHandle.h"
+#include "Type.h"
 
 namespace Arca
 {
-    using RelicStructure = std::vector<TypeHandle>;
+    using RelicStructure = std::vector<Type>;
 }

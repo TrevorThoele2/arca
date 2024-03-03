@@ -16,7 +16,7 @@ namespace Arca
         {
             using ShardT = typename ShardList::template Parameter<i - 1>::Type;
 
-            structure.push_back(TypeHandleFor<ShardT>());
+            structure.push_back(TypeFor<ShardT>());
             ShardListToStructure<i - 1>::Do(structure, shardList);
         }
     };

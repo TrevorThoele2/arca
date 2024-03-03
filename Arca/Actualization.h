@@ -9,7 +9,7 @@ namespace Arca
     template<class T, std::enable_if_t<!is_either_v<T> && !is_global_relic_v<T>, int> = 0>
     Ptr<T> Actualize(const Handle& handle)
     {
-        if (handle.Type() != TypeHandleFor<T>())
+        if (handle.Type() != TypeFor<T>())
             return {};
 
         return handle.Owner().Find<T>(handle.ID());
@@ -18,7 +18,7 @@ namespace Arca
     template<class T, std::enable_if_t<is_global_relic_v<T>, int> = 0>
     Ptr<T> Actualize(const Handle& handle)
     {
-        if (handle.Type() != TypeHandleFor<T>())
+        if (handle.Type() != TypeFor<T>())
             return {};
 
         return handle.Owner().Find<T>();
@@ -28,7 +28,7 @@ namespace Arca
     Ptr<EitherT> Actualize(const Handle& handle)
     {
         using BareT = typename EitherT::BareT;
-        if (TypeHandleFor<BareT>().name != handle.Type().name)
+        if (TypeFor<BareT>().name != handle.Type().name)
             return {};
 
         return handle.Owner().Find<EitherT>(handle.ID());

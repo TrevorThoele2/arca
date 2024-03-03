@@ -14,10 +14,10 @@ void ConstShardTestsFixture::Relic::InitializeImplementation()
 
 namespace Arca
 {
-    const TypeHandleName Traits<ConstShardTestsFixture::Shard>::typeName =
+    const TypeName Traits<ConstShardTestsFixture::Shard>::typeName =
         "ConstShardTestsShard";
 
-    const TypeHandleName Traits<ConstShardTestsFixture::Relic>::typeName =
+    const TypeName Traits<ConstShardTestsFixture::Relic>::typeName =
         "ConstShardTestsRelic";
 }
 
@@ -206,7 +206,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
             .Actualize();
 
         auto relicStructure = RelicStructure{};
-        relicStructure.emplace_back(TypeHandleFor<const Shard>());
+        relicStructure.emplace_back(TypeFor<const Shard>());
         auto relic = reliquary->CreateWith<ClosedRelic>(relicStructure);
 
         WHEN("finding const shard")

@@ -2,5 +2,5 @@
 
 namespace Arca
 {
-    const TypeHandleName Traits<RelicParented>::typeName = "RelicParented";
+    const TypeName Traits<RelicParented>::typeName = "RelicParented";
 }

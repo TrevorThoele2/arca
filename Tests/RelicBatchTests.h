@@ -57,28 +57,28 @@ namespace Arca
     struct Traits<::RelicBatchFixture::Relic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 
     template<>
     struct Traits<::RelicBatchFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 
     template<>
     struct Traits<::RelicBatchFixture::UnregisteredRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 
     template<>
     struct Traits<::RelicBatchFixture::Shard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 }
 

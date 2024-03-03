@@ -6,7 +6,7 @@ namespace Arca
 {
     ClosedRelic::operator Handle() const
     {
-        return Handle(ID(), Owner(), TypeHandle(Traits<ClosedRelic>::typeName, false));
+        return Handle(ID(), Owner(), Type(Traits<ClosedRelic>::typeName, false));
     }
 
     ClosedRelic::operator bool() const
@@ -37,5 +37,5 @@ namespace Arca
         this->owner = &owner;
     }
 
-    const TypeHandleName Traits<ClosedRelic>::typeName = "ClosedRelic";
+    const TypeName Traits<ClosedRelic>::typeName = "ClosedRelic";
 }

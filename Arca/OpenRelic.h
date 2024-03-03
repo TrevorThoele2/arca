@@ -53,7 +53,7 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Relic;
         static const Openness openness = Openness::Open;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 }
 

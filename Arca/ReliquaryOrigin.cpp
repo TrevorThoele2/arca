@@ -95,7 +95,7 @@ namespace Arca
     {
         for (auto& loop : namedRelicStructureList)
             if (loop.name == name)
-                throw AlreadyRegistered("relic structure", name);
+                throw AlreadyRegistered("relic structure", Arca::Type(name));
 
         namedRelicStructureList.emplace_back(name, structure);
         return *this;
@@ -118,9 +118,9 @@ namespace Arca
     }
 
     ReliquaryOrigin::TypeConstructor::TypeConstructor(
-        TypeHandleName typeHandleName, std::function<void(Reliquary&)>&& factory)
+        TypeName typeName, std::function<void(Reliquary&)>&& factory)
         :
-        typeHandleName(std::move(typeHandleName)), factory(std::move(factory))
+        typeName(std::move(typeName)), factory(std::move(factory))
     {}
 
     std::vector<Curator*> ReliquaryOrigin::PushAllCuratorsTo(Reliquary& reliquary) const
@@ -137,13 +137,13 @@ namespace Arca
             ReliquaryCurators::HandlePtr handle;
 
             if (loop.curator.index() == 0)
-                handle = std::make_unique<OwnedCuratorHandle>(std::move(std::get<0>(loop.curator)), loop.typeHandle);
+                handle = std::make_unique<OwnedCuratorHandle>(std::move(std::get<0>(loop.curator)), loop.type);
             else
-                handle = std::make_unique<UnownedCuratorHandle>(std::get<1>(loop.curator), loop.typeHandle);
+                handle = std::make_unique<UnownedCuratorHandle>(std::get<1>(loop.curator), loop.type);
 
             returnValue.push_back(handle->Get());
 
-            reliquary.curators.map.emplace(handle->typeHandle.name, std::move(handle));
+            reliquary.curators.map.emplace(handle->type.name, std::move(handle));
         }
 
         for (auto& loop : curatorSerializationTypeHandlesFactoryList)
@@ -183,16 +183,16 @@ namespace Arca
         {
             ReliquaryCurators::Stage createdStage;
 
-            auto typeHandleNames = stage.TypeHandleNameList();
-            for(auto& typeHandleName : typeHandleNames)
+            auto typeNames = stage.TypeNameList();
+            for(auto& typeName : typeNames)
             {
-                auto found = reliquary.Find<Arca::Curator>(typeHandleName);
+                auto found = reliquary.Find<Arca::Curator>(typeName);
                 if (found == nullptr)
-                    throw InvalidPipeline("Curator (" + typeHandleName + ") was not found.");
+                    throw InvalidPipeline("Curator (" + typeName + ") was not found.");
 
                 const auto wasAlreadySeen = !seenCurators.emplace(found).second;
                 if (wasAlreadySeen)
-                    throw InvalidPipeline("Curator (" + typeHandleName + ") was already in the pipeline.");
+                    throw InvalidPipeline("Curator (" + typeName + ") was already in the pipeline.");
 
                 createdStage.push_back(found);
             }

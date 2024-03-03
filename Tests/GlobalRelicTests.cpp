@@ -21,13 +21,13 @@ void GlobalRelicTestsFixture::GlobalRelic::InitializeImplementation()
 
 namespace Arca
 {
-    const TypeHandleName Traits<GlobalRelicTestsFixture::BasicShard>::typeName =
+    const TypeName Traits<GlobalRelicTestsFixture::BasicShard>::typeName =
         "RelicTestsBasicShard";
 
-    const TypeHandleName Traits<GlobalRelicTestsFixture::BasicTypedRelic>::typeName =
+    const TypeName Traits<GlobalRelicTestsFixture::BasicTypedRelic>::typeName =
         "ReliquaryTestsBasicTypedRelic";
 
-    const TypeHandleName Traits<GlobalRelicTestsFixture::GlobalRelic>::typeName =
+    const TypeName Traits<GlobalRelicTestsFixture::GlobalRelic>::typeName =
         "ReliquaryTestsGlobalRelic";
 }
 

@@ -6,7 +6,7 @@ namespace Arca
 {
     OpenTypedRelic::operator Handle() const
     {
-        return Handle(id, *owner, TypeHandle());
+        return Handle(id, *owner, Type());
     }
 
     OpenTypedRelic::operator bool() const

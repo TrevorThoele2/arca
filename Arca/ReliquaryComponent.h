@@ -29,9 +29,9 @@ namespace Arca
         using KnownPolymorphicSerializerList = std::vector<KnownPolymorphicSerializer>;
     public:
         [[nodiscard]] Arca::NotRegistered NotRegistered(
-            const TypeHandle& type) const;
+            const Type& type) const;
         [[nodiscard]] Arca::NotRegistered NotRegistered(
-            const TypeHandle& type,
+            const Type& type,
             const std::type_index& classType) const;
         [[nodiscard]] CannotModify CannotModify(RelicID id) const;
     protected:
@@ -50,7 +50,7 @@ namespace Arca
         [[nodiscard]] ReliquarySignals& Signals();
         [[nodiscard]] const ReliquarySignals& Signals() const;
     protected:
-        Handle HandleFrom(RelicID id, TypeHandle typeHandle);
+        Handle HandleFrom(RelicID id, Type type);
         Handle HandleFrom(const RelicMetadata& metadata);
         template<class T>
         Ptr<T> PtrFrom(RelicID id) const;
@@ -65,13 +65,13 @@ namespace Arca
             constexpr static bool is_object_v = Derived::template is_object_v<RelicT>;
         public:
             using Ptr = std::unique_ptr<BatchSourceBaseT>;
-            using Map = std::unordered_map<TypeHandleName, Ptr>;
+            using Map = std::unordered_map<TypeName, Ptr>;
 
             Map map;
 
-            [[nodiscard]] BatchSourceBaseT* Find(const TypeHandleName& typeHandle) const
+            [[nodiscard]] BatchSourceBaseT* Find(const TypeName& typeName) const
             {
-                const auto found = map.find(typeHandle);
+                const auto found = map.find(typeName);
                 if (found == map.end())
                     return nullptr;
 
@@ -81,8 +81,8 @@ namespace Arca
             [[nodiscard]] BatchSource<ObjectT>* Find() const
             {
                 auto& map = AsDerived().template MapFor<ObjectT>();
-                const auto typeHandleName = TypeHandleFor<ObjectT>().name;
-                auto found = map.find(typeHandleName);
+                const auto typeName = TypeFor<ObjectT>().name;
+                auto found = map.find(typeName);
                 if (found == map.end())
                     return nullptr;
 
@@ -94,8 +94,8 @@ namespace Arca
                 auto found = Find<ObjectT>();
                 if (!found)
                 {
-                    const auto typeHandle = TypeHandleFor<ObjectT>();
-                    throw owner->NotRegistered(typeHandle, typeid(ObjectT));
+                    const auto type = TypeFor<ObjectT>();
+                    throw owner->NotRegistered(type, typeid(ObjectT));
                 }
 
                 return *found;

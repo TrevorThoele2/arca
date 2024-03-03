@@ -5,13 +5,13 @@
 namespace Arca
 {
     NotRegistered ReliquaryComponent::NotRegistered(
-        const TypeHandle& type) const
+        const Type& type) const
     {
         return Arca::NotRegistered(objectTypeName, type);
     }
 
     NotRegistered ReliquaryComponent::NotRegistered(
-        const TypeHandle& type,
+        const Type& type,
         const std::type_index& classType) const
     {
         return Arca::NotRegistered(objectTypeName, type, classType);
@@ -86,13 +86,13 @@ namespace Arca
         return owner->signals;
     }
 
-    Handle ReliquaryComponent::HandleFrom(RelicID id, TypeHandle typeHandle)
+    Handle ReliquaryComponent::HandleFrom(RelicID id, Type type)
     {
-        return Handle{ id, Owner(), typeHandle };
+        return Handle{ id, Owner(), type };
     }
 
     Handle ReliquaryComponent::HandleFrom(const RelicMetadata& metadata)
     {
-        return HandleFrom(metadata.id, metadata.typeHandle);
+        return HandleFrom(metadata.id, metadata.type);
     }
 }

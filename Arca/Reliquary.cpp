@@ -79,14 +79,14 @@ namespace Arca
         return totalSize;
     }
 
-    Handle Reliquary::HandleFrom(RelicID id, TypeHandle typeHandle)
+    Handle Reliquary::HandleFrom(RelicID id, Type type)
     {
-        return Handle{ id, *this, typeHandle };
+        return Handle{ id, *this, type };
     }
 
     Handle Reliquary::HandleFrom(const RelicMetadata& metadata)
     {
-        return HandleFrom(metadata.id, metadata.typeHandle);
+        return HandleFrom(metadata.id, metadata.type);
     }
 }
 
@@ -181,21 +181,21 @@ namespace Inscription
             Arca::RelicMetadata createdMetadata;
             createdMetadata.id = metadata.id;
             createdMetadata.openness = metadata.openness;
-            auto [typeHandle, locality, storage] = FindExtensionForLoadedMetadata(metadata.id, object);
-            createdMetadata.typeHandle = typeHandle;
+            auto [type, locality, storage] = FindExtensionForLoadedMetadata(metadata.id, object);
+            createdMetadata.type = type;
             createdMetadata.locality = locality;
             createdMetadata.storage = storage;
             if (metadata.parent)
             {
                 const auto parentID = *metadata.parent;
-                const auto parentTypeHandle = std::get<0>(FindExtensionForLoadedMetadata(parentID, object));
-                createdMetadata.parent = Arca::HandleSlim(parentID, parentTypeHandle);
+                const auto parentType = std::get<0>(FindExtensionForLoadedMetadata(parentID, object));
+                createdMetadata.parent = Arca::HandleSlim(parentID, parentType);
             }
             for(auto& child : metadata.children)
             {
                 const auto childID = child;
-                const auto childTypeHandle = std::get<0>(FindExtensionForLoadedMetadata(childID, object));
-                createdMetadata.parent = Arca::HandleSlim(childID, childTypeHandle);
+                const auto childType = std::get<0>(FindExtensionForLoadedMetadata(childID, object));
+                createdMetadata.parent = Arca::HandleSlim(childID, childType);
             }
 
             object.relics.metadataList.push_back(createdMetadata);
@@ -236,7 +236,7 @@ namespace Inscription
             list.end(),
             [&mainTypeHandle](const Arca::KnownPolymorphicSerializer& entry)
             {
-                return entry.mainTypeHandle == mainTypeHandle;
+                return entry.mainType == mainTypeHandle;
             });
         return found != list.end()
             ? &*found
@@ -307,14 +307,14 @@ namespace Inscription
         {
             auto found = relicBatchSource.second->FindStorage(id);
             if (found)
-                return { relicBatchSource.second->TypeHandle(), Arca::Locality::Local, found };
+                return { relicBatchSource.second->Type(), Arca::Locality::Local, found };
         }
 
         for(auto& global : object.relics.globalMap)
             if (global.second.id == id)
-                return { TypeHandle(global.first, false), Arca::Locality::Global, global.second.storage.get() };
+                return { Arca::Type(global.first, false), Arca::Locality::Global, global.second.storage.get() };
 
-        return { TypeHandle(), Arca::Locality::Local, nullptr };
+        return { Arca::Type(), Arca::Locality::Local, nullptr };
     }
 
     auto Scribe<::Arca::Reliquary, BinaryArchive>::PruneTypesToLoad(
@@ -322,15 +322,15 @@ namespace Inscription
         ArchiveT& archive,
         const std::vector<TypeHandle>& typeHandlesFromArchive)
         ->
-        std::vector<TypeHandlePair>
+        std::vector<TypePair>
     {
-        auto typeHandlesFromReliquary = ExtractTypeHandles(fromObject, archive);
+        auto typesFromReliquary = ExtractTypeHandles(fromObject, archive);
 
-        std::vector<TypeHandlePair> returnValue;
-        for (auto& typeHandleFromArchive : typeHandlesFromArchive)
-            for (auto& typeHandleFromReliquary : typeHandlesFromReliquary)
-                if (typeHandleFromReliquary.inscription == typeHandleFromArchive)
-                    returnValue.push_back(typeHandleFromReliquary);
+        std::vector<TypePair> returnValue;
+        for (auto& typeFromArchive : typeHandlesFromArchive)
+            for (auto& typeFromReliquary : typesFromReliquary)
+                if (typeFromReliquary.inscription == typeFromArchive)
+                    returnValue.push_back(typeFromReliquary);
 
         return returnValue;
     }
@@ -339,15 +339,15 @@ namespace Inscription
         KnownPolymorphicSerializerList& fromObject,
         ArchiveT& archive)
         ->
-        std::vector<TypeHandlePair>
+        std::vector<TypePair>
     {
-        std::vector<TypeHandlePair> returnValue;
+        std::vector<TypePair> returnValue;
         for(auto& loop : fromObject)
         {
             auto inscriptionTypes = loop.inscriptionTypeProvider(archive);
 
             for(auto& inscriptionType : inscriptionTypes)
-                returnValue.push_back({ loop.mainTypeHandle, inscriptionType });
+                returnValue.push_back({ loop.mainType, inscriptionType });
         }
         return returnValue;
     }

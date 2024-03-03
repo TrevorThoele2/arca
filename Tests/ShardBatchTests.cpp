@@ -14,11 +14,11 @@ void ShardBatchFixture::GlobalRelic::InitializeImplementation()
 
 namespace Arca
 {
-    const TypeHandleName Traits<ShardBatchFixture::Shard>::typeName
+    const TypeName Traits<ShardBatchFixture::Shard>::typeName
         = "ShardBatchTestsShard";
-    const TypeHandleName Traits<ShardBatchFixture::UnregisteredShard>::typeName
+    const TypeName Traits<ShardBatchFixture::UnregisteredShard>::typeName
         = "ShardBatchTestsUnregisteredShard";
-    const TypeHandleName Traits<ShardBatchFixture::GlobalRelic>::typeName
+    const TypeName Traits<ShardBatchFixture::GlobalRelic>::typeName
         = "ShardBatchTestsGlobalRelic";
 }
 

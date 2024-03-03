@@ -34,22 +34,22 @@ void RelicTestsFixture::GlobalRelic::InitializeImplementation()
 
 namespace Arca
 {
-    const TypeHandleName Traits<RelicTestsFixture::Shard>::typeName =
+    const TypeName Traits<RelicTestsFixture::Shard>::typeName =
         "RelicTestsShard";
 
-    const TypeHandleName Traits<RelicTestsFixture::OtherShard>::typeName =
+    const TypeName Traits<RelicTestsFixture::OtherShard>::typeName =
         "RelicTestsOtherShard";
 
-    const TypeHandleName Traits<RelicTestsFixture::TypedRelic>::typeName =
+    const TypeName Traits<RelicTestsFixture::TypedRelic>::typeName =
         "RelicTestsTypedRelic";
 
-    const TypeHandleName Traits<RelicTestsFixture::OpenTypedRelic>::typeName =
+    const TypeName Traits<RelicTestsFixture::OpenTypedRelic>::typeName =
         "RelicTestsOpenTypedRelic";
 
-    const TypeHandleName Traits<RelicTestsFixture::GlobalRelic>::typeName =
+    const TypeName Traits<RelicTestsFixture::GlobalRelic>::typeName =
         "RelicTestsGlobalRelic";
 
-    const TypeHandleName Traits<RelicTestsFixture::MostBasicCustomFactoryRelic>::typeName =
+    const TypeName Traits<RelicTestsFixture::MostBasicCustomFactoryRelic>::typeName =
         "RelicTestsMostBasicCustomFactoryRelic";
 
     std::optional<RelicTestsFixture::MostBasicCustomFactoryRelic>
@@ -60,7 +60,7 @@ namespace Arca
         return relic;
     }
 
-    const TypeHandleName Traits<RelicTestsFixture::GuardedCustomFactoryRelic>::typeName =
+    const TypeName Traits<RelicTestsFixture::GuardedCustomFactoryRelic>::typeName =
         "ReliquaryTestsGuardedCustomFactoryRelic";
 
     std::optional<RelicTestsFixture::GuardedCustomFactoryRelic>
@@ -191,7 +191,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
         WHEN("creating closed relic with valid structure")
         {
             auto preCreateRelicCount = reliquary->RelicSize();
-            auto closedRelic = reliquary->CreateWith<ClosedRelic>(RelicStructure{ TypeHandleFor<Shard>() });
+            auto closedRelic = reliquary->CreateWith<ClosedRelic>(RelicStructure{ TypeFor<Shard>() });
 
             THEN("structure has been satisfied")
             {
@@ -447,7 +447,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
         WHEN("creating closed relic")
         {
-            const auto created = reliquary->CreateWith<ClosedRelic>(RelicStructure { TypeHandleFor<Shard>() });
+            const auto created = reliquary->CreateWith<ClosedRelic>(RelicStructure { TypeFor<Shard>() });
 
             THEN("signal is emitted for relic")
             {

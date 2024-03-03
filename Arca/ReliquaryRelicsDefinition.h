@@ -84,10 +84,10 @@ namespace Arca
     template<class RelicT, std::enable_if_t<is_global_relic_v<RelicT>, int>>
     Ptr<RelicT> ReliquaryRelics::Find() const
     {
-        const auto typeHandle = TypeHandleFor<RelicT>();
-        const auto found = globalMap.find(typeHandle.name);
+        const auto type = TypeFor<RelicT>();
+        const auto found = globalMap.find(type.name);
         if (found == globalMap.end())
-            throw NotRegistered(typeHandle, typeid(RelicT));
+            throw NotRegistered(type, typeid(RelicT));
 
         auto relic = reinterpret_cast<RelicT*>(found->second.storage.get());
         return PtrFrom<RelicT>(relic->ID());
@@ -119,10 +119,10 @@ namespace Arca
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
     RelicT* ReliquaryRelics::FindGlobalStorage()
     {
-        const auto typeHandle = TypeHandleFor<RelicT>();
-        const auto found = globalMap.find(typeHandle.name);
+        const auto type = TypeFor<RelicT>();
+        const auto found = globalMap.find(type.name);
         if (found == globalMap.end())
-            throw NotRegistered(typeHandle, typeid(RelicT));
+            throw NotRegistered(type, typeid(RelicT));
 
         return reinterpret_cast<RelicT*>(found->second.storage.get());
     }
@@ -154,7 +154,7 @@ namespace Arca
         auto& batchSource = batchSources.Required<RelicT>();
         auto added = batchSource.Add(std::move(relic));
 
-        SetupNewInternals(id, OpennessFor<RelicT>(), LocalityFor<RelicT>(), TypeHandleFor<RelicT>(), added);
+        SetupNewInternals(id, OpennessFor<RelicT>(), LocalityFor<RelicT>(), TypeFor<RelicT>(), added);
         auto structure = StructureFrom<shards_for_t<RelicT>>();
         structure.insert(
             structure.end(),
@@ -164,7 +164,7 @@ namespace Arca
         added->Initialize(Owner());
         Shards().NotifyCompositesRelicCreate(id, structure);
 
-        Owner().Raise<Created>(HandleFrom(id, TypeHandleFor<RelicT>()));
+        Owner().Raise<Created>(HandleFrom(id, TypeFor<RelicT>()));
 
         return PtrFrom<RelicT>(id);
     }

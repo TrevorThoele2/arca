@@ -3,7 +3,7 @@
 #include "GeneralFixture.h"
 
 #include <Arca/ClosedTypedRelicAutomation.h>
-#include <Arca/Shard.h>
+#include <Arca/ShardTraits.h>
 
 #include <Arca/Serialization.h>
 
@@ -48,21 +48,21 @@ namespace Arca
     struct Traits<::GlobalRelicTestsFixture::BasicShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 
     template<>
     struct Traits<::GlobalRelicTestsFixture::BasicTypedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
     };
 
     template<>
     struct Traits<::GlobalRelicTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeHandleName typeName;
+        static const TypeName typeName;
         static const Locality locality = Locality::Global;
     };
 }

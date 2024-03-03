@@ -6,7 +6,7 @@
 #include "RelicID.h"
 #include "Openness.h"
 #include "Locality.h"
-#include "TypeHandle.h"
+#include "Type.h"
 #include "HandleSlim.h"
 
 namespace Arca
@@ -16,7 +16,7 @@ namespace Arca
         RelicID id = 0;
         Openness openness = Openness::Open;
         Locality locality = Locality::Local;
-        TypeHandle typeHandle;
+        Type type;
         void* storage = nullptr;
 
         std::optional<HandleSlim> parent;
@@ -27,7 +27,7 @@ namespace Arca
             RelicID id,
             Openness openness,
             Locality locality,
-            TypeHandle typeHandle,
+            Type type,
             void* storage = nullptr);
     };
 }

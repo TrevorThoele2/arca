@@ -93,7 +93,7 @@ namespace Arca
         size_t referenceCount = 0;
     private:
         RelicStructure structure;
-        bool StructureContains(TypeHandle typeHandle) const;
+        [[nodiscard]] bool StructureContains(Type type) const;
     private:
         void CreateEntry(RelicID id);
         void DestroyEntry(RelicID id);

@@ -20,7 +20,7 @@
 #include "RelicParented.h"
 
 #include "Serialization.h"
-#include "TypeHandleSerialization.h"
+#include "TypeScribe.h"
 #include <Inscription/OutputJumpTable.h>
 #include <Inscription/InputJumpTable.h>
 
@@ -101,16 +101,16 @@ namespace Arca
         [[nodiscard]] SizeT ShardSize() const;
     public:
         template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int> = 0>
-        [[nodiscard]] Curator* Find(const TypeHandleName& typeHandle);
+        [[nodiscard]] Curator* Find(const TypeName& type);
         template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int> = 0>
-        [[nodiscard]] const Curator* Find(const TypeHandleName& typeHandle) const;
+        [[nodiscard]] const Curator* Find(const TypeName& type) const;
         template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int> = 0>
         [[nodiscard]] CuratorT* Find();
         template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int> = 0>
         [[nodiscard]] const CuratorT* Find() const;
 
         template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int> = 0>
-        [[nodiscard]] bool Contains(const TypeHandleName& typeHandle) const;
+        [[nodiscard]] bool Contains(const TypeName& type) const;
         template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int> = 0>
         [[nodiscard]] bool Contains() const;
 
@@ -147,7 +147,7 @@ namespace Arca
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] ShardT* FindStorage(RelicID id);
     private:
-        Handle HandleFrom(RelicID id, TypeHandle typeHandle);
+        Handle HandleFrom(RelicID id, Type type);
         Handle HandleFrom(const RelicMetadata& metadata);
         template<class T>
         Ptr<T> PtrFrom(RelicID id) const;
@@ -304,9 +304,9 @@ namespace Arca
     }
 
     template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int>>
-    Curator* Reliquary::Find(const TypeHandleName& typeHandle)
+    Curator* Reliquary::Find(const TypeName& type)
     {
-        const auto found = curators.map.find(typeHandle);
+        const auto found = curators.map.find(type);
         if (found == curators.map.end())
             return nullptr;
 
@@ -314,9 +314,9 @@ namespace Arca
     }
 
     template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int>>
-    const Curator* Reliquary::Find(const TypeHandleName& typeHandle) const
+    const Curator* Reliquary::Find(const TypeName& type) const
     {
-        return const_cast<Reliquary&>(*this).Find<CuratorT>(typeHandle);
+        return const_cast<Reliquary&>(*this).Find<CuratorT>(type);
     }
 
     template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int>>
@@ -339,9 +339,9 @@ namespace Arca
     }
 
     template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int>>
-    bool Reliquary::Contains(const TypeHandleName& typeHandle) const
+    bool Reliquary::Contains(const TypeName& type) const
     {
-        return static_cast<bool>(Find<CuratorT>(typeHandle));
+        return static_cast<bool>(Find<CuratorT>(type));
     }
 
     template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int>>
@@ -356,8 +356,8 @@ namespace Arca
         auto batchSource = signals.batchSources.Find<SignalT>();
         if (!batchSource)
         {
-            const auto typeHandle = TypeHandleFor<SignalT>();
-            throw signals.NotRegistered(typeHandle, typeid(SignalT));
+            const auto type = TypeFor<SignalT>();
+            throw signals.NotRegistered(type, typeid(SignalT));
         }
 
         batchSource->Raise(signal);
@@ -373,10 +373,10 @@ namespace Arca
     template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int>>
     void Reliquary::ExecuteOn(const std::function<void(const SignalT&)>& function)
     {
-        const auto typeHandleName = TypeHandleFor<SignalT>().name;
-        auto found = signals.executionMap.find(typeHandleName);
+        const auto typeName = TypeFor<SignalT>().name;
+        auto found = signals.executionMap.find(typeName);
         if (found == signals.executionMap.end())
-            found = signals.executionMap.emplace(typeHandleName, Signals::ExecutionList<SignalT>()).first;
+            found = signals.executionMap.emplace(typeName, Signals::ExecutionList<SignalT>()).first;
 
         auto& executionList = std::any_cast<Signals::ExecutionList<SignalT>&>(found->second);
         executionList.push_back(function);
@@ -487,21 +487,21 @@ namespace Inscription
         static void SaveRelicMetadata(Arca::RelicMetadata& metadata, ArchiveT& archive);
         static LoadedRelicMetadata LoadRelicMetadata(ObjectT& object, ArchiveT& archive);
 
-        using MetadataExtension = std::tuple<Arca::TypeHandle, Arca::Locality, void*>;
+        using MetadataExtension = std::tuple<Arca::Type, Arca::Locality, void*>;
         static MetadataExtension FindExtensionForLoadedMetadata(Arca::RelicID id, ObjectT& object);
     private:
-        struct TypeHandlePair
+        struct TypePair
         {
-            ::Arca::TypeHandleName arca;
+            ::Arca::TypeName arca;
             TypeHandle inscription;
         };
 
-        static std::vector<TypeHandlePair> PruneTypesToLoad(
+        static std::vector<TypePair> PruneTypesToLoad(
             KnownPolymorphicSerializerList& fromObject,
             ArchiveT& archive,
             const std::vector<TypeHandle>& typeHandlesFromArchive);
 
-        static std::vector<TypeHandlePair> ExtractTypeHandles(
+        static std::vector<TypePair> ExtractTypeHandles(
             KnownPolymorphicSerializerList& fromObject,
             ArchiveT& archive);
     };

@@ -156,6 +156,6 @@ namespace Arca
     {
         --referenceCount;
         if (referenceCount == 0)
-            owner->eitherBatchSources.map.erase(TypeHandleFor<ShardT>().name);
+            owner->eitherBatchSources.map.erase(TypeFor<ShardT>().name);
     }
 }

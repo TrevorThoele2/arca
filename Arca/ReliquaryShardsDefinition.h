@@ -16,7 +16,7 @@ namespace Arca
         AttemptAddToEitherBatches(id, *added);
         NotifyCompositesShardCreate(id);
 
-        Owner().Raise<Created>(HandleFrom(id, TypeHandleFor<ShardT>()));
+        Owner().Raise<Created>(HandleFrom(id, TypeFor<ShardT>()));
         return PtrFrom<ShardT>(id);
     }
 
@@ -97,8 +97,8 @@ namespace Arca
     template<class ShardT>
     auto ReliquaryShards::FindFactory() -> Factory
     {
-        auto typeHandle = TypeHandleFor<ShardT>();
-        const auto found = factoryMap.find(typeHandle);
+        auto type = TypeFor<ShardT>();
+        const auto found = factoryMap.find(type);
         if (found == factoryMap.end())
             return nullptr;
 
@@ -160,9 +160,9 @@ namespace Arca
     }
 
     template<class T>
-    TypeHandleName ReliquaryShards::EitherBatchSources::KeyFor()
+    TypeName ReliquaryShards::EitherBatchSources::KeyFor()
     {
-        return Arca::TypeHandleFor<ShardT<T>>().name;
+        return Arca::TypeFor<ShardT<T>>().name;
     }
 
     template<class T, std::enable_if_t<is_composite_v<T>, int>>
