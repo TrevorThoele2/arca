@@ -12,14 +12,18 @@ namespace Arca
     class NotRegistered final : public Exception
     {
     public:
-        explicit NotRegistered(
+        NotRegistered(
+            const std::string& objectType,
+            const std::type_index& classType);
+        NotRegistered(
             const std::string& objectType,
             const Type& type);
-        explicit NotRegistered(
+        NotRegistered(
             const std::string& objectType,
             const Type& type,
             const std::type_index& classType);
     private:
+        [[nodiscard]] std::string BaseMessage(const std::string& objectType, const std::type_index& classType) const;
         [[nodiscard]] std::string BaseMessage(const std::string& objectType, const Type& type) const;
     };
 
@@ -28,12 +32,16 @@ namespace Arca
     public:
         AlreadyRegistered(
             const std::string& objectType,
+            const std::type_index& classType);
+        AlreadyRegistered(
+            const std::string& objectType,
             const Type& type);
         AlreadyRegistered(
             const std::string& objectType,
             const Type& type,
             const std::type_index& classType);
     private:
+        [[nodiscard]] std::string BaseMessage(const std::string& objectType, const std::type_index& classType) const;
         [[nodiscard]] std::string BaseMessage(const std::string& objectType, const Type& type) const;
     };
 
@@ -42,12 +50,16 @@ namespace Arca
     public:
         CannotCreate(
             const std::string& objectType,
+            const std::type_index& classType);
+        CannotCreate(
+            const std::string& objectType,
             const Type& type);
         CannotCreate(
             const std::string& objectType,
             const Type& type,
             const std::type_index& classType);
     private:
+        [[nodiscard]] std::string BaseMessage(const std::string& objectType, const std::type_index& classType) const;
         [[nodiscard]] std::string BaseMessage(const std::string& objectType, const Type& type) const;
     };
 
@@ -56,12 +68,16 @@ namespace Arca
     public:
         CannotDestroy(
             const std::string& objectType,
+            const std::type_index& classType);
+        CannotDestroy(
+            const std::string& objectType,
             const Type& type);
         CannotDestroy(
             const std::string& objectType,
             const Type& type,
             const std::type_index& classType);
     private:
+        [[nodiscard]] std::string BaseMessage(const std::string& objectType, const std::type_index& classType) const;
         [[nodiscard]] std::string BaseMessage(const std::string& objectType, const Type& type) const;
     };
 
@@ -70,12 +86,16 @@ namespace Arca
     public:
         CannotFind(
             const std::string& objectType,
+            const std::type_index& classType);
+        CannotFind(
+            const std::string& objectType,
             const Type& type);
         CannotFind(
             const std::string& objectType,
             const Type& type,
             const std::type_index& classType);
     private:
+        [[nodiscard]] std::string BaseMessage(const std::string& objectType, const std::type_index& classType) const;
         [[nodiscard]] std::string BaseMessage(const std::string& objectType, const Type& type) const;
     };
 

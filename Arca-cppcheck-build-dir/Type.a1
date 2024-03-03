@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<analyzerinfo checksum="2186342783">
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="ToString" lineNumber="25"/>
+    <functioncall functionName="Type"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="default"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="isConst"/>
+    <functioncall functionName="move"/>
+    <functioncall functionName="name"/>
+  </FileInfo>
+</analyzerinfo>

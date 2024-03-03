@@ -5,9 +5,7 @@
 #include "BatchSource.h"
 
 #include "RelicID.h"
-#include "Either.h"
-
-#include "Serialization.h"
+#include "IsEither.h"
 
 namespace Arca
 {
@@ -80,7 +78,5 @@ namespace Arca
         size_t referenceCount = 0;
     private:
         friend class Reliquary;
-    private:
-        INSCRIPTION_ACCESS;
     };
 }

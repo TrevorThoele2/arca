@@ -48,7 +48,6 @@
     <ClCompile Include="CuratorTests.cpp" />
     <ClCompile Include="EitherShardBatchTests.cpp" />
     <ClCompile Include="EitherTests.cpp" />
-    <ClCompile Include="GeneralFixture.cpp" />
     <ClCompile Include="HandleTests.cpp" />
     <ClCompile Include="IntegrationTests.cpp" />
     <ClCompile Include="IsTypeTests.cpp" />

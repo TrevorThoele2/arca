@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<analyzerinfo checksum="891544668">
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="ObjectTrackerEntry"/>
+    <functioncall functionName="default"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="id"/>
+    <functioncall functionName="nullptr"/>
+    <functioncall functionName="object"/>
+  </FileInfo>
+</analyzerinfo>

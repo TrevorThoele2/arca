@@ -1,9 +1,10 @@
 #pragma once
 
 #include <vector>
-#include "CuratorTraits.h"
+
 #include "Type.h"
 #include "TypeFor.h"
+
 #include <Chroma/Iterate.h>
 
 namespace Arca

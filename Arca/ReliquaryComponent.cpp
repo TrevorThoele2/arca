@@ -62,10 +62,6 @@ namespace Arca
         return Arca::CannotModifyShards(objectTypeName, id);
     }
 
-    ReliquaryComponent::ReliquaryComponent(Reliquary& owner, std::string objectTypeName)
-        : owner(&owner), objectTypeName(std::move(objectTypeName))
-    {}
-
     Reliquary& ReliquaryComponent::Owner()
     {
         return *owner;
@@ -75,6 +71,10 @@ namespace Arca
     {
         return *owner;
     }
+
+    ReliquaryComponent::ReliquaryComponent(Reliquary& owner, std::string objectTypeName)
+        : owner(&owner), objectTypeName(std::move(objectTypeName))
+    {}
 
     ReliquaryRelics& ReliquaryComponent::Relics()
     {

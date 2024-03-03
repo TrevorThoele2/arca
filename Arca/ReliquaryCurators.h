@@ -5,7 +5,8 @@
 #include <memory>
 #include <unordered_map>
 
-#include "CuratorHandle.h"
+#include "StoredCurator.h"
+#include "IsCurator.h"
 
 #include "KnownPolymorphicSerializer.h"
 
@@ -23,7 +24,7 @@ namespace Arca
         template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int> = 0>
         [[nodiscard]] const CuratorT& Find() const;
     public:
-        using HandlePtr = std::unique_ptr<CuratorHandle>;
+        using HandlePtr = std::unique_ptr<StoredCurator>;
         using Map = std::unordered_map<TypeName, HandlePtr>;
         Map map;
 

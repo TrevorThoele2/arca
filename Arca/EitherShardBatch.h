@@ -3,7 +3,6 @@
 #include "Batch.h"
 #include "EitherShardBatchSource.h"
 #include "EitherShardBatchIterator.h"
-#include "Either.h"
 
 namespace Arca
 {

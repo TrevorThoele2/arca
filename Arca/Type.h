@@ -5,6 +5,7 @@
 namespace Arca
 {
     using TypeName = std::string;
+
     struct Type
     {
         TypeName name{};

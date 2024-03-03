@@ -20,13 +20,13 @@ void GlobalRelicTestsFixture::GlobalRelic::PostConstruct(ShardTuple shards)
 namespace Arca
 {
     const TypeName Traits<GlobalRelicTestsFixture::BasicShard>::typeName =
-        "RelicTestsBasicShard";
+        "GlobalRelicTestsBasicShard";
 
     const TypeName Traits<GlobalRelicTestsFixture::BasicTypedRelic>::typeName =
-        "ReliquaryTestsBasicTypedRelic";
+        "GlobalRelicTestsBasicTypedRelic";
 
     const TypeName Traits<GlobalRelicTestsFixture::GlobalRelic>::typeName =
-        "ReliquaryTestsGlobalRelic";
+        "GlobalRelicTestsGlobalRelic";
 }
 
 SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
@@ -39,13 +39,15 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
             .Type<GlobalRelic>()
             .Actualize();
 
+        auto& test = *static_cast<Reliquary*>(nullptr);
+
         WHEN("retrieving global relic")
         {
-            const auto globalRelic = reliquary->Find<GlobalRelic>();
+            const auto globalRelic = Arca::GlobalPtr<GlobalRelic>(*reliquary);
 
             THEN("structure has been satisfied")
             {
-                REQUIRE(reliquary->Find<BasicShard>(globalRelic->ID()));
+                REQUIRE(Arca::LocalPtr<BasicShard>(globalRelic->ID(), globalRelic->Owner()));
                 REQUIRE(globalRelic->basicShard);
             }
 
@@ -55,7 +57,7 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
 
                 reliquary->Destroy(AsHandle(*globalRelic));
 
-                auto foundAgain = reliquary->Find<GlobalRelic>();
+                auto foundAgain = Arca::GlobalPtr<GlobalRelic>(*reliquary);
 
                 REQUIRE(foundAgain->ID() == globalRelic->ID());
                 REQUIRE(foundAgain->basicShard == globalRelic->basicShard);
@@ -64,7 +66,7 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
 
             WHEN("retrieving global relic as open")
             {
-                const auto asOpen = reliquary->Find<OpenRelic>(globalRelic->ID());
+                const auto asOpen = Arca::LocalPtr<OpenRelic>(globalRelic->ID(), globalRelic->Owner());
 
                 THEN("open is empty")
                 {
@@ -74,7 +76,7 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
 
             WHEN("retrieving as closed")
             {
-                const auto asClosed = reliquary->Find<ClosedRelic>(globalRelic->ID());
+                const auto asClosed = Arca::LocalPtr<ClosedRelic>(globalRelic->ID(), globalRelic->Owner());
 
                 THEN("closed is empty")
                 {
@@ -84,7 +86,7 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
 
             WHEN("retrieving as typed")
             {
-                const auto asTyped = reliquary->Find<BasicTypedRelic>(globalRelic->ID());
+                const auto asTyped = Arca::LocalPtr<BasicTypedRelic>(globalRelic->ID(), globalRelic->Owner());
 
                 THEN("typed is empty")
                 {
@@ -96,16 +98,70 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
 
     GIVEN("global relic registered")
     {
-        auto reliquary = ReliquaryOrigin()
+        auto origin = ReliquaryOrigin()
             .Type<BasicShard>()
-            .Type<GlobalRelic>()
-            .Actualize();
+            .Type<GlobalRelic>();
 
-        WHEN("creating typed relic with type from global relic")
+        WHEN("actualizing and creating typed relic with type from global relic")
         {
+            auto reliquary = origin.Actualize();
+
             THEN("throws error")
             {
                 REQUIRE_THROWS(reliquary->Create<GlobalRelic>());
+            }
+        }
+
+        WHEN("registering alias with int backing")
+        {
+            THEN("throws error")
+            {
+                REQUIRE_THROWS_AS((origin.Alias<int, GlobalRelic>(
+                    [](GlobalRelic& backing)
+                    {
+                        return backing.myValue;
+                    })),
+                    AlreadyRegistered);
+            }
+        }
+    }
+
+    GIVEN("global relic alias registered")
+    {
+        auto origin = ReliquaryOrigin()
+            .Type<BasicShard>()
+            .Alias<int, GlobalRelic>(
+                [](GlobalRelic& backing)
+                {
+                    return backing.myValue;
+                });
+
+        WHEN("registering global relic alias backing type")
+        {
+            THEN("throws error")
+            {
+                REQUIRE_THROWS_AS(origin.Type<GlobalRelic>(), AlreadyRegistered);
+            }
+        }
+    }
+
+    GIVEN("global relic alias registered")
+    {
+        auto reliquary = ReliquaryOrigin()
+            .Type<BasicShard>()
+            .Type<BasicTypedRelic>()
+            .Alias<int, GlobalRelic>(
+                [](GlobalRelic& backing)
+                {
+                    return backing.myValue;
+                })
+            .Actualize();
+
+        WHEN("retrieving backing relic type")
+        {
+            THEN("throws error")
+            {
+                REQUIRE_THROWS_AS(Arca::GlobalPtr<GlobalRelic>(*reliquary), NotRegistered);
             }
         }
     }

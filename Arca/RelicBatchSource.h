@@ -1,10 +1,10 @@
 #pragma once
 
-#include <vector>
+#include <list>
 
 #include "BatchSource.h"
 #include "RelicID.h"
-#include "RelicTraits.h"
+#include "IsRelic.h"
 
 #include "Serialization.h"
 

@@ -1,13 +1,13 @@
 #pragma once
 
 #include "RelicID.h"
-#include "Openness.h"
-#include "Handle.h"
-#include "ShardTraits.h"
-#include "Either.h"
-#include "CompositeTraits.h"
 
-#include "Ptr.h"
+#include "IsShard.h"
+#include "IsEither.h"
+#include "IsComposite.h"
+
+#include "LocalPtr.h"
+#include "Handle.h"
 
 #include "CompositeScribe.h"
 
@@ -21,13 +21,13 @@ namespace Arca
         explicit operator bool() const;
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        Ptr<ShardT> Create();
+        LocalPtr<ShardT> Create();
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         void Destroy();
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] Ptr<ShardT> Find() const;
+        [[nodiscard]] LocalPtr<ShardT> Find() const;
         template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
-        [[nodiscard]] typename EitherT::ShardT* Find() const;
+        [[nodiscard]] LocalPtr<EitherT> Find() const;
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] bool Contains() const;
         template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
@@ -58,7 +58,6 @@ namespace Arca
     struct Traits<OpenRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const Openness openness = Openness::Open;
         static const TypeName typeName;
     };
 }

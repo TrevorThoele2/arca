@@ -3,6 +3,8 @@
 #include <Inscription/CompositeScribe.h>
 #include <Inscription/BinaryArchive.h>
 
+#include "TypeFor.h"
+
 #include "Traits.h"
 
 namespace Inscription

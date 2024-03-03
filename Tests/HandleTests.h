@@ -3,7 +3,6 @@
 #include "GeneralFixture.h"
 
 #include <Arca/ClosedTypedRelicAutomation.h>
-#include <Arca/ShardTraits.h>
 
 #include <Inscription/BinaryArchive.h>
 
@@ -30,20 +29,20 @@ public:
         explicit OtherShard(std::string myValue);
     };
 
-    class TypedRelic : public ClosedTypedRelicAutomation<TypedRelic, Shard>
+    class TypedRelic final : public ClosedTypedRelicAutomation<TypedRelic, Shard>
     {
     public:
-        Ptr<Shard> basicShard;
+        LocalPtr<Shard> basicShard;
     public:
         TypedRelic() = default;
 
         void PostConstruct(ShardTuple shards);
     };
 
-    class GlobalRelic : public ClosedTypedRelicAutomation<GlobalRelic, Shard>
+    class GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic, Shard>
     {
     public:
-        Ptr<Shard> basicShard;
+        LocalPtr<Shard> basicShard;
     public:
         GlobalRelic() = default;
 

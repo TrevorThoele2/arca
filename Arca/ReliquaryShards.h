@@ -4,14 +4,15 @@
 
 #include <unordered_map>
 
-#include "ShardTraits.h"
-#include "ShardBatchSource.h"
 #include "ShardBatch.h"
-#include "EitherShardBatchSource.h"
-#include "CompositeShardBatchSource.h"
-#include "Either.h"
+#include "EitherShardBatch.h"
+#include "CompositeShardBatch.h"
 
-#include "Ptr.h"
+#include "IsShard.h"
+#include "IsEither.h"
+#include "IsComposite.h"
+
+#include "LocalPtr.h"
 
 #include "RelicID.h"
 #include "Type.h"
@@ -29,14 +30,9 @@ namespace Arca
 
         void Create(const Type& type, RelicID id);
         template<class ShardT>
-        Ptr<ShardT> Create(RelicID id);
+        LocalPtr<ShardT> Create(RelicID id);
 
         void Destroy(const Handle& handle);
-
-        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] Ptr<ShardT> Find(RelicID id) const;
-        template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
-        [[nodiscard]] Ptr<EitherT> Find(RelicID id) const;
 
         [[nodiscard]] bool Contains(const Handle& handle) const;
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
@@ -145,7 +141,7 @@ namespace Arca
         void NotifyCompositesShardDestroy(RelicID id);
     private:
         template<class ShardT>
-        Ptr<ShardT> CreatePtr(RelicID id) const;
+        LocalPtr<ShardT> CreatePtr(RelicID id) const;
     private:
         template<::Chroma::VariadicTemplateSize i>
         struct ContainsAllShardsIterator

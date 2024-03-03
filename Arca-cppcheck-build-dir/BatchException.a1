@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<analyzerinfo checksum="3995753679">
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="BatchNotSetup"/>
+    <functioncall functionName="runtime_error"/>
+  </FileInfo>
+</analyzerinfo>

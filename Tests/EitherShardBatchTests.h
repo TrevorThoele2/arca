@@ -2,7 +2,6 @@
 
 #include "ReliquaryFixture.h"
 
-#include <Arca/ShardTraits.h>
 #include <Arca/ClosedTypedRelicAutomation.h>
 
 using namespace Arca;

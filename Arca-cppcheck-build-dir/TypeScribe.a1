@@ -1,0 +1,277 @@
+<?xml version="1.0"?>
+<analyzerinfo checksum="1906536283">
+        <error id="unusedPrivateFunction" severity="style" msg="Unused private function: &apos;Access::is_constructible_impl&apos;" verbose="Unused private function: &apos;Access::is_constructible_impl&apos;" cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Arca\TypeScribe.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Inscription\Inscription\Access.h" line="16" column="21"/>
+            <symbol>Access::is_constructible_impl</symbol>
+        </error>
+        <error id="unusedPrivateFunction" severity="style" msg="Unused private function: &apos;Access::is_constructible_impl&apos;" verbose="Unused private function: &apos;Access::is_constructible_impl&apos;" cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Arca\TypeScribe.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Inscription\Inscription\Access.h" line="22" column="21"/>
+            <symbol>Access::is_constructible_impl</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;FilePath&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;FilePath&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Arca\TypeScribe.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\FilePath.h" line="16" column="9"/>
+            <symbol>FilePath</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;FilePath&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;FilePath&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Arca\TypeScribe.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Chroma\Chroma\FilePath.h" line="18" column="9"/>
+            <symbol>FilePath</symbol>
+        </error>
+        <error id="redundantInitialization" severity="style" msg="Redundant initialization for &apos;typeIndex&apos;. The initialized value is overwritten before it is read." verbose="Redundant initialization for &apos;typeIndex&apos;. The initialized value is overwritten before it is read." cwe="563">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Arca\TypeScribe.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Inscription\Inscription\CompositeScribe.h" line="243" column="27" info="typeIndex is overwritten"/>
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Arca\TypeScribe.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Inscription\Inscription\CompositeScribe.h" line="232" column="35" info="typeIndex is initialized"/>
+            <symbol>typeIndex</symbol>
+        </error>
+        <error id="constParameter" severity="style" msg="Parameter &apos;archive&apos; can be declared with const" verbose="Parameter &apos;archive&apos; can be declared with const" cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Arca\TypeScribe.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Inscription\Inscription\ArrayScribe.h" line="41" column="97"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::copy_if algorithm instead of a raw loop." verbose="Consider using std::copy_if algorithm instead of a raw loop." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Arca\TypeScribe.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Inscription\Inscription\PolymorphicManager.h" line="165" column="35"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::transform algorithm instead of a raw loop." verbose="Consider using std::transform algorithm instead of a raw loop." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Arca\TypeScribe.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Inscription\Inscription\TypeRegistrationContext.h" line="143" column="16"/>
+        </error>
+        <error id="unreadVariable" severity="style" msg="Variable &apos;typeID&apos; is assigned a value that is never used." verbose="Variable &apos;typeID&apos; is assigned a value that is never used." cwe="563">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Arca\TypeScribe.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Inscription\Inscription\PolymorphicManager.h" line="106" column="21"/>
+            <symbol>typeID</symbol>
+        </error>
+  <FileInfo check="ctu">
+<function-call call-id="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/Const.h:64:41" call-funcname="RemoveConst" call-argnr="1" file="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/BinaryArchive.h" line="138" col="24" my-id="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/BinaryArchive.h:40:24" my-argnr="1"/>
+<function-call call-id="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/CompositeScribe.h:59:14" call-funcname="Save" call-argnr="1" file="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/CompositeScribe.h" line="107" col="13" my-id="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/CompositeScribe.h:52:22" my-argnr="1"/>
+  </FileInfo>
+  <FileInfo check="Null pointer">
+    <unsafe-usage my-id="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/CompositeScribe.h:62:14" my-argnr="1" my-argname="object" file="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/CompositeScribe.h" line="196" col="50" value="0"/>
+    <unsafe-usage my-id="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/CompositeScribe.h:68:14" my-argnr="1" my-argname="object" file="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/CompositeScribe.h" line="224" col="18" value="0"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/CompositeScribe.h:62:14" my-argnr="1" my-argname="object" file="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/CompositeScribe.h" line="196" col="50" value="0"/>
+    <unsafe-usage my-id="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/CompositeScribe.h:68:14" my-argnr="1" my-argname="object" file="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/CompositeScribe.h" line="224" col="18" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="A"/>
+    <functioncall functionName="Active"/>
+    <functioncall functionName="Add"/>
+    <functioncall functionName="Archive"/>
+    <functioncall functionName="ArchiveT"/>
+    <functioncall functionName="AsInput"/>
+    <functioncall functionName="AsOutput"/>
+    <functioncall functionName="AsScribe"/>
+    <functioncall functionName="AttemptReplaceTrackedObject"/>
+    <functioncall functionName="AttemptTrackObject"/>
+    <functioncall functionName="AutoImplementation"/>
+    <functioncall functionName="AutoSameTypeImplementation"/>
+    <functioncall functionName="AutoTableDataLink"/>
+    <functioncall functionName="BaseImplementation"/>
+    <functioncall functionName="BaseReferenceImplementation"/>
+    <functioncall functionName="BinaryArchive"/>
+    <functioncall functionName="Buffer"/>
+    <functioncall functionName="Clone"/>
+    <functioncall functionName="Close"/>
+    <functioncall functionName="CompositeScribe"/>
+    <functioncall functionName="CompositeScribe &lt; Arca :: Type , BinaryArchive &gt;"/>
+    <functioncall functionName="Construct"/>
+    <functioncall functionName="CopyEntryList"/>
+    <functioncall functionName="CreateImplementation"/>
+    <functioncall functionName="CreateStorage"/>
+    <functioncall functionName="Curator"/>
+    <functioncall functionName="Data"/>
+    <functioncall functionName="DataMemberT"/>
+    <functioncall functionName="DoConstruct"/>
+    <functioncall functionName="DoScriven"/>
+    <functioncall functionName="Edit"/>
+    <functioncall functionName="EnsureCorrectEndianness"/>
+    <functioncall functionName="Entry"/>
+    <functioncall functionName="EntryBasePtr"/>
+    <functioncall functionName="FailedStream"/>
+    <functioncall functionName="FileEncounteredError"/>
+    <functioncall functionName="FilePath"/>
+    <functioncall functionName="FindID"/>
+    <functioncall functionName="FindObject"/>
+    <functioncall functionName="FindRequiredEntry"/>
+    <functioncall functionName="FindType"/>
+    <functioncall functionName="FromString"/>
+    <functioncall functionName="FromStringImpl"/>
+    <functioncall functionName="Get"/>
+    <functioncall functionName="GetMove"/>
+    <functioncall functionName="GetValue"/>
+    <functioncall functionName="HasSavedConstruction"/>
+    <functioncall functionName="Inactive"/>
+    <functioncall functionName="Input"/>
+    <functioncall functionName="InputBinaryArchive"/>
+    <functioncall functionName="InputBinaryFile"/>
+    <functioncall functionName="InputTypeNotFound"/>
+    <functioncall functionName="InputTypes"/>
+    <functioncall functionName="InputTypesAlreadyRegistered"/>
+    <functioncall functionName="InputTypesFor"/>
+    <functioncall functionName="IsLittleEndian"/>
+    <functioncall functionName="IsOutput"/>
+    <functioncall functionName="IsTypeIn"/>
+    <functioncall functionName="Load"/>
+    <functioncall functionName="LoadConstruction"/>
+    <functioncall functionName="LoadImplementation"/>
+    <functioncall functionName="N"/>
+    <functioncall functionName="NULLPTR"/>
+    <functioncall functionName="NotOpenable"/>
+    <functioncall functionName="NullScribe"/>
+    <functioncall functionName="Object"/>
+    <functioncall functionName="ObjectScriven"/>
+    <functioncall functionName="ObjectScrivenImplementation"/>
+    <functioncall functionName="ObjectT"/>
+    <functioncall functionName="ObjectTracker"/>
+    <functioncall functionName="ObjectTrackerEntry"/>
+    <functioncall functionName="Open"/>
+    <functioncall functionName="Output"/>
+    <functioncall functionName="OutputBinaryArchive"/>
+    <functioncall functionName="OutputBinaryFile"/>
+    <functioncall functionName="OutputType"/>
+    <functioncall functionName="OutputTypeFor"/>
+    <functioncall functionName="PullFromObject"/>
+    <functioncall functionName="PullFromObjectImplementation"/>
+    <functioncall functionName="PushTo"/>
+    <functioncall functionName="PushToObject"/>
+    <functioncall functionName="PushToObjectImplementation"/>
+    <functioncall functionName="Read"/>
+    <functioncall functionName="ReadData"/>
+    <functioncall functionName="ReadFromFile"/>
+    <functioncall functionName="ReadImpl"/>
+    <functioncall functionName="Register"/>
+    <functioncall functionName="RegisterType"/>
+    <functioncall functionName="RegisterTypeImpl&lt;T&gt;"/>
+    <functioncall functionName="Relic"/>
+    <functioncall functionName="RemoveConst"/>
+    <functioncall functionName="ReplaceObject"/>
+    <functioncall functionName="RequiredTypeTrackingIDFor"/>
+    <functioncall functionName="Save"/>
+    <functioncall functionName="SaveConstruction"/>
+    <functioncall functionName="SaveImplementation"/>
+    <functioncall functionName="ScribeBase"/>
+    <functioncall functionName="Scriven"/>
+    <functioncall functionName="ScrivenImplementation"/>
+    <functioncall functionName="Shard"/>
+    <functioncall functionName="Signal"/>
+    <functioncall functionName="SignalSavedConstruction"/>
+    <functioncall functionName="Stream &lt; std :: ifstream &gt;"/>
+    <functioncall functionName="Stream &lt; std :: ofstream &gt;"/>
+    <functioncall functionName="SwapBytes"/>
+    <functioncall functionName="T"/>
+    <functioncall functionName="TableConstruct"/>
+    <functioncall functionName="TrackSavedConstruction"/>
+    <functioncall functionName="TrackingScribe &lt; std :: string , BinaryArchive &gt;"/>
+    <functioncall functionName="Type"/>
+    <functioncall functionName="TypeFor"/>
+    <functioncall functionName="TypeIndexFor"/>
+    <functioncall functionName="TypeTracker"/>
+    <functioncall functionName="TypeTrackerEntry"/>
+    <functioncall functionName="Write"/>
+    <functioncall functionName="WriteData"/>
+    <functioncall functionName="WriteImpl"/>
+    <functioncall functionName="WriteToFile"/>
+    <functioncall functionName="any_of"/>
+    <functioncall functionName="archive"/>
+    <functioncall functionName="arg"/>
+    <functioncall functionName="back"/>
+    <functioncall functionName="back_inserter"/>
+    <functioncall functionName="bad"/>
+    <functioncall functionName="baseLink"/>
+    <functioncall functionName="baseTable"/>
+    <functioncall functionName="begin"/>
+    <functioncall functionName="bytes"/>
+    <functioncall functionName="c_str"/>
+    <functioncall functionName="castedObject"/>
+    <functioncall functionName="castedStorage"/>
+    <functioncall functionName="checkBegin"/>
+    <functioncall functionName="checkEnd"/>
+    <functioncall functionName="clear"/>
+    <functioncall functionName="close"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="const_cast"/>
+    <functioncall functionName="constructedBytes"/>
+    <functioncall functionName="constructor"/>
+    <functioncall functionName="count"/>
+    <functioncall functionName="currentNewInput"/>
+    <functioncall functionName="data"/>
+    <functioncall functionName="dataEntryList"/>
+    <functioncall functionName="dataMember"/>
+    <functioncall functionName="decltype"/>
+    <functioncall functionName="default"/>
+    <functioncall functionName="delete"/>
+    <functioncall functionName="derivedScribe"/>
+    <functioncall functionName="duplicateTypes"/>
+    <functioncall functionName="emplace"/>
+    <functioncall functionName="empty"/>
+    <functioncall functionName="end"/>
+    <functioncall functionName="entryList"/>
+    <functioncall functionName="erase"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="false_type"/>
+    <functioncall functionName="find"/>
+    <functioncall functionName="first"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="foundObject"/>
+    <functioncall functionName="from"/>
+    <functioncall functionName="has_value"/>
+    <functioncall functionName="hash"/>
+    <functioncall functionName="here"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="implementation"/>
+    <functioncall functionName="inputType"/>
+    <functioncall functionName="inputTypes"/>
+    <functioncall functionName="insert"/>
+    <functioncall functionName="int"/>
+    <functioncall functionName="isConst"/>
+    <functioncall functionName="isOpen"/>
+    <functioncall functionName="isOutputTypeIn"/>
+    <functioncall functionName="link"/>
+    <functioncall functionName="loaded"/>
+    <functioncall functionName="make_move_iterator"/>
+    <functioncall functionName="make_unique"/>
+    <functioncall functionName="mode"/>
+    <functioncall functionName="move"/>
+    <functioncall functionName="name"/>
+    <functioncall functionName="needsType"/>
+    <functioncall functionName="new"/>
+    <functioncall functionName="newInputTypes"/>
+    <functioncall functionName="newObject"/>
+    <functioncall functionName="noexcept"/>
+    <functioncall functionName="nullptr"/>
+    <functioncall functionName="object"/>
+    <functioncall functionName="objectID"/>
+    <functioncall functionName="objectMember"/>
+    <functioncall functionName="open"/>
+    <functioncall functionName="operatorconstchar*"/>
+    <functioncall functionName="operatorstd::string"/>
+    <functioncall functionName="outputType"/>
+    <functioncall functionName="override"/>
+    <functioncall functionName="path"/>
+    <functioncall functionName="push_back"/>
+    <functioncall functionName="read"/>
+    <functioncall functionName="reinterpret_cast"/>
+    <functioncall functionName="reset"/>
+    <functioncall functionName="return"/>
+    <functioncall functionName="scribe"/>
+    <functioncall functionName="second"/>
+    <functioncall functionName="set"/>
+    <functioncall functionName="size"/>
+    <functioncall functionName="sizeof"/>
+    <functioncall functionName="static_assert"/>
+    <functioncall functionName="static_cast"/>
+    <functioncall functionName="storage"/>
+    <functioncall functionName="str"/>
+    <functioncall functionName="stream"/>
+    <functioncall functionName="string"/>
+    <functioncall functionName="t"/>
+    <functioncall functionName="table"/>
+    <functioncall functionName="trackingContext"/>
+    <functioncall functionName="true"/>
+    <functioncall functionName="true_type"/>
+    <functioncall functionName="type"/>
+    <functioncall functionName="typeID"/>
+    <functioncall functionName="typeIndex"/>
+    <functioncall functionName="type_index"/>
+    <functioncall functionName="typeid"/>
+    <functioncall functionName="userContext"/>
+    <functioncall functionName="var"/>
+    <functioncall functionName="void"/>
+    <functioncall functionName="while"/>
+    <functioncall functionName="write"/>
+  </FileInfo>
+</analyzerinfo>

@@ -16,9 +16,6 @@
     <ClCompile Include="SignalBatchSource.cpp">
       <Filter>Source Files\Signal\Batch</Filter>
     </ClCompile>
-    <ClCompile Include="CuratorHandle.cpp">
-      <Filter>Source Files\Curator</Filter>
-    </ClCompile>
     <ClCompile Include="ReliquaryOrigin.cpp">
       <Filter>Source Files\Reliquary</Filter>
     </ClCompile>
@@ -67,23 +64,11 @@
     <ClCompile Include="RelicParented.cpp">
       <Filter>Source Files\Signal\Common</Filter>
     </ClCompile>
-    <ClCompile Include="OpenRelic.cpp">
-      <Filter>Source Files\Relic</Filter>
-    </ClCompile>
     <ClCompile Include="EitherShardBatchSource.cpp">
       <Filter>Source Files\Shard\Batch\Either</Filter>
     </ClCompile>
     <ClCompile Include="CompositeShardBatchSource.cpp">
       <Filter>Source Files\Shard\Batch\Composite</Filter>
-    </ClCompile>
-    <ClCompile Include="ClosedRelic.cpp">
-      <Filter>Source Files\Relic</Filter>
-    </ClCompile>
-    <ClCompile Include="ClosedTypedRelic.cpp">
-      <Filter>Source Files\Relic</Filter>
-    </ClCompile>
-    <ClCompile Include="OpenTypedRelic.cpp">
-      <Filter>Source Files\Relic</Filter>
     </ClCompile>
     <ClCompile Include="Handle.cpp">
       <Filter>Source Files\Handle</Filter>
@@ -106,6 +91,21 @@
     <ClCompile Include="TypeScribe.cpp">
       <Filter>Source Files\Type</Filter>
     </ClCompile>
+    <ClCompile Include="StoredCurator.cpp">
+      <Filter>Source Files\Curator</Filter>
+    </ClCompile>
+    <ClCompile Include="ClosedRelic.cpp">
+      <Filter>Source Files\Relic\Closed</Filter>
+    </ClCompile>
+    <ClCompile Include="ClosedTypedRelic.cpp">
+      <Filter>Source Files\Relic\Closed</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenTypedRelic.cpp">
+      <Filter>Source Files\Relic\Open</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenRelic.cpp">
+      <Filter>Source Files\Relic\Open</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Curator.h">
@@ -126,17 +126,11 @@
     <ClInclude Include="SignalBatchSource.h">
       <Filter>Header Files\Signal\Batch</Filter>
     </ClInclude>
-    <ClInclude Include="CuratorHandle.h">
-      <Filter>Header Files\Curator</Filter>
-    </ClInclude>
     <ClInclude Include="Serialization.h">
       <Filter>Header Files\Serialization</Filter>
     </ClInclude>
     <ClInclude Include="ReliquaryOrigin.h">
       <Filter>Header Files\Reliquary</Filter>
-    </ClInclude>
-    <ClInclude Include="CuratorTraits.h">
-      <Filter>Header Files\Curator</Filter>
     </ClInclude>
     <ClInclude Include="ShardBatch.h">
       <Filter>Header Files\Shard\Batch</Filter>
@@ -147,19 +141,10 @@
     <ClInclude Include="ShardBatchSource.h">
       <Filter>Header Files\Shard\Batch</Filter>
     </ClInclude>
-    <ClInclude Include="ShardTraits.h">
-      <Filter>Header Files\Shard</Filter>
-    </ClInclude>
     <ClInclude Include="RelicID.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
     <ClInclude Include="RelicMetadata.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
-    <ClInclude Include="RelicStructure.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
-    <ClInclude Include="RelicTraits.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
     <ClInclude Include="RelicBatch.h">
@@ -174,9 +159,6 @@
     <ClInclude Include="RelicBatchSource.h">
       <Filter>Header Files\Relic\Batch</Filter>
     </ClInclude>
-    <ClInclude Include="StructureFrom.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="ExtractShards.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
@@ -188,9 +170,6 @@
     </ClInclude>
     <ClInclude Include="BatchSource.h">
       <Filter>Header Files\Batch</Filter>
-    </ClInclude>
-    <ClInclude Include="SignalTraits.h">
-      <Filter>Header Files\Signal</Filter>
     </ClInclude>
     <ClInclude Include="Destroying.h">
       <Filter>Header Files\Signal\Common</Filter>
@@ -237,15 +216,6 @@
     <ClInclude Include="ReliquaryRelicStructures.h">
       <Filter>Header Files\Reliquary\Components</Filter>
     </ClInclude>
-    <ClInclude Include="OpenRelic.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenRelicDefinition.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
-    <ClInclude Include="Either.h">
-      <Filter>Header Files\Shard</Filter>
-    </ClInclude>
     <ClInclude Include="EitherShardBatch.h">
       <Filter>Header Files\Shard\Batch\Either</Filter>
     </ClInclude>
@@ -258,9 +228,6 @@
     <ClInclude Include="EitherShardBatchSourceDefinition.h">
       <Filter>Header Files\Shard\Batch\Either</Filter>
     </ClInclude>
-    <ClInclude Include="All.h">
-      <Filter>Header Files\Shard</Filter>
-    </ClInclude>
     <ClInclude Include="CompositeShardBatch.h">
       <Filter>Header Files\Shard\Batch\Composite</Filter>
     </ClInclude>
@@ -272,33 +239,6 @@
     </ClInclude>
     <ClInclude Include="CompositeShardBatchSource.h">
       <Filter>Header Files\Shard\Batch\Composite</Filter>
-    </ClInclude>
-    <ClInclude Include="ClosedRelic.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
-    <ClInclude Include="ClosedRelicDefinition.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
-    <ClInclude Include="Locality.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
-    <ClInclude Include="Openness.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
-    <ClInclude Include="ClosedTypedRelic.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
-    <ClInclude Include="ClosedTypedRelicAutomation.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenTypedRelic.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenTypedRelicAutomation.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenTypedRelicDefinition.h">
-      <Filter>Header Files\Relic</Filter>
     </ClInclude>
     <ClInclude Include="Actualization.h">
       <Filter>Header Files\Handle</Filter>
@@ -336,21 +276,6 @@
     <ClInclude Include="TypeScribe.h">
       <Filter>Header Files\Type</Filter>
     </ClInclude>
-    <ClInclude Include="Ptr.h">
-      <Filter>Header Files\Ptr</Filter>
-    </ClInclude>
-    <ClInclude Include="HasShouldCreateMethod.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
-    <ClInclude Include="HasInitializeMethod.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
-    <ClInclude Include="HasPostConstructMethod.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
-    <ClInclude Include="HasRequiredShards.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="RelicBatchSourceDefinition.h">
       <Filter>Header Files\Relic\Batch</Filter>
     </ClInclude>
@@ -360,17 +285,146 @@
     <ClInclude Include="PostConstruct.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
-    <ClInclude Include="AsHandle.h">
-      <Filter>Header Files\Traits</Filter>
-    </ClInclude>
     <ClInclude Include="TypeFor.h">
       <Filter>Header Files\Type</Filter>
     </ClInclude>
-    <ClInclude Include="UsableInAll.h">
+    <ClInclude Include="GlobalPtr.h">
+      <Filter>Header Files\Ptr</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicTraits.h">
+      <Filter>Header Files\Relic\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="HasShouldCreateMethod.h">
+      <Filter>Header Files\Relic\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="HasRequiredShards.h">
+      <Filter>Header Files\Relic\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="HasPostConstructMethod.h">
+      <Filter>Header Files\Relic\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="HasInitializeMethod.h">
+      <Filter>Header Files\Relic\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="Either.h">
+      <Filter>Header Files\Shard\Either</Filter>
+    </ClInclude>
+    <ClInclude Include="IsEither.h">
+      <Filter>Header Files\Shard\Either</Filter>
+    </ClInclude>
+    <ClInclude Include="IsRelic.h">
+      <Filter>Header Files\Relic\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="IsShard.h">
       <Filter>Header Files\Shard</Filter>
     </ClInclude>
-    <ClInclude Include="CompositeTraits.h">
+    <ClInclude Include="IsSignal.h">
+      <Filter>Header Files\Signal</Filter>
+    </ClInclude>
+    <ClInclude Include="IsCurator.h">
+      <Filter>Header Files\Curator</Filter>
+    </ClInclude>
+    <ClInclude Include="HandleObjectTypeFor.h">
+      <Filter>Header Files\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="Shard.h">
       <Filter>Header Files\Shard</Filter>
+    </ClInclude>
+    <ClInclude Include="UsableInAll.h">
+      <Filter>Header Files\Shard\Composite</Filter>
+    </ClInclude>
+    <ClInclude Include="IsAll.h">
+      <Filter>Header Files\Shard\Composite</Filter>
+    </ClInclude>
+    <ClInclude Include="All.h">
+      <Filter>Header Files\Shard\Composite</Filter>
+    </ClInclude>
+    <ClInclude Include="IsComposite.h">
+      <Filter>Header Files\Shard\Composite</Filter>
+    </ClInclude>
+    <ClInclude Include="StoredCurator.h">
+      <Filter>Header Files\Curator</Filter>
+    </ClInclude>
+    <ClInclude Include="IsOpen.h">
+      <Filter>Header Files\Relic\Traits\Openness</Filter>
+    </ClInclude>
+    <ClInclude Include="Openness.h">
+      <Filter>Header Files\Relic\Traits\Openness</Filter>
+    </ClInclude>
+    <ClInclude Include="OpennessFor.h">
+      <Filter>Header Files\Relic\Traits\Openness</Filter>
+    </ClInclude>
+    <ClInclude Include="IsClosed.h">
+      <Filter>Header Files\Relic\Traits\Openness</Filter>
+    </ClInclude>
+    <ClInclude Include="HasLocality.h">
+      <Filter>Header Files\Relic\Traits\Locality</Filter>
+    </ClInclude>
+    <ClInclude Include="IsGlobal.h">
+      <Filter>Header Files\Relic\Traits\Locality</Filter>
+    </ClInclude>
+    <ClInclude Include="IsLocal.h">
+      <Filter>Header Files\Relic\Traits\Locality</Filter>
+    </ClInclude>
+    <ClInclude Include="Locality.h">
+      <Filter>Header Files\Relic\Traits\Locality</Filter>
+    </ClInclude>
+    <ClInclude Include="LocalityFor.h">
+      <Filter>Header Files\Relic\Traits\Locality</Filter>
+    </ClInclude>
+    <ClInclude Include="AsHandle.h">
+      <Filter>Header Files\Handle</Filter>
+    </ClInclude>
+    <ClInclude Include="ClosedRelic.h">
+      <Filter>Header Files\Relic\Closed</Filter>
+    </ClInclude>
+    <ClInclude Include="ClosedRelicDefinition.h">
+      <Filter>Header Files\Relic\Closed</Filter>
+    </ClInclude>
+    <ClInclude Include="ClosedTypedRelic.h">
+      <Filter>Header Files\Relic\Closed</Filter>
+    </ClInclude>
+    <ClInclude Include="ClosedTypedRelicAutomation.h">
+      <Filter>Header Files\Relic\Closed</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenTypedRelicDefinition.h">
+      <Filter>Header Files\Relic\Open</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenRelic.h">
+      <Filter>Header Files\Relic\Open</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenRelicDefinition.h">
+      <Filter>Header Files\Relic\Open</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenTypedRelic.h">
+      <Filter>Header Files\Relic\Open</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenTypedRelicAutomation.h">
+      <Filter>Header Files\Relic\Open</Filter>
+    </ClInclude>
+    <ClInclude Include="StructureFrom.h">
+      <Filter>Header Files\Relic\Structure</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicStructure.h">
+      <Filter>Header Files\Relic\Structure</Filter>
+    </ClInclude>
+    <ClInclude Include="HasShards.h">
+      <Filter>Header Files\Relic\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="ShardsFor.h">
+      <Filter>Header Files\Relic\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="ShardList.h">
+      <Filter>Header Files\Relic\Traits</Filter>
+    </ClInclude>
+    <ClInclude Include="LocalPtr.h">
+      <Filter>Header Files\Ptr</Filter>
+    </ClInclude>
+    <ClInclude Include="PtrFor.h">
+      <Filter>Header Files\Ptr</Filter>
+    </ClInclude>
+    <ClInclude Include="AliasPtr.h">
+      <Filter>Header Files\Ptr</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -493,6 +547,36 @@
     </Filter>
     <Filter Include="Header Files\Ptr">
       <UniqueIdentifier>{0af7c992-c8d6-4968-b66c-32a0a88b551e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Relic\Traits">
+      <UniqueIdentifier>{8ee29fed-0593-482e-9bed-165183532f75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Shard\Either">
+      <UniqueIdentifier>{62973e57-95a4-4085-a9b8-be5b381ee5e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Shard\Composite">
+      <UniqueIdentifier>{6ecc1c89-7553-43b3-bf7d-21f3802d7326}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Relic\Traits\Openness">
+      <UniqueIdentifier>{d0948f78-8c6b-4759-9d96-e3e19e1b3685}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Relic\Traits\Locality">
+      <UniqueIdentifier>{d2a34d83-bb1a-4ea5-b655-437789a7974b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Relic\Open">
+      <UniqueIdentifier>{333c4855-e18f-4302-aea4-d03d1cc417a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Relic\Closed">
+      <UniqueIdentifier>{8cbe489a-ca83-4884-89b1-22c4e32767ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Relic\Structure">
+      <UniqueIdentifier>{6cd6e0af-90a0-4d32-8d45-e71b04e7e4e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Relic\Closed">
+      <UniqueIdentifier>{8ff883cd-a3b8-454e-a56f-e3ca4b22355f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Relic\Open">
+      <UniqueIdentifier>{f42b3f06-82ee-428f-adf0-354c49789ba8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

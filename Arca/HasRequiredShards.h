@@ -6,7 +6,7 @@ namespace Arca
 {
     class Reliquary;
 
-    template <class T, class = void>
+    template <class T, class Enable = void>
     struct has_required_shards_method : std::false_type
     {};
 

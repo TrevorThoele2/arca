@@ -4,7 +4,6 @@
 
 #include <Arca/ClosedTypedRelicAutomation.h>
 #include <Arca/OpenTypedRelicAutomation.h>
-#include <Arca/ShardTraits.h>
 
 #include <Inscription/BinaryArchive.h>
 
@@ -44,7 +43,7 @@ public:
     {
     public:
         int myInt = 0;
-        Ptr<BasicShard> basicShard;
+        LocalPtr<BasicShard> basicShard;
     public:
         TypedClosedRelic() = default;
 
@@ -55,7 +54,7 @@ public:
     {
     public:
         int myInt = 0;
-        Ptr<BasicShard> basicShard;
+        LocalPtr<BasicShard> basicShard;
     public:
         TypedOpenRelic() = default;
 
@@ -66,11 +65,12 @@ public:
     {
     public:
         int myInt = 0;
-        Ptr<BasicShard> basicShard;
+        LocalPtr<BasicShard> basicShard;
     public:
         GlobalRelic() = default;
 
         void PostConstruct(ShardTuple shards);
+        void Initialize(int myInt = 0);
     };
 
     class BasicCurator final : public Curator
@@ -105,7 +105,7 @@ public:
     {
     public:
         int myInt = 0;
-        Ptr<BasicShardNullInscription> basicShard;
+        LocalPtr<BasicShardNullInscription> basicShard;
     public:
         TypedClosedRelicNullInscription() = default;
 
@@ -117,7 +117,7 @@ public:
     {
     public:
         int myInt = 0;
-        Ptr<BasicShardNullInscription> basicShard;
+        LocalPtr<BasicShardNullInscription> basicShard;
     public:
         TypedOpenRelicNullInscription() = default;
 
@@ -129,7 +129,7 @@ public:
     {
     public:
         int myInt = 0;
-        Ptr<BasicShardNullInscription> basicShard;
+        LocalPtr<BasicShardNullInscription> basicShard;
     public:
         GlobalRelicNullInscription() = default;
 
@@ -139,7 +139,7 @@ public:
     class MovableOnlyRelic final : public ClosedTypedRelicAutomation<MovableOnlyRelic, BasicShard>
     {
     public:
-        Ptr<BasicShard> basicShard;
+        LocalPtr<BasicShard> basicShard;
 
         int myValue = 0;
     public:

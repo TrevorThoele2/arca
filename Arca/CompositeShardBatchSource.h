@@ -3,9 +3,11 @@
 #include <vector>
 
 #include "BatchSource.h"
-#include "CompositeTraits.h"
-#include "Ptr.h"
-#include "RelicStructure.h"
+
+#include "RelicID.h"
+#include "IsComposite.h"
+
+#include "PtrFor.h"
 
 namespace Arca
 {
@@ -34,7 +36,7 @@ namespace Arca
         template<class U>
         struct ToPtr
         {
-            using Type = Ptr<U>;
+            using Type = typename PtrFor<U>::Type;
         };
     public:
         using TupleT = typename Pack::template Transform<ToPtr>::Type::TupleT;
@@ -86,7 +88,5 @@ namespace Arca
         };
     private:
         friend class Reliquary;
-    private:
-        INSCRIPTION_ACCESS;
     };
 }

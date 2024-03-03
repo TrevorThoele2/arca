@@ -12,6 +12,13 @@ namespace Arca
 
     NotRegistered::NotRegistered(
         const std::string& objectType,
+        const std::type_index& classType)
+        :
+        Exception(BaseMessage(objectType, classType))
+    {}
+
+    NotRegistered::NotRegistered(
+        const std::string& objectType,
         const Type& type)
         :
         Exception(BaseMessage(objectType, type))
@@ -25,10 +32,22 @@ namespace Arca
         Exception(BaseMessage(objectType, type) + " " + ClassNameMessage(classType))
     {}
 
+    std::string NotRegistered::BaseMessage(const std::string& objectType, const std::type_index& classType) const
+    {
+        return "The " + objectType + " (" + classType.name() + ") was not registered.";
+    }
+
     std::string NotRegistered::BaseMessage(const std::string & objectType, const Type& type) const
     {
         return "The " + objectType + " (" + ::Chroma::ToString(type) + ") was not registered.";
     }
+
+    AlreadyRegistered::AlreadyRegistered(
+        const std::string& objectType,
+        const std::type_index& classType)
+        :
+        Exception(BaseMessage(objectType, classType))
+    {}
 
     AlreadyRegistered::AlreadyRegistered(
         const std::string& objectType,
@@ -44,6 +63,11 @@ namespace Arca
         :
         Exception(BaseMessage(objectType, type) + " " + ClassNameMessage(classType))
     {}
+
+    std::string AlreadyRegistered::BaseMessage(const std::string& objectType, const std::type_index& classType) const
+    {
+        return "The " + objectType + " (" + classType.name() + ") was already registered.";
+    }
 
     std::string AlreadyRegistered::BaseMessage(const std::string& objectType, const Type& type) const
     {
@@ -52,6 +76,13 @@ namespace Arca
 
     CannotCreate::CannotCreate(
         const std::string& objectType,
+        const std::type_index& classType)
+        :
+        Exception(BaseMessage(objectType, classType))
+    {}
+
+    CannotCreate::CannotCreate(
+        const std::string& objectType,
         const Type& type)
         :
         Exception(BaseMessage(objectType, type))
@@ -65,10 +96,22 @@ namespace Arca
         Exception(BaseMessage(objectType, type) + " " + ClassNameMessage(classType))
     {}
 
+    std::string CannotCreate::BaseMessage(const std::string& objectType, const std::type_index& classType) const
+    {
+        return "The " + objectType + " (" + classType.name() + ") cannot be created.";
+    }
+
     std::string CannotCreate::BaseMessage(const std::string& objectType, const Type& type) const
     {
         return "The " + objectType + " (" + ::Chroma::ToString(type) + ") cannot be created.";
     }
+
+    CannotDestroy::CannotDestroy(
+        const std::string& objectType,
+        const std::type_index& classType)
+        :
+        Exception(BaseMessage(objectType, classType))
+    {}
 
     CannotDestroy::CannotDestroy(
         const std::string& objectType,
@@ -84,6 +127,11 @@ namespace Arca
         :
         Exception(BaseMessage(objectType, type) + " " + ClassNameMessage(classType))
     {}
+
+    std::string CannotDestroy::BaseMessage(const std::string& objectType, const std::type_index& classType) const
+    {
+        return "The " + objectType + " (" + classType.name() + ") cannot be destroyed.";
+    }
 
     std::string CannotDestroy::BaseMessage(const std::string& objectType, const Type& type) const
     {
@@ -92,6 +140,13 @@ namespace Arca
 
     CannotFind::CannotFind(
         const std::string& objectType,
+        const std::type_index& classType)
+        :
+        Exception(BaseMessage(objectType, classType))
+    {}
+
+    CannotFind::CannotFind(
+        const std::string& objectType,
         const Type& type)
         :
         Exception(BaseMessage(objectType, type))
@@ -104,6 +159,11 @@ namespace Arca
         :
         Exception(BaseMessage(objectType, type) + " " + ClassNameMessage(classType))
     {}
+
+    std::string CannotFind::BaseMessage(const std::string& objectType, const std::type_index& classType) const
+    {
+        return "The " + objectType + " (" + classType.name() + ") cannot be found.";
+    }
 
     std::string CannotFind::BaseMessage(const std::string& objectType, const Type& type) const
     {

@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<analyzerinfo checksum="3349529756">
+  <FileInfo check="ctu">
+<function-call call-id="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/ObjectTracker.h:28:27" call-funcname="Add" call-argnr="1" file="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/ObjectTracker.cpp" line="47" col="16" my-id="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/ObjectTracker.h:27:27" my-argnr="1"/>
+<function-call call-id="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/ObjectTracker.h:35:27" call-funcname="FindID" call-argnr="1" file="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/ObjectTracker.cpp" line="60" col="34" my-id="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/ObjectTracker.h:28:27" my-argnr="1"/>
+<function-call call-id="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/ObjectTracker.h:47:18" call-funcname="FindIterator" call-argnr="1" file="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/ObjectTracker.cpp" line="75" col="31" my-id="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/ObjectTracker.h:29:14" my-argnr="1"/>
+<function-call call-id="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/ObjectTracker.h:27:27" call-funcname="Add" call-argnr="1" file="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/ObjectTracker.cpp" line="78" col="13" my-id="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/ObjectTracker.h:29:14" my-argnr="2"/>
+<function-call call-id="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/ObjectTracker.h:47:18" call-funcname="FindIterator" call-argnr="1" file="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/ObjectTracker.cpp" line="119" col="31" my-id="C:/Users/Trevor/Documents/ProgrammingProjects/Inscription/Inscription/ObjectTracker.h:35:27" my-argnr="1"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="Activate" lineNumber="30"/>
+    <functiondecl functionName="Deactivate" lineNumber="35"/>
+    <functiondecl functionName="IsActive" lineNumber="40"/>
+    <functiondecl functionName="Add" lineNumber="45"/>
+    <functiondecl functionName="Add" lineNumber="50"/>
+    <functiondecl functionName="ReplaceObject" lineNumber="70"/>
+    <functiondecl functionName="SignalSavedConstruction" lineNumber="87"/>
+    <functiondecl functionName="HasSavedConstruction" lineNumber="99"/>
+    <functiondecl functionName="FindObject" lineNumber="108"/>
+    <functiondecl functionName="FindID" lineNumber="117"/>
+    <functiondecl functionName="Clear" lineNumber="126"/>
+    <functiondecl functionName="FindEntry" lineNumber="134"/>
+    <functiondecl functionName="FindIterator" lineNumber="143"/>
+    <functiondecl functionName="NextID" lineNumber="152"/>
+    <functioncall functionName="Add"/>
+    <functioncall functionName="Entry"/>
+    <functioncall functionName="FindEntry"/>
+    <functioncall functionName="FindID"/>
+    <functioncall functionName="FindIterator"/>
+    <functioncall functionName="FindObject"/>
+    <functioncall functionName="IsActive"/>
+    <functioncall functionName="NextID"/>
+    <functioncall functionName="ObjectTracker"/>
+    <functioncall functionName="ObjectTrackerEntry"/>
+    <functioncall functionName="active"/>
+    <functioncall functionName="add"/>
+    <functioncall functionName="begin"/>
+    <functioncall functionName="clear"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="default"/>
+    <functioncall functionName="emplace"/>
+    <functioncall functionName="end"/>
+    <functioncall functionName="entry"/>
+    <functioncall functionName="erase"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="find"/>
+    <functioncall functionName="first"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="foundObject"/>
+    <functioncall functionName="hasSavedConstruction"/>
+    <functioncall functionName="has_value"/>
+    <functioncall functionName="here"/>
+    <functioncall functionName="id"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="map"/>
+    <functioncall functionName="move"/>
+    <functioncall functionName="newObject"/>
+    <functioncall functionName="noexcept"/>
+    <functioncall functionName="nullptr"/>
+    <functioncall functionName="object"/>
+    <functioncall functionName="return"/>
+    <functioncall functionName="second"/>
+    <functioncall functionName="set"/>
+    <functioncall functionName="size"/>
+    <functioncall functionName="true"/>
+  </FileInfo>
+</analyzerinfo>

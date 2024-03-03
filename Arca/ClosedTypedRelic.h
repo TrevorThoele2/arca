@@ -1,8 +1,9 @@
 #pragma once
 
+#include <optional>
+
 #include "RelicID.h"
-#include "RelicStructure.h"
-#include "RelicTraits.h"
+
 #include "Handle.h"
 
 #include "Serialization.h"

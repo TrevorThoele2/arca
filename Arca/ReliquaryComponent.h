@@ -49,11 +49,12 @@ namespace Arca
             const Type& type,
             const std::type_index& classType) const;
         [[nodiscard]] CannotModifyShards CannotModify(RelicID id) const;
+    public:
+        [[nodiscard]] Reliquary& Owner();
+        [[nodiscard]] const Reliquary& Owner() const;
     protected:
         explicit ReliquaryComponent(Reliquary& owner, std::string objectTypeName);
     protected:
-        [[nodiscard]] Reliquary& Owner();
-        [[nodiscard]] const Reliquary& Owner() const;
         [[nodiscard]] ReliquaryRelics& Relics();
         [[nodiscard]] const ReliquaryRelics& Relics() const;
         [[nodiscard]] ReliquaryRelicStructures& RelicStructures();

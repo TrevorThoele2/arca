@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="ReliquaryFixture.cpp" />
     <ClCompile Include="CompositeShardBatchTests.cpp">
       <Filter>Source Files\Tests</Filter>
     </ClCompile>
@@ -56,18 +55,17 @@
     <ClCompile Include="ReliquaryOriginRegistrationTests.cpp">
       <Filter>Source Files\Tests</Filter>
     </ClCompile>
-    <ClCompile Include="GeneralFixture.cpp">
-      <Filter>Source Files\Fixtures</Filter>
-    </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ReliquarySerializationTests.cpp">
       <Filter>Source Files\Tests</Filter>
     </ClCompile>
+    <ClCompile Include="ReliquaryFixture.cpp">
+      <Filter>Source Files\Fixtures</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ReliquaryFixture.h" />
     <ClInclude Include="CompositeShardBatchTests.h">
       <Filter>Header Files\Tests</Filter>
     </ClInclude>
@@ -127,6 +125,9 @@
     </ClInclude>
     <ClInclude Include="ReliquarySerializationTests.h">
       <Filter>Header Files\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquaryFixture.h">
+      <Filter>Header Files\Fixtures</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

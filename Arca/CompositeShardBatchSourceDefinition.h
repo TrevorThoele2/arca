@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CompositeShardBatchSource.h"
-#include "Reliquary.h"
+#include "ReliquaryShards.h"
 
 namespace Arca
 {
@@ -11,7 +11,10 @@ namespace Arca
         CreateTupleIterator<i>::Do(TupleT& tuple, RelicID id, ReliquaryShards& shards)
     {
         using T = typename Pack::template Parameter<i>::Type;
-        std::get<i>(tuple) = shards.Find<T>(id);
+        if constexpr (usable_for_local_ptr_v<T>)
+            std::get<i>(tuple) = Arca::LocalPtr<T>(id, shards.Owner());
+        else
+            std::get<i>(tuple) = Arca::GlobalPtr<T>(shards.Owner());
     }
 
     template<class T>

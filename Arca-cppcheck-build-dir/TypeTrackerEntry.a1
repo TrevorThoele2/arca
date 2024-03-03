@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<analyzerinfo checksum="3484833906">
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="NULLPTR"/>
+    <functioncall functionName="TypeTrackerEntry"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="id"/>
+    <functioncall functionName="nullptr_t"/>
+    <functioncall functionName="type"/>
+    <functioncall functionName="typeid"/>
+  </FileInfo>
+</analyzerinfo>

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "CuratorTraits.h"
-
 #include "Serialization.h"
 
 namespace Arca

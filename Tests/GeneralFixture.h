@@ -9,5 +9,5 @@ class GeneralFixture
 public:
     ::TestFramework::DataGeneration dataGeneration;
 public:
-    GeneralFixture();
+    GeneralFixture() = default;
 };

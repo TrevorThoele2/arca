@@ -79,6 +79,9 @@ namespace Arca
         for (auto& initializer : globalRelicList)
             initializer.factory(*reliquary);
 
+        for (auto& initializer : globalRelicAliasInitializerMap)
+            initializer.second(*reliquary);
+
         {
             for (auto& stage : transformedCuratorInitializationPipeline)
                 for (auto& curator : stage)
@@ -88,9 +91,6 @@ namespace Arca
                 for (auto& curator : stage)
                     curator->Initialize();
         }
-
-        for (auto& initializer : globalRelicInitializerList)
-            initializer(*reliquary);
 
         return reliquary;
     }
@@ -141,9 +141,9 @@ namespace Arca
             ReliquaryCurators::HandlePtr handle;
 
             if (loop.curator.index() == 0)
-                handle = std::make_unique<OwnedCuratorHandle>(std::move(std::get<0>(loop.curator)), loop.type);
+                handle = std::make_unique<OwnedStoredCurator>(std::move(std::get<0>(loop.curator)), loop.type);
             else
-                handle = std::make_unique<UnownedCuratorHandle>(std::get<1>(loop.curator), loop.type);
+                handle = std::make_unique<UnownedStoredCurator>(std::get<1>(loop.curator), loop.type);
 
             returnValue.push_back(handle->Get());
 

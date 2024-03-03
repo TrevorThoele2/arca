@@ -6,7 +6,7 @@
 namespace Arca
 {
     template<class ShardT>
-    Ptr<ShardT> ReliquaryShards::Create(RelicID id)
+    LocalPtr<ShardT> ReliquaryShards::Create(RelicID id)
     {
         Relics().ShardModificationRequired(id);
 
@@ -25,35 +25,18 @@ namespace Arca
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    Ptr<ShardT> ReliquaryShards::Find(RelicID id) const
+    bool ReliquaryShards::Contains(RelicID id) const
     {
         auto& batchSource = batchSources.Required<ShardT>();
         auto found = batchSource.Find(id);
-        if (!found)
-            return {};
-        return CreatePtr<ShardT>(id);
+        return static_cast<bool>(found);
     }
 
     template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int>>
-    Ptr<EitherT> ReliquaryShards::Find(RelicID id) const
+    bool ReliquaryShards::Contains(RelicID id) const
     {
         using ShardT = typename EitherT::BareT;
-        if (Find<ShardT>(id) || Find<const ShardT>(id))
-            return CreatePtr<EitherT>(id);
-
-        return {};
-    }
-
-    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    bool ReliquaryShards::Contains(RelicID id) const
-    {
-        return static_cast<bool>(Find<ShardT>(id));
-    }
-
-    template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int>>
-    bool ReliquaryShards::Contains(RelicID id) const
-    {
-        return static_cast<bool>(Find<EitherT>(id));
+        return Contains<ShardT>(id) || Contains<const ShardT>(id);
     }
 
     template<class ShardsT, std::enable_if_t<is_composite_v<ShardsT>, int>>
@@ -212,7 +195,7 @@ namespace Arca
     }
 
     template<class ShardT>
-    Ptr<ShardT> ReliquaryShards::CreatePtr(RelicID id) const
+    LocalPtr<ShardT> ReliquaryShards::CreatePtr(RelicID id) const
     {
         return { id, const_cast<Reliquary&>(Owner()) };
     }

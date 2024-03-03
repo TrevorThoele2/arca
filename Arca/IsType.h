@@ -2,9 +2,9 @@
 
 #include "Type.h"
 
-#include "RelicTraits.h"
-#include "ShardTraits.h"
-#include "CuratorTraits.h"
+#include "IsShard.h"
+#include "IsRelic.h"
+#include "IsCurator.h"
 
 namespace Arca
 {

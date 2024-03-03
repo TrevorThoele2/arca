@@ -3,7 +3,6 @@
 #include "GeneralFixture.h"
 
 #include <Arca/ClosedTypedRelicAutomation.h>
-#include <Arca/ShardTraits.h>
 
 #include <Arca/Serialization.h>
 
@@ -22,12 +21,12 @@ public:
         explicit Shard(std::string myValue);
     };
 
-    class BasicTypedRelic : public ClosedTypedRelicAutomation<BasicTypedRelic, Shard<0>, Shard<1>, Shard<2>>
+    class BasicTypedRelic final : public ClosedTypedRelicAutomation<BasicTypedRelic, Shard<0>, Shard<1>, Shard<2>>
     {
     public:
-        Ptr<Shard<0>> shard0;
-        Ptr<Shard<1>> shard1;
-        Ptr<Shard<2>> shard2;
+        LocalPtr<Shard<0>> shard0;
+        LocalPtr<Shard<1>> shard1;
+        LocalPtr<Shard<2>> shard2;
     public:
         BasicTypedRelic() = default;
 

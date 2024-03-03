@@ -1,13 +1,12 @@
 #pragma once
 
 #include <type_traits>
-#include "RelicTraits.h"
 
 namespace Arca
 {
     class Reliquary;
 
-    template <class T, class = void>
+    template <class T, class Enable = void>
     struct has_should_create_method : std::false_type
     {};
 

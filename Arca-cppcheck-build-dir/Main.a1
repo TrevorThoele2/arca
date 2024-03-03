@@ -1,0 +1,1628 @@
+<?xml version="1.0"?>
+<analyzerinfo checksum="4162354334">
+        <error id="operatorEq" severity="style" msg="&apos;StringRef::operator=&apos; should return &apos;StringRef &amp;&apos;." verbose="The StringRef::operator= does not conform to standard C/C++ behaviour. To conform to standard C/C++ behaviour, return a reference to self (such as: &apos;StringRef &amp;StringRef::operator=(..) { .. return *this; }&apos;. For safety reasons it might be better to not fix this message. If you think that safety is always more important than conformance then please ignore/suppress this message. For more details about this topic, see the book &quot;Effective C++&quot; by Scott Meyers." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="637" column="9"/>
+            <symbol>StringRef</symbol>
+        </error>
+        <error id="useInitializationList" severity="performance" msg="Variable &apos;m_ref&apos; is assigned in constructor body. Consider performing initialization in initialization list." verbose="When an object of a class is created, the constructors of all member variables are called consecutively in the order the variables are declared, even if you don&apos;t explicitly write them to the initialization list. You could avoid assigning &apos;m_ref&apos; a value by passing the value to the constructor in the initialization list." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="9185" column="13"/>
+            <symbol>m_ref</symbol>
+        </error>
+        <error id="useInitializationList" severity="performance" msg="Variable &apos;m_ref&apos; is assigned in constructor body. Consider performing initialization in initialization list." verbose="When an object of a class is created, the constructors of all member variables are called consecutively in the order the variables are declared, even if you don&apos;t explicitly write them to the initialization list. You could avoid assigning &apos;m_ref&apos; a value by passing the value to the constructor in the initialization list." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="9190" column="13"/>
+            <symbol>m_ref</symbol>
+        </error>
+        <error id="virtualCallInConstructor" severity="warning" msg="Virtual function &apos;next&apos; is called from constructor &apos;FilterGenerator(P&amp;&amp;pred,GeneratorWrapper&lt;T&gt;&amp;&amp;generator)&apos; at line 4135. Dynamic binding is not used." verbose="Virtual function &apos;next&apos; is called from constructor &apos;FilterGenerator(P&amp;&amp;pred,GeneratorWrapper&lt;T&gt;&amp;&amp;generator)&apos; at line 4135. Dynamic binding is not used.">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="4146" column="14" info="next is a virtual function"/>
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="4135" column="42" info="Calling next"/>
+        </error>
+        <error id="virtualCallInConstructor" severity="warning" msg="Virtual function &apos;next&apos; is called from constructor &apos;RandomFloatingGenerator(Float a,Float b)&apos; at line 4582. Dynamic binding is not used." verbose="Virtual function &apos;next&apos; is called from constructor &apos;RandomFloatingGenerator(Float a,Float b)&apos; at line 4582. Dynamic binding is not used.">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="4588" column="10" info="next is a virtual function"/>
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="4582" column="27" info="Calling next"/>
+        </error>
+        <error id="virtualCallInConstructor" severity="warning" msg="Virtual function &apos;next&apos; is called from constructor &apos;RandomIntegerGenerator(Integer a,Integer b)&apos; at line 4604. Dynamic binding is not used." verbose="Virtual function &apos;next&apos; is called from constructor &apos;RandomIntegerGenerator(Integer a,Integer b)&apos; at line 4604. Dynamic binding is not used.">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="4610" column="10" info="next is a virtual function"/>
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="4604" column="27" info="Calling next"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;StringRef&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;StringRef&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="621" column="9"/>
+            <symbol>StringRef</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;StringRef&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;StringRef&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="628" column="9"/>
+            <symbol>StringRef</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;LazyExpression&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;LazyExpression&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="2514" column="9"/>
+            <symbol>LazyExpression</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;Section&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;Section&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="2892" column="9"/>
+            <symbol>Section</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;ExceptionTranslatorRegistrar&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;ExceptionTranslatorRegistrar&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="3025" column="9"/>
+            <symbol>ExceptionTranslatorRegistrar</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;ExceptionMessageMatcher&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;ExceptionMessageMatcher&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="3373" column="5"/>
+            <symbol>ExceptionMessageMatcher</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;EqualsMatcher&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;EqualsMatcher&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="3527" column="13"/>
+            <symbol>EqualsMatcher</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;ContainsMatcher&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;ContainsMatcher&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="3531" column="13"/>
+            <symbol>ContainsMatcher</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;StartsWithMatcher&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;StartsWithMatcher&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="3535" column="13"/>
+            <symbol>StartsWithMatcher</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;EndsWithMatcher&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;EndsWithMatcher&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="3539" column="13"/>
+            <symbol>EndsWithMatcher</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;ContainsElementMatcher&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;ContainsElementMatcher&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="3579" column="13"/>
+            <symbol>ContainsElementMatcher</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;ContainsMatcher&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;ContainsMatcher&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="3600" column="13"/>
+            <symbol>ContainsMatcher</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;EqualsMatcher&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;EqualsMatcher&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="3630" column="13"/>
+            <symbol>EqualsMatcher</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;ApproxMatcher&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;ApproxMatcher&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="3653" column="13"/>
+            <symbol>ApproxMatcher</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;UnorderedEqualsMatcher&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;UnorderedEqualsMatcher&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="3688" column="13"/>
+            <symbol>UnorderedEqualsMatcher</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;GeneratorException&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;GeneratorException&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="3895" column="5"/>
+            <symbol>GeneratorException</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;SingleValueGenerator&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;SingleValueGenerator&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="3928" column="9"/>
+            <symbol>SingleValueGenerator</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;SingleValueGenerator&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;SingleValueGenerator&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="3929" column="9"/>
+            <symbol>SingleValueGenerator</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;FixedValuesGenerator&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;FixedValuesGenerator&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="3947" column="9"/>
+            <symbol>FixedValuesGenerator</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;GeneratorWrapper&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;GeneratorWrapper&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="3962" column="9"/>
+            <symbol>GeneratorWrapper</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;Generators&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;Generators&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="4005" column="9"/>
+            <symbol>Generators</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;TestSpecParser&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;TestSpecParser&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="5187" column="9"/>
+            <symbol>TestSpecParser</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;Config&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;Config&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="5304" column="9"/>
+            <symbol>Config</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;TestRunInfo&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;TestRunInfo&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="5493" column="9"/>
+            <symbol>TestRunInfo</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;TestGroupStats&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;TestGroupStats&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="5563" column="9"/>
+            <symbol>TestGroupStats</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;TestEventListenerBase&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;TestEventListenerBase&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="5951" column="9"/>
+            <symbol>TestEventListenerBase</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;Colour&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;Colour&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="6004" column="9"/>
+            <symbol>Colour</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;ConsoleReporter&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;ConsoleReporter&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="6134" column="9"/>
+            <symbol>ConsoleReporter</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;XmlEncode&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;XmlEncode&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="6206" column="9"/>
+            <symbol>XmlEncode</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;ScopedElement&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;ScopedElement&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="6222" column="13"/>
+            <symbol>ScopedElement</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;JunitReporter&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;JunitReporter&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="6294" column="9"/>
+            <symbol>JunitReporter</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;XmlReporter&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;XmlReporter&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="6342" column="9"/>
+            <symbol>XmlReporter</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;Args&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;Args&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="8708" column="9"/>
+            <symbol>Args</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;Help&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;Help&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="9350" column="9"/>
+            <symbol>Help</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;TestInvokerAsFunction&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;TestInvokerAsFunction&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="12123" column="9"/>
+            <symbol>TestInvokerAsFunction</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;FileStream&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;FileStream&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="13415" column="13"/>
+            <symbol>FileStream</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;MatchNotOf &lt; std :: string &gt;&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;MatchNotOf &lt; std :: string &gt;&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="3328" column="13"/>
+            <symbol>MatchNotOf &lt; std :: string &gt;</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;MatchNotOf &lt; std &gt;&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;MatchNotOf &lt; std &gt;&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="3328" column="13"/>
+            <symbol>MatchNotOf &lt; std &gt;</symbol>
+        </error>
+        <error id="missingOverride" severity="style" msg="The function &apos;isFlag&apos; overrides a function in a base class but is not marked with a &apos;override&apos; specifier." verbose="The function &apos;isFlag&apos; overrides a function in a base class but is not marked with a &apos;override&apos; specifier.">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="8997" column="22" info="Function in derived class"/>
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="8990" column="22" info="Virtual function in base class"/>
+            <symbol>isFlag</symbol>
+        </error>
+        <error id="missingOverride" severity="style" msg="The function &apos;use&apos; overrides a function in a base class but is not marked with a &apos;override&apos; specifier." verbose="The function &apos;use&apos; overrides a function in a base class but is not marked with a &apos;override&apos; specifier.">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="9923" column="18" info="Function in derived class"/>
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="9919" column="26" info="Virtual function in base class"/>
+            <symbol>use</symbol>
+        </error>
+        <error id="shadowFunction" severity="style" msg="Local variable &apos;width&apos; shadows outer function" verbose="Local variable &apos;width&apos; shadows outer function" cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="8403" column="9" info="Shadow variable"/>
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="8495" column="7" info="Shadowed declaration"/>
+            <symbol>width</symbol>
+        </error>
+        <error id="shadowFunction" severity="style" msg="Local variable &apos;end&apos; shadows outer function" verbose="Local variable &apos;end&apos; shadows outer function" cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="13564" column="32" info="Shadow variable"/>
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="1993" column="18" info="Shadowed declaration"/>
+            <symbol>end</symbol>
+        </error>
+        <error id="shadowFunction" severity="style" msg="Local variable &apos;end&apos; shadows outer function" verbose="Local variable &apos;end&apos; shadows outer function" cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="14678" column="20" info="Shadow variable"/>
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="1993" column="18" info="Shadowed declaration"/>
+            <symbol>end</symbol>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &apos;enumName&apos; should be passed by const reference." verbose="Parameter &apos;enumName&apos; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="1481" column="57"/>
+            <symbol>enumName</symbol>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &apos;allEnums&apos; should be passed by const reference." verbose="Parameter &apos;allEnums&apos; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="1481" column="77"/>
+            <symbol>allEnums</symbol>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &apos;capturedExpression&apos; should be passed by const reference." verbose="Parameter &apos;capturedExpression&apos; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="8097" column="23"/>
+            <symbol>capturedExpression</symbol>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &apos;op&apos; should be passed by const reference." verbose="Parameter &apos;op&apos; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="10348" column="93"/>
+            <symbol>op</symbol>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &apos;enums&apos; should be passed by const reference." verbose="Parameter &apos;enums&apos; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="10438" column="54"/>
+            <symbol>enums</symbol>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &apos;enumName&apos; should be passed by const reference." verbose="Parameter &apos;enumName&apos; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="10458" column="59"/>
+            <symbol>enumName</symbol>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &apos;enumName&apos; should be passed by const reference." verbose="Parameter &apos;enumName&apos; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="10472" column="69"/>
+            <symbol>enumName</symbol>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &apos;allValueNames&apos; should be passed by const reference." verbose="Parameter &apos;allValueNames&apos; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="10472" column="89"/>
+            <symbol>allValueNames</symbol>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &apos;filename&apos; should be passed by const reference." verbose="Parameter &apos;filename&apos; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="13415" column="35"/>
+            <symbol>filename</symbol>
+        </error>
+        <error id="constParameter" severity="style" msg="Parameter &apos;result&apos; can be declared with const" verbose="Parameter &apos;result&apos; can be declared with const" cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="15322" column="53"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::transform algorithm instead of a raw loop." verbose="Consider using std::transform algorithm instead of a raw loop." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="1486" column="27"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::any_of algorithm instead of a raw loop." verbose="Consider using std::any_of algorithm instead of a raw loop." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="3583" column="45"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::any_of algorithm instead of a raw loop." verbose="Consider using std::any_of algorithm instead of a raw loop." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="3609" column="47"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::transform algorithm instead of a raw loop." verbose="Consider using std::transform algorithm instead of a raw loop." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="8561" column="17"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::transform algorithm instead of a raw loop." verbose="Consider using std::transform algorithm instead of a raw loop." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="8577" column="17"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::any_of algorithm instead of a raw loop." verbose="Consider using std::any_of algorithm instead of a raw loop." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="9287" column="0"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::accumulate algorithm instead of a raw loop." verbose="Consider using std::accumulate algorithm instead of a raw loop." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="9438" column="26"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::transform algorithm instead of a raw loop." verbose="Consider using std::transform algorithm instead of a raw loop." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="10443" column="24"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::find_if algorithm instead of a raw loop." verbose="Consider using std::find_if algorithm instead of a raw loop." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="10452" column="0"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::accumulate algorithm instead of a raw loop." verbose="Consider using std::accumulate algorithm instead of a raw loop." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="11102" column="18"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::accumulate algorithm instead of a raw loop." verbose="Consider using std::accumulate algorithm instead of a raw loop." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="11154" column="24"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::accumulate algorithm instead of a raw loop." verbose="Consider using std::accumulate algorithm instead of a raw loop." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="13900" column="23"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::copy_if algorithm instead of a raw loop." verbose="Consider using std::copy_if algorithm instead of a raw loop." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="13991" column="25"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::accumulate algorithm instead of a raw loop." verbose="Consider using std::accumulate algorithm instead of a raw loop." cwe="398">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="14364" column="18"/>
+        </error>
+        <error id="unreadVariable" severity="style" msg="Variable &apos;e&apos; is assigned a value that is never used." verbose="Variable &apos;e&apos; is assigned a value that is never used." cwe="563">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="16446" column="36"/>
+            <symbol>e</symbol>
+        </error>
+        <error id="unreadVariable" severity="style" msg="Variable &apos;properties&apos; is assigned a value that is never used." verbose="Variable &apos;properties&apos; is assigned a value that is never used." cwe="563">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="16462" column="29"/>
+            <symbol>properties</symbol>
+        </error>
+        <error id="unreadVariable" severity="style" msg="Variable &apos;e&apos; is assigned a value that is never used." verbose="Variable &apos;e&apos; is assigned a value that is never used." cwe="563">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="16515" column="40"/>
+            <symbol>e</symbol>
+        </error>
+        <error id="unreadVariable" severity="style" msg="Variable &apos;e&apos; is assigned a value that is never used." verbose="Variable &apos;e&apos; is assigned a value that is never used." cwe="563">
+            <location file0="C:\Users\Trevor\Documents\ProgrammingProjects\Arca\Tests\Main.cpp" file="C:\Users\Trevor\Documents\ProgrammingProjects\Catch\catch.hpp" line="16575" column="40"/>
+            <symbol>e</symbol>
+        </error>
+  <FileInfo check="ctu">
+<function-call call-id="C:/Users/Trevor/Documents/ProgrammingProjects/Catch/catch.hpp:3061:18" call-funcname="Approx" call-argnr="1" file="C:/Users/Trevor/Documents/ProgrammingProjects/Catch/catch.hpp" line="7750" col="22" call-argexpr="0" call-argvaluetype="0" call-argvalue="0"/><function-call call-id="C:/Users/Trevor/Documents/ProgrammingProjects/Catch/catch.hpp:9982:14" call-funcname="setTextAttribute" call-argnr="1" file="C:/Users/Trevor/Documents/ProgrammingProjects/Catch/catch.hpp" line="9966" col="64" call-argexpr="0" call-argvaluetype="0" call-argvalue="0"/><function-call call-id="C:/Users/Trevor/Documents/ProgrammingProjects/Catch/catch.hpp:6010:21" call-funcname="use" call-argnr="1" file="C:/Users/Trevor/Documents/ProgrammingProjects/Catch/catch.hpp" line="10106" col="42" call-argexpr="None" call-argvaluetype="0" call-argvalue="0"/><function-call call-id="C:/Users/Trevor/Documents/ProgrammingProjects/Catch/catch.hpp:8022:14" call-funcname="reportExpr" call-argnr="2" file="C:/Users/Trevor/Documents/ProgrammingProjects/Catch/catch.hpp" line="12779" col="27" call-argexpr="ResultWas::Ok" call-argvaluetype="0" call-argvalue="0"/><function-call call-id="C:/Users/Trevor/Documents/ProgrammingProjects/Catch/catch.hpp:8022:14" call-funcname="reportExpr" call-argnr="3" file="C:/Users/Trevor/Documents/ProgrammingProjects/Catch/catch.hpp" line="12779" col="27" call-argexpr="&expr" call-argvaluetype="7" call-argvalue="0"/><function-call call-id="C:/Users/Trevor/Documents/ProgrammingProjects/Catch/catch.hpp:8022:14" call-funcname="reportExpr" call-argnr="3" file="C:/Users/Trevor/Documents/ProgrammingProjects/Catch/catch.hpp" line="12783" col="23" call-argexpr="&expr" call-argvaluetype="7" call-argvalue="0"/><function-call call-id="C:/Users/Trevor/Documents/ProgrammingProjects/Catch/catch.hpp:6177:14" call-funcname="printSummaryRow" call-argnr="3" file="C:/Users/Trevor/Documents/ProgrammingProjects/Catch/catch.hpp" line="16280" col="24" call-argexpr="0" call-argvaluetype="0" call-argvalue="0"/><function-call call-id="C:/Users/Trevor/Documents/ProgrammingProjects/Catch/catch.hpp:4795:14" call-funcname="makeTestCase" call-argnr="1" file="C:/Users/Trevor/Documents/ProgrammingProjects/Catch/catch.hpp" line="14295" col="25" my-id="C:/Users/Trevor/Documents/ProgrammingProjects/Catch/catch.hpp:986:5" my-argnr="1"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="C:/Users/Trevor/Documents/ProgrammingProjects/Catch/catch.hpp:1711:28" my-argnr="1" my-argname="str" file="C:/Users/Trevor/Documents/ProgrammingProjects/Catch/catch.hpp" line="1712" col="60" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="AddVectoredExceptionHandler"/>
+    <functioncall functionName="Allocator"/>
+    <functioncall functionName="Always"/>
+    <functioncall functionName="Approx"/>
+    <functioncall functionName="ApproxMatcher"/>
+    <functioncall functionName="Arg"/>
+    <functioncall functionName="ArgT"/>
+    <functioncall functionName="Args"/>
+    <functioncall functionName="Argument"/>
+    <functioncall functionName="AssertionHandler"/>
+    <functioncall functionName="AssertionPrinter"/>
+    <functioncall functionName="AssertionResult"/>
+    <functioncall functionName="AssertionResultData"/>
+    <functioncall functionName="AssertionStats"/>
+    <functioncall functionName="Auto"/>
+    <functioncall functionName="AutoReg"/>
+    <functioncall functionName="BasicResult &lt; ParseResultType &gt;"/>
+    <functioncall functionName="BasicResult &lt; ParseState &gt;"/>
+    <functioncall functionName="BasicResult &lt; void &gt;"/>
+    <functioncall functionName="BeforeExit"/>
+    <functioncall functionName="BeforeStart"/>
+    <functioncall functionName="BeforeStartAndExit"/>
+    <functioncall functionName="Big"/>
+    <functioncall functionName="Blue"/>
+    <functioncall functionName="BrightGreen"/>
+    <functioncall functionName="BrightRed"/>
+    <functioncall functionName="BrightYellow"/>
+    <functioncall functionName="Capturer"/>
+    <functioncall functionName="CasedString"/>
+    <functioncall functionName="Catch_global_namespace_dummy"/>
+    <functioncall functionName="Code"/>
+    <functioncall functionName="Colour"/>
+    <functioncall functionName="Column"/>
+    <functioncall functionName="ColumnBreak"/>
+    <functioncall functionName="Columns"/>
+    <functioncall functionName="CompletedCycle"/>
+    <functioncall functionName="CompletedSuccessfully"/>
+    <functioncall functionName="Config"/>
+    <functioncall functionName="ConsoleAssertionPrinter"/>
+    <functioncall functionName="ConsoleReporter"/>
+    <functioncall functionName="ContainsElementMatcher"/>
+    <functioncall functionName="ContainsMatcher"/>
+    <functioncall functionName="Context"/>
+    <functioncall functionName="CoutStream"/>
+    <functioncall functionName="CumulativeReporterBase"/>
+    <functioncall functionName="Cyan"/>
+    <functioncall functionName="DebugOutStream"/>
+    <functioncall functionName="DefaultForReporter"/>
+    <functioncall functionName="DidntThrowException"/>
+    <functioncall functionName="Double"/>
+    <functioncall functionName="Duration"/>
+    <functioncall functionName="E"/>
+    <functioncall functionName="ECMAScript"/>
+    <functioncall functionName="EndTag"/>
+    <functioncall functionName="EndsWithMatcher"/>
+    <functioncall functionName="Equals"/>
+    <functioncall functionName="EqualsMatcher"/>
+    <functioncall functionName="ErrnoGuard"/>
+    <functioncall functionName="Error"/>
+    <functioncall functionName="EscapedName"/>
+    <functioncall functionName="ExceptionMessageMatcher"/>
+    <functioncall functionName="ExceptionTranslator"/>
+    <functioncall functionName="ExcludedPattern"/>
+    <functioncall functionName="ExeName"/>
+    <functioncall functionName="Executing"/>
+    <functioncall functionName="ExecutingChildren"/>
+    <functioncall functionName="ExpressionFailed"/>
+    <functioncall functionName="Failed"/>
+    <functioncall functionName="FailureBit"/>
+    <functioncall functionName="FatalConditionHandler"/>
+    <functioncall functionName="FatalErrorCondition"/>
+    <functioncall functionName="FileName"/>
+    <functioncall functionName="FileStream"/>
+    <functioncall functionName="Filter"/>
+    <functioncall functionName="Float"/>
+    <functioncall functionName="ForAttributes"/>
+    <functioncall functionName="ForTextNodes"/>
+    <functioncall functionName="Func"/>
+    <functioncall functionName="GeneratorException"/>
+    <functioncall functionName="GeneratorTracker"/>
+    <functioncall functionName="GeneratorWrapper"/>
+    <functioncall functionName="Generators"/>
+    <functioncall functionName="GetConsoleScreenBufferInfo"/>
+    <functioncall functionName="GetStdHandle"/>
+    <functioncall functionName="Green"/>
+    <functioncall functionName="Grey"/>
+    <functioncall functionName="GroupInfo"/>
+    <functioncall functionName="Gs"/>
+    <functioncall functionName="Headers"/>
+    <functioncall functionName="Help"/>
+    <functioncall functionName="High"/>
+    <functioncall functionName="IMutableRegistryHub"/>
+    <functioncall functionName="INFINITY"/>
+    <functioncall functionName="IRegistryHub"/>
+    <functioncall functionName="ITransientExpression"/>
+    <functioncall functionName="InDeclarationOrder"/>
+    <functioncall functionName="InLexicographicalOrder"/>
+    <functioncall functionName="InRandomOrder"/>
+    <functioncall functionName="IsDebuggerPresent"/>
+    <functioncall functionName="IsHidden"/>
+    <functioncall functionName="JunitReporter"/>
+    <functioncall functionName="LazyExpression"/>
+    <functioncall functionName="LeakDetector"/>
+    <functioncall functionName="Left"/>
+    <functioncall functionName="LightGrey"/>
+    <functioncall functionName="ListeningReporter"/>
+    <functioncall functionName="Little"/>
+    <functioncall functionName="LogicError"/>
+    <functioncall functionName="MatchAllOf &lt; std :: string &gt;"/>
+    <functioncall functionName="MatchAnyOf &lt; std :: string &gt;"/>
+    <functioncall functionName="MatchExpr"/>
+    <functioncall functionName="MatchNotOf &lt; std :: string &gt;"/>
+    <functioncall functionName="MatchNotOf &lt; std &gt;"/>
+    <functioncall functionName="Matched"/>
+    <functioncall functionName="MatcherT"/>
+    <functioncall functionName="MatcherUntypedBase"/>
+    <functioncall functionName="MaxExitCode"/>
+    <functioncall functionName="MayFail"/>
+    <functioncall functionName="MessageBuilder"/>
+    <functioncall functionName="MessageInfo"/>
+    <functioncall functionName="Microseconds"/>
+    <functioncall functionName="Milliseconds"/>
+    <functioncall functionName="Minutes"/>
+    <functioncall functionName="N"/>
+    <functioncall functionName="Name"/>
+    <functioncall functionName="NameAndLocation"/>
+    <functioncall functionName="NameAndTags"/>
+    <functioncall functionName="NamePattern"/>
+    <functioncall functionName="Nanoseconds"/>
+    <functioncall functionName="NeedsAnotherRun"/>
+    <functioncall functionName="Never"/>
+    <functioncall functionName="No"/>
+    <functioncall functionName="NoMatch"/>
+    <functioncall functionName="NoWildcard"/>
+    <functioncall functionName="NonCopyable"/>
+    <functioncall functionName="None"/>
+    <functioncall functionName="Normal"/>
+    <functioncall functionName="NotStarted"/>
+    <functioncall functionName="Nothing"/>
+    <functioncall functionName="Ok"/>
+    <functioncall functionName="Opt"/>
+    <functioncall functionName="Option"/>
+    <functioncall functionName="Optional"/>
+    <functioncall functionName="OriginalExpression"/>
+    <functioncall functionName="OutputDebugStringA"/>
+    <functioncall functionName="ParseState"/>
+    <functioncall functionName="Parser"/>
+    <functioncall functionName="ParserRefImpl"/>
+    <functioncall functionName="Pattern"/>
+    <functioncall functionName="Predicate"/>
+    <functioncall functionName="PredicateMatcher"/>
+    <functioncall functionName="Quiet"/>
+    <functioncall functionName="QuotedName"/>
+    <functioncall functionName="RangeGenerator"/>
+    <functioncall functionName="Ratio"/>
+    <functioncall functionName="ReconstructedExpression"/>
+    <functioncall functionName="Red"/>
+    <functioncall functionName="RedirectedStdErr"/>
+    <functioncall functionName="RedirectedStdOut"/>
+    <functioncall functionName="RedirectedStream"/>
+    <functioncall functionName="RedirectedStreams"/>
+    <functioncall functionName="RegexMatcher"/>
+    <functioncall functionName="RegistrarForTagAliases"/>
+    <functioncall functionName="RemoveVectoredExceptionHandler"/>
+    <functioncall functionName="ReporterConfig"/>
+    <functioncall functionName="Required"/>
+    <functioncall functionName="ResultError"/>
+    <functioncall functionName="ResultExpectedFailure"/>
+    <functioncall functionName="ResultSuccess"/>
+    <functioncall functionName="ResultValueBase &lt; void &gt;"/>
+    <functioncall functionName="ReturnT"/>
+    <functioncall functionName="ReusableStringStream"/>
+    <functioncall functionName="Right"/>
+    <functioncall functionName="RowBreak"/>
+    <functioncall functionName="RunContext"/>
+    <functioncall functionName="RuntimeError"/>
+    <functioncall functionName="SZ"/>
+    <functioncall functionName="ScopedElement"/>
+    <functioncall functionName="ScopedMessage"/>
+    <functioncall functionName="SecondaryText"/>
+    <functioncall functionName="Seconds"/>
+    <functioncall functionName="Section"/>
+    <functioncall functionName="SectionInfo"/>
+    <functioncall functionName="SectionStats"/>
+    <functioncall functionName="SectionTracker"/>
+    <functioncall functionName="Session"/>
+    <functioncall functionName="SetConsoleTextAttribute"/>
+    <functioncall functionName="SetThreadStackGuarantee"/>
+    <functioncall functionName="ShortCircuitAll"/>
+    <functioncall functionName="ShortCircuitSame"/>
+    <functioncall functionName="ShouldFail"/>
+    <functioncall functionName="SimplePcg32"/>
+    <functioncall functionName="SingleValueGenerator"/>
+    <functioncall functionName="SourceLineInfo"/>
+    <functioncall functionName="Spacer"/>
+    <functioncall functionName="StartsWithMatcher"/>
+    <functioncall functionName="StreamEndStop"/>
+    <functioncall functionName="StreamingReporterBase"/>
+    <functioncall functionName="StringMatcherBase"/>
+    <functioncall functionName="StringRef"/>
+    <functioncall functionName="Success"/>
+    <functioncall functionName="SummaryColumn"/>
+    <functioncall functionName="T"/>
+    <functioncall functionName="Tag"/>
+    <functioncall functionName="TagAlias"/>
+    <functioncall functionName="TagInfo"/>
+    <functioncall functionName="TagPattern"/>
+    <functioncall functionName="TestCase"/>
+    <functioncall functionName="TestCaseInfo"/>
+    <functioncall functionName="TestCaseStats"/>
+    <functioncall functionName="TestEventListenerBase"/>
+    <functioncall functionName="TestGroupStats"/>
+    <functioncall functionName="TestInvokerAsFunction"/>
+    <functioncall functionName="TestInvokerAsMethod"/>
+    <functioncall functionName="TestRunInfo"/>
+    <functioncall functionName="TestRunStats"/>
+    <functioncall functionName="TestSpecParser"/>
+    <functioncall functionName="ThrewException"/>
+    <functioncall functionName="TokenStream"/>
+    <functioncall functionName="TrackerBase"/>
+    <functioncall functionName="U"/>
+    <functioncall functionName="UnorderedEqualsMatcher"/>
+    <functioncall functionName="Version"/>
+    <functioncall functionName="Warning"/>
+    <functioncall functionName="White"/>
+    <functioncall functionName="WildcardAtEnd"/>
+    <functioncall functionName="WildcardAtStart"/>
+    <functioncall functionName="WildcardPattern"/>
+    <functioncall functionName="WithinAbsMatcher"/>
+    <functioncall functionName="WithinRelMatcher"/>
+    <functioncall functionName="WithinUlpsMatcher"/>
+    <functioncall functionName="XmlEncode"/>
+    <functioncall functionName="XmlReporter"/>
+    <functioncall functionName="XmlWriter"/>
+    <functioncall functionName="Yellow"/>
+    <functioncall functionName="Yes"/>
+    <functioncall functionName="_CRTDBG_FILE_STDERR"/>
+    <functioncall functionName="_CRTDBG_MODE_DEBUG"/>
+    <functioncall functionName="_CRTDBG_REPORT_FLAG"/>
+    <functioncall functionName="_CRT_WARN"/>
+    <functioncall functionName="_CrtSetBreakAlloc"/>
+    <functioncall functionName="_CrtSetDbgFlag"/>
+    <functioncall functionName="_CrtSetReportFile"/>
+    <functioncall functionName="_CrtSetReportMode"/>
+    <functioncall functionName="__debugbreak"/>
+    <functioncall functionName="_aborting"/>
+    <functioncall functionName="_assertionResult"/>
+    <functioncall functionName="_assertionStats"/>
+    <functioncall functionName="_assertions"/>
+    <functioncall functionName="_branchName"/>
+    <functioncall functionName="_buildNumber"/>
+    <functioncall functionName="_className"/>
+    <functioncall functionName="_colour"/>
+    <functioncall functionName="_colourCode"/>
+    <functioncall functionName="_config"/>
+    <functioncall functionName="_description"/>
+    <functioncall functionName="_durationInSeconds"/>
+    <functioncall functionName="_file"/>
+    <functioncall functionName="_fullConfig"/>
+    <functioncall functionName="_groupIndex"/>
+    <functioncall functionName="_groupInfo"/>
+    <functioncall functionName="_groupsCount"/>
+    <functioncall functionName="_infoMessages"/>
+    <functioncall functionName="_label"/>
+    <functioncall functionName="_lazyExpression"/>
+    <functioncall functionName="_line"/>
+    <functioncall functionName="_lineInfo"/>
+    <functioncall functionName="_location"/>
+    <functioncall functionName="_macroName"/>
+    <functioncall functionName="_majorVersion"/>
+    <functioncall functionName="_minorVersion"/>
+    <functioncall functionName="_missingAssertions"/>
+    <functioncall functionName="_name"/>
+    <functioncall functionName="_newName"/>
+    <functioncall functionName="_patchNumber"/>
+    <functioncall functionName="_printInfoMessages"/>
+    <functioncall functionName="_resultType"/>
+    <functioncall functionName="_runInfo"/>
+    <functioncall functionName="_sectionInfo"/>
+    <functioncall functionName="_sectionStats"/>
+    <functioncall functionName="_stats"/>
+    <functioncall functionName="_stdErr"/>
+    <functioncall functionName="_stdOut"/>
+    <functioncall functionName="_stream"/>
+    <functioncall functionName="_string"/>
+    <functioncall functionName="_tag"/>
+    <functioncall functionName="_tags"/>
+    <functioncall functionName="_testCase"/>
+    <functioncall functionName="_testCaseStats"/>
+    <functioncall functionName="_testGroupStats"/>
+    <functioncall functionName="_testInfo"/>
+    <functioncall functionName="_testRunStats"/>
+    <functioncall functionName="_totals"/>
+    <functioncall functionName="_type"/>
+    <functioncall functionName="_value"/>
+    <functioncall functionName="a"/>
+    <functioncall functionName="abort"/>
+    <functioncall functionName="abortAfter"/>
+    <functioncall functionName="aborting"/>
+    <functioncall functionName="acquire"/>
+    <functioncall functionName="acquireGeneratorTracker"/>
+    <functioncall functionName="add"/>
+    <functioncall functionName="addCharToPattern"/>
+    <functioncall functionName="addChild"/>
+    <functioncall functionName="addFilter"/>
+    <functioncall functionName="addIndentAndSuffix"/>
+    <functioncall functionName="addInitialFilters"/>
+    <functioncall functionName="addListener"/>
+    <functioncall functionName="addNextFilters"/>
+    <functioncall functionName="addPattern"/>
+    <functioncall functionName="addReporter"/>
+    <functioncall functionName="addRow"/>
+    <functioncall functionName="adjustString"/>
+    <functioncall functionName="alias"/>
+    <functioncall functionName="all"/>
+    <functioncall functionName="allEnums"/>
+    <functioncall functionName="allOk"/>
+    <functioncall functionName="allPassed"/>
+    <functioncall functionName="allTestCases"/>
+    <functioncall functionName="allValueNames"/>
+    <functioncall functionName="all_of"/>
+    <functioncall functionName="allowThrows"/>
+    <functioncall functionName="almostEqualUlps"/>
+    <functioncall functionName="alreadyInstantiated"/>
+    <functioncall functionName="any_of"/>
+    <functioncall functionName="append"/>
+    <functioncall functionName="applyFilenamesAsTags"/>
+    <functioncall functionName="approx"/>
+    <functioncall functionName="arg"/>
+    <functioncall functionName="argc"/>
+    <functioncall functionName="args"/>
+    <functioncall functionName="argv"/>
+    <functioncall functionName="arr"/>
+    <functioncall functionName="assert"/>
+    <functioncall functionName="assertion"/>
+    <functioncall functionName="assertionEnded"/>
+    <functioncall functionName="assertionInfo"/>
+    <functioncall functionName="assertionPassed"/>
+    <functioncall functionName="assertionResult"/>
+    <functioncall functionName="assertionStarting"/>
+    <functioncall functionName="assertionStats"/>
+    <functioncall functionName="assertions"/>
+    <functioncall functionName="at"/>
+    <functioncall functionName="attribute"/>
+    <functioncall functionName="b"/>
+    <functioncall functionName="back"/>
+    <functioncall functionName="baseTicks"/>
+    <functioncall functionName="baseType"/>
+    <functioncall functionName="begin"/>
+    <functioncall functionName="benchmarkConfidenceInterval"/>
+    <functioncall functionName="benchmarkNoAnalysis"/>
+    <functioncall functionName="benchmarkResamples"/>
+    <functioncall functionName="benchmarkSamples"/>
+    <functioncall functionName="bool"/>
+    <functioncall functionName="bothOrAll"/>
+    <functioncall functionName="branchName"/>
+    <functioncall functionName="break"/>
+    <functioncall functionName="buffer"/>
+    <functioncall functionName="buildNumber"/>
+    <functioncall functionName="builder"/>
+    <functioncall functionName="c"/>
+    <functioncall functionName="c_str"/>
+    <functioncall functionName="calcLength"/>
+    <functioncall functionName="captureValue"/>
+    <functioncall functionName="captureValues"/>
+    <functioncall functionName="capturedExpression"/>
+    <functioncall functionName="cardinality"/>
+    <functioncall functionName="caseSensitivity"/>
+    <functioncall functionName="caseSensitivitySuffix"/>
+    <functioncall functionName="cend"/>
+    <functioncall functionName="cerr"/>
+    <functioncall functionName="char"/>
+    <functioncall functionName="child"/>
+    <functioncall functionName="childSections"/>
+    <functioncall functionName="childTracker"/>
+    <functioncall functionName="children"/>
+    <functioncall functionName="className"/>
+    <functioncall functionName="classOrMethod"/>
+    <functioncall functionName="classOrQualifiedMethodName"/>
+    <functioncall functionName="cleanUp"/>
+    <functioncall functionName="cleanUpContext"/>
+    <functioncall functionName="cleanupSingletons"/>
+    <functioncall functionName="clear"/>
+    <functioncall functionName="clog"/>
+    <functioncall functionName="close"/>
+    <functioncall functionName="col"/>
+    <functioncall functionName="colour"/>
+    <functioncall functionName="colourGuard"/>
+    <functioncall functionName="cols"/>
+    <functioncall functionName="column"/>
+    <functioncall functionName="columnInfos"/>
+    <functioncall functionName="columns"/>
+    <functioncall functionName="comparator"/>
+    <functioncall functionName="completeCycle"/>
+    <functioncall functionName="completedCycle"/>
+    <functioncall functionName="config"/>
+    <functioncall functionName="configData"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="const_cast"/>
+    <functioncall functionName="container"/>
+    <functioncall functionName="contains"/>
+    <functioncall functionName="continue"/>
+    <functioncall functionName="convert"/>
+    <functioncall functionName="convertInto"/>
+    <functioncall functionName="convertUnknownEnumToString"/>
+    <functioncall functionName="convertUnstreamable"/>
+    <functioncall functionName="converted"/>
+    <functioncall functionName="copyfmt"/>
+    <functioncall functionName="count"/>
+    <functioncall functionName="cout"/>
+    <functioncall functionName="create"/>
+    <functioncall functionName="createContext"/>
+    <functioncall functionName="createReporter"/>
+    <functioncall functionName="csbiInfo"/>
+    <functioncall functionName="ctx"/>
+    <functioncall functionName="currentContext"/>
+    <functioncall functionName="currentData"/>
+    <functioncall functionName="currentMatches"/>
+    <functioncall functionName="currentTracker"/>
+    <functioncall functionName="current_exception"/>
+    <functioncall functionName="current_status"/>
+    <functioncall functionName="custom"/>
+    <functioncall functionName="d"/>
+    <functioncall functionName="data"/>
+    <functioncall functionName="decltype"/>
+    <functioncall functionName="default"/>
+    <functioncall functionName="delete"/>
+    <functioncall functionName="delimiterPos"/>
+    <functioncall functionName="delta"/>
+    <functioncall functionName="deltaTotals"/>
+    <functioncall functionName="desc"/>
+    <functioncall functionName="descr"/>
+    <functioncall functionName="describe"/>
+    <functioncall functionName="description"/>
+    <functioncall functionName="dimColour"/>
+    <functioncall functionName="distance"/>
+    <functioncall functionName="domain_error"/>
+    <functioncall functionName="double"/>
+    <functioncall functionName="dummyReaction"/>
+    <functioncall functionName="duration"/>
+    <functioncall functionName="durationInSeconds"/>
+    <functioncall functionName="duration_cast"/>
+    <functioncall functionName="e"/>
+    <functioncall functionName="elem"/>
+    <functioncall functionName="elementName"/>
+    <functioncall functionName="emplace"/>
+    <functioncall functionName="emplace_back"/>
+    <functioncall functionName="empty"/>
+    <functioncall functionName="encodeTo"/>
+    <functioncall functionName="end"/>
+    <functioncall functionName="endElement"/>
+    <functioncall functionName="endInfo"/>
+    <functioncall functionName="endMode"/>
+    <functioncall functionName="endsWith"/>
+    <functioncall functionName="enforceNoDuplicateTestCases"/>
+    <functioncall functionName="enforceNotReservedTag"/>
+    <functioncall functionName="ensureTagClosed"/>
+    <functioncall functionName="enumInfo"/>
+    <functioncall functionName="enumName"/>
+    <functioncall functionName="enumValue"/>
+    <functioncall functionName="enumValues"/>
+    <functioncall functionName="enums"/>
+    <functioncall functionName="epptr"/>
+    <functioncall functionName="eps"/>
+    <functioncall functionName="epsilon"/>
+    <functioncall functionName="epsilonAsDouble"/>
+    <functioncall functionName="equal"/>
+    <functioncall functionName="equalityComparisonImpl"/>
+    <functioncall functionName="erase"/>
+    <functioncall functionName="errno"/>
+    <functioncall functionName="error"/>
+    <functioncall functionName="errorMessage"/>
+    <functioncall functionName="escape"/>
+    <functioncall functionName="estimateClockResolution"/>
+    <functioncall functionName="exception"/>
+    <functioncall functionName="exceptionHandlerHandle"/>
+    <functioncall functionName="exceptionMessage"/>
+    <functioncall functionName="exeName"/>
+    <functioncall functionName="execute"/>
+    <functioncall functionName="expandAliases"/>
+    <functioncall functionName="expectedToFail"/>
+    <functioncall functionName="expr"/>
+    <functioncall functionName="extractClassName"/>
+    <functioncall functionName="extractInstanceName"/>
+    <functioncall functionName="f"/>
+    <functioncall functionName="fabs"/>
+    <functioncall functionName="factories"/>
+    <functioncall functionName="factory"/>
+    <functioncall functionName="fail"/>
+    <functioncall functionName="failed"/>
+    <functioncall functionName="failedButOk"/>
+    <functioncall functionName="failedButOkRatio"/>
+    <functioncall functionName="failedRatio"/>
+    <functioncall functionName="failedString"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="fatalErrorEncountered"/>
+    <functioncall functionName="file"/>
+    <functioncall functionName="fileNameTag"/>
+    <functioncall functionName="filename"/>
+    <functioncall functionName="filenamesAsTags"/>
+    <functioncall functionName="filterString"/>
+    <functioncall functionName="filterTests"/>
+    <functioncall functionName="finalizeDescription"/>
+    <functioncall functionName="find"/>
+    <functioncall functionName="findChild"/>
+    <functioncall functionName="findMax"/>
+    <functioncall functionName="find_first_not_of"/>
+    <functioncall functionName="find_first_of"/>
+    <functioncall functionName="find_if"/>
+    <functioncall functionName="find_last_not_of"/>
+    <functioncall functionName="find_last_of"/>
+    <functioncall functionName="first"/>
+    <functioncall functionName="flag"/>
+    <functioncall functionName="flags"/>
+    <functioncall functionName="float"/>
+    <functioncall functionName="fmt"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="forWhat"/>
+    <functioncall functionName="forward"/>
+    <functioncall functionName="fpToString"/>
+    <functioncall functionName="from"/>
+    <functioncall functionName="front"/>
+    <functioncall functionName="fullConfig"/>
+    <functioncall functionName="full_size"/>
+    <functioncall functionName="function"/>
+    <functioncall functionName="functions"/>
+    <functioncall functionName="g_singletons"/>
+    <functioncall functionName="generator"/>
+    <functioncall functionName="generatorExpression"/>
+    <functioncall functionName="get"/>
+    <functioncall functionName="getAllTestCasesSorted"/>
+    <functioncall functionName="getAllTestsSorted"/>
+    <functioncall functionName="getConfig"/>
+    <functioncall functionName="getCurrentContext"/>
+    <functioncall functionName="getCurrentMutableContext"/>
+    <functioncall functionName="getCurrentNanosecondsSinceEpoch"/>
+    <functioncall functionName="getCurrentTimestamp"/>
+    <functioncall functionName="getDescription"/>
+    <functioncall functionName="getElapsedMicroseconds"/>
+    <functioncall functionName="getElapsedNanoseconds"/>
+    <functioncall functionName="getElapsedSeconds"/>
+    <functioncall functionName="getExceptionTranslatorRegistry"/>
+    <functioncall functionName="getExpandedExpression"/>
+    <functioncall functionName="getExpression"/>
+    <functioncall functionName="getExpressionInMacro"/>
+    <functioncall functionName="getFactories"/>
+    <functioncall functionName="getFormattedDuration"/>
+    <functioncall functionName="getGenerator"/>
+    <functioncall functionName="getHelpColumns"/>
+    <functioncall functionName="getInvalidArgs"/>
+    <functioncall functionName="getLineOfChars &lt; '-' &gt;"/>
+    <functioncall functionName="getLineOfChars &lt; '.' &gt;"/>
+    <functioncall functionName="getLineOfChars &lt; '~' &gt;"/>
+    <functioncall functionName="getListeners"/>
+    <functioncall functionName="getMessage"/>
+    <functioncall functionName="getMutable"/>
+    <functioncall functionName="getMutableRegistryHub"/>
+    <functioncall functionName="getPreferences"/>
+    <functioncall functionName="getRegistryHub"/>
+    <functioncall functionName="getReporterName"/>
+    <functioncall functionName="getReporterRegistry"/>
+    <functioncall functionName="getResult"/>
+    <functioncall functionName="getResultCapture"/>
+    <functioncall functionName="getResultType"/>
+    <functioncall functionName="getSectionsToRun"/>
+    <functioncall functionName="getSingletons"/>
+    <functioncall functionName="getSourceInfo"/>
+    <functioncall functionName="getStylesheetRef"/>
+    <functioncall functionName="getTagAliasRegistry"/>
+    <functioncall functionName="getTestCaseInfo"/>
+    <functioncall functionName="getTestCaseRegistry"/>
+    <functioncall functionName="getTestMacroName"/>
+    <functioncall functionName="getTestsOrTags"/>
+    <functioncall functionName="getchar"/>
+    <functioncall functionName="getline"/>
+    <functioncall functionName="gmtime_s"/>
+    <functioncall functionName="groupIndex"/>
+    <functioncall functionName="groupInfo"/>
+    <functioncall functionName="groupsCount"/>
+    <functioncall functionName="groupsCounts"/>
+    <functioncall functionName="guaranteeSize"/>
+    <functioncall functionName="handleExceptionMatchExpr"/>
+    <functioncall functionName="handleExpr"/>
+    <functioncall functionName="handleFatalErrorCondition"/>
+    <functioncall functionName="handleIncomplete"/>
+    <functioncall functionName="handleMessage"/>
+    <functioncall functionName="handleNonExpr"/>
+    <functioncall functionName="handleUnexpectedExceptionNotThrown"/>
+    <functioncall functionName="handleUnexpectedInflightException"/>
+    <functioncall functionName="handleUnfinishedSections"/>
+    <functioncall functionName="handleVectoredException"/>
+    <functioncall functionName="handler"/>
+    <functioncall functionName="hasChildren"/>
+    <functioncall functionName="hasExpandedExpression"/>
+    <functioncall functionName="hasExpression"/>
+    <functioncall functionName="hasFilters"/>
+    <functioncall functionName="hasGenerator"/>
+    <functioncall functionName="hasMessage"/>
+    <functioncall functionName="hasTestFilters"/>
+    <functioncall functionName="has_initial_value"/>
+    <functioncall functionName="headerValue"/>
+    <functioncall functionName="hexEscapeChar"/>
+    <functioncall functionName="hint"/>
+    <functioncall functionName="i"/>
+    <functioncall functionName="id"/>
+    <functioncall functionName="idx"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="inNanoseconds"/>
+    <functioncall functionName="inTag"/>
+    <functioncall functionName="includeResults"/>
+    <functioncall functionName="includeSuccessfulResults"/>
+    <functioncall functionName="indent"/>
+    <functioncall functionName="index"/>
+    <functioncall functionName="infix"/>
+    <functioncall functionName="info"/>
+    <functioncall functionName="infoMessages"/>
+    <functioncall functionName="initial"/>
+    <functioncall functionName="initialIndent"/>
+    <functioncall functionName="insert"/>
+    <functioncall functionName="instance"/>
+    <functioncall functionName="int"/>
+    <functioncall functionName="int32_t"/>
+    <functioncall functionName="int64_t"/>
+    <functioncall functionName="intValues"/>
+    <functioncall functionName="invalidArg"/>
+    <functioncall functionName="invalidArgs"/>
+    <functioncall functionName="invoke"/>
+    <functioncall functionName="invokeActiveTestCase"/>
+    <functioncall functionName="invoker"/>
+    <functioncall functionName="isBinaryExpression"/>
+    <functioncall functionName="isBoundary"/>
+    <functioncall functionName="isBreakableAfter"/>
+    <functioncall functionName="isBreakableBefore"/>
+    <functioncall functionName="isComplete"/>
+    <functioncall functionName="isContainer"/>
+    <functioncall functionName="isControlChar"/>
+    <functioncall functionName="isDebuggerActive"/>
+    <functioncall functionName="isFalseTest"/>
+    <functioncall functionName="isFlag"/>
+    <functioncall functionName="isGeneratorTracker"/>
+    <functioncall functionName="isHidden"/>
+    <functioncall functionName="isMatch"/>
+    <functioncall functionName="isNegated"/>
+    <functioncall functionName="isOk"/>
+    <functioncall functionName="isOpen"/>
+    <functioncall functionName="isOptPrefix"/>
+    <functioncall functionName="isOptional"/>
+    <functioncall functionName="isOwned"/>
+    <functioncall functionName="isReservedTag"/>
+    <functioncall functionName="isSectionTracker"/>
+    <functioncall functionName="isSet"/>
+    <functioncall functionName="isSubstring"/>
+    <functioncall functionName="isSuccessfullyCompleted"/>
+    <functioncall functionName="isThrowSafe"/>
+    <functioncall functionName="isWhitespace"/>
+    <functioncall functionName="is_open"/>
+    <functioncall functionName="is_permutation"/>
+    <functioncall functionName="is_ws"/>
+    <functioncall functionName="isalnum"/>
+    <functioncall functionName="isinf"/>
+    <functioncall functionName="isnan"/>
+    <functioncall functionName="isspace"/>
+    <functioncall functionName="it"/>
+    <functioncall functionName="itEnd"/>
+    <functioncall functionName="itMessage"/>
+    <functioncall functionName="item"/>
+    <functioncall functionName="iterations"/>
+    <functioncall functionName="iterator"/>
+    <functioncall functionName="j"/>
+    <functioncall functionName="keypress"/>
+    <functioncall functionName="label"/>
+    <functioncall functionName="lambda"/>
+    <functioncall functionName="last"/>
+    <functioncall functionName="lastDot"/>
+    <functioncall functionName="lastMode"/>
+    <functioncall functionName="lastSlash"/>
+    <functioncall functionName="lazyExpr"/>
+    <functioncall functionName="lazyExpression"/>
+    <functioncall functionName="lazyPrint"/>
+    <functioncall functionName="lazyPrintGroupInfo"/>
+    <functioncall functionName="lazyPrintRunInfo"/>
+    <functioncall functionName="lazyPrintWithoutClosingBenchmarkTable"/>
+    <functioncall functionName="lc"/>
+    <functioncall functionName="lcReporter"/>
+    <functioncall functionName="lcaseTag"/>
+    <functioncall functionName="lcaseTagName"/>
+    <functioncall functionName="lcaseTags"/>
+    <functioncall functionName="left"/>
+    <functioncall functionName="len"/>
+    <functioncall functionName="lhs"/>
+    <functioncall functionName="lhs_v"/>
+    <functioncall functionName="libIdentify"/>
+    <functioncall functionName="libraryVersion"/>
+    <functioncall functionName="line"/>
+    <functioncall functionName="lineInfo"/>
+    <functioncall functionName="list"/>
+    <functioncall functionName="listReporters"/>
+    <functioncall functionName="listTags"/>
+    <functioncall functionName="listTestNamesOnly"/>
+    <functioncall functionName="listTests"/>
+    <functioncall functionName="listTestsNamesOnly"/>
+    <functioncall functionName="listener"/>
+    <functioncall functionName="listeners"/>
+    <functioncall functionName="loadBuffer"/>
+    <functioncall functionName="loadTestNamesFromFile"/>
+    <functioncall functionName="location"/>
+    <functioncall functionName="logic_error"/>
+    <functioncall functionName="long"/>
+    <functioncall functionName="m_activeIterators"/>
+    <functioncall functionName="m_args"/>
+    <functioncall functionName="m_assertionInfo"/>
+    <functioncall functionName="m_assertions"/>
+    <functioncall functionName="m_cache"/>
+    <functioncall functionName="m_caseSensitivity"/>
+    <functioncall functionName="m_cerr"/>
+    <functioncall functionName="m_chunk_size"/>
+    <functioncall functionName="m_clog"/>
+    <functioncall functionName="m_column"/>
+    <functioncall functionName="m_columnInfos"/>
+    <functioncall functionName="m_columns"/>
+    <functioncall functionName="m_comparator"/>
+    <functioncall functionName="m_completed"/>
+    <functioncall functionName="m_config"/>
+    <functioncall functionName="m_configData"/>
+    <functioncall functionName="m_context"/>
+    <functioncall functionName="m_count"/>
+    <functioncall functionName="m_cout"/>
+    <functioncall functionName="m_ctx"/>
+    <functioncall functionName="m_current"/>
+    <functioncall functionName="m_currentColumn"/>
+    <functioncall functionName="m_currentFilter"/>
+    <functioncall functionName="m_data"/>
+    <functioncall functionName="m_description"/>
+    <functioncall functionName="m_dist"/>
+    <functioncall functionName="m_elems"/>
+    <functioncall functionName="m_end"/>
+    <functioncall functionName="m_epsilon"/>
+    <functioncall functionName="m_errorMessage"/>
+    <functioncall functionName="m_exeName"/>
+    <functioncall functionName="m_filters"/>
+    <functioncall functionName="m_forWhat"/>
+    <functioncall functionName="m_fullConfig"/>
+    <functioncall functionName="m_function"/>
+    <functioncall functionName="m_functions"/>
+    <functioncall functionName="m_generator"/>
+    <functioncall functionName="m_headerPrinted"/>
+    <functioncall functionName="m_hint"/>
+    <functioncall functionName="m_idx"/>
+    <functioncall functionName="m_inNanoseconds"/>
+    <functioncall functionName="m_includeSuccessfulResults"/>
+    <functioncall functionName="m_indent"/>
+    <functioncall functionName="m_index"/>
+    <functioncall functionName="m_info"/>
+    <functioncall functionName="m_initialIndent"/>
+    <functioncall functionName="m_invalidArgs"/>
+    <functioncall functionName="m_isBinaryExpression"/>
+    <functioncall functionName="m_isNegated"/>
+    <functioncall functionName="m_isOpen"/>
+    <functioncall functionName="m_iterators"/>
+    <functioncall functionName="m_label"/>
+    <functioncall functionName="m_lastAssertionInfo"/>
+    <functioncall functionName="m_len"/>
+    <functioncall functionName="m_listeners"/>
+    <functioncall functionName="m_margin"/>
+    <functioncall functionName="m_matchers"/>
+    <functioncall functionName="m_matches"/>
+    <functioncall functionName="m_message"/>
+    <functioncall functionName="m_messages"/>
+    <functioncall functionName="m_mode"/>
+    <functioncall functionName="m_moved"/>
+    <functioncall functionName="m_msg"/>
+    <functioncall functionName="m_name"/>
+    <functioncall functionName="m_nameAndLocation"/>
+    <functioncall functionName="m_nanoseconds"/>
+    <functioncall functionName="m_needsNewline"/>
+    <functioncall functionName="m_okToFail"/>
+    <functioncall functionName="m_oldErrno"/>
+    <functioncall functionName="m_operation"/>
+    <functioncall functionName="m_optNames"/>
+    <functioncall functionName="m_options"/>
+    <functioncall functionName="m_originalStream"/>
+    <functioncall functionName="m_os"/>
+    <functioncall functionName="m_oss"/>
+    <functioncall functionName="m_parent"/>
+    <functioncall functionName="m_pattern"/>
+    <functioncall functionName="m_patterns"/>
+    <functioncall functionName="m_pos"/>
+    <functioncall functionName="m_positive"/>
+    <functioncall functionName="m_predicate"/>
+    <functioncall functionName="m_prevBuf"/>
+    <functioncall functionName="m_reaction"/>
+    <functioncall functionName="m_realPatternPos"/>
+    <functioncall functionName="m_redirectedCerr"/>
+    <functioncall functionName="m_redirectedCout"/>
+    <functioncall functionName="m_redirectionStream"/>
+    <functioncall functionName="m_ref"/>
+    <functioncall functionName="m_referenceStream"/>
+    <functioncall functionName="m_regex"/>
+    <functioncall functionName="m_registry"/>
+    <functioncall functionName="m_remainingTokens"/>
+    <functioncall functionName="m_repeat_index"/>
+    <functioncall functionName="m_reporter"/>
+    <functioncall functionName="m_result"/>
+    <functioncall functionName="m_resultCapture"/>
+    <functioncall functionName="m_resultData"/>
+    <functioncall functionName="m_rng"/>
+    <functioncall functionName="m_runInfo"/>
+    <functioncall functionName="m_runState"/>
+    <functioncall functionName="m_scale"/>
+    <functioncall functionName="m_sectionIncluded"/>
+    <functioncall functionName="m_shouldReportUnexpected"/>
+    <functioncall functionName="m_size"/>
+    <functioncall functionName="m_start"/>
+    <functioncall functionName="m_startupExceptions"/>
+    <functioncall functionName="m_state"/>
+    <functioncall functionName="m_step"/>
+    <functioncall functionName="m_str"/>
+    <functioncall functionName="m_stream"/>
+    <functioncall functionName="m_streamBuf"/>
+    <functioncall functionName="m_stringIndex"/>
+    <functioncall functionName="m_tablePrinter"/>
+    <functioncall functionName="m_tag"/>
+    <functioncall functionName="m_tagAliases"/>
+    <functioncall functionName="m_tagIsOpen"/>
+    <functioncall functionName="m_target"/>
+    <functioncall functionName="m_target_repeats"/>
+    <functioncall functionName="m_testAsFunction"/>
+    <functioncall functionName="m_tests"/>
+    <functioncall functionName="m_totals"/>
+    <functioncall functionName="m_trackerContext"/>
+    <functioncall functionName="m_transientExpression"/>
+    <functioncall functionName="m_trimmed_name"/>
+    <functioncall functionName="m_type"/>
+    <functioncall functionName="m_ulps"/>
+    <functioncall functionName="m_underlyingMatcher"/>
+    <functioncall functionName="m_underlyingPattern"/>
+    <functioncall functionName="m_units"/>
+    <functioncall functionName="m_value"/>
+    <functioncall functionName="m_values"/>
+    <functioncall functionName="m_width"/>
+    <functioncall functionName="m_wildcard"/>
+    <functioncall functionName="m_wildcardPattern"/>
+    <functioncall functionName="m_writer"/>
+    <functioncall functionName="m_xml"/>
+    <functioncall functionName="macroName"/>
+    <functioncall functionName="majorVersion"/>
+    <functioncall functionName="makeCommandLineParser"/>
+    <functioncall functionName="makeEnumInfo"/>
+    <functioncall functionName="makeGenerators"/>
+    <functioncall functionName="makeRatio"/>
+    <functioncall functionName="makeReporter"/>
+    <functioncall functionName="makeStream"/>
+    <functioncall functionName="makeTestCase"/>
+    <functioncall functionName="make_pair"/>
+    <functioncall functionName="make_shared"/>
+    <functioncall functionName="make_unique"/>
+    <functioncall functionName="margin"/>
+    <functioncall functionName="marginAsDouble"/>
+    <functioncall functionName="marginComparison"/>
+    <functioncall functionName="markAsNeedingAnotherRun"/>
+    <functioncall functionName="match"/>
+    <functioncall functionName="matchTest"/>
+    <functioncall functionName="matchedTestCases"/>
+    <functioncall functionName="matchee"/>
+    <functioncall functionName="matcher"/>
+    <functioncall functionName="matcherString"/>
+    <functioncall functionName="matches"/>
+    <functioncall functionName="matchesByFilter"/>
+    <functioncall functionName="max"/>
+    <functioncall functionName="maxDoubleSize"/>
+    <functioncall functionName="maxNameLen"/>
+    <functioncall functionName="maxUlpDiff"/>
+    <functioncall functionName="memcpy"/>
+    <functioncall functionName="memset"/>
+    <functioncall functionName="message"/>
+    <functioncall functionName="messages"/>
+    <functioncall functionName="min"/>
+    <functioncall functionName="minorVersion"/>
+    <functioncall functionName="missingAssertions"/>
+    <functioncall functionName="mode"/>
+    <functioncall functionName="moreGenerators"/>
+    <functioncall functionName="move"/>
+    <functioncall functionName="moveToParent"/>
+    <functioncall functionName="moveToThis"/>
+    <functioncall functionName="msg"/>
+    <functioncall functionName="n"/>
+    <functioncall functionName="name"/>
+    <functioncall functionName="nameAndLocation"/>
+    <functioncall functionName="nameAndTags"/>
+    <functioncall functionName="name_"/>
+    <functioncall functionName="name_start"/>
+    <functioncall functionName="negated"/>
+    <functioncall functionName="new"/>
+    <functioncall functionName="newEpsilon"/>
+    <functioncall functionName="newIndent"/>
+    <functioncall functionName="newMargin"/>
+    <functioncall functionName="newName"/>
+    <functioncall functionName="newParser"/>
+    <functioncall functionName="newScale"/>
+    <functioncall functionName="newWidth"/>
+    <functioncall functionName="newlineIfNecessary"/>
+    <functioncall functionName="next"/>
+    <functioncall functionName="noMatchingTestCases"/>
+    <functioncall functionName="noThrow"/>
+    <functioncall functionName="noexcept"/>
+    <functioncall functionName="normaliseOpt"/>
+    <functioncall functionName="normaliseString"/>
+    <functioncall functionName="nothrow"/>
+    <functioncall functionName="now"/>
+    <functioncall functionName="npos"/>
+    <functioncall functionName="nullptr"/>
+    <functioncall functionName="nullptr_t"/>
+    <functioncall functionName="object"/>
+    <functioncall functionName="ok"/>
+    <functioncall functionName="okToFail"/>
+    <functioncall functionName="oldRow"/>
+    <functioncall functionName="open"/>
+    <functioncall functionName="openChild"/>
+    <functioncall functionName="openStream"/>
+    <functioncall functionName="operation"/>
+    <functioncall functionName="operator"/>
+    <functioncall functionName="operator++"/>
+    <functioncall functionName="operator&lt;&lt;"/>
+    <functioncall functionName="operator="/>
+    <functioncall functionName="operator=="/>
+    <functioncall functionName="operatorbool"/>
+    <functioncall functionName="operator|"/>
+    <functioncall functionName="operator|="/>
+    <functioncall functionName="opt"/>
+    <functioncall functionName="optName"/>
+    <functioncall functionName="optToken"/>
+    <functioncall functionName="optWidth"/>
+    <functioncall functionName="optional"/>
+    <functioncall functionName="order"/>
+    <functioncall functionName="originalBackgroundAttributes"/>
+    <functioncall functionName="originalForegroundAttributes"/>
+    <functioncall functionName="originalStream"/>
+    <functioncall functionName="os"/>
+    <functioncall functionName="other"/>
+    <functioncall functionName="outputFilename"/>
+    <functioncall functionName="override"/>
+    <functioncall functionName="p"/>
+    <functioncall functionName="parent"/>
+    <functioncall functionName="parse"/>
+    <functioncall functionName="parseEnums"/>
+    <functioncall functionName="parseSpecialTag"/>
+    <functioncall functionName="parser"/>
+    <functioncall functionName="passed"/>
+    <functioncall functionName="passedRatio"/>
+    <functioncall functionName="passedString"/>
+    <functioncall functionName="patchNumber"/>
+    <functioncall functionName="pattern"/>
+    <functioncall functionName="pbase"/>
+    <functioncall functionName="penultimateColons"/>
+    <functioncall functionName="plain"/>
+    <functioncall functionName="platformColourInstance"/>
+    <functioncall functionName="pluralise"/>
+    <functioncall functionName="pop"/>
+    <functioncall functionName="popScopedMessage"/>
+    <functioncall functionName="pop_back"/>
+    <functioncall functionName="populate"/>
+    <functioncall functionName="populateReaction"/>
+    <functioncall functionName="pos"/>
+    <functioncall functionName="pptr"/>
+    <functioncall functionName="precision"/>
+    <functioncall functionName="pred"/>
+    <functioncall functionName="predicate"/>
+    <functioncall functionName="present"/>
+    <functioncall functionName="prev"/>
+    <functioncall functionName="prevAssertions"/>
+    <functioncall functionName="prevTotals"/>
+    <functioncall functionName="print"/>
+    <functioncall functionName="printClosedHeader"/>
+    <functioncall functionName="printExpressionWas"/>
+    <functioncall functionName="printHeaderString"/>
+    <functioncall functionName="printInfoMessages"/>
+    <functioncall functionName="printIssue"/>
+    <functioncall functionName="printMessage"/>
+    <functioncall functionName="printOpenHeader"/>
+    <functioncall functionName="printOriginalExpression"/>
+    <functioncall functionName="printReconstructedExpression"/>
+    <functioncall functionName="printRemainingMessages"/>
+    <functioncall functionName="printResultType"/>
+    <functioncall functionName="printSourceInfo"/>
+    <functioncall functionName="printSummaryDivider"/>
+    <functioncall functionName="printSummaryRow"/>
+    <functioncall functionName="printTestCaseAndSectionHeader"/>
+    <functioncall functionName="printTestFilters"/>
+    <functioncall functionName="printTotals"/>
+    <functioncall functionName="printTotalsDivider"/>
+    <functioncall functionName="printer"/>
+    <functioncall functionName="processName"/>
+    <functioncall functionName="processNameChar"/>
+    <functioncall functionName="processNoneChar"/>
+    <functioncall functionName="processOtherChar"/>
+    <functioncall functionName="properties"/>
+    <functioncall functionName="push"/>
+    <functioncall functionName="pushScopedMessage"/>
+    <functioncall functionName="push_back"/>
+    <functioncall functionName="range"/>
+    <functioncall functionName="rangeToString"/>
+    <functioncall functionName="ratio"/>
+    <functioncall functionName="rawChars"/>
+    <functioncall functionName="rawMemoryToString"/>
+    <functioncall functionName="rawtime"/>
+    <functioncall functionName="rbegin"/>
+    <functioncall functionName="rdbuf"/>
+    <functioncall functionName="reaction"/>
+    <functioncall functionName="real_begin"/>
+    <functioncall functionName="real_end"/>
+    <functioncall functionName="reconstructExpression"/>
+    <functioncall functionName="redirectedCerr"/>
+    <functioncall functionName="redirectedCout"/>
+    <functioncall functionName="redirectedStreams"/>
+    <functioncall functionName="redirectionStream"/>
+    <functioncall functionName="ref"/>
+    <functioncall functionName="reg"/>
+    <functioncall functionName="regex"/>
+    <functioncall functionName="regex_match"/>
+    <functioncall functionName="registerEnum"/>
+    <functioncall functionName="registerListener"/>
+    <functioncall functionName="registerReporter"/>
+    <functioncall functionName="registerStartupException"/>
+    <functioncall functionName="registerTagAlias"/>
+    <functioncall functionName="registerTest"/>
+    <functioncall functionName="registerTranslator"/>
+    <functioncall functionName="reinterpret_cast"/>
+    <functioncall functionName="relMargin"/>
+    <functioncall functionName="release"/>
+    <functioncall functionName="remainingTokens"/>
+    <functioncall functionName="remove"/>
+    <functioncall functionName="rend"/>
+    <functioncall functionName="repeats"/>
+    <functioncall functionName="replaceThis"/>
+    <functioncall functionName="reportExpr"/>
+    <functioncall functionName="reportFatal"/>
+    <functioncall functionName="reportInvalidArguments"/>
+    <functioncall functionName="reporter"/>
+    <functioncall functionName="reporterName"/>
+    <functioncall functionName="required"/>
+    <functioncall functionName="reserve"/>
+    <functioncall functionName="reset"/>
+    <functioncall functionName="resetAssertionInfo"/>
+    <functioncall functionName="resize"/>
+    <functioncall functionName="result"/>
+    <functioncall functionName="resultCapture"/>
+    <functioncall functionName="resultDisposition"/>
+    <functioncall functionName="resultType"/>
+    <functioncall functionName="ret"/>
+    <functioncall functionName="return"/>
+    <functioncall functionName="revertBackToLastMode"/>
+    <functioncall functionName="rfind"/>
+    <functioncall functionName="rhs"/>
+    <functioncall functionName="right"/>
+    <functioncall functionName="rng"/>
+    <functioncall functionName="rngSeed"/>
+    <functioncall functionName="rootSection"/>
+    <functioncall functionName="rootTracker"/>
+    <functioncall functionName="rotate_right"/>
+    <functioncall functionName="row"/>
+    <functioncall functionName="rows"/>
+    <functioncall functionName="run"/>
+    <functioncall functionName="runCurrentTest"/>
+    <functioncall functionName="runInfo"/>
+    <functioncall functionName="runInternal"/>
+    <functioncall functionName="runOrder"/>
+    <functioncall functionName="runTest"/>
+    <functioncall functionName="runner"/>
+    <functioncall functionName="runtimeError"/>
+    <functioncall functionName="runtime_error"/>
+    <functioncall functionName="s"/>
+    <functioncall functionName="s_empty"/>
+    <functioncall functionName="s_inc"/>
+    <functioncall functionName="s_instance"/>
+    <functioncall functionName="s_nanosecondsInAMicrosecond"/>
+    <functioncall functionName="s_nanosecondsInAMillisecond"/>
+    <functioncall functionName="s_nanosecondsInAMinute"/>
+    <functioncall functionName="s_nanosecondsInASecond"/>
+    <functioncall functionName="saveLastMode"/>
+    <functioncall functionName="scale"/>
+    <functioncall functionName="scoped"/>
+    <functioncall functionName="scopedElement"/>
+    <functioncall functionName="second"/>
+    <functioncall functionName="section"/>
+    <functioncall functionName="sectionEnded"/>
+    <functioncall functionName="sectionEndedEarly"/>
+    <functioncall functionName="sectionInfo"/>
+    <functioncall functionName="sectionNode"/>
+    <functioncall functionName="sectionStarted"/>
+    <functioncall functionName="sectionStarting"/>
+    <functioncall functionName="sectionStats"/>
+    <functioncall functionName="sectionTracker"/>
+    <functioncall functionName="sectionsToRun"/>
+    <functioncall functionName="seed"/>
+    <functioncall functionName="seedRng"/>
+    <functioncall functionName="seed_"/>
+    <functioncall functionName="separate"/>
+    <functioncall functionName="sequence"/>
+    <functioncall functionName="serializeFilters"/>
+    <functioncall functionName="set"/>
+    <functioncall functionName="setColourUsage"/>
+    <functioncall functionName="setCompleted"/>
+    <functioncall functionName="setConfig"/>
+    <functioncall functionName="setCurrentTracker"/>
+    <functioncall functionName="setEpsilon"/>
+    <functioncall functionName="setFlag"/>
+    <functioncall functionName="setGenerator"/>
+    <functioncall functionName="setMargin"/>
+    <functioncall functionName="setReporter"/>
+    <functioncall functionName="setResultCapture"/>
+    <functioncall functionName="setRngSeed"/>
+    <functioncall functionName="setRunner"/>
+    <functioncall functionName="setTags"/>
+    <functioncall functionName="setTestOrder"/>
+    <functioncall functionName="setTextAttribute"/>
+    <functioncall functionName="setValue"/>
+    <functioncall functionName="setVerbosity"/>
+    <functioncall functionName="setWaitForKeypress"/>
+    <functioncall functionName="setWarning"/>
+    <functioncall functionName="setfill"/>
+    <functioncall functionName="setp"/>
+    <functioncall functionName="setprecision"/>
+    <functioncall functionName="setw"/>
+    <functioncall functionName="shouldDebugBreak"/>
+    <functioncall functionName="shouldRedirectStdOut"/>
+    <functioncall functionName="shouldReportAllAssertions"/>
+    <functioncall functionName="shouldSuppressFailure"/>
+    <functioncall functionName="shouldThrow"/>
+    <functioncall functionName="showDurations"/>
+    <functioncall functionName="showHelp"/>
+    <functioncall functionName="showInvisibles"/>
+    <functioncall functionName="showSuccessfulTests"/>
+    <functioncall functionName="shuffle"/>
+    <functioncall functionName="signalDefs"/>
+    <functioncall functionName="singleton"/>
+    <functioncall functionName="size"/>
+    <functioncall functionName="sizeof"/>
+    <functioncall functionName="sizeof..."/>
+    <functioncall functionName="skipTest"/>
+    <functioncall functionName="skipq"/>
+    <functioncall functionName="sort"/>
+    <functioncall functionName="sortTests"/>
+    <functioncall functionName="source"/>
+    <functioncall functionName="spaceWidth"/>
+    <functioncall functionName="spacer"/>
+    <functioncall functionName="spec"/>
+    <functioncall functionName="spelling"/>
+    <functioncall functionName="spellings"/>
+    <functioncall functionName="splitStringRef"/>
+    <functioncall functionName="sprintf_s"/>
+    <functioncall functionName="sputc"/>
+    <functioncall functionName="srand"/>
+    <functioncall functionName="start"/>
+    <functioncall functionName="startCycle"/>
+    <functioncall functionName="startElement"/>
+    <functioncall functionName="startNewMode"/>
+    <functioncall functionName="startRun"/>
+    <functioncall functionName="startsWith"/>
+    <functioncall functionName="static_assert"/>
+    <functioncall functionName="static_cast"/>
+    <functioncall functionName="static_cast&lt;void&gt;"/>
+    <functioncall functionName="static_pointer_cast"/>
+    <functioncall functionName="stats"/>
+    <functioncall functionName="stdErr"/>
+    <functioncall functionName="stdErrForSuite"/>
+    <functioncall functionName="stdOut"/>
+    <functioncall functionName="stdOutForSuite"/>
+    <functioncall functionName="stdoutHandle"/>
+    <functioncall functionName="step"/>
+    <functioncall functionName="str"/>
+    <functioncall functionName="strcmp"/>
+    <functioncall functionName="stream"/>
+    <functioncall functionName="streamReconstructedExpression"/>
+    <functioncall functionName="strftime"/>
+    <functioncall functionName="string"/>
+    <functioncall functionName="stringIndex"/>
+    <functioncall functionName="stringify"/>
+    <functioncall functionName="strlen"/>
+    <functioncall functionName="strncmp"/>
+    <functioncall functionName="stylesheetRef"/>
+    <functioncall functionName="substr"/>
+    <functioncall functionName="succeeded"/>
+    <functioncall functionName="success"/>
+    <functioncall functionName="suiteTime"/>
+    <functioncall functionName="swap"/>
+    <functioncall functionName="switch"/>
+    <functioncall functionName="symbol"/>
+    <functioncall functionName="sync"/>
+    <functioncall functionName="t"/>
+    <functioncall functionName="tag"/>
+    <functioncall functionName="tagAliases"/>
+    <functioncall functionName="tagCounts"/>
+    <functioncall functionName="tagName"/>
+    <functioncall functionName="tags"/>
+    <functioncall functionName="tagsAsString"/>
+    <functioncall functionName="tags_"/>
+    <functioncall functionName="takeOwnership"/>
+    <functioncall functionName="target"/>
+    <functioncall functionName="temp"/>
+    <functioncall functionName="tempResult"/>
+    <functioncall functionName="terminate"/>
+    <functioncall functionName="test"/>
+    <functioncall functionName="testAsFunction"/>
+    <functioncall functionName="testAsMethod"/>
+    <functioncall functionName="testCase"/>
+    <functioncall functionName="testCaseEnded"/>
+    <functioncall functionName="testCaseSection"/>
+    <functioncall functionName="testCaseSectionStats"/>
+    <functioncall functionName="testCaseStarting"/>
+    <functioncall functionName="testCaseStats"/>
+    <functioncall functionName="testCases"/>
+    <functioncall functionName="testForMissingAssertions"/>
+    <functioncall functionName="testGroupEnded"/>
+    <functioncall functionName="testGroupStarting"/>
+    <functioncall functionName="testGroupStats"/>
+    <functioncall functionName="testInfo"/>
+    <functioncall functionName="testOrTags"/>
+    <functioncall functionName="testRunEnded"/>
+    <functioncall functionName="testRunInfo"/>
+    <functioncall functionName="testRunStarting"/>
+    <functioncall functionName="testRunStats"/>
+    <functioncall functionName="testSpec"/>
+    <functioncall functionName="tests"/>
+    <functioncall functionName="testsOrTags"/>
+    <functioncall functionName="text"/>
+    <functioncall functionName="this"/>
+    <functioncall functionName="throw_domain_error"/>
+    <functioncall functionName="throw_exception"/>
+    <functioncall functionName="throw_logic_error"/>
+    <functioncall functionName="throws"/>
+    <functioncall functionName="ticks"/>
+    <functioncall functionName="time"/>
+    <functioncall functionName="timeInfo"/>
+    <functioncall functionName="timeStamp"/>
+    <functioncall functionName="timeStampSize"/>
+    <functioncall functionName="time_point"/>
+    <functioncall functionName="time_since_epoch"/>
+    <functioncall functionName="to"/>
+    <functioncall functionName="toLower"/>
+    <functioncall functionName="toLowerCh"/>
+    <functioncall functionName="toLowerInPlace"/>
+    <functioncall functionName="toString"/>
+    <functioncall functionName="to_string"/>
+    <functioncall functionName="to_time_t"/>
+    <functioncall functionName="token"/>
+    <functioncall functionName="tokenParsed"/>
+    <functioncall functionName="tokens"/>
+    <functioncall functionName="tolower"/>
+    <functioncall functionName="total"/>
+    <functioncall functionName="totals"/>
+    <functioncall functionName="tracker"/>
+    <functioncall functionName="trailingBytes"/>
+    <functioncall functionName="transform"/>
+    <functioncall functionName="translateActiveException"/>
+    <functioncall functionName="translateFunction"/>
+    <functioncall functionName="translator"/>
+    <functioncall functionName="trim"/>
+    <functioncall functionName="trimmed"/>
+    <functioncall functionName="true"/>
+    <functioncall functionName="tryOpen"/>
+    <functioncall functionName="tuples"/>
+    <functioncall functionName="type"/>
+    <functioncall functionName="uint64_t"/>
+    <functioncall functionName="uint8_t"/>
+    <functioncall functionName="ulps"/>
+    <functioncall functionName="uncaught_exceptions"/>
+    <functioncall functionName="underlyingMatcher"/>
+    <functioncall functionName="underlyingPattern"/>
+    <functioncall functionName="unexpandedTestSpec"/>
+    <functioncall functionName="unexpectedExceptions"/>
+    <functioncall functionName="unique"/>
+    <functioncall functionName="unique_ptr"/>
+    <functioncall functionName="units"/>
+    <functioncall functionName="unitsAsString"/>
+    <functioncall functionName="unsortedTestCases"/>
+    <functioncall functionName="use"/>
+    <functioncall functionName="useColour"/>
+    <functioncall functionName="used"/>
+    <functioncall functionName="v"/>
+    <functioncall functionName="val"/>
+    <functioncall functionName="valid"/>
+    <functioncall functionName="validate"/>
+    <functioncall functionName="validationResult"/>
+    <functioncall functionName="value"/>
+    <functioncall functionName="valueOr"/>
+    <functioncall functionName="valueOrGenerator"/>
+    <functioncall functionName="values"/>
+    <functioncall functionName="vector"/>
+    <functioncall functionName="verbosity"/>
+    <functioncall functionName="version"/>
+    <functioncall functionName="visitChar"/>
+    <functioncall functionName="warnAboutMissingAssertions"/>
+    <functioncall functionName="warnAboutNoTests"/>
+    <functioncall functionName="warningSet"/>
+    <functioncall functionName="what"/>
+    <functioncall functionName="which"/>
+    <functioncall functionName="while"/>
+    <functioncall functionName="whitespaceChars"/>
+    <functioncall functionName="width"/>
+    <functioncall functionName="withName"/>
+    <functioncall functionName="write"/>
+    <functioncall functionName="writeAssertion"/>
+    <functioncall functionName="writeAssertions"/>
+    <functioncall functionName="writeAttribute"/>
+    <functioncall functionName="writeDeclaration"/>
+    <functioncall functionName="writeGroup"/>
+    <functioncall functionName="writeSection"/>
+    <functioncall functionName="writeSourceInfo"/>
+    <functioncall functionName="writeStylesheetRef"/>
+    <functioncall functionName="writeTestCase"/>
+    <functioncall functionName="writeText"/>
+    <functioncall functionName="writeToDebugConsole"/>
+    <functioncall functionName="writeToStream"/>
+    <functioncall functionName="writer"/>
+    <functioncall functionName="wstr"/>
+    <functioncall functionName="wstring"/>
+    <functioncall functionName="x"/>
+    <functioncall functionName="xml"/>
+    <functioncall functionName="xorshifted"/>
+  </FileInfo>
+</analyzerinfo>

@@ -1,13 +1,13 @@
 #pragma once
 
 #include "RelicID.h"
-#include "RelicStructure.h"
-#include "RelicTraits.h"
-#include "Handle.h"
-#include "Either.h"
-#include "CompositeTraits.h"
 
-#include "Serialization.h"
+#include "IsShard.h"
+#include "IsEither.h"
+#include "IsComposite.h"
+
+#include "LocalPtr.h"
+#include "Handle.h"
 
 namespace Arca
 {
@@ -21,13 +21,13 @@ namespace Arca
         explicit operator bool() const;
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        ShardT* Create();
+        LocalPtr<ShardT> Create();
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         void Destroy();
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] ShardT* Find() const;
+        [[nodiscard]] LocalPtr<ShardT> Find() const;
         template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
-        [[nodiscard]] typename EitherT::ShardT* Find() const;
+        [[nodiscard]] LocalPtr<EitherT> Find() const;
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] bool Contains() const;
         template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
