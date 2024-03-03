@@ -10,6 +10,11 @@ namespace Arca
     {
     protected:
         OpenTypedRelicAutomation() = default;
+        OpenTypedRelicAutomation(const OpenTypedRelicAutomation& arg) = default;
+        OpenTypedRelicAutomation(OpenTypedRelicAutomation&& arg) noexcept = default;
+
+        OpenTypedRelicAutomation& operator=(const OpenTypedRelicAutomation& arg) = default;
+        OpenTypedRelicAutomation& operator=(OpenTypedRelicAutomation&& arg) noexcept = default;
     protected:
         [[nodiscard]] bool ReliquaryContainsSelf() const override final
         {

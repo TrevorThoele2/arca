@@ -339,7 +339,7 @@ SCENARIO_METHOD(RelicTestsFixture, "many relics", "[relic]")
             .Register<OtherShard>()
             .Actualize();
 
-        std::vector<OpenRelic*> relics;
+        std::vector<RelicIndex<OpenRelic>> relics;
         for (size_t i = 0; i < 100; ++i)
         {
             relics.push_back(reliquary->Create<OpenRelic>());
