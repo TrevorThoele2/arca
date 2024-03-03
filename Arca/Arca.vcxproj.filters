@@ -483,6 +483,9 @@
     <ClInclude Include="ReferenceTypeFor.h">
       <Filter>Header Files\Reference</Filter>
     </ClInclude>
+    <ClInclude Include="RelicInitDefinition.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">

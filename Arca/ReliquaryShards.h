@@ -8,7 +8,7 @@
 
 #include "IsShard.h"
 
-#include "ShardIndex.h"
+#include "Index.h"
 
 #include "RelicID.h"
 #include "Type.h"

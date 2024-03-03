@@ -6,7 +6,7 @@
 #include "IsShard.h"
 #include "IsMatrix.h"
 #include "RelicID.h"
-#include "RelicIndex.h"
+#include "Index.h"
 
 namespace Arca
 {

@@ -4,7 +4,7 @@
 
 #include "IsRelic.h"
 #include "Handle.h"
-#include "RelicIndex.h"
+#include "Index.h"
 
 #include "ReliquaryRelics.h"
 

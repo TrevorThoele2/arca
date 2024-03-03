@@ -57,6 +57,7 @@
     <ClInclude Include="IsMatrixSignal.h" />
     <ClInclude Include="MatrixTypeForSignal.h" />
     <ClInclude Include="RelicInit.h" />
+    <ClInclude Include="RelicInitDefinition.h" />
     <ClInclude Include="ReliquaryCommands.h" />
     <ClInclude Include="ReliquaryCommandsDefinition.h" />
     <ClInclude Include="ReliquaryMatrices.h" />

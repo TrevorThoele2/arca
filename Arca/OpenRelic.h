@@ -6,8 +6,8 @@
 #include "IsShard.h"
 #include "IsMatrix.h"
 
-#include "ShardIndex.h"
-#include "MatrixIndex.h"
+#include "Index.h"
+#include "Index.h"
 #include "Handle.h"
 
 #include "CompositeScribe.h"

@@ -2,8 +2,8 @@
 
 #include "Traits.h"
 #include "Handle.h"
-#include "RelicIndex.h"
-#include "ShardIndex.h"
+#include "Index.h"
+#include "Index.h"
 #include "TypeFor.h"
 
 #include "IsRelic.h"

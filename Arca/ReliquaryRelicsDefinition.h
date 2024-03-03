@@ -233,9 +233,15 @@ namespace Arca
     }
 
     template<class RelicT>
-    ReliquaryRelics::GlobalHandler<RelicT>::GlobalHandler(ReliquaryRelics& owner, std::shared_ptr<void>&& storage, RelicID id) :
-        GlobalHandlerBase(TypeFor<RelicT>().name, std::move(storage), id), owner(&owner)
+    ReliquaryRelics::GlobalHandler<RelicT>::GlobalHandler(ReliquaryRelics& owner, std::unique_ptr<RelicT>&& storage, RelicID id) :
+        GlobalHandlerBase(TypeFor<RelicT>().name, id), owner(&owner), storage(std::move(storage))
     {}
+
+    template<class RelicT>
+    void* ReliquaryRelics::GlobalHandler<RelicT>::Storage() const
+    {
+        return storage.get();
+    }
 
     template<class RelicT>
     bool ReliquaryRelics::GlobalHandler<RelicT>::WillSerialize() const
@@ -260,17 +266,20 @@ namespace Arca
     {
         const auto type = TypeFor<RelicT>();
         const auto id = AdvanceID();
+
         auto metadata = SetupNewInternals(
             id,
             OpennessFor<RelicT>(),
             LocalityFor<RelicT>(),
             HasScribe<RelicT>(),
             Type(type.name));
-        const auto storage = std::make_shared<RelicT>(RelicInit{ id, Owner() }, std::forward<ConstructorArgs>(constructorArgs)...);
+
+        auto relic = std::make_unique<RelicT>(RelicInit{ id, Owner() }, std::forward<ConstructorArgs>(constructorArgs)...);
+
         globalHandlers.push_back(
-            std::make_unique<GlobalHandler<RelicT>>(*this, storage, id));
-        auto relic = reinterpret_cast<RelicT*>(globalHandlers.back()->storage.get());
-        metadata->storage = relic;
+            std::make_unique<GlobalHandler<RelicT>>(*this, std::move(relic), id));
+
+        MetadataFor(id)->storage = relic.get();
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
@@ -294,7 +303,7 @@ namespace Arca
     }
 
     template<class T>
-    T ReliquaryRelics::FindPostulate()
+    T ReliquaryRelics::FindPostulateValue()
     {
         const auto found = postulateMap.find(typeid(T));
         if (found != postulateMap.end())
@@ -326,7 +335,7 @@ namespace Arca
     {
         const auto id = AdvanceID();
 
-        auto metadata = SetupNewInternals(
+        SetupNewInternals(
             id,
             OpennessFor<RelicT>(),
             LocalityFor<RelicT>(),
@@ -336,7 +345,8 @@ namespace Arca
         auto& batchSource = RequiredBatchSource<RelicT>();
         auto added = batchSource.Add(RelicT{ RelicInit{id, Owner()}, std::forward<ConstructorArgs>(constructorArgs)... });
 
-        metadata->storage = added;
+        MetadataFor(id)->storage = added;
+
         SatisfyStructure(id, structure);
 
         Owner().Raise<Created>(HandleFrom(id, TypeFor<RelicT>(), HandleObjectType::Relic));

@@ -2,7 +2,7 @@
 
 #include "Signal.h"
 
-#include "MatrixIndex.h"
+#include "Index.h"
 #include "IsMatrix.h"
 
 namespace Arca

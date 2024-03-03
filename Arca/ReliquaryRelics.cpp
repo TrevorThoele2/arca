@@ -260,9 +260,9 @@ namespace Arca
     }
 
     ReliquaryRelics::GlobalHandlerBase::GlobalHandlerBase(
-        const TypeName& typeName, std::shared_ptr<void>&& storage, RelicID id)
+        const TypeName& typeName, RelicID id)
         :
-        typeName(typeName), storage(std::move(storage)), id(id)
+        typeName(typeName), id(id)
     {}
 
     ReliquaryRelics::GlobalHandlerBase* ReliquaryRelics::FindGlobalHandler(const TypeName& typeName) const

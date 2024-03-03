@@ -15,7 +15,7 @@
 #include "IsLocal.h"
 #include "IsGlobal.h"
 
-#include "RelicIndex.h"
+#include "Index.h"
 
 #include "KnownPolymorphicSerializer.h"
 
@@ -161,21 +161,26 @@ namespace Arca
         {
         public:
             const TypeName typeName;
-            std::shared_ptr<void> storage;
             RelicID id;
         public:
             virtual ~GlobalHandlerBase() = 0;
         public:
+            [[nodiscard]] virtual void* Storage() const = 0;
+
             [[nodiscard]] TypeName MainType() const override;
         protected:
-            explicit GlobalHandlerBase(const TypeName& typeName, std::shared_ptr<void>&& storage, RelicID id);
+            explicit GlobalHandlerBase(const TypeName& typeName, RelicID id);
         };
 
         template<class RelicT>
         class GlobalHandler final : public GlobalHandlerBase
         {
         public:
-            explicit GlobalHandler(ReliquaryRelics& owner, std::shared_ptr<void>&& storage, RelicID id);
+            std::unique_ptr<RelicT> storage;
+        public:
+            explicit GlobalHandler(ReliquaryRelics& owner, std::unique_ptr<RelicT>&& storage, RelicID id);
+
+            [[nodiscard]] void* Storage() const override;
 
             [[nodiscard]] bool WillSerialize() const override;
             void Serialize(Inscription::BinaryArchive& archive) override;
@@ -201,7 +206,7 @@ namespace Arca
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         RelicT* FindGlobalStorage();
         template<class T>
-        T FindPostulate();
+        T FindPostulateValue();
     public:
         ReliquaryRelics(const ReliquaryRelics& arg) = delete;
         ReliquaryRelics& operator=(const ReliquaryRelics& arg) = delete;
