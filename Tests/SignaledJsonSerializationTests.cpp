@@ -42,7 +42,7 @@ SCENARIO_METHOD(
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
             {
-                auto inputArchive = ::Inscription::Archive::InputJson("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputJson(Inscription::File::Path("Test.dat"));
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -78,7 +78,7 @@ SCENARIO_METHOD(
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
             {
-                auto inputArchive = ::Inscription::Archive::InputJson("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputJson(Inscription::File::Path("Test.dat"));
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -128,7 +128,7 @@ SCENARIO_METHOD(
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
             {
-                auto inputArchive = ::Inscription::Archive::InputJson("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputJson(Inscription::File::Path("Test.dat"));
                 inputArchive("reliquary", *loadedReliquary);
             }
 
@@ -177,7 +177,7 @@ SCENARIO_METHOD(
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
             {
-                auto inputArchive = ::Inscription::Archive::InputJson("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputJson(Inscription::File::Path("Test.dat"));
                 inputArchive("reliquary", *loadedReliquary);
             }
 
