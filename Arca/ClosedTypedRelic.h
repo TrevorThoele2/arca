@@ -22,12 +22,9 @@ namespace Arca
         [[nodiscard]] Reliquary& Owner() const;
     public:
         virtual ~ClosedTypedRelic() = 0;
-
-        void Initialize(Reliquary& owner);
     protected:
         ClosedTypedRelic() = default;
 
-        virtual void InitializeImplementation() {}
         [[nodiscard]] virtual bool ReliquaryContainsSelf() const = 0;
         [[nodiscard]] virtual Type Type() const = 0;
     private:

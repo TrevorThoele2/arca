@@ -11,7 +11,7 @@
 #include "RelicMetadata.h"
 #include "RelicBatchSource.h"
 #include "RelicBatch.h"
-#include "HasFactoryMethod.h"
+#include "HasShouldCreateMethod.h"
 
 #include "Ptr.h"
 
@@ -22,19 +22,19 @@ namespace Arca
     class ReliquaryRelics : public ReliquaryComponent
     {
     public:
-        template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> Create(CreationArgs&& ... creationArgs);
-        template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateWith(const RelicStructure& structure, CreationArgs&& ... creationArgs);
-        template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateWith(const std::string& structureName, CreationArgs&& ... creationArgs);
+        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        Ptr<RelicT> Create(InitializeArgs&& ... initializeArgs);
+        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        Ptr<RelicT> CreateWith(const RelicStructure& structure, InitializeArgs&& ... initializeArgs);
+        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        Ptr<RelicT> CreateWith(const std::string& structureName, InitializeArgs&& ... initializeArgs);
 
-        template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateChild(const Handle& parent, CreationArgs&& ... creationArgs);
-        template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateChildWith(const Handle& parent, const RelicStructure& structure, CreationArgs&& ... creationArgs);
-        template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateChildWith(const Handle& parent, const std::string& structureName, CreationArgs&& ... creationArgs);
+        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        Ptr<RelicT> CreateChild(const Handle& parent, InitializeArgs&& ... initializeArgs);
+        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        Ptr<RelicT> CreateChildWith(const Handle& parent, const RelicStructure& structure, InitializeArgs&& ... initializeArgs);
+        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        Ptr<RelicT> CreateChildWith(const Handle& parent, const std::string& structureName, InitializeArgs&& ... initializeArgs);
 
         void Destroy(const Handle& handle);
 
@@ -89,10 +89,6 @@ namespace Arca
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         RelicT* FindStorage(RelicID id);
     public:
-        using Initializer = void(*)(Reliquary&);
-        using InitializerList = std::vector<Initializer>;
-        InitializerList initializers;
-    public:
         class BatchSources
             : public StorageBatchSources<RelicBatchSourceBase, ReliquaryRelics, BatchSources, is_relic>
         { 
@@ -124,16 +120,17 @@ namespace Arca
     private:
         template<
             class RelicT,
-            class... CreationArgs,
-            std::enable_if_t<is_relic_v<RelicT> && has_factory_method_v<RelicT>, int> = 0>
-        std::optional<RelicT> CreateRelic(CreationArgs&& ... creationArgs);
+            class... InitializeArgs,
+            std::enable_if_t<is_relic_v<RelicT> && has_should_create_method_v<RelicT>, int> = 0>
+            bool ShouldCreate(InitializeArgs&& ... initializeArgs);
         template<
             class RelicT,
-            class... CreationArgs,
-            std::enable_if_t<is_relic_v<RelicT> && !has_factory_method_v<RelicT>, int> = 0>
-        std::optional<RelicT> CreateRelic(CreationArgs&& ... creationArgs);
-        template<class RelicT>
-        RelicT* PushNewRelic(RelicT&& relic, RelicStructure additionalStructure);
+            class... InitializeArgs,
+            std::enable_if_t<is_relic_v<RelicT> && !has_should_create_method_v<RelicT>, int> = 0>
+            bool ShouldCreate(InitializeArgs&& ... initializeArgs);
+
+        template<class RelicT, class... InitializeArgs>
+        RelicT* PushNewRelic(RelicT&& relic, RelicStructure additionalStructure, InitializeArgs&& ... initializeArgs);
     private:
         RelicMetadata& ValidateParentForParenting(const Handle& parent);
     private:

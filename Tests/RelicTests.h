@@ -37,8 +37,8 @@ public:
         Shard* basicShard;
     public:
         TypedRelic() = default;
-    protected:
-        void InitializeImplementation() override;
+
+        void PostConstruct(ShardTuple shards);
     };
 
     class OpenTypedRelic : public OpenTypedRelicAutomation<OpenTypedRelic, Shard>
@@ -47,8 +47,8 @@ public:
         Shard* basicShard;
     public:
         OpenTypedRelic() = default;
-    protected:
-        void InitializeImplementation() override;
+
+        void PostConstruct(ShardTuple shards);
     };
 
     class GlobalRelic : public ClosedTypedRelicAutomation<GlobalRelic, Shard>
@@ -57,28 +57,30 @@ public:
         Shard* basicShard;
     public:
         GlobalRelic() = default;
-    protected:
-        void InitializeImplementation() override;
+
+        void PostConstruct(ShardTuple shards);
     };
 
-    class MostBasicCustomFactoryRelic : public ClosedTypedRelicAutomation<MostBasicCustomFactoryRelic>
+    class ShouldCreateRelic : public ClosedTypedRelicAutomation<ShouldCreateRelic>
     {
     public:
         int value = 0;
     public:
-        MostBasicCustomFactoryRelic() = default;
-    protected:
-        void InitializeImplementation() override {}
+        ShouldCreateRelic() = default;
+
+        void Initialize(int value);
     };
 
-    class GuardedCustomFactoryRelic : public ClosedTypedRelicAutomation<GuardedCustomFactoryRelic>
+    class InitializedRelic : public ClosedTypedRelicAutomation<InitializedRelic, Shard>
     {
     public:
-        int value = 0;
+        Shard* basicShard;
+
+        int myValue = 0;
     public:
-        GuardedCustomFactoryRelic() = default;
-    protected:
-        void InitializeImplementation() override {}
+        void PostConstruct(ShardTuple shards);
+
+        void Initialize(int myValue);
     };
 };
 
@@ -121,21 +123,18 @@ namespace Arca
     };
 
     template<>
-    struct Traits<::RelicTestsFixture::MostBasicCustomFactoryRelic>
+    struct Traits<::RelicTestsFixture::ShouldCreateRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static const TypeName typeName;
-        static std::optional<RelicTestsFixture::MostBasicCustomFactoryRelic>
-            Factory(Reliquary& reliquary);
+        static bool ShouldCreate(Reliquary& reliquary, int value);
     };
 
     template<>
-    struct Traits<::RelicTestsFixture::GuardedCustomFactoryRelic>
+    struct Traits<::RelicTestsFixture::InitializedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static const TypeName typeName;
-        static std::optional<RelicTestsFixture::GuardedCustomFactoryRelic>
-            Factory(Reliquary& reliquary, int value);
     };
 }
 
@@ -179,12 +178,12 @@ namespace Inscription
     {};
 
     template<>
-    class Scribe<::RelicTestsFixture::MostBasicCustomFactoryRelic, BinaryArchive> final
-        : public ArcaNullScribe<::RelicTestsFixture::MostBasicCustomFactoryRelic, BinaryArchive>
+    class Scribe<::RelicTestsFixture::ShouldCreateRelic, BinaryArchive> final
+        : public ArcaNullScribe<::RelicTestsFixture::ShouldCreateRelic, BinaryArchive>
     {};
 
     template<>
-    class Scribe<::RelicTestsFixture::GuardedCustomFactoryRelic, BinaryArchive> final
-        : public ArcaNullScribe<::RelicTestsFixture::GuardedCustomFactoryRelic, BinaryArchive>
+    class Scribe<::RelicTestsFixture::InitializedRelic, BinaryArchive> final
+        : public ArcaNullScribe<::RelicTestsFixture::InitializedRelic, BinaryArchive>
     {};
 }

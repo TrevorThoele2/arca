@@ -5,9 +5,8 @@
 EitherTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std::move(myValue))
 {}
 
-void EitherTestsFixture::BasicTypedRelic::InitializeImplementation()
+void EitherTestsFixture::BasicTypedRelic::PostConstruct(ShardTuple shards)
 {
-    auto shards = ExtractShards();
     basicShard = std::get<0>(shards);
 }
 

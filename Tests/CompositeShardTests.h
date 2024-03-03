@@ -30,8 +30,8 @@ public:
         Ptr<Shard<2>> shard2;
     public:
         BasicTypedRelic() = default;
-    protected:
-        void InitializeImplementation() override;
+
+        void PostConstruct(ShardTuple shards);
     };
 };
 

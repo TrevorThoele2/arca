@@ -14,7 +14,9 @@ namespace Arca
     protected:
         OpenTypedRelicAutomation() = default;
     protected:
-        [[nodiscard]] auto ExtractShards() const
+        using ShardTuple = ShardTuple<Shards>;
+
+        [[nodiscard]] ShardTuple ExtractShards() const
         {
             return Arca::ExtractShards<Shards>(ID(), Owner());
         }
@@ -40,5 +42,8 @@ namespace Arca
         {
             return Owner().Contains<Derived>();
         }
+    private:
+        friend class ReliquaryOrigin;
+        friend class ReliquaryRelics;
     };
 }

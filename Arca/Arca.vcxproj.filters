@@ -180,9 +180,6 @@
     <ClInclude Include="ExtractShards.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
-    <ClInclude Include="HasFactoryMethod.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="RelicParented.h">
       <Filter>Header Files\Signal\Common</Filter>
     </ClInclude>
@@ -344,6 +341,27 @@
     </ClInclude>
     <ClInclude Include="Ptr.h">
       <Filter>Header Files\Ptr</Filter>
+    </ClInclude>
+    <ClInclude Include="HasShouldCreateMethod.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="HasInitializeMethod.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="InitializeRelic.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="HasPostConstructMethod.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="PostConstructRelic.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="HasRequiredShards.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicBatchSourceDefinition.h">
+      <Filter>Header Files\Relic\Batch</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

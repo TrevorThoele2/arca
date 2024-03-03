@@ -10,22 +10,19 @@ ReliquarySerializationTestsFixture::BasicShard::BasicShard(std::string myValue) 
 ReliquarySerializationTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
 {}
 
-void ReliquarySerializationTestsFixture::TypedClosedRelic::InitializeImplementation()
+void ReliquarySerializationTestsFixture::TypedClosedRelic::PostConstruct(ShardTuple shards)
 {
-    auto shards = ExtractShards();
     basicShard = std::get<0>(shards);
 }
 
-void ReliquarySerializationTestsFixture::TypedOpenRelic::InitializeImplementation()
+void ReliquarySerializationTestsFixture::TypedOpenRelic::PostConstruct(ShardTuple shards)
 {
-    auto shards = ExtractShards();
     basicShard = std::get<0>(shards);
 }
 
-void ReliquarySerializationTestsFixture::GlobalRelic::InitializeImplementation()
+void ReliquarySerializationTestsFixture::GlobalRelic::PostConstruct(ShardTuple shards)
 {
-    auto tuple = ExtractShards();
-    basicShard = std::get<0>(tuple);
+    basicShard = std::get<0>(shards);
 }
 
 ReliquarySerializationTestsFixture::BasicShardNullInscription::BasicShardNullInscription(std::string myValue) :
@@ -36,22 +33,19 @@ ReliquarySerializationTestsFixture::OtherShardNullInscription::OtherShardNullIns
     myValue(myValue)
 {}
 
-void ReliquarySerializationTestsFixture::TypedClosedRelicNullInscription::InitializeImplementation()
+void ReliquarySerializationTestsFixture::TypedClosedRelicNullInscription::PostConstruct(ShardTuple shards)
 {
-    auto shards = ExtractShards();
     basicShard = std::get<0>(shards);
 }
 
-void ReliquarySerializationTestsFixture::TypedOpenRelicNullInscription::InitializeImplementation()
+void ReliquarySerializationTestsFixture::TypedOpenRelicNullInscription::PostConstruct(ShardTuple shards)
 {
-    auto shards = ExtractShards();
     basicShard = std::get<0>(shards);
 }
 
-void ReliquarySerializationTestsFixture::GlobalRelicNullInscription::InitializeImplementation()
+void ReliquarySerializationTestsFixture::GlobalRelicNullInscription::PostConstruct(ShardTuple shards)
 {
-    auto tuple = ExtractShards();
-    basicShard = std::get<0>(tuple);
+    basicShard = std::get<0>(shards);
 }
 
 namespace Arca
@@ -329,6 +323,8 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 .Actualize();
 
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
+
+            auto test = loadedReliquary->Find<GlobalRelic>();
 
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");

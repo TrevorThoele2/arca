@@ -9,6 +9,8 @@
 #include "Curator.h"
 #include "CuratorProvider.h"
 
+#include "InitializeRelic.h"
+
 namespace Arca
 {
     class ReliquaryOrigin
@@ -24,8 +26,8 @@ namespace Arca
     public:
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && !is_global_relic_v<RelicT>, int> = 0>
         ReliquaryOrigin& Type();
-        template<class RelicT, class... CreationArgs, std::enable_if_t<is_global_relic_v<RelicT>, int> = 0>
-        ReliquaryOrigin& Type(CreationArgs&& ... creationArgs);
+        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_global_relic_v<RelicT>, int> = 0>
+        ReliquaryOrigin& Type(InitializeArgs&& ... initializeArgs);
         ReliquaryOrigin& RelicStructure(const std::string& name, const RelicStructure& structure);
     public:
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
@@ -55,6 +57,10 @@ namespace Arca
         template<class RelicT>
         [[nodiscard]] bool IsRelicRegistered() const;
     private:
+        using GlobalRelicInitializer = std::function<void(Reliquary&)>;
+        using GlobalRelicInitializerList = std::vector<GlobalRelicInitializer>;
+        GlobalRelicInitializerList globalRelicInitializerList;
+
         TypeConstructorList globalRelicList;
 
         template<class RelicT>
@@ -136,78 +142,76 @@ namespace Arca
                         }
                     });
             }
-            reliquary.relics.initializers.push_back(
-                [](Reliquary& reliquary)
-                {
-                    auto batchSource = reliquary.relics.batchSources.Find<RelicT>();
-                    for (auto& loop : *batchSource)
-                        loop.Initialize(reliquary);
-                });
         };
         relicList.emplace_back(type.name, factory);
 
         return *this;
     }
 
-    template<class RelicT, class... CreationArgs, std::enable_if_t<is_global_relic_v<RelicT>, int>>
-    ReliquaryOrigin& ReliquaryOrigin::Type(CreationArgs&& ... creationArgs)
+    template<class RelicT, class... InitializeArgs, std::enable_if_t<is_global_relic_v<RelicT>, int>>
+    ReliquaryOrigin& ReliquaryOrigin::Type(InitializeArgs&& ... initializeArgs)
     {
         const auto type = TypeFor<RelicT>();
 
         if (IsGlobalRelicRegistered<RelicT>())
             throw AlreadyRegistered("global relic", type, typeid(RelicT));
 
-        const auto factory = [args = std::make_tuple(std::forward<CreationArgs>(creationArgs) ...)](Reliquary& reliquary)
+        const auto factory = [](Reliquary& reliquary)
         {
-            return std::apply([&reliquary](auto&& ... creationArgs)
+            const auto type = TypeFor<RelicT>();
+            const auto id = reliquary.relics.AdvanceID();
+            auto created = std::make_shared<RelicT>();
+            created->id = id;
+            created->owner = &reliquary;
+            auto relic = created.get();
+            auto emplaced = reliquary.relics.globalMap.emplace(
+                type.name,
+                ReliquaryRelics::StoredGlobal
                 {
-                    const auto type = TypeFor<RelicT>();
-                    const auto id = reliquary.relics.AdvanceID();
-                    auto relic = std::make_shared<RelicT>(std::forward<CreationArgs>(creationArgs)...);
-                    relic->id = id;
-                    auto emplaced = reliquary.relics.globalMap.emplace(
-                        type.name,
-                        ReliquaryRelics::StoredGlobal
-                        {
-                            std::move(relic),
-                            id
-                        }
-                    )
-                        .first->second;
-                    reliquary.relics.SetupNewInternals(
-                        id,
-                        OpennessFor<RelicT>(),
-                        LocalityFor<RelicT>(),
-                        HasScribe<RelicT>(),
-                        Arca::Type(type.name),
-                        relic.get());
-                    reliquary.relics.SatisfyStructure(id, StructureFrom<shards_for_t<RelicT>>());
-                    if (HasScribe<RelicT>())
+                    std::move(created),
+                    id
+                }
+            )
+                .first->second;
+            reliquary.relics.SetupNewInternals(
+                id,
+                OpennessFor<RelicT>(),
+                LocalityFor<RelicT>(),
+                HasScribe<RelicT>(),
+                Arca::Type(type.name),
+                relic);
+            reliquary.relics.SatisfyStructure(id, StructureFrom<shards_for_t<RelicT>>());
+            if (HasScribe<RelicT>())
+            {
+                reliquary.relics.globalSerializers.push_back(
+                    KnownPolymorphicSerializer
                     {
-                        reliquary.relics.globalSerializers.push_back(
-                            KnownPolymorphicSerializer
-                            {
-                                type.name,
-                                [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
-                                {
-                                    auto relic = reliquary.Find<RelicT>();
-                                    archive(*relic);
-                                },
-                                [](::Inscription::BinaryArchive& archive)
-                                {
-                                    return ::Inscription::InputTypesFor<RelicT>(archive);
-                                }
-                            });
-                    }
-                    reliquary.relics.initializers.push_back(
-                        [](Reliquary& reliquary)
+                        type.name,
+                        [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
                         {
                             auto relic = reliquary.Find<RelicT>();
-                            relic->Initialize(reliquary);
-                        });
-                }, args);
+                            archive(*relic);
+                        },
+                        [](::Inscription::BinaryArchive& archive)
+                        {
+                            return ::Inscription::InputTypesFor<RelicT>(archive);
+                        }
+                    });
+            }
         };
         globalRelicList.emplace_back(type.name, factory);
+
+        globalRelicInitializerList.push_back(
+            [args = std::make_tuple(std::forward<InitializeArgs>(initializeArgs) ...)](Reliquary& reliquary)
+        {
+            return std::apply(
+                [&reliquary](auto&& ... initializeArgs)
+                {
+                    auto relic = reliquary.Find<RelicT>();
+                    PostConstructRelic(*relic);
+                    InitializeRelic(*relic, std::forward<InitializeArgs>(initializeArgs)...);
+                }, args);
+        });
 
         return *this;
     }

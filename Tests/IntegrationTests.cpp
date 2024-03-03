@@ -7,8 +7,10 @@ using namespace std::string_literals;
 IntegrationTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std::move(myValue))
 {}
 
-IntegrationTestsFixture::ParentRelic::ParentRelic(int value) : value(value)
-{}
+void IntegrationTestsFixture::ParentRelic::Initialize(int value)
+{
+    this->value = value;
+}
 
 void IntegrationTestsFixture::ParentRelic::CreateChild()
 {
@@ -60,13 +62,9 @@ namespace Arca
     const TypeName Traits<::IntegrationTestsFixture::ParentRelic>::typeName =
         "IntegrationTestsParentRelic";
 
-    std::optional<::IntegrationTestsFixture::ParentRelic>
-        Traits<::IntegrationTestsFixture::ParentRelic>::Factory(Reliquary& reliquary, int value)
+    bool Traits<::IntegrationTestsFixture::ParentRelic>::ShouldCreate(Reliquary& reliquary, int value)
     {
-        if (value < 100)
-            return {};
-
-        return ::IntegrationTestsFixture::ParentRelic(value);
+        return value >= 100;
     }
 }
 

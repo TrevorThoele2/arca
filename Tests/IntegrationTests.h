@@ -51,7 +51,7 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Relic;
         static const TypeName typeName;
-        static std::optional<IntegrationTestsFixture::ParentRelic> Factory(Reliquary& reliquary, int value);
+        static bool ShouldCreate(Reliquary& reliquary, int value);
     };
 
     template<size_t differentiator>
@@ -86,8 +86,6 @@ public:
     int value = 0;
 public:
     ChildRelic() = default;
-protected:
-    void InitializeImplementation() override {}
 };
 
 class IntegrationTestsFixture::ParentRelic : public ClosedTypedRelicAutomation<ParentRelic>
@@ -95,7 +93,9 @@ class IntegrationTestsFixture::ParentRelic : public ClosedTypedRelicAutomation<P
 public:
     int value;
 public:
-    ParentRelic(int value = 0);
+    ParentRelic() = default;
+
+    void Initialize(int value);
 
     void CreateChild();
 };

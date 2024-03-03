@@ -36,8 +36,8 @@ public:
         Ptr<Shard> basicShard;
     public:
         TypedRelic() = default;
-    protected:
-        void InitializeImplementation() override;
+
+        void PostConstruct(ShardTuple shards);
     };
 
     class GlobalRelic : public ClosedTypedRelicAutomation<GlobalRelic, Shard>
@@ -46,8 +46,8 @@ public:
         Ptr<Shard> basicShard;
     public:
         GlobalRelic() = default;
-    protected:
-        void InitializeImplementation() override;
+
+        void PostConstruct(ShardTuple shards);
     };
 
     class Curator final : public Arca::Curator

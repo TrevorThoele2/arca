@@ -27,8 +27,8 @@ class ConstShardTestsFixture::Relic : public ClosedTypedRelicAutomation<Relic, c
 {
 public:
     Ptr<const Shard> shard;
-protected:
-    void InitializeImplementation() override;
+
+    void PostConstruct(ShardTuple shards);
 };
 
 namespace Arca

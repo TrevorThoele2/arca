@@ -38,11 +38,12 @@ namespace Arca
         Reliquary* owner = nullptr;
     private:
         ClosedRelic() = default;
-        void Initialize(Reliquary& owner);
     private:
         friend Reliquary;
         friend class ReliquaryRelics;
         friend class ReliquaryOrigin;
+        template<class, class>
+        friend class BatchSource;
     private:
         INSCRIPTION_ACCESS;
     };

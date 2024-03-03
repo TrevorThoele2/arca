@@ -2,12 +2,6 @@
 
 #include "RelicBatchTests.h"
 
-void RelicBatchFixture::Relic::InitializeImplementation()
-{}
-
-void RelicBatchFixture::GlobalRelic::InitializeImplementation()
-{}
-
 RelicBatchFixture::Shard::Shard(int value) :
     value(value)
 {}

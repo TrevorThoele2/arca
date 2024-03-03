@@ -6,9 +6,8 @@ ConstShardTestsFixture::Shard::Shard(int value) :
     value(value)
 {}
 
-void ConstShardTestsFixture::Relic::InitializeImplementation()
+void ConstShardTestsFixture::Relic::PostConstruct(ShardTuple shards)
 {
-    auto shards = ExtractShards();
     shard = std::get<0>(shards);
 }
 

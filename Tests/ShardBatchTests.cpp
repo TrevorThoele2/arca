@@ -6,9 +6,8 @@ ShardBatchFixture::Shard::Shard(int value) :
     value(value)
 {}
 
-void ShardBatchFixture::GlobalRelic::InitializeImplementation()
+void ShardBatchFixture::GlobalRelic::PostConstruct(ShardTuple shards)
 {
-    auto shards = ExtractShards();
     shard = std::get<0>(shards);
 }
 
