@@ -185,20 +185,6 @@ namespace Arca
         template<class, class>
         friend struct Destroy;
         friend struct Clear;
-        template<class>
-        friend struct IdentifiedCreate;
-        template<class>
-        friend struct CreateWith;
-        template<class>
-        friend struct IdentifiedCreateWith;
-        template<class>
-        friend struct CreateChild;
-        template<class>
-        friend struct IdentifiedCreateChild;
-        template<class>
-        friend struct CreateChildWith;
-        template<class>
-        friend struct IdentifiedCreateChildWith;
         template<class, class>
         friend struct AssignCopy;
         template<class, class>
