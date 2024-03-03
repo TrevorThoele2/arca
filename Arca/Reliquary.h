@@ -415,7 +415,7 @@ namespace Inscription
     private:
         struct LoadedRelicMetadata
         {
-            Arca::RelicID id = 0;
+            Arca::RelicID id = Arca::nullRelicID;
             Arca::Openness openness = Arca::Openness::Open;
 
             std::optional<Arca::RelicID> parent;

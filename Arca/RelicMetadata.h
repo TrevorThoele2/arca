@@ -13,7 +13,7 @@ namespace Arca
 {
     struct RelicMetadata
     {
-        RelicID id = 0;
+        RelicID id = nullRelicID;
         Openness openness = Openness::Open;
         Locality locality = Locality::Local;
         Type type;

@@ -217,7 +217,7 @@ namespace Inscription
             {
                 input->StartObject("");
 
-                Arca::RelicID id = 0;
+                Arca::RelicID id = Arca::nullRelicID;
                 archive("id", id);
 
                 auto matrixSnapshot = object.owner->matrices.StartCreationTransaction(id);

@@ -26,7 +26,7 @@ namespace Arca
         [[nodiscard]] Type Type() const;
         [[nodiscard]] HandleObjectType ObjectType() const;
     private:
-        RelicID id = 0;
+        RelicID id = nullRelicID;
         Reliquary* owner = nullptr;
         Arca::Type type;
         HandleObjectType objectType = HandleObjectType::Relic;

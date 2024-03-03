@@ -43,7 +43,7 @@ namespace Arca
         [[nodiscard]] RelicID ID() const;
         [[nodiscard]] Reliquary* Owner() const;
     private:
-        RelicID id = 0;
+        RelicID id = nullRelicID;
         Reliquary* owner = nullptr;
     private:
         [[nodiscard]] ValueT* FindValueFromOwner() const;
@@ -87,7 +87,7 @@ namespace Arca
         [[nodiscard]] RelicID ID() const;
         [[nodiscard]] Reliquary* Owner() const;
     private:
-        RelicID id = 0;
+        RelicID id = nullRelicID;
         Reliquary* owner = nullptr;
     private:
         [[nodiscard]] ValueT* FindValueFromOwner() const;

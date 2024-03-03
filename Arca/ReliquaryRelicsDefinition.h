@@ -257,7 +257,7 @@ namespace Arca
     {
         auto found = FindGlobalHandler<RelicT>();
         if (found == nullptr)
-            return 0;
+            return nullRelicID;
 
         return found->id;
     }
