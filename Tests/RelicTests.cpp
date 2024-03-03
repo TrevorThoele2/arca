@@ -19,13 +19,9 @@ RelicTestsFixture::BasicTypedRelic::BasicTypedRelic(const ::Inscription::BinaryT
     TypedRelic(data.base)
 {}
 
-RelicStructure RelicTestsFixture::BasicTypedRelic::Structure() const
+void RelicTestsFixture::BasicTypedRelic::InitializeImplementation()
 {
-    return StructureFrom<Shards>();
-}
-
-void RelicTestsFixture::BasicTypedRelic::DoInitialize()
-{
+    using Shards = ShardsFor<BasicTypedRelic>;
     auto tuple = ExtractShards<Shards>(ID(), Owner());
     basicShard = std::get<0>(tuple);
 }
@@ -34,13 +30,9 @@ RelicTestsFixture::StaticRelic::StaticRelic(const ::Inscription::BinaryTableData
     TypedRelic(data.base)
 {}
 
-RelicStructure RelicTestsFixture::StaticRelic::Structure() const
+void RelicTestsFixture::StaticRelic::InitializeImplementation()
 {
-    return StructureFrom<Shards>();
-}
-
-void RelicTestsFixture::StaticRelic::DoInitialize()
-{
+    using Shards = ShardsFor<StaticRelic>;
     auto tuple = ExtractShards<Shards>(ID(), Owner());
     basicShard = std::get<0>(tuple);
 }
@@ -97,7 +89,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
         WHEN("creating dynamic relic")
         {
-            auto preCreateRelicCount = reliquary.RelicCount();
+            auto preCreateRelicCount = reliquary.RelicSize();
             auto relic = reliquary.CreateRelic();
 
             THEN("relic is dynamic")
@@ -107,7 +99,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             THEN("reliquary relic count increments by one")
             {
-                REQUIRE(reliquary.RelicCount() == (preCreateRelicCount + 1));
+                REQUIRE(reliquary.RelicSize() == (preCreateRelicCount + 1));
             }
 
             WHEN("creating shard")
@@ -140,12 +132,12 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
         WHEN("creating fixed relic with valid structure")
         {
-            auto preCreateRelicCount = reliquary.RelicCount();
+            auto preCreateRelicCount = reliquary.RelicSize();
             auto relic = reliquary.CreateRelic(RelicStructure{ ShardTraits<BasicShard>::typeHandle });
 
             THEN("structure has been satisfied")
             {
-                auto shardFromReliquary = reliquary.FindShard<BasicShard>(relic.ID());
+                auto shardFromReliquary = reliquary.Find<BasicShard>(relic.ID());
                 REQUIRE(shardFromReliquary != nullptr);
 
                 auto shardFromRelic = relic.FindShard<BasicShard>();
@@ -170,15 +162,15 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             THEN("reliquary relic count increments by one")
             {
-                REQUIRE(reliquary.RelicCount() == (preCreateRelicCount + 1));
+                REQUIRE(reliquary.RelicSize() == (preCreateRelicCount + 1));
             }
 
             WHEN("destroying relic")
             {
-                auto preDestroyRelicCount = reliquary.RelicCount();
+                auto preDestroyRelicCount = reliquary.RelicSize();
 
                 auto id = relic.ID();
-                reliquary.DestroyRelic(relic);
+                reliquary.Destroy(relic);
 
                 THEN("finding relic returns empty")
                 {
@@ -188,23 +180,23 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
                 THEN("destroying again does not throw")
                 {
-                    REQUIRE_NOTHROW(reliquary.DestroyRelic(relic));
+                    REQUIRE_NOTHROW(reliquary.Destroy(relic));
                 }
 
                 THEN("reliquary relic count decrements by one")
                 {
-                    REQUIRE(reliquary.RelicCount() == (preDestroyRelicCount - 1));
+                    REQUIRE(reliquary.RelicSize() == (preDestroyRelicCount - 1));
                 }
             }
         }
 
         WHEN("retrieving static relic")
         {
-            const auto staticRelic = reliquary.StaticRelic<StaticRelic>();
+            const auto staticRelic = reliquary.Static<StaticRelic>();
 
             THEN("structure has been satisfied")
             {
-                auto shardFromReliquary = reliquary.FindShard<BasicShard>(staticRelic->ID());
+                auto shardFromReliquary = reliquary.Find<BasicShard>(staticRelic->ID());
                 REQUIRE(shardFromReliquary != nullptr);
 
                 auto shardFromRelic = staticRelic->basicShard;
@@ -213,21 +205,21 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             THEN("cannot destroy relic")
             {
-                auto preDestroyRelicCount = reliquary.RelicCount();
+                auto preDestroyRelicCount = reliquary.RelicSize();
 
-                reliquary.DestroyRelic(*staticRelic);
+                reliquary.Destroy(*staticRelic);
 
-                auto foundAgain = reliquary.StaticRelic<StaticRelic>();
+                auto foundAgain = reliquary.Static<StaticRelic>();
 
                 REQUIRE(foundAgain->ID() == staticRelic->ID());
                 REQUIRE(foundAgain->basicShard == staticRelic->basicShard);
-                REQUIRE(preDestroyRelicCount == reliquary.RelicCount());
+                REQUIRE(preDestroyRelicCount == reliquary.RelicSize());
             }
         }
 
         WHEN("retrieving static relic by id")
         {
-            const auto idProvider = reliquary.StaticRelic<StaticRelic>();
+            const auto idProvider = reliquary.Static<StaticRelic>();
             const auto staticRelic = reliquary.FindRelic(idProvider->ID());
 
             THEN("returns value")
@@ -237,7 +229,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             THEN("structure has been satisfied")
             {
-                auto shardFromReliquary = reliquary.FindShard<BasicShard>(staticRelic->ID());
+                auto shardFromReliquary = reliquary.Find<BasicShard>(staticRelic->ID());
                 REQUIRE(shardFromReliquary != nullptr);
 
                 auto shardFromRelic = staticRelic->FindShard<BasicShard>();
@@ -251,15 +243,15 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             THEN("cannot destroy relic")
             {
-                auto preDestroyRelicCount = reliquary.RelicCount();
+                auto preDestroyRelicCount = reliquary.RelicSize();
 
-                reliquary.DestroyRelic(*staticRelic);
+                reliquary.Destroy(*staticRelic);
 
-                auto foundAgain = reliquary.StaticRelic<StaticRelic>();
+                auto foundAgain = reliquary.Static<StaticRelic>();
 
                 REQUIRE(foundAgain->ID() == staticRelic->ID());
                 REQUIRE(foundAgain->basicShard == staticRelic->FindShard<BasicShard>());
-                REQUIRE(preDestroyRelicCount == reliquary.RelicCount());
+                REQUIRE(preDestroyRelicCount == reliquary.RelicSize());
             }
         }
 
@@ -269,9 +261,10 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary.StaticRelic<BasicTypedRelic>(),
+                    reliquary.Static<BasicTypedRelic>(),
                     NotRegistered,
-                    ::Catch::Matchers::Message("The static relic (ReliquaryTestsBasicTypedRelic) was not registered.")
+                    ::Catch::Matchers::Message(
+                        "The static relic (ReliquaryTestsBasicTypedRelic) was not registered.")
                 );
             }
         }
@@ -300,7 +293,7 @@ SCENARIO_METHOD(RelicTestsFixture, "many relics", "[relic]")
             auto loop = relics.begin();
             while (loop != --relics.end())
             {
-                reliquary.DestroyRelic(*loop);
+                reliquary.Destroy(*loop);
                 loop = relics.erase(loop);
             }
 
@@ -328,7 +321,7 @@ SCENARIO_METHOD(RelicTestsFixture, "custom factory relic", "[relic][factory]")
 
         WHEN("creating relic")
         {
-            const auto relic = reliquary.CreateRelic<MostBasicCustomFactoryRelic>();
+            const auto relic = reliquary.Create<MostBasicCustomFactoryRelic>();
 
             THEN("has value set from factory")
             {
@@ -345,23 +338,23 @@ SCENARIO_METHOD(RelicTestsFixture, "custom factory relic", "[relic][factory]")
 
         WHEN("creating relic with 100 value")
         {
-            const auto relic = reliquary.CreateRelic<GuardedCustomFactoryRelic>(100);
+            const auto relic = reliquary.Create<GuardedCustomFactoryRelic>(100);
 
             THEN("relic was created")
             {
                 REQUIRE(relic != nullptr);
-                REQUIRE(reliquary.FindRelic<GuardedCustomFactoryRelic>(relic->ID()) != nullptr);
+                REQUIRE(reliquary.Find<GuardedCustomFactoryRelic>(relic->ID()) != nullptr);
             }
         }
 
         WHEN("creating relic with 99 value")
         {
-            const auto relic = reliquary.CreateRelic<GuardedCustomFactoryRelic>(99);
+            const auto relic = reliquary.Create<GuardedCustomFactoryRelic>(99);
 
             THEN("relic was not created")
             {
                 REQUIRE(relic == nullptr);
-                REQUIRE(reliquary.RelicBatch<GuardedCustomFactoryRelic>().IsEmpty());
+                REQUIRE(reliquary.Batch<GuardedCustomFactoryRelic>().IsEmpty());
             }
         }
     }
@@ -381,7 +374,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
         WHEN("creating relic")
         {
-            const auto created = reliquary.CreateRelic<BasicTypedRelic>();
+            const auto created = reliquary.Create<BasicTypedRelic>();
 
             THEN("signal is emitted")
             {
@@ -390,7 +383,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
             WHEN("destroying relic")
             {
-                reliquary.DestroyRelic(*created);
+                reliquary.Destroy(*created);
 
                 THEN("signal is emitted")
                 {
@@ -410,7 +403,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             .Shard<BasicShard>()
             .Actualize();
 
-        auto staticRelic = reliquary.StaticRelic<StaticRelic>();
+        auto staticRelic = reliquary.Static<StaticRelic>();
         auto dynamicRelic = reliquary.CreateRelic();
 
         auto onParented = reliquary.SignalBatch<RelicParented>();
@@ -475,28 +468,28 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
 
             THEN("destroying parent also destroys child")
             {
-                reliquary.DestroyRelic(parent);
+                reliquary.Destroy(parent);
 
-                REQUIRE(reliquary.RelicCount() == 0);
-                REQUIRE(reliquary.FindShard<BasicShard>(child.ID()) == nullptr);
+                REQUIRE(reliquary.RelicSize() == 0);
+                REQUIRE(reliquary.Find<BasicShard>(child.ID()) == nullptr);
             }
 
             WHEN("destroying child")
             {
-                reliquary.DestroyRelic(child);
+                reliquary.Destroy(child);
 
                 THEN("does not destroy parent")
                 {
-                    REQUIRE(reliquary.RelicCount() == 1);
-                    REQUIRE(reliquary.FindShard<BasicShard>(parent.ID()) != nullptr);
+                    REQUIRE(reliquary.RelicSize() == 1);
+                    REQUIRE(reliquary.Find<BasicShard>(parent.ID()) != nullptr);
                 }
 
                 THEN("destroying parent works")
                 {
-                    reliquary.DestroyRelic(parent);
+                    reliquary.Destroy(parent);
 
-                    REQUIRE(reliquary.RelicCount() == 0);
-                    REQUIRE(reliquary.FindShard<BasicShard>(parent.ID()) == nullptr);
+                    REQUIRE(reliquary.RelicSize() == 0);
+                    REQUIRE(reliquary.Find<BasicShard>(parent.ID()) == nullptr);
                 }
             }
 

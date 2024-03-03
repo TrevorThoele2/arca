@@ -27,6 +27,6 @@ namespace Inscription
     template<class T, class Archive>
     TypeHandle CuratorScribe<T, Archive>::OutputTypeHandle(const ArchiveT& archive)
     {
-        return ::Arca::CuratorTraits<T>::typeHandle;
+        return ::Arca::TypeHandleFor<T>();
     }
 }

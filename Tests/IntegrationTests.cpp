@@ -12,13 +12,13 @@ IntegrationTestsFixture::ParentRelic::ParentRelic(int value) : value(value)
 
 void IntegrationTestsFixture::ParentRelic::CreateChild()
 {
-    const auto child = Owner().CreateRelic<ChildRelic>();
+    const auto child = Owner().Create<ChildRelic>();
     Owner().ParentRelic(ID(), child->ID());
 }
 
-void IntegrationTestsFixture::ParentRelic::DoInitialize()
+void IntegrationTestsFixture::ParentRelic::InitializeImplementation()
 {
-    children = Owner().ChildRelicBatch<ChildRelic>(ID());
+    children = Owner().ChildBatch<ChildRelic>(ID());
 }
 
 Reliquary& IntegrationTestsFixture::BasicCuratorBase::Owner()
@@ -104,11 +104,11 @@ SCENARIO_METHOD(IntegrationTestsFixture, "working with signals through curators"
 
         std::vector<BasicCuratorBase*> curatorsInOrder
         {
-            reliquary.FindCurator<BasicCurator<1>>(),
-            reliquary.FindCurator<BasicCurator<4>>(),
-            reliquary.FindCurator<BasicCurator<3>>(),
-            reliquary.FindCurator<BasicCurator<2>>(),
-            reliquary.FindCurator<BasicCurator<0>>()
+            reliquary.Find<BasicCurator<1>>(),
+            reliquary.Find<BasicCurator<4>>(),
+            reliquary.Find<BasicCurator<3>>(),
+            reliquary.Find<BasicCurator<2>>(),
+            reliquary.Find<BasicCurator<0>>()
         };
 
         WHEN("raising signal then working reliquary")
@@ -172,11 +172,11 @@ SCENARIO_METHOD(
 
         std::unordered_map<int, ParentRelic*> mappedParents;
 
-        auto curator = reliquary.FindCurator<ParentChildCurator>();
+        auto curator = reliquary.Find<ParentChildCurator>();
         curator->onStartStep = [&mappedParents](BasicCuratorBase& self)
         {
             auto value = 100;
-            auto parent = self.Owner().CreateRelic<ParentRelic>(value);
+            auto parent = self.Owner().Create<ParentRelic>(value);
             parent->CreateChild();
             mappedParents.emplace(value, parent);
         };
@@ -187,8 +187,8 @@ SCENARIO_METHOD(
 
             THEN("has created parent and child")
             {
-                auto parents = reliquary.RelicBatch<ParentRelic>();
-                auto children = reliquary.RelicBatch<ChildRelic>();
+                auto parents = reliquary.Batch<ParentRelic>();
+                auto children = reliquary.Batch<ChildRelic>();
 
                 REQUIRE(parents.begin() != parents.end());
                 REQUIRE(children.begin() != children.end());

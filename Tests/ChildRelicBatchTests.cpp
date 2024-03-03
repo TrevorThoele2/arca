@@ -9,13 +9,9 @@ ChildRelicBatchTestsFixture::BasicTypedRelic::BasicTypedRelic(
     const ::Inscription::BinaryTableData<BasicTypedRelic>& data)
 {}
 
-RelicStructure ChildRelicBatchTestsFixture::BasicTypedRelic::Structure() const
+void ChildRelicBatchTestsFixture::BasicTypedRelic::InitializeImplementation()
 {
-    return StructureFrom<Shards>();
-}
-
-void ChildRelicBatchTestsFixture::BasicTypedRelic::DoInitialize()
-{
+    using Shards = ShardsFor<BasicTypedRelic>;
     auto tuple = ExtractShards<Shards>(ID(), Owner());
     basicShard = std::get<0>(tuple);
 }
@@ -42,7 +38,7 @@ SCENARIO_METHOD(ChildRelicBatchTestsFixture, "default child relic batch")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary.ChildRelicBatch<BasicTypedRelic>(0),
+                    reliquary.ChildBatch<BasicTypedRelic>(0),
                     NotRegistered,
                     Catch::Matchers::Message("The relic (ChildRelicTestsBasicTypedRelic) was not registered.")
                 );
@@ -58,7 +54,7 @@ SCENARIO_METHOD(ChildRelicBatchTestsFixture, "default child relic batch")
 
         WHEN("retrieving child relic batch")
         {
-            auto batch = reliquary.ChildRelicBatch<BasicTypedRelic>(0);
+            auto batch = reliquary.ChildBatch<BasicTypedRelic>(0);
 
             THEN("batch is empty")
             {
@@ -79,13 +75,13 @@ SCENARIO_METHOD(ChildRelicBatchTestsFixture, "child relic batch")
             .Relic<BasicTypedRelic>()
             .Actualize();
 
-        const auto parent = reliquary.CreateRelic<BasicTypedRelic>();
-        const auto child = reliquary.CreateRelic<BasicTypedRelic>();
+        const auto parent = reliquary.Create<BasicTypedRelic>();
+        const auto child = reliquary.Create<BasicTypedRelic>();
         reliquary.ParentRelic(parent->ID(), child->ID());
 
         WHEN("retrieving child relic batch")
         {
-            auto batch = reliquary.ChildRelicBatch<BasicTypedRelic>(parent->ID());
+            auto batch = reliquary.ChildBatch<BasicTypedRelic>(parent->ID());
 
             THEN("batch is occupied")
             {
@@ -96,7 +92,7 @@ SCENARIO_METHOD(ChildRelicBatchTestsFixture, "child relic batch")
 
             WHEN("destroying typed child")
             {
-                reliquary.DestroyRelic(*child);
+                reliquary.Destroy(*child);
 
                 THEN("batch is empty")
                 {
@@ -121,7 +117,7 @@ SCENARIO_METHOD(ChildRelicBatchTestsFixture, "child relic batch")
             WHEN("destroying dynamic child")
             {
                 auto dynamicChild = reliquary.FindRelic(child->ID());
-                reliquary.DestroyRelic(*dynamicChild);
+                reliquary.Destroy(*dynamicChild);
 
                 THEN("batch is empty")
                 {
@@ -140,12 +136,12 @@ SCENARIO_METHOD(ChildRelicBatchTestsFixture, "child relic batch")
             .Relic<BasicTypedRelic>()
             .Actualize();
 
-        auto batch = reliquary.ChildRelicBatch<BasicTypedRelic>(1);
+        auto batch = reliquary.ChildBatch<BasicTypedRelic>(1);
 
         WHEN("creating and parenting relics")
         {
-            const auto parent = reliquary.CreateRelic<BasicTypedRelic>();
-            const auto child = reliquary.CreateRelic<BasicTypedRelic>();
+            const auto parent = reliquary.Create<BasicTypedRelic>();
+            const auto child = reliquary.Create<BasicTypedRelic>();
             reliquary.ParentRelic(parent->ID(), child->ID());
 
             THEN("batch is occupied")
@@ -157,7 +153,7 @@ SCENARIO_METHOD(ChildRelicBatchTestsFixture, "child relic batch")
 
             WHEN("destroying typed child")
             {
-                reliquary.DestroyRelic(*child);
+                reliquary.Destroy(*child);
 
                 THEN("batch is empty")
                 {
@@ -182,7 +178,7 @@ SCENARIO_METHOD(ChildRelicBatchTestsFixture, "child relic batch")
             WHEN("destroying dynamic child")
             {
                 auto dynamicChild = reliquary.FindRelic(child->ID());
-                reliquary.DestroyRelic(*dynamicChild);
+                reliquary.Destroy(*dynamicChild);
 
                 THEN("batch is empty")
                 {

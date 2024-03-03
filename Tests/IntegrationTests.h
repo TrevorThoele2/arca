@@ -35,10 +35,8 @@ public:
         int value = 0;
     public:
         ChildRelic() = default;
-
-        [[nodiscard]] RelicStructure Structure() const override { return {}; }
     protected:
-        void DoInitialize() override {}
+        void InitializeImplementation() override {}
     };
 
     class ParentRelic : public TypedRelic
@@ -50,11 +48,9 @@ public:
     public:
         ParentRelic(int value);
 
-        [[nodiscard]] RelicStructure Structure() const override { return {}; }
-
         void CreateChild();
     protected:
-        void DoInitialize() override;
+        void InitializeImplementation() override;
     };
 
     class BasicCuratorBase : public Curator
@@ -98,12 +94,14 @@ namespace Arca
     struct RelicTraits<::IntegrationTestsFixture::ChildRelic>
     {
         static const TypeHandle typeHandle;
+        using Shards = ShardList<>;
     };
 
     template<>
     struct RelicTraits<::IntegrationTestsFixture::ParentRelic>
     {
         static const TypeHandle typeHandle;
+        using Shards = ShardList<>;
         static std::optional<IntegrationTestsFixture::ParentRelic> Factory(Reliquary& reliquary, int value);
     };
 

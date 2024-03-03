@@ -68,7 +68,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator", "[curator]")
             .Curator<BasicCurator>()
             .Actualize();
 
-        auto curator = reliquary.FindCurator<BasicCurator>();
+        auto curator = reliquary.Find<BasicCurator>();
         curator->onStartStep = [&states]()
         {
             states.push_back(CuratorState::Started);
@@ -196,7 +196,7 @@ struct RequireDifferentiableCuratorCheckpointCadence
         Reliquary& reliquary,
         std::list<bool>& output)
     {
-        auto curator = reliquary.FindCurator<CuratorTestsFixture::DifferentiableCurator<id>>();
+        auto curator = reliquary.Find<CuratorTestsFixture::DifferentiableCurator<id>>();
 
         auto position = beginPosition + id;
         output.push_back(position->curator == curator);
@@ -366,7 +366,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
             .Curator<BasicCurator>()
             .Actualize();
 
-        auto savedCurator = savedReliquary.FindCurator<BasicCurator>();
+        auto savedCurator = savedReliquary.Find<BasicCurator>();
         savedCurator->value = dataGeneration.Random<int>();
 
         {
@@ -385,7 +385,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
                 inputArchive(loadedReliquary);
             }
 
-            auto loadedCurator = loadedReliquary.FindCurator<BasicCurator>();
+            auto loadedCurator = loadedReliquary.Find<BasicCurator>();
 
             THEN("loaded curator is not null")
             {
@@ -408,7 +408,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
                 inputArchive(loadedReliquary);
             }
 
-            auto loadedCurator = loadedReliquary.FindCurator<BasicCurator>();
+            auto loadedCurator = loadedReliquary.Find<BasicCurator>();
 
             THEN("loaded curator is null")
             {
@@ -427,7 +427,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
                 inputArchive(loadedReliquary);
             }
 
-            auto loadedCurator = loadedReliquary.FindCurator<OtherBasicCurator>();
+            auto loadedCurator = loadedReliquary.Find<OtherBasicCurator>();
 
             THEN("loaded curator is not null")
             {

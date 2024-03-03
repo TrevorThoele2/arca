@@ -22,7 +22,7 @@ namespace Arca
         {
             using ShardT = std::remove_pointer_t<std::tuple_element_t<i - 1, ShardTuple>>;
 
-            auto shard = reliquary.FindShard<ShardT>(id);
+            auto shard = reliquary.Find<ShardT>(id);
             std::get<i - 1>(tuple) = shard;
             return ShardListExtractor<i - 1>::Do(tuple, id, reliquary);
         }

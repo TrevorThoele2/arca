@@ -146,7 +146,7 @@ namespace Arca
         DestroyRelic(*metadata);
     }
 
-    void Reliquary::DestroyRelic(DynamicRelic& relic)
+    void Reliquary::Destroy(const DynamicRelic& relic)
     {
         const auto metadata = RelicMetadataFor(relic.ID());
         if (!WillDestroyRelic(metadata))
@@ -164,7 +164,7 @@ namespace Arca
         return DynamicRelic(id, metadata->dynamism, *this);
     }
 
-    Reliquary::SizeT Reliquary::RelicCount() const
+    Reliquary::SizeT Reliquary::RelicSize() const
     {
         return relicMetadataList.size();
     }

@@ -19,13 +19,13 @@ namespace Arca
     template<class ShardT>
     ShardT* DynamicRelic::FindShard()
     {
-        return owner->FindShard<ShardT>(id);
+        return owner->Find<ShardT>(id);
     }
 
     template<class ShardT>
     const ShardT* DynamicRelic::FindShard() const
     {
-        return owner->FindShard<ShardT>(id);
+        return owner->Find<ShardT>(id);
     }
 
     template<class ShardT>
