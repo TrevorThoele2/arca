@@ -45,6 +45,12 @@ namespace Arca
     }
 
     template<class MatrixT>
+    bool KnownMatrix::Derived<MatrixT>::Contains(Type type) const
+    {
+        return MatrixContains<MatrixT>::Contains(type);
+    }
+
+    template<class MatrixT>
     void KnownMatrix::Derived<MatrixT>::InteractWithBatchSource(bool value)
     {
         interactWithBatchSource = value;

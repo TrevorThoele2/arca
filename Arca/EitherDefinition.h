@@ -60,4 +60,10 @@ namespace Arca
         else
             return reliquary.FindStorage<const T>(id);
     }
+
+    template<class T>
+    bool MatrixContains<Either<T>>::Contains(Type type)
+    {
+        return type == TypeFor<T>() || type == TypeFor<const T>();
+    }
 }

@@ -41,6 +41,18 @@ namespace Arca
     };
 
     template<Chroma::VariadicTemplateSize i>
+    struct ContainsTypeIterator
+    {
+        template<class Pack>
+        static bool Check(Pack, Type type)
+        {
+            using T = typename Pack::template Parameter<i>::Type;
+
+            return MatrixContains<T>::Contains(type);
+        }
+    };
+
+    template<Chroma::VariadicTemplateSize i>
     struct DestroyAllShardsIterator
     {
         template<class Pack>
@@ -118,5 +130,17 @@ namespace Arca
             return {};
         else
             return tuple;
+    }
+
+    template<class... Ts>
+    bool MatrixContains<All<Ts...>>::Contains(Type type)
+    {
+        return ::Chroma::IterateRangeCheckStop<
+            ::Chroma::VariadicTemplateSize,
+            ContainsTypeIterator,
+            bool,
+            Pack::count - 1>
+
+            (true, Pack{}, type);
     }
 }

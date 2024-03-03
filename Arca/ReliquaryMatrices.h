@@ -49,7 +49,7 @@ namespace Arca
             DestroyingSnapshotObject(const DestroyingSnapshotObject& arg) = default;
             DestroyingSnapshotObject(DestroyingSnapshotObject&& arg) noexcept = default;
 
-            void Finalize();
+            void Finalize(Type type);
         private:
             explicit DestroyingSnapshotObject(std::vector<KnownMatrix*>&& knownMatrices, RelicID id, Reliquary& owner);
             RelicID id;

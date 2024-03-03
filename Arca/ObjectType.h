@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Chroma/StringUtility.h>
 #include <optional>
+#include <Chroma/StringUtility.h>
 
 namespace Arca
 {

@@ -32,4 +32,10 @@ namespace Arca
 
         static IndexOptional CreateIndexValue(RelicID id, Reliquary& reliquary);
     };
+
+    template<class T>
+    struct MatrixContains<Either<T>>
+    {
+        static bool Contains(Type type);
+    };
 }
