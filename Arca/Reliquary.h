@@ -478,6 +478,8 @@ namespace Inscription
 
         static void SaveRelicMetadata(Arca::RelicMetadata& metadata, OutputJsonArchive& archive);
         static LoadedRelicMetadata LoadRelicMetadata(ObjectT& object, InputJsonArchive& archive);
+        static void SetupLoadedRelicMetadata(
+            const std::vector<LoadedRelicMetadata>& loadedRelicMetadata, ObjectT& object);
 
         static std::vector<TypePair> LoadTypes(
             KnownPolymorphicSerializerList& fromObject,
@@ -519,8 +521,7 @@ namespace Inscription
         KnownPolymorphicSerializerList list;
         list.reserve(stored.size());
         for (auto& loop : stored)
-            if (loop->WillBinarySerialize())
-                list.push_back(loop.get());
+            list.push_back(loop.get());
         return list;
     }
 

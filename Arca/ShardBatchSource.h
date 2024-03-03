@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <unordered_map>
 
 #include "BatchSource.h"
 #include "IsShard.h"
@@ -42,22 +42,17 @@ namespace Arca
     private:
         using StoredT = std::decay_t<ShardT>;
 
-        struct Entry
-        {
-            RelicID id;
-            StoredT shard;
-
-            Entry(RelicID id, StoredT&& shard);
-        };
-
-        using List = std::vector<Entry>;
+        using Map = std::unordered_map<RelicID, StoredT>;
     public:
-        using iterator = typename List::iterator;
-        using const_iterator = typename List::const_iterator;
+        using iterator = typename Map::iterator;
+        using const_iterator = typename Map::const_iterator;
     public:
         explicit BatchSource(Reliquary& owner);
         BatchSource(const BatchSource& arg) = delete;
-        BatchSource(BatchSource&& arg) = default;
+        BatchSource(BatchSource&& arg) noexcept = default;
+
+        BatchSource& operator=(const BatchSource& arg) = delete;
+        BatchSource& operator=(BatchSource&& arg) noexcept = default;
 
         template<class... ConstructorArgs>
         ShardT* Add(RelicID id, ConstructorArgs&& ... constructorArgs);
@@ -85,7 +80,7 @@ namespace Arca
 
         [[nodiscard]] Arca::Type Type() const override;
     private:
-        List list;
+        Map map;
     private:
         Reliquary* owner = nullptr;
         friend class Reliquary;
@@ -105,16 +100,6 @@ namespace Inscription
         void Scriven(ObjectT& object, BinaryArchive& archive);
         void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
     private:
-        template<class U, std::enable_if_t<Arca::HasScribe<U, BinaryArchive>(), int> = 0>
-        void DoScriven(ObjectT& object, BinaryArchive& archive);
-        template<class U, std::enable_if_t<!Arca::HasScribe<U, BinaryArchive>(), int> = 0>
-        void DoScriven(ObjectT& object, BinaryArchive& archive);
-
-        template<class U, std::enable_if_t<Arca::HasScribe<U, JsonArchive>(), int> = 0>
-        void DoScriven(const std::string& name, ObjectT& object, JsonArchive& archive);
-        template<class U, std::enable_if_t<!Arca::HasScribe<U, JsonArchive>(), int> = 0>
-        void DoScriven(const std::string& name, ObjectT& object, JsonArchive& archive);
-
         template<class U, std::enable_if_t<Arca::has_shard_serialization_constructor_v<U>, int> = 0>
         U Create();
         template<class U, std::enable_if_t<!Arca::has_shard_serialization_constructor_v<U> && Arca::has_shard_default_constructor_v<U>, int> = 0>

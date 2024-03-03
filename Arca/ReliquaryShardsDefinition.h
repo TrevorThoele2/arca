@@ -149,10 +149,10 @@ namespace Arca
     void ReliquaryShards::Handler<ShardT>::SignalAllCreated(Reliquary& reliquary)
     {
         for (auto& shard : batchSource)
-            reliquary.shards.SignalCreation(Index<ShardT>(shard.id, reliquary));
+            reliquary.shards.SignalCreation(Index<ShardT>(shard.first, reliquary));
 
         for (auto& shard : constBatchSource)
-            reliquary.shards.SignalCreation(Index<const ShardT>(shard.id, reliquary));
+            reliquary.shards.SignalCreation(Index<const ShardT>(shard.first, reliquary));
     }
 
     template<class ShardT>

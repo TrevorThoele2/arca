@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <unordered_map>
 
 #include "BatchSource.h"
 #include "RelicID.h"
@@ -41,10 +41,10 @@ namespace Arca
     public:
         using RelicT = T;
     private:
-        using List = std::vector<RelicT>;
+        using Map = std::unordered_map<RelicID, RelicT>;
     public:
-        using iterator = typename List::iterator;
-        using const_iterator = typename List::const_iterator;
+        using iterator = typename Map::iterator;
+        using const_iterator = typename Map::const_iterator;
     public:
         explicit BatchSource(Reliquary& owner);
         BatchSource(const BatchSource& arg) = delete;
@@ -77,7 +77,7 @@ namespace Arca
 
         [[nodiscard]] Arca::Type Type() const override;
     private:
-        List list;
+        Map map;
         Reliquary* owner;
     private:
         friend class Reliquary;
@@ -97,16 +97,6 @@ namespace Inscription
         void Scriven(ObjectT& object, BinaryArchive& archive);
         void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
     private:
-        template<class U, std::enable_if_t<Arca::HasScribe<U, BinaryArchive>(), int> = 0>
-        void DoScriven(ObjectT& object, BinaryArchive& archive);
-        template<class U, std::enable_if_t<!Arca::HasScribe<U, BinaryArchive>(), int> = 0>
-        void DoScriven(ObjectT& object, BinaryArchive& archive);
-
-        template<class U, std::enable_if_t<Arca::HasScribe<U, JsonArchive>(), int> = 0>
-        void DoScriven(const std::string& name, ObjectT& object, JsonArchive& archive);
-        template<class U, std::enable_if_t<!Arca::HasScribe<U, JsonArchive>(), int> = 0>
-        void DoScriven(const std::string& name, ObjectT& object, JsonArchive& archive);
-
         template<class U, std::enable_if_t<Arca::has_relic_serialization_constructor_v<U>, int> = 0>
         U Create(Arca::RelicInit init);
         template<class U, std::enable_if_t<!Arca::has_relic_serialization_constructor_v<U> && Arca::has_relic_default_constructor_v<U>, int> = 0>

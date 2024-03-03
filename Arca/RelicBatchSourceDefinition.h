@@ -18,30 +18,33 @@ namespace Arca
         if (found)
             return nullptr;
 
-        list.emplace_back(init, std::forward<ConstructorArgs>(constructorArgs)...);
-        return &list.back();
+        return &map.emplace(
+            std::piecewise_construct,
+            std::forward_as_tuple(init.id),
+            std::forward_as_tuple(init, std::forward<ConstructorArgs>(constructorArgs)...))
+                .first->second;
     }
 
     template<class T>
     auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Destroy(RelicID destroy) -> iterator
     {
-        for (auto loop = list.begin(); loop != list.end(); ++loop)
-            if (loop->ID() == destroy)
-                return list.erase(loop);
+        auto found = map.find(destroy);
+        if (found != map.end())
+            return map.erase(found);
 
-        return list.end();
+        return map.end();
     }
 
     template<class T>
     auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Destroy(iterator destroy) -> iterator
     {
-        return list.erase(destroy);
+        return map.erase(destroy);
     }
 
     template<class T>
     auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Destroy(const_iterator destroy) -> iterator
     {
-        return list.erase(destroy);
+        return map.erase(destroy);
     }
 
     template<class T>
@@ -59,27 +62,24 @@ namespace Arca
     template<class T>
     void BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Clear()
     {
-        list.clear();
+        map.clear();
     }
 
     template<class T>
     void BatchSource<T, std::enable_if_t<is_relic_v<T>>>::SetOwner(Reliquary& owner)
     {
-        for (auto& loop : list)
-            loop.owner = &owner;
+        for (auto& loop : map)
+            loop.second.owner = &owner;
     }
 
     template<class T>
     void* BatchSource<T, std::enable_if_t<is_relic_v<T>>>::FindStorage(RelicID id)
     {
-        auto found = std::find_if(
-            list.begin(),
-            list.end(),
-            [id](const RelicT& entry) { return entry.ID() == id; });
-        if (found == list.end())
+        auto found = map.find(id);
+        if (found == map.end())
             return {};
 
-        return &*found;
+        return &found->second;
     }
 
     template<class T>
@@ -91,37 +91,37 @@ namespace Arca
     template<class T>
     auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Size() const -> SizeT
     {
-        return list.size();
+        return map.size();
     }
 
     template<class T>
     bool BatchSource<T, std::enable_if_t<is_relic_v<T>>>::IsEmpty() const
     {
-        return list.empty();
+        return map.empty();
     }
 
     template<class T>
     auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::begin() -> iterator
     {
-        return list.begin();
+        return map.begin();
     }
 
     template<class T>
     auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::begin() const -> const_iterator
     {
-        return list.begin();
+        return map.begin();
     }
 
     template<class T>
     auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::end() -> iterator
     {
-        return list.end();
+        return map.end();
     }
 
     template<class T>
     auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::end() const -> const_iterator
     {
-        return list.end();
+        return map.end();
     }
 
     template<class T>
@@ -137,31 +137,16 @@ namespace Inscription
     void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::
         Scriven(ObjectT& object, BinaryArchive& archive)
     {
-        DoScriven<typename ObjectT::RelicT>(object, archive);
-    }
-
-    template<class T>
-    void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::
-        Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
-    {
-        DoScriven<typename ObjectT::RelicT>(name, object, archive);
-    }
-
-    template<class T>
-    template<class U, std::enable_if_t<Arca::HasScribe<U, BinaryArchive>(), int>>
-    void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::
-        DoScriven(ObjectT& object, BinaryArchive& archive)
-    {
         if (archive.IsOutput())
         {
-            auto size = object.list.size();
+            auto size = object.map.size();
             archive(size);
 
-            for (auto& relic : object.list)
+            for (auto& entry : object.map)
             {
-                auto id = relic.ID();
+                auto id = entry.first;
                 archive(id);
-                archive(relic);
+                archive(entry.second);
             }
         }
         else
@@ -181,34 +166,27 @@ namespace Inscription
                 {
                     auto relic = Create<RelicT>(Arca::RelicInit{ id, *object.owner });
                     archive(relic);
-                    object.list.push_back(std::move(relic));
-                    archive.types.AttemptReplaceTrackedObject(relic, object.list.back());
+                    auto& emplaced = object.map.emplace(id, std::move(relic)).first->second;
+                    archive.types.AttemptReplaceTrackedObject(relic, emplaced);
                 }
             }
         }
     }
 
     template<class T>
-    template<class U, std::enable_if_t<!Arca::HasScribe<U, BinaryArchive>(), int>>
     void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::
-        DoScriven(ObjectT&, BinaryArchive&)
-    {}
-
-    template<class T>
-    template<class U, std::enable_if_t<Arca::HasScribe<U, JsonArchive>(), int>>
-    void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::
-        DoScriven(const std::string& name, ObjectT& object, JsonArchive& archive)
+        Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
     {
         if (archive.IsOutput())
         {
             auto output = archive.AsOutput();
             output->StartList(name);
-            for (auto& relic : object.list)
+            for (auto& entry : object.map)
             {
                 output->StartObject("");
-                auto id = relic.ID();
+                auto id = entry.first;
                 archive("id", id);
-                archive("relic", relic);
+                archive("relic", entry.second);
                 output->EndObject();
             }
             output->EndList();
@@ -226,20 +204,14 @@ namespace Inscription
 
                 auto relic = Create<RelicT>(Arca::RelicInit{ id, *object.owner });
                 archive("relic", relic);
-                object.list.push_back(std::move(relic));
-                archive.types.AttemptReplaceTrackedObject(relic, object.list.back());
+                auto& emplaced = object.map.emplace(id, std::move(relic)).first->second;
+                archive.types.AttemptReplaceTrackedObject(relic, emplaced);
 
                 input->EndObject();
             }
             input->EndList();
         }
     }
-
-    template<class T>
-    template<class U, std::enable_if_t<!Arca::HasScribe<U, JsonArchive>(), int>>
-    void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::
-        DoScriven(const std::string& name, ObjectT&, JsonArchive&)
-    {}
 
     template<class T>
     template<class U, std::enable_if_t<Arca::has_relic_serialization_constructor_v<U>, int>>

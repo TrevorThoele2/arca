@@ -10,6 +10,11 @@ HandleTestsFixture::TypedRelic::TypedRelic(Init init) : ClosedTypedRelic(init)
     basicShard = Create<Shard>();
 }
 
+HandleTestsFixture::TypedRelic::TypedRelic(Init init, Serialization) : ClosedTypedRelic(init)
+{
+    basicShard = Find<Shard>();
+}
+
 HandleTestsFixture::GlobalRelic::GlobalRelic(Init init) : ClosedTypedRelic(init)
 {
     basicShard = Create<Shard>();

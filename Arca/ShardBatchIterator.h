@@ -69,13 +69,13 @@ namespace Arca
     template<class ReturnT, class WrapT>
     ReturnT& ShardBatchIteratorBase<ReturnT, WrapT>::operator*()
     {
-        return wrapped->shard;
+        return wrapped->second;
     }
 
     template<class ReturnT, class WrapT>
     ReturnT* ShardBatchIteratorBase<ReturnT, WrapT>::operator->()
     {
-        return &wrapped->shard;
+        return &wrapped->second;
     }
 
     template<class ReturnT, class WrapT>
@@ -115,6 +115,6 @@ namespace Arca
     template<class ReturnT, class WrapT>
     RelicID ShardBatchIteratorBase<ReturnT, WrapT>::ID() const
     {
-        return wrapped->id;
+        return wrapped->first;
     }
 }
