@@ -73,7 +73,6 @@ SCENARIO_METHOD(HandleTestsFixture, "basic handle", "[handle]")
 
             THEN("is not equal to same ID object with different type")
             {
-                const auto shard = reliquary->Find<Shard>(relic1->ID());
                 auto handle2 = AsHandle<Shard>(relic1->ID(), *reliquary);
 
                 REQUIRE(handle1 != handle2);

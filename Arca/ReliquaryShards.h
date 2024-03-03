@@ -10,6 +10,8 @@
 #include "EitherShardBatchSource.h"
 #include "CompositeShardBatchSource.h"
 
+#include "Ptr.h"
+
 #include "RelicID.h"
 #include "Type.h"
 
@@ -26,14 +28,14 @@ namespace Arca
 
         void Create(const Type& type, RelicID id);
         template<class ShardT>
-        ShardT* Create(RelicID id);
+        Ptr<ShardT> Create(RelicID id);
 
         void Destroy(const Handle& handle);
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] ShardT* Find(RelicID id) const;
+        [[nodiscard]] Ptr<ShardT> Find(RelicID id) const;
         template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
-        [[nodiscard]] typename EitherT::ShardT* Find(RelicID id) const;
+        [[nodiscard]] Ptr<EitherT> Find(RelicID id) const;
 
         [[nodiscard]] bool Contains(const Handle& handle) const;
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
@@ -44,6 +46,9 @@ namespace Arca
         [[nodiscard]] bool Contains(RelicID id) const;
         template<class ShardsT, std::enable_if_t<is_composite_v<ShardsT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
+
+        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        [[nodiscard]] RelicID IDFor(const ShardT& shard) const;
 
         template<class ShardT>
         void AttemptAddToEitherBatches(RelicID id, ShardT& shard);
@@ -56,6 +61,8 @@ namespace Arca
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] ShardT* FindStorage(RelicID id);
+        template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
+        [[nodiscard]] typename EitherT::ShardT* FindStorage(RelicID id);
     public:
         class BatchSources
             : public StorageBatchSources<ShardBatchSourceBase, ReliquaryShards, BatchSources, is_shard>
@@ -137,6 +144,9 @@ namespace Arca
     private:
         void NotifyCompositesShardCreate(RelicID id);
         void NotifyCompositesShardDestroy(RelicID id);
+    private:
+        template<class ShardT>
+        Ptr<ShardT> CreatePtr(RelicID id) const;
     private:
         template<::Chroma::VariadicTemplateSize i>
         struct ContainsAllShardsIterator

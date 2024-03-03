@@ -99,6 +99,8 @@ namespace Inscription
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
+        archive.EmplaceUserContext(&object);
+
         if (archive.IsOutput())
             Save(object, archive);
         else

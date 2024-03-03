@@ -3,8 +3,6 @@
 #include "RelicID.h"
 #include "Type.h"
 
-#include "Serialization.h"
-
 namespace Arca
 {
     enum class HandleObjectType
@@ -29,7 +27,5 @@ namespace Arca
         RelicID id = 0;
         Arca::Type type;
         HandleObjectType objectType = HandleObjectType::Relic;
-    private:
-        INSCRIPTION_ACCESS;
     };
 }

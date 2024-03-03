@@ -15,6 +15,7 @@
 #include "StructureFrom.h"
 #include "Either.h"
 #include "AreAllShards.h"
+#include "Ptr.h"
 
 #include "Destroying.h"
 #include "RelicParented.h"
@@ -43,23 +44,23 @@ namespace Arca
         void Destroy(const Handle& handle);
     public:
         template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicT* Create(CreationArgs&& ... creationArgs);
+        Ptr<RelicT> Create(CreationArgs&& ... creationArgs);
         template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicT* CreateWith(const RelicStructure& structure, CreationArgs&& ... creationArgs);
+        Ptr<RelicT> CreateWith(const RelicStructure& structure, CreationArgs&& ... creationArgs);
         template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicT* CreateWith(const std::string& structureName, CreationArgs&& ... creationArgs);
+        Ptr<RelicT> CreateWith(const std::string& structureName, CreationArgs&& ... creationArgs);
 
         template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicT* CreateChild(const Handle& parent, CreationArgs&& ... creationArgs);
+        Ptr<RelicT> CreateChild(const Handle& parent, CreationArgs&& ... creationArgs);
         template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicT* CreateChildWith(const Handle& parent, const RelicStructure& structure, CreationArgs&& ... creationArgs);
+        Ptr<RelicT> CreateChildWith(const Handle& parent, const RelicStructure& structure, CreationArgs&& ... creationArgs);
         template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicT* CreateChildWith(const Handle& parent, const std::string& structureName, CreationArgs&& ... creationArgs);
+        Ptr<RelicT> CreateChildWith(const Handle& parent, const std::string& structureName, CreationArgs&& ... creationArgs);
 
         template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int> = 0>
-        [[nodiscard]] RelicT* Find(RelicID id) const;
+        [[nodiscard]] Ptr<RelicT> Find(RelicID id) const;
         template<class RelicT, std::enable_if_t<is_global_relic_v<RelicT>, int> = 0>
-        [[nodiscard]] RelicT* Find() const;
+        [[nodiscard]] Ptr<RelicT> Find() const;
 
         template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
@@ -67,18 +68,21 @@ namespace Arca
         [[nodiscard]] bool Contains() const;
 
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        [[nodiscard]] Arca::Batch<RelicT> Batch() const;
+        [[nodiscard]] Batch<RelicT> Batch() const;
 
         [[nodiscard]] std::optional<Handle> ParentOf(const Handle& child) const;
+
+        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        [[nodiscard]] RelicID IDFor(const RelicT& relic) const;
 
         [[nodiscard]] std::vector<RelicID> AllIDs() const;
 
         [[nodiscard]] SizeT RelicSize() const;
     public:
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] ShardT* Find(RelicID id) const;
+        [[nodiscard]] Ptr<ShardT> Find(RelicID id) const;
         template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
-        [[nodiscard]] typename EitherT::ShardT* Find(RelicID id) const;
+        [[nodiscard]] Ptr<EitherT> Find(RelicID id) const;
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
@@ -95,6 +99,9 @@ namespace Arca
         [[nodiscard]] Arca::Batch<EitherT> Batch();
         template<class ShardsT, std::enable_if_t<is_composite_v<ShardsT>, int> = 0>
         [[nodiscard]] Arca::Batch<ShardsT> Batch();
+
+        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        [[nodiscard]] RelicID IDFor(const ShardT& shard) const;
 
         [[nodiscard]] SizeT ShardSize() const;
     public:
@@ -144,6 +151,8 @@ namespace Arca
         [[nodiscard]] RelicT* FindGlobalStorage();
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] ShardT* FindStorage(RelicID id);
+        template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
+        [[nodiscard]] typename EitherT::ShardT* FindStorage(RelicID id);
     private:
         Handle HandleFrom(RelicID id, Type type, HandleObjectType objectType);
         Handle HandleFrom(const RelicMetadata& metadata);
@@ -166,51 +175,51 @@ namespace Arca
     };
 
     template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    RelicT* Reliquary::Create(CreationArgs&& ... creationArgs)
+    Ptr<RelicT> Reliquary::Create(CreationArgs&& ... creationArgs)
     {
         return relics.Create<RelicT>(std::forward<CreationArgs>(creationArgs)...);
     }
 
     template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    RelicT* Reliquary::CreateWith(const RelicStructure& structure, CreationArgs&& ... creationArgs)
+    Ptr<RelicT> Reliquary::CreateWith(const RelicStructure& structure, CreationArgs&& ... creationArgs)
     {
         return relics.CreateWith<RelicT>(structure, std::forward<CreationArgs>(creationArgs)...);
     }
 
     template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    RelicT* Reliquary::CreateWith(const std::string& structureName, CreationArgs&& ... creationArgs)
+    Ptr<RelicT> Reliquary::CreateWith(const std::string& structureName, CreationArgs&& ... creationArgs)
     {
         return relics.CreateWith<RelicT>(structureName, std::forward<CreationArgs>(creationArgs)...);
     }
 
     template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    RelicT* Reliquary::CreateChild(const Handle& parent, CreationArgs&& ... creationArgs)
+    Ptr<RelicT> Reliquary::CreateChild(const Handle& parent, CreationArgs&& ... creationArgs)
     {
         return relics.CreateChild<RelicT>(parent, std::forward<CreationArgs>(creationArgs)...);
     }
 
     template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    RelicT* Reliquary::CreateChildWith(
+    Ptr<RelicT> Reliquary::CreateChildWith(
         const Handle& parent, const RelicStructure& structure, CreationArgs&& ... creationArgs)
     {
         return relics.CreateChildWith<RelicT>(parent, structure, std::forward<CreationArgs>(creationArgs)...);
     }
 
     template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    RelicT* Reliquary::CreateChildWith(
+    Ptr<RelicT> Reliquary::CreateChildWith(
         const Handle& parent, const std::string& structureName, CreationArgs&& ... creationArgs)
     {
         return relics.CreateChildWith<RelicT>(parent, structureName, std::forward<CreationArgs>(creationArgs)...);
     }
 
     template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int>>
-    RelicT* Reliquary::Find(RelicID id) const
+    Ptr<RelicT> Reliquary::Find(RelicID id) const
     {
         return relics.Find<RelicT>(id);
     }
 
     template<class RelicT, std::enable_if_t<is_global_relic_v<RelicT>, int>>
-    RelicT* Reliquary::Find() const
+    Ptr<RelicT> Reliquary::Find() const
     {
         return relics.Find<RelicT>();
     }
@@ -228,19 +237,25 @@ namespace Arca
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
-    Arca::Batch<RelicT> Reliquary::Batch() const
+    Batch<RelicT> Reliquary::Batch() const
     {
         return relics.batchSources.Batch<RelicT>();
     }
 
+    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
+    RelicID Reliquary::IDFor(const RelicT& relic) const
+    {
+        return relics.IDFor(relic);
+    }
+
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    ShardT* Reliquary::Find(RelicID id) const
+    Ptr<ShardT> Reliquary::Find(RelicID id) const
     {
         return shards.Find<ShardT>(id);
     }
 
     template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int>>
-    typename EitherT::ShardT* Reliquary::Find(RelicID id) const
+    Ptr<EitherT> Reliquary::Find(RelicID id) const
     {
         return shards.Find<EitherT>(id);
     }
@@ -270,21 +285,27 @@ namespace Arca
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    Arca::Batch<ShardT> Reliquary::Batch() const
+    Batch<ShardT> Reliquary::Batch() const
     {
         return shards.batchSources.Batch<ShardT>();
     }
 
     template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int>>
-    Arca::Batch<EitherT> Reliquary::Batch()
+    Batch<EitherT> Reliquary::Batch()
     {
         return shards.eitherBatchSources.Batch<EitherT>();
     }
 
     template<class ShardsT, std::enable_if_t<is_composite_v<ShardsT>, int>>
-    Arca::Batch<ShardsT> Reliquary::Batch()
+    Batch<ShardsT> Reliquary::Batch()
     {
         return shards.compositeBatchSources.Batch<ShardsT>();
+    }
+
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
+    RelicID Reliquary::IDFor(const ShardT& shard) const
+    {
+        return shards.IDFor(shard);
     }
 
     template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int>>
@@ -342,7 +363,7 @@ namespace Arca
     }
 
     template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int>>
-    Arca::Batch<SignalT> Reliquary::Batch() const
+    Batch<SignalT> Reliquary::Batch() const
     {
         return signals.batchSources.Batch<SignalT>();
     }
@@ -364,6 +385,12 @@ namespace Arca
     {
         return shards.FindStorage<ShardT>(id);
     }
+
+    template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int>>
+    typename EitherT::ShardT* Reliquary::FindStorage(RelicID id)
+    {
+        return shards.FindStorage<EitherT>(id);
+    }
 }
 
 namespace Inscription
@@ -373,12 +400,13 @@ namespace Inscription
     public:
         using Serializer = std::function<void(Arca::Reliquary&, BinaryArchive&)>;
     public:
+        KnownPolymorphic() = default;
         KnownPolymorphic(Arca::Reliquary& reliquary, Serializer serializer);
         KnownPolymorphic(const KnownPolymorphic& arg) = default;
 
         KnownPolymorphic& operator=(const KnownPolymorphic& arg) = default;
     private:
-        Arca::Reliquary* reliquary;
+        Arca::Reliquary* reliquary = nullptr;
         Serializer serializer;
     private:
         INSCRIPTION_ACCESS;

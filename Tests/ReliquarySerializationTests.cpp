@@ -503,7 +503,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
         }
     }
 
-    GIVEN("saved reliquary with curator")
+    GIVEN("saved reliquary with signal")
     {
         auto savedReliquary = ReliquaryOrigin()
             .Type<BasicSignal>()
@@ -752,7 +752,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
         }
     }
 
-    GIVEN("saved reliquary with curator")
+    GIVEN("saved reliquary with signal")
     {
         auto savedReliquary = ReliquaryOrigin()
             .Type<BasicSignalNullInscription>()
