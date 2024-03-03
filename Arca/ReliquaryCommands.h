@@ -9,6 +9,7 @@
 #include "CreateWith.h"
 #include "CreateChild.h"
 #include "CreateChildWith.h"
+#include "Assign.h"
 #include "Destroy.h"
 #include "Clear.h"
 
@@ -31,6 +32,14 @@ namespace Arca
         command_result_t<CreateChild<T>> Do(const CreateChild<T>& command);
         template<class T>
         command_result_t<CreateChildWith<T>> Do(const CreateChildWith<T>& command);
+        template<class T, std::enable_if_t<is_relic_v<T>, int> = 0>
+        command_result_t<AssignCopy<T>> Do(const AssignCopy<T>& command);
+        template<class T, std::enable_if_t<is_shard_v<T>, int> = 0>
+        command_result_t<AssignCopy<T>> Do(const AssignCopy<T>& command);
+        template<class T, std::enable_if_t<is_relic_v<T>, int> = 0>
+        command_result_t<AssignMove<T>> Do(const AssignMove<T>& command);
+        template<class T, std::enable_if_t<is_shard_v<T>, int> = 0>
+        command_result_t<AssignMove<T>> Do(const AssignMove<T>& command);
         template<class T, std::enable_if_t<is_relic_v<T>, int> = 0>
         void Do(const Destroy<T>& command);
         template<class T, std::enable_if_t<is_shard_v<T>, int> = 0>

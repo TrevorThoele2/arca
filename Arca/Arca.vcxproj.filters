@@ -507,6 +507,9 @@
     <ClInclude Include="MutablePointerDefinition.h">
       <Filter>Header Files\Curator</Filter>
     </ClInclude>
+    <ClInclude Include="Assign.h">
+      <Filter>Header Files\Command\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
