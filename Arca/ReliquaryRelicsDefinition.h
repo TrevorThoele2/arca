@@ -23,11 +23,17 @@ namespace Arca
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
-    RelicT* ReliquaryRelics::FindStaticStorage(RelicID id)
+    auto ReliquaryRelics::BatchSources::MapFor() const -> const Map&
+    {
+        return map;
+    }
+
+    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
+    RelicT* ReliquaryRelics::FindGlobalStorage(RelicID id)
     {
         const auto typeHandle = TypeHandleFor<RelicT>();
-        const auto found = staticMap.find(typeHandle.name);
-        if (found == staticMap.end())
+        const auto found = globalMap.find(typeHandle.name);
+        if (found == globalMap.end())
             throw NotRegistered(typeHandle, typeid(RelicT));
 
         return std::any_cast<RelicT>(&found->second);

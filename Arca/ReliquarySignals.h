@@ -31,6 +31,8 @@ namespace Arca
         public:
             template<class RelicT, std::enable_if_t<is_signal_v<RelicT>, int> = 0>
             [[nodiscard]] Map& MapFor();
+            template<class RelicT, std::enable_if_t<is_signal_v<RelicT>, int> = 0>
+            [[nodiscard]] const Map& MapFor() const;
         private:
             explicit BatchSources(ReliquarySignals& owner);
             friend ReliquarySignals;

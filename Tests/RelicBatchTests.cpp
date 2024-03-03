@@ -3,17 +3,17 @@
 #include "RelicBatchTests.h"
 
 RelicBatchFixture::Relic::Relic(const ::Inscription::BinaryTableData<Relic>& data) :
-    TypedRelic(data.base), value(data.value)
+    TypedRelicAutomation(data.base), value(data.value)
 {}
 
 void RelicBatchFixture::Relic::InitializeImplementation()
 {}
 
-RelicBatchFixture::StaticRelic::StaticRelic(const ::Inscription::BinaryTableData<Relic>& data) :
-    TypedRelic(data.base), value(data.value)
+RelicBatchFixture::GlobalRelic::GlobalRelic(const ::Inscription::BinaryTableData<Relic>& data) :
+    TypedRelicAutomation(data.base), value(data.value)
 {}
 
-void RelicBatchFixture::StaticRelic::InitializeImplementation()
+void RelicBatchFixture::GlobalRelic::InitializeImplementation()
 {}
 
 RelicBatchFixture::Shard::Shard(int value) :
@@ -23,7 +23,7 @@ RelicBatchFixture::Shard::Shard(int value) :
 namespace Arca
 {
     const TypeHandleName Traits<RelicBatchFixture::Relic>::typeName = "RelicBatchTestsRelic";
-    const TypeHandleName Traits<RelicBatchFixture::StaticRelic>::typeName = "RelicBatchTestsStaticRelic";
+    const TypeHandleName Traits<RelicBatchFixture::GlobalRelic>::typeName = "RelicBatchTestsGlobalRelic";
     const TypeHandleName Traits<RelicBatchFixture::UnregisteredRelic>::typeName = "RelicBatchTestsUnregisteredRelic";
     const TypeHandleName Traits<RelicBatchFixture::Shard>::typeName = "RelicBatchTestsShard";
 }

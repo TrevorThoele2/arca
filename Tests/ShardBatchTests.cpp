@@ -2,17 +2,14 @@
 
 #include "ShardBatchTests.h"
 
-#include <Arca/ExtractShards.h>
-
 ShardBatchFixture::Shard::Shard(int value) :
     value(value)
 {}
 
-void ShardBatchFixture::StaticRelic::InitializeImplementation()
+void ShardBatchFixture::GlobalRelic::InitializeImplementation()
 {
-    using Shards = shards_for_t<StaticRelic>;
-    auto tuple = ExtractShards<Shards>(ID(), Owner());
-    shard = std::get<0>(tuple);
+    auto shards = ExtractShards();
+    shard = std::get<0>(shards);
 }
 
 namespace Arca
@@ -21,8 +18,8 @@ namespace Arca
         = "ShardBatchTestsShard";
     const TypeHandleName Traits<ShardBatchFixture::UnregisteredShard>::typeName
         = "ShardBatchTestsUnregisteredShard";
-    const TypeHandleName Traits<ShardBatchFixture::StaticRelic>::typeName
-        = "ShardBatchTestsStaticRelic";
+    const TypeHandleName Traits<ShardBatchFixture::GlobalRelic>::typeName
+        = "ShardBatchTestsGlobalRelic";
 }
 
 SCENARIO_METHOD(ShardBatchFixture, "default shard batch", "[ShardBatch]")
@@ -90,7 +87,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
     GIVEN("registered reliquary and relic")
     {
         auto reliquary = ReliquaryOrigin().Shard<Shard>().Actualize();
-        auto relic = reliquary->Create<DynamicRelic>();
+        auto relic = reliquary->Create<OpenRelic>();
 
         WHEN("creating shard")
         {
@@ -170,11 +167,11 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
         }
     }
 
-    GIVEN("registered reliquary with static relic")
+    GIVEN("registered reliquary with global relic")
     {
         auto reliquary = ReliquaryOrigin()
             .Shard<Shard>()
-            .StaticRelic<StaticRelic>()
+            .GlobalRelic<GlobalRelic>()
             .Actualize();
 
         WHEN("starting batch")
@@ -203,7 +200,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch serialization", "[ShardBatch][se
             .Shard<Shard>()
             .Actualize();
 
-        auto savedRelic = savedReliquary->Create<DynamicRelic>();
+        auto savedRelic = savedReliquary->Create<OpenRelic>();
         savedRelic.Create<Shard>();
 
         {

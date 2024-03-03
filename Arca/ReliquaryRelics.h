@@ -5,13 +5,11 @@
 #include <vector>
 #include <any>
 
-#include "DynamicRelic.h"
+#include "OpenRelic.h"
 #include "RelicStructure.h"
 #include "RelicTraits.h"
 #include "RelicMetadata.h"
 #include "RelicBatchSource.h"
-
-#include "IntervalList.h"
 
 #include "KnownPolymorphicSerializer.h"
 
@@ -20,14 +18,20 @@ namespace Arca
     class ReliquaryRelics : public ReliquaryComponent
     {
     public:
+        struct RelicPrototype
+        {
+            RelicID id;
+            RelicOpenness openness;
+        };
+    public:
         using RelicMetadataList = std::vector<RelicMetadata>;
         RelicMetadataList metadataList;
 
-        IntervalList<RelicID> occupiedIDs;
+        RelicID nextRelicID = 1;
 
         void SetupNewInternals(
             RelicID id,
-            RelicDynamism dynamism,
+            RelicOpenness openness,
             std::optional<TypeHandle> typeHandle = {},
             void* storage = nullptr);
         void DestroyMetadata(RelicID id);
@@ -40,9 +44,13 @@ namespace Arca
         void Destroy(RelicMetadata& metadata);
 
         [[nodiscard]] RelicID NextID() const;
+        [[nodiscard]] RelicID AdvanceID();
 
         [[nodiscard]] bool CanModify(RelicID id) const;
         void ModificationRequired(RelicID id) const;
+
+        void ThrowIfCannotParent(const Handle& parent, RelicPrototype child);
+        void Parent(const Handle& parent, const Handle& child);
 
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         RelicT* FindStorage(RelicID id);
@@ -56,6 +64,8 @@ namespace Arca
         public:
             template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
             [[nodiscard]] Map& MapFor();
+            template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+            [[nodiscard]] const Map& MapFor() const;
         private:
             explicit BatchSources(ReliquaryRelics& owner);
             friend ReliquaryRelics;
@@ -63,13 +73,15 @@ namespace Arca
 
         KnownPolymorphicSerializerList serializers;
     public:
-        using StaticMap = std::unordered_map<TypeHandleName, std::any>;
-        StaticMap staticMap;
+        using GlobalMap = std::unordered_map<TypeHandleName, std::any>;
+        GlobalMap globalMap;
 
-        KnownPolymorphicSerializerList staticSerializers;
+        KnownPolymorphicSerializerList globalSerializers;
 
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        RelicT* FindStaticStorage(RelicID id);
+        RelicT* FindGlobalStorage(RelicID id);
+    private:
+        RelicMetadata& ValidateParentForParenting(const Handle& parent);
     private:
         explicit ReliquaryRelics(Reliquary& owner);
         friend Reliquary;

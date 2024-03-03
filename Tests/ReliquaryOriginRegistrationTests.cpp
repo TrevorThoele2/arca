@@ -11,8 +11,8 @@ namespace Arca
     const TypeHandleName Traits<::ReliquaryOriginRegistrationTestsFixture::Relic>::typeName =
         "ReliquaryTestsRelic";
 
-    const TypeHandleName Traits<::ReliquaryOriginRegistrationTestsFixture::StaticRelic>::typeName =
-        "ReliquaryTestsStaticRelic";
+    const TypeHandleName Traits<::ReliquaryOriginRegistrationTestsFixture::GlobalRelic>::typeName =
+        "ReliquaryTestsGlobalRelic";
 
     const TypeHandleName Traits<::ReliquaryOriginRegistrationTestsFixture::Curator>::typeName =
         "ReliquaryTestsCurator";
@@ -30,7 +30,7 @@ SCENARIO_METHOD(ReliquaryOriginRegistrationTestsFixture, "registering types mult
         auto reliquaryOrigin = ReliquaryOrigin()
             .Shard<Shard>()
             .Relic<Relic>()
-            .StaticRelic<StaticRelic>()
+            .GlobalRelic<GlobalRelic>()
             .Signal<Signal>()
             .Curator<Curator>()
             .RelicStructure(relicStructureName, RelicStructure{});
@@ -65,17 +65,17 @@ SCENARIO_METHOD(ReliquaryOriginRegistrationTestsFixture, "registering types mult
             }
         }
 
-        WHEN("registering static relic again")
+        WHEN("registering global relic again")
         {
             THEN("throws error")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquaryOrigin.StaticRelic<StaticRelic>(),
+                    reliquaryOrigin.GlobalRelic<GlobalRelic>(),
                     AlreadyRegistered,
                     Catch::Matchers::Message(
-                        "The static relic (" + TypeHandleFor<StaticRelic>().name + ") was already registered. " +
-                        "The class name is: \"" + typeid(StaticRelic).name() + "\".")
+                        "The global relic (" + TypeHandleFor<GlobalRelic>().name + ") was already registered. " +
+                        "The class name is: \"" + typeid(GlobalRelic).name() + "\".")
                 );
             }
         }

@@ -7,11 +7,11 @@ namespace Arca
 {
     RelicMetadata::RelicMetadata(
         RelicID id,
-        RelicDynamism dynamism,
+        RelicOpenness openness,
         std::optional<TypeHandle> typeHandle,
         void* storage)
         :
-        id(id), dynamism(dynamism), typeHandle(std::move(typeHandle)), storage(storage)
+        id(id), openness(openness), typeHandle(std::move(typeHandle)), storage(storage)
     {}
 }
 
@@ -21,7 +21,7 @@ namespace Inscription
         ObjectT& object, ArchiveT& archive)
     {
         archive(object.id);
-        archive(object.dynamism);
+        archive(object.openness);
         archive(object.typeHandle);
         archive(object.parent);
         archive(object.children);

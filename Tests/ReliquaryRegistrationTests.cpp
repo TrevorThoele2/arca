@@ -11,8 +11,8 @@ namespace Arca
     const TypeHandleName Traits<::ReliquaryRegistrationTestsFixture::Relic>::typeName =
         "ReliquaryTestsRelic";
 
-    const TypeHandleName Traits<::ReliquaryRegistrationTestsFixture::StaticRelic>::typeName =
-        "ReliquaryTestsStaticRelic";
+    const TypeHandleName Traits<::ReliquaryRegistrationTestsFixture::GlobalRelic>::typeName =
+        "ReliquaryTestsGlobalRelic";
 
     const TypeHandleName Traits<::ReliquaryRegistrationTestsFixture::Curator>::typeName =
         "ReliquaryTestsCurator";
@@ -29,15 +29,15 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
 
         auto reliquary = ReliquaryOrigin().Actualize();
 
-        auto dynamicRelic = reliquary->Create<DynamicRelic>();
+        auto openRelic = reliquary->Create<OpenRelic>();
 
-        WHEN("creating unregistered shard on dynamic relic")
+        WHEN("creating unregistered shard on open relic")
         {
             THEN("throws error")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    dynamicRelic.Create<Shard>(),
+                    openRelic.Create<Shard>(),
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The shard ("s + ::Chroma::ToString(TypeHandleFor<Shard>()) + ") was not registered. " +
@@ -46,13 +46,13 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             }
         }
 
-        WHEN("creating unregistered const shard on dynamic relic")
+        WHEN("creating unregistered const shard on open relic")
         {
             THEN("throws error")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    dynamicRelic.Create<const Shard>(),
+                    openRelic.Create<const Shard>(),
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The shard ("s + ::Chroma::ToString(TypeHandleFor<const Shard>()) + ") was not registered. " +
@@ -76,17 +76,17 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             }
         }
 
-        WHEN("retrieving unregistered static relic")
+        WHEN("retrieving unregistered global relic")
         {
             THEN("throws error")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary->Static<StaticRelic>(),
+                    reliquary->Global<GlobalRelic>(),
                     NotRegistered,
                     ::Catch::Matchers::Message(
-                        "The relic ("s + ::Chroma::ToString(TypeHandleFor<StaticRelic>()) + ") was not registered. " +
-                        "The class name is: \"" + typeid(StaticRelic).name() + "\".")
+                        "The relic ("s + ::Chroma::ToString(TypeHandleFor<GlobalRelic>()) + ") was not registered. " +
+                        "The class name is: \"" + typeid(GlobalRelic).name() + "\".")
                 );
             }
         }

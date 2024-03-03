@@ -25,7 +25,7 @@ namespace Arca
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         ReliquaryOrigin& Relic();
         template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        ReliquaryOrigin& StaticRelic(CreationArgs&& ... creationArgs);
+        ReliquaryOrigin& GlobalRelic(CreationArgs&& ... creationArgs);
         ReliquaryOrigin& RelicStructure(const std::string& name, const RelicStructure& structure);
     public:
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
@@ -55,10 +55,10 @@ namespace Arca
         template<class RelicT>
         [[nodiscard]] bool IsRelicRegistered() const;
     private:
-        TypeConstructorList staticRelicList;
+        TypeConstructorList globalRelicList;
 
         template<class RelicT>
-        [[nodiscard]] bool IsStaticRelicRegistered() const;
+        [[nodiscard]] bool IsGlobalRelicRegistered() const;
     private:
         using TypedRelicInitializer = void(*)(Reliquary&);
         using TypedRelicInitializerList = std::vector<TypedRelicInitializer>;
@@ -160,38 +160,38 @@ namespace Arca
     }
 
     template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
-    ReliquaryOrigin& ReliquaryOrigin::StaticRelic(CreationArgs&& ... creationArgs)
+    ReliquaryOrigin& ReliquaryOrigin::GlobalRelic(CreationArgs&& ... creationArgs)
     {
         const auto typeHandle = TypeHandleFor<RelicT>();
 
-        if (IsStaticRelicRegistered<RelicT>())
-            throw AlreadyRegistered("static relic", typeHandle, typeid(RelicT));
+        if (IsGlobalRelicRegistered<RelicT>())
+            throw AlreadyRegistered("global relic", typeHandle, typeid(RelicT));
 
         const auto factory = [args = std::make_tuple(std::forward<CreationArgs>(creationArgs) ...)](Reliquary& reliquary)
         {
             return std::apply([&reliquary](auto&& ... creationArgs)
                 {
                     const auto typeHandle = TypeHandleFor<RelicT>();
-                    const auto id = reliquary.relics.NextID();
+                    const auto id = reliquary.relics.AdvanceID();
                     auto relic = RelicT(std::forward<CreationArgs>(creationArgs)...);
                     relic.id = id;
-                    auto emplaced = reliquary.relics.staticMap.emplace(
+                    auto emplaced = reliquary.relics.globalMap.emplace(
                         typeHandle.name,
                         std::move(relic)
                     )
                         .first->second;
                     auto castedEmplaced = std::any_cast<RelicT>(&emplaced);
-                    reliquary.relics.SetupNewInternals(id, RelicDynamism::Static, typeHandle.name, castedEmplaced);
+                    reliquary.relics.SetupNewInternals(id, RelicOpenness::Global, typeHandle.name, castedEmplaced);
                     reliquary.relics.SatisfyStructure(id, StructureFrom<shards_for_t<RelicT>>());
 
-                    reliquary.relics.staticSerializers.push_back(
+                    reliquary.relics.globalSerializers.push_back(
                         KnownPolymorphicSerializer
                         {
                             typeHandle.name,
                             [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
                             {
-                                auto staticRelic = reliquary.Static<RelicT>();
-                                archive(*staticRelic);
+                                auto relic = reliquary.Global<RelicT>();
+                                archive(*relic);
                             },
                             [](::Inscription::BinaryArchive& archive)
                             {
@@ -200,11 +200,11 @@ namespace Arca
                         });
                 }, args);
         };
-        staticRelicList.emplace_back(typeHandle.name, factory);
+        globalRelicList.emplace_back(typeHandle.name, factory);
 
         typedRelicInitializerList.push_back([](Reliquary& reliquary)
             {
-                auto relic = reliquary.Static<RelicT>();
+                auto relic = reliquary.Global<RelicT>();
                 relic->Initialize(reliquary);
             });
 
@@ -322,17 +322,17 @@ namespace Arca
     }
 
     template<class RelicT>
-    bool ReliquaryOrigin::IsStaticRelicRegistered() const
+    bool ReliquaryOrigin::IsGlobalRelicRegistered() const
     {
         const auto typeHandle = TypeHandleFor<RelicT>();
         const auto found = std::find_if(
-            staticRelicList.begin(),
-            staticRelicList.end(),
+            globalRelicList.begin(),
+            globalRelicList.end(),
             [typeHandle](const TypeConstructor& constructor)
             {
                 return constructor.typeHandleName == typeHandle.name;
             });
-        return found != staticRelicList.end();
+        return found != globalRelicList.end();
     }
 
     template<class ShardT>

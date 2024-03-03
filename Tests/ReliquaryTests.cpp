@@ -4,8 +4,6 @@ using namespace std::string_literals;
 
 #include "ReliquaryTests.h"
 
-#include <Arca/ExtractShards.h>
-
 ReliquaryTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std::move(myValue))
 {}
 
@@ -13,24 +11,22 @@ ReliquaryTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
 {}
 
 ReliquaryTestsFixture::BasicTypedRelic::BasicTypedRelic(const ::Inscription::BinaryTableData<BasicTypedRelic>& data) :
-    TypedRelic(data.base)
+    TypedRelicAutomation(data.base)
 {}
 
 void ReliquaryTestsFixture::BasicTypedRelic::InitializeImplementation()
 {
-    using Shards = shards_for_t<BasicTypedRelic>;
-    auto tuple = ExtractShards<Shards>(ID(), Owner());
-    basicShard = std::get<0>(tuple);
+    auto shards = ExtractShards();
+    basicShard = std::get<0>(shards);
 }
 
-ReliquaryTestsFixture::StaticRelic::StaticRelic(const ::Inscription::BinaryTableData<StaticRelic>& data) :
-    TypedRelic(data.base)
+ReliquaryTestsFixture::GlobalRelic::GlobalRelic(const ::Inscription::BinaryTableData<GlobalRelic>& data) :
+    TypedRelicAutomation(data.base)
 {}
 
-void ReliquaryTestsFixture::StaticRelic::InitializeImplementation()
+void ReliquaryTestsFixture::GlobalRelic::InitializeImplementation()
 {
-    using Shards = shards_for_t<StaticRelic>;
-    auto tuple = ExtractShards<Shards>(ID(), Owner());
+    auto tuple = ExtractShards();
     basicShard = std::get<0>(tuple);
 }
 
@@ -48,8 +44,8 @@ namespace Arca
     const TypeHandleName Traits<::ReliquaryTestsFixture::BasicTypedRelic>::typeName =
         "ReliquaryTestsBasicTypedRelic";
 
-    const TypeHandleName Traits<::ReliquaryTestsFixture::StaticRelic>::typeName =
-        "ReliquaryTestsStaticRelic";
+    const TypeHandleName Traits<::ReliquaryTestsFixture::GlobalRelic>::typeName =
+        "ReliquaryTestsGlobalRelic";
 
     const TypeHandleName Traits<::ReliquaryTestsFixture::BasicCurator>::typeName =
         "ReliquaryTestsBasicCurator";
@@ -98,7 +94,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
 
         WHEN("finding relic")
         {
-            auto found = reliquary->Find<DynamicRelic>(1);
+            auto found = reliquary->Find<OpenRelic>(1);
 
             THEN("is empty")
             {
@@ -106,9 +102,19 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
             }
         }
 
+        WHEN("querying contains relic")
+        {
+            auto contains = reliquary->Contains<OpenRelic>(1);
+
+            THEN("is false")
+            {
+                REQUIRE(!contains);
+            }
+        }
+
         WHEN("creating relic")
         {
-            reliquary->Create<DynamicRelic>();
+            reliquary->Create<OpenRelic>();
 
             THEN("reliquary has relic count of one")
             {
@@ -131,6 +137,28 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
             THEN("returns nullptr")
             {
                 REQUIRE(constReliquary->Find<BasicCurator>() == nullptr);
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary wih single shard")
+{
+    GIVEN("reliquary registered with single shard")
+    {
+        auto reliquary = ReliquaryOrigin()
+            .Shard<BasicShard>()
+            .Actualize();
+
+        WHEN("creating open relic with non-const and const shards")
+        {
+            auto relic = reliquary->Create<OpenRelic>();
+            relic.Create<BasicShard>();
+            relic.Create<const BasicShard>();
+
+            THEN("reliquary has shard size of two")
+            {
+                REQUIRE(reliquary->ShardSize() == 2);
             }
         }
     }
@@ -186,7 +214,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "registered reliquary with every type", "
     {
         auto reliquary = ReliquaryOrigin()
             .Relic<BasicTypedRelic>()
-            .StaticRelic<StaticRelic>()
+            .GlobalRelic<GlobalRelic>()
             .RelicStructure(dataGeneration.Random<std::string>(), RelicStructure())
             .Shard<BasicShard>()
             .Curator<BasicCurator>()
@@ -196,12 +224,12 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "registered reliquary with every type", "
 
         WHEN("checking relic size")
         {
-            THEN("has one relic for static relic")
+            THEN("has one relic for global relic")
             {
                 REQUIRE(reliquary->RelicSize() == 1);
             }
 
-            THEN("has one shard for static relic")
+            THEN("has one shard for global relic")
             {
                 REQUIRE(reliquary->ShardSize() == 1);
             }
@@ -215,7 +243,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
     {
         auto savedReliquary = ReliquaryOrigin()
             .Shard<BasicShard>()
-            .StaticRelic<StaticRelic>()
+            .GlobalRelic<GlobalRelic>()
             .Curator<BasicCurator>()
             .CuratorPipeline(Pipeline())
             .Signal<BasicSignal>()
@@ -230,7 +258,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
         {
             auto loadedReliquary = ReliquaryOrigin()
                 .Shard<BasicShard>()
-                .StaticRelic<StaticRelic>()
+                .GlobalRelic<GlobalRelic>()
                 .Curator<BasicCurator>()
                 .CuratorPipeline(Pipeline())
                 .Signal<BasicSignal>()
@@ -241,20 +269,20 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
                 inputArchive(*loadedReliquary);
             }
 
-            THEN("has only static relic")
+            THEN("has only global relic")
             {
                 REQUIRE(loadedReliquary->RelicSize() == 1);
             }
         }
     }
 
-    GIVEN("saved reliquary with dynamic relic")
+    GIVEN("saved reliquary with open relic")
     {
         auto savedReliquary = ReliquaryOrigin()
             .Shard<BasicShard>()
             .Actualize();
 
-        auto savedRelic = savedReliquary->Create<DynamicRelic>();
+        auto savedRelic = savedReliquary->Create<OpenRelic>();
         auto savedShard = savedRelic.Create<BasicShard>();
         savedShard->myValue = dataGeneration.Random<std::string>();
 
@@ -274,13 +302,14 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
                 inputArchive(*loadedReliquary);
             }
 
-            auto loadedRelic = loadedReliquary->Find<DynamicRelic>(savedRelic.ID());
+            auto loadedRelic = loadedReliquary->Find<OpenRelic>(savedRelic.ID());
             auto shardFromRelic = loadedRelic->Find<BasicShard>();
 
             THEN("has relic")
             {
                 REQUIRE(loadedReliquary->RelicSize() == 1);
                 REQUIRE(loadedRelic);
+                REQUIRE(loadedReliquary->Contains<OpenRelic>(loadedRelic->ID()));
             }
 
             THEN("relic has shard")
@@ -288,7 +317,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
                 auto shardFromReliquary = loadedReliquary->Find<BasicShard>(loadedRelic->ID());
                 REQUIRE(shardFromReliquary);
                 REQUIRE(shardFromRelic);
-                REQUIRE(loadedRelic->Has<BasicShard>());
+                REQUIRE(loadedRelic->Contains<BasicShard>());
             }
 
             THEN("shard has saved value")
@@ -317,12 +346,13 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
                 inputArchive(*loadedReliquary);
             }
 
-            auto loadedRelic = loadedReliquary->Find<DynamicRelic>(savedRelic.ID());
+            auto loadedRelic = loadedReliquary->Find<OpenRelic>(savedRelic.ID());
 
             THEN("has relic")
             {
                 REQUIRE(loadedReliquary->RelicSize() == 1);
                 REQUIRE(loadedRelic);
+                REQUIRE(loadedReliquary->Contains<OpenRelic>(loadedRelic->ID()));
             }
 
             THEN("relic does not have shard")
@@ -353,13 +383,14 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
                 inputArchive(*loadedReliquary);
             }
 
-            auto loadedRelic = loadedReliquary->Find<DynamicRelic>(savedRelic.ID());
+            auto loadedRelic = loadedReliquary->Find<OpenRelic>(savedRelic.ID());
             auto shardFromRelic = loadedRelic->Find<OtherBasicShard>();
 
             THEN("has relic")
             {
                 REQUIRE(loadedReliquary->RelicSize() == 1);
                 REQUIRE(loadedRelic);
+                REQUIRE(loadedReliquary->Contains<OpenRelic>(loadedRelic->ID()));
             }
 
             THEN("relic has shard")
@@ -367,7 +398,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
                 auto shardFromReliquary = loadedReliquary->Find<OtherBasicShard>(loadedRelic->ID());
                 REQUIRE(shardFromReliquary);
                 REQUIRE(shardFromRelic);
-                REQUIRE(loadedRelic->Has<OtherBasicShard>());
+                REQUIRE(loadedRelic->Contains<OtherBasicShard>());
             }
 
             THEN("shard has saved value")

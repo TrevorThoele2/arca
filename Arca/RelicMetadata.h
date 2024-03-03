@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "RelicID.h"
-#include "RelicDynamism.h"
+#include "RelicOpenness.h"
 #include "TypeHandle.h"
 
 #include "Serialization.h"
@@ -14,7 +14,7 @@ namespace Arca
     struct RelicMetadata
     {
         RelicID id = 0;
-        RelicDynamism dynamism = RelicDynamism::Dynamic;
+        RelicOpenness openness = RelicOpenness::Open;
         std::optional<TypeHandle> typeHandle;
         void* storage = nullptr;
 
@@ -24,7 +24,7 @@ namespace Arca
         RelicMetadata() = default;
         RelicMetadata(
             RelicID id,
-            RelicDynamism dynamism,
+            RelicOpenness openness,
             std::optional<TypeHandle> typeHandle = {},
             void* storage = nullptr);
     };

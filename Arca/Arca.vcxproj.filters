@@ -37,9 +37,6 @@
     <ClCompile Include="RelicBatchSource.cpp">
       <Filter>Source Files\Relic\Batch</Filter>
     </ClCompile>
-    <ClCompile Include="DynamicRelic.cpp">
-      <Filter>Source Files\Relic</Filter>
-    </ClCompile>
     <ClCompile Include="TypedRelic.cpp">
       <Filter>Source Files\Relic</Filter>
     </ClCompile>
@@ -91,12 +88,12 @@
     <ClCompile Include="RelicParented.cpp">
       <Filter>Source Files\Signal\Common</Filter>
     </ClCompile>
+    <ClCompile Include="OpenRelic.cpp">
+      <Filter>Source Files\Relic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Exception.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IntervalList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StaticAssert.h">
@@ -159,9 +156,6 @@
     <ClInclude Include="ShardTraits.h">
       <Filter>Header Files\Shard</Filter>
     </ClInclude>
-    <ClInclude Include="RelicDynamism.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="RelicID.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
@@ -192,13 +186,7 @@
     <ClInclude Include="RelicScribe.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
-    <ClInclude Include="DynamicRelic.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="StructureFrom.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
-    <ClInclude Include="DynamicRelicDefinition.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
     <ClInclude Include="ExtractShards.h">
@@ -249,9 +237,6 @@
     <ClInclude Include="RelicHandleActualization.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
-    <ClInclude Include="Static.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="ObjectType.h">
       <Filter>Header Files\Type</Filter>
     </ClInclude>
@@ -290,6 +275,21 @@
     </ClInclude>
     <ClInclude Include="ReliquaryRelicStructures.h">
       <Filter>Header Files\Reliquary\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="TypedRelicAutomation.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="Global.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenRelic.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenRelicDefinition.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicOpenness.h">
+      <Filter>Header Files\Relic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

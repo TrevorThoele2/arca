@@ -9,9 +9,12 @@ namespace Arca
         return Handle(ID(), Owner());
     }
 
-    void FixedRelic::ParentTo(const Handle& parent) const
+    FixedRelic::operator bool() const
     {
-        owner->ParentRelicTo(parent, *this);
+        if (!owner)
+            return false;
+
+        return owner->Contains<FixedRelic>(id);
     }
 
     std::optional<Handle> FixedRelic::Parent() const

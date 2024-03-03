@@ -17,7 +17,7 @@ namespace Arca
 
     ReliquaryOrigin::ReliquaryOrigin(const ReliquaryOrigin& arg) :
         relicList(arg.relicList),
-        staticRelicList(arg.staticRelicList),
+        globalRelicList(arg.globalRelicList),
         namedRelicStructureList(arg.namedRelicStructureList),
         shardList(arg.shardList),
         curatorInitializationPipeline(arg.curatorInitializationPipeline),
@@ -32,7 +32,7 @@ namespace Arca
     ReliquaryOrigin& ReliquaryOrigin::operator=(const ReliquaryOrigin& arg)
     {
         relicList = arg.relicList;
-        staticRelicList = arg.staticRelicList;
+        globalRelicList = arg.globalRelicList;
         namedRelicStructureList = arg.namedRelicStructureList;
         shardList = arg.shardList;
         for (auto& provider : arg.curatorProviders)
@@ -73,7 +73,7 @@ namespace Arca
                 curatorWorkPipeline,
                 allCurators);
 
-        for (auto& initializer : staticRelicList)
+        for (auto& initializer : globalRelicList)
             initializer.factory(*reliquary);
 
         {

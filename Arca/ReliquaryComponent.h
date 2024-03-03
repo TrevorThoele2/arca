@@ -66,7 +66,7 @@ namespace Arca
 
             Map map;
 
-            [[nodiscard]] BatchSourceBaseT* Find(const TypeHandleName& typeHandle)
+            [[nodiscard]] BatchSourceBaseT* Find(const TypeHandleName& typeHandle) const
             {
                 const auto found = map.find(typeHandle);
                 if (found == map.end())
@@ -75,7 +75,7 @@ namespace Arca
                 return found->second.get();
             }
             template<class ObjectT, std::enable_if_t<is_object_v<ObjectT>, int> = 0>
-            [[nodiscard]] BatchSource<ObjectT>* Find()
+            [[nodiscard]] BatchSource<ObjectT>* Find() const
             {
                 auto& map = AsDerived().template MapFor<ObjectT>();
                 const auto typeHandleName = TypeHandleFor<ObjectT>().name;
@@ -86,7 +86,7 @@ namespace Arca
                 return static_cast<BatchSource<ObjectT>*>(found->second.get());
             }
             template<class ObjectT, std::enable_if_t<is_object_v<ObjectT>, int> = 0>
-            BatchSource<ObjectT>& Required()
+            BatchSource<ObjectT>& Required() const
             {
                 auto found = Find<ObjectT>();
                 if (!found)
@@ -99,7 +99,7 @@ namespace Arca
             }
 
             template<class ObjectT, std::enable_if_t<is_object_v<ObjectT>, int> = 0>
-            Batch<ObjectT> Batch()
+            Batch<ObjectT> Batch() const
             {
                 auto& batchSource = Required<ObjectT>();
                 return Arca::Batch<ObjectT>(batchSource);
@@ -118,7 +118,7 @@ namespace Arca
             [[nodiscard]] const Derived& AsDerived() const
             {
 
-                return static_cast<Derived&>(*this);
+                return static_cast<const Derived&>(*this);
             }
         };
     private:

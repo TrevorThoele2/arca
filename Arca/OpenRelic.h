@@ -11,10 +11,11 @@ namespace Arca
 {
     class Reliquary;
 
-    class DynamicRelic
+    class OpenRelic
     {
     public:
         operator Handle() const;
+        explicit operator bool() const;
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         Ptr<ShardT> Create();
@@ -23,10 +24,9 @@ namespace Arca
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] Ptr<ShardT> Find() const;
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] bool Has() const;
+        [[nodiscard]] bool Contains() const;
 
-        void ParentTo(const Handle& parent) const;
-        std::optional<Handle> Parent() const;
+        [[nodiscard]] std::optional<Handle> Parent() const;
 
         [[nodiscard]] RelicID ID() const;
         [[nodiscard]] Reliquary& Owner() const;
@@ -34,7 +34,7 @@ namespace Arca
         RelicID id;
         Reliquary* owner;
     private:
-        DynamicRelic(RelicID id, Reliquary& owner);
+        OpenRelic(RelicID id, Reliquary& owner);
     private:
         friend Reliquary;
     private:
@@ -45,8 +45,8 @@ namespace Arca
 namespace Inscription
 {
     template<>
-    class Scribe<::Arca::DynamicRelic, BinaryArchive> final :
-        public CompositeScribe<::Arca::DynamicRelic, BinaryArchive>
+    class Scribe<::Arca::OpenRelic, BinaryArchive> final :
+        public CompositeScribe<::Arca::OpenRelic, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;

@@ -3,7 +3,7 @@
 #include "ReliquaryFixture.h"
 
 #include <Arca/Shard.h>
-#include <Arca/TypedRelic.h>
+#include <Arca/TypedRelicAutomation.h>
 
 using namespace Arca;
 
@@ -12,7 +12,7 @@ class ShardBatchFixture : public ReliquaryFixture
 public:
     class Shard;
     class UnregisteredShard;
-    class StaticRelic;
+    class GlobalRelic;
 };
 
 class ShardBatchFixture::Shard
@@ -27,7 +27,7 @@ public:
 class ShardBatchFixture::UnregisteredShard
 {};
 
-class ShardBatchFixture::StaticRelic : public TypedRelic
+class ShardBatchFixture::GlobalRelic : public TypedRelicAutomation<GlobalRelic, Shard>
 {
 public:
     Ptr<Shard> shard;
@@ -52,11 +52,10 @@ namespace Arca
     };
 
     template<>
-    struct Traits<::ShardBatchFixture::StaticRelic>
+    struct Traits<::ShardBatchFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandleName typeName;
-        using Shards = ShardList<::ShardBatchFixture::Shard>;
     };
 }
 
@@ -74,13 +73,13 @@ namespace Inscription
     };
 
     template<>
-    struct TableData<::ShardBatchFixture::StaticRelic, BinaryArchive> final
-        : TableDataBase<::ShardBatchFixture::StaticRelic, BinaryArchive>
+    struct TableData<::ShardBatchFixture::GlobalRelic, BinaryArchive> final
+        : TableDataBase<::ShardBatchFixture::GlobalRelic, BinaryArchive>
     {};
 
     template<>
-    class Scribe<::ShardBatchFixture::StaticRelic, BinaryArchive> final
-        : public RelicScribe<::ShardBatchFixture::StaticRelic, BinaryArchive>
+    class Scribe<::ShardBatchFixture::GlobalRelic, BinaryArchive> final
+        : public RelicScribe<::ShardBatchFixture::GlobalRelic, BinaryArchive>
     {
     public:
         class Table : public TableBase

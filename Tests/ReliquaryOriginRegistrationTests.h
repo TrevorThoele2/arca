@@ -2,7 +2,7 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/TypedRelic.h>
+#include <Arca/TypedRelicAutomation.h>
 #include <Arca/Shard.h>
 
 #include <Inscription/BinaryArchive.h>
@@ -16,10 +16,10 @@ public:
     class Shard
     {};
 
-    class Relic : public TypedRelic
+    class Relic final : public TypedRelicAutomation<Relic>
     {};
 
-    class StaticRelic : public TypedRelic
+    class GlobalRelic final : public TypedRelicAutomation<GlobalRelic>
     {};
 
     class Curator final : public Arca::Curator
@@ -46,7 +46,7 @@ namespace Arca
     };
 
     template<>
-    struct Traits<::ReliquaryOriginRegistrationTestsFixture::StaticRelic>
+    struct Traits<::ReliquaryOriginRegistrationTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandleName typeName;
@@ -101,15 +101,15 @@ namespace Inscription
     };
 
     template<>
-    struct TableData<::ReliquaryOriginRegistrationTestsFixture::StaticRelic, BinaryArchive> final
-        : TableDataBase<::ReliquaryOriginRegistrationTestsFixture::StaticRelic, BinaryArchive>
+    struct TableData<::ReliquaryOriginRegistrationTestsFixture::GlobalRelic, BinaryArchive> final
+        : TableDataBase<::ReliquaryOriginRegistrationTestsFixture::GlobalRelic, BinaryArchive>
     {
         Base<TypedRelic> base;
     };
 
     template<>
-    class Scribe<::ReliquaryOriginRegistrationTestsFixture::StaticRelic, BinaryArchive> final
-        : public RelicScribe<::ReliquaryOriginRegistrationTestsFixture::StaticRelic, BinaryArchive>
+    class Scribe<::ReliquaryOriginRegistrationTestsFixture::GlobalRelic, BinaryArchive> final
+        : public RelicScribe<::ReliquaryOriginRegistrationTestsFixture::GlobalRelic, BinaryArchive>
     {
     public:
         class Table : public TableBase
