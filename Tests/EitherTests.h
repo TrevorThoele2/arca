@@ -19,8 +19,8 @@ namespace Arca
     template<>
     struct Traits<::EitherTestsFixture::BasicTypedRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "ReliquaryTestsBasicTypedRelic"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "ReliquaryTestsBasicTypedRelic";
     };
 }
 

@@ -23,43 +23,43 @@ namespace Arca
     struct Traits<ReliquaryRegistrationTestsFixture::Shard>
     {
         static constexpr ObjectType objectType = ObjectType::Shard;
-        static TypeName TypeName() { return "ReliquaryTestsShard"; }
+        static const inline TypeName typeName = "ReliquaryTestsShard";
     };
 
     template<>
     struct Traits<ReliquaryRegistrationTestsFixture::Relic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "ReliquaryTestsRelic"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "ReliquaryTestsRelic";
     };
 
     template<>
     struct Traits<ReliquaryRegistrationTestsFixture::GlobalRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "ReliquaryTestsGlobalRelic"; }
-        static const Locality locality = Locality::Global;
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "ReliquaryTestsGlobalRelic";
+        static constexpr Locality locality = Locality::Global;
     };
 
     template<>
     struct Traits<ReliquaryRegistrationTestsFixture::Curator>
     {
-        static const ObjectType objectType = ObjectType::Curator;
-        static TypeName TypeName() { return "ReliquaryTestsCurator"; }
+        static constexpr ObjectType objectType = ObjectType::Curator;
+        static const inline TypeName typeName = "ReliquaryTestsCurator";
     };
 
     template<>
     struct Traits<ReliquaryRegistrationTestsFixture::Command>
     {
-        static const ObjectType objectType = ObjectType::Command;
-        static TypeName TypeName() { return "ReliquaryTestsCommand"; }
+        static constexpr ObjectType objectType = ObjectType::Command;
+        static const inline TypeName typeName = "ReliquaryTestsCommand";
     };
 
     template<>
     struct Traits<ReliquaryRegistrationTestsFixture::Signal>
     {
-        static const ObjectType objectType = ObjectType::Signal;
-        static TypeName TypeName() { return "ReliquaryTestsSignal"; }
+        static constexpr ObjectType objectType = ObjectType::Signal;
+        static const inline TypeName typeName = "ReliquaryTestsSignal";
     };
 }
 

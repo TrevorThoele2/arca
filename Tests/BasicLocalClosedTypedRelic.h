@@ -20,8 +20,8 @@ namespace Arca
     template<>
     struct Traits<BasicLocalClosedTypedRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "BasicLocalClosedTypedRelic"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "BasicLocalClosedTypedRelic";
     };
 }
 

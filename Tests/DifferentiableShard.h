@@ -22,8 +22,8 @@ namespace Arca
     template<size_t i>
     struct Traits<DifferentiableShard<i>>
     {
-        static const ObjectType objectType = ObjectType::Shard;
-        static TypeName TypeName() { return "DifferentiableShard" + Chroma::ToString(i); }
+        static constexpr ObjectType objectType = ObjectType::Shard;
+        static const inline TypeName typeName = "DifferentiableShard" + Chroma::ToString(i);
     };
 }
 

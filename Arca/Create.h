@@ -85,7 +85,7 @@ namespace Arca
     struct Traits<Create<T, std::enable_if_t<is_relic_v<T>>>>
     {
         static constexpr ObjectType objectType = ObjectType::Command;
-        static constexpr TypeName TypeName() { return "Arca::Create<" + Traits<std::remove_const_t<T>>::TypeName() + ">"; }
+        static const inline TypeName typeName = "Arca::Create<" + Traits<std::remove_const_t<T>>::typeName + ">";
         using Result = Index<T>;
         static constexpr bool selfContained = true;
     };
@@ -153,7 +153,7 @@ namespace Arca
     struct Traits<Create<T, std::enable_if_t<is_shard_v<T>>>>
     {
         static constexpr ObjectType objectType = ObjectType::Command;
-        static constexpr TypeName TypeName() { return "Arca::Create<" + Traits<std::remove_const_t<T>>::TypeName() + ">"; }
+        static const inline TypeName typeName = "Arca::Create<" + Traits<std::remove_const_t<T>>::typeName + ">";
         using Result = Index<T>;
         static constexpr bool selfContained = true;
     };

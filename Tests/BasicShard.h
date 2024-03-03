@@ -17,8 +17,8 @@ namespace Arca
     template<>
     struct Traits<BasicShard>
     {
-        static const ObjectType objectType = ObjectType::Shard;
-        static TypeName TypeName() { return "BasicShard"; }
+        static constexpr ObjectType objectType = ObjectType::Shard;
+        static const inline TypeName typeName = "BasicShard";
     };
 }
 

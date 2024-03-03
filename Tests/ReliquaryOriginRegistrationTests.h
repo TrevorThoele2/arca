@@ -56,52 +56,52 @@ namespace Arca
     template<>
     struct Traits<::ReliquaryOriginRegistrationTestsFixture::Shard>
     {
-        static const ObjectType objectType = ObjectType::Shard;
-        static TypeName TypeName() { return "ReliquaryTestsShard"; }
+        static constexpr ObjectType objectType = ObjectType::Shard;
+        static const inline TypeName typeName = "ReliquaryTestsShard";
     };
 
     template<>
     struct Traits<::ReliquaryOriginRegistrationTestsFixture::Relic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "ReliquaryTestsRelic"; }
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "ReliquaryTestsRelic";
     };
 
     template<>
     struct Traits<::ReliquaryOriginRegistrationTestsFixture::GlobalRelic>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "ReliquaryTestsGlobalRelic"; }
-        static const Locality locality = Locality::Global;
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "ReliquaryTestsGlobalRelic";
+        static constexpr Locality locality = Locality::Global;
     };
 
     template<>
     struct Traits<::ReliquaryOriginRegistrationTestsFixture::GlobalRelicWithMovedValue>
     {
-        static const ObjectType objectType = ObjectType::Relic;
-        static TypeName TypeName() { return "ReliquaryTestsGlobalRelicWithMovedValue"; }
-        static const Locality locality = Locality::Global;
+        static constexpr ObjectType objectType = ObjectType::Relic;
+        static const inline TypeName typeName = "ReliquaryTestsGlobalRelicWithMovedValue";
+        static constexpr Locality locality = Locality::Global;
     };
 
     template<>
     struct Traits<::ReliquaryOriginRegistrationTestsFixture::Curator>
     {
-        static const ObjectType objectType = ObjectType::Curator;
-        static TypeName TypeName() { return "ReliquaryTestsCurator"; }
+        static constexpr ObjectType objectType = ObjectType::Curator;
+        static const inline TypeName typeName = "ReliquaryTestsCurator";
     };
 
     template<>
     struct Traits<::ReliquaryOriginRegistrationTestsFixture::CuratorWithMovedValue>
     {
-        static const ObjectType objectType = ObjectType::Curator;
-        static TypeName TypeName() { return "ReliquaryTestsCuratorWithMovedValue"; }
+        static constexpr ObjectType objectType = ObjectType::Curator;
+        static const inline TypeName typeName = "ReliquaryTestsCuratorWithMovedValue";
     };
 
     template<>
     struct Traits<::ReliquaryOriginRegistrationTestsFixture::Signal>
     {
-        static const ObjectType objectType = ObjectType::Signal;
-        static TypeName TypeName() { return "ReliquaryTestsSignal"; }
+        static constexpr ObjectType objectType = ObjectType::Signal;
+        static const inline TypeName typeName = "ReliquaryTestsSignal";
     };
 }
 

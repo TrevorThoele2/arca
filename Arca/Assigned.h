@@ -24,6 +24,7 @@ namespace Arca
     struct Traits<AssignedKnown<T>>
     {
         static constexpr ObjectType objectType = ObjectType::Signal;
-        static constexpr TypeName TypeName() { return "Arca::AssignedKnown<" + FullTypeNameFor<T>() + ">"; }
+        static const inline TypeName typeName =
+            "Arca::AssignedKnown<" + FullTypeNameFor<T>() + ">";
     };
 }

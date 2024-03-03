@@ -22,14 +22,14 @@ namespace Arca
     template<>
     struct Traits<SignalTestsFixture::BasicSignal>
     {
-        static const ObjectType objectType = ObjectType::Signal;
-        static TypeName TypeName() { return "SignalTestsFixture::BasicSignal"; }
+        static constexpr ObjectType objectType = ObjectType::Signal;
+        static const inline TypeName typeName = "SignalTestsFixture::BasicSignal";
     };
 
     template<>
     struct Traits<SignalTestsFixture::EmptySignal>
     {
-        static const ObjectType objectType = ObjectType::Signal;
-        static TypeName TypeName() { return "SignalTestsFixture::EmptySignal"; }
+        static constexpr ObjectType objectType = ObjectType::Signal;
+        static const inline TypeName typeName = "SignalTestsFixture::EmptySignal";
     };
 }

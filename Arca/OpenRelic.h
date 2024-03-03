@@ -14,10 +14,7 @@ namespace Arca
     struct Traits<OpenRelic>
     {
         static constexpr ObjectType objectType = ObjectType::Relic;
-        static constexpr TypeName TypeName()
-        {
-            return "Arca::OpenRelic";
-        }
+        static const inline TypeName typeName = "Arca::OpenRelic";
     };
 }
 
