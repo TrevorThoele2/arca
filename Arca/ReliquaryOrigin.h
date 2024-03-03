@@ -28,14 +28,8 @@ namespace Arca
         ReliquaryOrigin& Type();
         template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
         ReliquaryOrigin& Type(InitializeArgs&& ... initializeArgs);
-        template<
-            class InterfaceT,
-            class BackingT,
-            class... BackingInitializeT,
-            std::enable_if_t<is_relic_v<BackingT> && is_global_v<BackingT>, int> = 0>
-        ReliquaryOrigin& Alias(
-            std::function<InterfaceT(BackingT&)> transformation,
-            BackingInitializeT&& ... initializeArgs);
+        template<class InterfaceT>
+        ReliquaryOrigin& Compute(std::function<InterfaceT(Reliquary&)> computation);
         ReliquaryOrigin& RelicStructure(const std::string& name, const RelicStructure& structure);
     public:
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
@@ -67,9 +61,9 @@ namespace Arca
     private:
         TypeConstructorList globalRelicList;
 
-        using GlobalRelicAliasInitializer = std::function<void(Reliquary&)>;
-        using GlobalRelicAliasInitializerMap = std::unordered_map<std::type_index, GlobalRelicAliasInitializer>;
-        GlobalRelicAliasInitializerMap globalRelicAliasInitializerMap;
+        using GlobalComputationInitializer = std::function<void(Reliquary&)>;
+        using GlobalComputationInitializerMap = std::unordered_map<std::type_index, GlobalComputationInitializer>;
+        GlobalComputationInitializerMap globalComputationInitializerMap;
 
         template<class RelicT, class... InitializeArgs>
         void GlobalRelicCommon(InitializeArgs&& ... initializeArgs);
@@ -77,7 +71,7 @@ namespace Arca
         template<class RelicT>
         [[nodiscard]] bool IsGlobalRelicRegistered() const;
         template<class T>
-        [[nodiscard]] bool IsGlobalRelicAliasRegistered() const;
+        [[nodiscard]] bool IsGlobalComputationRegistered() const;
     private:
         using NamedRelicStructure = ReliquaryRelicStructures::Named;
         using NamedRelicStructureList = std::vector<NamedRelicStructure>;
@@ -164,42 +158,30 @@ namespace Arca
     template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int>>
     ReliquaryOrigin& ReliquaryOrigin::Type(InitializeArgs&& ... initializeArgs)
     {
+        if (IsGlobalRelicRegistered<RelicT>())
+            throw AlreadyRegistered("global relic", TypeFor<RelicT>(), typeid(RelicT));
+
         GlobalRelicCommon<RelicT>(std::forward<InitializeArgs>(initializeArgs)...);
         return *this;
     }
 
-    template<
-        class InterfaceT,
-        class BackingT,
-        class... BackingInitializeT,
-        std::enable_if_t<is_relic_v<BackingT> && is_global_v<BackingT>, int>>
-    ReliquaryOrigin& ReliquaryOrigin::Alias(
-        std::function<InterfaceT(BackingT&)> transformation,
-        BackingInitializeT&& ... initializeArgs)
+    template<class InterfaceT>
+    ReliquaryOrigin& ReliquaryOrigin::Compute(std::function<InterfaceT(Reliquary&)> computation)
     {
         const std::type_index interfaceType = typeid(InterfaceT);
-        const auto backingType = TypeFor<BackingT>();
 
-        if (IsGlobalRelicAliasRegistered<InterfaceT>())
-            throw AlreadyRegistered("global alias", typeid(InterfaceT));
+        if (IsGlobalComputationRegistered<InterfaceT>())
+            throw AlreadyRegistered("global computation", interfaceType);
 
-        GlobalRelicCommon<BackingT>(std::forward<BackingInitializeT>(initializeArgs)...);
-
-        globalRelicAliasInitializerMap.emplace(
+        globalComputationInitializerMap.emplace(
             interfaceType,
-            [interfaceType, transformation](Reliquary& reliquary)
+            [interfaceType, computation](Reliquary& reliquary)
             {
-                reliquary.relics.globalRelicAliasMap.emplace(
+                reliquary.relics.globalComputationMap.emplace(
                     interfaceType,
-                    [transformation](Reliquary& reliquary) -> std::any
+                    [computation](Reliquary& reliquary) -> std::any
                     {
-                        const auto backingType = TypeFor<BackingT>();
-                        auto found = reliquary.relics.globalMap.find(backingType.name);
-                        if (found == reliquary.relics.globalMap.end())
-                            throw reliquary.relics.NotRegistered(backingType, typeid(BackingT));
-
-                        auto backing = reinterpret_cast<BackingT*>(found->second.storage.get());
-                        auto transformed = transformation(*backing);
+                        auto transformed = computation(reliquary);
                         return transformed;
                     });
             });
@@ -322,11 +304,6 @@ namespace Arca
     template<class RelicT, class... InitializeArgs>
     void ReliquaryOrigin::GlobalRelicCommon(InitializeArgs&& ... initializeArgs)
     {
-        const auto type = TypeFor<RelicT>();
-
-        if (IsGlobalRelicRegistered<RelicT>())
-            throw AlreadyRegistered("global relic", type, typeid(RelicT));
-
         const auto factory =
             [args = std::make_tuple(std::forward<InitializeArgs>(initializeArgs) ...)]
         (Reliquary& reliquary)
@@ -383,7 +360,7 @@ namespace Arca
             };
             return std::apply(execution, args);
         };
-        globalRelicList.emplace_back(type.name, factory);
+        globalRelicList.emplace_back(TypeFor<RelicT>().name, factory);
     }
 
     template<class RelicT>
@@ -401,11 +378,11 @@ namespace Arca
     }
 
     template<class T>
-    bool ReliquaryOrigin::IsGlobalRelicAliasRegistered() const
+    bool ReliquaryOrigin::IsGlobalComputationRegistered() const
     {
         const std::type_index type(typeid(T));
-        const auto found = globalRelicAliasInitializerMap.find(type);
-        return found != globalRelicAliasInitializerMap.end();
+        const auto found = globalComputationInitializerMap.find(type);
+        return found != globalComputationInitializerMap.end();
     }
 
     template<class ShardT>

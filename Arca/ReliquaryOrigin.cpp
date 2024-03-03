@@ -81,7 +81,7 @@ namespace Arca
         for (auto& initializer : globalRelicList)
             initializer.factory(*reliquary);
 
-        for (auto& initializer : globalRelicAliasInitializerMap)
+        for (auto& initializer : globalComputationInitializerMap)
             initializer.second(*reliquary);
 
         {

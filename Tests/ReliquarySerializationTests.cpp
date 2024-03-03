@@ -603,21 +603,22 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
     }
 }
 
-SCENARIO_METHOD(ReliquarySerializationTestsFixture, "global alias serialization", "[global][alias][serialization]")
+SCENARIO_METHOD(ReliquarySerializationTestsFixture, "global computation serialization", "[global][computation][serialization]")
 {
-    GIVEN("saved reliquary with global relic alias")
+    GIVEN("saved reliquary with global computation")
     {
         const auto savedReliquary = ReliquaryOrigin()
             .Type<BasicShard>()
-            .Alias<int, GlobalRelic>(
-                [](GlobalRelic& backing)
+            .Type<GlobalRelic>(dataGeneration.Random<int>())
+            .Compute<int>(
+                [](Reliquary& reliquary)
                 {
-                    return backing.myInt;
-                },
-                dataGeneration.Random<int>())
+                    const GlobalPtr<GlobalRelic> backing(reliquary);
+                    return backing->myInt;
+                })
             .Actualize();
 
-        auto savedAlias = Arca::AliasPtr<int>(*savedReliquary);
+        auto savedComputation = Arca::ComputedPtr<int>(*savedReliquary);
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
@@ -628,10 +629,12 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "global alias serialization"
         {
             auto loadedReliquary = ReliquaryOrigin()
                 .Type<BasicShard>()
-                .Alias<int, GlobalRelic>(
-                    [](GlobalRelic& backing)
+                .Type<GlobalRelic>()
+                .Compute<int>(
+                    [](Reliquary& reliquary)
                     {
-                        return backing.myInt;
+                        const GlobalPtr<GlobalRelic> backing(reliquary);
+                        return backing->myInt;
                     })
                 .Actualize();
 
@@ -640,11 +643,11 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "global alias serialization"
                 inputArchive(*loadedReliquary);
             }
 
-            auto loadedAlias = Arca::AliasPtr<int>(*loadedReliquary);
+            auto loadedComputation = Arca::ComputedPtr<int>(*loadedReliquary);
 
             THEN("loaded relic has saved value")
             {
-                REQUIRE(*loadedAlias == *savedAlias);
+                REQUIRE(*loadedComputation == *savedComputation);
             }
 
             THEN("reliquary has global, shard for global, and created signal")

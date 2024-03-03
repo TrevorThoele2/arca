@@ -16,7 +16,7 @@
 #include "IsGlobal.h"
 
 #include "LocalPtr.h"
-#include "AliasPtr.h"
+#include "ComputedPtr.h"
 
 #include "KnownPolymorphicSerializer.h"
 
@@ -128,14 +128,14 @@ namespace Arca
         using GlobalConstructList = std::vector<GlobalConstruct>;
         GlobalConstructList globalConstructList;
 
-        using GlobalRelicAliasTransformation = std::function<std::any(Reliquary&)>;
-        using GlobalRelicAliasMap = std::unordered_map<std::type_index, GlobalRelicAliasTransformation>;
-        GlobalRelicAliasMap globalRelicAliasMap;
+        using GlobalComputationTransformation = std::function<std::any(Reliquary&)>;
+        using GlobalComputationMap = std::unordered_map<std::type_index, GlobalComputationTransformation>;
+        GlobalComputationMap globalComputationMap;
 
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         RelicT* FindGlobalStorage();
         template<class T>
-        T FindGlobalAliasStorage();
+        T FindGlobalComputation();
     public:
         ReliquaryRelics(const ReliquaryRelics& arg) = delete;
         ReliquaryRelics& operator=(const ReliquaryRelics& arg) = delete;

@@ -112,48 +112,31 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
             }
         }
 
-        WHEN("registering alias with int backing")
+        WHEN("registering int computation with global relic backing")
         {
-            THEN("throws error")
+            THEN("not throws error")
             {
-                REQUIRE_THROWS_AS((origin.Alias<int, GlobalRelic>(
-                    [](GlobalRelic& backing)
+                REQUIRE_NOTHROW(origin.Compute<int>(
+                    [](Reliquary& reliquary)
                     {
-                        return backing.myValue;
-                    })),
-                    AlreadyRegistered);
+                        const GlobalPtr<GlobalRelic> backing(reliquary);
+                        return backing->myValue;
+                    }));
             }
         }
     }
 
-    GIVEN("global relic alias registered")
-    {
-        auto origin = ReliquaryOrigin()
-            .Type<BasicShard>()
-            .Alias<int, GlobalRelic>(
-                [](GlobalRelic& backing)
-                {
-                    return backing.myValue;
-                });
-
-        WHEN("registering global relic alias backing type")
-        {
-            THEN("throws error")
-            {
-                REQUIRE_THROWS_AS(origin.Type<GlobalRelic>(), AlreadyRegistered);
-            }
-        }
-    }
-
-    GIVEN("global relic alias registered")
+    GIVEN("global computation registered")
     {
         auto reliquary = ReliquaryOrigin()
             .Type<BasicShard>()
             .Type<BasicTypedRelic>()
-            .Alias<int, GlobalRelic>(
-                [](GlobalRelic& backing)
+            .Type<GlobalRelic>()
+            .Compute<int>(
+                [](Reliquary& reliquary)
                 {
-                    return backing.myValue;
+                    const GlobalPtr<GlobalRelic> backing(reliquary);
+                    return backing->myValue;
                 })
             .Actualize();
 

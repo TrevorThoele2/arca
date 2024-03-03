@@ -156,13 +156,13 @@ namespace Arca
     }
 
     template<class T>
-    T ReliquaryRelics::FindGlobalAliasStorage()
+    T ReliquaryRelics::FindGlobalComputation()
     {
-        const auto aliasFound = globalRelicAliasMap.find(typeid(T));
-        if (aliasFound != globalRelicAliasMap.end())
-            return std::any_cast<T>(aliasFound->second(Owner()));
+        const auto computationFound = globalComputationMap.find(typeid(T));
+        if (computationFound != globalComputationMap.end())
+            return std::any_cast<T>(computationFound->second(Owner()));
 
-        throw Arca::NotRegistered("alias", typeid(T));
+        throw Arca::NotRegistered("global computation", typeid(T));
     }
 
     template<

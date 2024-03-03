@@ -20,9 +20,6 @@ public:
     class GlobalRelic final : public ClosedTypedRelicAutomation<Relic>
     {};
 
-    class GlobalRelicAlias final : public ClosedTypedRelicAutomation<Relic>
-    {};
-
     class Curator final : public Arca::Curator
     {};
 
@@ -48,14 +45,6 @@ namespace Arca
 
     template<>
     struct Traits<::ReliquaryRegistrationTestsFixture::GlobalRelic>
-    {
-        static const ObjectType objectType = ObjectType::Relic;
-        static const TypeName typeName;
-        static const Locality locality = Locality::Global;
-    };
-
-    template<>
-    struct Traits<::ReliquaryRegistrationTestsFixture::GlobalRelicAlias>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static const TypeName typeName;
@@ -92,11 +81,6 @@ namespace Inscription
     template<>
     class Scribe<::ReliquaryRegistrationTestsFixture::GlobalRelic, BinaryArchive> final
         : public ArcaNullScribe<::ReliquaryRegistrationTestsFixture::GlobalRelic, BinaryArchive>
-    {};
-
-    template<>
-    class Scribe<::ReliquaryRegistrationTestsFixture::GlobalRelicAlias, BinaryArchive> final
-        : public ArcaNullScribe<::ReliquaryRegistrationTestsFixture::GlobalRelicAlias, BinaryArchive>
     {};
 
     template<>
