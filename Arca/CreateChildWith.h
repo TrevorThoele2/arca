@@ -55,7 +55,7 @@ namespace Arca
             {
 
                 return std::apply(
-                    [&relics](auto&& ... args)
+                    [&relics](auto ... args)
                     {
                         return relics.template CreateChildWith<T>(std::forward<decltype(args)>(args)...);
                     }, std::move(args));

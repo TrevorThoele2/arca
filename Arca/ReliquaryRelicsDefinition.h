@@ -18,7 +18,7 @@ namespace Arca
     template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
     Index<RelicT> ReliquaryRelics::Create(ConstructorArgs&& ... constructorArgs)
     {
-        if (!ShouldCreate<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...))
+        if (!ShouldCreate<RelicT>(constructorArgs...))
             return {};
 
         const auto id = AdvanceID();
@@ -29,7 +29,7 @@ namespace Arca
     template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
     Index<RelicT> ReliquaryRelics::CreateWith(const RelicStructure& structure, ConstructorArgs&& ... constructorArgs)
     {
-        if (!ShouldCreate<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...))
+        if (!ShouldCreate<RelicT>(constructorArgs...))
             return {};
 
         const auto id = AdvanceID();
@@ -40,7 +40,7 @@ namespace Arca
     template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
     Index<RelicT> ReliquaryRelics::CreateWith(const std::string& structureName, ConstructorArgs&& ... constructorArgs)
     {
-        if (!ShouldCreate<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...))
+        if (!ShouldCreate<RelicT>(constructorArgs...))
             return {};
 
         const auto id = AdvanceID();
@@ -52,7 +52,7 @@ namespace Arca
     template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
     Index<RelicT> ReliquaryRelics::IdentifiedCreate(RelicID id, ConstructorArgs&& ... constructorArgs)
     {
-        if (!ShouldCreate<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...))
+        if (!ShouldCreate<RelicT>(constructorArgs...))
             return {};
 
         if (Contains(id))
@@ -67,7 +67,7 @@ namespace Arca
     template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
     Index<RelicT> ReliquaryRelics::IdentifiedCreateWith(RelicID id, const RelicStructure& structure, ConstructorArgs&& ... constructorArgs)
     {
-        if (!ShouldCreate<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...))
+        if (!ShouldCreate<RelicT>(constructorArgs...))
             return {};
 
         if (Contains(id))
@@ -82,7 +82,7 @@ namespace Arca
     template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
     Index<RelicT> ReliquaryRelics::IdentifiedCreateWith(RelicID id, const std::string& structureName, ConstructorArgs&& ... constructorArgs)
     {
-        if (!ShouldCreate<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...))
+        if (!ShouldCreate<RelicT>(constructorArgs...))
             return {};
 
         if (Contains(id))
@@ -98,7 +98,7 @@ namespace Arca
     template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
     Index<RelicT> ReliquaryRelics::CreateChild(const Handle& parent, ConstructorArgs&& ... constructorArgs)
     {
-        if (!ShouldCreate<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...))
+        if (!ShouldCreate<RelicT>(constructorArgs...))
             return {};
 
         ThrowIfCannotParent(parent, RelicPrototype{ NextID(), OpennessFor<RelicT>() });
@@ -115,7 +115,7 @@ namespace Arca
     Index<RelicT> ReliquaryRelics::CreateChildWith(
         const Handle& parent, const RelicStructure& structure, ConstructorArgs&& ... constructorArgs)
     {
-        if (!ShouldCreate<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...))
+        if (!ShouldCreate<RelicT>(constructorArgs...))
             return {};
 
         ThrowIfCannotParent(parent, RelicPrototype{ NextID(), OpennessFor<RelicT>() });
@@ -132,7 +132,7 @@ namespace Arca
     Index<RelicT> ReliquaryRelics::CreateChildWith(
         const Handle& parent, const std::string& structureName, ConstructorArgs&& ... constructorArgs)
     {
-        if (!ShouldCreate<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...))
+        if (!ShouldCreate<RelicT>(constructorArgs...))
             return {};
 
         ThrowIfCannotParent(parent, RelicPrototype{ NextID(), OpennessFor<RelicT>() });
@@ -149,7 +149,7 @@ namespace Arca
     template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
     Index<RelicT> ReliquaryRelics::IdentifiedCreateChild(RelicID id, const Handle& parent, ConstructorArgs&& ... constructorArgs)
     {
-        if (!ShouldCreate<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...))
+        if (!ShouldCreate<RelicT>(constructorArgs...))
             return {};
 
         ThrowIfCannotParent(parent, RelicPrototype{ NextID(), OpennessFor<RelicT>() });
@@ -169,7 +169,7 @@ namespace Arca
     template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
     Index<RelicT> ReliquaryRelics::IdentifiedCreateChildWith(RelicID id, const Handle& parent, const RelicStructure& structure, ConstructorArgs&& ... constructorArgs)
     {
-        if (!ShouldCreate<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...))
+        if (!ShouldCreate<RelicT>(constructorArgs...))
             return {};
 
         ThrowIfCannotParent(parent, RelicPrototype{ NextID(), OpennessFor<RelicT>() });
@@ -189,7 +189,7 @@ namespace Arca
     template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int>>
     Index<RelicT> ReliquaryRelics::IdentifiedCreateChildWith(RelicID id, const Handle& parent, const std::string& structureName, ConstructorArgs&& ... constructorArgs)
     {
-        if (!ShouldCreate<RelicT>(std::forward<ConstructorArgs>(constructorArgs)...))
+        if (!ShouldCreate<RelicT>(constructorArgs...))
             return {};
 
         ThrowIfCannotParent(parent, RelicPrototype{ NextID(), OpennessFor<RelicT>() });
@@ -492,16 +492,16 @@ namespace Arca
         class RelicT,
         class... ConstructorArgs,
         std::enable_if_t<is_relic_v<RelicT> && has_should_create_method_v<RelicT>, int>>
-        bool ReliquaryRelics::ShouldCreate(ConstructorArgs&& ... constructorArgs)
+    bool ReliquaryRelics::ShouldCreate(ConstructorArgs& ... constructorArgs)
     {
-        return Traits<RelicT>::ShouldCreate(Owner(), std::forward<ConstructorArgs>(constructorArgs)...);
+        return Traits<RelicT>::ShouldCreate(Owner(), constructorArgs...);
     }
 
     template<
         class RelicT,
         class... ConstructorArgs,
         std::enable_if_t<is_relic_v<RelicT> && !has_should_create_method_v<RelicT>, int>>
-        bool ReliquaryRelics::ShouldCreate(ConstructorArgs&& ...)
+    bool ReliquaryRelics::ShouldCreate(ConstructorArgs& ...)
     {
         return true;
     }

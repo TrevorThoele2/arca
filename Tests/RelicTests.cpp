@@ -60,11 +60,11 @@ RelicTestsFixture::RelicConstructedFromMovedValue::RelicConstructedFromMovedValu
     myInt(std::move(myInt))
 {}
 
-RelicTestsFixture::RelicWithUnorderedSet::RelicWithUnorderedSet(RelicInit init)
+RelicTestsFixture::RelicWithShouldCreateAndMovedValue::RelicWithShouldCreateAndMovedValue(RelicInit init)
 {}
 
-RelicTestsFixture::RelicWithUnorderedSet::RelicWithUnorderedSet(RelicInit init, std::unordered_set<int> ints) :
-    ints(ints)
+RelicTestsFixture::RelicWithShouldCreateAndMovedValue::RelicWithShouldCreateAndMovedValue(RelicInit init, std::unique_ptr<int>&& myInt) :
+    myInt(std::move(myInt))
 {}
 
 namespace Arca
@@ -72,6 +72,11 @@ namespace Arca
     bool Traits<RelicTestsFixture::ShouldCreateRelic>::ShouldCreate(Reliquary& reliquary, int value)
     {
         return value >= 100;
+    }
+
+    bool Traits<RelicTestsFixture::RelicWithShouldCreateAndMovedValue>::ShouldCreate(Reliquary& reliquary, std::unique_ptr<int>& myInt)
+    {
+        return *myInt >= 100;
     }
 }
 
@@ -912,24 +917,24 @@ SCENARIO_METHOD(RelicTestsFixture, "relic constructed from moved value", "[relic
     }
 }
 
-SCENARIO_METHOD(RelicTestsFixture, "relic constructed with unordered_set", "[relic]")
+SCENARIO_METHOD(RelicTestsFixture, "relic moving only and shouldCreate", "[relic]")
 {
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
-            .Register<RelicWithUnorderedSet>()
+            .Register<RelicWithShouldCreateAndMovedValue>()
             .Actualize();
 
         WHEN("creating relic from unordered_set")
         {
-            const auto ints = dataGeneration.RandomGroup<int>(3);
-            const auto passInts = std::unordered_set<int>{ ints.begin(), ints.end() };
+            const auto intValue = dataGeneration.Random<int>();
+            auto myInt = std::make_unique<int>(intValue);
 
-            auto relic = reliquary->Do(Create<RelicWithUnorderedSet>{passInts});
+            auto relic = reliquary->Do(Create<RelicWithShouldCreateAndMovedValue>{std::move(myInt)});
 
             THEN("has ints")
             {
-                REQUIRE(relic->ints == passInts);
+                REQUIRE(*relic->myInt == intValue);
             }
         }
     }
