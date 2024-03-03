@@ -30,6 +30,7 @@
     <ClInclude Include="RelicBatchSource.h" />
     <ClInclude Include="RelicCreated.h" />
     <ClInclude Include="ExtractShards.h" />
+    <ClInclude Include="RelicParented.h" />
     <ClInclude Include="RelicScribe.h" />
     <ClInclude Include="Shard.h" />
     <ClInclude Include="ShardBatchIterator.h" />

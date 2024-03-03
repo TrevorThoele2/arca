@@ -287,7 +287,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "registered reliquary with every type", "
     }
 }
 
-SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][serialization][focused]")
+SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][serialization]")
 {
     GIVEN("saved empty reliquary with every type registered")
     {

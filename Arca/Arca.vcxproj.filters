@@ -189,6 +189,9 @@
     <ClInclude Include="HasFactoryMethod.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
+    <ClInclude Include="RelicParented.h">
+      <Filter>Header Files\Signal\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">

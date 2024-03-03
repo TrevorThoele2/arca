@@ -100,6 +100,9 @@ namespace Arca
         void RaiseSignal(const SignalT& signal);
 
         template<class SignalT>
+        void ExecuteOnSignal(const std::function<void(const SignalT&)>& function);
+
+        template<class SignalT>
         SignalBatch<SignalT> SignalBatch();
     private:
         struct KnownPolymorphicSerializer
@@ -143,6 +146,7 @@ namespace Arca
         void SignalRelicCreation(RelicT& relic);
         template<class RelicT>
         void SignalRelicDestruction(RelicT& relic);
+        void SignalRelicParented(RelicMetadata parent, RelicMetadata child);
 
         template<class RelicT>
         static TypeHandle TypeHandleForRelic();
@@ -236,6 +240,16 @@ namespace Arca
 
         template<class Curator>
         static TypeHandle TypeHandleForCurator();
+    private:
+        template<class SignalT>
+        using SignalExecution = std::function<void(const SignalT&)>;
+        template<class SignalT>
+        using SignalExecutionList = std::vector<SignalExecution<SignalT>>;
+        using SignalExecutionMap = std::unordered_map<std::type_index, std::any>;
+        SignalExecutionMap signalExecutionMap;
+
+        template<class SignalT>
+        void ExecuteAllForSignal(const SignalT& signal);
     private:
         using SignalBatchSourcePtr = std::unique_ptr<SignalBatchSourceBase>;
         using SignalBatchSourceList = std::unordered_map<std::type_index, SignalBatchSourcePtr>;
@@ -420,6 +434,19 @@ namespace Arca
             throw NotRegistered("signal", typeid(SignalT).name());
 
         signalBatchSource->Raise(signal);
+        ExecuteAllForSignal(signal);
+    }
+
+    template<class SignalT>
+    void Reliquary::ExecuteOnSignal(const std::function<void(const SignalT&)>& function)
+    {
+        const auto typeIndex = std::type_index(typeid(SignalT));
+        auto found = signalExecutionMap.find(typeIndex);
+        if (found == signalExecutionMap.end())
+            found = signalExecutionMap.emplace(typeIndex, SignalExecutionList<SignalT>()).first;
+
+        auto& executionList = std::any_cast<SignalExecutionList<SignalT>&>(found->second);
+        executionList.push_back(function);
     }
 
     template<class SignalT>
@@ -581,6 +608,19 @@ namespace Arca
     TypeHandle Reliquary::TypeHandleForCurator()
     {
         return CuratorTraits<Curator>::typeHandle;
+    }
+
+    template<class SignalT>
+    void Reliquary::ExecuteAllForSignal(const SignalT& signal)
+    {
+        const auto typeIndex = std::type_index(typeid(SignalT));
+        auto found = signalExecutionMap.find(typeIndex);
+        if (found == signalExecutionMap.end())
+            return;
+
+        auto& executionList = std::any_cast<SignalExecutionList<SignalT>&>(found->second);
+        for (auto& loop : executionList)
+            loop(signal);
     }
 
     template<class SignalT>
