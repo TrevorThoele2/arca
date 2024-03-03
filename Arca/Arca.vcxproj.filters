@@ -46,9 +46,6 @@
     <ClCompile Include="PipelineException.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FixedRelic.cpp">
-      <Filter>Source Files\Relic</Filter>
-    </ClCompile>
     <ClCompile Include="TypeHandle.cpp">
       <Filter>Source Files\Type</Filter>
     </ClCompile>
@@ -96,6 +93,9 @@
     </ClCompile>
     <ClCompile Include="CompositeShardBatchSource.cpp">
       <Filter>Source Files\Shard\Batch\Composite</Filter>
+    </ClCompile>
+    <ClCompile Include="ClosedRelic.cpp">
+      <Filter>Source Files\Relic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -234,12 +234,6 @@
     <ClInclude Include="IsType.h">
       <Filter>Header Files\Type</Filter>
     </ClInclude>
-    <ClInclude Include="FixedRelic.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
-    <ClInclude Include="FixedRelicDefinition.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="RelicHandleActualization.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
@@ -285,9 +279,6 @@
     <ClInclude Include="TypedRelicAutomation.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
-    <ClInclude Include="Global.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="OpenRelic.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
@@ -319,16 +310,25 @@
       <Filter>Header Files\Shard</Filter>
     </ClInclude>
     <ClInclude Include="CompositeShardBatch.h">
-      <Filter>Header Files\Shard\Batch\All</Filter>
+      <Filter>Header Files\Shard\Batch\Composite</Filter>
     </ClInclude>
     <ClInclude Include="CompositeShardBatchIterator.h">
-      <Filter>Header Files\Shard\Batch\All</Filter>
+      <Filter>Header Files\Shard\Batch\Composite</Filter>
     </ClInclude>
     <ClInclude Include="CompositeShardBatchSourceDefinition.h">
-      <Filter>Header Files\Shard\Batch\All</Filter>
+      <Filter>Header Files\Shard\Batch\Composite</Filter>
     </ClInclude>
     <ClInclude Include="CompositeShardBatchSource.h">
-      <Filter>Header Files\Shard\Batch\All</Filter>
+      <Filter>Header Files\Shard\Batch\Composite</Filter>
+    </ClInclude>
+    <ClInclude Include="ClosedRelic.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="ClosedRelicDefinition.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="Global.h">
+      <Filter>Header Files\Relic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -422,11 +422,11 @@
     <Filter Include="Source Files\Shard\Batch\Either">
       <UniqueIdentifier>{ba0d62be-6fc6-42cb-9950-dfb82be604c7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Shard\Batch\All">
-      <UniqueIdentifier>{e08ae1bc-fb86-4a8e-bf9c-82e1a92c7325}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Shard\Batch\Composite">
       <UniqueIdentifier>{d48ea134-5016-4151-bfe1-407aff09ffad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Shard\Batch\Composite">
+      <UniqueIdentifier>{e08ae1bc-fb86-4a8e-bf9c-82e1a92c7325}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

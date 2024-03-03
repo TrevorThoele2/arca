@@ -24,6 +24,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "reliquary composite shards", "[reli
             .Shard<Shard<0>>()
             .Shard<Shard<1>>()
             .Shard<Shard<2>>()
+            .Shard<Shard<3>>()
             .Relic<BasicTypedRelic>()
             .Actualize();
 
@@ -45,6 +46,36 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "reliquary composite shards", "[reli
             THEN("contains composite")
             {
                 REQUIRE(reliquary->Contains<Shard<0>, Shard<1>, Shard<2>>(relic.ID()));
+            }
+
+            WHEN("removing a shard")
+            {
+                relic.Destroy<Shard<0>>();
+
+                THEN("does not contain composite")
+                {
+                    REQUIRE(!reliquary->Contains<Shard<0>, Shard<1>, Shard<2>>(relic.ID()));
+                }
+            }
+
+            WHEN("adding a new shard")
+            {
+                relic.Create<Shard<3>>();
+
+                THEN("contains composite")
+                {
+                    REQUIRE(reliquary->Contains<Shard<0>, Shard<1>, Shard<2>>(relic.ID()));
+                }
+
+                WHEN("removing that shard")
+                {
+                    relic.Destroy<Shard<3>>();
+
+                    THEN("contains composite")
+                    {
+                        REQUIRE(reliquary->Contains<Shard<0>, Shard<1>, Shard<2>>(relic.ID()));
+                    }
+                }
             }
         }
 
@@ -72,6 +103,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "OpenRelic composite shards", "[Open
             .Shard<Shard<0>>()
             .Shard<Shard<1>>()
             .Shard<Shard<2>>()
+            .Shard<Shard<3>>()
             .Relic<BasicTypedRelic>()
             .Actualize();
 
@@ -85,6 +117,36 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "OpenRelic composite shards", "[Open
             THEN("contains composite")
             {
                 REQUIRE(relic.Contains<Shard<0>, Shard<1>, Shard<2>>());
+            }
+
+            WHEN("removing a shard")
+            {
+                relic.Destroy<Shard<0>>();
+
+                THEN("does not contain composite")
+                {
+                    REQUIRE(!relic.Contains<Shard<0>, Shard<1>, Shard<2>>());
+                }
+            }
+
+            WHEN("adding a new shard")
+            {
+                relic.Create<Shard<3>>();
+
+                THEN("contains composite")
+                {
+                    REQUIRE(relic.Contains<Shard<0>, Shard<1>, Shard<2>>());
+                }
+
+                WHEN("removing that shard")
+                {
+                    relic.Destroy<Shard<3>>();
+
+                    THEN("contains composite")
+                    {
+                        REQUIRE(relic.Contains<Shard<0>, Shard<1>, Shard<2>>());
+                    }
+                }
             }
         }
 
@@ -117,7 +179,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "FixedRelic composite shards", "[Fix
 
         WHEN("creating const shard")
         {
-            auto relic = reliquary->Create<FixedRelic>(
+            auto relic = reliquary->Create<ClosedRelic>(
                 RelicStructure
                 {
                     TypeHandleFor<Shard<0>>(),
@@ -133,7 +195,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "FixedRelic composite shards", "[Fix
 
         WHEN("creating separate relic with shard")
         {
-            reliquary->Create<FixedRelic>(
+            reliquary->Create<ClosedRelic>(
                 RelicStructure
                 {
                     TypeHandleFor<Shard<0>>(),
@@ -143,7 +205,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "FixedRelic composite shards", "[Fix
 
             THEN("irrelevant relic does not contain either")
             {
-                auto irrelevant = reliquary->Create<FixedRelic>(RelicStructure{});
+                auto irrelevant = reliquary->Create<ClosedRelic>(RelicStructure{});
                 REQUIRE(!irrelevant.Contains<Shard<0>, Shard<1>, Shard<2>>());
             }
         }

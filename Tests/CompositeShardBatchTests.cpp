@@ -3,7 +3,6 @@
 #include "CompositeShardBatchTests.h"
 
 #include <Arca/CompositeShardBatch.h>
-#include <Arca/CompositeShardBatchSourceDefinition.h>
 
 namespace Arca
 {
@@ -79,6 +78,7 @@ SCENARIO_METHOD(CompositeShardBatchFixture, "composite shard batch", "[Composite
             .Shard<Shard<0>>()
             .Shard<Shard<1>>()
             .Shard<Shard<2>>()
+            .Shard<Shard<3>>()
             .Actualize();
         auto relic = reliquary->Create<OpenRelic>();
 
@@ -115,6 +115,36 @@ SCENARIO_METHOD(CompositeShardBatchFixture, "composite shard batch", "[Composite
                 {
                     relic.Destroy<Shard<0>>();
                     REQUIRE(batch.IsEmpty());
+                }
+
+                WHEN("adding a new relic")
+                {
+                    relic.Create<Shard<3>>();
+
+                    THEN("batch is not empty")
+                    {
+                        REQUIRE(!batch.IsEmpty());
+                        REQUIRE(batch.Size() == 1);
+                    }
+
+                    THEN("returned shard contains each created shard")
+                    {
+                        auto& first = *batch.begin();
+                        REQUIRE(std::get<0>(first) == createdShard0);
+                        REQUIRE(std::get<1>(first) == createdShard1);
+                        REQUIRE(std::get<2>(first) == createdShard2);
+                    }
+
+                    THEN("begin is not end")
+                    {
+                        REQUIRE(batch.begin() != batch.end());
+                    }
+
+                    THEN("removing fourth shard does not empty batch")
+                    {
+                        relic.Destroy<Shard<3>>();
+                        REQUIRE(!batch.IsEmpty());
+                    }
                 }
             }
         }
@@ -163,6 +193,36 @@ SCENARIO_METHOD(CompositeShardBatchFixture, "composite shard batch", "[Composite
                 {
                     relic.Destroy<Shard<0>>();
                     REQUIRE(batch.IsEmpty());
+                }
+
+                WHEN("adding a new relic")
+                {
+                    relic.Create<Shard<3>>();
+
+                    THEN("batch is not empty")
+                    {
+                        REQUIRE(!batch.IsEmpty());
+                        REQUIRE(batch.Size() == 1);
+                    }
+
+                    THEN("returned shard contains each created shard")
+                    {
+                        auto& first = *batch.begin();
+                        REQUIRE(std::get<0>(first) == createdShard0);
+                        REQUIRE(std::get<1>(first) == createdShard1);
+                        REQUIRE(std::get<2>(first) == createdShard2);
+                    }
+
+                    THEN("begin is not end")
+                    {
+                        REQUIRE(batch.begin() != batch.end());
+                    }
+
+                    THEN("removing fourth shard does not empty batch")
+                    {
+                        relic.Destroy<Shard<3>>();
+                        REQUIRE(!batch.IsEmpty());
+                    }
                 }
             }
         }

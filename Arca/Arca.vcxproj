@@ -30,12 +30,13 @@
     <ClInclude Include="EitherShardBatchIterator.h" />
     <ClInclude Include="EitherShardBatchSource.h" />
     <ClInclude Include="EitherShardBatchSourceDefinition.h" />
-    <ClInclude Include="FixedRelic.h" />
-    <ClInclude Include="FixedRelicDefinition.h" />
+    <ClInclude Include="ClosedRelic.h" />
+    <ClInclude Include="ClosedRelicDefinition.h" />
     <ClInclude Include="Batch.h" />
     <ClInclude Include="BatchSource.h" />
     <ClInclude Include="Destroying.h" />
     <ClInclude Include="CuratorHandle.h" />
+    <ClInclude Include="Global.h" />
     <ClInclude Include="HasFactoryMethod.h" />
     <ClInclude Include="IsType.h" />
     <ClInclude Include="KnownPolymorphicSerializer.h" />
@@ -65,7 +66,6 @@
     <ClInclude Include="ShardBatchIterator.h" />
     <ClInclude Include="Exception.h" />
     <ClInclude Include="SignalTraits.h" />
-    <ClInclude Include="Global.h" />
     <ClInclude Include="StructureFrom.h" />
     <ClInclude Include="ShardScribe.h" />
     <ClInclude Include="ReliquaryOrigin.h" />
@@ -103,7 +103,7 @@
     <ClCompile Include="CuratorHandle.cpp" />
     <ClCompile Include="Destroying.cpp" />
     <ClCompile Include="EitherShardBatchSource.cpp" />
-    <ClCompile Include="FixedRelic.cpp" />
+    <ClCompile Include="ClosedRelic.cpp" />
     <ClCompile Include="KnownPolymorphicSerializer.cpp" />
     <ClCompile Include="ObjectType.cpp" />
     <ClCompile Include="Pipeline.cpp" />

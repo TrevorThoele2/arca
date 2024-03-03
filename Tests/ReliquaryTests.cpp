@@ -172,7 +172,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "creating relic from registered relic str
                 .Shard<BasicShard>()
                 .Actualize();
 
-            auto relic = reliquary->Create<FixedRelic>(structureName);
+            auto relic = reliquary->Create<ClosedRelic>(structureName);
 
             THEN("relic has shard")
             {
@@ -190,7 +190,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "creating relic from registered relic str
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary->Create<FixedRelic>(structureName),
+                    reliquary->Create<ClosedRelic>(structureName),
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The shard ("s + Traits<BasicShard>::typeName + ") was not registered.")

@@ -160,7 +160,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("retrieving as fixed")
             {
-                auto fixedRelic = reliquary->Find<FixedRelic>(openRelic.ID());
+                auto fixedRelic = reliquary->Find<ClosedRelic>(openRelic.ID());
 
                 THEN("fixed relic is not found")
                 {
@@ -182,7 +182,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
         WHEN("creating fixed relic with valid structure")
         {
             auto preCreateRelicCount = reliquary->RelicSize();
-            auto fixedRelic = reliquary->Create<FixedRelic>(RelicStructure{ TypeHandleFor<BasicShard>() });
+            auto fixedRelic = reliquary->Create<ClosedRelic>(RelicStructure{ TypeHandleFor<BasicShard>() });
 
             THEN("structure has been satisfied")
             {
@@ -199,12 +199,12 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             THEN("reliquary contains relic")
             {
-                REQUIRE(reliquary->Contains<FixedRelic>(fixedRelic.ID()));
+                REQUIRE(reliquary->Contains<ClosedRelic>(fixedRelic.ID()));
             }
 
             WHEN("finding open relic")
             {
-                auto found = reliquary->Find<FixedRelic>(fixedRelic.ID());
+                auto found = reliquary->Find<ClosedRelic>(fixedRelic.ID());
 
                 THEN("found is same as created")
                 {
@@ -222,7 +222,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
                 THEN("finding relic returns empty")
                 {
-                    REQUIRE(!reliquary->Find<FixedRelic>(id));
+                    REQUIRE(!reliquary->Find<ClosedRelic>(id));
                 }
 
                 THEN("destroying again does not throw")
@@ -305,7 +305,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("retrieving as fixed")
             {
-                auto fixedRelic = reliquary->Find<FixedRelic>(typedRelic.ID());
+                auto fixedRelic = reliquary->Find<ClosedRelic>(typedRelic.ID());
 
                 THEN("fixed relic is not found")
                 {
@@ -438,7 +438,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
         WHEN("creating fixed relic")
         {
-            const auto created = reliquary->Create<FixedRelic>(RelicStructure { TypeHandleFor<BasicShard>() });
+            const auto created = reliquary->Create<ClosedRelic>(RelicStructure { TypeHandleFor<BasicShard>() });
 
             THEN("signal is emitted for relic")
             {
@@ -487,7 +487,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             .Shard<BasicShard>()
             .Actualize();
 
-        auto globalRelic = reliquary->Global<GlobalRelic>();
+        auto globalRelic = reliquary->Find<Global<GlobalRelic>>();
 
         auto onParented = reliquary->Batch<RelicParented>();
 

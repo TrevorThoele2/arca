@@ -50,9 +50,11 @@ namespace Arca
         Handle HandleFrom(RelicID id);
         Handle HandleFrom(const RelicMetadata& metadata);
         template<class T>
-        Ptr<T> PtrFrom(RelicID id);
+        LocalPtr<T> LocalPtrFrom(RelicID id) const;
         template<class T>
-        Ptr<T> PtrFrom(const RelicMetadata& metadata);
+        LocalPtr<T> LocalPtrFrom(const RelicMetadata& metadata) const;
+        template<class T>
+        GlobalPtr<T> GlobalPtrFrom(RelicID id) const;
     protected:
         template<class BatchSourceBaseT, class Owner, class Derived>
         class StorageBatchSources
@@ -202,14 +204,20 @@ namespace Arca
     };
 
     template<class T>
-    Ptr<T> ReliquaryComponent::PtrFrom(RelicID id)
+    LocalPtr<T> ReliquaryComponent::LocalPtrFrom(RelicID id) const
     {
-        return Ptr<T>(id, Owner());
+        return LocalPtr<T>(id, const_cast<Reliquary&>(Owner()));
     }
 
     template<class T>
-    Ptr<T> ReliquaryComponent::PtrFrom(const RelicMetadata& metadata)
+    LocalPtr<T> ReliquaryComponent::LocalPtrFrom(const RelicMetadata& metadata) const
     {
-        return Ptr<T>(metadata.id, Owner());
+        return LocalPtr<T>(metadata.id, const_cast<Reliquary&>(Owner()));
+    }
+
+    template<class T>
+    GlobalPtr<T> ReliquaryComponent::GlobalPtrFrom(RelicID id) const
+    {
+        return GlobalPtr<T>(const_cast<Reliquary&>(Owner()));
     }
 }

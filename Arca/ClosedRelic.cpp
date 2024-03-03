@@ -1,0 +1,46 @@
+#include "ClosedRelic.h"
+
+#include "Reliquary.h"
+
+namespace Arca
+{
+    ClosedRelic::operator Handle() const
+    {
+        return Handle(ID(), Owner());
+    }
+
+    ClosedRelic::operator bool() const
+    {
+        if (!owner)
+            return false;
+
+        return owner->Contains<ClosedRelic>(id);
+    }
+
+    std::optional<Handle> ClosedRelic::Parent() const
+    {
+        return owner->ParentOf(*this);
+    }
+
+    RelicID ClosedRelic::ID() const
+    {
+        return id;
+    }
+
+    Reliquary& ClosedRelic::Owner() const
+    {
+        return *owner;
+    }
+
+    ClosedRelic::ClosedRelic(RelicID id, Reliquary& owner) : id(id), owner(&owner)
+    {}
+}
+
+namespace Inscription
+{
+    void Scribe<Arca::ClosedRelic, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    {
+        archive(object.id);
+        archive(object.owner);
+    }
+}

@@ -207,7 +207,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
 
         auto relicStructure = RelicStructure{};
         relicStructure.emplace_back(TypeHandleFor<const Shard>());
-        auto relic = reliquary->Create<FixedRelic>(relicStructure);
+        auto relic = reliquary->Create<ClosedRelic>(relicStructure);
 
         WHEN("finding const shard")
         {

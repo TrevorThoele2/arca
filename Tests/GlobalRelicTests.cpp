@@ -43,7 +43,7 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
 
         WHEN("retrieving global relic")
         {
-            const auto globalRelic = reliquary->Global<GlobalRelic>();
+            const auto globalRelic = reliquary->Find<Global<GlobalRelic>>();
 
             THEN("structure has been satisfied")
             {
@@ -57,7 +57,7 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
 
                 reliquary->Destroy(globalRelic);
 
-                auto foundAgain = reliquary->Global<GlobalRelic>();
+                auto foundAgain = reliquary->Find<Global<GlobalRelic>>();
 
                 REQUIRE(foundAgain->ID() == globalRelic->ID());
                 REQUIRE(foundAgain->basicShard == globalRelic->basicShard);
@@ -76,7 +76,7 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
 
             WHEN("retrieving as fixed")
             {
-                const auto asFixed = reliquary->Find<FixedRelic>(globalRelic->ID());
+                const auto asFixed = reliquary->Find<ClosedRelic>(globalRelic->ID());
 
                 THEN("fixed is empty")
                 {

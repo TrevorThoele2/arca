@@ -40,7 +40,7 @@ namespace Arca
     template<class T>
     void BatchSource<T, std::enable_if_t<is_composite_v<T>>>::NotifyShardCreated(RelicID id)
     {
-        if (HasEntry(id))
+        if (ContainsEntry(id))
             return;
 
         if (owner->Contains<T>(id))
@@ -50,10 +50,10 @@ namespace Arca
     template<class T>
     void BatchSource<T, std::enable_if_t<is_composite_v<T>>>::NotifyShardDestroyed(RelicID id)
     {
-        if (!HasEntry(id))
+        if (!ContainsEntry(id))
             return;
 
-        if (owner->Contains<T>(id))
+        if (!owner->Contains<T>(id))
             DestroyEntry(id);
     }
 
@@ -62,17 +62,8 @@ namespace Arca
         RelicID id, const RelicStructure& structure)
     {
         for (auto& type : structure)
-        {
-            if (!std::any_of(
-                this->structure.begin(),
-                this->structure.end(),
-                [type](const TypeHandle& checkType)
-                {
-                    return checkType == type;
-                }))
-
+            if (!StructureContains(type))
                 return;
-        }
 
         CreateEntry(id);
     }
@@ -134,6 +125,18 @@ namespace Arca
     }
 
     template<class T>
+    bool BatchSource<T, std::enable_if_t<is_composite_v<T>>>::StructureContains(TypeHandle typeHandle) const
+    {
+        return std::any_of(
+            this->structure.begin(),
+            this->structure.end(),
+            [typeHandle](const TypeHandle& checkTypeHandle)
+            {
+                return typeHandle == checkTypeHandle;
+            });
+    }
+
+    template<class T>
     void BatchSource<T, std::enable_if_t<is_composite_v<T>>>::CreateEntry(RelicID id)
     {
         list.push_back({ id, CreateTuple(id) });
@@ -161,7 +164,7 @@ namespace Arca
     }
 
     template<class T>
-    bool BatchSource<T, std::enable_if_t<is_composite_v<T>>>::HasEntry(RelicID id) const
+    bool BatchSource<T, std::enable_if_t<is_composite_v<T>>>::ContainsEntry(RelicID id) const
     {
         return std::any_of(
             this->list.begin(),

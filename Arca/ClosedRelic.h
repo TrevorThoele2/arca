@@ -11,14 +11,14 @@
 
 namespace Arca
 {
-    class FixedRelic
+    class ClosedRelic
     {
     public:
         operator Handle() const;
         explicit operator bool() const;
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] Ptr<ShardT> Find() const;
+        [[nodiscard]] LocalPtr<ShardT> Find() const;
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] bool Contains() const;
         template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
@@ -34,7 +34,7 @@ namespace Arca
         RelicID id;
         Reliquary* owner;
     private:
-        FixedRelic(RelicID id, Reliquary& owner);
+        ClosedRelic(RelicID id, Reliquary& owner);
     private:
         friend Reliquary;
     private:
@@ -45,8 +45,8 @@ namespace Arca
 namespace Inscription
 {
     template<>
-    class Scribe<::Arca::FixedRelic, BinaryArchive> final :
-        public CompositeScribe<::Arca::FixedRelic, BinaryArchive>
+    class Scribe<::Arca::ClosedRelic, BinaryArchive> final :
+        public CompositeScribe<::Arca::ClosedRelic, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
