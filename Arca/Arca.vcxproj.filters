@@ -324,9 +324,6 @@
     <ClInclude Include="Exception.h">
       <Filter>Header Files\Exception</Filter>
     </ClInclude>
-    <ClInclude Include="Ptr.h">
-      <Filter>Header Files\Ptr</Filter>
-    </ClInclude>
     <ClInclude Include="Traits.h">
       <Filter>Header Files\Traits</Filter>
     </ClInclude>
@@ -460,9 +457,6 @@
     </Filter>
     <Filter Include="Source Files\Exception">
       <UniqueIdentifier>{99080f8b-def6-4880-ab99-3c40e63d52d3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Ptr">
-      <UniqueIdentifier>{265a1d98-8599-457b-beaf-9d35022b08e1}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Traits">
       <UniqueIdentifier>{a358dbd0-8c99-4de9-9ff9-27db7776d056}</UniqueIdentifier>

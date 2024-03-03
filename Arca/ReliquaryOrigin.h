@@ -60,10 +60,6 @@ namespace Arca
         template<class RelicT>
         [[nodiscard]] bool IsGlobalRelicRegistered() const;
     private:
-        using TypedRelicInitializer = void(*)(Reliquary&);
-        using TypedRelicInitializerList = std::vector<TypedRelicInitializer>;
-        TypedRelicInitializerList typedRelicInitializerList;
-    private:
         using NamedRelicStructure = ReliquaryRelicStructures::Named;
         using NamedRelicStructureList = std::vector<NamedRelicStructure>;
         NamedRelicStructureList namedRelicStructureList;
@@ -123,20 +119,23 @@ namespace Arca
             reliquary.relics.batchSources.map.emplace(
                 type.name,
                 std::make_unique<BatchSource<RelicT>>(reliquary));
-            reliquary.relics.serializers.push_back(
-                KnownPolymorphicSerializer
-                {
-                    type.name,
-                    [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
+            if (HasScribe<RelicT>())
+            {
+                reliquary.relics.serializers.push_back(
+                    KnownPolymorphicSerializer
                     {
-                        auto batchSource = reliquary.relics.batchSources.Find<RelicT>();
-                        archive(*batchSource);
-                    },
-                    [](::Inscription::BinaryArchive& archive)
-                    {
-                        return ::Inscription::InputTypesFor<RelicT>(archive);
-                    }
-                });
+                        type.name,
+                        [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
+                        {
+                            auto batchSource = reliquary.relics.batchSources.Find<RelicT>();
+                            archive(*batchSource);
+                        },
+                        [](::Inscription::BinaryArchive& archive)
+                        {
+                            return ::Inscription::InputTypesFor<RelicT>(archive);
+                        }
+                    });
+            }
             reliquary.relics.initializers.push_back(
                 [](Reliquary& reliquary)
                 {
@@ -146,13 +145,6 @@ namespace Arca
                 });
         };
         relicList.emplace_back(type.name, factory);
-
-        typedRelicInitializerList.push_back([](Reliquary& reliquary)
-            {
-                auto& relicBatchSource = reliquary.relics.batchSources.Required<RelicT>();
-                for (auto& loop : relicBatchSource)
-                    loop.Initialize(reliquary);
-            });
 
         return *this;
     }
@@ -186,33 +178,36 @@ namespace Arca
                         id,
                         OpennessFor<RelicT>(),
                         LocalityFor<RelicT>(),
+                        HasScribe<RelicT>(),
                         Arca::Type(type.name),
                         relic.get());
                     reliquary.relics.SatisfyStructure(id, StructureFrom<shards_for_t<RelicT>>());
-
-                    reliquary.relics.globalSerializers.push_back(
-                        KnownPolymorphicSerializer
+                    if (HasScribe<RelicT>())
+                    {
+                        reliquary.relics.globalSerializers.push_back(
+                            KnownPolymorphicSerializer
+                            {
+                                type.name,
+                                [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
+                                {
+                                    auto relic = reliquary.Find<RelicT>();
+                                    archive(*relic);
+                                },
+                                [](::Inscription::BinaryArchive& archive)
+                                {
+                                    return ::Inscription::InputTypesFor<RelicT>(archive);
+                                }
+                            });
+                    }
+                    reliquary.relics.initializers.push_back(
+                        [](Reliquary& reliquary)
                         {
-                            type.name,
-                            [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
-                            {
-                                auto relic = reliquary.Find<RelicT>();
-                                archive(*relic);
-                            },
-                            [](::Inscription::BinaryArchive& archive)
-                            {
-                                return ::Inscription::InputTypesFor<RelicT>(archive);
-                            }
+                            auto relic = reliquary.Find<RelicT>();
+                            relic->Initialize(reliquary);
                         });
                 }, args);
         };
         globalRelicList.emplace_back(type.name, factory);
-
-        typedRelicInitializerList.push_back([](Reliquary& reliquary)
-            {
-                auto relic = reliquary.Find<RelicT>();
-                relic->Initialize(reliquary);
-            });
 
         return *this;
     }
@@ -249,23 +244,26 @@ namespace Arca
                         ? creator(reliquary.shards.batchSources.Find<const ShardT>())
                         : creator(reliquary.shards.batchSources.Find<ShardT>());
                 });
-            reliquary.shards.serializers.push_back(
-                KnownPolymorphicSerializer
-                {
-                    type.name,
-                    [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
+            if (HasScribe<ShardT>())
+            {
+                reliquary.shards.serializers.push_back(
+                    KnownPolymorphicSerializer
                     {
-                        auto batchSource = reliquary.shards.batchSources.Find<ShardT>();
-                        archive(*batchSource);
+                        type.name,
+                        [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
+                        {
+                            auto batchSource = reliquary.shards.batchSources.Find<ShardT>();
+                            archive(*batchSource);
 
-                        auto constBatchSource = reliquary.shards.batchSources.Find<const ShardT>();
-                        archive(*constBatchSource);
-                    },
-                    [](::Inscription::BinaryArchive& archive)
-                    {
-                        return ::Inscription::InputTypesFor<ShardT>(archive);
-                    }
-                });
+                            auto constBatchSource = reliquary.shards.batchSources.Find<const ShardT>();
+                            archive(*constBatchSource);
+                        },
+                        [](::Inscription::BinaryArchive& archive)
+                        {
+                            return ::Inscription::InputTypesFor<ShardT>(archive);
+                        }
+                    });
+            }
         };
 
         shardList.emplace_back(type.name, std::move(factory));
@@ -362,26 +360,29 @@ namespace Arca
             throw AlreadyRegistered("curator", type, typeid(CuratorT));
 
         curatorProviders.emplace(type.name, std::make_unique<CuratorProvider>(std::forward<Args>(args)...));
-        const auto curatorSerializationTypesFactory = [](Reliquary& reliquary)
+        if (HasScribe<CuratorT>())
         {
-            const auto type = TypeFor<CuratorT>();
-            reliquary.curators.serializers.push_back(
-                KnownPolymorphicSerializer
-                {
-                    type.name,
-                    [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
+            const auto curatorSerializationTypesFactory = [](Reliquary& reliquary)
+            {
+                const auto type = TypeFor<CuratorT>();
+                reliquary.curators.serializers.push_back(
+                    KnownPolymorphicSerializer
                     {
-                        auto curator = reliquary.Find<CuratorT>();
-                        archive(*curator);
-                    },
-                    [](::Inscription::BinaryArchive& archive)
-                    {
-                        return ::Inscription::InputTypesFor<CuratorT>(archive);
-                    }
-                });
-        };
+                        type.name,
+                        [](Reliquary& reliquary, ::Inscription::BinaryArchive& archive)
+                        {
+                            auto curator = reliquary.Find<CuratorT>();
+                            archive(*curator);
+                        },
+                        [](::Inscription::BinaryArchive& archive)
+                        {
+                            return ::Inscription::InputTypesFor<CuratorT>(archive);
+                        }
+                    });
+            };
 
-        curatorSerializationTypesFactoryList.push_back(curatorSerializationTypesFactory);
+            curatorSerializationTypesFactoryList.push_back(curatorSerializationTypesFactory);
+        }
     }
 
     template<class CuratorT>

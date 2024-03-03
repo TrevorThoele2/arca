@@ -4,7 +4,6 @@
 #include "RelicStructure.h"
 #include "RelicTraits.h"
 #include "Handle.h"
-#include "Ptr.h"
 #include "Either.h"
 #include "AreAllShards.h"
 
@@ -22,11 +21,13 @@ namespace Arca
         explicit operator bool() const;
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        Ptr<ShardT> Create();
+        ShardT* Create();
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         void Destroy();
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] Ptr<ShardT> Find() const;
+        [[nodiscard]] ShardT* Find() const;
+        template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
+        [[nodiscard]] typename EitherT::ShardT* Find() const;
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] bool Contains() const;
         template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>

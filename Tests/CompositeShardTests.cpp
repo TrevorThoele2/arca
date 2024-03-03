@@ -45,7 +45,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "reliquary composite shards", "[reli
 
             THEN("contains composite")
             {
-                REQUIRE(reliquary->Contains<Shard<0>, Shard<1>, Shard<2>>(relic.ID()));
+                REQUIRE(reliquary->Contains<Shard<0>, Shard<1>, Shard<2>>(relic->ID()));
             }
 
             WHEN("removing a shard")
@@ -54,7 +54,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "reliquary composite shards", "[reli
 
                 THEN("does not contain composite")
                 {
-                    REQUIRE(!reliquary->Contains<Shard<0>, Shard<1>, Shard<2>>(relic.ID()));
+                    REQUIRE(!reliquary->Contains<Shard<0>, Shard<1>, Shard<2>>(relic->ID()));
                 }
             }
 
@@ -64,7 +64,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "reliquary composite shards", "[reli
 
                 THEN("contains composite")
                 {
-                    REQUIRE(reliquary->Contains<Shard<0>, Shard<1>, Shard<2>>(relic.ID()));
+                    REQUIRE(reliquary->Contains<Shard<0>, Shard<1>, Shard<2>>(relic->ID()));
                 }
 
                 WHEN("removing that shard")
@@ -73,7 +73,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "reliquary composite shards", "[reli
 
                     THEN("contains composite")
                     {
-                        REQUIRE(reliquary->Contains<Shard<0>, Shard<1>, Shard<2>>(relic.ID()));
+                        REQUIRE(reliquary->Contains<Shard<0>, Shard<1>, Shard<2>>(relic->ID()));
                     }
                 }
             }
@@ -89,7 +89,7 @@ SCENARIO_METHOD(CompositeShardTestsFixture, "reliquary composite shards", "[reli
             THEN("irrelevant relic does not contain composite")
             {
                 auto irrelevant = reliquary->Create<OpenRelic>();
-                REQUIRE(!reliquary->Contains<Shard<0>, Shard<1>, Shard<2>>(irrelevant.ID()));
+                REQUIRE(!reliquary->Contains<Shard<0>, Shard<1>, Shard<2>>(irrelevant->ID()));
             }
         }
     }

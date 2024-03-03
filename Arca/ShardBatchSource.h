@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <list>
 
 #include "BatchSource.h"
 #include "RelicID.h"
@@ -43,7 +43,7 @@ namespace Arca
             Entry(RelicID id, StoredT&& shard);
         };
 
-        using List = std::vector<Entry>;
+        using List = std::list<Entry>;
     public:
         using iterator = typename List::iterator;
         using const_iterator = typename List::const_iterator;
@@ -99,14 +99,11 @@ namespace Arca
     template<class T>
     auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Destroy(RelicID destroy) -> iterator
     {
-        auto itr = std::remove_if(
-            list.begin(),
-            list.end(),
-            [destroy](const Entry& entry) { return entry.id == destroy; });
-        if (itr == list.end())
-            return list.end();
+        for (auto loop = list.begin(); loop != list.end(); ++loop)
+            if (loop->id == destroy)
+                return list.erase(loop);
 
-        return list.erase(itr);
+        return list.end();
     }
 
     template<class T>

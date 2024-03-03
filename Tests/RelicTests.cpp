@@ -103,17 +103,17 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             THEN("reliquary contains relic")
             {
-                REQUIRE(reliquary->Contains<OpenRelic>(openRelic.ID()));
+                REQUIRE(reliquary->Contains<OpenRelic>(openRelic->ID()));
             }
 
             WHEN("finding open relic")
             {
-                auto found = reliquary->Find<OpenRelic>(openRelic.ID());
+                auto found = reliquary->Find<OpenRelic>(openRelic->ID());
 
                 THEN("found is same as created")
                 {
-                    REQUIRE(found->ID() == openRelic.ID());
-                    REQUIRE(&found->Owner() == &openRelic.Owner());
+                    REQUIRE(found->ID() == openRelic->ID());
+                    REQUIRE(&found->Owner() == &openRelic->Owner());
                 }
             }
 
@@ -134,13 +134,14 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
                 THEN("reliquary has shard")
                 {
-                    REQUIRE(reliquary->Find<Shard>(openRelic.ID()));
-                    REQUIRE(reliquary->Contains<Shard>(openRelic.ID()));
+                    REQUIRE(reliquary->Find<Shard>(openRelic->ID()));
+                    REQUIRE(reliquary->Contains<Shard>(openRelic->ID()));
                 }
 
                 THEN("relic has shard")
                 {
                     REQUIRE(openRelic->Find<Shard>());
+                    REQUIRE(openRelic->Find<Either<Shard>>());
                     REQUIRE(openRelic->Contains<Shard>());
                 }
 
@@ -155,8 +156,8 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
                     THEN("reliquary does not have shard")
                     {
-                        REQUIRE(!reliquary->Find<Shard>(openRelic.ID()));
-                        REQUIRE(!reliquary->Contains<Shard>(openRelic.ID()));
+                        REQUIRE(!reliquary->Find<Shard>(openRelic->ID()));
+                        REQUIRE(!reliquary->Contains<Shard>(openRelic->ID()));
                     }
 
                     THEN("relic does not have shard")
@@ -169,7 +170,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("retrieving as closed")
             {
-                auto closedRelic = reliquary->Find<ClosedRelic>(openRelic.ID());
+                auto closedRelic = reliquary->Find<ClosedRelic>(openRelic->ID());
 
                 THEN("closed relic is not found")
                 {
@@ -179,7 +180,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("retrieving as typed")
             {
-                const auto asTyped = reliquary->Find<TypedRelic>(openRelic.ID());
+                const auto asTyped = reliquary->Find<TypedRelic>(openRelic->ID());
 
                 THEN("typed is empty")
                 {
@@ -195,7 +196,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             THEN("structure has been satisfied")
             {
-                REQUIRE(reliquary->Find<Shard>(closedRelic.ID()));
+                REQUIRE(reliquary->Find<Shard>(closedRelic->ID()));
 
                 REQUIRE(closedRelic->Find<Shard>());
                 REQUIRE(closedRelic->Contains<Shard>());
@@ -208,17 +209,17 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             THEN("reliquary contains relic")
             {
-                REQUIRE(reliquary->Contains<ClosedRelic>(closedRelic.ID()));
+                REQUIRE(reliquary->Contains<ClosedRelic>(closedRelic->ID()));
             }
 
             WHEN("finding open relic")
             {
-                auto found = reliquary->Find<ClosedRelic>(closedRelic.ID());
+                auto found = reliquary->Find<ClosedRelic>(closedRelic->ID());
 
                 THEN("found is same as created")
                 {
-                    REQUIRE(found->ID() == closedRelic.ID());
-                    REQUIRE(&found->Owner() == &closedRelic.Owner());
+                    REQUIRE(found->ID() == closedRelic->ID());
+                    REQUIRE(&found->Owner() == &closedRelic->Owner());
                 }
             }
 
@@ -226,8 +227,8 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
             {
                 auto preDestroyRelicCount = reliquary->RelicSize();
 
-                auto id = closedRelic.ID();
-                reliquary->Destroy(closedRelic);
+                auto id = closedRelic->ID();
+                reliquary->Destroy(AsHandle(*closedRelic));
 
                 THEN("finding relic returns empty")
                 {
@@ -236,7 +237,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
                 THEN("destroying again does not throw")
                 {
-                    REQUIRE_NOTHROW(reliquary->Destroy(closedRelic));
+                    REQUIRE_NOTHROW(reliquary->Destroy(AsHandle(*closedRelic)));
                 }
 
                 THEN("reliquary relic count decrements by one")
@@ -247,7 +248,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("retrieving as open")
             {
-                const auto asOpen = reliquary->Find<OpenRelic>(closedRelic.ID());
+                const auto asOpen = reliquary->Find<OpenRelic>(closedRelic->ID());
 
                 THEN("open is empty")
                 {
@@ -257,7 +258,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("retrieving as typed")
             {
-                const auto asTyped = reliquary->Find<TypedRelic>(closedRelic.ID());
+                const auto asTyped = reliquary->Find<TypedRelic>(closedRelic->ID());
 
                 THEN("typed is empty")
                 {
@@ -283,17 +284,17 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             THEN("reliquary contains relic")
             {
-                REQUIRE(reliquary->Contains<TypedRelic>(typedRelic.ID()));
+                REQUIRE(reliquary->Contains<TypedRelic>(typedRelic->ID()));
             }
 
             WHEN("finding typed relic")
             {
-                auto found = reliquary->Find<TypedRelic>(typedRelic.ID());
+                auto found = reliquary->Find<TypedRelic>(typedRelic->ID());
 
                 THEN("found is same as created")
                 {
-                    REQUIRE(found->ID() == typedRelic.ID());
-                    REQUIRE(&found->Owner() == &typedRelic.Owner());
+                    REQUIRE(found->ID() == typedRelic->ID());
+                    REQUIRE(&found->Owner() == &typedRelic->Owner());
                 }
             }
 
@@ -304,7 +305,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("retrieving as open")
             {
-                const auto asOpen = reliquary->Find<OpenRelic>(typedRelic.ID());
+                const auto asOpen = reliquary->Find<OpenRelic>(typedRelic->ID());
 
                 THEN("typed is empty")
                 {
@@ -314,7 +315,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("retrieving as closed")
             {
-                auto closedRelic = reliquary->Find<ClosedRelic>(typedRelic.ID());
+                auto closedRelic = reliquary->Find<ClosedRelic>(typedRelic->ID());
 
                 THEN("closed relic is not found")
                 {
@@ -334,7 +335,7 @@ SCENARIO_METHOD(RelicTestsFixture, "many relics", "[relic]")
             .Type<OtherShard>()
             .Actualize();
 
-        std::vector<Ptr<OpenRelic>> relics;
+        std::vector<OpenRelic*> relics;
         for (size_t i = 0; i < 100; ++i)
         {
             relics.push_back(reliquary->Create<OpenRelic>());
@@ -346,7 +347,7 @@ SCENARIO_METHOD(RelicTestsFixture, "many relics", "[relic]")
             auto loop = relics.begin();
             while (loop != --relics.end())
             {
-                reliquary->Destroy(*loop);
+                reliquary->Destroy(AsHandle(**loop));
                 loop = relics.erase(loop);
             }
 
@@ -436,7 +437,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
             WHEN("destroying relic")
             {
-                reliquary->Destroy(created);
+                reliquary->Destroy(AsHandle(*created));
 
                 THEN("signal is emitted for relic")
                 {
@@ -456,7 +457,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
 
             WHEN("destroying relic")
             {
-                reliquary->Destroy(created);
+                reliquary->Destroy(AsHandle(*created));
 
                 THEN("signal is emitted for relic")
                 {
@@ -522,14 +523,19 @@ SCENARIO_METHOD(RelicTestsFixture, "open typed relic", "[relic][open]")
                 REQUIRE(reliquary->Find<OtherShard>(relic->ID()));
             }
 
+            WHEN("finding by either")
+            {
+                auto found = relic->Find<Either<OtherShard>>();
+
+                THEN("is same as created")
+                {
+                    REQUIRE(&*found == &*shard);
+                }
+            }
+
             WHEN("destroying dynamic shard")
             {
                 relic->Destroy<OtherShard>();
-
-                THEN("returned is now invalid")
-                {
-                    REQUIRE(!shard);
-                }
 
                 THEN("reliquary has destroyed shard")
                 {
@@ -541,11 +547,6 @@ SCENARIO_METHOD(RelicTestsFixture, "open typed relic", "[relic][open]")
             WHEN("destroying shard via handle")
             {
                 reliquary->Destroy(AsHandle<OtherShard>(relic->ID(), relic->Owner()));
-
-                THEN("returned is now invalid")
-                {
-                    REQUIRE(!shard);
-                }
 
                 THEN("reliquary has destroyed shard")
                 {
@@ -584,7 +585,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary->CreateChild<OpenRelic>(globalRelic),
+                    reliquary->CreateChild<OpenRelic>(AsHandle(*globalRelic)),
                     CannotParentRelic,
                     ::Catch::Matchers::Message("Attempted to parent to a global relic.")
                 );
@@ -610,39 +611,39 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
 
         WHEN("created child")
         {
-            auto child = reliquary->CreateChild<OpenRelic>(parent);
+            auto child = reliquary->CreateChild<OpenRelic>(AsHandle(*parent));
             child->Create<Shard>();
 
             THEN("child has parent")
             {
                 REQUIRE(child->Parent());
-                REQUIRE(child->Parent()->ID() == parent.ID());
+                REQUIRE(child->Parent()->ID() == parent->ID());
             }
 
             THEN("destroying parent also destroys child")
             {
-                reliquary->Destroy(parent);
+                reliquary->Destroy(AsHandle(*parent));
 
                 REQUIRE(reliquary->RelicSize() == 0);
-                REQUIRE(!reliquary->Find<Shard>(child.ID()));
+                REQUIRE(!reliquary->Find<Shard>(child->ID()));
             }
 
             WHEN("destroying child")
             {
-                reliquary->Destroy(child);
+                reliquary->Destroy(AsHandle(*child));
 
                 THEN("does not destroy parent")
                 {
                     REQUIRE(reliquary->RelicSize() == 1);
-                    REQUIRE(reliquary->Find<Shard>(parent.ID()));
+                    REQUIRE(reliquary->Find<Shard>(parent->ID()));
                 }
 
                 THEN("destroying parent works")
                 {
-                    reliquary->Destroy(parent);
+                    reliquary->Destroy(AsHandle(*parent));
 
                     REQUIRE(reliquary->RelicSize() == 0);
-                    REQUIRE(!reliquary->Find<Shard>(parent.ID()));
+                    REQUIRE(!reliquary->Find<Shard>(parent->ID()));
                 }
             }
 
@@ -652,8 +653,8 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
 
                 auto signal = onParented.begin();
 
-                REQUIRE(signal->parent.ID() == parent.ID());
-                REQUIRE(signal->child.ID() == child.ID());
+                REQUIRE(signal->parent.ID() == parent->ID());
+                REQUIRE(signal->child.ID() == child->ID());
             }
         }
 
@@ -696,7 +697,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    childReliquary->CreateChild<OpenRelic>(parent),
+                    childReliquary->CreateChild<OpenRelic>(AsHandle(*parent)),
                     CannotParentRelic,
                     ::Catch::Matchers::Message(
                         "The parent relic is from a different Reliquary.")
@@ -712,51 +713,11 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    irrelevantReliquary->CreateChild<OpenRelic>(parent),
+                    irrelevantReliquary->CreateChild<OpenRelic>(AsHandle(*parent)),
                     CannotParentRelic,
                     ::Catch::Matchers::Message(
                         "The parent relic is from a different Reliquary.")
                 );
-            }
-        }
-    }
-}
-
-SCENARIO_METHOD(RelicTestsFixture, "references to relics stay empty when relic placed later", "[reliquary][relic]")
-{
-    GIVEN("all registered")
-    {
-        auto reliquary = ReliquaryOrigin()
-            .Type<TypedRelic>()
-            .Actualize();
-
-        WHEN("generating relic list, deleting half then recreating half of list")
-        {
-            std::vector<Ptr<OpenRelic>> everyOtherRelic;
-            auto pickRelic = false;
-            for (auto i = 0; i < 100; ++i)
-            {
-                auto relic = reliquary->Create<OpenRelic>();
-                if (pickRelic)
-                    everyOtherRelic.push_back(relic);
-                pickRelic = !pickRelic;
-            }
-
-            for (auto& relic : everyOtherRelic)
-                reliquary->Destroy(relic);
-
-            for (auto i = 0; i < 50; ++i)
-                reliquary->Create<OpenRelic>();
-
-            THEN("relic references to previous relics do not point to anything")
-            {
-                REQUIRE(std::all_of(
-                    everyOtherRelic.begin(),
-                    everyOtherRelic.end(),
-                    [](const Ptr<OpenRelic>& entry)
-                    {
-                        return !static_cast<bool>(entry);
-                    }));
             }
         }
     }

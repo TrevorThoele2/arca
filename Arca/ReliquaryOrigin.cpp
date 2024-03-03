@@ -84,7 +84,7 @@ namespace Arca
                 for (auto& curator : stage)
                     curator->Initialize(*reliquary);
 
-            for (auto& loop : typedRelicInitializerList)
+            for (auto& loop : reliquary->relics.initializers)
                 loop(*reliquary);
         }
 

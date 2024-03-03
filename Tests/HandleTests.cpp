@@ -61,20 +61,20 @@ SCENARIO_METHOD(HandleTestsFixture, "basic handle", "[handle]")
         WHEN("creating object")
         {
             const auto relic1 = reliquary->Create<TypedRelic>();
-            auto handle1 = static_cast<Handle>(relic1);
+            auto handle1 = AsHandle(*relic1);
 
             THEN("is not equal to different ID object")
             {
                 const auto relic2 = reliquary->Create<TypedRelic>();
-                auto handle2 = static_cast<Handle>(relic2);
+                auto handle2 = AsHandle(*relic2);
 
                 REQUIRE(handle1 != handle2);
             }
 
             THEN("is not equal to same ID object with different type")
             {
-                const auto shard = reliquary->Find<Shard>(relic1.ID());
-                auto handle2 = static_cast<Handle>(shard);
+                const auto shard = reliquary->Find<Shard>(relic1->ID());
+                auto handle2 = AsHandle<Shard>(relic1->ID(), *reliquary);
 
                 REQUIRE(handle1 != handle2);
             }
@@ -96,34 +96,36 @@ SCENARIO_METHOD(HandleTestsFixture, "handle comparison combinations", "[handle]"
             .Actualize();
 
         auto openRelic1 = reliquary->Create<OpenRelic>();
-        auto openRelicHandle1 = static_cast<Handle>(openRelic1);
-        auto openRelicOtherShardHandle1 = static_cast<Handle>(openRelic1->Create<OtherShard>());
+        auto openRelicHandle1 = AsHandle(*openRelic1);
+        openRelic1->Create<OtherShard>();
+        auto openRelicOtherShardHandle1 = AsHandle<OtherShard>(openRelic1->ID(), *reliquary);
 
         auto typedRelic1 = reliquary->Create<TypedRelic>();
-        auto typedRelicHandle1 = static_cast<Handle>(typedRelic1);
-        auto typedRelicShardHandle1 = static_cast<Handle>(typedRelic1->basicShard);
+        auto typedRelicHandle1 = AsHandle(*typedRelic1);
+        auto typedRelicShardHandle1 = AsHandle<Shard>(typedRelic1->ID(), *reliquary);;
 
         auto globalRelic1 = reliquary->Find<GlobalRelic>();
-        auto globalRelicHandle1 = static_cast<Handle>(globalRelic1);
+        auto globalRelicHandle1 = AsHandle(*globalRelic1);
 
         auto closedRelic1 = reliquary->CreateWith<ClosedRelic>(RelicStructure { TypeFor<Shard>() });
-        auto closedRelicHandle1 = static_cast<Handle>(closedRelic1);
-        auto closedRelicShardHandle1 = static_cast<Handle>(closedRelic1->Find<Shard>());
+        auto closedRelicHandle1 = AsHandle(*closedRelic1);
+        auto closedRelicShardHandle1 = AsHandle<Shard>(closedRelic1->ID(), *reliquary);
 
         auto openRelic2 = reliquary->Create<OpenRelic>();
-        auto openRelicHandle2 = static_cast<Handle>(openRelic2);
-        auto openRelicOtherShardHandle2 = static_cast<Handle>(openRelic2->Create<OtherShard>());
+        auto openRelicHandle2 = AsHandle(*openRelic2);
+        openRelic2->Create<OtherShard>();
+        auto openRelicOtherShardHandle2 = AsHandle<OtherShard>(openRelic2->ID(), *reliquary);
 
         auto typedRelic2 = reliquary->Create<TypedRelic>();
-        auto typedRelicHandle2 = static_cast<Handle>(typedRelic2);
-        auto typedRelicShardHandle2 = static_cast<Handle>(typedRelic2->basicShard);
+        auto typedRelicHandle2 = AsHandle(*typedRelic2);
+        auto typedRelicShardHandle2 = AsHandle<Shard>(typedRelic2->ID(), *reliquary);;
 
         auto globalRelic2 = reliquary->Find<GlobalRelic>();
-        auto globalRelicHandle2 = static_cast<Handle>(globalRelic2);
+        auto globalRelicHandle2 = AsHandle(*globalRelic2);
 
         auto closedRelic2 = reliquary->CreateWith<ClosedRelic>(RelicStructure{ TypeFor<Shard>() });
-        auto closedRelicHandle2 = static_cast<Handle>(closedRelic2);
-        auto closedRelicShardHandle2 = static_cast<Handle>(closedRelic2->Find<Shard>());
+        auto closedRelicHandle2 = AsHandle(*closedRelic2);
+        auto closedRelicShardHandle2 = AsHandle<Shard>(closedRelic2->ID(), *reliquary);
 
         WHEN("comparing open relic")
         {
@@ -381,19 +383,20 @@ SCENARIO_METHOD(HandleTestsFixture, "handle actualizations combinations", "[hand
             .Actualize();
 
         auto openRelic = reliquary->Create<OpenRelic>();
-        auto openRelicHandle = static_cast<Handle>(openRelic);
-        auto openRelicOtherShardHandle = static_cast<Handle>(openRelic->Create<OtherShard>());
+        auto openRelicHandle = AsHandle(*openRelic);
+        openRelic->Create<OtherShard>();
+        auto openRelicOtherShardHandle = AsHandle<OtherShard>(openRelic->ID(), *reliquary);
 
         auto typedRelic = reliquary->Create<TypedRelic>();
-        auto typedRelicHandle = static_cast<Handle>(typedRelic);
-        auto typedRelicShardHandle = static_cast<Handle>(typedRelic->basicShard);
+        auto typedRelicHandle = AsHandle(*typedRelic);
+        auto typedRelicShardHandle = AsHandle<Shard>(typedRelic->ID(), *reliquary);;
 
         auto globalRelic = reliquary->Find<GlobalRelic>();
-        auto globalRelicHandle = static_cast<Handle>(globalRelic);
+        auto globalRelicHandle = AsHandle(*globalRelic);
 
         auto closedRelic = reliquary->CreateWith<ClosedRelic>(RelicStructure{ TypeFor<Shard>() });
-        auto closedRelicHandle = static_cast<Handle>(closedRelic);
-        auto closedRelicShardHandle = static_cast<Handle>(closedRelic->Find<Shard>());
+        auto closedRelicHandle = AsHandle(*closedRelic);
+        auto closedRelicShardHandle = AsHandle<Shard>(closedRelic->ID(), *reliquary);
 
         WHEN("actualizing open relic")
         {
@@ -561,7 +564,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle actualizations combinations", "[hand
 
         WHEN("actualizing global relic")
         {
-            const auto& handle = globalRelic;
+            const auto handle = AsHandle(*globalRelic);
 
             THEN("is not valid when set to open relic")
             {
@@ -602,7 +605,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle actualizations combinations", "[hand
 
         WHEN("actualizing closed relic")
         {
-            const auto& handle = closedRelic;
+            const auto handle = AsHandle(*closedRelic);
 
             THEN("is not valid when set to open relic")
             {

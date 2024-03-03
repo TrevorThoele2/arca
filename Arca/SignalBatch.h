@@ -126,26 +126,3 @@ namespace Arca
         source->Clear();
     }
 }
-
-namespace Inscription
-{
-    template<class T>
-    class Scribe<::Arca::Batch<T, std::enable_if_t<Arca::is_signal_v<T>>>, BinaryArchive> :
-        public CompositeScribe<::Arca::Batch<T, std::enable_if_t<Arca::is_signal_v<T>>>, BinaryArchive>
-    {
-    private:
-        using BaseT = CompositeScribe<::Arca::Batch<T, std::enable_if_t<Arca::is_signal_v<T>>>, BinaryArchive>;
-    public:
-        using ObjectT = typename BaseT::ObjectT;
-        using ArchiveT = typename BaseT::ArchiveT;
-
-        using BaseT::Scriven;
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {
-            archive(object.source);
-            if (archive.IsInput())
-                object.IncrementSource();
-        }
-    };
-}

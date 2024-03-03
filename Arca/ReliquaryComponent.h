@@ -6,7 +6,6 @@
 
 #include "RelicMetadata.h"
 #include "Handle.h"
-#include "Ptr.h"
 #include "ReliquaryException.h"
 #include "Traits.h"
 
@@ -67,17 +66,10 @@ namespace Arca
     protected:
         [[nodiscard]] Handle HandleFrom(RelicID id, Type type, HandleObjectType objectType) const;
         [[nodiscard]] Handle HandleFrom(const RelicMetadata& metadata) const;
-        template<class T>
-        [[nodiscard]] Ptr<T> PtrFrom(RelicID id) const;
-        template<class T>
-        [[nodiscard]] Ptr<T> PtrFrom(const RelicMetadata& metadata) const;
     protected:
-        template<class BatchSourceBaseT, class Owner, class Derived>
+        template<class BatchSourceBaseT, class Owner, class Derived, template<class> class is_object>
         class StorageBatchSources
         {
-        private:
-            template<class RelicT>
-            constexpr static bool is_object_v = Derived::template is_object_v<RelicT>;
         public:
             using Ptr = std::unique_ptr<BatchSourceBaseT>;
             using Map = std::unordered_map<TypeName, Ptr>;
@@ -92,7 +84,8 @@ namespace Arca
 
                 return found->second.get();
             }
-            template<class ObjectT, std::enable_if_t<is_object_v<ObjectT>, int> = 0>
+
+            template<class ObjectT, std::enable_if_t<is_object<ObjectT>::value, int> = 0>
             [[nodiscard]] BatchSource<ObjectT>* Find() const
             {
                 auto& map = AsDerived().template MapFor<ObjectT>();
@@ -103,8 +96,9 @@ namespace Arca
 
                 return static_cast<BatchSource<ObjectT>*>(found->second.get());
             }
-            template<class ObjectT, std::enable_if_t<is_object_v<ObjectT>, int> = 0>
-            BatchSource<ObjectT>& Required() const
+
+            template<class ObjectT, std::enable_if_t<is_object<ObjectT>::value, int> = 0>
+            [[nodiscard]] BatchSource<ObjectT>& Required() const
             {
                 auto found = Find<ObjectT>();
                 if (!found)
@@ -116,8 +110,8 @@ namespace Arca
                 return *found;
             }
 
-            template<class ObjectT, std::enable_if_t<is_object_v<ObjectT>, int> = 0>
-            Batch<ObjectT> Batch() const
+            template<class ObjectT, std::enable_if_t<is_object<ObjectT>::value, int> = 0>
+            [[nodiscard]] Arca::Batch<ObjectT> Batch() const
             {
                 auto& batchSource = Required<ObjectT>();
                 return Arca::Batch<ObjectT>(batchSource);
@@ -143,8 +137,8 @@ namespace Arca
         class MetaBatchSources
         {
         private:
-            template<class RelicT>
-            constexpr static bool should_accept = Derived::template should_accept<RelicT>;
+            template<class T>
+            constexpr static bool should_accept = Derived::template should_accept<T>;
         public:
             using Ptr = std::unique_ptr<BatchSourceBaseT>;
             using Map = std::unordered_map<Key, Ptr>;
@@ -159,6 +153,7 @@ namespace Arca
 
                 return found->second.get();
             }
+
             template<class ObjectT, std::enable_if_t<should_accept<ObjectT>, int> = 0>
             [[nodiscard]] BatchSource<ObjectT>* Find() const
             {
@@ -170,8 +165,9 @@ namespace Arca
 
                 return static_cast<BatchSource<ObjectT>*>(found->second.get());
             }
+
             template<class ObjectT, std::enable_if_t<should_accept<ObjectT>, int> = 0>
-            BatchSource<ObjectT>& Required()
+            [[nodiscard]] BatchSource<ObjectT>& Required()
             {
                 auto found = Find<ObjectT>();
                 if (found)
@@ -184,7 +180,7 @@ namespace Arca
             }
 
             template<class ObjectT, std::enable_if_t<should_accept<ObjectT>, int> = 0>
-            Batch<ObjectT> Batch()
+            [[nodiscard]] Batch<ObjectT> Batch()
             {
                 auto& batchSource = Required<ObjectT>();
                 return Arca::Batch<ObjectT>(batchSource);
@@ -221,18 +217,6 @@ namespace Arca
     private:
         friend Reliquary;
     };
-
-    template<class T>
-    Ptr<T> ReliquaryComponent::PtrFrom(RelicID id) const
-    {
-        return Ptr<T>(id, const_cast<Reliquary&>(Owner()));
-    }
-
-    template<class T>
-    Ptr<T> ReliquaryComponent::PtrFrom(const RelicMetadata& metadata) const
-    {
-        return Ptr<T>(metadata.id, const_cast<Reliquary&>(Owner()));
-    }
 
     template<class ExceptionT, class... Args>
     ExceptionT ReliquaryComponent::CreateException(Args&& ... args) const

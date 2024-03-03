@@ -30,7 +30,7 @@ class ShardBatchFixture::UnregisteredShard
 class ShardBatchFixture::GlobalRelic : public ClosedTypedRelicAutomation<GlobalRelic, Shard>
 {
 public:
-    Ptr<Shard> shard;
+    Shard* shard;
 protected:
     void InitializeImplementation() override;
 };

@@ -109,7 +109,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch", "[RelicBatch]")
 
                 THEN("destroying relic empties the batch")
                 {
-                    reliquary->Destroy(createdRelic);
+                    reliquary->Destroy(AsHandle(*createdRelic));
                     REQUIRE(batch.IsEmpty());
                 }
             }
@@ -166,7 +166,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch serialization", "[RelicBatch][se
         savedReliquary->Create<Relic>();
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.exe", "Testing", 1);
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
             outputArchive(*savedReliquary);
         }
 
@@ -177,7 +177,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch serialization", "[RelicBatch][se
                 .Actualize();
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.exe", "Testing");
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
                 inputArchive(*loadedReliquary);
             }
 

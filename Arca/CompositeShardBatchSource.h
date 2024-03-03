@@ -5,7 +5,6 @@
 #include "BatchSource.h"
 #include "AreAllShards.h"
 #include "All.h"
-#include "Ptr.h"
 #include "RelicStructure.h"
 
 namespace Arca
@@ -52,7 +51,7 @@ namespace Arca
         template<class U>
         struct ToPtr
         {
-            using Type = Ptr<U>;
+            using Type = U*;
         };
     public:
         using TupleT = typename Pack::template Transform<ToPtr>::Type::TupleT;

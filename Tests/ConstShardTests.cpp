@@ -333,7 +333,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shard serialization", "[shard][co
                 inputArchive(*loadedReliquary);
             }
 
-            auto loadedRelic = loadedReliquary->Find<OpenRelic>(savedRelic.ID());
+            auto loadedRelic = loadedReliquary->Find<OpenRelic>(savedRelic->ID());
 
             WHEN("finding const shard")
             {

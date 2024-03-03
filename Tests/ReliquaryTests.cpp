@@ -145,11 +145,18 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary wih single shard")
         WHEN("creating open relic with non-const shard")
         {
             auto relic = reliquary->Create<OpenRelic>();
-            relic->Create<BasicShard>();
+            auto shard = relic->Create<BasicShard>();
 
             THEN("creating const shard of same type throws")
             {
                 REQUIRE_THROWS_AS(relic->Create<const BasicShard>(), CannotCreate);
+            }
+
+            THEN("finding either shard gives correct")
+            {
+                auto found = reliquary->Find<Either<BasicShard>>(relic->ID());
+                REQUIRE(found);
+                REQUIRE(&*found == &*shard);
             }
         }
     }
@@ -223,188 +230,6 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "registered reliquary with every type", "
             THEN("has one shard for global relic")
             {
                 REQUIRE(reliquary->ShardSize() == 1);
-            }
-        }
-    }
-}
-
-SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][serialization]")
-{
-    GIVEN("saved empty reliquary with every type registered")
-    {
-        auto savedReliquary = ReliquaryOrigin()
-            .Type<BasicShard>()
-            .Type<GlobalRelic>()
-            .Type<BasicCurator>()
-            .CuratorPipeline(Pipeline())
-            .Type<BasicSignal>()
-            .Actualize();
-
-        {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.exe", "Testing", 1);
-            outputArchive(*savedReliquary);
-        }
-
-        WHEN("loading reliquary")
-        {
-            auto loadedReliquary = ReliquaryOrigin()
-                .Type<BasicShard>()
-                .Type<GlobalRelic>()
-                .Type<BasicCurator>()
-                .CuratorPipeline(Pipeline())
-                .Type<BasicSignal>()
-                .Actualize();
-
-            {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.exe", "Testing");
-                inputArchive(*loadedReliquary);
-            }
-
-            THEN("has only global relic")
-            {
-                REQUIRE(loadedReliquary->RelicSize() == 1);
-            }
-        }
-    }
-
-    GIVEN("saved reliquary with open relic")
-    {
-        auto savedReliquary = ReliquaryOrigin()
-            .Type<BasicShard>()
-            .Actualize();
-
-        auto savedRelic = savedReliquary->Create<OpenRelic>();
-        auto savedShard = savedRelic->Create<BasicShard>();
-        savedShard->myValue = dataGeneration.Random<std::string>();
-
-        {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.exe", "Testing", 1);
-            outputArchive(*savedReliquary);
-        }
-
-        WHEN("loading reliquary")
-        {
-            auto loadedReliquary = ReliquaryOrigin()
-                .Type<BasicShard>()
-                .Actualize();
-
-            {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.exe", "Testing");
-                inputArchive(*loadedReliquary);
-            }
-
-            auto loadedRelic = loadedReliquary->Find<OpenRelic>(savedRelic.ID());
-            auto shardFromRelic = loadedRelic->Find<BasicShard>();
-
-            THEN("has relic")
-            {
-                REQUIRE(loadedReliquary->RelicSize() == 1);
-                REQUIRE(loadedRelic);
-                REQUIRE(loadedReliquary->Contains<OpenRelic>(loadedRelic->ID()));
-            }
-
-            THEN("relic has shard")
-            {
-                auto shardFromReliquary = loadedReliquary->Find<BasicShard>(loadedRelic->ID());
-                REQUIRE(shardFromReliquary);
-                REQUIRE(shardFromRelic);
-                REQUIRE(loadedRelic->Contains<BasicShard>());
-            }
-
-            THEN("shard has saved value")
-            {
-                REQUIRE(shardFromRelic->myValue == savedShard->myValue);
-            }
-
-            THEN("relic owner is loaded reliquary")
-            {
-                REQUIRE(&loadedRelic->Owner() == loadedReliquary.get());
-            }
-
-            THEN("relic id is saved id")
-            {
-                REQUIRE(loadedRelic->ID() == savedRelic.ID());
-            }
-        }
-
-        WHEN("loading reliquary without registering shard type")
-        {
-            auto loadedReliquary = ReliquaryOrigin()
-                .Actualize();
-
-            {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.exe", "Testing");
-                inputArchive(*loadedReliquary);
-            }
-
-            auto loadedRelic = loadedReliquary->Find<OpenRelic>(savedRelic.ID());
-
-            THEN("has relic")
-            {
-                REQUIRE(loadedReliquary->RelicSize() == 1);
-                REQUIRE(loadedRelic);
-                REQUIRE(loadedReliquary->Contains<OpenRelic>(loadedRelic->ID()));
-            }
-
-            THEN("relic does not have shard")
-            {
-                REQUIRE_THROWS_AS(loadedRelic->Find<BasicShard>(), NotRegistered);
-                REQUIRE_THROWS_AS(loadedReliquary->Find<BasicShard>(loadedRelic->ID()), NotRegistered);
-            }
-
-            THEN("relic owner is loaded reliquary")
-            {
-                REQUIRE(&loadedRelic->Owner() == loadedReliquary.get());
-            }
-
-            THEN("relic id is saved id")
-            {
-                REQUIRE(loadedRelic->ID() == savedRelic.ID());
-            }
-        }
-
-        WHEN("loading reliquary with different shard type with same input type handle")
-        {
-            auto loadedReliquary = ReliquaryOrigin()
-                .Type<OtherBasicShard>()
-                .Actualize();
-
-            {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.exe", "Testing");
-                inputArchive(*loadedReliquary);
-            }
-
-            auto loadedRelic = loadedReliquary->Find<OpenRelic>(savedRelic.ID());
-            auto shardFromRelic = loadedRelic->Find<OtherBasicShard>();
-
-            THEN("has relic")
-            {
-                REQUIRE(loadedReliquary->RelicSize() == 1);
-                REQUIRE(loadedRelic);
-                REQUIRE(loadedReliquary->Contains<OpenRelic>(loadedRelic->ID()));
-            }
-
-            THEN("relic has shard")
-            {
-                auto shardFromReliquary = loadedReliquary->Find<OtherBasicShard>(loadedRelic->ID());
-                REQUIRE(shardFromReliquary);
-                REQUIRE(shardFromRelic);
-                REQUIRE(loadedRelic->Contains<OtherBasicShard>());
-            }
-
-            THEN("shard has saved value")
-            {
-                REQUIRE(shardFromRelic->myValue == savedShard->myValue);
-            }
-
-            THEN("relic owner is loaded reliquary")
-            {
-                REQUIRE(&loadedRelic->Owner() == loadedReliquary.get());
-            }
-
-            THEN("relic id is saved id")
-            {
-                REQUIRE(loadedRelic->ID() == savedRelic.ID());
             }
         }
     }

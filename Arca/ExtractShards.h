@@ -8,7 +8,7 @@ namespace Arca
     template<class ShardT>
     struct ShardListToTuple
     {
-        using Type = Ptr<ShardT>;
+        using Type = ShardT*;
     };
 
     template<class Shards>
@@ -20,7 +20,7 @@ namespace Arca
         template<class ShardTuple>
         constexpr static void Do(ShardTuple& tuple, RelicID id, Reliquary& reliquary)
         {
-            using ShardT = typename std::tuple_element_t<i - 1, ShardTuple>::WrappedT;
+            using ShardT = std::remove_pointer_t<std::tuple_element_t<i - 1, ShardTuple>>;
 
             auto shard = reliquary.Find<ShardT>(id);
             std::get<i - 1>(tuple) = shard;

@@ -10,6 +10,7 @@
 #include "RelicTraits.h"
 #include "RelicMetadata.h"
 #include "RelicBatchSource.h"
+#include "RelicBatch.h"
 #include "HasFactoryMethod.h"
 
 #include "KnownPolymorphicSerializer.h"
@@ -20,25 +21,25 @@ namespace Arca
     {
     public:
         template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> Create(CreationArgs&& ... creationArgs);
+        RelicT* Create(CreationArgs&& ... creationArgs);
         template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateWith(const RelicStructure& structure, CreationArgs&& ... creationArgs);
+        RelicT* CreateWith(const RelicStructure& structure, CreationArgs&& ... creationArgs);
         template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateWith(const std::string& structureName, CreationArgs&& ... creationArgs);
+        RelicT* CreateWith(const std::string& structureName, CreationArgs&& ... creationArgs);
 
         template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateChild(const Handle& parent, CreationArgs&& ... creationArgs);
+        RelicT* CreateChild(const Handle& parent, CreationArgs&& ... creationArgs);
         template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateChildWith(const Handle& parent, const RelicStructure& structure, CreationArgs&& ... creationArgs);
+        RelicT* CreateChildWith(const Handle& parent, const RelicStructure& structure, CreationArgs&& ... creationArgs);
         template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        Ptr<RelicT> CreateChildWith(const Handle& parent, const std::string& structureName, CreationArgs&& ... creationArgs);
+        RelicT* CreateChildWith(const Handle& parent, const std::string& structureName, CreationArgs&& ... creationArgs);
 
         void Destroy(const Handle& handle);
 
         template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int> = 0>
-        [[nodiscard]] Ptr<RelicT> Find(RelicID id) const;
+        [[nodiscard]] RelicT* Find(RelicID id) const;
         template<class RelicT, std::enable_if_t<is_global_relic_v<RelicT>, int> = 0>
-        [[nodiscard]] Ptr<RelicT> Find() const;
+        [[nodiscard]] RelicT* Find() const;
 
         [[nodiscard]] std::optional<Handle> ParentOf(const Handle& child) const;
     public:
@@ -57,6 +58,7 @@ namespace Arca
             RelicID id,
             Openness openness,
             Locality locality,
+            bool shouldSerialize,
             Type type = {},
             void* storage = nullptr);
         void DestroyMetadata(RelicID id);
@@ -86,7 +88,8 @@ namespace Arca
         using InitializerList = std::vector<Initializer>;
         InitializerList initializers;
     public:
-        class BatchSources : public StorageBatchSources<RelicBatchSourceBase, ReliquaryRelics, BatchSources>
+        class BatchSources
+            : public StorageBatchSources<RelicBatchSourceBase, ReliquaryRelics, BatchSources, is_relic>
         { 
         public:
             template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
@@ -96,10 +99,6 @@ namespace Arca
         private:
             explicit BatchSources(ReliquaryRelics& owner);
             friend ReliquaryRelics;
-        private:
-            template<class RelicT>
-            constexpr static bool is_object_v = is_relic_v<RelicT>;
-            friend StorageBatchSources<RelicBatchSourceBase, ReliquaryRelics, BatchSources>;
         } batchSources = BatchSources(*this);
 
         KnownPolymorphicSerializerList serializers;
@@ -129,7 +128,7 @@ namespace Arca
             std::enable_if_t<is_relic_v<RelicT> && !has_factory_method_v<RelicT>, int> = 0>
         std::optional<RelicT> CreateRelic(CreationArgs&& ... creationArgs);
         template<class RelicT>
-        Ptr<RelicT> PushNewRelic(RelicT&& relic, RelicStructure additionalStructure);
+        RelicT* PushNewRelic(RelicT&& relic, RelicStructure additionalStructure);
     private:
         RelicMetadata& ValidateParentForParenting(const Handle& parent);
     private:

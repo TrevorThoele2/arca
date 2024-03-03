@@ -6,12 +6,12 @@
 
 #include "ShardTraits.h"
 #include "ShardBatchSource.h"
+#include "ShardBatch.h"
 #include "EitherShardBatchSource.h"
 #include "CompositeShardBatchSource.h"
 
 #include "RelicID.h"
 #include "Type.h"
-#include "Ptr.h"
 
 namespace Arca
 {
@@ -26,14 +26,14 @@ namespace Arca
 
         void Create(const Type& type, RelicID id);
         template<class ShardT>
-        Ptr<ShardT> Create(RelicID id);
+        ShardT* Create(RelicID id);
 
         void Destroy(const Handle& handle);
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] Ptr<ShardT> Find(RelicID id) const;
+        [[nodiscard]] ShardT* Find(RelicID id) const;
         template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
-        [[nodiscard]] Ptr<EitherT> Find(RelicID id) const;
+        [[nodiscard]] typename EitherT::ShardT* Find(RelicID id) const;
 
         [[nodiscard]] bool Contains(const Handle& handle) const;
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
@@ -57,7 +57,8 @@ namespace Arca
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] ShardT* FindStorage(RelicID id);
     public:
-        class BatchSources : public StorageBatchSources<ShardBatchSourceBase, ReliquaryShards, BatchSources>
+        class BatchSources
+            : public StorageBatchSources<ShardBatchSourceBase, ReliquaryShards, BatchSources, is_shard>
         {
         public:
             Map constMap;
@@ -75,10 +76,6 @@ namespace Arca
         private:
             explicit BatchSources(ReliquaryShards& owner);
             friend ReliquaryShards;
-        private:
-            template<class ShardT>
-            constexpr static bool is_object_v = is_shard_v<ShardT>;
-            friend StorageBatchSources<ShardBatchSourceBase, ReliquaryShards, BatchSources>;
         } batchSources = BatchSources(*this);
 
         class EitherBatchSources

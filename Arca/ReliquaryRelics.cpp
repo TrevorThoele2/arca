@@ -45,10 +45,11 @@ namespace Arca
         RelicID id,
         Openness openness,
         Locality locality,
+        bool shouldSerialize,
         Type type,
         void* storage)
     {
-        metadataList.emplace_back(id, openness, locality, std::move(type), storage);
+        metadataList.emplace_back(id, openness, locality, std::move(type), storage, shouldSerialize);
     }
 
     void ReliquaryRelics::DestroyMetadata(RelicID id)

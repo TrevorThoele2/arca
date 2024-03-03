@@ -14,8 +14,8 @@ namespace Arca
     public:
         using TupleT = typename SourceT::TupleT;
 
-        using iterator = AllShardBatchIteratorBase<TupleT, typename SourceT::iterator>;
-        using const_iterator = AllShardBatchIteratorBase<const TupleT, typename SourceT::const_iterator>;
+        using iterator = CompositeShardBatchIteratorBase<TupleT, typename SourceT::iterator>;
+        using const_iterator = CompositeShardBatchIteratorBase<const TupleT, typename SourceT::const_iterator>;
     public:
         Batch();
         explicit Batch(SourceT& source);
