@@ -11,16 +11,10 @@ namespace Arca
         return Arca::LocalPtr<ShardT>(id, Owner());
     }
 
-    template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int>>
-    LocalPtr<EitherT> ClosedRelic::Find() const
+    template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int>>
+    MatrixPtr<MatrixT> ClosedRelic::Find() const
     {
-        return Arca::LocalPtr<EitherT>(id, Owner());
-    }
-
-    template<class ShardsT, std::enable_if_t<is_composite_v<ShardsT>, int>>
-    CompositePtr<ShardsT> ClosedRelic::Find() const
-    {
-        return Arca::CompositePtr<ShardsT>(id, Owner());
+        return Arca::MatrixPtr<MatrixT>(id, Owner());
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
@@ -29,15 +23,9 @@ namespace Arca
         return static_cast<bool>(Find<ShardT>());
     }
 
-    template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int>>
+    template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int>>
     bool ClosedRelic::Contains() const
     {
-        return owner->Contains<EitherT>(id);
-    }
-
-    template<class ShardsT, std::enable_if_t<is_composite_v<ShardsT>, int>>
-    bool ClosedRelic::Contains() const
-    {
-        return owner->Contains<ShardsT>(id);
+        return owner->Contains<MatrixT>(id);
     }
 }

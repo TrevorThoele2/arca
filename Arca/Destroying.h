@@ -5,6 +5,9 @@
 #include "LocalPtr.h"
 #include "TypeFor.h"
 
+#include "IsRelic.h"
+#include "IsShard.h"
+
 namespace Arca
 {
     struct Destroying
@@ -16,6 +19,8 @@ namespace Arca
     struct DestroyingKnown
     {
         typename PtrTypeFor<T>::Type ptr;
+
+        static_assert(is_relic_v<T> || is_shard_v<T>, "CreatedKnown must be used for relics or shards.");
     };
 
     template<>

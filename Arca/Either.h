@@ -6,6 +6,8 @@
 
 namespace Arca
 {
+    class Reliquary;
+
     template<class T, std::enable_if_t<is_shard_v<T>, int> = 0>
     struct Either
     {
@@ -16,6 +18,7 @@ namespace Arca
     template<class T>
     struct Traits<Either<T>>
     {
+        static const ObjectType objectType = ObjectType::Matrix;
         static inline const TypeName typeName = "Either<" + Traits<std::decay_t<T>>::typeName + ">";
     };
 }

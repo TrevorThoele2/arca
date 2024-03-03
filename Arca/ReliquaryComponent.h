@@ -20,6 +20,7 @@ namespace Arca
     class ReliquaryRelics;
     class ReliquaryRelicStructures;
     class ReliquaryShards;
+    class ReliquaryMatrices;
     class ReliquaryCurators;
     class ReliquarySignals;
 
@@ -61,6 +62,8 @@ namespace Arca
         [[nodiscard]] const ReliquaryRelicStructures& RelicStructures() const;
         [[nodiscard]] ReliquaryShards& Shards();
         [[nodiscard]] const ReliquaryShards& Shards() const;
+        [[nodiscard]] ReliquaryMatrices& Matrices();
+        [[nodiscard]] const ReliquaryMatrices& Matrices() const;
         [[nodiscard]] ReliquaryCurators& Curators();
         [[nodiscard]] const ReliquaryCurators& Curators() const;
         [[nodiscard]] ReliquarySignals& Signals();
@@ -70,7 +73,7 @@ namespace Arca
         [[nodiscard]] Handle HandleFrom(const RelicMetadata& metadata) const;
     protected:
         template<class BatchSourceBaseT, class Owner, class Derived, template<class> class is_object>
-        class StorageBatchSources
+        class StorageBatchSourcesBase
         {
         public:
             using Ptr = std::unique_ptr<BatchSourceBaseT>;
@@ -128,7 +131,7 @@ namespace Arca
                 return Arca::Batch<ObjectT>(batchSource);
             }
         protected:
-            explicit StorageBatchSources(Owner& owner) : owner(&owner)
+            explicit StorageBatchSourcesBase(Owner& owner) : owner(&owner)
             {}
         private:
             Owner* owner;
@@ -141,78 +144,6 @@ namespace Arca
             [[nodiscard]] const Derived& AsDerived() const
             {
                 return static_cast<const Derived&>(*this);
-            }
-        };
-
-        template<class Key, class BatchSourceBaseT, class Owner, class Derived, template<class> class is_object>
-        class MetaBatchSources
-        {
-        public:
-            using Ptr = std::unique_ptr<BatchSourceBaseT>;
-            using Map = std::unordered_map<Key, Ptr>;
-
-            Map map;
-
-            [[nodiscard]] BatchSourceBaseT* Find(const Key& key) const
-            {
-                const auto found = map.find(key);
-                if (found == map.end())
-                    return nullptr;
-
-                return found->second.get();
-            }
-
-            template<class ObjectT, std::enable_if_t<is_object<ObjectT>::value, int> = 0>
-            [[nodiscard]] BatchSource<ObjectT>* Find() const
-            {
-                auto& map = AsDerived().template MapFor<ObjectT>();
-                const auto key = KeyFor<ObjectT>();
-                auto found = map.find(key);
-                if (found == map.end())
-                    return nullptr;
-
-                return static_cast<BatchSource<ObjectT>*>(found->second.get());
-            }
-
-            template<class ObjectT, std::enable_if_t<is_object<ObjectT>::value, int> = 0>
-            [[nodiscard]] BatchSource<ObjectT>& Required()
-            {
-                auto found = Find<ObjectT>();
-                if (found)
-                    return *found;
-
-                const auto key = KeyFor<ObjectT>();
-                auto batchSource = AsDerived().template Create<ObjectT>();
-                auto emplaced = map.emplace(key, std::move(batchSource)).first->second.get();
-                return static_cast<BatchSource<ObjectT>&>(*emplaced);
-            }
-
-            template<class ObjectT, std::enable_if_t<is_object<ObjectT>::value, int> = 0>
-            [[nodiscard]] Arca::Batch<ObjectT> Batch()
-            {
-                auto& batchSource = Required<ObjectT>();
-                return Arca::Batch<ObjectT>(batchSource);
-            }
-        protected:
-            explicit MetaBatchSources(Owner& owner) : owner(&owner)
-            {}
-        protected:
-            Owner* owner;
-        private:
-            [[nodiscard]] Derived& AsDerived()
-            {
-                return static_cast<Derived&>(*this);
-            }
-
-            [[nodiscard]] const Derived& AsDerived() const
-            {
-                return static_cast<const Derived&>(*this);
-            }
-
-            template<class T>
-            [[nodiscard]] static Key KeyFor()
-            {
-                return Derived::template KeyFor<T>();
             }
         };
     private:

@@ -5,18 +5,16 @@
 #include "ReliquaryShards.h"
 #include "ReliquaryCurators.h"
 #include "ReliquarySignals.h"
+#include "ReliquaryMatrices.h"
 
 #include "RelicBatch.h"
 #include "ShardBatch.h"
-#include "EitherShardBatch.h"
-#include "CompositeShardBatch.h"
 #include "SignalBatch.h"
 #include "ClosedRelic.h"
 #include "StructureFrom.h"
 
 #include "LocalPtr.h"
 #include "GlobalPtr.h"
-#include "CompositePtr.h"
 #include "ComputedPtr.h"
 #include "AsHandle.h"
 
@@ -24,6 +22,8 @@
 #include "Destroying.h"
 #include "RelicParented.h"
 #include "TransferableSignal.h"
+#include "MatrixFormed.h"
+#include "MatrixDissolved.h"
 
 #include "Serialization.h"
 #include "TypeScribe.h"
@@ -91,23 +91,26 @@ namespace Arca
         [[nodiscard]] SizeT RelicSize() const;
     public:
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] bool Contains(RelicID id) const;
-        template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
-        [[nodiscard]] bool Contains(RelicID id) const;
-        template<class ShardsT, std::enable_if_t<is_composite_v<ShardsT>, int> = 0>
+        [[nodiscard]] void Destroy(RelicID id);
+
+        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] Arca::Batch<ShardT> Batch() const;
-        template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
-        [[nodiscard]] Arca::Batch<EitherT> Batch();
-        template<class ShardsT, std::enable_if_t<is_composite_v<ShardsT>, int> = 0>
-        [[nodiscard]] Arca::Batch<ShardsT> Batch();
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] RelicID IDFor(const ShardT& shard) const;
 
         [[nodiscard]] SizeT ShardSize() const;
+    public:
+        template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
+        [[nodiscard]] bool Contains(RelicID id) const;
+
+        template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
+        [[nodiscard]] Arca::Batch<MatrixT> Batch();
+
+        [[nodiscard]] SizeT MatrixSize() const;
     public:
         template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int> = 0>
         [[nodiscard]] Curator& Find(const TypeName& type);
@@ -145,11 +148,13 @@ namespace Arca
         using Shards = ReliquaryShards;
         using Curators = ReliquaryCurators;
         using Signals = ReliquarySignals;
+        using Matrices = ReliquaryMatrices;
         Relics relics = Relics(*this);
         RelicStructures relicStructures = RelicStructures(*this);
         Shards shards = Shards(*this);
         Curators curators = Curators(*this);
         Signals signals = Signals(*this);
+        Matrices matrices = Matrices(*this);
     private:
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         [[nodiscard]] RelicT* FindStorage(RelicID id);
@@ -159,8 +164,6 @@ namespace Arca
         [[nodiscard]] T FindGlobalComputation();
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] ShardT* FindStorage(RelicID id);
-        template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
-        [[nodiscard]] typename EitherT::ShardT* FindStorage(RelicID id);
     private:
         Handle HandleFrom(RelicID id, Type type, HandleObjectType objectType);
         Handle HandleFrom(const RelicMetadata& metadata);
@@ -172,6 +175,7 @@ namespace Arca
         friend class ReliquaryShards;
         friend class ReliquaryCurators;
         friend class ReliquarySignals;
+        friend class ReliquaryMatrices;
 
         friend class OpenRelic;
         friend class ClosedTypedRelic;
@@ -181,9 +185,11 @@ namespace Arca
         template<class>
         friend class GlobalPtr;
         template<class>
-        friend class CompositePtr;
-        template<class>
         friend class ComputedPtr;
+
+        friend class KnownMatrix;
+        template<class>
+        friend class MatrixImplementation;
     private:
         INSCRIPTION_ACCESS;
     };
@@ -281,21 +287,15 @@ namespace Arca
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
+    void Reliquary::Destroy(RelicID id)
+    {
+        shards.Destroy<ShardT>(id);
+    }
+
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     bool Reliquary::Contains(RelicID id) const
     {
         return shards.Contains<ShardT>(id);
-    }
-
-    template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int>>
-    bool Reliquary::Contains(RelicID id) const
-    {
-        return shards.Contains<EitherT>(id);
-    }
-
-    template<class ShardsT, std::enable_if_t<is_composite_v<ShardsT>, int>>
-    bool Reliquary::Contains(RelicID id) const
-    {
-        return shards.Contains<ShardsT>(id);
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
@@ -304,22 +304,22 @@ namespace Arca
         return shards.batchSources.Batch<ShardT>();
     }
 
-    template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int>>
-    Batch<EitherT> Reliquary::Batch()
-    {
-        return shards.eitherBatchSources.Batch<EitherT>();
-    }
-
-    template<class ShardsT, std::enable_if_t<is_composite_v<ShardsT>, int>>
-    Batch<ShardsT> Reliquary::Batch()
-    {
-        return shards.compositeBatchSources.Batch<ShardsT>();
-    }
-
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     RelicID Reliquary::IDFor(const ShardT& shard) const
     {
         return shards.IDFor(shard);
+    }
+
+    template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int>>
+    bool Reliquary::Contains(RelicID id) const
+    {
+        return matrices.Contains<MatrixT>(id);
+    }
+
+    template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int>>
+    Arca::Batch<MatrixT> Reliquary::Batch()
+    {
+        return matrices.batchSources.Batch<MatrixT>();
     }
 
     template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int>>
@@ -404,12 +404,6 @@ namespace Arca
     ShardT* Reliquary::FindStorage(RelicID id)
     {
         return shards.FindStorage<ShardT>(id);
-    }
-
-    template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int>>
-    typename EitherT::ShardT* Reliquary::FindStorage(RelicID id)
-    {
-        return shards.FindStorage<EitherT>(id);
     }
 }
 
@@ -504,8 +498,12 @@ namespace Inscription
 #include "OpenTypedRelicDefinition.h"
 #include "ReliquaryRelicsDefinition.h"
 #include "ReliquaryShardsDefinition.h"
+#include "ReliquaryMatricesDefinition.h"
 #include "ReliquaryCuratorsDefinition.h"
 #include "ReliquarySignalsDefinition.h"
 #include "RelicBatchSourceDefinition.h"
-#include "CompositeShardBatchSourceDefinition.h"
+#include "MatrixBatchSourceDefinition.h"
 #include "TransferableSignalDefinition.h"
+#include "KnownMatrixDefinition.h"
+#include "EitherDefinition.h"
+#include "AllDefinition.h"

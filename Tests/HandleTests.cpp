@@ -32,7 +32,6 @@ SCENARIO_METHOD(HandleTestsFixture, "basic handle", "[handle]")
             .Type<TypedRelic>()
             .Type<GlobalRelic>()
             .Type<Curator>()
-            .Type<Signal>()
             .Actualize();
 
         WHEN("creating object")
@@ -68,7 +67,6 @@ SCENARIO_METHOD(HandleTestsFixture, "handle comparison combinations", "[handle]"
             .Type<TypedRelic>()
             .Type<GlobalRelic>()
             .Type<Curator>()
-            .Type<Signal>()
             .Actualize();
 
         auto openRelic1 = reliquary->Create<OpenRelic>();
@@ -355,7 +353,6 @@ SCENARIO_METHOD(HandleTestsFixture, "handle actualizations combinations", "[hand
             .Type<TypedRelic>()
             .Type<GlobalRelic>()
             .Type<Curator>()
-            .Type<Signal>()
             .Actualize();
 
         auto openRelic = reliquary->Create<OpenRelic>();

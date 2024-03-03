@@ -3,11 +3,10 @@
 #include "RelicID.h"
 
 #include "IsShard.h"
-#include "IsEither.h"
-#include "IsComposite.h"
+#include "IsMatrix.h"
 
 #include "LocalPtr.h"
-#include "CompositePtr.h"
+#include "MatrixPtr.h"
 #include "Handle.h"
 
 #include "CompositeScribe.h"
@@ -21,15 +20,11 @@ namespace Arca
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] LocalPtr<ShardT> Find() const;
-        template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
-        [[nodiscard]] LocalPtr<EitherT> Find() const;
-        template<class ShardsT, std::enable_if_t<is_composite_v<ShardsT>, int> = 0>
-        [[nodiscard]] CompositePtr<ShardsT> Find() const;
+        template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
+        [[nodiscard]] MatrixPtr<MatrixT> Find() const;
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] bool Contains() const;
-        template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
-        [[nodiscard]] bool Contains() const;
-        template<class ShardsT, std::enable_if_t<is_composite_v<ShardsT>, int> = 0>
+        template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
         [[nodiscard]] bool Contains() const;
 
         [[nodiscard]] std::optional<Handle> Parent() const;

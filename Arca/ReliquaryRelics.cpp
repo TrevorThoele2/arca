@@ -103,10 +103,9 @@ namespace Arca
         for (auto& child : metadata.children)
             Destroy(*MetadataFor(child.ID()));
 
-        auto& id = metadata.id;
+        const auto id = metadata.id;
 
-        for (auto& eitherShardBatchSource : Shards().eitherBatchSources.map)
-            eitherShardBatchSource.second->DestroyFromBase(metadata.id);
+        Owner().matrices.NotifyDestroying(id);
 
         for (auto& shardBatchSource : Shards().batchSources.map)
         {
@@ -192,7 +191,7 @@ namespace Arca
         Owner().Raise<RelicParented>({ parent, child });
     }
 
-    ReliquaryRelics::BatchSources::BatchSources(ReliquaryRelics& owner) : StorageBatchSources(owner)
+    ReliquaryRelics::BatchSources::BatchSources(ReliquaryRelics& owner) : StorageBatchSourcesBase(owner)
     {}
 
     RelicMetadata& ReliquaryRelics::ValidateParentForParenting(const Handle& parent)

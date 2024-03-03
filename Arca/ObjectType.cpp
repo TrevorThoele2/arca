@@ -9,6 +9,8 @@ namespace Chroma
             return Arca::ObjectType::Shard;
         else if (arg == "relic")
             return Arca::ObjectType::Relic;
+        else if (arg == "matrix")
+            return Arca::ObjectType::Matrix;
         else if (arg == "curator")
             return Arca::ObjectType::Curator;
         else if (arg == "signal")
@@ -25,6 +27,8 @@ namespace Chroma
             return "shard";
         case Arca::ObjectType::Relic:
             return "relic";
+        case Arca::ObjectType::Matrix:
+            return "matrix";
         case Arca::ObjectType::Curator:
             return "curator";
         case Arca::ObjectType::Signal:

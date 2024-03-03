@@ -4,11 +4,9 @@
 
 SCENARIO_METHOD(SignalTestsFixture, "signal", "[signal]")
 {
-    GIVEN("registered reliquary")
+    GIVEN("reliquary")
     {
-        auto reliquary = ReliquaryOrigin()
-            .Type<BasicSignal>()
-            .Actualize();
+        auto reliquary = ReliquaryOrigin().Actualize();
 
         WHEN("raising signal")
         {
@@ -41,11 +39,9 @@ SCENARIO_METHOD(SignalTestsFixture, "signal", "[signal]")
             }
         }
 
-        WHEN("registering second reliquary and transfering all relics to second reliquary")
+        WHEN("creating second reliquary and transfering all relics to second reliquary")
         {
-            auto secondReliquary = ReliquaryOrigin()
-                .Type<BasicSignal>()
-                .Actualize();
+            auto secondReliquary = ReliquaryOrigin().Actualize();
 
             reliquary->ExecuteOn<TransferableSignal>(
                 [secondReliquary = &*secondReliquary](const TransferableSignal& signal)

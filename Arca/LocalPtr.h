@@ -1,6 +1,5 @@
 #pragma once
 
-#include "IsEither.h"
 #include "UsableForLocalPtr.h"
 
 #include "TypeFor.h"
@@ -11,23 +10,11 @@
 
 namespace Arca
 {
-    template<class T, class = void>
-    struct LocalPtrValueT
-    {
-        using Type = T;
-    };
-
-    template<class T>
-    struct LocalPtrValueT<T, std::enable_if_t<is_either_v<T>>>
-    {
-        using Type = typename T::ShardT;
-    };
-
     template<class T>
     class LocalPtr
     {
     public:
-        using ValueT = typename LocalPtrValueT<T>::Type;
+        using ValueT = T;
     public:
         LocalPtr() = default;
 

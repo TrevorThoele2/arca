@@ -2,8 +2,8 @@
 
 #include "RelicID.h"
 
-#include "Composite.h"
-#include "UsableForCompositePtr.h"
+#include "MatrixImplementation.h"
+#include "UsableForMatrixPtr.h"
 
 #include "PtrTypeFor.h"
 
@@ -12,44 +12,43 @@
 namespace Arca
 {
     template<class T>
-    class CompositePtr
+    class MatrixPtr
     {
-    private:
-        using PackT = typename T::Pack;
     public:
-        using ValueT = typename T::Pack::template Transform<PtrTypeFor>::Type::TupleT;
+        using ReferenceValueT = typename MatrixImplementation<T>::PtrReference;
+        using OptionalValueT = typename MatrixImplementation<T>::PtrOptional;
     public:
-        CompositePtr() = default;
+        MatrixPtr() = default;
 
-        CompositePtr(RelicID id, Reliquary& owner) : id(id), owner(&owner)
+        MatrixPtr(RelicID id, Reliquary& owner) : id(id), owner(&owner)
         {}
 
-        CompositePtr(const CompositePtr& arg) : id(arg.id), owner(arg.owner)
+        MatrixPtr(const MatrixPtr& arg) : id(arg.id), owner(arg.owner)
         {}
 
-        CompositePtr(CompositePtr&& arg) noexcept : id(arg.id), owner(arg.owner)
+        MatrixPtr(MatrixPtr&& arg) noexcept : id(arg.id), owner(arg.owner)
         {}
 
-        CompositePtr& operator=(const CompositePtr& arg)
+        MatrixPtr& operator=(const MatrixPtr& arg)
         {
             id = arg.id;
             owner = arg.owner;
             return *this;
         }
 
-        CompositePtr& operator=(CompositePtr&& arg) noexcept
+        MatrixPtr& operator=(MatrixPtr&& arg) noexcept
         {
             id = arg.id;
             owner = arg.owner;
             return *this;
         }
 
-        bool operator==(const CompositePtr& arg) const
+        bool operator==(const MatrixPtr& arg) const
         {
             return id == arg.id && owner == arg.owner;
         }
 
-        bool operator!=(const CompositePtr& arg) const
+        bool operator!=(const MatrixPtr& arg) const
         {
             return !(*this == arg);
         }
@@ -59,22 +58,22 @@ namespace Arca
             return static_cast<bool>(Get());
         }
 
-        operator std::optional<ValueT> () const
+        operator OptionalValueT() const
         {
             return Get();
         }
 
-        [[nodiscard]] ValueT operator*() const
+        [[nodiscard]] ReferenceValueT operator*() const
         {
             return *Get();
         }
 
-        [[nodiscard]] std::optional<ValueT> operator->() const
+        [[nodiscard]] OptionalValueT operator->() const
         {
             return Get();
         }
 
-        [[nodiscard]] std::optional<ValueT> Get() const
+        [[nodiscard]] OptionalValueT Get() const
         {
             return FindValueFromOwner();
         }
@@ -92,49 +91,35 @@ namespace Arca
         RelicID id = 0;
         Reliquary* owner = nullptr;
     private:
-        [[nodiscard]] std::optional<ValueT> FindValueFromOwner() const
+        [[nodiscard]] OptionalValueT FindValueFromOwner() const
         {
-            ValueT tuple;
-
-            ::Chroma::IterateRange<::Chroma::VariadicTemplateSize, CompositeToTuple, PackT::count - 1>
-                (tuple, id, *owner);
-
-            if (
-                ::Chroma::IterateRangeCheckStop<
-                ::Chroma::VariadicTemplateSize,
-                CompositeTupleContainsValid,
-                bool,
-                PackT::count - 1>
-                (false, tuple))
-                return tuple;
-            else
-                return {};
+            return MatrixImplementation<T>::CreatePtrValue(id , *owner);
         }
     private:
         INSCRIPTION_ACCESS;
     };
 
     template<class T>
-    struct PtrTypeFor<T, std::enable_if_t<usable_for_composite_ptr_v<T>>>
+    struct PtrTypeFor<T, std::enable_if_t<usable_for_matrix_ptr_v<T>>>
     {
-        using Type = CompositePtr<T>;
+        using Type = MatrixPtr<T>;
     };
 
-    template<class T, std::enable_if_t<usable_for_composite_ptr_v<T>, int> = 0>
-    CompositePtr<T> ToPtr(RelicID id, Reliquary& owner)
+    template<class T, std::enable_if_t<usable_for_matrix_ptr_v<T>, int> = 0>
+    MatrixPtr<T> ToPtr(RelicID id, Reliquary& owner)
     {
-        return CompositePtr<T>(id, owner);
+        return MatrixPtr<T>(id, owner);
     }
 }
 
 namespace Inscription
 {
     template<class T>
-    class Scribe<Arca::CompositePtr<T>, BinaryArchive>
-        : public CompositeScribe<Arca::CompositePtr<T>, BinaryArchive>
+    class Scribe<Arca::MatrixPtr<T>, BinaryArchive>
+        : public CompositeScribe<Arca::MatrixPtr<T>, BinaryArchive>
     {
     private:
-        using BaseT = CompositeScribe<Arca::CompositePtr<T>, BinaryArchive>;
+        using BaseT = CompositeScribe<Arca::MatrixPtr<T>, BinaryArchive>;
     public:
         using ObjectT = typename BaseT::ObjectT;
         using ArchiveT = typename BaseT::ArchiveT;

@@ -114,7 +114,7 @@ SCENARIO_METHOD(PtrTestsFixture, "LocalPtr resets to nullptr after underlying ob
     }
 }
 
-SCENARIO_METHOD(PtrTestsFixture, "CompositePtr", "[ptr][composite]")
+SCENARIO_METHOD(PtrTestsFixture, "MatrixPtr", "[ptr][matrix]")
 {
     GIVEN("registered reliquary, open relic and three shards")
     {
@@ -129,9 +129,9 @@ SCENARIO_METHOD(PtrTestsFixture, "CompositePtr", "[ptr][composite]")
         auto shard1 = relic->Create<DifferentiableShard<1>>();
         auto shard2 = relic->Create<DifferentiableShard<2>>();
 
-        WHEN("creating CompositePtr")
+        WHEN("creating MatrixPtr out of all")
         {
-            auto ptr = CompositePtr<All<
+            auto ptr = MatrixPtr<All<
                 DifferentiableShard<0>,
                 DifferentiableShard<1>,
                 DifferentiableShard<2>>>

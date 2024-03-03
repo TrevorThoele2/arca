@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Batch.h"
-#include "IsSignal.h"
 #include "SignalBatchSource.h"
 #include "BatchException.h"
 

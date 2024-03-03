@@ -6,7 +6,7 @@
 
 using namespace Arca;
 
-class CompositeShardBatchFixture : public ReliquaryFixture
+class AllBatchTestsFixture : public ReliquaryFixture
 {
 public:
     template<size_t i>
@@ -16,7 +16,7 @@ public:
 };
 
 template<size_t i>
-class CompositeShardBatchFixture::Shard
+class AllBatchTestsFixture::Shard
 {
 public:
     int value = 0;
@@ -26,36 +26,36 @@ public:
 };
 
 template<size_t i>
-CompositeShardBatchFixture::Shard<i>::Shard(int value) :
+AllBatchTestsFixture::Shard<i>::Shard(int value) :
     value(value)
 {}
 
-class CompositeShardBatchFixture::Relic final :
+class AllBatchTestsFixture::Relic final :
     public ClosedTypedRelicAutomation<Relic, Shard<0>, Shard<1>, Shard<2>>
 {};
 
-class CompositeShardBatchFixture::GlobalRelic final :
+class AllBatchTestsFixture::GlobalRelic final :
     public ClosedTypedRelicAutomation<GlobalRelic, Shard<0>, Shard<1>, Shard<2>>
 {};
 
 namespace Arca
 {
     template<size_t i>
-    struct Traits<::CompositeShardBatchFixture::Shard<i>>
+    struct Traits<::AllBatchTestsFixture::Shard<i>>
     {
         static const ObjectType objectType = ObjectType::Shard;
         static inline const TypeName typeName = "EitherShardBatchTestsShard" + ::Chroma::ToString(i);
     };
 
     template<>
-    struct Traits<::CompositeShardBatchFixture::Relic>
+    struct Traits<::AllBatchTestsFixture::Relic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "EitherShardBatchTestsRelic";
     };
 
     template<>
-    struct Traits<::CompositeShardBatchFixture::GlobalRelic>
+    struct Traits<::AllBatchTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "EitherShardBatchTestsGlobalRelic";
@@ -66,11 +66,11 @@ namespace Arca
 namespace Inscription
 {
     template<size_t i>
-    class Scribe<::CompositeShardBatchFixture::Shard<i>, BinaryArchive> final
-        : public ArcaCompositeScribe<::CompositeShardBatchFixture::Shard<i>, BinaryArchive>
+    class Scribe<::AllBatchTestsFixture::Shard<i>, BinaryArchive> final
+        : public ArcaCompositeScribe<::AllBatchTestsFixture::Shard<i>, BinaryArchive>
     {
     private:
-        using BaseT = ArcaCompositeScribe<::CompositeShardBatchFixture::Shard<i>, BinaryArchive>;
+        using BaseT = ArcaCompositeScribe<::AllBatchTestsFixture::Shard<i>, BinaryArchive>;
     public:
         using ObjectT = typename BaseT::ObjectT;
         using ArchiveT = typename BaseT::ArchiveT;
@@ -84,12 +84,12 @@ namespace Inscription
     };
 
     template<>
-    class Scribe<::CompositeShardBatchFixture::Relic, BinaryArchive> final
-        : public ArcaNullScribe<::CompositeShardBatchFixture::Relic, BinaryArchive>
+    class Scribe<::AllBatchTestsFixture::Relic, BinaryArchive> final
+        : public ArcaNullScribe<::AllBatchTestsFixture::Relic, BinaryArchive>
     {};
 
     template<>
-    class Scribe<::CompositeShardBatchFixture::GlobalRelic, BinaryArchive> final
-        : public ArcaNullScribe<::CompositeShardBatchFixture::GlobalRelic, BinaryArchive>
+    class Scribe<::AllBatchTestsFixture::GlobalRelic, BinaryArchive> final
+        : public ArcaNullScribe<::AllBatchTestsFixture::GlobalRelic, BinaryArchive>
     {};
 }

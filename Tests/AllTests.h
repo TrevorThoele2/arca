@@ -8,7 +8,7 @@
 
 using namespace Arca;
 
-class CompositeShardTestsFixture : public GeneralFixture
+class AllTestsFixture : public GeneralFixture
 {
 public:
     template<size_t i>
@@ -35,20 +35,20 @@ public:
 };
 
 template<size_t i>
-CompositeShardTestsFixture::Shard<i>::Shard(std::string myValue) : myValue(std::move(myValue))
+AllTestsFixture::Shard<i>::Shard(std::string myValue) : myValue(std::move(myValue))
 {}
 
 namespace Arca
 {
     template<size_t i>
-    struct Traits<::CompositeShardTestsFixture::Shard<i>>
+    struct Traits<::AllTestsFixture::Shard<i>>
     {
         static const ObjectType objectType = ObjectType::Shard;
         static inline const TypeName typeName = "RelicTestsBasicShard" + ::Chroma::ToString(i);
     };
 
     template<>
-    struct Traits<::CompositeShardTestsFixture::BasicTypedRelic>
+    struct Traits<::AllTestsFixture::BasicTypedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "ReliquaryTestsBasicTypedRelic";
@@ -58,11 +58,11 @@ namespace Arca
 namespace Inscription
 {
     template<size_t i>
-    class Scribe<::CompositeShardTestsFixture::Shard<i>, BinaryArchive> final
-        : public ArcaCompositeScribe<::CompositeShardTestsFixture::Shard<i>, BinaryArchive>
+    class Scribe<::AllTestsFixture::Shard<i>, BinaryArchive> final
+        : public ArcaCompositeScribe<::AllTestsFixture::Shard<i>, BinaryArchive>
     {
     private:
-        using BaseT = ArcaCompositeScribe<::CompositeShardTestsFixture::Shard<i>, BinaryArchive>;
+        using BaseT = ArcaCompositeScribe<::AllTestsFixture::Shard<i>, BinaryArchive>;
     public:
         using ObjectT = typename BaseT::ObjectT;
         using ArchiveT = typename BaseT::ArchiveT;
@@ -76,7 +76,7 @@ namespace Inscription
     };
 
     template<>
-    class Scribe<::CompositeShardTestsFixture::BasicTypedRelic, BinaryArchive> final
-        : public ArcaNullScribe<::CompositeShardTestsFixture::BasicTypedRelic, BinaryArchive>
+    class Scribe<::AllTestsFixture::BasicTypedRelic, BinaryArchive> final
+        : public ArcaNullScribe<::AllTestsFixture::BasicTypedRelic, BinaryArchive>
     {};
 }

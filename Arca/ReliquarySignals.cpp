@@ -2,7 +2,8 @@
 
 namespace Arca
 {
-    ReliquarySignals::BatchSources::BatchSources(ReliquarySignals& owner) : StorageBatchSources(owner)
+    ReliquarySignals::BatchSources::BatchSources(ReliquarySignals& owner) :
+        owner(&owner)
     {}
 
     ReliquarySignals::ReliquarySignals(Reliquary& owner) : ReliquaryComponent(owner, "signal")

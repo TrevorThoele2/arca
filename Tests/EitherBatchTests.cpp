@@ -1,14 +1,14 @@
 #include <catch.hpp>
 
-#include "EitherShardBatchTests.h"
+#include "EitherBatchTests.h"
 
-#include <Arca/EitherShardBatch.h>
+#include <Arca/Either.h>
 
-EitherShardBatchFixture::Shard::Shard(int value) :
+EitherBatchTestsFixture::Shard::Shard(int value) :
     value(value)
 {}
 
-SCENARIO_METHOD(EitherShardBatchFixture, "default either shard batch", "[EitherBatch]")
+SCENARIO_METHOD(EitherBatchTestsFixture, "default either batch", "[either][batch]")
 {
     GIVEN("default either batch")
     {
@@ -68,7 +68,7 @@ SCENARIO_METHOD(EitherShardBatchFixture, "default either shard batch", "[EitherB
     }
 }
 
-SCENARIO_METHOD(EitherShardBatchFixture, "either shard batch", "[EitherShardBatch]")
+SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
 {
     GIVEN("registered reliquary and relic")
     {
@@ -135,7 +135,7 @@ SCENARIO_METHOD(EitherShardBatchFixture, "either shard batch", "[EitherShardBatc
 
                 THEN("removing shard empties the batch")
                 {
-                    relic->Destroy<Shard>();
+                    relic->Destroy<const Shard>();
                     REQUIRE(batch.IsEmpty());
                 }
             }
@@ -207,7 +207,7 @@ SCENARIO_METHOD(EitherShardBatchFixture, "either shard batch", "[EitherShardBatc
 
                 THEN("removing shard empties the batch")
                 {
-                    relic->Destroy<Shard>();
+                    relic->Destroy<const Shard>();
                     REQUIRE(batch.IsEmpty());
                 }
             }
@@ -239,7 +239,7 @@ SCENARIO_METHOD(EitherShardBatchFixture, "either shard batch", "[EitherShardBatc
     }
 }
 
-SCENARIO_METHOD(EitherShardBatchFixture, "either shard batch serialization", "[EitherShardBatch][serialization]")
+SCENARIO_METHOD(EitherBatchTestsFixture, "either shard batch serialization", "[EitherShardBatch][serialization]")
 {
     GIVEN("saved reliquary")
     {

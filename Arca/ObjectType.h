@@ -9,6 +9,7 @@ namespace Arca
     {
         Shard,
         Relic,
+        Matrix,
         Curator,
         Signal
     };

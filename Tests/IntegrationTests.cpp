@@ -87,7 +87,6 @@ SCENARIO_METHOD(IntegrationTestsFixture, "working with signals through curators"
             .Type<BasicCurator<3>>()
             .Type<BasicCurator<4>>()
             .CuratorPipeline(curatorPipeline)
-            .Type<BasicSignal>()
             .Actualize();
 
         std::vector<BasicCuratorBase*> curatorsInOrder
@@ -154,7 +153,6 @@ SCENARIO_METHOD(
         auto reliquary = ReliquaryOrigin()
             .Type<ChildRelic>()
             .Type<ParentRelic>()
-            .Type<BasicSignal>()
             .Type<ParentChildCurator>()
             .Actualize();
 
@@ -211,7 +209,6 @@ SCENARIO_METHOD(IntegrationTestsFixture, "curators with custom signal execution"
         };
 
         auto reliquary = ReliquaryOrigin()
-            .Type<BasicSignal>()
             .Type<FocusedCurator>()
             .Actualize();
 
@@ -242,24 +239,23 @@ SCENARIO_METHOD(IntegrationTestsFixture, "curators with custom signal execution"
 
 SCENARIO_METHOD(
     IntegrationTestsFixture,
-    "composite shard batch with either in it is occupied after loading",
-    "[integration][curator][composite][either][serialization]")
+    "all batch with either in it is occupied after loading",
+    "[integration][curator][all][either][serialization]")
 {
     GIVEN("registered reliquary and 3 relics with both shards")
     {
         using FocusedCurator = BasicCurator<0>;
 
-        Batch<All<BasicShard, OtherShard>> compositeBatch;
+        Batch<All<BasicShard, OtherShard>> allBatch;
 
-        FocusedCurator::onPostConstruct = [&compositeBatch](BasicCuratorBase& curator)
+        FocusedCurator::onPostConstruct = [&allBatch](BasicCuratorBase& curator)
         {
-            compositeBatch = curator.Owner().Batch<All<BasicShard, OtherShard>>();
+            allBatch = curator.Owner().Batch<All<BasicShard, OtherShard>>();
         };
 
         const auto savedReliquary = ReliquaryOrigin()
             .Type<BasicShard>()
             .Type<OtherShard>()
-            .Type<BasicSignal>()
             .Type<FocusedCurator>()
             .Actualize();
 
@@ -282,21 +278,20 @@ SCENARIO_METHOD(
 
             WHEN("loading reliquary and taking batch in PostConstruct")
             {
-                FocusedCurator::onPostConstruct = [&compositeBatch](BasicCuratorBase& curator)
+                FocusedCurator::onPostConstruct = [&allBatch](BasicCuratorBase& curator)
                 {
-                    compositeBatch = curator.Owner().Batch<All<BasicShard, OtherShard>>();
+                    allBatch = curator.Owner().Batch<All<BasicShard, OtherShard>>();
                 };
 
                 const auto loadedReliquary = ReliquaryOrigin()
                     .Type<BasicShard>()
                     .Type<OtherShard>()
-                    .Type<BasicSignal>()
                     .Type<FocusedCurator>()
                     .Actualize();
 
-                FocusedCurator::onPostConstruct = [&compositeBatch](BasicCuratorBase& curator)
+                FocusedCurator::onPostConstruct = [&allBatch](BasicCuratorBase& curator)
                 {
-                    compositeBatch = curator.Owner().Batch<All<BasicShard, OtherShard>>();
+                    allBatch = curator.Owner().Batch<All<BasicShard, OtherShard>>();
                 };
 
                 auto input = Inscription::InputBinaryArchive("Test.dat", "Test");
@@ -304,7 +299,7 @@ SCENARIO_METHOD(
 
                 THEN("batch is occupied")
                 {
-                    REQUIRE(compositeBatch.Size() == 3);
+                    REQUIRE(allBatch.Size() == 3);
                 }
             }
         }

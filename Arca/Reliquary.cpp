@@ -55,6 +55,11 @@ namespace Arca
         return totalSize;
     }
 
+    Reliquary::SizeT Reliquary::MatrixSize() const
+    {
+        return matrices.batchSources.map.size();
+    }
+
     Reliquary::SizeT Reliquary::CuratorSize() const
     {
         return curators.map.size();
@@ -153,7 +158,7 @@ namespace Inscription
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::Load(ObjectT& object, ArchiveT& archive)
     {
-        object.shards.ClearMetaBatchSources();
+        object.matrices.Clear();
 
         for(auto loop = object.relics.metadataList.begin(); loop != object.relics.metadataList.end();)
         {
