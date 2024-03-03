@@ -7,7 +7,8 @@ namespace Arca
     enum class VesselDynamism
     {
         Fixed,
-        Dynamic
+        Dynamic,
+        Static
     };
 }
 

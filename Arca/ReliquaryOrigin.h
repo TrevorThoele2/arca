@@ -54,6 +54,10 @@ namespace Arca
         using CuratorLayoutList = std::vector<Arca::CuratorLayout>;
         CuratorLayoutList curatorLayoutList;
 
+        using CuratorSerializationTypeHandlesFactory = void(*)(Reliquary&);
+        using CuratorSerializationTypeHandlesFactoryList = std::vector<CuratorSerializationTypeHandlesFactory>;
+        CuratorSerializationTypeHandlesFactoryList curatorSerializationTypeHandlesFactoryList;
+
         void PushAllCuratorsTo(Reliquary& reliquary) const;
 
         template<class Curator, class CuratorProvider, class... Args>
@@ -82,7 +86,7 @@ namespace Arca
         const auto factory = [](Reliquary& reliquary)
         {
             const auto typeHandle = VesselTraits<VesselT>::typeHandle;
-            const auto id = reliquary.SetupNewVesselInternals(VesselDynamism::Fixed, true, typeHandle);
+            const auto id = reliquary.SetupNewVesselInternals(VesselDynamism::Static, typeHandle);
             reliquary.SatisfyVesselStructure(VesselT::structure, id);
             reliquary.staticVesselIDMap.emplace(typeHandle, id);
         };
@@ -108,6 +112,20 @@ namespace Arca
                     auto found = reliquary.FindRelicBatchSource<RelicT>();
                     auto added = found->Add(id);
                     reliquary.SignalCreation(*added);
+                });
+            reliquary.relicSerializerMap.emplace(
+                typeHandle,
+                Reliquary::KnownPolymorphicSerializer
+                {
+                    [](void* relicBatchSource, ::Inscription::BinaryArchive& archive)
+                    {
+                        auto castedRelicBatchSource = static_cast<RelicBatchSource<RelicT>*>(relicBatchSource);
+                        archive(*castedRelicBatchSource);
+                    },
+                    [](::Inscription::BinaryArchive& archive)
+                    {
+                        return ::Inscription::InputTypeHandlesFor<RelicT>(archive);
+                    }
                 });
         };
 
@@ -195,6 +213,26 @@ namespace Arca
 
         auto typeHandle = CuratorTraits<CuratorT>::typeHandle;
         curatorProviders.emplace(typeHandle, std::make_unique<CuratorProvider>(std::forward<Args>(args)...));
+        const auto curatorSerializationTypeHandlesFactory = [](Reliquary& reliquary)
+        {
+            auto typeHandle = CuratorTraits<CuratorT>::typeHandle;
+            reliquary.curatorSerializerMap.emplace(
+                typeHandle,
+                Reliquary::KnownPolymorphicSerializer
+                {
+                    [](void* curator, ::Inscription::BinaryArchive& archive)
+                    {
+                        auto castedCurator = static_cast<CuratorT*>(curator);
+                        archive(*castedCurator);
+                    },
+                    [](::Inscription::BinaryArchive& archive)
+                    {
+                        return ::Inscription::InputTypeHandlesFor<CuratorT>(archive);
+                    }
+                });
+        };
+
+        curatorSerializationTypeHandlesFactoryList.push_back(curatorSerializationTypeHandlesFactory);
     }
 
     template<class CuratorT>

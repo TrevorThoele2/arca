@@ -24,7 +24,6 @@ public:
 public:
     Relic() = default;
     explicit Relic(int value);
-    explicit Relic(const ::Inscription::BinaryTableData<Relic>& data);
 };
 
 class RelicBatchFixture::UnregisteredRelic
@@ -36,7 +35,6 @@ public:
     Relic* relic = nullptr;
 public:
     StaticVessel(VesselID id, Reliquary& owner);
-    explicit StaticVessel(const ::Inscription::BinaryTableData<StaticVessel>& data);
 private:
     void Setup();
 };
@@ -65,40 +63,24 @@ namespace Arca
 namespace Inscription
 {
     template<>
-    struct TableData<::RelicBatchFixture::Relic, BinaryArchive> final :
-        TableDataBase<::RelicBatchFixture::Relic, BinaryArchive>
+    class Scribe<::RelicBatchFixture::Relic, BinaryArchive> final
+        : public RelicScribe<::RelicBatchFixture::Relic, BinaryArchive>
     {
-        int value = 0;
-    };
-
-    template<>
-    class Scribe<::RelicBatchFixture::Relic, BinaryArchive> final :
-        public TableScribe<::RelicBatchFixture::Relic, BinaryArchive>
-    {
-    public:
-        class Table final : public TableBase
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
         {
-        public:
-            Table();
-        };
+            archive(object.value);
+        }
     };
 
     template<>
-    struct TableData<::RelicBatchFixture::StaticVessel, BinaryArchive> final :
-        TableDataBase<::RelicBatchFixture::StaticVessel, BinaryArchive>
+    class Scribe<::RelicBatchFixture::StaticVessel, BinaryArchive> final
+        : public RelicScribe<::RelicBatchFixture::StaticVessel, BinaryArchive>
     {
-        Base<TypedVessel<::RelicBatchFixture::Relic>> base;
-    };
-
-    template<>
-    class Scribe<::RelicBatchFixture::StaticVessel, BinaryArchive> final :
-        public TableScribe<::RelicBatchFixture::StaticVessel, BinaryArchive>
-    {
-    public:
-        class Table final : public TableBase
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
         {
-        public:
-            Table();
-        };
+            archive(object.relic);
+        }
     };
 }

@@ -8,7 +8,7 @@ SignalBatchFixture::SignalBatchFixture()
     typeGroup->RegisterSignal<BasicSignal>();
 }
 
-SCENARIO_METHOD(SignalBatchFixture, "SignalBatch")
+SCENARIO_METHOD(SignalBatchFixture, "default signal batch", "[SignalBatch]")
 {
     GIVEN("registered reliquary")
     {
@@ -21,39 +21,44 @@ SCENARIO_METHOD(SignalBatchFixture, "SignalBatch")
                 REQUIRE_THROWS_AS(reliquary.StartSignalBatch<UnregisteredSignal>(), NotRegistered);
             }
         }
+    }
+}
 
-        WHEN("initializing")
+SCENARIO_METHOD(SignalBatchFixture, "signal batch", "[SignalBatch]")
+{
+    GIVEN("registered and initialized reliquary")
+    {
+        auto reliquary = CreateRegistered<Reliquary>();
+
+        WHEN("raising signal")
         {
-            WHEN("raising signal")
-            {
-                BasicSignal signal{};
-                signal.myValue = dataGeneration.Random<int>();
-                reliquary.RaiseSignal(signal);
+            BasicSignal signal{};
+            signal.myValue = dataGeneration.Random<int>();
+            reliquary.RaiseSignal(signal);
 
-                THEN("starting batch contains raised signal")
-                {
-                    auto batch = reliquary.StartSignalBatch<BasicSignal>();
-
-                    REQUIRE(!batch.IsEmpty());
-                    REQUIRE(batch.Size() == 1);
-                    REQUIRE(batch.begin()->myValue == signal.myValue);
-                }
-            }
-
-            WHEN("starting batch")
+            THEN("starting batch contains raised signal")
             {
                 auto batch = reliquary.StartSignalBatch<BasicSignal>();
 
-                THEN("raising signal causes batch to contain signal")
-                {
-                    BasicSignal signal;
-                    signal.myValue = dataGeneration.Random<int>();
-                    reliquary.RaiseSignal(signal);
+                REQUIRE(!batch.IsEmpty());
+                REQUIRE(batch.Size() == 1);
+                REQUIRE(batch.begin()->myValue == signal.myValue);
+            }
+        }
 
-                    REQUIRE(!batch.IsEmpty());
-                    REQUIRE(batch.Size() == 1);
-                    REQUIRE(batch.begin()->myValue == signal.myValue);
-                }
+        WHEN("starting batch")
+        {
+            auto batch = reliquary.StartSignalBatch<BasicSignal>();
+
+            THEN("raising signal causes batch to contain signal")
+            {
+                BasicSignal signal;
+                signal.myValue = dataGeneration.Random<int>();
+                reliquary.RaiseSignal(signal);
+
+                REQUIRE(!batch.IsEmpty());
+                REQUIRE(batch.Size() == 1);
+                REQUIRE(batch.begin()->myValue == signal.myValue);
             }
         }
     }

@@ -258,9 +258,7 @@ namespace Arca
 
     template<class T>
     void TypeRegistration::CuratorEntry<T>::PushTo(::Inscription::BinaryArchive& archive)
-    {
-        archive.RegisterType<T>();
-    }
+    {}
 
     template<class T>
     std::type_index TypeRegistration::CuratorEntry<T>::Type() const

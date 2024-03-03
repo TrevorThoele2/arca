@@ -124,7 +124,7 @@ namespace Arca
     {
         return CuratorTypeDescription(CuratorTraits<T>::typeHandle, [](::Inscription::BinaryArchive& archive)
             {
-                return ::Inscription::RepresentedTypeHandlesFor<T>(archive);
+                return ::Inscription::InputTypeHandlesFor<T>(archive);
             });
     }
 }

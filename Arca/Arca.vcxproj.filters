@@ -46,15 +46,12 @@
     <ClCompile Include="ReliquaryOrigin.cpp">
       <Filter>Source Files\Reliquary</Filter>
     </ClCompile>
+    <ClCompile Include="VesselMetadata.cpp">
+      <Filter>Source Files\Vessel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Exception.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IDManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IDManagerIterator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IntervalList.h">
@@ -150,9 +147,6 @@
     <ClInclude Include="RelicBatchIterator.h">
       <Filter>Header Files\Relic\Batch</Filter>
     </ClInclude>
-    <ClInclude Include="KnownPolymorphicList.h">
-      <Filter>Header Files\Serialization</Filter>
-    </ClInclude>
     <ClInclude Include="Serialization.h">
       <Filter>Header Files\Serialization</Filter>
     </ClInclude>
@@ -179,6 +173,12 @@
     </ClInclude>
     <ClInclude Include="VesselDefinition.h">
       <Filter>Header Files\Vessel</Filter>
+    </ClInclude>
+    <ClInclude Include="VesselMetadata.h">
+      <Filter>Header Files\Vessel</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicScribe.h">
+      <Filter>Header Files\Relic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

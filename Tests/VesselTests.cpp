@@ -12,18 +12,8 @@ VesselTestsFixture::BasicRelic::BasicRelic(std::string myValue) : myValue(std::m
 VesselTestsFixture::OtherRelic::OtherRelic(int myValue) : myValue(myValue)
 {}
 
-VesselTestsFixture::OtherRelic::OtherRelic(const ::Inscription::BinaryTableData<OtherRelic>& data) :
-    myValue(data.myValue)
-{}
-
 VesselTestsFixture::BasicTypedVessel::BasicTypedVessel(VesselID id, Reliquary& owner) :
     TypedVessel(id, owner)
-{
-    Setup();
-}
-
-VesselTestsFixture::BasicTypedVessel::BasicTypedVessel(const ::Inscription::BinaryTableData<BasicTypedVessel>& data) :
-    TypedVessel(data.base)
 {
     Setup();
 }
@@ -34,12 +24,6 @@ void VesselTestsFixture::BasicTypedVessel::Setup()
 }
 
 VesselTestsFixture::StaticVessel::StaticVessel(VesselID id, Reliquary& owner) : TypedVessel(id, owner)
-{
-    Setup();
-}
-
-VesselTestsFixture::StaticVessel::StaticVessel(const ::Inscription::BinaryTableData<StaticVessel>& data) :
-    TypedVessel(data.base)
 {
     Setup();
 }
@@ -64,7 +48,7 @@ namespace Arca
         "ReliquaryTestsStaticVessel";
 }
 
-SCENARIO_METHOD(VesselTestsFixture, "vessel")
+SCENARIO_METHOD(VesselTestsFixture, "vessel", "[vessel]")
 {
     GIVEN("all types registered")
     {

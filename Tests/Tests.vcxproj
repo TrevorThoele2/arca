@@ -30,7 +30,6 @@
   <ItemGroup>
     <ClCompile Include="CuratorTests.cpp" />
     <ClCompile Include="GeneralFixture.cpp" />
-    <ClCompile Include="IDManagerTests.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="RelicBatchTests.cpp" />
     <ClCompile Include="ReliquaryFixture.cpp" />

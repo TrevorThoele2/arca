@@ -3,6 +3,8 @@
 #include "GeneralFixture.h"
 
 #include <Arca/TypedVessel.h>
+#include <Arca/Relic.h>
+#include "Inscription/BaseScriven.h"
 
 using namespace Arca;
 
@@ -25,7 +27,6 @@ public:
     public:
         OtherRelic() = default;
         explicit OtherRelic(int myValue);
-        explicit OtherRelic(const ::Inscription::BinaryTableData<OtherRelic>& data);
     };
 
     class BasicTypedVessel : public TypedVessel<BasicRelic>
@@ -34,7 +35,6 @@ public:
         BasicRelic* basicRelic = nullptr;
     public:
         BasicTypedVessel(VesselID id, Reliquary& owner);
-        explicit BasicTypedVessel(const ::Inscription::BinaryTableData<BasicTypedVessel>& data);
     private:
         void Setup();
     };
@@ -45,7 +45,6 @@ public:
         BasicRelic* basicRelic = nullptr;
     public:
         StaticVessel(VesselID id, Reliquary& owner);
-        explicit StaticVessel(const ::Inscription::BinaryTableData<StaticVessel>& data);
     private:
         void Setup();
     };
@@ -81,69 +80,46 @@ namespace Arca
 namespace Inscription
 {
     template<>
-    struct TableData<VesselTestsFixture::OtherRelic, BinaryArchive> :
-        TableDataBase<VesselTestsFixture::OtherRelic, BinaryArchive>
+    class Scribe<::VesselTestsFixture::BasicRelic, BinaryArchive> final
+        : public RelicScribe<::VesselTestsFixture::BasicRelic, BinaryArchive>
     {
-        int myValue;
-    };
-
-    template<>
-    class Scribe<VesselTestsFixture::OtherRelic, BinaryArchive> final :
-        public TableScribe<VesselTestsFixture::OtherRelic, BinaryArchive>
-    {
-    public:
-        class Table final : public TableBase
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
         {
-        public:
-            Table()
-            {
-                AddDataLink(DataLink::Auto(&ObjectT::myValue, &DataT::myValue));
-            }
-        };
+            archive(object.myValue);
+        }
     };
 
     template<>
-    struct TableData<VesselTestsFixture::BasicTypedVessel, BinaryArchive> :
-        TableDataBase<VesselTestsFixture::BasicTypedVessel, BinaryArchive>
+    class Scribe<::VesselTestsFixture::OtherRelic, BinaryArchive> final
+        : public RelicScribe<::VesselTestsFixture::OtherRelic, BinaryArchive>
     {
-        Base<TypedVessel<VesselTestsFixture::BasicRelic>> base;
-    };
-
-    template<>
-    class Scribe<VesselTestsFixture::BasicTypedVessel, BinaryArchive> final :
-        public TableScribe<VesselTestsFixture::BasicTypedVessel, BinaryArchive>
-    {
-    public:
-        class Table final : public TableBase
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
         {
-        public:
-            Table()
-            {
-                AddDataLink(DataLink::Base(Type<TypedVessel<::VesselTestsFixture::BasicRelic>>{}));
-            }
-        };
+            archive(object.myValue);
+        }
     };
 
     template<>
-    struct TableData<VesselTestsFixture::StaticVessel, BinaryArchive> :
-        TableDataBase<VesselTestsFixture::StaticVessel, BinaryArchive>
+    class Scribe<::VesselTestsFixture::BasicTypedVessel, BinaryArchive> final
+        : CompositeScribe<::VesselTestsFixture::BasicTypedVessel, BinaryArchive>
     {
-        Base<TypedVessel<::VesselTestsFixture::BasicRelic>> base;
-        std::string myValue;
-    };
-
-    template<>
-    class Scribe<VesselTestsFixture::StaticVessel, BinaryArchive> final :
-        public TableScribe<VesselTestsFixture::StaticVessel, BinaryArchive>
-    {
-    public:
-        class Table final : public TableBase
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
         {
-        public:
-            Table()
-            {
-                AddDataLink(DataLink::Base(Type<TypedVessel<::VesselTestsFixture::BasicRelic>>{}));
-            }
-        };
+            BaseScriven<TypedVessel<::VesselTestsFixture::BasicRelic>>(object, archive);
+        }
+    };
+
+    template<>
+    class Scribe<::VesselTestsFixture::StaticVessel, BinaryArchive> final
+        : CompositeScribe<::VesselTestsFixture::StaticVessel, BinaryArchive>
+    {
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        {
+            BaseScriven<TypedVessel<::VesselTestsFixture::BasicRelic>>(object, archive);
+        }
     };
 }

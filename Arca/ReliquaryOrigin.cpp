@@ -50,7 +50,10 @@ namespace Arca
             else
                 handle = std::make_unique<UnownedCuratorHandle>(std::get<1>(loop.curator), loop.description);
 
-            reliquary.curators.push_back(std::move(handle));
+            reliquary.curators.emplace(handle->description.typeHandle, std::move(handle));
         }
+
+        for (auto& loop : curatorSerializationTypeHandlesFactoryList)
+            loop(reliquary);
     }
 }

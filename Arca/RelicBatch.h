@@ -38,8 +38,6 @@ namespace Arca
     private:
         SourceT* source = nullptr;
         void SourceRequired() const;
-    private:
-        INSCRIPTION_ACCESS;
     };
 
     template<class T>
