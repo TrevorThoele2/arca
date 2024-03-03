@@ -22,7 +22,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
 
         WHEN("creating open relic and non-const shard")
         {
-            const auto relic = reliquary->Do<Create<OpenRelic>>();
+            const auto relic = reliquary->Do(Create<OpenRelic>());
             auto shard = relic->Create<BasicShard>();
 
             WHEN("destroying shard by either")
@@ -44,7 +44,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
 
         WHEN("creating open relic and const shard")
         {
-            const auto relic = reliquary->Do<Create<OpenRelic>>();
+            const auto relic = reliquary->Do(Create<OpenRelic>());
             auto shard = relic->Create<const BasicShard>();
 
             WHEN("destroying shard by either")
@@ -75,7 +75,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
 
         WHEN("creating open relic and three shards")
         {
-            const auto relic = reliquary->Do<Create<OpenRelic>>();
+            const auto relic = reliquary->Do(Create<OpenRelic>());
             auto shard0 = relic->Create<DifferentiableShard<0>>();
             auto shard1 = relic->Create<DifferentiableShard<1>>();
             auto shard2 = relic->Create<DifferentiableShard<2>>();
@@ -187,7 +187,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
             auto knownCreatedSignals = SignalListener<CreatedKnown<BasicShard>>(*reliquary);
             auto knownDestroyingSignals = SignalListener<DestroyingKnown<BasicShard>>(*reliquary);
 
-            const auto relic = reliquary->Do<Create<OpenRelic>>();
+            const auto relic = reliquary->Do(Create<OpenRelic>());
             auto shard = relic->Create<BasicShard>();
             auto shardHandle = AsHandle<BasicShard>(shard.ID(), *shard.Owner());
 
@@ -249,7 +249,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
             auto knownCreatedSignals = SignalListener<CreatedKnown<const BasicShard>>(*reliquary);
             auto knownDestroyingSignals = SignalListener<DestroyingKnown<const BasicShard>>(*reliquary);
 
-            const auto relic = reliquary->Do<Create<OpenRelic>>();
+            const auto relic = reliquary->Do(Create<OpenRelic>());
             auto shard = relic->Create<const BasicShard>();
             auto shardHandle = AsHandle<const BasicShard>(shard.ID(), *shard.Owner());
 
@@ -321,7 +321,7 @@ SCENARIO_METHOD(ShardTestsFixture, "either signals", "[either][signal]")
 
         WHEN("creating open relic and non-const shard")
         {
-            const auto relic = reliquary->Do<Create<OpenRelic>>();
+            const auto relic = reliquary->Do(Create<OpenRelic>());
             auto shard = relic->Create<BasicShard>();
             auto shardHandle = AsHandle<BasicShard>(shard.ID(), *shard.Owner());
 
@@ -356,7 +356,7 @@ SCENARIO_METHOD(ShardTestsFixture, "either signals", "[either][signal]")
 
         WHEN("creating open relic and const shard")
         {
-            const auto relic = reliquary->Do<Create<OpenRelic>>();
+            const auto relic = reliquary->Do(Create<OpenRelic>());
             auto shard = relic->Create<const BasicShard>();
             auto shardHandle = AsHandle<const BasicShard>(shard.ID(), *shard.Owner());
 
@@ -401,7 +401,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard constructed from moved value", "[shard
 
         WHEN("creating shard from moved value")
         {
-            auto relic = reliquary->Do<Create<OpenRelic>>();
+            auto relic = reliquary->Do(Create<OpenRelic>());
 
             const auto generatedInt = dataGeneration.Random<int>();
             auto backingInt = new int(generatedInt);

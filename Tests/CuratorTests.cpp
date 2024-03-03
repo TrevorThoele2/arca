@@ -32,7 +32,7 @@ CuratorTestsFixture::CuratorWithLocalRelicConstructor::CuratorWithLocalRelicCons
     Init init, int localRelicInteger, const std::string& localRelicString)
     :
     Curator(init),
-    localRelic(init.owner.Do<Create<BasicLocalClosedTypedRelic>>(localRelicInteger, localRelicString))
+    localRelic(init.owner.Do(Create<BasicLocalClosedTypedRelic>{localRelicInteger, localRelicString}))
 {
     this->localRelicInteger = localRelic->integer;
     this->localRelicString = localRelic->string;

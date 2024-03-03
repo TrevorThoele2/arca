@@ -19,7 +19,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
             .Register<Shard>()
             .Actualize();
 
-        auto relic = reliquary->Do<Create<OpenRelic>>();
+        auto relic = reliquary->Do(Create<OpenRelic>());
 
         WHEN("creating const shard on relic")
         {
@@ -90,9 +90,9 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
 
         WHEN("creating many non-const shards on relics")
         {
-            auto createdRelic1 = reliquary->Do<Create<OpenRelic>>();
-            auto createdRelic2 = reliquary->Do<Create<OpenRelic>>();
-            auto createdRelic3 = reliquary->Do<Create<OpenRelic>>();
+            auto createdRelic1 = reliquary->Do(Create<OpenRelic>());
+            auto createdRelic2 = reliquary->Do(Create<OpenRelic>());
+            auto createdRelic3 = reliquary->Do(Create<OpenRelic>());
 
             createdRelic1->Create<Shard>();
             createdRelic2->Create<Shard>();
@@ -121,9 +121,9 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
 
         WHEN("creating many const shards on relics")
         {
-            auto createdRelic1 = reliquary->Do<Create<OpenRelic>>();
-            auto createdRelic2 = reliquary->Do<Create<OpenRelic>>();
-            auto createdRelic3 = reliquary->Do<Create<OpenRelic>>();
+            auto createdRelic1 = reliquary->Do(Create<OpenRelic>());
+            auto createdRelic2 = reliquary->Do(Create<OpenRelic>());
+            auto createdRelic3 = reliquary->Do(Create<OpenRelic>());
 
             createdRelic1->Create<const Shard>();
             createdRelic2->Create<const Shard>();
@@ -153,12 +153,12 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
 
         WHEN("creating many non-const and const shards on relics")
         {
-            auto createdRelic1 = reliquary->Do<Create<OpenRelic>>();
-            auto createdRelic2 = reliquary->Do<Create<OpenRelic>>();
-            auto createdRelic3 = reliquary->Do<Create<OpenRelic>>();
-            auto createdRelic4 = reliquary->Do<Create<OpenRelic>>();
-            auto createdRelic5 = reliquary->Do<Create<OpenRelic>>();
-            auto createdRelic6 = reliquary->Do<Create<OpenRelic>>();
+            auto createdRelic1 = reliquary->Do(Create<OpenRelic>());
+            auto createdRelic2 = reliquary->Do(Create<OpenRelic>());
+            auto createdRelic3 = reliquary->Do(Create<OpenRelic>());
+            auto createdRelic4 = reliquary->Do(Create<OpenRelic>());
+            auto createdRelic5 = reliquary->Do(Create<OpenRelic>());
+            auto createdRelic6 = reliquary->Do(Create<OpenRelic>());
 
             createdRelic1->Create<Shard>();
             createdRelic2->Create<const Shard>();
@@ -197,7 +197,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
 
         auto relicStructure = RelicStructure{};
         relicStructure.emplace_back(TypeFor<const Shard>());
-        auto relic = reliquary->Do<CreateWith<ClosedRelic>>(relicStructure);
+        auto relic = reliquary->Do(CreateWith<ClosedRelic>{ relicStructure });
 
         WHEN("finding const shard")
         {
@@ -253,7 +253,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
             .Register<Relic>()
             .Actualize();
 
-        auto relic = reliquary->Do<Create<Relic>>();
+        auto relic = reliquary->Do(Create<Relic>());
 
         WHEN("finding const shard")
         {
@@ -304,7 +304,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shard serialization", "[shard][co
             .Register<Shard>()
             .Actualize();
 
-        auto savedRelic = savedReliquary->Do<Create<OpenRelic>>();
+        auto savedRelic = savedReliquary->Do(Create<OpenRelic>());
         savedRelic->Create<const Shard>();
 
         {

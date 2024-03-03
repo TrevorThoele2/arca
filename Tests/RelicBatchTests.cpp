@@ -74,7 +74,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch", "[RelicBatch]")
 
         WHEN("creating relic")
         {
-            auto createdRelic = reliquary->Do<Create<Relic>>();
+            auto createdRelic = reliquary->Do(Create<Relic>());
 
             WHEN("starting batch")
             {
@@ -116,7 +116,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch", "[RelicBatch]")
 
             WHEN("creating relic")
             {
-                auto createdRelic = reliquary->Do<Create<Relic>>();
+                auto createdRelic = reliquary->Do(Create<Relic>());
 
                 THEN("batch contains relic")
                 {
@@ -147,7 +147,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch serialization", "[RelicBatch][se
             .Register<Relic>()
             .Actualize();
 
-        savedReliquary->Do<Create<Relic>>();
+        savedReliquary->Do(Create<Relic>());
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");

@@ -72,7 +72,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
     GIVEN("registered reliquary and relic")
     {
         auto reliquary = ReliquaryOrigin().Register<BasicShard>().Actualize();
-        auto relic = reliquary->Do<Create<OpenRelic>>();
+        auto relic = reliquary->Do(Create<OpenRelic>());
 
         WHEN("creating shard")
         {
@@ -185,7 +185,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch serialization", "[ShardBatch][se
             .Register<BasicShard>()
             .Actualize();
 
-        auto savedRelic = savedReliquary->Do<Create<OpenRelic>>();
+        auto savedRelic = savedReliquary->Do(Create<OpenRelic>());
         savedRelic->Create<BasicShard>();
 
         {

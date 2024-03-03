@@ -52,7 +52,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
             .Register<BasicShard>()
             .Actualize();
 
-        auto savedRelic = savedReliquary->Do<Create<OpenRelic>>();
+        auto savedRelic = savedReliquary->Do(Create<OpenRelic>());
         auto savedShard = savedRelic->Create<BasicShard>(dataGeneration.Random<std::string>());
 
         {
@@ -238,7 +238,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
             .Register<TypedClosedRelic>()
             .Actualize();
 
-        auto savedRelic = savedReliquary->Do<Create<TypedClosedRelic>>(dataGeneration.Random<int>());
+        auto savedRelic = savedReliquary->Do(Create<TypedClosedRelic>{dataGeneration.Random<int>()});
 
         {
             auto outputArchive = ::Inscription::OutputJsonArchive("Test.json");
@@ -279,7 +279,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
             .Register<TypedOpenRelic>()
             .Actualize();
 
-        auto savedRelic = savedReliquary->Do<Create<TypedOpenRelic>>(dataGeneration.Random<int>());
+        auto savedRelic = savedReliquary->Do(Create<TypedOpenRelic>{dataGeneration.Random<int>()});
         auto savedOtherShard = savedRelic->Create<OtherShard>();
 
         {
@@ -327,9 +327,9 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
             .Register<MovableOnlyRelic>()
             .Actualize();
 
-        auto savedRelic = savedReliquary->Do<Create<MovableOnlyRelic>>(
+        auto savedRelic = savedReliquary->Do(Create<MovableOnlyRelic> {
             dataGeneration.Random<int>(),
-            dataGeneration.Random<std::string>());
+            dataGeneration.Random<std::string>()});
 
         {
             auto outputArchive = ::Inscription::OutputJsonArchive("Test.json");
@@ -400,7 +400,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
     {
         auto savedReliquary = ReliquaryOrigin().Actualize();
 
-        savedReliquary->Raise<BasicSignal>();
+        savedReliquary->Raise(BasicSignal());
 
         {
             auto outputArchive = ::Inscription::OutputJsonArchive("Test.json");
@@ -587,7 +587,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
             .Register<TypedClosedRelicNullInscription<BasicShardNullInscription>>()
             .Actualize();
 
-        auto savedRelic = savedReliquary->Do<Create<TypedClosedRelicNullInscription<BasicShardNullInscription>>>();
+        auto savedRelic = savedReliquary->Do(Create<TypedClosedRelicNullInscription<BasicShardNullInscription>>{});
 
         {
             auto outputArchive = ::Inscription::OutputJsonArchive("Test.json");
@@ -629,7 +629,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
             .Register<TypedOpenRelicNullInscription<BasicShardNullInscription>>()
             .Actualize();
 
-        auto savedRelic = savedReliquary->Do<Create<TypedOpenRelicNullInscription<BasicShardNullInscription>>>();
+        auto savedRelic = savedReliquary->Do(Create<TypedOpenRelicNullInscription<BasicShardNullInscription>>{});
         savedRelic->Create<OtherShardNullInscription>(dataGeneration.Random<int>());
 
         {
@@ -709,7 +709,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
     {
         auto savedReliquary = ReliquaryOrigin().Actualize();
 
-        savedReliquary->Raise<BasicSignalNullInscription>();
+        savedReliquary->Raise(BasicSignalNullInscription{});
 
         {
             auto outputArchive = ::Inscription::OutputJsonArchive("Test.json");
@@ -752,8 +752,8 @@ SCENARIO_METHOD(
             .Register<NonDefaultConstructorRelic>()
             .Actualize();
 
-        const auto& savedRelic = *savedReliquary->Do<Create<NonDefaultConstructorRelic>>(
-            dataGeneration.Random<int>());
+        const auto& savedRelic = *savedReliquary->Do(Create<NonDefaultConstructorRelic>{
+            dataGeneration.Random<int>() });
 
         {
             auto outputArchive = ::Inscription::OutputJsonArchive("Test.json");

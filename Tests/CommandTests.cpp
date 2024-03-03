@@ -47,7 +47,7 @@ SCENARIO_METHOD(CommandTestsFixture, "command", "[command]")
 
         WHEN("emitting command")
         {
-            reliquary->Do<Command>();
+            reliquary->Do(Command());
 
             THEN("handled it")
             {
@@ -67,7 +67,7 @@ SCENARIO_METHOD(CommandTestsFixture, "command result", "[command]")
 
         WHEN("emitting command with result")
         {
-            auto result = reliquary->Do<CommandWithResult>();
+            auto result = reliquary->Do(CommandWithResult());
 
             THEN("result value is correct")
             {
@@ -142,9 +142,9 @@ SCENARIO_METHOD(CommandTestsFixture, "relic copy assignment", "[command]")
             auto assigningKnown = SignalListener<Arca::AssigningKnown<Relic>>(*reliquary);
             auto assignedKnown = SignalListener<Arca::AssignedKnown<Relic>>(*reliquary);
 
-            auto created = reliquary->Do<Arca::Create<Relic>>(integers[0], strings[0]);
+            auto created = reliquary->Do(Arca::Create<Relic>{integers[0], strings[0]});
 
-            reliquary->Do<Arca::AssignCopy<Relic>>(created.ID(), integers[1], strings[1]);
+            reliquary->Do(Arca::AssignCopy<Relic>{created.ID(), integers[1], strings[1]});
 
             THEN("data changes")
             {
@@ -168,7 +168,7 @@ SCENARIO_METHOD(CommandTestsFixture, "relic copy assignment", "[command]")
             THEN("throws error")
             {
                 REQUIRE_THROWS_MATCHES(
-                    reliquary->Do<Arca::AssignCopy<Relic>>(1, integers[1], strings[1]),
+                    reliquary->Do(Arca::AssignCopy < Relic>{1, integers[1], strings[1]}),
                     Arca::CannotFind,
                     ::Catch::Matchers::Message("The relic (" + Arca::Traits<Relic>::typeName + ") cannot be found."));
             }
@@ -187,9 +187,9 @@ SCENARIO_METHOD(CommandTestsFixture, "relic copy assignment", "[command]")
             auto assigningKnown = SignalListener<Arca::AssigningKnown<RelicWithShard>>(*reliquary);
             auto assignedKnown = SignalListener<Arca::AssignedKnown<RelicWithShard>>(*reliquary);
 
-            auto created = reliquary->Do<Arca::Create<RelicWithShard>>(integers[0], strings[0]);
+            auto created = reliquary->Do(Arca::Create<RelicWithShard>{integers[0], strings[0]});
 
-            reliquary->Do<Arca::AssignCopy<RelicWithShard>>(created.ID(), integers[1], strings[1]);
+            reliquary->Do(Arca::AssignCopy<RelicWithShard>{created.ID(), integers[1], strings[1]});
 
             THEN("assigns new shard")
             {
@@ -226,9 +226,9 @@ SCENARIO_METHOD(CommandTestsFixture, "relic move assignment", "[command]")
             auto assigningKnown = SignalListener<Arca::AssigningKnown<Relic>>(*reliquary);
             auto assignedKnown = SignalListener<Arca::AssignedKnown<Relic>>(*reliquary);
 
-            auto created = reliquary->Do<Arca::Create<Relic>>(integers[0], strings[0]);
+            auto created = reliquary->Do(Arca::Create<Relic>{integers[0], strings[0]});
 
-            reliquary->Do<Arca::AssignMove<Relic>>(created.ID(), integers[1], strings[1]);
+            reliquary->Do(Arca::AssignMove<Relic>{created.ID(), integers[1], strings[1]});
 
             THEN("data changes")
             {
@@ -252,7 +252,7 @@ SCENARIO_METHOD(CommandTestsFixture, "relic move assignment", "[command]")
             THEN("throws error")
             {
                 REQUIRE_THROWS_MATCHES(
-                    reliquary->Do<Arca::AssignMove<Relic>>(1, integers[1], strings[1]),
+                    reliquary->Do(Arca::AssignMove<Relic>{1, integers[1], strings[1]}),
                     Arca::CannotFind,
                     ::Catch::Matchers::Message("The relic (" + Arca::Traits<Relic>::typeName + ") cannot be found."));
             }
@@ -271,9 +271,9 @@ SCENARIO_METHOD(CommandTestsFixture, "relic move assignment", "[command]")
             auto assigningKnown = SignalListener<Arca::AssigningKnown<RelicWithShard>>(*reliquary);
             auto assignedKnown = SignalListener<Arca::AssignedKnown<RelicWithShard>>(*reliquary);
 
-            auto created = reliquary->Do<Arca::Create<RelicWithShard>>(integers[0], strings[0]);
+            auto created = reliquary->Do(Arca::Create<RelicWithShard>{integers[0], strings[0]});
 
-            reliquary->Do<Arca::AssignMove<RelicWithShard>>(created.ID(), integers[1], strings[1]);
+            reliquary->Do(Arca::AssignMove<RelicWithShard>{created.ID(), integers[1], strings[1]});
 
             THEN("assigns new shard")
             {
@@ -310,10 +310,10 @@ SCENARIO_METHOD(CommandTestsFixture, "shard copy assignment", "[command]")
             auto assigningKnown = SignalListener<Arca::AssigningKnown<BasicShard>>(*reliquary);
             auto assignedKnown = SignalListener<Arca::AssignedKnown<BasicShard>>(*reliquary);
 
-            auto created = reliquary->Do<Arca::Create<Arca::OpenRelic>>();
+            auto created = reliquary->Do(Arca::Create<Arca::OpenRelic>{});
             created->Create<BasicShard>(integers[0], strings[0]);
 
-            reliquary->Do<Arca::AssignCopy<BasicShard>>(created.ID(), integers[1], strings[1]);
+            reliquary->Do(Arca::AssignCopy<BasicShard>{created.ID(), integers[1], strings[1]});
 
             auto shard = created->Find<BasicShard>();
 
@@ -339,7 +339,7 @@ SCENARIO_METHOD(CommandTestsFixture, "shard copy assignment", "[command]")
             THEN("throws error")
             {
                 REQUIRE_THROWS_MATCHES(
-                    reliquary->Do<Arca::AssignCopy<BasicShard>>(1, integers[1], strings[1]),
+                    reliquary->Do(Arca::AssignCopy<BasicShard>{1, integers[1], strings[1]}),
                     Arca::CannotFind,
                     ::Catch::Matchers::Message("The shard (" + Arca::Traits<BasicShard>::typeName + ") cannot be found."));
             }
@@ -363,10 +363,10 @@ SCENARIO_METHOD(CommandTestsFixture, "shard move assignment", "[command]")
             auto assigningKnown = SignalListener<Arca::AssigningKnown<BasicShard>>(*reliquary);
             auto assignedKnown = SignalListener<Arca::AssignedKnown<BasicShard>>(*reliquary);
 
-            auto created = reliquary->Do<Arca::Create<Arca::OpenRelic>>();
+            auto created = reliquary->Do(Arca::Create<Arca::OpenRelic>{});
             created->Create<BasicShard>(integers[0], strings[0]);
 
-            reliquary->Do<Arca::AssignMove<BasicShard>>(created.ID(), integers[1], strings[1]);
+            reliquary->Do(Arca::AssignMove<BasicShard>{created.ID(), integers[1], strings[1]});
 
             auto shard = created->Find<BasicShard>();
 
@@ -392,7 +392,7 @@ SCENARIO_METHOD(CommandTestsFixture, "shard move assignment", "[command]")
             THEN("throws error")
             {
                 REQUIRE_THROWS_MATCHES(
-                    reliquary->Do<Arca::AssignMove<BasicShard>>(1, integers[1], strings[1]),
+                    reliquary->Do(Arca::AssignMove < BasicShard>{1, integers[1], strings[1]}),
                     Arca::CannotFind,
                     ::Catch::Matchers::Message("The shard (" + Arca::Traits<BasicShard>::typeName + ") cannot be found."));
             }

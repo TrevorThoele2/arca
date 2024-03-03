@@ -15,8 +15,8 @@ namespace Arca
     void MatrixImplementation<Either<T>>::Destroy(RelicID id, Reliquary& reliquary)
     {
         reliquary.relics.ShardModificationRequired(id);
-        reliquary.Do<Arca::Destroy<T>>(id);
-        reliquary.Do<Arca::Destroy<const T>>(id);
+        reliquary.Do(Arca::Destroy<T>{id});
+        reliquary.Do(Arca::Destroy<const T>{id});
     }
 
     template<class T>
