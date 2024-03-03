@@ -173,7 +173,11 @@ namespace Inscription
 
                 auto foundShard = object.Find(id);
                 if (foundShard)
+                {
                     archive(*foundShard);
+                    bool required = false;
+                    archive(required);
+                }
                 else
                 {
                     auto shard = Create<ShardT>();
@@ -231,7 +235,11 @@ namespace Inscription
 
                 auto foundShard = object.Find(id);
                 if (foundShard)
+                {
                     archive("shard", *foundShard);
+                    bool required = false;
+                    archive("required", required);
+                }
                 else
                 {
                     auto shard = Create<ShardT>();
