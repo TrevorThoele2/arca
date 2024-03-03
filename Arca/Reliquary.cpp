@@ -186,25 +186,10 @@ namespace Inscription
         auto globalRelicSerializers = ToKnownPolymorphicSerializerList(object.relics.globalHandlers);
         auto curatorSerializers = ToKnownPolymorphicSerializerList(object.curators.handlers);
 
-        SaveAll(
-            object,
-            archive,
-            shardSerializers);
-
-        SaveAll(
-            object,
-            archive,
-            relicSerializers);
-
-        SaveAll(
-            object,
-            archive,
-            globalRelicSerializers);
-
-        SaveAll(
-            object,
-            archive,
-            curatorSerializers);
+        SaveAll(object, archive, shardSerializers);
+        SaveAll(object, archive, relicSerializers);
+        SaveAll(object, archive, globalRelicSerializers);
+        SaveAll(object, archive, curatorSerializers);
     }
 
     void Scribe<Arca::Reliquary>::Load(ObjectT& object, Archive::InputBinary& archive)
@@ -213,34 +198,20 @@ namespace Inscription
         archive(metadataSize);
 
         while (metadataSize-- > 0)
-            loadedRelicMetadata.push_back(LoadRelicMetadata(object, archive));
+            loadedRelicMetadata.push_back(LoadRelicMetadata(archive));
 
         auto shardSerializers = ToKnownPolymorphicSerializerList(object.shards.handlers);
         auto relicSerializers = ToKnownPolymorphicSerializerList(object.relics.localHandlers);
         auto globalRelicSerializers = ToKnownPolymorphicSerializerList(object.relics.globalHandlers);
         auto curatorSerializers = ToKnownPolymorphicSerializerList(object.curators.handlers);
 
-        LoadAll(
-            object,
-            archive,
-            shardSerializers);
-
-        LoadAll(
-            object,
-            archive,
-            relicSerializers);
-
-        LoadAll(
-            object,
-            archive,
-            globalRelicSerializers);
+        LoadAll(object, archive, shardSerializers);
+        LoadAll(object, archive, relicSerializers);
+        LoadAll(object, archive, globalRelicSerializers);
 
         SetupLoadedRelicMetadata(loadedRelicMetadata, object);
 
-        LoadAll(
-            object,
-            archive,
-            curatorSerializers);
+        LoadAll(object, archive, curatorSerializers);
     }
 
     void Scribe<Arca::Reliquary>::SaveAll(
@@ -341,8 +312,7 @@ namespace Inscription
         }
     }
 
-    auto Scribe<Arca::Reliquary>::LoadRelicMetadata(ObjectT& object, Archive::InputBinary& archive)
-        -> LoadedRelicMetadata
+    auto Scribe<Arca::Reliquary>::LoadRelicMetadata(Archive::InputBinary& archive) -> LoadedRelicMetadata
     {
         LoadedRelicMetadata metadata;
 
@@ -390,29 +360,10 @@ namespace Inscription
         auto globalRelicSerializers = ToKnownPolymorphicSerializerList(object.relics.globalHandlers);
         auto curatorSerializers = ToKnownPolymorphicSerializerList(object.curators.handlers);
 
-        SaveAll(
-            "shards",
-            object,
-            archive,
-            shardSerializers);
-
-        SaveAll(
-            "localRelics",
-            object,
-            archive,
-            relicSerializers);
-
-        SaveAll(
-            "globalRelics",
-            object,
-            archive,
-            globalRelicSerializers);
-
-        SaveAll(
-            "curators",
-            object,
-            archive,
-            curatorSerializers);
+        SaveAll("shards", object, archive, shardSerializers);
+        SaveAll("localRelics", object, archive, relicSerializers);
+        SaveAll("globalRelics", object, archive, globalRelicSerializers);
+        SaveAll("curators", object, archive, curatorSerializers);
 
         archive.RemoveUserContext<SaveUserContext>();
     }
@@ -421,7 +372,7 @@ namespace Inscription
     {
         auto metadataSize = archive.StartList("relicMetadata");
         while (metadataSize-- > 0)
-            loadedRelicMetadata.push_back(LoadRelicMetadata(object, archive));
+            loadedRelicMetadata.push_back(LoadRelicMetadata(archive));
         archive.EndList();
 
         auto shardSerializers = ToKnownPolymorphicSerializerList(object.shards.handlers);
@@ -429,31 +380,13 @@ namespace Inscription
         auto globalRelicSerializers = ToKnownPolymorphicSerializerList(object.relics.globalHandlers);
         auto curatorSerializers = ToKnownPolymorphicSerializerList(object.curators.handlers);
 
-        LoadAll(
-            "shards",
-            object,
-            archive,
-            shardSerializers);
-
-        LoadAll(
-            "localRelics",
-            object,
-            archive,
-            relicSerializers);
-
-        LoadAll(
-            "globalRelics",
-            object,
-            archive,
-            globalRelicSerializers);
+        LoadAll("shards", object, archive, shardSerializers);
+        LoadAll("localRelics", object, archive, relicSerializers);
+        LoadAll("globalRelics", object, archive, globalRelicSerializers);
 
         SetupLoadedRelicMetadata(loadedRelicMetadata, object);
 
-        LoadAll(
-            "curators",
-            object,
-            archive,
-            curatorSerializers);
+        LoadAll("curators", object, archive, curatorSerializers);
     }
 
     void Scribe<Arca::Reliquary>::SaveAll(
@@ -490,10 +423,8 @@ namespace Inscription
         {
             const auto serializer = FindFrom(typeToLoad.arca, polymorphicsFromObject);
             auto adapter = KnownPolymorphic(object, serializer);
-            if (!archive.HasValue(typeToLoad.inscription))
-                continue;
-
-            archive(typeToLoad.inscription, adapter);
+            if (archive.HasValue(typeToLoad.inscription))
+                archive(typeToLoad.inscription, adapter);
         }
 
         archive.EndObject();
@@ -518,8 +449,7 @@ namespace Inscription
         archive.EndObject();
     }
 
-    auto Scribe<Arca::Reliquary>::LoadRelicMetadata(ObjectT& object, Archive::InputJson& archive)
-        -> LoadedRelicMetadata
+    auto Scribe<Arca::Reliquary>::LoadRelicMetadata(Archive::InputJson& archive) -> LoadedRelicMetadata
     {
         LoadedRelicMetadata metadata;
 
@@ -548,28 +478,28 @@ namespace Inscription
         for (auto& metadata : loadedRelicMetadata)
         {
             auto [type, locality, storage] = FindExtensionForLoadedMetadata(metadata.id, object);
-            if (locality == Arca::Locality::Global)
-                continue;
-
-            Arca::RelicMetadata createdMetadata;
-            createdMetadata.id = metadata.id;
-            createdMetadata.type = type;
-            createdMetadata.locality = locality;
-            createdMetadata.storage = storage;
-            if (metadata.parent)
+            if (locality != Arca::Locality::Global)
             {
-                const auto parentID = *metadata.parent;
-                const auto parentType = std::get<0>(FindExtensionForLoadedMetadata(parentID, object));
-                createdMetadata.parent = Arca::Handle{ parentID, parentType };
-            }
-            for (auto& child : metadata.children)
-            {
-                const auto childID = child;
-                const auto childType = std::get<0>(FindExtensionForLoadedMetadata(childID, object));
-                createdMetadata.parent = Arca::Handle{ childID, childType };
-            }
+                Arca::RelicMetadata createdMetadata;
+                createdMetadata.id = metadata.id;
+                createdMetadata.type = type;
+                createdMetadata.locality = locality;
+                createdMetadata.storage = storage;
+                if (metadata.parent)
+                {
+                    const auto parentID = *metadata.parent;
+                    const auto parentType = std::get<0>(FindExtensionForLoadedMetadata(parentID, object));
+                    createdMetadata.parent = Arca::Handle{ parentID, parentType };
+                }
+                for (auto& child : metadata.children)
+                {
+                    const auto childID = child;
+                    const auto childType = std::get<0>(FindExtensionForLoadedMetadata(childID, object));
+                    createdMetadata.parent = Arca::Handle{ childID, childType };
+                }
 
-            object.relics.metadataList.push_back(createdMetadata);
+                object.relics.metadataList.push_back(createdMetadata);
+            }
         }
     }
 
