@@ -164,7 +164,7 @@
     <IncludePath>..\;..\..\function2\include;..\..\catch;..\..\testframework;..\..\chroma;..\..\inscription;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\Users\Trevor\Documents\ProgrammingProjects\Catch;C:\Users\Trevor\Documents\ProgrammingProjects\TestFramework;C:\Users\Trevor\Documents\ProgrammingProjects\Arca;C:\Users\Trevor\Documents\ProgrammingProjects\Chroma;C:\Users\Trevor\Documents\ProgrammingProjects\Inscription;C:\Users\Trevor\Documents\ProgrammingProjects\function2\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\;..\..\function2\include;..\..\catch;..\..\testframework;..\..\chroma;..\..\inscription;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
