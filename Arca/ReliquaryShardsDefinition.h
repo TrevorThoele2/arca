@@ -63,7 +63,9 @@ namespace Arca
     }
 
     template<class ShardT>
-    ReliquaryShards::Handler<ShardT>::Handler() : HandlerBase(TypeFor<ShardT>().name)
+    ReliquaryShards::Handler<ShardT>::Handler(Reliquary& reliquary) :
+        HandlerBase(TypeFor<ShardT>().name),
+        batchSource(reliquary), constBatchSource(reliquary)
     {}
 
     template<class ShardT>
@@ -126,7 +128,7 @@ namespace Arca
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     void ReliquaryShards::CreateHandler()
     {
-        handlers.push_back(std::make_unique<Handler<ShardT>>());
+        handlers.push_back(std::make_unique<Handler<ShardT>>(Owner()));
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>

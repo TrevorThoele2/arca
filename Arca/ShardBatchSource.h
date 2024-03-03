@@ -12,6 +12,8 @@
 
 namespace Arca
 {
+    class Reliquary;
+    
     class ShardBatchSourceBase
     {
     public:
@@ -49,7 +51,7 @@ namespace Arca
         using iterator = typename List::iterator;
         using const_iterator = typename List::const_iterator;
     public:
-        BatchSource() = default;
+        explicit BatchSource(Reliquary& owner);
         BatchSource(const BatchSource& arg) = delete;
         BatchSource(BatchSource&& arg) = default;
 
@@ -80,6 +82,7 @@ namespace Arca
     private:
         List list;
     private:
+        Reliquary* owner = nullptr;
         friend class Reliquary;
     private:
         INSCRIPTION_ACCESS;
@@ -88,6 +91,10 @@ namespace Arca
     template<class T>
     BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Entry::Entry(RelicID id, StoredT&& shard)
         : id(id), shard(std::move(shard))
+    {}
+
+    template<class T>
+    BatchSource<T, std::enable_if_t<is_shard_v<T>>>::BatchSource(Reliquary& owner) : owner(&owner)
     {}
 
     template<class T>
@@ -247,17 +254,21 @@ namespace Inscription
             ContainerSize size;
             archive(size);
 
-            object.list.clear();
-
             while(size-- > 0)
             {
                 ::Arca::RelicID id;
                 archive(id);
 
-                typename ObjectT::StoredT shard;
-                archive(shard);
-
-                object.list.emplace_back(id, std::move(shard));
+                auto foundShard = object.Find(id);
+                if (foundShard)
+                    archive(*foundShard);
+                else
+                {
+                    typename ObjectT::StoredT shard;
+                    archive(shard);
+                    object.list.emplace_back(id, std::move(shard));
+                    object.owner->matrices.NotifyCreated(id);
+                }
             }
         }
     }
