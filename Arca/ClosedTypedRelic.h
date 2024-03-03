@@ -12,7 +12,7 @@ namespace Arca
     public:
         [[nodiscard]] std::optional<Handle> Parent() const
         {
-            return owner->ParentOf(Handle(ID(), Owner(), TypeFor<Derived>(), HandleObjectType::Relic));
+            return owner->ParentOf(ID());
         }
 
         [[nodiscard]] RelicID ID() const

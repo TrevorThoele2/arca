@@ -18,9 +18,14 @@ namespace Arca
         curators.Work();
     }
 
-    std::optional<Handle> Reliquary::ParentOf(const Handle& child) const
+    std::optional<Handle> Reliquary::ParentOf(RelicID childID) const
     {
-        return relics.ParentOf(child);
+        return relics.ParentOf(childID);
+    }
+
+    std::vector<Handle> Reliquary::ChildrenOf(RelicID parentID) const
+    {
+        return relics.ChildrenOf(parentID);
     }
 
     bool Reliquary::IsRelicTypeName(const TypeName& typeName) const

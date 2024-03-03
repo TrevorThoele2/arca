@@ -40,12 +40,11 @@ namespace Arca
         batchSource.DestroyAllFromBase(Owner());
     }
 
-    std::optional<Handle> ReliquaryRelics::ParentOf(const Handle& child) const
+    std::optional<Handle> ReliquaryRelics::ParentOf(RelicID childID) const
     {
-        const auto childID = child.ID();
         const auto metadata = MetadataFor(childID);
         if (!metadata)
-            throw CannotFind(child.Type());
+            return {};
 
         if (!metadata->parent)
             return {};
@@ -55,6 +54,25 @@ namespace Arca
             const_cast<Reliquary&>(Owner()),
             metadata->parent->Type(),
             HandleObjectType::Relic);
+    }
+
+    std::vector<Handle> ReliquaryRelics::ChildrenOf(RelicID parentID) const
+    {
+        std::vector<Handle> returnValue;
+
+        for(auto& metadata : metadataList)
+        {
+            if (metadata.parent->ID() != parentID)
+                continue;
+
+            returnValue.emplace_back(
+                metadata.id,
+                const_cast<Reliquary&>(Owner()),
+                metadata.type,
+                HandleObjectType::Relic);
+        }
+
+        return returnValue;
     }
 
     bool ReliquaryRelics::IsRelicTypeName(const TypeName& typeName) const
@@ -135,8 +153,8 @@ namespace Arca
     {
         Owner().Raise<Destroying>(HandleFrom(metadata));
 
-        for (auto& child : metadata.children)
-            Destroy(*MetadataFor(child.ID()));
+        while(!metadata.children.empty())
+            Destroy(*MetadataFor(metadata.children[0].ID()));
 
         const auto id = metadata.id;
 
@@ -295,7 +313,7 @@ namespace Arca
     {
         if (&parent.Owner() != &Owner())
             throw CannotParentRelic(
-                "The parent relic is from a different Reliquary.");
+                "Cannot parent a relic to a relic in a different Reliquary.");
 
         const auto parentMetadata = MetadataFor(parent.ID());
         if (!parentMetadata)
@@ -303,7 +321,7 @@ namespace Arca
 
         if (parentMetadata->locality == Locality::Global)
             throw CannotParentRelic(
-                "Attempted to parent to a global relic.");
+                "Cannot parent a relic to a global relic.");
 
         return *parentMetadata;
     }
