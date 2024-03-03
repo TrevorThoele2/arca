@@ -18,16 +18,8 @@
 #include "AsHandle.h"
 #include "IsSignal.h"
 
-#include "Created.h"
-#include "Destroying.h"
-#include "Assigning.h"
-#include "RelicParented.h"
-#include "MatrixFormed.h"
-#include "MatrixDissolved.h"
-
 #include "ReliquaryUserContext.h"
 #include "Serialization.h"
-#include "HasScribe.h"
 #include <Inscription/OutputJumpTable.h>
 #include <Inscription/InputJumpTable.h>
 
@@ -555,26 +547,9 @@ namespace Inscription
     };
 }
 
-#include "RelicInitDefinition.h"
-
 #include "RelicIndexDefinition.h"
 #include "MatrixIndexDefinition.h"
 #include "GlobalIndexDefinition.h"
 #include "ShardIndexDefinition.h"
 
 #include "KnownMatrixDefinition.h"
-
-#include "All.h"
-#include "Either.h"
-
-#include "Create.h"
-#include "IdentifiedCreate.h"
-#include "CreateWith.h"
-#include "IdentifiedCreateWith.h"
-#include "CreateChild.h"
-#include "IdentifiedCreateChild.h"
-#include "CreateChildWith.h"
-#include "IdentifiedCreateChildWith.h"
-#include "Assign.h"
-#include "Destroy.h"
-#include "Clear.h"

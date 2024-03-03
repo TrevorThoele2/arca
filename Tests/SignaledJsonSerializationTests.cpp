@@ -4,6 +4,7 @@ using namespace std::string_literals;
 #include "SignaledJsonSerializationTests.h"
 
 #include <Arca/OpenRelic.h>
+#include <Arca/Create.h>
 #include "SignalListener.h"
 
 SCENARIO_METHOD(

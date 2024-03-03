@@ -4,6 +4,11 @@
 #include "SignalListener.h"
 
 #include <Arca/OpenRelic.h>
+#include <Arca/Create.h>
+#include <Arca/Destroy.h>
+#include <Arca/Either.h>
+#include <Arca/All.h>
+#include <Arca/Clear.h>
 #include <Arca/AsHandle.h>
 
 #include "BasicShard.h"
@@ -111,7 +116,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
 
         WHEN("creating open relic with relic structure")
         {
-            const auto relic = reliquary->Do(CreateWith<OpenRelic>(RelicStructure{ TypeFor<BasicShard>() }));
+            const auto relic = reliquary->Do(Create<OpenRelic>(CreateData{ {}, {}, RelicStructure{ TypeFor<BasicShard>() } }));
 
             WHEN("destroying shard")
             {

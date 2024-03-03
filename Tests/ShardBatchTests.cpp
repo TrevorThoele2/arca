@@ -3,6 +3,8 @@
 #include "ShardBatchTests.h"
 
 #include <Arca/OpenRelic.h>
+#include <Arca/Create.h>
+#include <Arca/Destroy.h>
 
 ShardBatchFixture::GlobalRelic::GlobalRelic(RelicInit init)
 {

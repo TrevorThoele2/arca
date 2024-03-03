@@ -3,6 +3,9 @@
 #include "CommandTests.h"
 
 #include <Arca/OpenRelic.h>
+#include <Arca/Create.h>
+#include <Arca/Assign.h>
+#include <Arca/Assigned.h>
 #include "SignalListener.h"
 
 void CommandTestsFixture::Curator::Handle(const Command& command)

@@ -4,7 +4,8 @@ using namespace std::string_literals;
 #include "ReliquaryJsonSerializationTests.h"
 
 #include <Arca/OpenRelic.h>
-
+#include <Arca/Create.h>
+#include <Arca/Destroy.h>
 #include "SignalListener.h"
 
 SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serialization", "[reliquary][serialization][json]")

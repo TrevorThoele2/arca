@@ -5,6 +5,7 @@
 #include "DifferentiableCurator.h"
 
 #include <Arca/PipelineException.h>
+#include <Arca/Create.h>
 #include <Chroma/Iterate.h>
 
 void CuratorTestsFixture::BasicCurator::Handle(const BasicCommand& command)

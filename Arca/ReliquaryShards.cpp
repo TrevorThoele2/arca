@@ -117,10 +117,7 @@ namespace Arca
             {
                 return entry->type.name == typeName;
             });
-        if (found == handlers.end())
-            return nullptr;
-
-        return found->get();
+        return found == handlers.end() ? nullptr : found->get();
     }
 
     ShardBatchSourceBase* ReliquaryShards::FindBatchSource(const Type& type) const

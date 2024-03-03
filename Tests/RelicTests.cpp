@@ -5,6 +5,10 @@ using namespace std::string_literals;
 #include "SignalListener.h"
 
 #include <Arca/OpenRelic.h>
+#include <Arca/Create.h>
+#include <Arca/Destroy.h>
+#include <Arca/Clear.h>
+#include <Arca/Either.h>
 #include <Arca/RelicParented.h>
 
 RelicTestsFixture::LocalRelic::LocalRelic(RelicInit init)
@@ -618,7 +622,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic constructed from moved value", "[relic
             const auto value = dataGeneration.Random<int>();
             auto uniquePtr = std::make_unique<int>(value);
 
-            auto relic = reliquary->Do(CreateChild<RelicConstructedFromMovedValue>{parent, std::move(uniquePtr)});
+            auto relic = reliquary->Do(Create<RelicConstructedFromMovedValue>{CreateData{ .parent = parent }, std::move(uniquePtr) });
 
             THEN("has moved value")
             {
@@ -633,7 +637,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic constructed from moved value", "[relic
             const auto value = dataGeneration.Random<int>();
             auto uniquePtr = std::make_unique<int>(value);
 
-            auto relic = reliquary->Do(CreateWith<RelicConstructedFromMovedValue>{structure, std::move(uniquePtr)});
+            auto relic = reliquary->Do(Create<RelicConstructedFromMovedValue>{CreateData{ .structure = structure }, std::move(uniquePtr)});
 
             THEN("has moved value")
             {
@@ -649,7 +653,8 @@ SCENARIO_METHOD(RelicTestsFixture, "relic constructed from moved value", "[relic
             const auto value = dataGeneration.Random<int>();
             auto uniquePtr = std::make_unique<int>(value);
 
-            auto relic = reliquary->Do(CreateChildWith<RelicConstructedFromMovedValue>{parent, structure, std::move(uniquePtr)});
+            auto relic = reliquary->Do(Create<RelicConstructedFromMovedValue>{
+                CreateData{ .parent = parent, .structure = structure }, std::move(uniquePtr)});
 
             THEN("has moved value")
             {

@@ -510,8 +510,7 @@ namespace Arca
     Index<ShardT> ReliquaryShards::CreateCommon(RelicID id, bool required, ConstructorArgs&& ... constructorArgs)
     {
         const auto type = TypeFor<ShardT>();
-        if (Contains(Handle{ id, { type.name, true } }) ||
-            Contains(Handle{ id, { type.name, false } }))
+        if (Contains(Handle{ id, { type.name, true } }) || Contains(Handle{ id, { type.name, false } }))
             throw CannotCreate(objectTypeName, type);
 
         auto handler = FindHandler<ShardT>();

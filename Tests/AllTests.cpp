@@ -3,6 +3,9 @@
 #include "AllTests.h"
 
 #include <Arca/OpenRelic.h>
+#include <Arca/All.h>
+#include <Arca/Create.h>
+#include <Arca/Destroy.h>
 
 AllTestsFixture::BasicTypedRelic::BasicTypedRelic(RelicInit init)
 {
