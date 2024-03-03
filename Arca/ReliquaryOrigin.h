@@ -72,7 +72,7 @@ namespace Arca
         GlobalRelicAliasInitializerMap globalRelicAliasInitializerMap;
 
         template<class RelicT, class... InitializeArgs>
-        void GlobalRelicCommon(bool externallyVisible, InitializeArgs&& ... initializeArgs);
+        void GlobalRelicCommon(InitializeArgs&& ... initializeArgs);
 
         template<class RelicT>
         [[nodiscard]] bool IsGlobalRelicRegistered() const;
@@ -164,7 +164,7 @@ namespace Arca
     template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int>>
     ReliquaryOrigin& ReliquaryOrigin::Type(InitializeArgs&& ... initializeArgs)
     {
-        GlobalRelicCommon<RelicT>(true, std::forward<InitializeArgs>(initializeArgs)...);
+        GlobalRelicCommon<RelicT>(std::forward<InitializeArgs>(initializeArgs)...);
         return *this;
     }
 
@@ -183,7 +183,7 @@ namespace Arca
         if (IsGlobalRelicAliasRegistered<InterfaceT>())
             throw AlreadyRegistered("global alias", typeid(InterfaceT));
 
-        GlobalRelicCommon<BackingT>(false, std::forward<BackingInitializeT>(initializeArgs)...);
+        GlobalRelicCommon<BackingT>(std::forward<BackingInitializeT>(initializeArgs)...);
 
         globalRelicAliasInitializerMap.emplace(
             interfaceType,
@@ -320,7 +320,7 @@ namespace Arca
     }
 
     template<class RelicT, class... InitializeArgs>
-    void ReliquaryOrigin::GlobalRelicCommon(bool externallyVisible, InitializeArgs&& ... initializeArgs)
+    void ReliquaryOrigin::GlobalRelicCommon(InitializeArgs&& ... initializeArgs)
     {
         const auto type = TypeFor<RelicT>();
 
@@ -328,10 +328,10 @@ namespace Arca
             throw AlreadyRegistered("global relic", type, typeid(RelicT));
 
         const auto factory =
-            [externallyVisible, args = std::make_tuple(std::forward<InitializeArgs>(initializeArgs) ...)]
+            [args = std::make_tuple(std::forward<InitializeArgs>(initializeArgs) ...)]
         (Reliquary& reliquary)
         {
-            auto execution = [&reliquary, externallyVisible](auto&& ... initializeArgs)
+            auto execution = [&reliquary](auto&& ... initializeArgs)
             {
                 const auto type = TypeFor<RelicT>();
                 const auto id = reliquary.relics.AdvanceID();
@@ -340,8 +340,7 @@ namespace Arca
                     ReliquaryRelics::StoredGlobal
                     {
                         std::make_shared<RelicT>(),
-                        id,
-                        externallyVisible
+                        id
                     }
                 );
                 auto relic = reinterpret_cast<RelicT*>(emplaced.first->second.storage.get());

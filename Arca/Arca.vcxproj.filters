@@ -426,6 +426,9 @@
     <ClInclude Include="AliasPtr.h">
       <Filter>Header Files\Ptr</Filter>
     </ClInclude>
+    <ClInclude Include="Signal.h">
+      <Filter>Header Files\Signal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">

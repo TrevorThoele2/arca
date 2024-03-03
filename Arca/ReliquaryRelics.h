@@ -117,7 +117,6 @@ namespace Arca
         {
             std::shared_ptr<void> storage;
             RelicID id;
-            bool externallyVisible;
         };
 
         using GlobalMap = std::unordered_map<TypeName, StoredGlobal>;

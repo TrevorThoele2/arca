@@ -159,9 +159,11 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
 
         WHEN("retrieving backing relic type")
         {
-            THEN("throws error")
+            GlobalPtr<GlobalRelic> global(*reliquary);
+
+            THEN("is retrieved")
             {
-                REQUIRE_THROWS_AS(Arca::GlobalPtr<GlobalRelic>(*reliquary), NotRegistered);
+                REQUIRE(static_cast<bool>(global));
             }
         }
     }

@@ -47,6 +47,7 @@
     <ClInclude Include="Shard.h" />
     <ClInclude Include="ShardList.h" />
     <ClInclude Include="ShardsFor.h" />
+    <ClInclude Include="Signal.h" />
     <ClInclude Include="UsableInAll.h" />
     <ClInclude Include="Either.h" />
     <ClInclude Include="EitherShardBatch.h" />
