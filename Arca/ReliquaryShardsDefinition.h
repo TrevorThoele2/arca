@@ -36,7 +36,7 @@ namespace Arca
 
         auto& map = batchSources.MapFor<ShardT>();
         auto shardBatchSource = map.find(TypeFor<ShardT>().name);
-        if (shardBatchSource != batchSources.map.end())
+        if (shardBatchSource != map.end())
         {
             if (shardBatchSource->second->DestroyFromBase(id))
             {
@@ -45,6 +45,25 @@ namespace Arca
                 NotifyCompositesShardDestroy(id);
             }
         }
+    }
+
+    template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int>>
+    void ReliquaryShards::Destroy(RelicID id)
+    {
+        using ShardT = typename EitherT::BareT;
+        Destroy<ShardT>(id);
+        Destroy<const ShardT>(id);
+    }
+
+    template<class ShardsT, std::enable_if_t<is_composite_v<ShardsT>, int>>
+    void ReliquaryShards::Destroy(RelicID id)
+    {
+        return ::Chroma::IterateRange<
+            ::Chroma::VariadicTemplateSize,
+            DestroyAllShardsIterator,
+            ShardsT::Pack::count - 1>
+
+            (typename ShardsT::Pack{}, id, *this);
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
@@ -91,17 +110,6 @@ namespace Arca
         auto found = eitherBatchSources.Find<Either<ShardT>>();
         if (found)
             found->Add(id, shard, std::is_const_v<ShardT>);
-    }
-
-    template<class ShardT>
-    auto ReliquaryShards::FindFactory() -> Factory
-    {
-        auto type = TypeFor<ShardT>();
-        const auto found = factoryMap.find(type);
-        if (found == factoryMap.end())
-            return nullptr;
-
-        return found->second;
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>

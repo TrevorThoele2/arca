@@ -7,7 +7,7 @@
 #include "RelicID.h"
 #include "IsComposite.h"
 
-#include "PtrFor.h"
+#include "PtrTypeFor.h"
 
 namespace Arca
 {
@@ -33,14 +33,8 @@ namespace Arca
     {
     private:
         using Pack = typename T::Pack;
-
-        template<class U>
-        struct ToPtr
-        {
-            using Type = typename PtrFor<U>::Type;
-        };
     public:
-        using TupleT = typename Pack::template Transform<ToPtr>::Type::TupleT;
+        using TupleT = typename Pack::template Transform<PtrTypeFor>::Type::TupleT;
     private:
         struct Entry
         {
@@ -82,12 +76,6 @@ namespace Arca
         void DestroyEntry(RelicID id);
         [[nodiscard]] bool ContainsEntry(RelicID id) const;
         [[nodiscard]] TupleT CreateTuple(RelicID id);
-
-        template<::Chroma::VariadicTemplateSize i>
-        struct CreateTupleIterator
-        {
-            static void Do(TupleT& tuple, RelicID id, ReliquaryShards& shards);
-        };
     private:
         friend class Reliquary;
     };

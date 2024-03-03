@@ -15,6 +15,9 @@
 #include "StructureFrom.h"
 
 #include "LocalPtr.h"
+#include "GlobalPtr.h"
+#include "CompositePtr.h"
+#include "ComputedPtr.h"
 #include "AsHandle.h"
 
 #include "Created.h"
@@ -177,6 +180,8 @@ namespace Arca
         friend class LocalPtr;
         template<class>
         friend class GlobalPtr;
+        template<class>
+        friend class CompositePtr;
         template<class>
         friend class ComputedPtr;
     private:

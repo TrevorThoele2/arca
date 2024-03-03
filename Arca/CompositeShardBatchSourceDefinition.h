@@ -2,21 +2,10 @@
 
 #include "CompositeShardBatchSource.h"
 #include "ReliquaryShards.h"
+#include "Composite.h"
 
 namespace Arca
 {
-    template<class T>
-    template<::Chroma::VariadicTemplateSize i>
-    void BatchSource<T, std::enable_if_t<is_composite_v<T>>>::
-        CreateTupleIterator<i>::Do(TupleT& tuple, RelicID id, ReliquaryShards& shards)
-    {
-        using T = typename Pack::template Parameter<i>::Type;
-        if constexpr (usable_for_local_ptr_v<T>)
-            std::get<i>(tuple) = Arca::LocalPtr<T>(id, shards.Owner());
-        else
-            std::get<i>(tuple) = Arca::GlobalPtr<T>(shards.Owner());
-    }
-
     template<class T>
     BatchSource<T, std::enable_if_t<is_composite_v<T>>>::BatchSource(ReliquaryShards& owner)
         : owner(&owner)
@@ -126,7 +115,7 @@ namespace Arca
     auto BatchSource<T, std::enable_if_t<is_composite_v<T>>>::CreateTuple(RelicID id) -> TupleT
     {
         TupleT tuple;
-        ::Chroma::IterateRange<::Chroma::VariadicTemplateSize, CreateTupleIterator, Pack::count - 1>
+        ::Chroma::IterateRange<::Chroma::VariadicTemplateSize, CompositeToTuple, Pack::count - 1>
             (tuple, id, *owner);
         return tuple;
     }

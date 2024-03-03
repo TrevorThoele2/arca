@@ -18,6 +18,18 @@ namespace Arca
         owner->shards.Destroy<ShardT>(id);
     }
 
+    template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int>>
+    void OpenRelic::Destroy()
+    {
+        owner->shards.Destroy<EitherT>(id);
+    }
+
+    template<class ShardsT, std::enable_if_t<is_composite_v<ShardsT>, int>>
+    void OpenRelic::Destroy()
+    {
+        owner->shards.Destroy<ShardsT>(id);
+    }
+
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     LocalPtr<ShardT> OpenRelic::Find() const
     {
@@ -28,6 +40,12 @@ namespace Arca
     LocalPtr<EitherT> OpenRelic::Find() const
     {
         return Arca::LocalPtr<EitherT>(id, Owner());
+    }
+
+    template<class ShardsT, std::enable_if_t<is_composite_v<ShardsT>, int>>
+    CompositePtr<ShardsT> OpenRelic::Find() const
+    {
+        return Arca::CompositePtr<ShardsT>(id, Owner());
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>

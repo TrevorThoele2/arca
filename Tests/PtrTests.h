@@ -16,6 +16,12 @@ public:
         int myInt;
     };
 
+    template<size_t i>
+    struct DifferentiableShard
+    {
+        int myInt;
+    };
+
     class TypedClosedRelic final : public ClosedTypedRelicAutomation<TypedClosedRelic, Shard>
     {
     public:
@@ -50,6 +56,13 @@ namespace Arca
         static inline const TypeName typeName = "PtrTestsShard";
     };
 
+    template<size_t i>
+    struct Traits<PtrTestsFixture::DifferentiableShard<i>>
+    {
+        static const ObjectType objectType = ObjectType::Shard;
+        static inline const TypeName typeName = "PtrTestsDifferentiableShard" + Chroma::ToString(i);
+    };
+
     template<>
     struct Traits<PtrTestsFixture::TypedClosedRelic>
     {
@@ -78,6 +91,11 @@ namespace Inscription
     template<>
     class Scribe<PtrTestsFixture::Shard, BinaryArchive> final :
         public ArcaNullScribe<PtrTestsFixture::Shard, BinaryArchive>
+    {};
+
+    template<size_t i>
+    class Scribe<PtrTestsFixture::DifferentiableShard<i>, BinaryArchive> final :
+        public ArcaNullScribe<PtrTestsFixture::DifferentiableShard<i>, BinaryArchive>
     {};
 
     template<>

@@ -35,6 +35,10 @@ namespace Arca
         void Destroy(const Type& type, RelicID id);
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         void Destroy(RelicID id);
+        template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
+        void Destroy(RelicID id);
+        template<class ShardsT, std::enable_if_t<is_composite_v<ShardsT>, int> = 0>
+        void Destroy(RelicID id);
 
         [[nodiscard]] bool Contains(const Handle& handle) const;
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
@@ -49,9 +53,6 @@ namespace Arca
 
         template<class ShardT>
         void AttemptAddToEitherBatches(RelicID id, ShardT& shard);
-
-        template<class ShardT>
-        Factory FindFactory();
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] ShardT* FindStorage(RelicID id);
@@ -151,6 +152,18 @@ namespace Arca
         template<class ShardT>
         LocalPtr<ShardT> CreatePtr(RelicID id) const;
     private:
+        template<::Chroma::VariadicTemplateSize i>
+        struct DestroyAllShardsIterator
+        {
+            template<class ShardPack>
+            static void Do(ShardPack, RelicID id, ReliquaryShards& shards)
+            {
+                using T = typename ShardPack::template Parameter<i>::Type;
+
+                shards.Destroy<T>(id);
+            }
+        };
+
         template<::Chroma::VariadicTemplateSize i>
         struct ContainsAllShardsIterator
         {
