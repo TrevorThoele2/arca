@@ -33,6 +33,8 @@ namespace Chroma
             return "curator";
         case Arca::ObjectType::Signal:
             return "signal";
+        case Arca::ObjectType::Command:
+            return "command";
         default:
             return "";
         }

@@ -202,7 +202,7 @@ namespace Arca
     template<class CuratorT>
     template<class U, std::enable_if_t<has_command_handle_method_with_stage_v<CuratorT, U>, int>>
     void CommandHandler<CommandT, false>::Link<CuratorT>::HandleImpl(
-        CuratorT& curator, const CommandT& command, Curator::Stage& stage)
+        CuratorT& curator, const CommandT& command, CuratorStage& stage)
     {
         curator.Handle(command, stage);
     }
@@ -211,7 +211,7 @@ namespace Arca
     template<class CuratorT>
     template<class U, std::enable_if_t<!has_command_handle_method_with_stage_v<CuratorT, U>, int>>
     void CommandHandler<CommandT, false>::Link<CuratorT>::HandleImpl(
-        CuratorT& curator, const CommandT& command, Curator::Stage&)
+        CuratorT& curator, const CommandT& command, CuratorStage&)
     {
         curator.Handle(command);
     }

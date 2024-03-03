@@ -94,6 +94,9 @@
     <ClCompile Include="Handle.cpp">
       <Filter>Source Files\Handle</Filter>
     </ClCompile>
+    <ClCompile Include="RelicInit.cpp">
+      <Filter>Source Files\Relic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Curator.h">
@@ -345,9 +348,6 @@
     <ClInclude Include="Index.h">
       <Filter>Header Files\Index</Filter>
     </ClInclude>
-    <ClInclude Include="RelicInitDefinition.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="ShardIndexDefinition.h">
       <Filter>Header Files\Index\Shard</Filter>
     </ClInclude>
@@ -385,9 +385,6 @@
       <Filter>Header Files\Index\Shard</Filter>
     </ClInclude>
     <ClInclude Include="MutablePointer.h">
-      <Filter>Header Files\Curator</Filter>
-    </ClInclude>
-    <ClInclude Include="MutablePointerDefinition.h">
       <Filter>Header Files\Curator</Filter>
     </ClInclude>
     <ClInclude Include="Assign.h">

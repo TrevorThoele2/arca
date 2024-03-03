@@ -67,7 +67,7 @@ namespace Arca
                         
                         signals.Raise(AssigningKnown<T>{ Index<T> { id, reliquary }});
                         shards.Clear(id);
-                        Impl<T>(*storage, RelicInit{ id, reliquary }, std::forward<Args>(args)...);
+                        Impl<T>(*storage, RelicInit{ id, reliquary, shards }, std::forward<Args>(args)...);
                         signals.Raise(AssignedKnown<T>{ Index<T> { id, reliquary }});
 
                         return Index<T>(id, reliquary);
@@ -235,7 +235,7 @@ namespace Arca
                         
                         signals.Raise(AssigningKnown<T>{ Index<T> { id, reliquary }});
                         shards.Clear(id);
-                        Impl<T>(*storage, RelicInit{ id, reliquary }, std::forward<Args>(args)...);
+                        Impl<T>(*storage, RelicInit{ id, reliquary, shards }, std::forward<Args>(args)...);
                         signals.Raise(AssignedKnown<T>{ Index<T> { id, reliquary }});
 
                         return Index<T>(id, reliquary);

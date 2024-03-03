@@ -20,7 +20,7 @@ namespace Arca
         if (found)
             return nullptr;
 
-        return CreateImpl<T>(RelicInit{ id, *owner }, std::forward<ConstructorArgs>(constructorArgs)...);
+        return CreateImpl<T>(RelicInit{ id, *owner, owner->shards }, std::forward<ConstructorArgs>(constructorArgs)...);
     }
 
     template<class T>
@@ -161,7 +161,7 @@ namespace Inscription
                     archive(*foundRelic);
                 else
                 {
-                    auto relic = Create<RelicT>(Arca::RelicInit{ id, *object.owner });
+                    auto relic = Create<RelicT>(Arca::RelicInit{ id, *object.owner, object.owner->shards });
                     archive(relic);
                     auto& emplaced = object.map.emplace(id, std::move(relic)).first->second;
                     archive.types.AttemptReplaceTrackedObject(relic, emplaced);
@@ -199,7 +199,7 @@ namespace Inscription
                 Arca::RelicID id = 0;
                 archive("id", id);
 
-                auto relic = Create<RelicT>(Arca::RelicInit{ id, *object.owner });
+                auto relic = Create<RelicT>(Arca::RelicInit{ id, *object.owner, object.owner->shards });
                 archive("relic", relic);
                 auto& emplaced = object.map.emplace(id, std::move(relic)).first->second;
                 archive.types.AttemptReplaceTrackedObject(relic, emplaced);
