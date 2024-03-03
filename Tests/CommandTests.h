@@ -40,7 +40,8 @@ namespace Arca
         static const ObjectType objectType = ObjectType::Curator;
         static inline const TypeName typeName = "CommandTestsFixture::Curator";
         using HandledCommands = Arca::HandledCommands<
-            CommandTestsFixture::Command, CommandTestsFixture::CommandWithResult>;
+            CommandTestsFixture::Command,
+            CommandTestsFixture::CommandWithResult>;
     };
 
     template<>
