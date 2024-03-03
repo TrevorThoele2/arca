@@ -83,7 +83,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle comparison combinations", "[handle]"
         auto typedRelicHandle1 = AsHandle(typedRelic1);
         auto typedRelicShardHandle1 = AsHandle<Shard>(typedRelic1.ID());
 
-        auto globalRelic1 = Arca::Index<GlobalRelic>(*reliquary);
+        auto globalRelic1 = reliquary->Find<GlobalRelic>();
         auto globalRelicHandle1 = AsHandle(globalRelic1);
 
         auto openRelic2 = reliquary->Do(Create<OpenRelic>());
@@ -95,7 +95,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle comparison combinations", "[handle]"
         auto typedRelicHandle2 = AsHandle(typedRelic2);
         auto typedRelicShardHandle2 = AsHandle<Shard>(typedRelic2.ID());
 
-        auto globalRelic2 = Arca::Index<GlobalRelic>(*reliquary);
+        auto globalRelic2 = reliquary->Find<GlobalRelic>();
         auto globalRelicHandle2 = AsHandle(globalRelic2);
 
         WHEN("comparing open relic")
@@ -308,8 +308,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle serialization", "[handle][serializat
                     inputArchive(*loadedReliquary);
                 }
 
-                auto loadedHandleHolder = Arca::Index<HandleHolder>(
-                    savedHandleHolder.ID(), *loadedReliquary);
+                auto loadedHandleHolder = loadedReliquary->Find<HandleHolder>(savedHandleHolder.ID());
 
                 REQUIRE(loadedHandleHolder->handle.id == savedHandleHolder->handle.id);
                 REQUIRE(loadedHandleHolder->handle.type == savedHandleHolder->handle.type);
@@ -352,8 +351,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle serialization", "[handle][serializat
                     inputArchive(*loadedReliquary);
                 }
 
-                auto loadedHandleHolder = Arca::Index<HandleHolder>(
-                    savedHandleHolder.ID(), *loadedReliquary);
+                auto loadedHandleHolder = loadedReliquary->Find<HandleHolder>(savedHandleHolder.ID());
 
                 REQUIRE(loadedHandleHolder->handle.id == savedHandleHolder->handle.id);
                 REQUIRE(loadedHandleHolder->handle.type == savedHandleHolder->handle.type);

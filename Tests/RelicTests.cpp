@@ -131,7 +131,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("finding open relic")
             {
-                auto found = Arca::Index<OpenRelic>(openRelic.ID(), *reliquary);
+                auto found = reliquary->Find<OpenRelic>(openRelic.ID());
 
                 THEN("found is same as created")
                 {
@@ -157,8 +157,8 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
                 THEN("reliquary has shard")
                 {
-                    REQUIRE(Arca::Index<Shard>(openRelic.ID(), *reliquary));
-                    REQUIRE(Arca::Index<Either<Shard>>(openRelic.ID(), *reliquary));
+                    REQUIRE(reliquary->Find<Shard>(openRelic.ID()));
+                    REQUIRE(reliquary->Find<Either<Shard>>(openRelic.ID()));
                     REQUIRE(reliquary->Contains<Shard>(openRelic.ID()));
                 }
 
@@ -178,8 +178,8 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
                     THEN("reliquary does not have shard")
                     {
-                        REQUIRE(!Arca::Index<Shard>(openRelic.ID(), *reliquary));
-                        REQUIRE(!Arca::Index<Either<Shard>>(openRelic.ID(), *reliquary));
+                        REQUIRE(!reliquary->Find<Shard>(openRelic.ID()));
+                        REQUIRE(!reliquary->Find<Either<Shard>>(openRelic.ID()));
                         REQUIRE(!reliquary->Contains<Shard>(openRelic.ID()));
                     }
                 }
@@ -187,7 +187,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("retrieving as local")
             {
-                auto localRelic = Arca::Index<LocalRelic>(openRelic.ID(), *reliquary);
+                auto localRelic = reliquary->Find<LocalRelic>(openRelic.ID());
 
                 THEN("is not found")
                 {
@@ -197,7 +197,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("retrieving as typed")
             {
-                const auto asTyped = Arca::Index<LocalRelic>(openRelic.ID(), *reliquary);
+                const auto asTyped = reliquary->Find<LocalRelic>(openRelic.ID());
 
                 THEN("typed is empty")
                 {
@@ -228,7 +228,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("finding typed relic")
             {
-                auto found = Arca::Index<LocalRelic>(typedRelic.ID(), *reliquary);
+                auto found = reliquary->Find<LocalRelic>(typedRelic.ID());
 
                 THEN("found is same as created")
                 {
@@ -244,7 +244,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             WHEN("retrieving as open")
             {
-                const auto asOpen = Arca::Index<OpenRelic>(typedRelic.ID(), *reliquary);
+                const auto asOpen = reliquary->Find<OpenRelic>(typedRelic.ID());
 
                 THEN("typed is empty")
                 {
@@ -285,7 +285,7 @@ SCENARIO_METHOD(RelicTestsFixture, "many relics", "[relic]")
             {
                 auto relic = relics[0];
 
-                auto shard = Arca::Index<Shard>(relic.ID(), *reliquary);
+                auto shard = reliquary->Find<Shard>(relic.ID());
                 REQUIRE(shard);
                 REQUIRE(shard->value == 99);
             }
@@ -330,7 +330,7 @@ SCENARIO_METHOD(RelicTestsFixture, "custom should create relic", "[relic][should
             THEN("relic was created")
             {
                 REQUIRE(relic);
-                REQUIRE(Arca::Index<ShouldCreateRelic>(relic.ID(), *reliquary));
+                REQUIRE(reliquary->Find<ShouldCreateRelic>(relic.ID()));
             }
         }
 

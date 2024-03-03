@@ -104,7 +104,7 @@ SCENARIO_METHOD(IdentifiedRelicCreationTestsFixture, "identified relic creation"
 
             WHEN("finding relic")
             {
-                auto found = Arca::Index<Relic>(relic.ID(), *reliquary);
+                auto found = reliquary->Find<Relic>(relic.ID());
 
                 THEN("found is same as created")
                 {
@@ -126,7 +126,7 @@ SCENARIO_METHOD(IdentifiedRelicCreationTestsFixture, "identified relic creation"
 
             THEN("structure has been satisfied")
             {
-                REQUIRE(Arca::Index<Shard>(relic.ID(), *reliquary));
+                REQUIRE(reliquary->Find<Shard>(relic.ID()));
             }
 
             THEN("reliquary relic count increments by one")
@@ -185,7 +185,7 @@ SCENARIO_METHOD(IdentifiedRelicCreationTestsFixture, "identified relic creation"
 
             THEN("structure has been satisfied")
             {
-                REQUIRE(Arca::Index<Shard>(relic.ID(), *reliquary));
+                REQUIRE(reliquary->Find<Shard>(relic.ID()));
             }
 
             THEN("reliquary has one more relic")

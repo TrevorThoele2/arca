@@ -46,7 +46,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
             .Register<BasicShard>()
             .Actualize();
 
-        auto globalRelic = Arca::Index<GlobalRelic>(*reliquary);
+        auto globalRelic = reliquary->Find<GlobalRelic>();
 
         auto onParented = SignalListener<RelicParented>(*reliquary);
 
@@ -117,7 +117,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
                 reliquary->Destroy(AsHandle(parent));
 
                 REQUIRE(reliquary->RelicSize() == 0);
-                REQUIRE(!Arca::Index<BasicShard>(child.ID(), *reliquary));
+                REQUIRE(!reliquary->Find<BasicShard>(child.ID()));
             }
 
             THEN("sends signal")
@@ -143,7 +143,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
                 THEN("does not destroy parent")
                 {
                     REQUIRE(reliquary->RelicSize() == 1);
-                    REQUIRE(Arca::Index<BasicShard>(parent.ID(), *reliquary));
+                    REQUIRE(reliquary->Find<BasicShard>(parent.ID()));
                 }
 
                 THEN("destroying parent works")
@@ -151,7 +151,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
                     reliquary->Destroy(AsHandle(parent));
 
                     REQUIRE(reliquary->RelicSize() == 0);
-                    REQUIRE(!Arca::Index<BasicShard>(parent.ID(), *reliquary));
+                    REQUIRE(!reliquary->Find<BasicShard>(parent.ID()));
                 }
             }
         }
@@ -203,7 +203,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
 
                 REQUIRE(reliquary->RelicSize() == 0);
                 for (auto& child : children)
-                    REQUIRE(!Arca::Index<BasicShard>(child.ID(), *reliquary));
+                    REQUIRE(!reliquary->Find<BasicShard>(child.ID()));
             }
 
             THEN("sends 10 signals")
@@ -237,7 +237,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
                 THEN("does not destroy parent")
                 {
                     REQUIRE(reliquary->RelicSize() == 10);
-                    REQUIRE(Arca::Index<BasicShard>(parent.ID(), *reliquary));
+                    REQUIRE(reliquary->Find<BasicShard>(parent.ID()));
                 }
 
                 THEN("destroying parent works")
@@ -246,7 +246,7 @@ SCENARIO_METHOD(RelicParentingTestsFixture, "relic parenting", "[relic][parentin
 
                     REQUIRE(reliquary->RelicSize() == 0);
                     for (auto& child : children)
-                        REQUIRE(!Arca::Index<BasicShard>(child.ID(), *reliquary));
+                        REQUIRE(!reliquary->Find<BasicShard>(child.ID()));
                 }
             }
         }

@@ -11,14 +11,11 @@ namespace Arca
     template<class T>
     class Index<T, std::enable_if_t<is_global_v<T>>>
     {
-    private:
-        using StoredT = T*;
     public:
         using ValueT = T;
     public:
         Index() = default;
-        explicit Index(Reliquary* owner);
-        explicit Index(Reliquary& owner);
+        explicit Index(Reliquary& owner, std::weak_ptr<ValueT> value);
         Index(const Index& arg);
         Index(Index&& arg) noexcept;
 
@@ -45,12 +42,7 @@ namespace Arca
         [[nodiscard]] Reliquary* Owner() const;
     private:
         Reliquary* owner = nullptr;
-        mutable StoredT value = EmptyValue();
-    private:
-        static StoredT FindValueFrom(Reliquary* reliquary);
-        StoredT FindValueFromOwner() const;
-        bool IsSetup() const;
-        constexpr static StoredT EmptyValue();
+        std::weak_ptr<ValueT> value;
     private:
         INSCRIPTION_ACCESS;
     };

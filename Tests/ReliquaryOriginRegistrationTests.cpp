@@ -124,7 +124,7 @@ SCENARIO_METHOD(ReliquaryOriginRegistrationTestsFixture, "registering types with
 
             THEN("has values")
             {
-                auto global = Arca::Index<GlobalRelicWithMovedValue>(*reliquary);
+                auto global = reliquary->Find<GlobalRelicWithMovedValue>();
                 REQUIRE(*global->myInt == globalIntValue);
 
                 auto& curator = reliquary->Find<CuratorWithMovedValue>();

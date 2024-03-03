@@ -66,6 +66,11 @@ namespace Arca
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         void Clear();
 
+        template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int> = 0>
+        Index<RelicT> Find(RelicID id) const;
+        template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
+        Index<RelicT> Find() const;
+
         [[nodiscard]] bool Contains(RelicID id) const;
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
@@ -151,7 +156,7 @@ namespace Arca
         public:
             Arca::BatchSource<RelicT> batchSource;
         public:
-            explicit LocalHandler(Reliquary& reliquary);
+            explicit LocalHandler(Reliquary& reliquary, ReliquaryShards& shards);
 
             RelicBatchSourceBase& BatchSource() override;
 
@@ -208,9 +213,9 @@ namespace Arca
         class GlobalHandler final : public GlobalHandlerBase
         {
         public:
-            std::unique_ptr<RelicT> storage;
+            std::shared_ptr<RelicT> storage;
         public:
-            explicit GlobalHandler(ReliquaryRelics& owner, std::unique_ptr<RelicT>&& storage, RelicID id);
+            explicit GlobalHandler(ReliquaryRelics& owner, std::shared_ptr<RelicT>&& storage, RelicID id);
 
             [[nodiscard]] void* Storage() const override;
 
@@ -255,26 +260,8 @@ namespace Arca
         Index<RelicT> FinishNewRelic(
             RelicStructure structure, RelicID id, ConstructorArgs&& ... constructorArgs);
 
-        template<
-            class T,
-            class... ConstructorArgs,
-            std::enable_if_t<
-                std::is_constructible_v<T, RelicInit, ConstructorArgs...> &&
-                !std::is_constructible_v<T, ConstructorArgs...>, int> = 0>
-        std::unique_ptr<T> CreateGlobalImpl(RelicInit init, ConstructorArgs&& ... constructorArgs)
-        {
-            return std::make_unique<T>(init, std::forward<ConstructorArgs>(constructorArgs)...);
-        }
-
-        template<
-            class T,
-            class... ConstructorArgs,
-            std::enable_if_t<
-                std::is_constructible_v<T, ConstructorArgs...>, int> = 0>
-        std::unique_ptr<T> CreateGlobalImpl(RelicInit init, ConstructorArgs&& ... constructorArgs)
-        {
-            return std::make_unique<T>(std::forward<ConstructorArgs>(constructorArgs)...);
-        }
+        template<class T, class... ConstructorArgs>
+        std::shared_ptr<T> CreateGlobalImpl(RelicInit init, ConstructorArgs&& ... constructorArgs);
     private:
         RelicMetadata& ValidateParentForParenting(const Handle& parent);
     private:
@@ -493,7 +480,7 @@ namespace Arca
         if (!WillDestroy(metadata))
             return;
 
-        auto index = Index<RelicT>(id, *owner);
+        auto index = Find<RelicT>(id);
         signals->Raise(DestroyingKnown<RelicT>{index});
         Destroy(*metadata);
     }
@@ -511,6 +498,23 @@ namespace Arca
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>&& is_local_v<RelicT>, int>>
+    Index<RelicT> ReliquaryRelics::Find(RelicID id) const
+    {
+        auto& batchSource = RequiredBatchSource<RelicT>();
+        return Index<RelicT>{ id, *owner, batchSource.Find(id) };
+    }
+
+    template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int>>
+    Index<RelicT> ReliquaryRelics::Find() const
+    {
+        const auto handler = FindGlobalHandler<RelicT>();
+        if (!handler)
+            throw NotRegistered(objectTypeName, TypeFor<RelicT>());
+
+        return Index<RelicT>{ *owner, handler->storage };
+    }
+
+    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>&& is_local_v<RelicT>, int>>
     bool ReliquaryRelics::Contains(RelicID id) const
     {
         const auto metadata = MetadataFor(id);
@@ -521,8 +525,8 @@ namespace Arca
     bool ReliquaryRelics::Contains() const
     {
         const auto type = TypeFor<RelicT>();
-        const auto found = FindGlobalHandler<RelicT>();
-        return found != nullptr;
+        const auto handler = FindGlobalHandler<RelicT>();
+        return handler != nullptr;
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>&& is_local_v<RelicT>, int>>
@@ -564,13 +568,13 @@ namespace Arca
             return {};
 
         auto& batchSource = RequiredBatchSource<RelicT>();
-        return batchSource.Find(id);
+        return batchSource.Find(id).lock().get();
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
     void ReliquaryRelics::CreateLocalHandler()
     {
-        localHandlers.push_back(std::make_unique<LocalHandler<RelicT>>(*owner));
+        localHandlers.push_back(std::make_unique<LocalHandler<RelicT>>(*owner, *shards));
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
@@ -609,8 +613,8 @@ namespace Arca
     }
 
     template<class RelicT>
-    ReliquaryRelics::LocalHandler<RelicT>::LocalHandler(Reliquary& reliquary) :
-        LocalHandlerBase(TypeFor<RelicT>().name), batchSource(reliquary)
+    ReliquaryRelics::LocalHandler<RelicT>::LocalHandler(Reliquary& reliquary, ReliquaryShards& shards) :
+        LocalHandlerBase(TypeFor<RelicT>().name), batchSource(reliquary, shards)
     {}
 
     template<class RelicT>
@@ -635,7 +639,7 @@ namespace Arca
     void ReliquaryRelics::LocalHandler<RelicT>::SignalAllCreated(Reliquary& reliquary, ReliquaryRelics& relics)
     {
         for (auto& relic : batchSource)
-            relics.SignalCreation(Index<RelicT>(relic.first, reliquary));
+            relics.SignalCreation(relics.Find<RelicT>(relic.first));
     }
 
     template<class RelicT>
@@ -675,7 +679,7 @@ namespace Arca
     }
 
     template<class RelicT>
-    ReliquaryRelics::GlobalHandler<RelicT>::GlobalHandler(ReliquaryRelics& owner, std::unique_ptr<RelicT>&& storage, RelicID id) :
+    ReliquaryRelics::GlobalHandler<RelicT>::GlobalHandler(ReliquaryRelics& owner, std::shared_ptr<RelicT>&& storage, RelicID id) :
         GlobalHandlerBase(TypeFor<RelicT>().name, id), storage(std::move(storage)), owner(&owner)
     {}
 
@@ -780,10 +784,19 @@ namespace Arca
 
         SatisfyStructure(id, structure);
 
-        const auto index = Index<RelicT>{ id, *owner };
+        const auto index = Find<RelicT>(id);
 
         SignalCreation(index);
 
         return index;
+    }
+
+    template<class T, class... ConstructorArgs>
+    std::shared_ptr<T> ReliquaryRelics::CreateGlobalImpl(RelicInit init, ConstructorArgs&& ... constructorArgs)
+    {
+        if constexpr (std::is_constructible_v<T, RelicInit, ConstructorArgs...>)
+            return std::make_shared<T>(init, std::forward<ConstructorArgs>(constructorArgs)...);
+        else
+            return std::make_shared<T>(std::forward<ConstructorArgs>(constructorArgs)...);
     }
 }

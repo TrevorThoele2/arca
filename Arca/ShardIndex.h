@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Index.h"
-#include "UsableForShardIndex.h"
 
+#include "IsShard.h"
 #include "Handle.h"
 
 #include "Serialization.h"
@@ -10,14 +10,13 @@
 namespace Arca
 {
     template<class T>
-    class Index<T, std::enable_if_t<usable_for_shard_index_v<T> && !std::is_const_v<T>>>
+    class Index<T, std::enable_if_t<is_shard_v<T> && !std::is_const_v<T>>>
     {
     public:
         using ValueT = T;
     public:
         Index() = default;
-        Index(RelicID id, Reliquary* owner);
-        Index(RelicID id, Reliquary& owner);
+        Index(RelicID id, Reliquary& owner, std::weak_ptr<ValueT> value);
         Index(const Index& arg);
         Index(Index&& arg) noexcept;
 
@@ -45,21 +44,123 @@ namespace Arca
     private:
         RelicID id = nullRelicID;
         Reliquary* owner = nullptr;
-    private:
-        [[nodiscard]] ValueT* FindValueFromOwner() const;
+        std::weak_ptr<T> value;
     private:
         INSCRIPTION_ACCESS;
     };
+    
+    template<class T>
+    Index<T, std::enable_if_t<is_shard_v<T> && !std::is_const_v<T>>>::Index(RelicID id, Reliquary& owner, std::weak_ptr<ValueT> value) :
+        id(id), owner(&owner), value(value)
+    {}
 
     template<class T>
-    class Index<T, std::enable_if_t<usable_for_shard_index_v<T> && std::is_const_v<T>>>
+    Index<T, std::enable_if_t<is_shard_v<T> && !std::is_const_v<T>>>::Index(const Index& arg) :
+        id(arg.id), owner(arg.owner), value(arg.value)
+    {}
+
+    template<class T>
+    Index<T, std::enable_if_t<is_shard_v<T> && !std::is_const_v<T>>>::Index(Index&& arg) noexcept :
+        id(arg.id), owner(arg.owner), value(std::move(arg.value))
+    {
+        arg.id = nullRelicID;
+        arg.owner = nullptr;
+    }
+
+    template<class T>
+    auto Index<T, std::enable_if_t<is_shard_v<T> && !std::is_const_v<T>>>::operator=(const Index& arg) -> Index&
+    {
+        id = arg.id;
+        owner = arg.owner;
+        value = arg.value;
+        return *this;
+    }
+
+    template<class T>
+    auto Index<T, std::enable_if_t<is_shard_v<T> && !std::is_const_v<T>>>::operator=(Index&& arg) noexcept -> Index&
+    {
+        id = arg.id;
+        owner = arg.owner;
+        value = std::move(arg.value);
+        arg.id = nullRelicID;
+        arg.owner = nullptr;
+        return *this;
+    }
+
+    template<class T>
+    bool Index<T, std::enable_if_t<is_shard_v<T> && !std::is_const_v<T>>>::operator==(const Index& arg) const
+    {
+        return id == arg.id && owner == arg.owner;
+    }
+
+    template<class T>
+    bool Index<T, std::enable_if_t<is_shard_v<T> && !std::is_const_v<T>>>::operator!=(const Index& arg) const
+    {
+        return !(*this == arg);
+    }
+
+    template<class T>
+    Index<T, std::enable_if_t<is_shard_v<T> && !std::is_const_v<T>>>::operator bool() const
+    {
+        return Get() != nullptr;
+    }
+
+    template<class T>
+    Index<T, std::enable_if_t<is_shard_v<T> && !std::is_const_v<T>>>::operator Handle() const
+    {
+        return Handle{ ID(), TypeFor<T>() };
+    }
+
+    template<class T>
+    Index<T, std::enable_if_t<is_shard_v<T> && !std::is_const_v<T>>>::operator const ValueT* () const
+    {
+        return Get();
+    }
+
+    template<class T>
+    Index<T, std::enable_if_t<is_shard_v<T> && !std::is_const_v<T>>>::operator Index<const T>() const
+    {
+        return Index<const T>(id, *owner, value);
+    }
+
+    template<class T>
+    auto Index<T, std::enable_if_t<is_shard_v<T> && !std::is_const_v<T>>>::operator*() const -> const ValueT&
+    {
+        return *Get();
+    }
+
+    template<class T>
+    auto Index<T, std::enable_if_t<is_shard_v<T> && !std::is_const_v<T>>>::operator->() const -> const ValueT*
+    {
+        return Get();
+    }
+
+    template<class T>
+    auto Index<T, std::enable_if_t<is_shard_v<T> && !std::is_const_v<T>>>::Get() const -> const ValueT*
+    {
+        return value.lock().get();
+    }
+
+    template<class T>
+    RelicID Index<T, std::enable_if_t<is_shard_v<T> && !std::is_const_v<T>>>::ID() const
+    {
+        return id;
+    }
+
+    template<class T>
+    Reliquary* Index<T, std::enable_if_t<is_shard_v<T> && !std::is_const_v<T>>>::Owner() const
+    {
+        return owner;
+    }
+    
+    template<class T>
+    class Index<T, std::enable_if_t<is_shard_v<T> && std::is_const_v<T>>>
     {
     public:
         using ValueT = T;
     public:
         Index() = default;
-        Index(RelicID id, Reliquary* owner);
-        Index(RelicID id, Reliquary& owner);
+        Index(RelicID id, Reliquary& owner, std::weak_ptr<ValueT> value);
         Index(const Index& arg);
         Index(Index&& arg) noexcept;
 
@@ -90,49 +191,125 @@ namespace Arca
     private:
         RelicID id = nullRelicID;
         Reliquary* owner = nullptr;
-    private:
-        [[nodiscard]] ValueT* FindValueFromOwner() const;
+        std::weak_ptr<T> value;
     private:
         INSCRIPTION_ACCESS;
     };
+    
+    template<class T>
+    Index<T, std::enable_if_t<is_shard_v<T>&& std::is_const_v<T>>>::Index(RelicID id, Reliquary& owner, std::weak_ptr<ValueT> value) :
+        id(id), owner(&owner), value(value)
+    {}
 
-    template<class T, std::enable_if_t<usable_for_shard_index_v<T>, int> = 0>
-    Index<T> ToIndex(RelicID id, Reliquary* owner)
+    template<class T>
+    Index<T, std::enable_if_t<is_shard_v<T>&& std::is_const_v<T>>>::Index(const Index& arg) :
+        id(arg.id), owner(arg.owner), value(arg.value)
+    {}
+
+    template<class T>
+    Index<T, std::enable_if_t<is_shard_v<T>&& std::is_const_v<T>>>::Index(Index&& arg) noexcept :
+        id(arg.id), owner(arg.owner), value(std::move(arg.value))
     {
-        return Index<T>(id, owner);
+        arg.id = nullRelicID;
+        arg.owner = nullptr;
+    }
+
+    template<class T>
+    auto Index<T, std::enable_if_t<is_shard_v<T>&& std::is_const_v<T>>>::operator=(const Index& arg) -> Index&
+    {
+        id = arg.id;
+        owner = arg.owner;
+        value = arg.value;
+        return *this;
+    }
+
+    template<class T>
+    auto Index<T, std::enable_if_t<is_shard_v<T>&& std::is_const_v<T>>>::operator=(Index&& arg) noexcept -> Index&
+    {
+        id = arg.id;
+        owner = arg.owner;
+        value = std::move(arg.value);
+        arg.id = nullRelicID;
+        arg.owner = nullptr;
+        return *this;
+    }
+
+    template<class T>
+    bool Index<T, std::enable_if_t<is_shard_v<T>&& std::is_const_v<T>>>::operator==(const Index& arg) const
+    {
+        return id == arg.id && owner == arg.owner;
+    }
+
+    template<class T>
+    bool Index<T, std::enable_if_t<is_shard_v<T>&& std::is_const_v<T>>>::operator!=(const Index& arg) const
+    {
+        return !(*this == arg);
+    }
+
+    template<class T>
+    Index<T, std::enable_if_t<is_shard_v<T>&& std::is_const_v<T>>>::operator bool() const
+    {
+        return Get() != nullptr;
+    }
+
+    template<class T>
+    Index<T, std::enable_if_t<is_shard_v<T>&& std::is_const_v<T>>>::operator Handle() const
+    {
+        return Handle{ id, TypeFor<T, std::enable_if_t<std::is_const_v<T>>>() };
+    }
+
+    template<class T>
+    Index<T, std::enable_if_t<is_shard_v<T>&& std::is_const_v<T>>>::operator Index<const T>() const
+    {
+        return Index<const T>(id, *owner, value);
+    }
+
+    template<class T>
+    auto Index<T, std::enable_if_t<is_shard_v<T>&& std::is_const_v<T>>>::operator*() const -> ValueT&
+    {
+        return *Get();
+    }
+
+    template<class T>
+    auto Index<T, std::enable_if_t<is_shard_v<T>&& std::is_const_v<T>>>::operator->() const -> ValueT*
+    {
+        return Get();
+    }
+
+    template<class T>
+    auto Index<T, std::enable_if_t<is_shard_v<T>&& std::is_const_v<T>>>::Get() const -> ValueT*
+    {
+        return value.lock().get();
+    }
+
+    template<class T>
+    RelicID Index<T, std::enable_if_t<is_shard_v<T>&& std::is_const_v<T>>>::ID() const
+    {
+        return id;
+    }
+
+    template<class T>
+    Reliquary* Index<T, std::enable_if_t<is_shard_v<T>&& std::is_const_v<T>>>::Owner() const
+    {
+        return owner;
     }
 }
 
 namespace Inscription
 {
     template<class T>
-    class Scribe<Arca::Index<T, std::enable_if_t<Arca::usable_for_shard_index_v<T>>>>
+    class Scribe<Arca::Index<T, std::enable_if_t<Arca::is_shard_v<T>>>>
     {
     public:
-        using ObjectT = Arca::Index<T, std::enable_if_t<Arca::usable_for_shard_index_v<T>>>;
+        using ObjectT = Arca::Index<T, std::enable_if_t<Arca::is_shard_v<T>>>;
     public:
         template<class Archive>
-        void Scriven(ObjectT& object, Archive& archive)
-        {
-            if (archive.IsOutput())
-            {
-                auto id = object.ID();
-                archive("id", id);
-            }
-            else
-            {
-                Arca::RelicID id;
-                archive("id", id);
-                object.id = id;
-
-                object.owner = archive.template UserContext<ReliquaryUserContext>()->reliquary;
-            }
-        }
+        void Scriven(ObjectT& object, Archive& archive);
     };
 
     template<class T, class Archive>
-    struct ScribeTraits<Arca::Index<T, std::enable_if_t<Arca::usable_for_shard_index_v<T>>>, Archive> final
+    struct ScribeTraits<Arca::Index<T, std::enable_if_t<Arca::is_shard_v<T>>>, Archive> final
     {
-        using Category = CompositeScribeCategory<Arca::Index<T, std::enable_if_t<Arca::usable_for_shard_index_v<T>>>>;
+        using Category = CompositeScribeCategory<Arca::Index<T, std::enable_if_t<Arca::is_shard_v<T>>>>;
     };
 }

@@ -45,6 +45,11 @@ namespace Arca
         Reliquary& operator=(const Reliquary& arg) = delete;
         Reliquary& operator=(Reliquary&& arg) noexcept = delete;
     public:
+        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>&& is_local_v<RelicT>, int> = 0>
+        [[nodiscard]] Index<RelicT> Find(RelicID id) const;
+        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>&& is_global_v<RelicT>, int> = 0>
+        [[nodiscard]] Index<RelicT> Find() const;
+
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
@@ -70,6 +75,9 @@ namespace Arca
         [[nodiscard]] SizeT RelicSize(const TypeName& typeName) const;
     public:
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        [[nodiscard]] Index<ShardT> Find(RelicID id) const;
+
+        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
@@ -84,6 +92,9 @@ namespace Arca
         [[nodiscard]] SizeT ShardSize() const;
         [[nodiscard]] SizeT ShardSize(const Type& type) const;
     public:
+        template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
+        [[nodiscard]] Index<MatrixT> Find(RelicID id) const;
+
         template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
         [[nodiscard]] bool Contains(RelicID id) const;
 
@@ -202,6 +213,18 @@ namespace Arca
         INSCRIPTION_ACCESS;
     };
 
+    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>&& is_local_v<RelicT>, int>>
+    Index<RelicT> Reliquary::Find(RelicID id) const
+    {
+        return relics.Find<RelicT>(id);
+    }
+
+    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>&& is_global_v<RelicT>, int>>
+    Index<RelicT> Reliquary::Find() const
+    {
+        return relics.Find<RelicT>();
+    }
+
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_local_v<RelicT>, int>>
     bool Reliquary::Contains(RelicID id) const
     {
@@ -233,6 +256,12 @@ namespace Arca
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
+    Index<ShardT> Reliquary::Find(RelicID id) const
+    {
+        return shards.Find<ShardT>(id);
+    }
+
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     bool Reliquary::Contains(RelicID id) const
     {
         return shards.Contains<ShardT>(id);
@@ -248,6 +277,13 @@ namespace Arca
     RelicID Reliquary::IDFor(const ShardT& shard) const
     {
         return shards.IDFor(shard);
+    }
+
+    template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int>>
+    Index<MatrixT> Reliquary::Find(RelicID id) const
+    {
+        auto& self = const_cast<Reliquary&>(*this);
+        return { id, self, MatrixImplementation<MatrixT>::CreateIndexValue(id, self) };
     }
 
     template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int>>
@@ -517,17 +553,17 @@ namespace Inscription
     };
 }
 
+#include "RelicInitDefinition.h"
+
 #include "RelicIndexDefinition.h"
 #include "MatrixIndexDefinition.h"
 #include "GlobalIndexDefinition.h"
 #include "ShardIndexDefinition.h"
 
-#include "RelicBatchSourceDefinition.h"
-#include "ShardBatchSourceDefinition.h"
-#include "MatrixBatchSourceDefinition.h"
 #include "KnownMatrixDefinition.h"
-#include "EitherImplementation.h"
-#include "AllImplementation.h"
+
+#include "All.h"
+#include "Either.h"
 
 #include "Create.h"
 #include "IdentifiedCreate.h"

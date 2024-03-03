@@ -342,7 +342,7 @@ SCENARIO_METHOD(CommandTestsFixture, "shard copy assignment", "[command]")
 
             reliquary->Do(Arca::AssignCopy<BasicShard>{created.ID(), integers[1], strings[1]});
 
-            auto shard = Arca::Index<BasicShard>(created.ID(), *reliquary);
+            auto shard = reliquary->Find<BasicShard>(created.ID());
 
             THEN("data changes")
             {
@@ -396,7 +396,7 @@ SCENARIO_METHOD(CommandTestsFixture, "shard move assignment", "[command]")
 
             reliquary->Do(Arca::AssignMove<BasicShard>{created.ID(), integers[1], strings[1]});
 
-            auto shard = Arca::Index<BasicShard>(created.ID(), *reliquary);
+            auto shard = reliquary->Find<BasicShard>(created.ID());
 
             THEN("data changes")
             {

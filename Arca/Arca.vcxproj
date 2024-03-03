@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AllImplementation.h" />
     <ClInclude Include="Assign.h" />
     <ClInclude Include="Assigned.h" />
     <ClInclude Include="Assigning.h" />
@@ -41,7 +40,6 @@
     <ClInclude Include="HasShardDefaultConstructor.h" />
     <ClInclude Include="HasShardSerializationConstructor.h" />
     <ClInclude Include="Destroy.h" />
-    <ClInclude Include="EitherImplementation.h" />
     <ClInclude Include="GlobalIndexDefinition.h" />
     <ClInclude Include="HandledCommands.h" />
     <ClInclude Include="HasCommandResult.h" />
@@ -55,6 +53,8 @@
     <ClInclude Include="IsSelfContained.h" />
     <ClInclude Include="OpenRelic.h" />
     <ClInclude Include="Relic.h" />
+    <ClInclude Include="RelicIndexDefinition.h" />
+    <ClInclude Include="RelicInitDefinition.h" />
     <ClInclude Include="ReliquaryUserContext.h" />
     <ClInclude Include="MatrixIndexDefinition.h" />
     <ClInclude Include="MutablePointer.h" />
@@ -72,16 +72,13 @@
     <ClInclude Include="MatrixBatch.h" />
     <ClInclude Include="MatrixBatchIterator.h" />
     <ClInclude Include="MatrixBatchSource.h" />
-    <ClInclude Include="MatrixBatchSourceDefinition.h" />
     <ClInclude Include="IsMatrixSignal.h" />
     <ClInclude Include="MatrixTypeForSignal.h" />
-    <ClInclude Include="RelicIndexDefinition.h" />
     <ClInclude Include="RelicInit.h" />
     <ClInclude Include="ReliquaryCommands.h" />
     <ClInclude Include="ReliquaryMatrices.h" />
     <ClInclude Include="SaveUserContext.h" />
     <ClInclude Include="SerializationConstructorMarker.h" />
-    <ClInclude Include="ShardBatchSourceDefinition.h" />
     <ClInclude Include="ShardBatchSource.h" />
     <ClInclude Include="ShardIndex.h" />
     <ClInclude Include="ShardIndexDefinition.h" />
@@ -98,9 +95,6 @@
     <ClInclude Include="Shard.h" />
     <ClInclude Include="ShardList.h" />
     <ClInclude Include="Signal.h" />
-    <ClInclude Include="UsableForRelicIndex.h" />
-    <ClInclude Include="UsableForShardIndex.h" />
-    <ClInclude Include="UsableInAll.h" />
     <ClInclude Include="Either.h" />
     <ClInclude Include="Batch.h" />
     <ClInclude Include="BatchSource.h" />
@@ -117,7 +111,6 @@
     <ClInclude Include="RelicBatchIterator.h" />
     <ClInclude Include="RelicBatchSource.h" />
     <ClInclude Include="Created.h" />
-    <ClInclude Include="RelicBatchSourceDefinition.h" />
     <ClInclude Include="RelicParented.h" />
     <ClInclude Include="ReliquaryCurators.h" />
     <ClInclude Include="ReliquaryRelics.h" />

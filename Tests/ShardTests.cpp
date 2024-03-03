@@ -85,7 +85,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
 
                 THEN("shard is destroyed")
                 {
-                    auto shard = Arca::Index<BasicShard>(relic.ID(), *reliquary);
+                    auto shard = reliquary->Find<BasicShard>(relic.ID());
                     REQUIRE(shard == nullptr);
                     REQUIRE(!shard);
                 }
@@ -101,7 +101,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
 
                     THEN("shard is destroyed")
                     {
-                        auto shard = Arca::Index<DifferentiableShard<0>>(relic.ID(), *reliquary);
+                        auto shard = reliquary->Find<DifferentiableShard<0>>(relic.ID());
                         REQUIRE(shard == nullptr);
                         REQUIRE(!shard);
                     }
@@ -130,7 +130,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
 
                 THEN("shard is destroyed")
                 {
-                    auto shard = Arca::Index<BasicShard>(relic.ID(), *reliquary);
+                    auto shard = reliquary->Find<BasicShard>(relic.ID());
                     REQUIRE(shard == nullptr);
                     REQUIRE(!shard);
                 }
@@ -146,7 +146,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
 
                     THEN("shard is destroyed")
                     {
-                        auto shard = Arca::Index<DifferentiableShard<0>>(relic.ID(), *reliquary);
+                        auto shard = reliquary->Find<DifferentiableShard<0>>(relic.ID());
                         REQUIRE(shard == nullptr);
                         REQUIRE(!shard);
                     }
@@ -226,9 +226,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
 
             WHEN("finding all shards by all")
             {
-                auto tuple =
-                    *Arca::Index<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(
-                        relic.ID(), *reliquary);
+                auto tuple = *reliquary->Find<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(relic.ID());
 
                 THEN("tuple shards are equal to created")
                 {
@@ -247,8 +245,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
 
             WHEN("finding two shards by all")
             {
-                auto tuple = *Arca::Index<All<DifferentiableShard<1>, DifferentiableShard<2>>>(
-                    relic.ID(), *reliquary);
+                auto tuple = *reliquary->Find<All<DifferentiableShard<1>, DifferentiableShard<2>>>(relic.ID());
 
                 THEN("tuple shards are equal to created")
                 {
@@ -419,8 +416,8 @@ SCENARIO_METHOD(ShardTestsFixture, "either signals", "[either][signal]")
         WHEN("creating open relic and non-const shard")
         {
             const auto relic = reliquary->Do(Create<OpenRelic>());
-            auto shard = reliquary->Do(Create<BasicShard>(relic.ID()));
-            auto shardHandle = AsHandle<BasicShard>(shard.ID());
+            auto shard = reliquary->Do(Create<BasicShard>(relic.ID())).Get();
+            auto shardHandle = AsHandle<BasicShard>(relic.ID());
 
             THEN("signal is emitted for known shard")
             {
@@ -454,8 +451,8 @@ SCENARIO_METHOD(ShardTestsFixture, "either signals", "[either][signal]")
         WHEN("creating open relic and const shard")
         {
             const auto relic = reliquary->Do(Create<OpenRelic>());
-            auto shard = reliquary->Do(Create<const BasicShard>(relic.ID()));
-            auto shardHandle = AsHandle<const BasicShard>(shard.ID());
+            auto shard = reliquary->Do(Create<const BasicShard>(relic.ID())).Get();
+            auto shardHandle = AsHandle<const BasicShard>(relic.ID());
 
             THEN("signal is emitted for known shard")
             {

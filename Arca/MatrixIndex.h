@@ -18,8 +18,7 @@ namespace Arca
         using OptionalValueT = typename MatrixImplementation<T>::IndexOptional;
     public:
         Index() = default;
-        Index(RelicID id, Reliquary* owner);
-        Index(RelicID id, Reliquary& owner);
+        Index(RelicID id, Reliquary& owner, OptionalValueT value);
         Index(const Index& arg);
         Index(Index&& arg) noexcept;
 
@@ -43,8 +42,7 @@ namespace Arca
     private:
         RelicID id = nullRelicID;
         Reliquary* owner = nullptr;
-    private:
-        [[nodiscard]] OptionalValueT FindValueFromOwner() const;
+        OptionalValueT value;
     private:
         INSCRIPTION_ACCESS;
     };

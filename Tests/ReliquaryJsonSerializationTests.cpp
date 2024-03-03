@@ -120,8 +120,8 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 inputArchive("reliquary", *loadedReliquary);
             }
 
-            auto loadedRelic = Arca::Index<OpenRelic>(savedRelic.ID(), *loadedReliquary);
-            auto shardFromRelic = Arca::Index<BasicShard>(loadedRelic.ID(), *loadedReliquary);
+            auto loadedRelic = loadedReliquary->Find<OpenRelic>(savedRelic.ID());
+            auto shardFromRelic = loadedReliquary->Find<BasicShard>(loadedRelic.ID());
 
             THEN("has relic")
             {
@@ -132,7 +132,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
 
             THEN("relic has shard")
             {
-                auto shardFromReliquary = Arca::Index<BasicShard>(loadedRelic.ID(), *loadedReliquary);
+                auto shardFromReliquary = loadedReliquary->Find<BasicShard>(loadedRelic.ID());
                 REQUIRE(shardFromReliquary);
                 REQUIRE(shardFromRelic);
             }
@@ -159,7 +159,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 inputArchive("reliquary", *loadedReliquary);
             }
 
-            auto loadedRelic = Arca::Index<OpenRelic>(savedRelic.ID(), *loadedReliquary);
+            auto loadedRelic = loadedReliquary->Find<OpenRelic>(savedRelic.ID());
 
             THEN("has relic")
             {
@@ -170,7 +170,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
 
             THEN("relic does not have shard")
             {
-                REQUIRE_THROWS_AS(Arca::Index<BasicShard>(loadedRelic.ID(), *loadedReliquary).Get(), NotRegistered);
+                REQUIRE_THROWS_AS(loadedReliquary->Find<BasicShard>(loadedRelic.ID()).Get(), NotRegistered);
             }
 
             THEN("relic id is saved id")
@@ -191,8 +191,8 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 inputArchive("reliquary", *loadedReliquary);
             }
 
-            auto loadedRelic = Arca::Index<OpenRelic>(savedRelic.ID(), *loadedReliquary);
-            auto shardFromRelic = Arca::Index<BasicShardWithDifferentInputHandle>(loadedRelic.ID(), *loadedReliquary);
+            auto loadedRelic = loadedReliquary->Find<OpenRelic>(savedRelic.ID());
+            auto shardFromRelic = loadedReliquary->Find<BasicShardWithDifferentInputHandle>(loadedRelic.ID());
 
             THEN("has relic")
             {
@@ -203,8 +203,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
 
             THEN("relic has shard")
             {
-                auto shardFromReliquary =
-                    Arca::Index<BasicShardWithDifferentInputHandle>(loadedRelic.ID(), *loadedReliquary);
+                auto shardFromReliquary = loadedReliquary->Find<BasicShardWithDifferentInputHandle>(loadedRelic.ID());
                 REQUIRE(shardFromReliquary);
                 REQUIRE(shardFromRelic);
             }
@@ -231,7 +230,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
             .Register<GlobalRelic>(relicData, shardData)
             .Actualize();
 
-        auto savedRelic = Arca::Index<GlobalRelic>(*savedReliquary);
+        auto savedRelic = savedReliquary->Find<GlobalRelic>();
 
         {
             auto outputArchive = ::Inscription::Archive::OutputJson("Test.json");
@@ -250,7 +249,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 inputArchive("reliquary", *loadedReliquary);
             }
 
-            auto loadedRelic = Arca::Index<GlobalRelic>(*loadedReliquary);
+            auto loadedRelic = loadedReliquary->Find<GlobalRelic>();
 
             THEN("loaded relic has value of saved")
             {
@@ -290,7 +289,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 inputArchive("reliquary", *loadedReliquary);
             }
 
-            auto loadedRelic = Arca::Index<LocalRelic>(savedRelic.ID(), *loadedReliquary);
+            auto loadedRelic = loadedReliquary->Find<LocalRelic>(savedRelic.ID());
 
             THEN("loaded relic has value of saved")
             {
@@ -332,7 +331,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
                 inputArchive("reliquary", *loadedReliquary);
             }
 
-            auto loadedRelic = Arca::Index<MovableOnlyRelic>(savedRelic.ID(), *loadedReliquary);
+            auto loadedRelic = loadedReliquary->Find<MovableOnlyRelic>(savedRelic.ID());
 
             THEN("loaded relic has value of saved")
             {
@@ -442,14 +441,11 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "preferential json seria
                 inputArchive("reliquary", *loadedReliquary);
             }
 
-            auto loadedRelic = Arca::Index<PreferentialSerializationConstructorRelic1>(
-                savedRelic.ID(), *loadedReliquary);
+            auto loadedRelic = loadedReliquary->Find<PreferentialSerializationConstructorRelic1>(savedRelic.ID());
 
-            auto loadedOpenRelic = Arca::Index<OpenRelic>(
-                openRelic.ID(), *loadedReliquary);
+            auto loadedOpenRelic = loadedReliquary->Find<OpenRelic>(openRelic.ID());
 
-            auto loadedShard = Arca::Index<PreferentialSerializationConstructorShard>(
-                loadedOpenRelic.ID(), *loadedReliquary);
+            auto loadedShard = loadedReliquary->Find<PreferentialSerializationConstructorShard>(loadedOpenRelic.ID());
 
             THEN("loaded relic used preferential constructor")
             {
@@ -476,7 +472,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
             .Register<GlobalRelicNullInscription<BasicShardNullInscription>>(relicData, shardData)
             .Actualize();
 
-        auto savedRelic = Arca::Index<GlobalRelicNullInscription<BasicShardNullInscription>>(*savedReliquary);
+        auto savedRelic = savedReliquary->Find<GlobalRelicNullInscription<BasicShardNullInscription>>();
 
         {
             auto outputArchive = ::Inscription::Archive::OutputJson("Test.json");
@@ -495,7 +491,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
                 inputArchive("reliquary", *loadedReliquary);
             }
 
-            auto loadedRelic = Arca::Index<GlobalRelicNullInscription<BasicShardNullInscription>>(*loadedReliquary);
+            auto loadedRelic = loadedReliquary->Find<GlobalRelicNullInscription<BasicShardNullInscription>>();
 
             THEN("loaded relic does not have saved value")
             {
@@ -520,7 +516,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
             .Register<GlobalRelicNullInscription<BasicShard>>(relicData, shardData)
             .Actualize();
 
-        auto savedRelic = Arca::Index<GlobalRelicNullInscription<BasicShard>>(*savedReliquary);
+        auto savedRelic = savedReliquary->Find<GlobalRelicNullInscription<BasicShard>>();
 
         {
             auto outputArchive = ::Inscription::Archive::OutputJson("Test.dat");
@@ -542,7 +538,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
                 inputArchive("reliquary", *loadedReliquary);
             }
 
-            auto loadedRelic = Arca::Index<GlobalRelicNullInscription<BasicShard>>(*loadedReliquary);
+            auto loadedRelic = loadedReliquary->Find<GlobalRelicNullInscription<BasicShard>>();
 
             THEN("loaded relic does not have saved value")
             {
@@ -593,8 +589,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "null reliquary json ser
                 inputArchive("reliquary", *loadedReliquary);
             }
 
-            auto loadedRelic = Arca::Index<LocalRelicNullInscription<BasicShardNullInscription>>(
-                savedRelic.ID(), *loadedReliquary);
+            auto loadedRelic = loadedReliquary->Find<LocalRelicNullInscription<BasicShardNullInscription>>(savedRelic.ID());
 
             THEN("loaded relic exists")
             {
@@ -715,7 +710,7 @@ SCENARIO_METHOD(
                 inputArchive("reliquary", *loadedReliquary);
             }
 
-            const auto loadedRelic = Arca::Index<NonDefaultConstructorRelic>(savedRelic.ID(), *loadedReliquary);
+            const auto loadedRelic = loadedReliquary->Find<NonDefaultConstructorRelic>(savedRelic.ID());
 
             THEN("has loaded relic")
             {

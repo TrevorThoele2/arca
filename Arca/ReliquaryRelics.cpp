@@ -36,8 +36,11 @@ namespace Arca
 
     void ReliquaryRelics::Clear(const TypeName& typeName)
     {
-        auto& batchSource = RequiredBatchSource(typeName);
-        batchSource.DestroyAllFromBase(*owner);
+        auto localHandler = FindLocalHandler(typeName);
+        if (localHandler)
+            localHandler->Clear(*this);
+        else
+            throw NotRegistered(objectTypeName, Type{ typeName, false });
     }
 
     bool ReliquaryRelics::Contains(RelicID id) const
@@ -131,9 +134,8 @@ namespace Arca
             {
                 return metadata.id == id;
             });
-        if (itr == metadataList.end())
-            return;
-        metadataList.erase(itr);
+        if (itr != metadataList.end())
+            metadataList.erase(itr);
     }
 
     auto ReliquaryRelics::MetadataFor(RelicID id) -> RelicMetadata*
@@ -258,19 +260,13 @@ namespace Arca
             {
                 return entry->typeName == typeName;
             });
-        if (found == localHandlers.end())
-            return nullptr;
-
-        return found->get();
+        return found == localHandlers.end() ? nullptr : found->get();
     }
 
     RelicBatchSourceBase* ReliquaryRelics::FindBatchSource(const TypeName& typeName) const
     {
         const auto found = FindLocalHandler(typeName);
-        if (found == nullptr)
-            return nullptr;
-
-        return &found->BatchSource();
+        return found == nullptr ? nullptr : &found->BatchSource();
     }
 
     RelicBatchSourceBase& ReliquaryRelics::RequiredBatchSource(const TypeName& typeName) const
@@ -304,10 +300,7 @@ namespace Arca
             {
                 return entry->typeName == typeName;
             });
-        if (found == globalHandlers.end())
-            return nullptr;
-
-        return found->get();
+        return found == globalHandlers.end() ? nullptr : found->get();
     }
 
     RelicMetadata& ReliquaryRelics::ValidateParentForParenting(const Handle& parent)

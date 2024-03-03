@@ -67,9 +67,7 @@ SCENARIO_METHOD(AllTestsFixture, "all", "[all]")
 
                 THEN("contains all")
                 {
-                    auto index = Arca::Index<
-                        All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(
-                            relic.ID(), *reliquary);
+                    auto index = reliquary->Find<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(relic.ID());
                     REQUIRE(index);
                 }
 
@@ -128,9 +126,7 @@ SCENARIO_METHOD(AllTestsFixture, "OpenRelic all", "[OpenRelic][all]")
 
             THEN("contains all")
             {
-                auto index = Arca::Index<
-                    All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(
-                        relic.ID(), *reliquary);
+                auto index = reliquary->Find<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(relic.ID());
                 REQUIRE(index);
             }
 
@@ -140,9 +136,7 @@ SCENARIO_METHOD(AllTestsFixture, "OpenRelic all", "[OpenRelic][all]")
 
                 THEN("does not contain all")
                 {
-                    auto index = Arca::Index<
-                        All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(
-                            relic.ID(), *reliquary);
+                    auto index = reliquary->Find<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(relic.ID());
                     REQUIRE(!index);
                 }
             }
@@ -153,9 +147,7 @@ SCENARIO_METHOD(AllTestsFixture, "OpenRelic all", "[OpenRelic][all]")
 
                 THEN("contains all")
                 {
-                    auto index = Arca::Index<
-                        All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(
-                            relic.ID(), *reliquary);
+                    auto index = reliquary->Find<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(relic.ID());
                     REQUIRE(index);
                 }
 
@@ -165,9 +157,7 @@ SCENARIO_METHOD(AllTestsFixture, "OpenRelic all", "[OpenRelic][all]")
 
                     THEN("contains all")
                     {
-                        auto index = Arca::Index<
-                            All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(
-                                relic.ID(), *reliquary);
+                        auto index = reliquary->Find<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(relic.ID());
                         REQUIRE(index);
                     }
                 }
@@ -184,9 +174,7 @@ SCENARIO_METHOD(AllTestsFixture, "OpenRelic all", "[OpenRelic][all]")
             THEN("irrelevant relic does not contain all")
             {
                 auto irrelevant = reliquary->Do(Create<OpenRelic>{});
-                auto index = Arca::Index<
-                    All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(
-                        irrelevant.ID(), *reliquary);
+                auto index = reliquary->Find<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(irrelevant.ID());
                 REQUIRE(!index);
             }
         }

@@ -49,7 +49,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
 
         WHEN("finding relic")
         {
-            auto found = Arca::Index<OpenRelic>(1, *reliquary);
+            auto found = reliquary->Find<OpenRelic>(1);
 
             THEN("is empty")
             {
@@ -118,7 +118,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary wih single shard")
 
             THEN("finding either shard gives correct")
             {
-                auto found = Arca::Index<Either<BasicShard>>(relic.ID(), *relic.Owner());
+                auto found = relic.Owner()->Find<Either<BasicShard>>(relic.ID());
                 REQUIRE(found);
                 REQUIRE(&*found == &*shard);
             }
@@ -147,7 +147,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "creating relic from registered relic str
 
             THEN("relic has shard")
             {
-                REQUIRE(Arca::Index<BasicShard>(relic.ID(), *reliquary));
+                REQUIRE(reliquary->Find<BasicShard>(relic.ID()));
             }
         }
 

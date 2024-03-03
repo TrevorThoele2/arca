@@ -64,13 +64,14 @@ namespace Arca
                         auto storage = relics.FindStorage<T>(id);
                         if (!storage)
                             throw CannotFind("relic", TypeFor<T>());
-                        
-                        signals.Raise(AssigningKnown<T>{ Index<T> { id, reliquary }});
+
+                        const auto index = relics.Find<T>(id);
+                        signals.Raise(AssigningKnown<T>{ index });
                         shards.Clear(id);
                         Impl<T>(*storage, RelicInit{ id, reliquary, shards }, std::forward<Args>(args)...);
-                        signals.Raise(AssignedKnown<T>{ Index<T> { id, reliquary }});
+                        signals.Raise(AssignedKnown<T>{ index });
 
-                        return Index<T>(id, reliquary);
+                        return index;
                     }, std::move(args));
             }
         private:
@@ -157,12 +158,13 @@ namespace Arca
                         auto storage = shards.FindStorage<T>(id);
                         if (!storage)
                             throw CannotFind("shard", TypeFor<T>());
-                        
-                        signals.Raise(AssigningKnown<T>{ Index<T> { id, reliquary }});
-                        *storage = T{ std::forward<Args>(args)... };
-                        signals.Raise(AssignedKnown<T>{ Index<T> { id, reliquary }});
 
-                        return Index<T>(id, reliquary);
+                        const auto index = shards.Find<T>(id);
+                        signals.Raise(AssigningKnown<T>{ index });
+                        *storage = T{ std::forward<Args>(args)... };
+                        signals.Raise(AssignedKnown<T>{ index });
+
+                        return index;
                     }, std::move(args));
             }
         private:
@@ -232,13 +234,14 @@ namespace Arca
                         auto storage = relics.FindStorage<T>(id);
                         if (!storage)
                             throw CannotFind("relic", TypeFor<T>());
-                        
-                        signals.Raise(AssigningKnown<T>{ Index<T> { id, reliquary }});
+
+                        const auto index = reliquary.Find<T>(id);
+                        signals.Raise(AssigningKnown<T>{ index });
                         shards.Clear(id);
                         Impl<T>(*storage, RelicInit{ id, reliquary, shards }, std::forward<Args>(args)...);
-                        signals.Raise(AssignedKnown<T>{ Index<T> { id, reliquary }});
+                        signals.Raise(AssignedKnown<T>{ index });
 
-                        return Index<T>(id, reliquary);
+                        return index;
                     }, std::move(args));
             }
         private:
@@ -325,12 +328,13 @@ namespace Arca
                         auto storage = shards.FindStorage<T>(id);
                         if (!storage)
                             throw CannotFind("shard", TypeFor<T>());
-                        
-                        signals.Raise(AssigningKnown<T>{ Index<T> { id, reliquary }});
-                        *storage = std::move(T{ std::forward<Args>(args)... });
-                        signals.Raise(AssignedKnown<T>{ Index<T> { id, reliquary }});
 
-                        return Index<T>(id, reliquary);
+                        const auto index = shards.Find<T>(id);
+                        signals.Raise(AssigningKnown<T>{ index });
+                        *storage = std::move(T{ std::forward<Args>(args)... });
+                        signals.Raise(AssignedKnown<T>{ index });
+
+                        return index;
                     }, std::move(args));
             }
         private:
