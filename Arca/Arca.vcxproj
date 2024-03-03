@@ -33,11 +33,11 @@
     <ClInclude Include="CreateChildWith.h" />
     <ClInclude Include="CreateWith.h" />
     <ClInclude Include="CuratorInit.h" />
+    <ClInclude Include="HandleObjectType.h" />
     <ClInclude Include="HasRelicDefaultConstructor.h" />
     <ClInclude Include="HasRelicSerializationConstructor.h" />
     <ClInclude Include="HasShardDefaultConstructor.h" />
     <ClInclude Include="HasShardSerializationConstructor.h" />
-    <ClInclude Include="ReliquaryDependencies.h" />
     <ClInclude Include="Destroy.h" />
     <ClInclude Include="EitherDefinition.h" />
     <ClInclude Include="EitherImplementation.h" />
@@ -73,7 +73,6 @@
     <ClInclude Include="RelicInitDefinition.h" />
     <ClInclude Include="ReliquaryCommands.h" />
     <ClInclude Include="ReliquaryCommandsDefinition.h" />
-    <ClInclude Include="ReliquaryDependencyAlreadyAdded.h" />
     <ClInclude Include="ReliquaryMatrices.h" />
     <ClInclude Include="ReliquaryMatricesDefinition.h" />
     <ClInclude Include="SerializationConstructorMarker.h" />
@@ -159,17 +158,13 @@
     <ClInclude Include="RelicMetadata.h" />
     <ClInclude Include="RelicStructure.h" />
     <ClInclude Include="TypeFor.h" />
-    <ClInclude Include="TypeScribe.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CannotFindReliquaryDependency.cpp" />
-    <ClCompile Include="ReliquaryDependencies.cpp" />
-    <ClCompile Include="InscriptionUserContext.cpp" />
     <ClCompile Include="KnownMatrix.cpp" />
     <ClCompile Include="MatrixBatchSource.cpp" />
     <ClCompile Include="MutablePointer.cpp" />
     <ClCompile Include="ReliquaryCommands.cpp" />
-    <ClCompile Include="ReliquaryDependencyAlreadyAdded.cpp" />
     <ClCompile Include="ReliquaryMatrices.cpp" />
     <ClCompile Include="ClosedRelic.cpp" />
     <ClCompile Include="HandleSlim.cpp" />
@@ -195,7 +190,6 @@
     <ClCompile Include="OpenRelic.cpp" />
     <ClCompile Include="RelicMetadata.cpp" />
     <ClCompile Include="Type.cpp" />
-    <ClCompile Include="TypeScribe.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

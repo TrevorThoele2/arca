@@ -2,15 +2,12 @@
 
 #include "RelicID.h"
 #include "Type.h"
+#include "HandleObjectType.h"
+
+#include "Serialization.h"
 
 namespace Arca
 {
-    enum class HandleObjectType
-    {
-        Relic,
-        Shard
-    };
-
     class HandleSlim
     {
     public:
@@ -27,5 +24,18 @@ namespace Arca
         RelicID id = 0;
         Arca::Type type;
         HandleObjectType objectType = HandleObjectType::Relic;
+    private:
+        INSCRIPTION_ACCESS;
+    };
+}
+
+namespace Inscription
+{
+    template<>
+    class Scribe<Arca::HandleSlim, BinaryArchive> final :
+        public CompositeScribe<Arca::HandleSlim, BinaryArchive>
+    {
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
     };
 }

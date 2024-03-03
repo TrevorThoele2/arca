@@ -57,6 +57,25 @@ namespace Arca
             HandleObjectType::Relic);
     }
 
+    bool ReliquaryRelics::IsRelicTypeName(const TypeName& typeName) const
+    {
+        for (auto& checkTypeName : AllTypeNames())
+            if (checkTypeName == typeName)
+                return true;
+
+        return false;
+    }
+
+    std::vector<TypeName> ReliquaryRelics::AllTypeNames() const
+    {
+        std::vector<TypeName> returnValue;
+        for (auto& handler : localHandlers)
+            returnValue.push_back(handler->MainType());
+        for (auto& handler : globalHandlers)
+            returnValue.push_back(handler->MainType());
+        return returnValue;
+    }
+
     RelicMetadata* ReliquaryRelics::SetupNewInternals(
         RelicID id,
         Openness openness,

@@ -76,7 +76,7 @@
     <ClCompile Include="DifferentiableCurator.cpp">
       <Filter>Source Files\Data</Filter>
     </ClCompile>
-    <ClCompile Include="ReliquaryDependenciesTests.cpp">
+    <ClCompile Include="TypeTests.cpp">
       <Filter>Source Files\Tests</Filter>
     </ClCompile>
   </ItemGroup>
@@ -156,11 +156,11 @@
     <ClInclude Include="DifferentiableCurator.h">
       <Filter>Header Files\Data</Filter>
     </ClInclude>
-    <ClInclude Include="ReliquaryDependenciesTests.h">
-      <Filter>Header Files\Tests</Filter>
-    </ClInclude>
     <ClInclude Include="SignalListener.h">
       <Filter>Header Files\Automation</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeTests.h">
+      <Filter>Header Files\Tests</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

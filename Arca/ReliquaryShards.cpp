@@ -37,7 +37,7 @@ namespace Arca
     {
         auto matrixSnapshot = Owner().matrices.DestroyingSnapshot(id);
 
-        for (auto& handler : Shards().handlers)
+        for (auto& handler : handlers)
         {
             if (handler->BatchSource().ContainsFromBase(id))
             {
@@ -54,7 +54,7 @@ namespace Arca
             }
         }
 
-        for (auto& handler : Shards().handlers)
+        for (auto& handler : handlers)
         {
             if (handler->BatchSource().ContainsFromBase(id))
                 handler->BatchSource().DestroyFromBase(id);
@@ -62,6 +62,23 @@ namespace Arca
             if (handler->ConstBatchSource().ContainsFromBase(id))
                 handler->ConstBatchSource().DestroyFromBase(id);
         }
+    }
+
+    bool ReliquaryShards::IsShardTypeName(const TypeName& typeName) const
+    {
+        for (auto& checkTypeName : AllTypeNames())
+            if (checkTypeName == typeName)
+                return true;
+
+        return false;
+    }
+
+    std::vector<TypeName> ReliquaryShards::AllTypeNames() const
+    {
+        std::vector<TypeName> returnValue;
+        for (auto& handler : handlers)
+            returnValue.push_back(handler->MainType());
+        return returnValue;
     }
 
     bool ReliquaryShards::Contains(const Handle& handle) const

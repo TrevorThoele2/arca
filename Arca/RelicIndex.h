@@ -83,10 +83,6 @@ namespace Inscription
             {
                 auto id = object.ID();
                 archive(id);
-
-                auto context = archive.template UserContext<Arca::InscriptionUserContext>();
-                auto reliquaryID = context->IDFor(object.Owner());
-                archive(reliquaryID);
             }
             else
             {
@@ -97,8 +93,7 @@ namespace Inscription
                 int reliquaryID;
                 archive(reliquaryID);
 
-                auto context = archive.template UserContext<Arca::InscriptionUserContext>();
-                object.owner = context->ReliquaryFor(reliquaryID);
+                object.owner = archive.template UserContext<Arca::InscriptionUserContext>()->reliquary;
             }
         }
     };

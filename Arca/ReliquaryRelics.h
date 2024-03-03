@@ -60,6 +60,9 @@ namespace Arca
         [[nodiscard]] RelicID IDFor(const RelicT& relic) const;
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT> && is_global_v<RelicT>, int> = 0>
         [[nodiscard]] RelicID IDFor() const;
+
+        [[nodiscard]] bool IsRelicTypeName(const TypeName& typeName) const;
+        [[nodiscard]] std::vector<TypeName> AllTypeNames() const;
     public:
         struct RelicPrototype
         {

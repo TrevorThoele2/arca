@@ -16,6 +16,7 @@ public:
 
     class TypedRelic;
     class GlobalRelic;
+    class HandleHolder;
 
     class Curator;
 
@@ -51,6 +52,13 @@ namespace Arca
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "HandleTestsGlobalRelic";
         static const Locality locality = Locality::Global;
+    };
+
+    template<>
+    struct Traits<::HandleTestsFixture::HandleHolder>
+    {
+        static const ObjectType objectType = ObjectType::Relic;
+        static inline const TypeName typeName = "HandleTestsHandleHolder";
     };
 
     template<>
@@ -102,6 +110,15 @@ public:
     explicit GlobalRelic(Init init);
 };
 
+class HandleTestsFixture::HandleHolder final : public ClosedTypedRelic<HandleHolder>
+{
+public:
+    Handle handle;
+public:
+    explicit HandleHolder(Init init);
+    explicit HandleHolder(Init init, Handle handle);
+};
+
 class HandleTestsFixture::Curator final : public Arca::Curator
 {
 public:
@@ -144,6 +161,17 @@ namespace Inscription
     class Scribe<::HandleTestsFixture::GlobalRelic, BinaryArchive> final
         : public ArcaNullScribe<::HandleTestsFixture::GlobalRelic, BinaryArchive>
     {};
+
+    template<>
+    class Scribe<::HandleTestsFixture::HandleHolder, BinaryArchive> final
+        : public ArcaCompositeScribe<::HandleTestsFixture::HandleHolder, BinaryArchive>
+    {
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        {
+            archive(object.handle);
+        }
+    };
 
     template<>
     class Scribe<::HandleTestsFixture::Curator, BinaryArchive> final

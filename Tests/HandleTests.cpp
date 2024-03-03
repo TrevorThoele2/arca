@@ -21,6 +21,13 @@ HandleTestsFixture::GlobalRelic::GlobalRelic(Init init) : ClosedTypedRelic(init)
     basicShard = Create<Shard>();
 }
 
+HandleTestsFixture::HandleHolder::HandleHolder(Init init) : ClosedTypedRelic(init)
+{}
+
+HandleTestsFixture::HandleHolder::HandleHolder(Init init, Handle handle) :
+    ClosedTypedRelic(init), handle(handle)
+{}
+
 SCENARIO_METHOD(HandleTestsFixture, "basic handle", "[handle]")
 {
     GIVEN("registered reliquary")
@@ -613,6 +620,95 @@ SCENARIO_METHOD(HandleTestsFixture, "handle actualizations combinations", "[hand
             {
                 auto actualized = Actualize<ClosedRelic>(handle);
                 REQUIRE(actualized);
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(HandleTestsFixture, "handle serialization", "[handle][serialization]")
+{
+    GIVEN("relic registered")
+    {
+        auto savedReliquary = ReliquaryOrigin()
+            .Register<Shard>()
+            .Register<TypedRelic>()
+            .Register<HandleHolder>()
+            .Actualize();
+
+        const auto index = savedReliquary->Do(Arca::Create<TypedRelic>());
+        const auto savedHandleHolder = savedReliquary->Do(Arca::Create<HandleHolder>(static_cast<Handle>(index)));
+
+        WHEN("saving handle")
+        {
+            {
+                auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+                outputArchive(*savedReliquary);
+            }
+
+            THEN("loading handle contains same information")
+            {
+                auto loadedReliquary = ReliquaryOrigin()
+                    .Register<Shard>()
+                    .Register<TypedRelic>()
+                    .Register<HandleHolder>()
+                    .Actualize();
+
+                {
+                    auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                    inputArchive(*loadedReliquary);
+                }
+
+                auto loadedHandleHolder = Arca::Index<HandleHolder>(
+                    savedHandleHolder.ID(), *loadedReliquary);
+
+                REQUIRE(loadedHandleHolder->handle.ID() == savedHandleHolder->handle.ID());
+                REQUIRE(loadedHandleHolder->handle.Type() == savedHandleHolder->handle.Type());
+                REQUIRE(&loadedHandleHolder->handle.Owner() == loadedReliquary.get());
+                REQUIRE(loadedHandleHolder->handle.ObjectType() == savedHandleHolder->handle.ObjectType());
+            }
+        }
+    }
+
+    GIVEN("shard registered")
+    {
+        auto savedReliquary = ReliquaryOrigin()
+            .Register<Shard>()
+            .Register<HandleHolder>()
+            .Actualize();
+
+        const auto relic = savedReliquary->Do(Arca::Create<OpenRelic>());
+        auto index = relic->Create<Shard>();
+        const auto savedHandleHolder = savedReliquary->Do(Arca::Create<HandleHolder>(index));
+
+        WHEN("saving handle")
+        {
+            {
+                auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+                outputArchive(*savedReliquary);
+            }
+
+            THEN("loading handle contains same information")
+            {
+                auto loadedReliquary = ReliquaryOrigin()
+                    .Register<Shard>()
+                    .Register<TypedRelic>()
+                    .Register<HandleHolder>()
+                    .Actualize();
+
+                Handle loadedHandle;
+
+                {
+                    auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                    inputArchive(*loadedReliquary);
+                }
+
+                auto loadedHandleHolder = Arca::Index<HandleHolder>(
+                    savedHandleHolder.ID(), *loadedReliquary);
+
+                REQUIRE(loadedHandleHolder->handle.ID() == savedHandleHolder->handle.ID());
+                REQUIRE(loadedHandleHolder->handle.Type() == savedHandleHolder->handle.Type());
+                REQUIRE(&loadedHandleHolder->handle.Owner() == loadedReliquary.get());
+                REQUIRE(loadedHandleHolder->handle.ObjectType() == savedHandleHolder->handle.ObjectType());
             }
         }
     }

@@ -134,8 +134,7 @@ namespace Inscription
                 archive(id);
                 object.id = id;
 
-                auto context = archive.template UserContext<Arca::InscriptionUserContext>();
-                object.owner = context->reliquary;
+                object.owner = archive.template UserContext<Arca::InscriptionUserContext>()->reliquary;
             }
         }
     };

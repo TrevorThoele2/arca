@@ -40,6 +40,9 @@ namespace Arca
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] RelicID IDFor(const ShardT& shard) const;
 
+        [[nodiscard]] bool IsShardTypeName(const TypeName& typeName) const;
+        [[nodiscard]] std::vector<TypeName> AllTypeNames() const;
+
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] ShardT* FindStorage(RelicID id);
     public:

@@ -4,6 +4,8 @@
 #include "Type.h"
 #include "HandleSlim.h"
 
+#include "Serialization.h"
+
 namespace Arca
 {
     class Reliquary;
@@ -28,5 +30,18 @@ namespace Arca
         Reliquary* owner = nullptr;
         Arca::Type type;
         HandleObjectType objectType = HandleObjectType::Relic;
+    private:
+        INSCRIPTION_ACCESS;
+    };
+}
+
+namespace Inscription
+{
+    template<>
+    class Scribe<Arca::Handle, BinaryArchive> final :
+        public CompositeScribe<Arca::Handle, BinaryArchive>
+    {
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
     };
 }
