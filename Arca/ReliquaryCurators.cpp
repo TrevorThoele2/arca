@@ -16,6 +16,11 @@ namespace Arca
         return const_cast<ReliquaryCurators&>(*this).Find(type);
     }
 
+    TypeName ReliquaryCurators::HandlerBase::MainType() const
+    {
+        return typeName;
+    }
+
     ReliquaryCurators::HandlerBase::~HandlerBase() = default;
 
     ReliquaryCurators::HandlerBase::HandlerBase(const TypeName& typeName) : typeName(typeName)

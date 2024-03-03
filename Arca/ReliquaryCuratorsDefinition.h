@@ -45,6 +45,24 @@ namespace Arca
         return curator;
     }
 
+    template<class CuratorT>
+    bool ReliquaryCurators::Handler<CuratorT>::WillSerialize() const
+    {
+        return HasScribe<CuratorT>();
+    }
+
+    template<class CuratorT>
+    void ReliquaryCurators::Handler<CuratorT>::Serialize(Inscription::BinaryArchive& archive)
+    {
+        archive(curator);
+    }
+
+    template<class CuratorT>
+    std::vector<::Inscription::Type> ReliquaryCurators::Handler<CuratorT>::InscriptionTypes(Inscription::BinaryArchive& archive) const
+    {
+        return ::Inscription::InputTypesFor<CuratorT>(archive);
+    }
+
     template<class CuratorT, class... Args, std::enable_if_t<is_curator_v<CuratorT>, int>>
     void ReliquaryCurators::CreateHandler(Args && ... args)
     {

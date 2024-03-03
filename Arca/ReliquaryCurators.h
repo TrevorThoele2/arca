@@ -26,7 +26,7 @@ namespace Arca
         template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int> = 0>
         [[nodiscard]] const CuratorT& Find() const;
     public:
-        class HandlerBase
+        class HandlerBase : public KnownPolymorphicSerializer
         {
         public:
             const TypeName typeName;
@@ -34,6 +34,8 @@ namespace Arca
             virtual ~HandlerBase() = 0;
 
             virtual Curator& Value() = 0;
+        public:
+            [[nodiscard]] TypeName MainType() const override;
         protected:
             explicit HandlerBase(const TypeName& typeName);
         };
@@ -48,6 +50,10 @@ namespace Arca
             explicit Handler(Args&& ... args);
 
             Curator& Value() override;
+
+            [[nodiscard]] bool WillSerialize() const override;
+            void Serialize(Inscription::BinaryArchive& archive) override;
+            [[nodiscard]] std::vector<::Inscription::Type> InscriptionTypes(Inscription::BinaryArchive& archive) const override;
         };
 
         using HandlerPtr = std::unique_ptr<HandlerBase>;

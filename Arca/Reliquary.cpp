@@ -138,6 +138,7 @@ namespace Inscription
         auto shardSerializers = ToKnownPolymorphicSerializerList(object.shards.handlers);
         auto relicSerializers = ToKnownPolymorphicSerializerList(object.relics.localHandlers);
         auto globalRelicSerializers = ToKnownPolymorphicSerializerList(object.relics.globalHandlers);
+        auto curatorSerializers = ToKnownPolymorphicSerializerList(object.curators.handlers);
 
         JumpSaveAll(
             object,
@@ -153,6 +154,11 @@ namespace Inscription
             object,
             archive,
             globalRelicSerializers);
+
+        JumpSaveAll(
+            object,
+            archive,
+            curatorSerializers);
     }
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::Load(ObjectT& object, ArchiveT& archive)
@@ -176,6 +182,7 @@ namespace Inscription
         auto shardSerializers = ToKnownPolymorphicSerializerList(object.shards.handlers);
         auto relicSerializers = ToKnownPolymorphicSerializerList(object.relics.localHandlers);
         auto globalRelicSerializers = ToKnownPolymorphicSerializerList(object.relics.globalHandlers);
+        auto curatorSerializers = ToKnownPolymorphicSerializerList(object.curators.handlers);
 
         JumpLoadAll(
             object,
@@ -191,6 +198,11 @@ namespace Inscription
             object,
             archive,
             globalRelicSerializers);
+
+        JumpLoadAll(
+            object,
+            archive,
+            curatorSerializers);
 
         for (auto& metadata : loadedRelicMetadata)
         {

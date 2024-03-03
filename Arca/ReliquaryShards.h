@@ -74,7 +74,7 @@ namespace Arca
             void Create(RelicID id, Reliquary& reliquary, bool isConst) override;
             void Destroy(RelicID id, Reliquary& reliquary) override;
 
-            bool WillSerialize() const override;
+            [[nodiscard]] bool WillSerialize() const override;
             void Serialize(Inscription::BinaryArchive& archive) override;
             [[nodiscard]] std::vector<::Inscription::Type> InscriptionTypes(Inscription::BinaryArchive& archive) const override;
         };
