@@ -1,7 +1,6 @@
 #include <catch.hpp>
 
 #include "EitherTests.h"
-#include "Arca/Actualization.h"
 #include <Arca/LocalRelic.h>
 
 EitherTestsFixture::BasicTypedRelic::BasicTypedRelic(RelicInit init)
