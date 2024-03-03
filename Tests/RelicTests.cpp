@@ -804,6 +804,25 @@ SCENARIO_METHOD(RelicTestsFixture, "relic moving only", "[relic]")
             {
                 REQUIRE(relic->basicShard);
             }
+
+            THEN("batch contains relic")
+            {
+                auto batch = reliquary->Batch<MovableOnlyRelic>();
+                REQUIRE(batch.Size() == 1);
+                REQUIRE(batch.begin()->myValue == myValue);
+            }
+
+            THEN("can extract values from loop")
+            {
+                auto batch = reliquary->Batch<MovableOnlyRelic>();
+
+                std::vector<int> values;
+                for (auto& relic : batch)
+                    values.push_back(relic.myValue);
+
+                REQUIRE(values.size() == 1);
+                REQUIRE(values[0] == myValue);
+            }
         }
     }
 }
@@ -819,15 +838,14 @@ SCENARIO_METHOD(RelicTestsFixture, "relic constructed from moved value", "[relic
 
         WHEN("creating relic from moved value")
         {
-            const auto generatedInt = dataGeneration.Random<int>();
-            auto backingInt = new int(generatedInt);
-            auto myInt = std::unique_ptr<int>(backingInt);
+            const auto value = dataGeneration.Random<int>();
+            auto uniquePtr = std::make_unique<int>(value);
 
-            auto relic = reliquary->Do<Create<RelicConstructedFromMovedValue>>(std::move(myInt));
+            auto relic = reliquary->Do<Create<RelicConstructedFromMovedValue>>(std::move(uniquePtr));
 
             THEN("has moved value")
             {
-                REQUIRE(relic->myInt.get() == backingInt);
+                REQUIRE(*relic->myInt == value);
             }
         }
 
@@ -835,15 +853,14 @@ SCENARIO_METHOD(RelicTestsFixture, "relic constructed from moved value", "[relic
         {
             auto parent = reliquary->Do<Create<OpenRelic>>();
 
-            const auto generatedInt = dataGeneration.Random<int>();
-            auto backingInt = new int(generatedInt);
-            auto myInt = std::unique_ptr<int>(backingInt);
+            const auto value = dataGeneration.Random<int>();
+            auto uniquePtr = std::make_unique<int>(value);
 
-            auto relic = reliquary->Do<CreateChild<RelicConstructedFromMovedValue>>(parent, std::move(myInt));
+            auto relic = reliquary->Do<CreateChild<RelicConstructedFromMovedValue>>(parent, std::move(uniquePtr));
 
             THEN("has moved value")
             {
-                REQUIRE(relic->myInt.get() == backingInt);
+                REQUIRE(*relic->myInt == value);
             }
         }
 
@@ -851,15 +868,14 @@ SCENARIO_METHOD(RelicTestsFixture, "relic constructed from moved value", "[relic
         {
             auto structure = RelicStructure{};
 
-            const auto generatedInt = dataGeneration.Random<int>();
-            auto backingInt = new int(generatedInt);
-            auto myInt = std::unique_ptr<int>(backingInt);
+            const auto value = dataGeneration.Random<int>();
+            auto uniquePtr = std::make_unique<int>(value);
 
-            auto relic = reliquary->Do<CreateWith<RelicConstructedFromMovedValue>>(structure, std::move(myInt));
+            auto relic = reliquary->Do<CreateWith<RelicConstructedFromMovedValue>>(structure, std::move(uniquePtr));
 
             THEN("has moved value")
             {
-                REQUIRE(relic->myInt.get() == backingInt);
+                REQUIRE(*relic->myInt == value);
             }
         }
 
@@ -868,15 +884,14 @@ SCENARIO_METHOD(RelicTestsFixture, "relic constructed from moved value", "[relic
             auto parent = reliquary->Do<Create<OpenRelic>>();
             auto structure = RelicStructure{};
 
-            const auto generatedInt = dataGeneration.Random<int>();
-            auto backingInt = new int(generatedInt);
-            auto myInt = std::unique_ptr<int>(backingInt);
+            const auto value = dataGeneration.Random<int>();
+            auto uniquePtr = std::make_unique<int>(value);
 
-            auto relic = reliquary->Do<CreateChildWith<RelicConstructedFromMovedValue>>(parent, structure, std::move(myInt));
+            auto relic = reliquary->Do<CreateChildWith<RelicConstructedFromMovedValue>>(parent, structure, std::move(uniquePtr));
 
             THEN("has moved value")
             {
-                REQUIRE(relic->myInt.get() == backingInt);
+                REQUIRE(*relic->myInt == value);
             }
         }
     }
