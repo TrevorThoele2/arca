@@ -23,7 +23,7 @@
     <ClInclude Include="AllImplementation.h" />
     <ClInclude Include="Clear.h" />
     <ClInclude Include="Command.h" />
-    <ClInclude Include="CommandReturn.h" />
+    <ClInclude Include="CommandResult.h" />
     <ClInclude Include="Create.h" />
     <ClInclude Include="CreateChild.h" />
     <ClInclude Include="CreateChildWith.h" />

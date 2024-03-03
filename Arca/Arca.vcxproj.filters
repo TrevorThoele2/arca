@@ -456,9 +456,6 @@
     <ClInclude Include="Clear.h">
       <Filter>Header Files\Command\Common</Filter>
     </ClInclude>
-    <ClInclude Include="CommandReturn.h">
-      <Filter>Header Files\Command</Filter>
-    </ClInclude>
     <ClInclude Include="ClosedTypedRelic.h">
       <Filter>Header Files\Relic\Closed</Filter>
     </ClInclude>
@@ -478,6 +475,9 @@
       <Filter>Header Files\Curator</Filter>
     </ClInclude>
     <ClInclude Include="HasCommandResult.h">
+      <Filter>Header Files\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandResult.h">
       <Filter>Header Files\Command</Filter>
     </ClInclude>
   </ItemGroup>

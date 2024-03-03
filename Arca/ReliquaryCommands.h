@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ReliquaryComponent.h"
-#include "CommandReturn.h"
+#include "CommandResult.h"
 #include "IsCommand.h"
 #include "IsCurator.h"
 
