@@ -21,27 +21,27 @@ namespace Arca
     {}
 
     AlreadyRegistered::AlreadyRegistered() :
-        Exception("A relic has already been registered with that type name.")
+        Exception("A shard has already been registered with that type name.")
     {}
 
-    CannotCreateRelic::CannotCreateRelic() :
-        Exception("A relic cannot be created.")
+    CannotCreateShard::CannotCreateShard() :
+        Exception("A shard cannot be created.")
     {}
 
-    CannotDestroyRelic::CannotDestroyRelic() :
-        Exception("A relic cannot be destroyed.")
+    CannotDestroyShard::CannotDestroyShard() :
+        Exception("A shard cannot be destroyed.")
     {}
 
-    CannotFindVessel::CannotFindVessel(VesselID id) :
-        Exception("The vessel with id (" + ::Chroma::ToString(id) + ") cannot be found.")
+    CannotFindRelic::CannotFindRelic(RelicID id) :
+        Exception("The relic with id (" + ::Chroma::ToString(id) + ") cannot be found.")
     {}
 
-    VesselAlreadyParented::VesselAlreadyParented(VesselID id) :
-        Exception("The vessel with id (" + ::Chroma::ToString(id) + ") has already been parented.")
+    RelicAlreadyParented::RelicAlreadyParented(RelicID id) :
+        Exception("The relic with id (" + ::Chroma::ToString(id) + ") has already been parented.")
     {}
 
-    CannotParentVesselToSelf::CannotParentVesselToSelf(VesselID id) :
-        Exception("The vessel with id (" + ::Chroma::ToString(id) + ") was attempted to be parented to itself.")
+    CannotParentRelicToSelf::CannotParentRelicToSelf(RelicID id) :
+        Exception("The relic with id (" + ::Chroma::ToString(id) + ") was attempted to be parented to itself.")
     {}
 
     InvalidCuratorPipeline::InvalidCuratorPipeline(const std::string& reason) :

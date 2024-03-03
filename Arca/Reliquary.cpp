@@ -11,12 +11,12 @@
 namespace Arca
 {
     Reliquary::Reliquary(Reliquary&& arg) noexcept :
-        vesselMetadataList(std::move(arg.vesselMetadataList)),
-        occupiedVesselIDs(std::move(arg.occupiedVesselIDs)),
-        staticVesselIDMap(std::move(arg.staticVesselIDMap)),
-        relicFactoryMap(std::move(arg.relicFactoryMap)),
-        relicBatchSources(std::move(arg.relicBatchSources)),
-        relicSerializerMap(std::move(arg.relicSerializerMap)),
+        relicMetadataList(std::move(arg.relicMetadataList)),
+        occupiedRelicIDs(std::move(arg.occupiedRelicIDs)),
+        staticRelicIDMap(std::move(arg.staticRelicIDMap)),
+        shardFactoryMap(std::move(arg.shardFactoryMap)),
+        shardBatchSources(std::move(arg.shardBatchSources)),
+        shardSerializerMap(std::move(arg.shardSerializerMap)),
         curators(std::move(arg.curators)),
         curatorPipeline(std::move(arg.curatorPipeline)),
         curatorSerializerMap(std::move(arg.curatorSerializerMap)),
@@ -28,12 +28,12 @@ namespace Arca
 
     Reliquary& Reliquary::operator=(Reliquary&& arg) noexcept
     {
-        vesselMetadataList = std::move(arg.vesselMetadataList);
-        occupiedVesselIDs = std::move(arg.occupiedVesselIDs);
-        staticVesselIDMap = std::move(arg.staticVesselIDMap);
-        relicFactoryMap = std::move(arg.relicFactoryMap);
-        relicBatchSources = std::move(arg.relicBatchSources);
-        relicSerializerMap = std::move(arg.relicSerializerMap);
+        relicMetadataList = std::move(arg.relicMetadataList);
+        occupiedRelicIDs = std::move(arg.occupiedRelicIDs);
+        staticRelicIDMap = std::move(arg.staticRelicIDMap);
+        shardFactoryMap = std::move(arg.shardFactoryMap);
+        shardBatchSources = std::move(arg.shardBatchSources);
+        shardSerializerMap = std::move(arg.shardSerializerMap);
         curators = std::move(arg.curators);
         curatorPipeline = std::move(arg.curatorPipeline);
         curatorSerializerMap = std::move(arg.curatorSerializerMap);
@@ -52,58 +52,58 @@ namespace Arca
         DoOnCurators([](Curator& curator) { curator.StopStep(); });
     }
 
-    Vessel Reliquary::CreateVessel()
+    Relic Reliquary::CreateRelic()
     {
-        const auto dynamism = VesselDynamism::Dynamic;
-        const auto id = SetupNewVesselInternals(dynamism);
-        return Vessel(id, dynamism, *this);
+        const auto dynamism = RelicDynamism::Dynamic;
+        const auto id = SetupNewRelicInternals(dynamism);
+        return Relic(id, dynamism, *this);
     }
 
-    Vessel Reliquary::CreateVessel(const VesselStructure& structure)
+    Relic Reliquary::CreateRelic(const RelicStructure& structure)
     {
-        const auto dynamism = VesselDynamism::Fixed;
-        const auto id = SetupNewVesselInternals(dynamism);
-        SatisfyVesselStructure(structure, id);
-        return Vessel(id, dynamism, *this);
+        const auto dynamism = RelicDynamism::Fixed;
+        const auto id = SetupNewRelicInternals(dynamism);
+        SatisfyRelicStructure(structure, id);
+        return Relic(id, dynamism, *this);
     }
 
-    void Reliquary::ParentVessel(VesselID parent, VesselID child)
+    void Reliquary::ParentRelic(RelicID parent, RelicID child)
     {
         if (parent == child)
-            throw CannotParentVesselToSelf(parent);
+            throw CannotParentRelicToSelf(parent);
 
-        auto parentMetadata = VesselMetadataFor(parent);
+        auto parentMetadata = RelicMetadataFor(parent);
         if (!parentMetadata)
-            throw CannotFindVessel(parent);
+            throw CannotFindRelic(parent);
 
-        auto childMetadata = VesselMetadataFor(child);
+        auto childMetadata = RelicMetadataFor(child);
         if (!childMetadata)
-            throw CannotFindVessel(child);
+            throw CannotFindRelic(child);
 
         if (childMetadata->parent.has_value())
-            throw VesselAlreadyParented(child);
+            throw RelicAlreadyParented(child);
 
         parentMetadata->children.push_back(child);
         childMetadata->parent = parent;
     }
 
-    void Reliquary::DestroyVessel(Vessel& vessel)
+    void Reliquary::DestroyRelic(Relic& relic)
     {
-        DestroyVessel(vessel.ID());
+        DestroyRelic(relic.ID());
     }
 
-    std::optional<Vessel> Reliquary::FindVessel(VesselID id)
+    std::optional<Relic> Reliquary::FindRelic(RelicID id)
     {
-        const auto metadata = VesselMetadataFor(id);
+        const auto metadata = RelicMetadataFor(id);
         if (!metadata)
             return {};
 
-        return Vessel(id, metadata->dynamism, *this);
+        return Relic(id, metadata->dynamism, *this);
     }
 
-    Reliquary::SizeT Reliquary::VesselCount() const
+    Reliquary::SizeT Reliquary::RelicCount() const
     {
-        return vesselMetadataList.size();
+        return relicMetadataList.size();
     }
 
     Curator* Reliquary::FindCurator(const TypeHandle& typeHandle)
@@ -123,85 +123,85 @@ namespace Arca
         return returnValue;
     }
 
-    VesselID Reliquary::SetupNewVesselInternals(VesselDynamism dynamism, std::optional<TypeHandle> typeHandle)
+    RelicID Reliquary::SetupNewRelicInternals(RelicDynamism dynamism, std::optional<TypeHandle> typeHandle)
     {
-        const auto id = NextVesselID();
-        occupiedVesselIDs.Include(id);
-        vesselMetadataList.push_back({ id, dynamism, std::move(typeHandle) });
+        const auto id = NextRelicID();
+        occupiedRelicIDs.Include(id);
+        relicMetadataList.push_back({ id, dynamism, std::move(typeHandle) });
         return id;
     }
 
-    void Reliquary::DestroyVesselMetadata(VesselID id)
+    void Reliquary::DestroyRelicMetadata(RelicID id)
     {
-        occupiedVesselIDs.Remove(id);
+        occupiedRelicIDs.Remove(id);
         const auto itr = std::remove_if(
-            vesselMetadataList.begin(),
-            vesselMetadataList.end(),
-            [id](const VesselMetadata& metadata) { return metadata.id == id; });
-        if (itr == vesselMetadataList.end())
+            relicMetadataList.begin(),
+            relicMetadataList.end(),
+            [id](const RelicMetadata& metadata) { return metadata.id == id; });
+        if (itr == relicMetadataList.end())
             return;
-        vesselMetadataList.erase(itr);
+        relicMetadataList.erase(itr);
     }
 
-    auto Reliquary::VesselMetadataFor(VesselID id) -> VesselMetadata*
+    auto Reliquary::RelicMetadataFor(RelicID id) -> RelicMetadata*
     {
         const auto found = std::find_if(
-            vesselMetadataList.begin(),
-            vesselMetadataList.end(),
-            [id](const VesselMetadata& metadata) { return metadata.id == id; });
-        return found != vesselMetadataList.end() ? &*found : nullptr;
+            relicMetadataList.begin(),
+            relicMetadataList.end(),
+            [id](const RelicMetadata& metadata) { return metadata.id == id; });
+        return found != relicMetadataList.end() ? &*found : nullptr;
     }
 
-    void Reliquary::SatisfyVesselStructure(const VesselStructure& structure, VesselID id)
+    void Reliquary::SatisfyRelicStructure(const RelicStructure& structure, RelicID id)
     {
         for(auto& typeHandle : structure)
-            CreateRelic(typeHandle, id);
+            CreateShard(typeHandle, id);
     }
 
-    void Reliquary::DestroyVessel(VesselID id)
+    void Reliquary::DestroyRelic(RelicID id)
     {
-        const auto metadata = VesselMetadataFor(id);
+        const auto metadata = RelicMetadataFor(id);
         if (!metadata)
             return;
 
-        if (metadata->dynamism == VesselDynamism::Static)
+        if (metadata->dynamism == RelicDynamism::Static)
             return;
 
         for (auto& child : metadata->children)
-            DestroyVessel(child);
+            DestroyRelic(child);
 
-        for (auto& relicBatchSource : relicBatchSources)
-            relicBatchSource.second->DestroyFromBase(id);
+        for (auto& shardBatchSource : shardBatchSources)
+            shardBatchSource.second->DestroyFromBase(id);
 
         if (metadata->parent)
         {
             const auto parent = *metadata->parent;
-            auto parentMetadata = VesselMetadataFor(parent);
+            auto parentMetadata = RelicMetadataFor(parent);
             const auto eraseChildrenItr =
                 std::remove_if(
                     parentMetadata->children.begin(),
                     parentMetadata->children.end(),
-                    [id](const VesselID& childId) { return id == childId; });
+                    [id](const RelicID& childId) { return id == childId; });
             if (eraseChildrenItr != parentMetadata->children.end())
                 parentMetadata->children.erase(eraseChildrenItr);
         }
 
-        DestroyVesselMetadata(id);
+        DestroyRelicMetadata(id);
     }
 
-    VesselID Reliquary::NextVesselID() const
+    RelicID Reliquary::NextRelicID() const
     {
-        const auto itr = occupiedVesselIDs.begin();
-        return itr == occupiedVesselIDs.end() || itr->Start() > 1
+        const auto itr = occupiedRelicIDs.begin();
+        return itr == occupiedRelicIDs.end() || itr->Start() > 1
             ? 1
             : itr->Start() + 1;
     }
 
-    void Reliquary::CreateRelic(const TypeHandle& typeHandle, VesselID id)
+    void Reliquary::CreateShard(const TypeHandle& typeHandle, RelicID id)
     {
-        const auto factory = relicFactoryMap.find(typeHandle);
-        if (factory == relicFactoryMap.end())
-            throw NotRegistered("relic", typeHandle);
+        const auto factory = shardFactoryMap.find(typeHandle);
+        if (factory == shardFactoryMap.end())
+            throw NotRegistered("shard", typeHandle);
 
         factory->second(*this, id);
     }
@@ -213,10 +213,10 @@ namespace Arca
         serializer(std::move(serializer)), inscriptionTypeProvider(std::move(inscriptionTypeProvider))
     {}
 
-    RelicBatchSourceBase* Reliquary::FindRelicBatchSource(const TypeHandle& typeHandle)
+    ShardBatchSourceBase* Reliquary::FindShardBatchSource(const TypeHandle& typeHandle)
     {
-        const auto found = relicBatchSources.find(typeHandle);
-        if (found == relicBatchSources.end())
+        const auto found = shardBatchSources.find(typeHandle);
+        if (found == shardBatchSources.end())
             return nullptr;
 
         return found->second.get();
@@ -253,15 +253,15 @@ namespace Inscription
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::Save(ObjectT& object, ArchiveT& archive)
     {
-        archive(object.vesselMetadataList);
+        archive(object.relicMetadataList);
 
         JumpSaveAll(
             object,
             archive,
-            object.relicSerializerMap,
-            object.relicBatchSources,
-            [](const ObjectT::RelicBatchSourceMap::value_type& entry) { return entry.second.get(); },
-            [](const ObjectT::RelicBatchSourceMap::value_type& entry) { return entry.first; });
+            object.shardSerializerMap,
+            object.shardBatchSources,
+            [](const ObjectT::ShardBatchSourceMap::value_type& entry) { return entry.second.get(); },
+            [](const ObjectT::ShardBatchSourceMap::value_type& entry) { return entry.first; });
 
         JumpSaveAll(
             object,
@@ -274,15 +274,15 @@ namespace Inscription
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::Load(ObjectT& object, ArchiveT& archive)
     {
-        archive(object.vesselMetadataList);
+        archive(object.relicMetadataList);
 
         JumpLoadAll(
             object,
             archive,
-            object.relicSerializerMap,
+            object.shardSerializerMap,
             [](ObjectT& object, const ::Arca::TypeHandle& typeHandle)
             {
-                return object.FindRelicBatchSource(typeHandle);
+                return object.FindShardBatchSource(typeHandle);
             });
 
         JumpLoadAll(

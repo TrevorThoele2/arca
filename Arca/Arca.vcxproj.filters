@@ -7,12 +7,6 @@
     <ClCompile Include="TypeRegistration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RelicBatchException.cpp">
-      <Filter>Source Files\Relic\Batch</Filter>
-    </ClCompile>
-    <ClCompile Include="RelicBatchSource.cpp">
-      <Filter>Source Files\Relic\Batch</Filter>
-    </ClCompile>
     <ClCompile Include="Curator.cpp">
       <Filter>Source Files\Curator</Filter>
     </ClCompile>
@@ -40,17 +34,23 @@
     <ClCompile Include="CuratorTypeDescription.cpp">
       <Filter>Source Files\Curator\Type</Filter>
     </ClCompile>
-    <ClCompile Include="Vessel.cpp">
-      <Filter>Source Files\Vessel</Filter>
-    </ClCompile>
     <ClCompile Include="ReliquaryOrigin.cpp">
       <Filter>Source Files\Reliquary</Filter>
     </ClCompile>
-    <ClCompile Include="VesselMetadata.cpp">
-      <Filter>Source Files\Vessel</Filter>
-    </ClCompile>
     <ClCompile Include="CuratorPipeline.cpp">
       <Filter>Source Files\Curator</Filter>
+    </ClCompile>
+    <ClCompile Include="ShardBatchException.cpp">
+      <Filter>Source Files\Shard\Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="ShardBatchSource.cpp">
+      <Filter>Source Files\Shard\Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="Relic.cpp">
+      <Filter>Source Files\Relic</Filter>
+    </ClCompile>
+    <ClCompile Include="RelicMetadata.cpp">
+      <Filter>Source Files\Relic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -81,15 +81,6 @@
     <ClInclude Include="CuratorScribe.h">
       <Filter>Header Files\Curator</Filter>
     </ClInclude>
-    <ClInclude Include="RelicBatch.h">
-      <Filter>Header Files\Relic\Batch</Filter>
-    </ClInclude>
-    <ClInclude Include="RelicBatchException.h">
-      <Filter>Header Files\Relic\Batch</Filter>
-    </ClInclude>
-    <ClInclude Include="RelicBatchSource.h">
-      <Filter>Header Files\Relic\Batch</Filter>
-    </ClInclude>
     <ClInclude Include="Reliquary.h">
       <Filter>Header Files\Reliquary</Filter>
     </ClInclude>
@@ -108,59 +99,17 @@
     <ClInclude Include="CuratorDependencyList.h">
       <Filter>Header Files\Curator</Filter>
     </ClInclude>
-    <ClInclude Include="RelicCreated.h">
-      <Filter>Header Files\Signal\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="BeforeRelicDestroyed.h">
-      <Filter>Header Files\Signal\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="RelicExtension.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
-    <ClInclude Include="Relic.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="CuratorHandle.h">
       <Filter>Header Files\Curator</Filter>
     </ClInclude>
     <ClInclude Include="TypeHandle.h">
       <Filter>Header Files\Type</Filter>
     </ClInclude>
-    <ClInclude Include="RelicBatchIterator.h">
-      <Filter>Header Files\Relic\Batch</Filter>
-    </ClInclude>
     <ClInclude Include="Serialization.h">
       <Filter>Header Files\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="Vessel.h">
-      <Filter>Header Files\Vessel</Filter>
-    </ClInclude>
-    <ClInclude Include="VesselID.h">
-      <Filter>Header Files\Vessel</Filter>
-    </ClInclude>
-    <ClInclude Include="VesselDynamism.h">
-      <Filter>Header Files\Vessel</Filter>
-    </ClInclude>
-    <ClInclude Include="VesselStructure.h">
-      <Filter>Header Files\Vessel</Filter>
-    </ClInclude>
-    <ClInclude Include="TypedVessel.h">
-      <Filter>Header Files\Vessel</Filter>
-    </ClInclude>
-    <ClInclude Include="VesselTraits.h">
-      <Filter>Header Files\Vessel</Filter>
-    </ClInclude>
     <ClInclude Include="ReliquaryOrigin.h">
       <Filter>Header Files\Reliquary</Filter>
-    </ClInclude>
-    <ClInclude Include="VesselDefinition.h">
-      <Filter>Header Files\Vessel</Filter>
-    </ClInclude>
-    <ClInclude Include="VesselMetadata.h">
-      <Filter>Header Files\Vessel</Filter>
-    </ClInclude>
-    <ClInclude Include="RelicScribe.h">
-      <Filter>Header Files\Relic</Filter>
     </ClInclude>
     <ClInclude Include="CuratorPipeline.h">
       <Filter>Header Files\Curator</Filter>
@@ -170,6 +119,57 @@
     </ClInclude>
     <ClInclude Include="CuratorTypeDescription.h">
       <Filter>Header Files\Curator</Filter>
+    </ClInclude>
+    <ClInclude Include="ShardBatch.h">
+      <Filter>Header Files\Shard\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="ShardBatchException.h">
+      <Filter>Header Files\Shard\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="ShardBatchIterator.h">
+      <Filter>Header Files\Shard\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="ShardBatchSource.h">
+      <Filter>Header Files\Shard\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="Shard.h">
+      <Filter>Header Files\Shard</Filter>
+    </ClInclude>
+    <ClInclude Include="ShardExtension.h">
+      <Filter>Header Files\Shard</Filter>
+    </ClInclude>
+    <ClInclude Include="ShardScribe.h">
+      <Filter>Header Files\Shard</Filter>
+    </ClInclude>
+    <ClInclude Include="ShardTraits.h">
+      <Filter>Header Files\Shard</Filter>
+    </ClInclude>
+    <ClInclude Include="BeforeShardDestroyed.h">
+      <Filter>Header Files\Signal\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="ShardCreated.h">
+      <Filter>Header Files\Signal\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="TypedRelic.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="Relic.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicDefinition.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicDynamism.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicID.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicMetadata.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicStructure.h">
+      <Filter>Header Files\Relic</Filter>
     </ClInclude>
     <ClInclude Include="RelicTraits.h">
       <Filter>Header Files\Relic</Filter>
@@ -190,18 +190,6 @@
     </Filter>
     <Filter Include="Header Files\Curator">
       <UniqueIdentifier>{36834c0c-c900-4819-8422-4c3541f667f8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Relic">
-      <UniqueIdentifier>{12448d81-7f9e-44ad-b44e-72566d9f0a0a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Relic\Batch">
-      <UniqueIdentifier>{bcfd2ad5-69d6-4875-9249-17e48d5a7ac6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Relic">
-      <UniqueIdentifier>{38c74878-8ca6-4c08-97fd-8d3c30950bad}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Relic\Batch">
-      <UniqueIdentifier>{e260ea4d-cc81-4ade-844b-be478463fc84}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Curator">
       <UniqueIdentifier>{8543afc7-ab74-4468-a3d6-8c9df732b5e3}</UniqueIdentifier>
@@ -230,11 +218,23 @@
     <Filter Include="Header Files\Serialization">
       <UniqueIdentifier>{fc740c7f-fc42-4913-9767-1b9cc1444ab7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Vessel">
-      <UniqueIdentifier>{3df72553-bb17-43bf-b78f-26e792faf1a5}</UniqueIdentifier>
+    <Filter Include="Header Files\Shard">
+      <UniqueIdentifier>{12448d81-7f9e-44ad-b44e-72566d9f0a0a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Vessel">
+    <Filter Include="Header Files\Shard\Batch">
+      <UniqueIdentifier>{bcfd2ad5-69d6-4875-9249-17e48d5a7ac6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Shard">
+      <UniqueIdentifier>{38c74878-8ca6-4c08-97fd-8d3c30950bad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Shard\Batch">
+      <UniqueIdentifier>{e260ea4d-cc81-4ade-844b-be478463fc84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Relic">
       <UniqueIdentifier>{5d11221a-c8ed-40ec-b972-7a6dde6a4e76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Relic">
+      <UniqueIdentifier>{3df72553-bb17-43bf-b78f-26e792faf1a5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

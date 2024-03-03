@@ -21,11 +21,11 @@ namespace Arca
     public:
         [[nodiscard]] Reliquary Actualize() const;
     public:
-        template<class VesselT>
-        ReliquaryOrigin& StaticVessel();
-    public:
         template<class RelicT>
-        ReliquaryOrigin& Relic();
+        ReliquaryOrigin& StaticRelic();
+    public:
+        template<class ShardT>
+        ReliquaryOrigin& Shard();
     public:
         template<class CuratorT, class... Args>
         ReliquaryOrigin& Curator(Args&& ... args);
@@ -43,15 +43,15 @@ namespace Arca
         };
         using TypedInitializerList = std::vector<TypedInitializer>;
     private:
-        TypedInitializerList staticVesselList;
-
-        template<class VesselT>
-        [[nodiscard]] bool IsStaticVesselRegistered() const;
-    private:
-        TypedInitializerList relicList;
+        TypedInitializerList staticRelicList;
 
         template<class RelicT>
-        [[nodiscard]] bool IsRelicRegistered() const;
+        [[nodiscard]] bool IsStaticRelicRegistered() const;
+    private:
+        TypedInitializerList shardList;
+
+        template<class ShardT>
+        [[nodiscard]] bool IsShardRegistered() const;
     private:
         using CuratorProviderPtr = std::unique_ptr<CuratorProviderBase>;
         using CuratorProviderMap = std::unordered_map<TypeHandle, CuratorProviderPtr>;
@@ -83,64 +83,64 @@ namespace Arca
         [[nodiscard]] bool IsSignalRegistered() const;
     };
 
-    template<class VesselT>
-    ReliquaryOrigin& ReliquaryOrigin::StaticVessel()
+    template<class RelicT>
+    ReliquaryOrigin& ReliquaryOrigin::StaticRelic()
     {
-        if (IsStaticVesselRegistered<VesselT>())
+        if (IsStaticRelicRegistered<RelicT>())
             throw AlreadyRegistered();
 
-        const auto typeHandle = VesselTraits<VesselT>::typeHandle;
+        const auto typeHandle = RelicTraits<RelicT>::typeHandle;
         const auto factory = [](Reliquary& reliquary)
         {
-            const auto typeHandle = VesselTraits<VesselT>::typeHandle;
-            const auto id = reliquary.SetupNewVesselInternals(VesselDynamism::Static, typeHandle);
-            reliquary.SatisfyVesselStructure(VesselT::structure, id);
-            reliquary.staticVesselIDMap.emplace(typeHandle, id);
+            const auto typeHandle = RelicTraits<RelicT>::typeHandle;
+            const auto id = reliquary.SetupNewRelicInternals(RelicDynamism::Static, typeHandle);
+            reliquary.SatisfyRelicStructure(RelicT::structure, id);
+            reliquary.staticRelicIDMap.emplace(typeHandle, id);
         };
-        staticVesselList.push_back({ typeHandle, factory });
+        staticRelicList.push_back({ typeHandle, factory });
 
         return *this;
     }
 
-    template<class RelicT>
-    ReliquaryOrigin& ReliquaryOrigin::Relic()
+    template<class ShardT>
+    ReliquaryOrigin& ReliquaryOrigin::Shard()
     {
-        if (IsRelicRegistered<RelicT>())
+        if (IsShardRegistered<ShardT>())
             throw AlreadyRegistered();
 
         const auto factory = [](Reliquary& reliquary)
         {
-            const auto typeHandle = RelicTraits<RelicT>::typeHandle;
-            reliquary.relicBatchSources.emplace(typeHandle, std::make_unique<RelicBatchSource<RelicT>>());
-            reliquary.relicFactoryMap.emplace(
+            const auto typeHandle = ShardTraits<ShardT>::typeHandle;
+            reliquary.shardBatchSources.emplace(typeHandle, std::make_unique<ShardBatchSource<ShardT>>());
+            reliquary.shardFactoryMap.emplace(
                 typeHandle,
-                [](Reliquary& reliquary, VesselID id)
+                [](Reliquary& reliquary, RelicID id)
                 {
-                    auto found = reliquary.FindRelicBatchSource<RelicT>();
+                    auto found = reliquary.FindShardBatchSource<ShardT>();
                     auto added = found->Add(id);
                     reliquary.SignalCreation(*added);
                 });
-            reliquary.relicSerializerMap.emplace(
+            reliquary.shardSerializerMap.emplace(
                 typeHandle,
                 Reliquary::KnownPolymorphicSerializer
                 {
-                    [](void* relicBatchSource, ::Inscription::BinaryArchive& archive)
+                    [](void* shardBatchSource, ::Inscription::BinaryArchive& archive)
                     {
-                        auto castedRelicBatchSource = static_cast<RelicBatchSource<RelicT>*>(relicBatchSource);
-                        archive(*castedRelicBatchSource);
+                        auto castedShardBatchSource = static_cast<ShardBatchSource<ShardT>*>(shardBatchSource);
+                        archive(*castedShardBatchSource);
                     },
                     [](::Inscription::BinaryArchive& archive)
                     {
-                        return ::Inscription::InputTypeHandlesFor<RelicT>(archive);
+                        return ::Inscription::InputTypeHandlesFor<ShardT>(archive);
                     }
                 });
         };
 
-        const auto typeHandle = RelicTraits<RelicT>::typeHandle;
-        relicList.push_back({ typeHandle, factory });
+        const auto typeHandle = ShardTraits<ShardT>::typeHandle;
+        shardList.push_back({ typeHandle, factory });
 
-        Signal<RelicCreated<RelicT>>();
-        Signal<BeforeRelicDestroyed<RelicT>>();
+        Signal<ShardCreated<ShardT>>();
+        Signal<BeforeShardDestroyed<ShardT>>();
 
         return *this;
     }
@@ -183,7 +183,7 @@ namespace Arca
     }
 
     template<class SignalT>
-    bool ReliquaryOrigin::IsStaticVesselRegistered() const
+    bool ReliquaryOrigin::IsStaticRelicRegistered() const
     {
         const auto type = std::type_index(typeid(SignalT));
         const auto found = std::find_if(
@@ -196,18 +196,18 @@ namespace Arca
         return found != signalList.end();
     }
 
-    template<class RelicT>
-    bool ReliquaryOrigin::IsRelicRegistered() const
+    template<class ShardT>
+    bool ReliquaryOrigin::IsShardRegistered() const
     {
-        const auto typeHandle = RelicTraits<RelicT>::typeHandle;
+        const auto typeHandle = ShardTraits<ShardT>::typeHandle;
         const auto found = std::find_if(
-            relicList.begin(),
-            relicList.end(),
+            shardList.begin(),
+            shardList.end(),
             [typeHandle](const TypedInitializer& initializer)
             {
                 return initializer.typeHandle == typeHandle;
             });
-        return found != relicList.end();
+        return found != shardList.end();
     }
 
     template<class CuratorT, class CuratorProvider, class... Args>

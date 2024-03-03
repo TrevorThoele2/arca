@@ -3,5 +3,5 @@
 namespace Arca
 {
     template<class T>
-    struct VesselTraits;
+    struct ShardTraits;
 }

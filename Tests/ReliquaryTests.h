@@ -2,8 +2,8 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/TypedVessel.h>
-#include <Arca/Relic.h>
+#include <Arca/TypedRelic.h>
+#include <Arca/Shard.h>
 
 #include <Inscription/BinaryArchive.h>
 #include "Inscription/BaseScriven.h"
@@ -15,49 +15,49 @@ class ReliquaryTestsFixture : public GeneralFixture
 public:
     ReliquaryTestsFixture();
 
-    class BasicRelic
+    class BasicShard
     {
     public:
         std::string myValue;
     public:
-        BasicRelic() = default;
-        explicit BasicRelic(std::string myValue);
+        BasicShard() = default;
+        explicit BasicShard(std::string myValue);
     };
 
-    class OtherBasicRelic
+    class OtherBasicShard
     {
     public:
         std::string myValue;
     public:
-        OtherBasicRelic() = default;
-        explicit OtherBasicRelic(int myValue);
+        OtherBasicShard() = default;
+        explicit OtherBasicShard(int myValue);
     };
 
-    class OtherRelic
+    class OtherShard
     {
     public:
         int myValue;
     public:
-        OtherRelic() = default;
-        explicit OtherRelic(int myValue);
+        OtherShard() = default;
+        explicit OtherShard(int myValue);
     };
 
-    class BasicTypedVessel : public TypedVessel<BasicRelic>
+    class BasicTypedRelic : public TypedRelic<BasicShard>
     {
     public:
-        BasicRelic* basicRelic = nullptr;
+        BasicShard* basicShard = nullptr;
     public:
-        BasicTypedVessel(VesselID id, Reliquary& owner);
+        BasicTypedRelic(RelicID id, Reliquary& owner);
     private:
         void Setup();
     };
 
-    class StaticVessel : public TypedVessel<BasicRelic>
+    class StaticRelic : public TypedRelic<BasicShard>
     {
     public:
-        BasicRelic* basicRelic = nullptr;
+        BasicShard* basicShard = nullptr;
     public:
-        StaticVessel(VesselID id, Reliquary& owner);
+        StaticRelic(RelicID id, Reliquary& owner);
     private:
         void Setup();
     };
@@ -75,31 +75,31 @@ public:
 namespace Arca
 {
     template<>
-    struct RelicTraits<::ReliquaryTestsFixture::BasicRelic>
+    struct ShardTraits<::ReliquaryTestsFixture::BasicShard>
     {
         static const TypeHandle typeHandle;
     };
 
     template<>
-    struct RelicTraits<::ReliquaryTestsFixture::OtherBasicRelic>
+    struct ShardTraits<::ReliquaryTestsFixture::OtherBasicShard>
     {
         static const TypeHandle typeHandle;
     };
 
     template<>
-    struct RelicTraits<::ReliquaryTestsFixture::OtherRelic>
+    struct ShardTraits<::ReliquaryTestsFixture::OtherShard>
     {
         static const TypeHandle typeHandle;
     };
 
     template<>
-    struct VesselTraits<::ReliquaryTestsFixture::BasicTypedVessel>
+    struct RelicTraits<::ReliquaryTestsFixture::BasicTypedRelic>
     {
         static const TypeHandle typeHandle;
     };
 
     template<>
-    struct VesselTraits<::ReliquaryTestsFixture::StaticVessel>
+    struct RelicTraits<::ReliquaryTestsFixture::StaticRelic>
     {
         static const TypeHandle typeHandle;
     };
@@ -114,8 +114,8 @@ namespace Arca
 namespace Inscription
 {
     template<>
-    class Scribe<::ReliquaryTestsFixture::BasicRelic, BinaryArchive> final
-        : public RelicScribe<::ReliquaryTestsFixture::BasicRelic, BinaryArchive>
+    class Scribe<::ReliquaryTestsFixture::BasicShard, BinaryArchive> final
+        : public ShardScribe<::ReliquaryTestsFixture::BasicShard, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
@@ -125,13 +125,13 @@ namespace Inscription
     };
 
     template<>
-    class Scribe<::ReliquaryTestsFixture::OtherBasicRelic, BinaryArchive> final
-        : public RelicScribe<::ReliquaryTestsFixture::OtherBasicRelic, BinaryArchive>
+    class Scribe<::ReliquaryTestsFixture::OtherBasicShard, BinaryArchive> final
+        : public ShardScribe<::ReliquaryTestsFixture::OtherBasicShard, BinaryArchive>
     {
     public:
         static std::vector<TypeHandle> InputTypeHandles(const ArchiveT& archive)
         {
-            return { "ReliquaryTestsBasicRelic" };
+            return { "ReliquaryTestsBasicShard" };
         }
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
@@ -141,8 +141,8 @@ namespace Inscription
     };
 
     template<>
-    class Scribe<::ReliquaryTestsFixture::OtherRelic, BinaryArchive> final
-        : public RelicScribe<::ReliquaryTestsFixture::OtherRelic, BinaryArchive>
+    class Scribe<::ReliquaryTestsFixture::OtherShard, BinaryArchive> final
+        : public ShardScribe<::ReliquaryTestsFixture::OtherShard, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
@@ -152,24 +152,24 @@ namespace Inscription
     };
 
     template<>
-    class Scribe<::ReliquaryTestsFixture::BasicTypedVessel, BinaryArchive> final
-        : CompositeScribe<::ReliquaryTestsFixture::BasicTypedVessel, BinaryArchive>
+    class Scribe<::ReliquaryTestsFixture::BasicTypedRelic, BinaryArchive> final
+        : CompositeScribe<::ReliquaryTestsFixture::BasicTypedRelic, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
         {
-            BaseScriven<TypedVessel<::ReliquaryTestsFixture::BasicRelic>>(object, archive);
+            BaseScriven<TypedRelic<::ReliquaryTestsFixture::BasicShard>>(object, archive);
         }
     };
 
     template<>
-    class Scribe<::ReliquaryTestsFixture::StaticVessel, BinaryArchive> final
-        : CompositeScribe<::ReliquaryTestsFixture::StaticVessel, BinaryArchive>
+    class Scribe<::ReliquaryTestsFixture::StaticRelic, BinaryArchive> final
+        : CompositeScribe<::ReliquaryTestsFixture::StaticRelic, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
         {
-            BaseScriven<TypedVessel<::ReliquaryTestsFixture::BasicRelic>>(object, archive);
+            BaseScriven<TypedRelic<::ReliquaryTestsFixture::BasicShard>>(object, archive);
         }
     };
 

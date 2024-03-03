@@ -1,19 +1,19 @@
 #pragma once
 
-#include "VesselID.h"
+#include "RelicID.h"
 
 #include "Serialization.h"
 
 namespace Arca
 {
-    class RelicBatchSourceBase
+    class ShardBatchSourceBase
     {
     public:
         using SizeT = size_t;
     public:
-        virtual ~RelicBatchSourceBase() = 0;
+        virtual ~ShardBatchSourceBase() = 0;
 
-        virtual void DestroyFromBase(VesselID id) = 0;
+        virtual void DestroyFromBase(RelicID id) = 0;
 
         [[nodiscard]] virtual SizeT Size() const = 0;
     protected:
@@ -21,15 +21,15 @@ namespace Arca
     };
 
     template<class T>
-    class RelicBatchSource : public RelicBatchSourceBase
+    class ShardBatchSource : public ShardBatchSourceBase
     {
     public:
-        using RelicT = T;
+        using ShardT = T;
     private:
         struct Entry
         {
-            VesselID id;
-            RelicT relic;
+            RelicID id;
+            ShardT shard;
         };
 
         using List = std::vector<Entry>;
@@ -37,17 +37,17 @@ namespace Arca
         using iterator = typename List::iterator;
         using const_iterator = typename List::const_iterator;
     public:
-        RelicBatchSource() = default;
+        ShardBatchSource() = default;
 
-        RelicT* Add(VesselID id);
+        ShardT* Add(RelicID id);
 
-        iterator Destroy(VesselID destroy);
+        iterator Destroy(RelicID destroy);
         iterator Destroy(iterator destroy);
         iterator Destroy(const_iterator destroy);
 
-        void DestroyFromBase(VesselID id) override;
+        void DestroyFromBase(RelicID id) override;
 
-        RelicT* Find(VesselID id);
+        ShardT* Find(RelicID id);
 
         [[nodiscard]] SizeT Size() const override;
         [[nodiscard]] bool IsEmpty() const;
@@ -65,18 +65,18 @@ namespace Arca
     };
 
     template<class T>
-    auto RelicBatchSource<T>::Add(VesselID id) -> RelicT*
+    auto ShardBatchSource<T>::Add(RelicID id) -> ShardT*
     {
         auto found = Find(id);
         if (found)
             return found;
 
-        list.push_back({ id, RelicT{} });
-        return &list.back().relic;
+        list.push_back({ id, ShardT{} });
+        return &list.back().shard;
     }
 
     template<class T>
-    auto RelicBatchSource<T>::Destroy(VesselID destroy) -> iterator
+    auto ShardBatchSource<T>::Destroy(RelicID destroy) -> iterator
     {
         auto itr = std::remove_if(
             list.begin(),
@@ -88,25 +88,25 @@ namespace Arca
     }
 
     template<class T>
-    auto RelicBatchSource<T>::Destroy(iterator destroy) -> iterator
+    auto ShardBatchSource<T>::Destroy(iterator destroy) -> iterator
     {
         return list.erase(destroy);
     }
 
     template<class T>
-    auto RelicBatchSource<T>::Destroy(const_iterator destroy) -> iterator
+    auto ShardBatchSource<T>::Destroy(const_iterator destroy) -> iterator
     {
         return list.erase(destroy);
     }
 
     template<class T>
-    void RelicBatchSource<T>::DestroyFromBase(VesselID id)
+    void ShardBatchSource<T>::DestroyFromBase(RelicID id)
     {
         Destroy(id);
     }
 
     template<class T>
-    auto RelicBatchSource<T>::Find(VesselID id) -> RelicT*
+    auto ShardBatchSource<T>::Find(RelicID id) -> ShardT*
     {
         auto found = std::find_if(
             list.begin(),
@@ -115,41 +115,41 @@ namespace Arca
         if (found == list.end())
             return {};
 
-        return &found->relic;
+        return &found->shard;
     }
 
     template<class T>
-    auto RelicBatchSource<T>::Size() const -> SizeT
+    auto ShardBatchSource<T>::Size() const -> SizeT
     {
         return list.size();
     }
 
     template<class T>
-    bool RelicBatchSource<T>::IsEmpty() const
+    bool ShardBatchSource<T>::IsEmpty() const
     {
         return list.empty();
     }
 
     template<class T>
-    auto RelicBatchSource<T>::begin() -> iterator
+    auto ShardBatchSource<T>::begin() -> iterator
     {
         return list.begin();
     }
 
     template<class T>
-    auto RelicBatchSource<T>::begin() const -> const_iterator
+    auto ShardBatchSource<T>::begin() const -> const_iterator
     {
         return list.begin();
     }
 
     template<class T>
-    auto RelicBatchSource<T>::end() -> iterator
+    auto ShardBatchSource<T>::end() -> iterator
     {
         return list.end();
     }
 
     template<class T>
-    auto RelicBatchSource<T>::end() const -> const_iterator
+    auto ShardBatchSource<T>::end() const -> const_iterator
     {
         return list.end();
     }
@@ -158,11 +158,11 @@ namespace Arca
 namespace Inscription
 {
     template<class T>
-    class Scribe<::Arca::RelicBatchSource<T>, BinaryArchive> final :
-        public CompositeScribe<::Arca::RelicBatchSource<T>, BinaryArchive>
+    class Scribe<::Arca::ShardBatchSource<T>, BinaryArchive> final :
+        public CompositeScribe<::Arca::ShardBatchSource<T>, BinaryArchive>
     {
     private:
-        using BaseT = CompositeScribe<::Arca::RelicBatchSource<T>, BinaryArchive>;
+        using BaseT = CompositeScribe<::Arca::ShardBatchSource<T>, BinaryArchive>;
     public:
         using ObjectT = typename BaseT::ObjectT;
         using ArchiveT = typename BaseT::ArchiveT;
@@ -173,7 +173,7 @@ namespace Inscription
     };
 
     template<class T>
-    void Scribe<::Arca::RelicBatchSource<T>, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    void Scribe<::Arca::ShardBatchSource<T>, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
         if (archive.IsOutput())
         {
@@ -184,8 +184,8 @@ namespace Inscription
             {
                 auto id = loop.id;
                 archive(id);
-                auto relic = loop.relic;
-                archive(relic);
+                auto shard = loop.shard;
+                archive(shard);
             }
         }
         else
@@ -197,13 +197,13 @@ namespace Inscription
 
             while(size-- > 0)
             {
-                ::Arca::VesselID id;
+                ::Arca::RelicID id;
                 archive(id);
 
-                typename ObjectT::RelicT relic;
-                archive(relic);
+                typename ObjectT::ShardT shard;
+                archive(shard);
 
-                object.list.push_back({ id, std::move(relic) });
+                object.list.push_back({ id, std::move(shard) });
             }
         }
     }
