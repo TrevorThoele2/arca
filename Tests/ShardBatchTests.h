@@ -32,8 +32,9 @@ class ShardBatchFixture::StaticRelic : public TypedRelic
 public:
     Shard* shard = nullptr;
 public:
-    void Initialize(Reliquary& reliquary) override;
     [[nodiscard]] RelicStructure Structure() const override;
+protected:
+    void DoInitialize() override;
 private:
     using Shards = ::Chroma::VariadicTemplate<Shard>;
 };

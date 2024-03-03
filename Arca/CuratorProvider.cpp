@@ -9,16 +9,16 @@ namespace Arca
         return
         {
             ProvideImpl(reliquary),
-            typeDescription
+            typeHandle
         };
     }
 
-    CuratorProviderBase::CuratorProviderBase(CuratorTypeDescription typeDescription) :
-        typeDescription(std::move(typeDescription))
+    CuratorProviderBase::CuratorProviderBase(TypeHandle typeHandle) :
+        typeHandle(std::move(typeHandle))
     {}
 
-    ExternalCuratorProvider::ExternalCuratorProvider(Curator* external, CuratorTypeDescription typeDescription) :
-        CuratorProviderBase(std::move(typeDescription)), external(external)
+    ExternalCuratorProvider::ExternalCuratorProvider(Curator* external, TypeHandle typeHandle) :
+        CuratorProviderBase(std::move(typeHandle)), external(external)
     {}
 
     std::unique_ptr<CuratorProviderBase> ExternalCuratorProvider::Clone() const

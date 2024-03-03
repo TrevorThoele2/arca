@@ -94,11 +94,11 @@ namespace Arca
             Reliquary::CuratorHandlePtr handle;
 
             if (loop.curator.index() == 0)
-                handle = std::make_unique<OwnedCuratorHandle>(std::move(std::get<0>(loop.curator)), loop.description);
+                handle = std::make_unique<OwnedCuratorHandle>(std::move(std::get<0>(loop.curator)), loop.typeHandle);
             else
-                handle = std::make_unique<UnownedCuratorHandle>(std::get<1>(loop.curator), loop.description);
+                handle = std::make_unique<UnownedCuratorHandle>(std::get<1>(loop.curator), loop.typeHandle);
 
-            reliquary.curators.emplace(handle->description.typeHandle, std::move(handle));
+            reliquary.curators.emplace(handle->typeHandle, std::move(handle));
         }
 
         for (auto& loop : curatorSerializationTypeHandlesFactoryList)

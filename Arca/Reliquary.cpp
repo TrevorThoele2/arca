@@ -29,6 +29,9 @@ namespace Arca
         curatorSerializerMap(std::move(arg.curatorSerializerMap)),
         signalBatchSources(std::move(arg.signalBatchSources))
     {
+        for (auto& loop : relicBatchSources)
+            loop.second->ChangeOwner(*this);
+
         for (auto& loop : curators)
             loop.second->Get()->owner = this;
     }
@@ -49,6 +52,9 @@ namespace Arca
         curatorPipeline = std::move(arg.curatorPipeline);
         curatorSerializerMap = std::move(arg.curatorSerializerMap);
         signalBatchSources = std::move(arg.signalBatchSources);
+
+        for (auto& loop : relicBatchSources)
+            loop.second->ChangeOwner(*this);
 
         for (auto& loop : curators)
             loop.second->Get()->owner = this;
@@ -166,14 +172,6 @@ namespace Arca
         return found->second->Get();
     }
 
-    std::vector<CuratorTypeDescription> Reliquary::CuratorTypeDescriptions() const
-    {
-        std::vector<CuratorTypeDescription> returnValue;
-        for (auto& loop : curators)
-            returnValue.push_back(loop.second->description);
-        return returnValue;
-    }
-
     Reliquary::KnownPolymorphicSerializer::KnownPolymorphicSerializer(
         Serializer&& serializer,
         InscriptionTypeHandleProvider&& inscriptionTypeProvider)
@@ -255,14 +253,14 @@ namespace Arca
                 parentMetadata->children.erase(eraseChildrenItr);
         }
 
+        if (metadata.parent.has_value() && metadata.typeHandle.has_value())
+            NotifyChildRelicBatchSourcesDestroy(*metadata.parent, metadata.id, *metadata.typeHandle);
+
         if (metadata.typeHandle)
         {
             auto batchSource = FindRelicBatchSource(*metadata.typeHandle);
             batchSource->DestroyFromBase(id);
         }
-
-        if (metadata.parent.has_value() && metadata.typeHandle.has_value())
-            NotifyChildRelicBatchSourcesDestroy(*metadata.parent, metadata.id, *metadata.typeHandle);
 
         DestroyRelicMetadata(id);
     }
@@ -310,6 +308,17 @@ namespace Arca
                 loop->DestroyFromBase(childID);
     }
 
+    auto Reliquary::FindChildRelicBatchSource(const TypeHandle& typeHandle, RelicID parentID)
+        -> ChildRelicBatchSourceBase*
+    {
+        auto& sourceList = RequiredChildRelicBatchSourceList(typeHandle);
+        for (auto& loop : sourceList)
+            if (loop->Parent() == parentID)
+                return loop.get();
+
+        return nullptr;
+    }
+
     auto Reliquary::FindChildRelicBatchSourceList(const TypeHandle& typeHandle) -> ChildRelicBatchSourceList*
     {
         auto found = childRelicBatchSources.find(typeHandle);
@@ -322,10 +331,10 @@ namespace Arca
     auto Reliquary::RequiredChildRelicBatchSourceList(const TypeHandle& typeHandle) -> ChildRelicBatchSourceList&
     {
         const auto found = FindChildRelicBatchSourceList(typeHandle);
-        if (!found)
-            throw NotRegistered("relic", typeHandle);
+        if (found != nullptr)
+            return *found;
 
-        return *found;
+        return childRelicBatchSources.emplace(typeHandle, ChildRelicBatchSourceList()).first->second;
     }
 
     void Reliquary::CreateShard(const TypeHandle& typeHandle, RelicID id)

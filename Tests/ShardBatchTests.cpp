@@ -8,15 +8,15 @@ ShardBatchFixture::Shard::Shard(int value) :
     value(value)
 {}
 
-void ShardBatchFixture::StaticRelic::Initialize(Reliquary& reliquary)
-{
-    auto tuple = ExtractShards<Shards>(ID(), reliquary);
-    shard = std::get<0>(tuple);
-}
-
 RelicStructure ShardBatchFixture::StaticRelic::Structure() const
 {
     return StructureFrom<Shards>();
+}
+
+void ShardBatchFixture::StaticRelic::DoInitialize()
+{
+    auto tuple = ExtractShards<Shards>(ID(), Owner());
+    shard = std::get<0>(tuple);
 }
 
 namespace Arca

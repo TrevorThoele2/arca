@@ -29,15 +29,45 @@ public:
         int value = 0;
     };
 
+    class ChildRelic : public TypedRelic
+    {
+    public:
+        int value = 0;
+    public:
+        ChildRelic() = default;
+
+        [[nodiscard]] RelicStructure Structure() const override { return {}; }
+    protected:
+        void DoInitialize() override {}
+    };
+
+    class ParentRelic : public TypedRelic
+    {
+    public:
+        int value = 0;
+
+        ChildRelicBatch<ChildRelic> children;
+    public:
+        ParentRelic(int value);
+
+        [[nodiscard]] RelicStructure Structure() const override { return {}; }
+
+        void CreateChild();
+    protected:
+        void DoInitialize() override;
+    };
+
     class BasicCuratorBase : public Curator
     {
     public:
         bool shouldStart = true;
-        std::function<void()> onStartStep;
-        std::function<void()> onWork;
-        std::function<void()> onStopStep;
+        std::function<void(BasicCuratorBase&)> onStartStep;
+        std::function<void(BasicCuratorBase&)> onWork;
+        std::function<void(BasicCuratorBase&)> onStopStep;
 
         SignalBatch<BasicSignal> basicSignals;
+
+        Reliquary& Owner();
     public:
         explicit BasicCuratorBase(Reliquary& owner);
     protected:
@@ -67,6 +97,19 @@ namespace Arca
         static const TypeHandle typeHandle;
     };
 
+    template<>
+    struct RelicTraits<::IntegrationTestsFixture::ChildRelic>
+    {
+        static const TypeHandle typeHandle;
+    };
+
+    template<>
+    struct RelicTraits<::IntegrationTestsFixture::ParentRelic>
+    {
+        static const TypeHandle typeHandle;
+        static std::optional<IntegrationTestsFixture::ParentRelic> Factory(Reliquary& reliquary, int value);
+    };
+
     template<size_t differentiator>
     struct CuratorTraits<::IntegrationTestsFixture::BasicCurator<differentiator>>
     {
@@ -89,6 +132,50 @@ namespace Inscription
         {
             archive(object.myValue);
         }
+    };
+
+    template<>
+    struct TableData<::IntegrationTestsFixture::ChildRelic, BinaryArchive> final
+        : TableDataBase<::IntegrationTestsFixture::ChildRelic, BinaryArchive>
+    {
+        Base<TypedRelic> base;
+    };
+
+    template<>
+    class Scribe<::IntegrationTestsFixture::ChildRelic, BinaryArchive> final
+        : public RelicScribe<::IntegrationTestsFixture::ChildRelic, BinaryArchive>
+    {
+    public:
+        class Table : public TableBase
+        {
+        public:
+            Table()
+            {
+                AddDataLink(DataLink::Base(data.base));
+            }
+        };
+    };
+
+    template<>
+    struct TableData<::IntegrationTestsFixture::ParentRelic, BinaryArchive> final
+        : TableDataBase<::IntegrationTestsFixture::ParentRelic, BinaryArchive>
+    {
+        Base<TypedRelic> base;
+    };
+
+    template<>
+    class Scribe<::IntegrationTestsFixture::ParentRelic, BinaryArchive> final
+        : public RelicScribe<::IntegrationTestsFixture::ParentRelic, BinaryArchive>
+    {
+    public:
+        class Table : public TableBase
+        {
+        public:
+            Table()
+            {
+                AddDataLink(DataLink::Base(data.base));
+            }
+        };
     };
 
     template<size_t differentiator>

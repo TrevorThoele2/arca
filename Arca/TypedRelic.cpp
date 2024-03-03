@@ -7,6 +7,22 @@ namespace Arca
         return id;
     }
 
+    Reliquary& TypedRelic::Owner()
+    {
+        return *owner;
+    }
+
+    const Reliquary& TypedRelic::Owner() const
+    {
+        return *owner;
+    }
+
+    void TypedRelic::Initialize(Reliquary& owner)
+    {
+        this->owner = &owner;
+        DoInitialize();
+    }
+
     TypedRelic::~TypedRelic() = default;
 
     TypedRelic::TypedRelic(const ::Inscription::BinaryTableData<TypedRelic>& data) :

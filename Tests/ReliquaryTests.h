@@ -48,8 +48,9 @@ public:
         BasicTypedRelic() = default;
         explicit BasicTypedRelic(const ::Inscription::BinaryTableData<BasicTypedRelic>& data);
 
-        void Initialize(Reliquary& reliquary) override;
         [[nodiscard]] RelicStructure Structure() const override;
+    protected:
+        void DoInitialize() override;
     private:
         using Shards = ::Chroma::VariadicTemplate<BasicShard>;
     };
@@ -62,8 +63,9 @@ public:
         StaticRelic() = default;
         explicit StaticRelic(const ::Inscription::BinaryTableData<StaticRelic>& data);
 
-        void Initialize(Reliquary& reliquary) override;
         [[nodiscard]] RelicStructure Structure() const override;
+    protected:
+        void DoInitialize() override;
     private:
         using Shards = ::Chroma::VariadicTemplate<BasicShard>;
     };
