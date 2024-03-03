@@ -73,6 +73,8 @@ namespace Arca
 
         [[nodiscard]] SizeT RelicSize() const;
         [[nodiscard]] SizeT RelicSize(const TypeName& typeName) const;
+
+        [[nodiscard]] RelicID NextRelicID() const;
     public:
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] Index<ShardT> Find(RelicID id) const;

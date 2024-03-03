@@ -10,6 +10,10 @@ SerializationData::PreferentialSerializationConstructorShard::PreferentialSerial
 SerializationData::OtherShard::OtherShard(int myValue) : myValue(myValue)
 {}
 
+SerializationData::ShardWithRelicIndex::ShardWithRelicIndex(Index<OpenRelic> openRelic) :
+    openRelic(openRelic)
+{}
+
 SerializationData::LocalRelic::LocalRelic(RelicInit init, int myInt)
 {
     basicShard = init.Create<BasicShard>();
