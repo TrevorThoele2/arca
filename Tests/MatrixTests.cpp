@@ -14,7 +14,7 @@ SCENARIO_METHOD(MatrixTestsFixture, "matrix signals")
         {
             auto batch = reliquary->Batch<MatrixFormed<Either<Shard>>>();
 
-            auto relic = reliquary->Create<OpenRelic>();
+            auto relic = reliquary->Do<Create<OpenRelic>>();
             auto shard = relic->Create<Shard>();
 
             THEN("batch contains entry")
@@ -29,7 +29,7 @@ SCENARIO_METHOD(MatrixTestsFixture, "matrix signals")
         {
             auto batch = reliquary->Batch<MatrixDissolved<Either<Shard>>>();
 
-            auto relic = reliquary->Create<OpenRelic>();
+            auto relic = reliquary->Do<Create<OpenRelic>>();
             auto shard = relic->Create<Shard>();
             relic->Destroy<Shard>();
 
@@ -51,7 +51,7 @@ SCENARIO_METHOD(MatrixTestsFixture, "matrix signals")
                     shardFromExecution = signal.index.Get();
                 });
 
-            auto relic = reliquary->Create<OpenRelic>();
+            auto relic = reliquary->Do<Create<OpenRelic>>();
             auto shard = relic->Create<Shard>();
 
             THEN("shard from execution is occupied")
@@ -72,7 +72,7 @@ SCENARIO_METHOD(MatrixTestsFixture, "matrix signals")
                     createdShardSameAsSignaled = createdShard == &*signal.index;
                 });
 
-            auto relic = reliquary->Create<OpenRelic>();
+            auto relic = reliquary->Do<Create<OpenRelic>>();
             auto shard = relic->Create<Shard>();
             createdShard = &*shard;
             relic->Destroy<Shard>();

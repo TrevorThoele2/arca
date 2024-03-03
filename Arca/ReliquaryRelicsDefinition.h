@@ -1,7 +1,9 @@
 #pragma once
 
 #include "ReliquaryRelics.h"
+#include "Reliquary.h"
 
+#include "Destroy.h"
 #include "Created.h"
 
 #include "Initialize.h"
@@ -98,7 +100,7 @@ namespace Arca
         auto iterator = batchSource.begin();
         while(iterator != batchSource.end())
         {
-            Owner().Destroy(*iterator);
+            Destroy<RelicT>(iterator->ID());
             iterator = batchSource.begin();
         }
     }
@@ -206,7 +208,7 @@ namespace Arca
     template<class RelicT>
     void ReliquaryRelics::LocalHandler<RelicT>::Destroy(RelicID id, Reliquary& reliquary)
     {
-        reliquary.Destroy<RelicT>(id);
+        reliquary.Do<Arca::Destroy<RelicT>>(id);
     }
 
     template<class RelicT>
@@ -285,7 +287,7 @@ namespace Arca
             Type(type.name),
             relic);
         PostConstruct(*relic);
-        Initialize(*relic, std::forward<decltype(initializeArgs)>(initializeArgs)...);
+        Initialize(*relic, std::forward<InitializeArgs>(initializeArgs)...);
     }
 
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>

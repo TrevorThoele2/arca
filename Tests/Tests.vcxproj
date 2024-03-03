@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="AllBatchTests.h" />
     <ClInclude Include="AllTests.h" />
+    <ClInclude Include="CommandTests.h" />
     <ClInclude Include="ConstShardTests.h" />
     <ClInclude Include="CuratorTests.h" />
     <ClInclude Include="EitherBatchTests.h" />
@@ -47,6 +48,7 @@
   <ItemGroup>
     <ClCompile Include="AllBatchTests.cpp" />
     <ClCompile Include="AllTests.cpp" />
+    <ClCompile Include="CommandTests.cpp" />
     <ClCompile Include="ConstShardTests.cpp" />
     <ClCompile Include="CuratorTests.cpp" />
     <ClCompile Include="EitherBatchTests.cpp" />

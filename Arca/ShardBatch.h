@@ -15,7 +15,6 @@ namespace Arca
     public:
         using ShardT = T;
 
-        using iterator = ShardBatchIteratorBase<ShardT, typename SourceT::iterator>;
         using const_iterator = ShardBatchIteratorBase<const ShardT, typename SourceT::const_iterator>;
     public:
         Batch();
@@ -29,9 +28,7 @@ namespace Arca
         [[nodiscard]] size_t Size() const;
         [[nodiscard]] bool IsEmpty() const;
 
-        [[nodiscard]] iterator begin();
         [[nodiscard]] const_iterator begin() const;
-        [[nodiscard]] iterator end();
         [[nodiscard]] const_iterator end() const;
     private:
         SourceT* source = nullptr;
@@ -90,27 +87,11 @@ namespace Arca
     }
 
     template<class T>
-    auto Batch<T, std::enable_if_t<is_shard_v<T>>>::begin() -> iterator
-    {
-        SourceRequired();
-
-        return iterator(source->begin(), source->end());
-    }
-
-    template<class T>
     auto Batch<T, std::enable_if_t<is_shard_v<T>>>::begin() const -> const_iterator
     {
         SourceRequired();
 
         return const_iterator(source->begin(), source->end());
-    }
-
-    template<class T>
-    auto Batch<T, std::enable_if_t<is_shard_v<T>>>::end() -> iterator
-    {
-        SourceRequired();
-
-        return iterator(source->end(), source->end());
     }
 
     template<class T>

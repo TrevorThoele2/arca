@@ -83,7 +83,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
     GIVEN("registered reliquary and relic")
     {
         auto reliquary = ReliquaryOrigin().Register<Shard>().Actualize();
-        auto relic = reliquary->Create<OpenRelic>();
+        auto relic = reliquary->Do<Create<OpenRelic>>();
 
         WHEN("creating shard")
         {
@@ -102,7 +102,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
                 THEN("returned shard is referentially equal to beginning")
                 {
                     auto& first = *batch.begin();
-                    REQUIRE(&first == static_cast<Shard*>(createdShard));
+                    REQUIRE(&first == static_cast<const Shard*>(createdShard));
                 }
 
                 THEN("begin is not end")
@@ -179,7 +179,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
                 THEN("returned shard is referentially equal to beginning")
                 {
                     auto& first = *batch.begin();
-                    REQUIRE(&first == static_cast<Shard*>(createdShard));
+                    REQUIRE(&first == static_cast<const Shard*>(createdShard));
                 }
 
                 THEN("begin is not end")
@@ -258,7 +258,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either shard batch serialization", "[E
             .Register<Shard>()
             .Actualize();
 
-        savedReliquary->Create<Relic>();
+        savedReliquary->Do<Create<Relic>>();
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);

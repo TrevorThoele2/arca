@@ -23,6 +23,7 @@ namespace Arca
     class ReliquaryMatrices;
     class ReliquaryCurators;
     class ReliquarySignals;
+    class ReliquaryCommands;
 
     class ReliquaryComponent
     {
@@ -68,6 +69,8 @@ namespace Arca
         [[nodiscard]] const ReliquaryCurators& Curators() const;
         [[nodiscard]] ReliquarySignals& Signals();
         [[nodiscard]] const ReliquarySignals& Signals() const;
+        [[nodiscard]] ReliquaryCommands& Commands();
+        [[nodiscard]] const ReliquaryCommands& Commands() const;
     protected:
         [[nodiscard]] Handle HandleFrom(RelicID id, Type type, HandleObjectType objectType) const;
         [[nodiscard]] Handle HandleFrom(const RelicMetadata& metadata) const;

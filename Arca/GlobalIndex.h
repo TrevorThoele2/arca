@@ -33,17 +33,14 @@ namespace Arca
 
         operator Handle() const;
 
-        operator ValueT* () const
-        {
-            return Get();
-        }
+        operator const ValueT* () const;
 
         operator GlobalIndex<const T>() const;
 
-        [[nodiscard]] ValueT& operator*() const;
-        [[nodiscard]] ValueT* operator->() const;
+        [[nodiscard]] const ValueT& operator*() const;
+        [[nodiscard]] const ValueT* operator->() const;
 
-        [[nodiscard]] ValueT* Get() const;
+        [[nodiscard]] const ValueT* Get() const;
 
         [[nodiscard]] RelicID ID() const;
         [[nodiscard]] Reliquary* Owner() const;
@@ -119,25 +116,31 @@ namespace Arca
     }
 
     template<class T>
+    GlobalIndex<T>::operator const ValueT* () const
+    {
+        return Get();
+    }
+
+    template<class T>
     GlobalIndex<T>::operator GlobalIndex<const T>() const
     {
         return GlobalIndex<const T>(*owner);
     }
 
     template<class T>
-    auto GlobalIndex<T>::operator*() const -> ValueT&
+    auto GlobalIndex<T>::operator*() const -> const ValueT&
     {
         return *Get();
     }
 
     template<class T>
-    auto GlobalIndex<T>::operator->() const -> ValueT*
+    auto GlobalIndex<T>::operator->() const -> const ValueT*
     {
         return Get();
     }
 
     template<class T>
-    auto GlobalIndex<T>::Get() const -> ValueT*
+    auto GlobalIndex<T>::Get() const -> const ValueT*
     {
         if (!IsSetup())
             value = FindValueFromOwner();

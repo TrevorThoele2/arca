@@ -81,7 +81,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
     GIVEN("registered reliquary and relic")
     {
         auto reliquary = ReliquaryOrigin().Register<Shard>().Actualize();
-        auto relic = reliquary->Create<OpenRelic>();
+        auto relic = reliquary->Do<Create<OpenRelic>>();
 
         WHEN("creating shard")
         {
@@ -100,7 +100,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
                 THEN("returned shard is referentially equal to beginning")
                 {
                     auto& first = *batch.begin();
-                    REQUIRE(&first == static_cast<Shard*>(createdShard));
+                    REQUIRE(&first == static_cast<const Shard*>(createdShard));
                 }
 
                 THEN("begin is not end")
@@ -144,7 +144,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
                 THEN("returned shard is referentially equal to beginning")
                 {
                     auto& first = *batch.begin();
-                    REQUIRE(&first == static_cast<Shard*>(createdShard));
+                    REQUIRE(&first == static_cast<const Shard*>(createdShard));
                 }
 
                 THEN("begin is not end")
@@ -194,7 +194,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch serialization", "[ShardBatch][se
             .Register<Shard>()
             .Actualize();
 
-        auto savedRelic = savedReliquary->Create<OpenRelic>();
+        auto savedRelic = savedReliquary->Do<Create<OpenRelic>>();
         savedRelic->Create<Shard>();
 
         {

@@ -4,8 +4,13 @@ using namespace std::string_literals;
 
 #include "ReliquarySerializationTests.h"
 
-ReliquarySerializationTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std::move(myValue))
+void ReliquarySerializationTestsFixture::BasicShard::Initialize()
 {}
+
+void ReliquarySerializationTestsFixture::BasicShard::Initialize(std::string myValue)
+{
+    this->myValue = std::move(myValue);
+}
 
 ReliquarySerializationTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
 {}
@@ -20,6 +25,12 @@ void ReliquarySerializationTestsFixture::TypedClosedRelic::Initialize()
     basicShard = Create<BasicShard>();
 }
 
+void ReliquarySerializationTestsFixture::TypedClosedRelic::Initialize(int myInt)
+{
+    Initialize();
+    this->myInt = myInt;
+}
+
 void ReliquarySerializationTestsFixture::TypedOpenRelic::PostConstruct()
 {
     basicShard = Find<BasicShard>();
@@ -30,24 +41,40 @@ void ReliquarySerializationTestsFixture::TypedOpenRelic::Initialize()
     basicShard = Create<BasicShard>();
 }
 
+void ReliquarySerializationTestsFixture::TypedOpenRelic::Initialize(int myInt)
+{
+    Initialize();
+    this->myInt = myInt;
+}
+
 void ReliquarySerializationTestsFixture::GlobalRelic::PostConstruct()
 {
     basicShard = Find<BasicShard>();
 }
 
-void ReliquarySerializationTestsFixture::GlobalRelic::Initialize(int myInt)
+void ReliquarySerializationTestsFixture::GlobalRelic::Initialize()
 {
-    this->myInt = myInt;
     basicShard = Create<BasicShard>();
 }
 
-ReliquarySerializationTestsFixture::BasicShardNullInscription::BasicShardNullInscription(std::string myValue) :
-    myValue(std::move(myValue))
+void ReliquarySerializationTestsFixture::GlobalRelic::Initialize(int myInt, std::string shardData)
+{
+    this->myInt = myInt;
+    basicShard = Create<BasicShard>(std::move(shardData));
+}
+
+void ReliquarySerializationTestsFixture::BasicShardNullInscription::Initialize()
 {}
 
-ReliquarySerializationTestsFixture::OtherShardNullInscription::OtherShardNullInscription(int myValue) :
-    myValue(myValue)
-{}
+void ReliquarySerializationTestsFixture::BasicShardNullInscription::Initialize(std::string myValue)
+{
+    this->myValue = myValue;
+}
+
+void ReliquarySerializationTestsFixture::OtherShardNullInscription::Initialize(int myValue)
+{
+    this->myValue = myValue;
+}
 
 void ReliquarySerializationTestsFixture::TypedClosedRelicNullInscription::PostConstruct()
 {
@@ -79,6 +106,12 @@ void ReliquarySerializationTestsFixture::GlobalRelicNullInscription::Initialize(
     basicShard = Create<BasicShardNullInscription>();
 }
 
+void ReliquarySerializationTestsFixture::GlobalRelicNullInscription::Initialize(int myInt, std::string shardData)
+{
+    this->myInt = myInt;
+    basicShard = Create<BasicShardNullInscription>(std::move(shardData));
+}
+
 void ReliquarySerializationTestsFixture::MovableOnlyRelic::PostConstruct()
 {
     basicShard = Find<BasicShard>();
@@ -87,6 +120,12 @@ void ReliquarySerializationTestsFixture::MovableOnlyRelic::PostConstruct()
 void ReliquarySerializationTestsFixture::MovableOnlyRelic::Initialize()
 {
     basicShard = Create<BasicShard>();
+}
+
+void ReliquarySerializationTestsFixture::MovableOnlyRelic::Initialize(int myInt, std::string shardData)
+{
+    this->myValue = myInt;
+    basicShard = Create<BasicShard>(std::move(shardData));
 }
 
 const Inscription::BinaryArchive::StreamPosition defaultOutputArchiveSize = 135;
@@ -146,9 +185,8 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             .Register<BasicShard>()
             .Actualize();
 
-        auto savedRelic = savedReliquary->Create<OpenRelic>();
-        auto savedShard = savedRelic->Create<BasicShard>();
-        savedShard->myValue = dataGeneration.Random<std::string>();
+        auto savedRelic = savedReliquary->Do<Create<OpenRelic>>();
+        auto savedShard = savedRelic->Create<BasicShard>(dataGeneration.Random<std::string>());
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
@@ -293,14 +331,15 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
 
     GIVEN("saved reliquary with global relic")
     {
+        auto relicData = dataGeneration.Random<int>();
+        auto shardData = dataGeneration.Random<std::string>();
+
         auto savedReliquary = ReliquaryOrigin()
             .Register<BasicShard>()
-            .Register<GlobalRelic>()
+            .Register<GlobalRelic>(relicData, shardData)
             .Actualize();
 
         auto savedRelic = Arca::GlobalIndex<GlobalRelic>(*savedReliquary);
-        savedRelic->myInt = dataGeneration.Random<int>();
-        savedRelic->basicShard->myValue = dataGeneration.Random<std::string>();
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
@@ -348,8 +387,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             .Register<TypedClosedRelic>()
             .Actualize();
 
-        auto savedRelic = savedReliquary->Create<TypedClosedRelic>();
-        savedRelic->myInt = dataGeneration.Random<int>();
+        auto savedRelic = savedReliquary->Do<Create<TypedClosedRelic>>(dataGeneration.Random<int>());
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
@@ -398,9 +436,8 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             .Register<TypedOpenRelic>()
             .Actualize();
 
-        auto savedRelic = savedReliquary->Create<TypedOpenRelic>();
+        auto savedRelic = savedReliquary->Do<Create<TypedOpenRelic>>(dataGeneration.Random<int>());
         auto savedOtherShard = savedRelic->Create<OtherShard>();
-        savedOtherShard->myValue = dataGeneration.Random<int>();
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
@@ -455,8 +492,9 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             .Register<MovableOnlyRelic>()
             .Actualize();
 
-        auto savedRelic = savedReliquary->Create<MovableOnlyRelic>();
-        savedRelic->myValue = dataGeneration.Random<int>();
+        auto savedRelic = savedReliquary->Do<Create<MovableOnlyRelic>>(
+            dataGeneration.Random<int>(),
+            dataGeneration.Random<std::string>());
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
@@ -583,7 +621,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "global computation serializ
     {
         const auto savedReliquary = ReliquaryOrigin()
             .Register<BasicShard>()
-            .Register<GlobalRelic>(dataGeneration.Random<int>())
+            .Register<GlobalRelic>(dataGeneration.Random<int>(), dataGeneration.Random<std::string>())
             .Compute<int>(
                 [](Reliquary& reliquary)
                 {
@@ -638,14 +676,15 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
 {
     GIVEN("saved reliquary with global relic")
     {
+        auto relicData = dataGeneration.Random<int>();
+        auto shardData = dataGeneration.Random<std::string>();
+
         auto savedReliquary = ReliquaryOrigin()
             .Register<BasicShardNullInscription>()
-            .Register<GlobalRelicNullInscription>()
+            .Register<GlobalRelicNullInscription>(relicData, shardData)
             .Actualize();
 
         auto savedRelic = Arca::GlobalIndex<GlobalRelicNullInscription>(*savedReliquary);
-        savedRelic->myInt = dataGeneration.Random<int>();
-        savedRelic->basicShard->myValue = dataGeneration.Random<std::string>();
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
@@ -695,7 +734,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
             .Register<TypedClosedRelicNullInscription>()
             .Actualize();
 
-        auto savedRelic = savedReliquary->Create<TypedClosedRelicNullInscription>();
+        auto savedRelic = savedReliquary->Do<Create<TypedClosedRelicNullInscription>>();
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
@@ -746,9 +785,8 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
             .Register<TypedOpenRelicNullInscription>()
             .Actualize();
 
-        auto savedRelic = savedReliquary->Create<TypedOpenRelicNullInscription>();
-        auto savedOtherShard = savedRelic->Create<OtherShardNullInscription>();
-        savedOtherShard->myValue = dataGeneration.Random<int>();
+        auto savedRelic = savedReliquary->Do<Create<TypedOpenRelicNullInscription>>();
+        savedRelic->Create<OtherShardNullInscription>(dataGeneration.Random<int>());
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);

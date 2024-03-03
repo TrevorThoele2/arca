@@ -24,11 +24,6 @@ namespace Arca
         signals.Clear();
     }
 
-    void Reliquary::Clear(const Type& type)
-    {
-        relics.Clear(type.name);
-    }
-
     std::optional<Handle> Reliquary::ParentOf(const Handle& child) const
     {
         return relics.ParentOf(child);

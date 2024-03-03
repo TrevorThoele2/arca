@@ -31,7 +31,7 @@ SCENARIO_METHOD(AllTestsFixture, "all", "[all]")
 
         WHEN("creating shards")
         {
-            auto relic = reliquary->Create<OpenRelic>();
+            auto relic = reliquary->Do<Create<OpenRelic>>();
             relic->Create<Shard<0>>();
             relic->Create<Shard<1>>();
             relic->Create<Shard<2>>();
@@ -74,14 +74,14 @@ SCENARIO_METHOD(AllTestsFixture, "all", "[all]")
 
         WHEN("creating separate relic with shards")
         {
-            auto relic = reliquary->Create<OpenRelic>();
+            auto relic = reliquary->Do<Create<OpenRelic>>();
             relic->Create<Shard<0>>();
             relic->Create<Shard<1>>();
             relic->Create<Shard<2>>();
 
             THEN("irrelevant relic does not contain all")
             {
-                auto irrelevant = reliquary->Create<OpenRelic>();
+                auto irrelevant = reliquary->Do<Create<OpenRelic>>();
                 REQUIRE(!reliquary->Contains<All<Shard<0>, Shard<1>, Shard<2>>>(irrelevant->ID()));
             }
         }
@@ -102,7 +102,7 @@ SCENARIO_METHOD(AllTestsFixture, "OpenRelic all", "[OpenRelic][all]")
 
         WHEN("creating shards")
         {
-            auto relic = reliquary->Create<OpenRelic>();
+            auto relic = reliquary->Do<Create<OpenRelic>>();
             relic->Create<Shard<0>>();
             relic->Create<Shard<1>>();
             relic->Create<Shard<2>>();
@@ -145,14 +145,14 @@ SCENARIO_METHOD(AllTestsFixture, "OpenRelic all", "[OpenRelic][all]")
 
         WHEN("creating separate relic with shards")
         {
-            auto relic = reliquary->Create<OpenRelic>();
+            auto relic = reliquary->Do<Create<OpenRelic>>();
             relic->Create<Shard<0>>();
             relic->Create<Shard<1>>();
             relic->Create<Shard<2>>();
 
             THEN("irrelevant relic does not contain all")
             {
-                auto irrelevant = reliquary->Create<OpenRelic>();
+                auto irrelevant = reliquary->Do<Create<OpenRelic>>();
                 REQUIRE(!irrelevant->Contains<All<Shard<0>, Shard<1>, Shard<2>>>());
             }
         }
@@ -172,7 +172,7 @@ SCENARIO_METHOD(AllTestsFixture, "ClosedRelic all", "[ClosedRelic][all]")
 
         WHEN("creating shards")
         {
-            auto relic = reliquary->CreateWith<ClosedRelic>(
+            auto relic = reliquary->Do<CreateWith<ClosedRelic>>(
                 RelicStructure
                 {
                     TypeFor<Shard<0>>(),
@@ -188,7 +188,7 @@ SCENARIO_METHOD(AllTestsFixture, "ClosedRelic all", "[ClosedRelic][all]")
 
         WHEN("creating separate relic with shard")
         {
-            reliquary->CreateWith<ClosedRelic>(
+            reliquary->Do<CreateWith<ClosedRelic>>(
                 RelicStructure
                 {
                     TypeFor<Shard<0>>(),
@@ -198,7 +198,7 @@ SCENARIO_METHOD(AllTestsFixture, "ClosedRelic all", "[ClosedRelic][all]")
 
             THEN("irrelevant relic does not contain either")
             {
-                auto irrelevant = reliquary->CreateWith<ClosedRelic>(RelicStructure{});
+                auto irrelevant = reliquary->Do<CreateWith<ClosedRelic>>(RelicStructure{});
                 REQUIRE(!irrelevant->Contains<All<Shard<0>, Shard<1>, Shard<2>>>());
             }
         }

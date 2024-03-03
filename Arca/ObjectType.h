@@ -11,7 +11,8 @@ namespace Arca
         Relic,
         Matrix,
         Curator,
-        Signal
+        Signal,
+        Command
     };
 }
 

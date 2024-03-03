@@ -52,7 +52,7 @@ namespace Arca
     template<class T>
     void BatchSource<T, std::enable_if_t<is_relic_v<T>>>::DestroyAllFromBase(Reliquary& reliquary)
     {
-        reliquary.Clear<T>();
+        reliquary.relics.Clear<T>();
     }
 
     template<class T>

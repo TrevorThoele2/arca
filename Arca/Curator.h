@@ -1,5 +1,11 @@
 #pragma once
 
+#include "HandledCommands.h"
+
+#include "IsRelic.h"
+#include "IsShard.h"
+#include "RelicID.h"
+
 #include "Serialization.h"
 
 namespace Arca
@@ -34,6 +40,11 @@ namespace Arca
     protected:
         Curator() = default;
     protected:
+        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        RelicT* Data(RelicID id);
+        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        ShardT* Data(RelicID id);
+    protected:
         [[nodiscard]] Reliquary& Owner();
         [[nodiscard]] const Reliquary& Owner() const;
     protected:
@@ -48,4 +59,16 @@ namespace Arca
         friend Reliquary;
         friend class ReliquaryCurators;
     };
+
+    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
+    RelicT* Curator::Data(RelicID id)
+    {
+        return Owner().FindStorage<RelicT>(id);
+    }
+
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
+    ShardT* Curator::Data(RelicID id)
+    {
+        return Owner().FindStorage<ShardT>(id);
+    }
 }

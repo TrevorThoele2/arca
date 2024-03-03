@@ -15,7 +15,6 @@ namespace Arca
     public:
         using RelicT = typename SourceT::RelicT;
 
-        using iterator = RelicBatchIteratorBase<RelicT, typename SourceT::iterator>;
         using const_iterator = RelicBatchIteratorBase<const RelicT, typename SourceT::const_iterator>;
     public:
         Batch();
@@ -29,9 +28,7 @@ namespace Arca
         [[nodiscard]] size_t Size() const;
         [[nodiscard]] bool IsEmpty() const;
 
-        [[nodiscard]] iterator begin();
         [[nodiscard]] const_iterator begin() const;
-        [[nodiscard]] iterator end();
         [[nodiscard]] const_iterator end() const;
     private:
         SourceT* source = nullptr;
@@ -90,27 +87,11 @@ namespace Arca
     }
 
     template<class T>
-    auto Batch<T, std::enable_if_t<is_relic_v<T>>>::begin() -> iterator
-    {
-        SourceRequired();
-
-        return iterator(source->begin());
-    }
-
-    template<class T>
     auto Batch<T, std::enable_if_t<is_relic_v<T>>>::begin() const -> const_iterator
     {
         SourceRequired();
 
         return const_iterator(source->begin());
-    }
-
-    template<class T>
-    auto Batch<T, std::enable_if_t<is_relic_v<T>>>::end() -> iterator
-    {
-        SourceRequired();
-
-        return iterator(source->end());
     }
 
     template<class T>
