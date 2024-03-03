@@ -100,11 +100,14 @@
     <ClCompile Include="InscriptionUserContext.cpp">
       <Filter>Source Files\Serialization</Filter>
     </ClCompile>
-    <ClCompile Include="DependentReliquaries.cpp">
-      <Filter>Source Files\Reliquary\Dependent</Filter>
-    </ClCompile>
-    <ClCompile Include="CannotFindDependent.cpp">
+    <ClCompile Include="CannotFindReliquaryDependency.cpp">
       <Filter>Source Files\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="ReliquaryDependencies.cpp">
+      <Filter>Source Files\Reliquary\Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="ReliquaryDependencyAlreadyAdded.cpp">
+      <Filter>Source Files\Reliquary\Dependencies</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -522,14 +525,14 @@
     <ClInclude Include="InscriptionUserContext.h">
       <Filter>Header Files\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="AddDependentReliquaries.h">
-      <Filter>Header Files\Reliquary\Dependent</Filter>
-    </ClInclude>
-    <ClInclude Include="DependentReliquaries.h">
-      <Filter>Header Files\Reliquary\Dependent</Filter>
-    </ClInclude>
-    <ClInclude Include="CannotFindDependent.h">
+    <ClInclude Include="CannotFindReliquaryDependency.h">
       <Filter>Header Files\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquaryDependencies.h">
+      <Filter>Header Files\Reliquary\Dependencies</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquaryDependencyAlreadyAdded.h">
+      <Filter>Header Files\Reliquary\Dependencies</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -707,11 +710,11 @@
     <Filter Include="Header Files\Reference\Index\Shard">
       <UniqueIdentifier>{22a61877-3ec0-46fc-94ab-a99eb6bbb63f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Reliquary\Dependent">
-      <UniqueIdentifier>{9d2682c6-3aad-4154-871e-275255737016}</UniqueIdentifier>
+    <Filter Include="Header Files\Reliquary\Dependencies">
+      <UniqueIdentifier>{faa237a7-7745-4d46-add2-2665f1540a0d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Reliquary\Dependent">
-      <UniqueIdentifier>{944af5a5-58b0-484e-bde2-88c274617c6e}</UniqueIdentifier>
+    <Filter Include="Source Files\Reliquary\Dependencies">
+      <UniqueIdentifier>{41f0128e-8218-4fe2-abb4-ae1f2ee090ac}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

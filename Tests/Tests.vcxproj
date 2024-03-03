@@ -35,6 +35,7 @@
     <ClInclude Include="MatrixTests.h" />
     <ClInclude Include="PostulateTests.h" />
     <ClInclude Include="RelicBatchTests.h" />
+    <ClInclude Include="ReliquaryDependenciesTests.h" />
     <ClInclude Include="ReliquaryOriginRegistrationTests.h" />
     <ClInclude Include="ReliquaryRegistrationTests.h" />
     <ClInclude Include="ReliquarySerializationTests.h" />
@@ -64,6 +65,7 @@
     <ClCompile Include="MatrixTests.cpp" />
     <ClCompile Include="PostulateTests.cpp" />
     <ClCompile Include="RelicBatchTests.cpp" />
+    <ClCompile Include="ReliquaryDependenciesTests.cpp" />
     <ClCompile Include="ReliquaryOriginRegistrationTests.cpp" />
     <ClCompile Include="ReliquaryRegistrationTests.cpp" />
     <ClCompile Include="ReliquarySerializationTests.cpp" />

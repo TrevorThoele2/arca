@@ -4,7 +4,7 @@
 #include <cassert>
 #include <utility>
 
-#include "DependentReliquaries.h"
+#include "ReliquaryDependencies.h"
 #include <Inscription/MultimapScribe.h>
 #include <Inscription/MemoryScribe.h>
 #include <Inscription/VectorScribe.h>
@@ -103,11 +103,11 @@ namespace Inscription
     void Scribe<::Arca::Reliquary, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
         userContext.reliquary = &object;
-        if (object.Contains<Arca::DependentReliquaries>())
+        if (object.Contains<Arca::ReliquaryDependencies>())
         {
-            auto entries = object.Do<Arca::AllDependentReliquaries>();
-            userContext.dependents.reserve(entries.size());
-            for (auto& dependent : entries)
+            auto dependencies = object.Do<Arca::AllReliquaryDependencies>();
+            userContext.dependents.reserve(dependencies.size());
+            for (auto& dependent : dependencies)
                 userContext.dependents.push_back(
                     Arca::InscriptionUserContext::Dependent{ dependent.id, dependent.reliquary });
         }
