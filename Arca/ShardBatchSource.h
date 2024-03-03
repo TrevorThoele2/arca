@@ -284,7 +284,7 @@ namespace Inscription
                 ::Arca::RelicID id;
                 archive(id);
 
-                auto matrixSnapshot = object.owner->matrices.CreationSnapshot(id);
+                auto matrixSnapshot = object.owner->matrices.StartCreationTransaction(id);
 
                 auto foundShard = object.Find(id);
                 if (foundShard)

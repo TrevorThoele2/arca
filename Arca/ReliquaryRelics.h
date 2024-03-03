@@ -76,7 +76,7 @@ namespace Arca
 
         RelicID nextRelicID = 1;
 
-        RelicMetadata* SetupNewInternals(
+        RelicMetadata* SetupNewMetadata(
             RelicID id,
             Openness openness,
             Locality locality,
@@ -220,13 +220,13 @@ namespace Arca
             std::enable_if_t<is_relic_v<RelicT> && !has_should_create_method_v<RelicT>, int> = 0>
             bool ShouldCreate(ConstructorArgs&& ... constructorArgs);
 
+        template<class RelicT>
+        RelicID StartNewRelic();
         template<class RelicT, class... ConstructorArgs>
-        RelicT* PushNewRelic(RelicStructure structure, ConstructorArgs&& ... constructorArgs);
+        Index<RelicT> FinishNewRelic(
+            RelicStructure structure, RelicID id, ConstructorArgs&& ... constructorArgs);
     private:
         RelicMetadata& ValidateParentForParenting(const Handle& parent);
-    private:
-        template<class T>
-        auto CreateIndex(RelicID id) const;
     private:
         explicit ReliquaryRelics(Reliquary& owner);
         ReliquaryRelics(ReliquaryRelics&& arg) noexcept = default;

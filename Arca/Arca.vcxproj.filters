@@ -510,6 +510,9 @@
     <ClInclude Include="HandleObjectType.h">
       <Filter>Header Files\Handle</Filter>
     </ClInclude>
+    <ClInclude Include="Operation.h">
+      <Filter>Header Files\Operation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
@@ -673,6 +676,9 @@
     </Filter>
     <Filter Include="Header Files\Reference\Index\Shard">
       <UniqueIdentifier>{22a61877-3ec0-46fc-94ab-a99eb6bbb63f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Operation">
+      <UniqueIdentifier>{e12cb0d3-751a-4e99-816c-385c18335124}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

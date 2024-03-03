@@ -94,7 +94,7 @@ namespace Arca
         return returnValue;
     }
 
-    RelicMetadata* ReliquaryRelics::SetupNewInternals(
+    RelicMetadata* ReliquaryRelics::SetupNewMetadata(
         RelicID id,
         Openness openness,
         Locality locality,
@@ -234,8 +234,6 @@ namespace Arca
 
         parentMetadata.children.push_back(child);
         childMetadata->parent = parent;
-
-        Owner().Raise<RelicParented>({ parent, child });
     }
 
     ReliquaryRelics::LocalHandlerBase::~LocalHandlerBase() = default;
