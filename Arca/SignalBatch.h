@@ -1,0 +1,213 @@
+#pragma once
+
+#include "SignalBatchSource.h"
+#include "SignalBatchException.h"
+
+#include "StaticAssert.h"
+
+#include "Serialization.h"
+
+namespace Arca
+{
+    using SignalBatchSizeT = size_t;
+
+    template<class Signal>
+    class SignalBatch
+    {
+    private:
+        using SourceT = SignalBatchSource<Signal>;
+    public:
+        using SizeT = SignalBatchSizeT;
+        using iterator = typename SourceT::iterator;
+        using const_iterator = typename SourceT::const_iterator;
+    public:
+        SignalBatch();
+        explicit SignalBatch(SourceT& source);
+        SignalBatch(const SignalBatch& arg);
+        SignalBatch(SignalBatch&& arg) noexcept;
+
+        ~SignalBatch();
+
+        SignalBatch& operator=(const SignalBatch& arg);
+        SignalBatch& operator=(SignalBatch&& arg) noexcept;
+
+        [[nodiscard]] SizeT Size() const;
+        [[nodiscard]] bool IsEmpty() const;
+
+        [[nodiscard]] iterator begin();
+        [[nodiscard]] const_iterator begin() const;
+        [[nodiscard]] iterator end();
+        [[nodiscard]] const_iterator end() const;
+    private:
+        SourceT* source = nullptr;
+
+        void IncrementSource();
+        void DecrementSource();
+    private:
+        bool isInvalid = false;
+
+        void Invalidate();
+        void ThrowIfInvalid() const;
+    private:
+        INSCRIPTION_ACCESS;
+    private:
+        void Clear();
+
+        friend Reliquary;
+    };
+
+    template<class Signal>
+    SignalBatch<Signal>::SignalBatch()
+    {}
+
+    template<class Signal>
+    SignalBatch<Signal>::SignalBatch(SourceT& source) : source(&source)
+    {
+        IncrementSource();
+    }
+
+    template<class Signal>
+    SignalBatch<Signal>::SignalBatch(const SignalBatch& arg) : source(arg.source)
+    {
+        IncrementSource();
+    }
+
+    template<class Signal>
+    SignalBatch<Signal>::SignalBatch(SignalBatch&& arg) noexcept : source(std::move(arg.source))
+    {
+        arg.source = nullptr;
+    }
+
+    template<class Signal>
+    SignalBatch<Signal>::~SignalBatch()
+    {
+        if (isInvalid)
+            return;
+
+        DecrementSource();
+    }
+
+    template<class Signal>
+    SignalBatch<Signal>& SignalBatch<Signal>::operator=(const SignalBatch& arg)
+    {
+        source = arg.source;
+        source->IncrementReference();
+        return *this;
+    }
+
+    template<class Signal>
+    SignalBatch<Signal>& SignalBatch<Signal>::operator=(SignalBatch&& arg) noexcept
+    {
+        source = std::move(arg.source);
+        arg.source = nullptr;
+        return *this;
+    }
+
+    template<class Signal>
+    auto SignalBatch<Signal>::Size() const -> SizeT
+    {
+        ThrowIfInvalid();
+
+        return source->Size();
+    }
+
+    template<class Signal>
+    bool SignalBatch<Signal>::IsEmpty() const
+    {
+        ThrowIfInvalid();
+
+        return source->IsEmpty();
+    }
+
+    template<class Signal>
+    auto SignalBatch<Signal>::begin() -> iterator
+    {
+        ThrowIfInvalid();
+
+        return source->begin();
+    }
+
+    template<class Signal>
+    auto SignalBatch<Signal>::begin() const -> const_iterator
+    {
+        ThrowIfInvalid();
+
+        return source->begin();
+    }
+
+    template<class Signal>
+    auto SignalBatch<Signal>::end() -> iterator
+    {
+        ThrowIfInvalid();
+
+        return source->end();
+    }
+
+    template<class Signal>
+    auto SignalBatch<Signal>::end() const -> const_iterator
+    {
+        ThrowIfInvalid();
+
+        return source->end();
+    }
+
+    template<class Signal>
+    void SignalBatch<Signal>::IncrementSource()
+    {
+        if (!source)
+            return;
+
+        source->IncrementReference();
+    }
+
+    template<class Signal>
+    void SignalBatch<Signal>::DecrementSource()
+    {
+        if (!source)
+            return;
+
+        source->DecrementReference();
+    }
+
+    template<class Signal>
+    void SignalBatch<Signal>::Invalidate()
+    {
+        isInvalid = true;
+    }
+
+    template<class Signal>
+    void SignalBatch<Signal>::ThrowIfInvalid() const
+    {
+        if (isInvalid)
+            throw SignalBatchInvalidated();
+    }
+
+    template<class Signal>
+    void SignalBatch<Signal>::Clear()
+    {
+        source->Clear();
+    }
+}
+
+namespace Inscription
+{
+    template<class T>
+    class Scribe<::Arca::SignalBatch<T>, BinaryArchive> :
+        public CompositeScribe<::Arca::SignalBatch<T>, BinaryArchive>
+    {
+    private:
+        using BaseT = CompositeScribe<::Arca::SignalBatch<T>, BinaryArchive>;
+    public:
+        using ObjectT = typename BaseT::ObjectT;
+        using ArchiveT = typename BaseT::ArchiveT;
+
+        using BaseT::Scriven;
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        {
+            archive(object.source);
+            if (archive.IsInput())
+                object.IncrementSource();
+        }
+    };
+}

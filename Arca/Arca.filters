@@ -1,0 +1,245 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\System">
+      <UniqueIdentifier>{26b8f760-13b1-40a1-b5a2-6babf688dd04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Manager">
+      <UniqueIdentifier>{c186fd54-bd2d-4ae2-8800-72767ab462b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\System">
+      <UniqueIdentifier>{3266c0c6-f9d1-45e0-b575-aaf9799886d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Manager">
+      <UniqueIdentifier>{5cc16b83-e726-4bb8-b2d1-89fbc5c030dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Object">
+      <UniqueIdentifier>{c7922b57-d990-42db-8cbc-dca964c49ff4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Object\Batch">
+      <UniqueIdentifier>{6337c4ce-d35b-44cc-8ae8-d0bb7110a756}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Object\Factory">
+      <UniqueIdentifier>{d1c17133-2100-4624-9e54-e34484911079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Object\Map">
+      <UniqueIdentifier>{8c52279e-c69b-4dcb-a954-e116c9b9ac5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Object\Type">
+      <UniqueIdentifier>{e254ef87-733b-4108-96e0-a6a08040d0ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Object">
+      <UniqueIdentifier>{fa29a6b2-d1d9-4e78-a6c8-4e265364f781}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Object\Batch">
+      <UniqueIdentifier>{bdbba232-0119-4dca-a395-9fa73d197f91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Object\Type">
+      <UniqueIdentifier>{bc4a0e1c-fe76-4a45-a017-01c752ee3924}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Object\Factory">
+      <UniqueIdentifier>{0a86b1ae-c49e-4b79-b3a1-d7ba34cd0c92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Signal">
+      <UniqueIdentifier>{0fc4473d-5599-4bc3-84b3-8d9a68882e77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Signal">
+      <UniqueIdentifier>{2c7b343b-3490-401d-a37b-b998609c3705}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Exception.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="ManagerException.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="System.h">
+      <Filter>Header Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemDependencyNotFound.h">
+      <Filter>Header Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemLayout.h">
+      <Filter>Header Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemProvider.h">
+      <Filter>Header Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemScribe.h">
+      <Filter>Header Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemTraits.h">
+      <Filter>Header Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticAssert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Serialization.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IDManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IDManagerIterator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IntervalList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectID.h">
+      <Filter>Header Files\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>Header Files\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectFactory.h">
+      <Filter>Header Files\Object\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectFactoryBase.h">
+      <Filter>Header Files\Object\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectFactoryTraits.h">
+      <Filter>Header Files\Object\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectMap.h">
+      <Filter>Header Files\Object\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectMapIterator.h">
+      <Filter>Header Files\Object\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTypeDescription.h">
+      <Filter>Header Files\Object\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTypeDescriptionGroup.h">
+      <Filter>Header Files\Object\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTypeGraph.h">
+      <Filter>Header Files\Object\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTypeGraphIterator.h">
+      <Filter>Header Files\Object\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTypeGraphNode.h">
+      <Filter>Header Files\Object\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTypeList.h">
+      <Filter>Header Files\Object\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeRegistration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTraits.h">
+      <Filter>Header Files\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeValidation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTypeName.h">
+      <Filter>Header Files\Object\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTypeNameSerializer.h">
+      <Filter>Header Files\Object\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectScribe.h">
+      <Filter>Header Files\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcessedObjectTraits.h">
+      <Filter>Header Files\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcessedSystemTraits.h">
+      <Filter>Header Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectBatch.h">
+      <Filter>Header Files\Object\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectBatchException.h">
+      <Filter>Header Files\Object\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectBatchSource.h">
+      <Filter>Header Files\Object\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectBatchSourceDefinition.h">
+      <Filter>Header Files\Object\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectReference.h">
+      <Filter>Header Files\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Signal.h">
+      <Filter>Header Files\Signal</Filter>
+    </ClInclude>
+    <ClInclude Include="SignalStack.h">
+      <Filter>Header Files\Signal</Filter>
+    </ClInclude>
+    <ClInclude Include="SignalStackSource.h">
+      <Filter>Header Files\Signal</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Manager.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="ManagerException.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="System.cpp">
+      <Filter>Source Files\System</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemDependencyNotFound.cpp">
+      <Filter>Source Files\System</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemProvider.cpp">
+      <Filter>Source Files\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Exception.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="TypeRegistration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectTypeDescription.cpp">
+      <Filter>Source Files\Object\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectTypeDescriptionGroup.cpp">
+      <Filter>Source Files\Object\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectTypeGraph.cpp">
+      <Filter>Source Files\Object\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectTypeGraphNode.cpp">
+      <Filter>Source Files\Object\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectTypeNameSerializer.cpp">
+      <Filter>Source Files\Object\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectFactoryBase.cpp">
+      <Filter>Source Files\Object\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectBatchException.cpp">
+      <Filter>Source Files\Object\Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectBatchSource.cpp">
+      <Filter>Source Files\Object\Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="Signal.cpp">
+      <Filter>Source Files\Signal</Filter>
+    </ClCompile>
+    <ClCompile Include="SignalStackSource.cpp">
+      <Filter>Source Files\Signal</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

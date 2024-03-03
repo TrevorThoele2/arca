@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CuratorDependencyList.h" />
+    <ClInclude Include="CuratorHandle.h" />
+    <ClInclude Include="CuratorTypeDescription.h" />
+    <ClInclude Include="ExtendedRelic.h" />
+    <ClInclude Include="OwnedRelic.h" />
+    <ClInclude Include="OwnedRelicFactory.h" />
+    <ClInclude Include="Relic.h" />
+    <ClInclude Include="RelicCreated.h" />
+    <ClInclude Include="RelicBatchSourceDefinition.h" />
+    <ClInclude Include="Exception.h" />
+    <ClInclude Include="RelicExtension.h" />
+    <ClInclude Include="RelicFactoryBase.h" />
+    <ClInclude Include="RelicFactoryTraits.h" />
+    <ClInclude Include="RelicID.h" />
+    <ClInclude Include="IDManager.h" />
+    <ClInclude Include="IDManagerIterator.h" />
+    <ClInclude Include="IntervalList.h" />
+    <ClInclude Include="BeforeRelicDestroyed.h" />
+    <ClInclude Include="ExtendedRelicSerializer.h" />
+    <ClInclude Include="Reliquary.h" />
+    <ClInclude Include="ReliquaryException.h" />
+    <ClInclude Include="RelicMap.h" />
+    <ClInclude Include="ProcessedCuratorTraits.h" />
+    <ClInclude Include="ProcessedRelicTraits.h" />
+    <ClInclude Include="RelicScribe.h" />
+    <ClInclude Include="Serialization.h" />
+    <ClInclude Include="SignalBatch.h" />
+    <ClInclude Include="SignalBatchException.h" />
+    <ClInclude Include="SignalBatchSource.h" />
+    <ClInclude Include="Curator.h" />
+    <ClInclude Include="CuratorDependencyNotFound.h" />
+    <ClInclude Include="CuratorLayout.h" />
+    <ClInclude Include="CuratorProvider.h" />
+    <ClInclude Include="CuratorScribe.h" />
+    <ClInclude Include="CuratorTraits.h" />
+    <ClInclude Include="RelicTraits.h" />
+    <ClInclude Include="RelicTypeDescription.h" />
+    <ClInclude Include="RelicTypeDescriptionGroup.h" />
+    <ClInclude Include="RelicTypeGraph.h" />
+    <ClInclude Include="RelicTypeGraphIterator.h" />
+    <ClInclude Include="RelicTypeGraphNode.h" />
+    <ClInclude Include="RelicTypeList.h" />
+    <ClInclude Include="RelicTypeNameSerializer.h" />
+    <ClInclude Include="SignalBatchSourceDefinition.h" />
+    <ClInclude Include="TypeHandle.h" />
+    <ClInclude Include="TypeRegistration.h" />
+    <ClInclude Include="TypeValidation.h" />
+    <ClInclude Include="RelicBatch.h" />
+    <ClInclude Include="RelicBatchException.h" />
+    <ClInclude Include="RelicBatchSource.h" />
+    <ClInclude Include="BasicRelicFactory.h" />
+    <ClInclude Include="RelicMapIterator.h" />
+    <ClInclude Include="StaticAssert.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CuratorHandle.cpp" />
+    <ClCompile Include="CuratorTypeDescription.cpp" />
+    <ClCompile Include="ExtendedRelic.cpp" />
+    <ClCompile Include="OwnedRelic.cpp" />
+    <ClCompile Include="RelicBatchException.cpp" />
+    <ClCompile Include="RelicBatchSource.cpp" />
+    <ClCompile Include="Exception.cpp" />
+    <ClCompile Include="RelicFactoryBase.cpp" />
+    <ClCompile Include="ExtendedRelicSerializer.cpp" />
+    <ClCompile Include="Reliquary.cpp" />
+    <ClCompile Include="ReliquaryException.cpp" />
+    <ClCompile Include="SignalBatchException.cpp" />
+    <ClCompile Include="SignalBatchSource.cpp" />
+    <ClCompile Include="Curator.cpp" />
+    <ClCompile Include="CuratorDependencyNotFound.cpp" />
+    <ClCompile Include="CuratorProvider.cpp" />
+    <ClCompile Include="RelicTypeDescription.cpp" />
+    <ClCompile Include="RelicTypeDescriptionGroup.cpp" />
+    <ClCompile Include="RelicTypeGraph.cpp" />
+    <ClCompile Include="RelicTypeGraphNode.cpp" />
+    <ClCompile Include="RelicTypeNameSerializer.cpp" />
+    <ClCompile Include="TypeRegistration.cpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{56692CFB-B693-404E-9D98-A379D1370664}</ProjectGuid>
+    <RootNamespace>Reliquary</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Arca</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>C:\Users\Trevor\Documents\Programming Projects\Chroma;C:\Users\Trevor\Documents\Programming Projects\Inscription;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>C:\Users\Trevor\Documents\Programming Projects\Chroma;C:\Users\Trevor\Documents\Programming Projects\Inscription;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
