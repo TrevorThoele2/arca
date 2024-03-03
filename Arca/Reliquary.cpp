@@ -8,26 +8,22 @@
 #include <Inscription/OutputJumpTable.h>
 #include <Inscription/InputJumpTable.h>
 
+#include <cassert>
+
 namespace Arca
 {
     Reliquary::Reliquary(Reliquary&& arg) noexcept :
-        relics(std::move(arg.relics)), relicToExtensionMap(std::move(arg.relicToExtensionMap)),
         staticRelicInitializerList(std::move(arg.staticRelicInitializerList)),
         relicTypeGraph(std::move(arg.relicTypeGraph)), relicFactories(std::move(arg.relicFactories)),
         curators(std::move(arg.curators)), relicBatchSources(std::move(arg.relicBatchSources)),
+        abstractRelicBatchSources(std::move(arg.abstractRelicBatchSources)),
         signalBatchSources(std::move(arg.signalBatchSources))
     {
-        for (auto& loop : relics)
-            loop->owner = this;
-
         for (auto& loop : relicFactories)
             loop.second->owner = this;
 
         for (auto& loop : curators)
             loop->Get()->owner = this;
-
-        for (auto& loop : relicBatchSources)
-            loop.second->owner = this;
 
         for (auto& loop : signalBatchSources)
             loop.second->owner = this;
@@ -36,8 +32,6 @@ namespace Arca
     Reliquary& Reliquary::operator=(Reliquary&& arg) noexcept
     {
         relicTypeGraph = std::move(arg.relicTypeGraph);
-        relics = std::move(arg.relics);
-        relicToExtensionMap = std::move(arg.relicToExtensionMap);
         staticRelicInitializerList = std::move(arg.staticRelicInitializerList);
         relicFactories = std::move(arg.relicFactories);
         curators = std::move(arg.curators);
@@ -74,12 +68,10 @@ namespace Arca
 
     Reliquary::SizeT Reliquary::RelicCount() const
     {
-        return relics.Size();
-    }
-
-    RelicTypeDescriptionGroup Reliquary::DescriptionGroupForRelic(const TypeHandle& typeHandle) const
-    {
-        return relicTypeGraph.GroupFor(typeHandle);
+        SizeT accumulated = 0;
+        for (auto& loop : relicBatchSources)
+            accumulated += loop.second->Size();
+        return accumulated;
     }
 
     RelicTypeGraph Reliquary::RelicTypeGraph() const
@@ -103,17 +95,28 @@ namespace Arca
         curatorLayouts.push_back(layout);
     }
 
-    AnyExtendedRelic* Reliquary::AddRelic(RelicPtr&& relic)
-    {
-        auto added = &**relics.Add(relic->id, std::move(relic));
-        relicToExtensionMap.emplace(added->RelicMemory(), added->Extension());
-        return added;
-    }
-
     void Reliquary::CreateAllStaticRelics()
     {
         for (auto& loop : staticRelicInitializerList)
             loop(*this);
+    }
+
+    RelicBatchSourceBase* Reliquary::FindRelicBatchSource(const TypeHandle& typeHandle)
+    {
+        const auto found = relicBatchSources.find(typeHandle);
+        if (found == relicBatchSources.end())
+            return nullptr;
+
+        return found->second.get();
+    }
+
+    AbstractRelicBatchSourceBase* Reliquary::FindAbstractRelicBatchSource(const TypeHandle& typeHandle)
+    {
+        const auto found = abstractRelicBatchSources.find(typeHandle);
+        if (found == abstractRelicBatchSources.end())
+            return nullptr;
+
+        return found->second.get();
     }
 
     void Reliquary::CreateAllCurators()
@@ -177,27 +180,6 @@ namespace Arca
         }
     }
 
-    RelicBatchSourceBase* Reliquary::FindRelicBatchSource(const TypeHandle& typeHandle)
-    {
-        const auto found = relicBatchSources.find(typeHandle);
-        if (found == relicBatchSources.end())
-            return nullptr;
-
-        return found->second.get();
-    }
-
-    void Reliquary::NotifyRelicBatchSourcesCreation(AnyExtendedRelic& relic)
-    {
-        for (auto& loop : relicBatchSources)
-            loop.second->NotifyCreated(relic);
-    }
-
-    void Reliquary::NotifyRelicBatchSourcesDestruction(AnyExtendedRelic& relic)
-    {
-        for (auto& loop : relicBatchSources)
-            loop.second->NotifyDestroyed(relic);
-    }
-
     SignalBatchSourceBase* Reliquary::FindSignalBatchSource(const std::type_index& type)
     {
         const auto found = signalBatchSources.find(type);
@@ -222,6 +204,7 @@ namespace Inscription
     {
         // Relics
         {
+            /*
             OutputJumpTable<::Arca::TypeHandle, ::Arca::ExtendedRelicSerializer> jumpTable;
             for(auto& loop : )
             std::unordered_map<::Arca::TypeHandle, RelicList> map;
@@ -232,7 +215,7 @@ namespace Inscription
             archive(jumpTable);
             for (auto& relicList : map)
                 for (auto& loop : relicList.second)
-                    loop.release();
+                    loop.release();*/
         }
 
         // Curators
@@ -255,6 +238,7 @@ namespace Inscription
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::Load(ObjectT& object, ArchiveT& archive)
     {
+        /*
         if (object.isInitialized)
             throw ::Arca::AttemptedLoadWhileInitialized();
 
@@ -308,5 +292,6 @@ namespace Inscription
         }
 
         object.isInitialized = true;
+        */
     }
 }

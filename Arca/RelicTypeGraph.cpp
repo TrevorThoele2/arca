@@ -11,7 +11,7 @@ namespace Arca
         for (auto& loop : add.baseTypes)
         {
             auto found = nodes.emplace(loop.typeHandle, Node(loop));
-            found.first->second.children.push_back(&created.first->second);
+            created.first->second.bases.push_back(&found.first->second);
         }
     }
 
@@ -27,33 +27,21 @@ namespace Arca
         return RelicTypeDescriptionGroup(std::move(descriptions));
     }
 
-    RelicTypeDescriptionGroup RelicTypeGraph::GroupFor(const TypeHandle& typeHandle) const
+    RelicTypeDescriptionGroup RelicTypeGraph::AllBasesFor(const TypeHandle& typeHandle) const
     {
         using DescriptionList = std::vector<RelicTypeDescription>;
+        
+        const auto found = std::find_if(nodes.begin(), nodes.end(),
+            [typeHandle](const std::pair<TypeHandle, Node>& entry)
+            {
+                return entry.first == typeHandle;
+            });
+
+        if (found == nodes.end())
+            return RelicTypeDescriptionGroup(DescriptionList());
 
         DescriptionList descriptions;
-
-        const auto extractGroup = [&](const Node* from) -> void
-        {
-            auto extractGroupImpl = [&](const Node* from, auto& extractGroupRef) mutable -> void
-            {
-                descriptions.push_back(from->description);
-                for (auto& loop : from->children)
-                    extractGroupRef(loop, extractGroupRef);
-            };
-
-            return extractGroupImpl(from, extractGroupImpl);
-        };
-
-        for (auto& loop : nodes)
-        {
-            if (loop.first != typeHandle)
-                continue;
-
-            extractGroup(&loop.second);
-            break;
-        }
-
+        PushBasesTo(descriptions, found->second);
         return RelicTypeDescriptionGroup(std::move(descriptions));
     }
 
@@ -68,4 +56,13 @@ namespace Arca
 
     RelicTypeGraph::Node::Node(const RelicTypeDescription& description) : description(description)
     {}
+
+    void RelicTypeGraph::PushBasesTo(std::vector<RelicTypeDescription>& descriptions, const Node& node) const
+    {
+        for (auto& loop : node.bases)
+        {
+            PushBasesTo(descriptions, *loop);
+            descriptions.push_back(loop->description);
+        }
+    }
 }

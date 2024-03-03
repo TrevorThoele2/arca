@@ -2,10 +2,10 @@
 
 namespace Arca
 {
-    template<class RelicT>
+    template<class Relic>
     struct BeforeRelicDestroyed
     {
-        using Relic = RelicT;
-        Relic& relic;
+        using RelicT = Relic;
+        Ref<RelicT> relic;
     };
 }

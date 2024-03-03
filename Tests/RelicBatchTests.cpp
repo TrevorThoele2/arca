@@ -72,15 +72,14 @@ SCENARIO_METHOD(RelicBatchFixture, "RelicBatch")
 
             WHEN("creating derived relic")
             {
-                auto& createdRelic = reliquary.CreateRelic<DerivedRelic>(
+                auto& createdRelic = *reliquary.CreateRelic<DerivedRelic>(
                     dataGeneration.Random<std::string>(),
                     dataGeneration.Random<int>());
-                auto createdID = reliquary.IDFor(createdRelic);
 
                 WHEN("starting derived batch")
                 {
                     auto batch = reliquary.StartRelicBatch<DerivedRelic>();
-                    auto& first = **batch.begin();
+                    auto& first = *batch.begin();
 
                     THEN("batch contains derived relic")
                     {
@@ -93,7 +92,7 @@ SCENARIO_METHOD(RelicBatchFixture, "RelicBatch")
 
                     THEN("removing relic empties the batch")
                     {
-                        batch.Remove(batch.begin());
+                        batch.Destroy(batch.begin());
                         REQUIRE(batch.IsEmpty());
                     }
                 }
@@ -101,14 +100,14 @@ SCENARIO_METHOD(RelicBatchFixture, "RelicBatch")
                 WHEN("starting base batch")
                 {
                     auto batch = reliquary.StartRelicBatch<AbstractRelic>();
-                    auto& first = **batch.begin();
+                    auto& first = *batch.begin();
 
                     THEN("base batch is occupied")
                     {
                         REQUIRE(!batch.IsEmpty());
                         REQUIRE(batch.Size() == 1);
-                        REQUIRE(first.abstractValue == createdRelic.abstractValue);
-                        REQUIRE(&first == &createdRelic);
+                        REQUIRE(first->abstractValue == createdRelic.abstractValue);
+                        REQUIRE(&*first == &createdRelic);
                     }
                 }
             }
@@ -122,10 +121,10 @@ SCENARIO_METHOD(RelicBatchFixture, "RelicBatch")
 
                 WHEN("creating derived relic")
                 {
-                    auto& createdRelic = reliquary.CreateRelic<DerivedRelic>(
+                    auto& createdRelic = *reliquary.CreateRelic<DerivedRelic>(
                         dataGeneration.Random<std::string>(),
                         dataGeneration.Random<int>());
-                    auto& first = **batch.begin();
+                    auto& first = *batch.begin();
 
                     THEN("batch contains derived relic")
                     {
@@ -138,7 +137,7 @@ SCENARIO_METHOD(RelicBatchFixture, "RelicBatch")
 
                     THEN("removing relic empties the batch")
                     {
-                        batch.Remove(batch.begin());
+                        batch.Destroy(batch.begin());
                         REQUIRE(batch.IsEmpty());
                     }
                 }

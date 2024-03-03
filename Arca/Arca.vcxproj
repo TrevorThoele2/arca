@@ -19,15 +19,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AbstractRelicBatch.h" />
+    <ClInclude Include="AbstractRelicBatchSource.h" />
     <ClInclude Include="CuratorDependencyList.h" />
     <ClInclude Include="CuratorHandle.h" />
     <ClInclude Include="CuratorTypeDescription.h" />
-    <ClInclude Include="ExtendedRelic.h" />
-    <ClInclude Include="OwnedRelic.h" />
     <ClInclude Include="OwnedRelicFactory.h" />
+    <ClInclude Include="Ref.h" />
     <ClInclude Include="Relic.h" />
+    <ClInclude Include="RelicBatchIterator.h" />
     <ClInclude Include="RelicCreated.h" />
-    <ClInclude Include="RelicBatchSourceDefinition.h" />
     <ClInclude Include="Exception.h" />
     <ClInclude Include="RelicExtension.h" />
     <ClInclude Include="RelicFactoryBase.h" />
@@ -37,7 +38,6 @@
     <ClInclude Include="IDManagerIterator.h" />
     <ClInclude Include="IntervalList.h" />
     <ClInclude Include="BeforeRelicDestroyed.h" />
-    <ClInclude Include="ExtendedRelicSerializer.h" />
     <ClInclude Include="Reliquary.h" />
     <ClInclude Include="ReliquaryException.h" />
     <ClInclude Include="RelicMap.h" />
@@ -74,15 +74,13 @@
     <ClInclude Include="StaticAssert.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AbstractRelicBatchSource.cpp" />
     <ClCompile Include="CuratorHandle.cpp" />
     <ClCompile Include="CuratorTypeDescription.cpp" />
-    <ClCompile Include="ExtendedRelic.cpp" />
-    <ClCompile Include="OwnedRelic.cpp" />
     <ClCompile Include="RelicBatchException.cpp" />
     <ClCompile Include="RelicBatchSource.cpp" />
     <ClCompile Include="Exception.cpp" />
     <ClCompile Include="RelicFactoryBase.cpp" />
-    <ClCompile Include="ExtendedRelicSerializer.cpp" />
     <ClCompile Include="Reliquary.cpp" />
     <ClCompile Include="ReliquaryException.cpp" />
     <ClCompile Include="SignalBatchException.cpp" />
@@ -161,7 +159,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

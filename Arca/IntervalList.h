@@ -30,7 +30,7 @@ namespace Arca
             [[nodiscard]] Value End() const;
             [[nodiscard]] Value GetSize() const;
 
-            bool IsInside(Value val) const;
+            [[nodiscard]] bool IsInside(Value val) const;
         private:
             Value start;
             Value size;
@@ -68,7 +68,7 @@ namespace Arca
         [[nodiscard]] const_reverse_iterator rbegin() const;
         [[nodiscard]] const_reverse_iterator rend() const;
     private:
-        static constexpr Value lowest = std::numeric_limits<T>::lowest();
+        static constexpr Value lowest = std::numeric_limits<Value>::lowest();
 
         friend Node;
     private:
@@ -331,7 +331,8 @@ namespace Arca
 namespace Inscription
 {
     template<class T>
-    class Scribe<::Arca::IntervalList<T>, BinaryArchive> : public CompositeScribe<::Arca::IntervalList<T>, BinaryArchive>
+    class Scribe<::Arca::IntervalList<T>, BinaryArchive> :
+        public CompositeScribe<::Arca::IntervalList<T>, BinaryArchive>
     {
     private:
         using BaseT = CompositeScribe<::Arca::IntervalList<T>, BinaryArchive>;

@@ -20,17 +20,19 @@ namespace Arca
         void AddDescription(const RelicTypeDescription& add);
 
         [[nodiscard]] RelicTypeDescriptionGroup AllDescriptions() const;
-        [[nodiscard]] RelicTypeDescriptionGroup GroupFor(const TypeHandle& typeHandle) const;
+        [[nodiscard]] RelicTypeDescriptionGroup AllBasesFor(const TypeHandle& typeHandle) const;
         [[nodiscard]] bool HasTypeHandle(const TypeHandle& typeHandle) const;
     private:
         struct Node
         {
             RelicTypeDescription description;
-            std::vector<Node*> children;
+            std::vector<Node*> bases;
 
             explicit Node(const RelicTypeDescription& description);
         };
 
         std::unordered_map<TypeHandle, Node> nodes;
+
+        void PushBasesTo(std::vector<RelicTypeDescription>& descriptions, const Node& node) const;
     };
 }
