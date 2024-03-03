@@ -38,8 +38,12 @@ namespace Arca
 
         void DoOn(void(*function)(Curator& curator));
         void DoOn(void(*function)(Curator& curator, Curator::Stage& stage));
+    public:
+        ReliquaryCurators(const ReliquaryCurators& arg) = delete;
+        ReliquaryCurators& operator=(const ReliquaryCurators& arg) = delete;
     private:
         explicit ReliquaryCurators(Reliquary& owner);
+        ReliquaryCurators(ReliquaryCurators&& arg) noexcept = default;
         friend Reliquary;
     };
 }

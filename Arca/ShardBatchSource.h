@@ -49,6 +49,8 @@ namespace Arca
         using const_iterator = typename List::const_iterator;
     public:
         BatchSource() = default;
+        BatchSource(const BatchSource& arg) = delete;
+        BatchSource(BatchSource&& arg) = default;
 
         ShardT* Add(RelicID id);
 

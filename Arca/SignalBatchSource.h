@@ -36,7 +36,8 @@ namespace Arca
         using const_iterator = typename List::const_iterator;
     public:
         BatchSource() = default;
-        explicit BatchSource(const Inscription::BinaryTableData<BatchSource>& data);
+        BatchSource(const BatchSource& arg) = delete;
+        BatchSource(BatchSource&& arg) = default;
 
         void Raise(const T& signal);
 
@@ -52,13 +53,6 @@ namespace Arca
     private:
         INSCRIPTION_TABLE_ACCESS;
     };
-
-    template<class T>
-    BatchSource<T, std::enable_if_t<is_signal_v<T>>>::BatchSource(
-        const Inscription::BinaryTableData<BatchSource>& data)
-        :
-        SignalBatchSourceBase(*data.owner), list(std::move(data.list))
-    {}
 
     template<class T>
     void BatchSource<T, std::enable_if_t<is_signal_v<T>>>::Raise(const T& signal)

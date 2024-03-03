@@ -43,8 +43,10 @@ namespace Arca
         using const_iterator = typename List::const_iterator;
     public:
         explicit BatchSource(Reliquary& owner);
+        BatchSource(const BatchSource& arg) = delete;
+        BatchSource(BatchSource&& arg) = default;
 
-        RelicT* Add(RelicT relic);
+        RelicT* Add(RelicT&& relic);
 
         iterator Destroy(RelicID destroy);
         iterator Destroy(iterator destroy);

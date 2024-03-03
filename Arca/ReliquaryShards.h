@@ -139,6 +139,9 @@ namespace Arca
         } compositeBatchSources = CompositeBatchSources(*this);
 
         KnownPolymorphicSerializerList serializers;
+    public:
+        ReliquaryShards(const ReliquaryShards& arg) = delete;
+        ReliquaryShards& operator=(const ReliquaryShards& arg) = delete;
     private:
         [[nodiscard]] bool HasEitherType(Type type, RelicID id) const;
     private:
@@ -161,6 +164,7 @@ namespace Arca
         };
     private:
         explicit ReliquaryShards(Reliquary& owner);
+        ReliquaryShards(ReliquaryShards&& arg) noexcept = default;
         friend Reliquary;
     };
 }
