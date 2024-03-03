@@ -63,24 +63,6 @@ namespace Arca
         return command.Do(Owner());
     }
 
-    template<class T, std::enable_if_t<is_relic_v<T>, int>>
-    void ReliquaryCommands::Do(const Destroy<T>& command)
-    {
-        Relics().Destroy<T>(command.id);
-    }
-
-    template<class T, std::enable_if_t<is_shard_v<T>, int>>
-    void ReliquaryCommands::Do(const Destroy<T>& command)
-    {
-        Shards().TransactionalDestroy<T>(command.id);
-    }
-
-    template<class T, std::enable_if_t<is_matrix_v<T>, int>>
-    void ReliquaryCommands::Do(const Destroy<T>& command)
-    {
-        Matrices().Destroy<T>(command.id);
-    }
-
     template<class CuratorT, class CommandT, std::enable_if_t<is_curator_v<CuratorT> && is_command_v<CommandT>, int>>
     void ReliquaryCommands::Link()
     {

@@ -8,11 +8,10 @@
 #include "RelicID.h"
 #include "Index.h"
 
+#include "Reliquary.h"
+
 namespace Arca
 {
-    class ReliquaryRelics;
-    class ReliquaryShards;
-
     template<class T, class Enable = void>
     struct Destroy;
 
@@ -21,21 +20,37 @@ namespace Arca
     {
         RelicID id;
 
-        explicit Destroy(RelicID id) : id(id)
-        {}
+        explicit Destroy(RelicID id);
+        explicit Destroy(const T& relic);
+        explicit Destroy(Index<T> index);
 
-        explicit Destroy(const T& relic) : id(relic.id)
-        {}
-
-        explicit Destroy(Index<T> index) : id(index.ID())
-        {}
+        void Do(Reliquary& reliquary) const;
     };
+
+    template<class T>
+    Destroy<T, std::enable_if_t<is_relic_v<T>>>::Destroy(RelicID id) : id(id)
+    {}
+
+    template<class T>
+    Destroy<T, std::enable_if_t<is_relic_v<T>>>::Destroy(const T& relic) : id(relic.id)
+    {}
+
+    template<class T>
+    Destroy<T, std::enable_if_t<is_relic_v<T>>>::Destroy(Index<T> index) : id(index.ID())
+    {}
+
+    template<class T>
+    void Destroy<T, std::enable_if_t<is_relic_v<T>>>::Do(Reliquary& reliquary) const
+    {
+        reliquary.relics.Destroy<T>(id);
+    }
 
     template<class T>
     struct Traits<Destroy<T, std::enable_if_t<is_relic_v<T>>>>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "Arca::Destroy<Relic>";
+        static inline const TypeName typeName = "Arca::Destroy<" + Chroma::ToString(TypeFor<T>()) + ">";
+        static const bool selfContained = true;
     };
 
     template<class T>
@@ -43,15 +58,27 @@ namespace Arca
     {
         RelicID id;
 
-        explicit Destroy(RelicID id) : id(id)
-        {}
+        explicit Destroy(RelicID id);
+
+        void Do(Reliquary& reliquary) const;
     };
+
+    template<class T>
+    Destroy<T, std::enable_if_t<is_shard_v<T>>>::Destroy(RelicID id) : id(id)
+    {}
+
+    template<class T>
+    void Destroy<T, std::enable_if_t<is_shard_v<T>>>::Do(Reliquary& reliquary) const
+    {
+        reliquary.shards.TransactionalDestroy<T>(id);
+    }
 
     template<class T>
     struct Traits<Destroy<T, std::enable_if_t<is_shard_v<T>>>>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "Arca::Destroy<Shard>";
+        static inline const TypeName typeName = "Arca::Destroy<" + Chroma::ToString(TypeFor<T>()) + ">";
+        static const bool selfContained = true;
     };
 
     template<class T>
@@ -59,15 +86,27 @@ namespace Arca
     {
         RelicID id;
 
-        explicit Destroy(RelicID id) : id(id)
-        {}
+        explicit Destroy(RelicID id);
+
+        void Do(Reliquary& reliquary) const;
     };
+
+    template<class T>
+    Destroy<T, std::enable_if_t<is_matrix_v<T>>>::Destroy(RelicID id) : id(id)
+    {}
+
+    template<class T>
+    void Destroy<T, std::enable_if_t<is_matrix_v<T>>>::Do(Reliquary& reliquary) const
+    {
+        reliquary.matrices.Destroy<T>(id);
+    }
 
     template<class T>
     struct Traits<Destroy<T, std::enable_if_t<is_matrix_v<T>>>>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "Arca::Destroy<Matrix>";
+        static inline const TypeName typeName = "Arca::Destroy<" + Chroma::ToString(TypeFor<T>()) + ">";
+        static const bool selfContained = true;
     };
 
     template<>
@@ -75,8 +114,7 @@ namespace Arca
     {
         Handle handle;
 
-        explicit Destroy(Handle handle) : handle(std::move(handle))
-        {}
+        explicit Destroy(Handle handle);
     };
 
     template<>

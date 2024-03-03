@@ -171,7 +171,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CannotFindReliquaryDependency.cpp" />
+    <ClCompile Include="Clear.cpp" />
     <ClCompile Include="CommandHandler.cpp" />
+    <ClCompile Include="Destroy.cpp" />
     <ClCompile Include="KnownMatrix.cpp" />
     <ClCompile Include="MatrixBatchSource.cpp" />
     <ClCompile Include="MutablePointer.cpp" />
