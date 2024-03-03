@@ -61,7 +61,7 @@ SCENARIO_METHOD(CommandTestsFixture, "command linked multiple times", "[command]
 {
     GIVEN("registered reliquary")
     {
-        const auto reliquaryOrigin = Arca::ReliquaryOrigin()
+        auto reliquaryOrigin = Arca::ReliquaryOrigin()
             .Register<Curator>()
             .Register<CuratorWithSameLink>();
 

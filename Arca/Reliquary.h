@@ -493,3 +493,4 @@ namespace Inscription
 #include "KnownMatrixDefinition.h"
 #include "EitherDefinition.h"
 #include "AllDefinition.h"
+#include "CuratorDefinition.h"

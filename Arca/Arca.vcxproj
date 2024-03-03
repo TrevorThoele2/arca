@@ -28,6 +28,7 @@
     <ClInclude Include="CreateChild.h" />
     <ClInclude Include="CreateChildWith.h" />
     <ClInclude Include="CreateWith.h" />
+    <ClInclude Include="CuratorDefinition.h" />
     <ClInclude Include="CuratorInit.h" />
     <ClInclude Include="Destroy.h" />
     <ClInclude Include="EitherDefinition.h" />
@@ -236,7 +237,7 @@
     <IncludePath>C:\Users\Trevor\Documents\Programming Projects\Chroma;C:\Users\Trevor\Documents\Programming Projects\Inscription;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\Trevor\Documents\ProgrammingProjects\Chroma;C:\Users\Trevor\Documents\ProgrammingProjects\Inscription;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Trevor\Documents\ProgrammingProjects\function2\include;C:\Users\Trevor\Documents\ProgrammingProjects\Chroma;C:\Users\Trevor\Documents\ProgrammingProjects\Inscription;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

@@ -3,6 +3,12 @@ using namespace std::string_literals;
 
 #include "ReliquaryOriginRegistrationTests.h"
 
+ReliquaryOriginRegistrationTestsFixture::CuratorWithMovedValue::CuratorWithMovedValue(
+    Init init, std::unique_ptr<int>&& myInt)
+    :
+    Curator(init), myInt(std::move(myInt))
+{}
+
 SCENARIO_METHOD(ReliquaryOriginRegistrationTestsFixture, "registering types multiple times", "[reliquaryorigin]")
 {
     GIVEN("all types registered to origin")
@@ -55,7 +61,7 @@ SCENARIO_METHOD(ReliquaryOriginRegistrationTestsFixture, "registering types mult
                     reliquaryOrigin.Register<GlobalRelic>(),
                     AlreadyRegistered,
                     Catch::Matchers::Message(
-                        "The relic (" + TypeFor<GlobalRelic>().name + ") was already registered. " +
+                        "The global relic (" + TypeFor<GlobalRelic>().name + ") was already registered. " +
                         "The class name is: \"" + typeid(GlobalRelic).name() + "\".")
                 );
             }
@@ -87,6 +93,36 @@ SCENARIO_METHOD(ReliquaryOriginRegistrationTestsFixture, "registering types mult
                     Catch::Matchers::Message(
                         "The relic structure (" + relicStructureName + ") was already registered.")
                 );
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(ReliquaryOriginRegistrationTestsFixture, "registering types with moved values", "[reliquaryorigin]")
+{
+    GIVEN("registered reliquary origin with types requiring moved values")
+    {
+        auto globalIntValue = dataGeneration.Random<int>();
+        auto globalValue = std::make_unique<int>(globalIntValue);
+
+        auto curatorIntValue = dataGeneration.Random<int>();
+        auto curatorValue = std::make_unique<int>(curatorIntValue);
+
+        auto reliquaryOrigin = ReliquaryOrigin()
+            .Register<GlobalRelicWithMovedValue>(std::move(globalValue))
+            .Register<CuratorWithMovedValue>(std::move(curatorValue));
+
+        WHEN("actualizing")
+        {
+            auto reliquary = reliquaryOrigin.Actualize();
+
+            THEN("has values")
+            {
+                auto global = Arca::GlobalIndex<GlobalRelicWithMovedValue>(*reliquary);
+                REQUIRE(*global->myInt == globalIntValue);
+
+                auto& curator = reliquary->Find<CuratorWithMovedValue>();
+                REQUIRE(*curator.myInt == curatorIntValue);
             }
         }
     }

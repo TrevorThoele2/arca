@@ -28,10 +28,31 @@ public:
         {}
     };
 
+    class GlobalRelicWithMovedValue final : public ClosedTypedRelic<GlobalRelicWithMovedValue>
+    {
+    public:
+        std::unique_ptr<int> myInt;
+    public:
+        explicit GlobalRelicWithMovedValue(Init init) : ClosedTypedRelic(init)
+        {}
+
+        GlobalRelicWithMovedValue(Init init, std::unique_ptr<int>&& myInt) :
+            ClosedTypedRelic(init), myInt(std::move(myInt))
+        {}
+    };
+
     class Curator final : public Arca::Curator
     {
     public:
         using Arca::Curator::Curator;
+    };
+
+    class CuratorWithMovedValue final : public Arca::Curator
+    {
+    public:
+        std::unique_ptr<int> myInt;
+    public:
+        CuratorWithMovedValue(Init init, std::unique_ptr<int>&& myInt);
     };
 
     struct Signal
@@ -59,7 +80,15 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "ReliquaryTestsGlobalRelic";
-        static const bool isGlobal = true;
+        static const Locality locality = Locality::Global;
+    };
+
+    template<>
+    struct Traits<::ReliquaryOriginRegistrationTestsFixture::GlobalRelicWithMovedValue>
+    {
+        static const ObjectType objectType = ObjectType::Relic;
+        static inline const TypeName typeName = "ReliquaryTestsGlobalRelicWithMovedValue";
+        static const Locality locality = Locality::Global;
     };
 
     template<>
@@ -67,6 +96,13 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Curator;
         static inline const TypeName typeName = "ReliquaryTestsCurator";
+    };
+
+    template<>
+    struct Traits<::ReliquaryOriginRegistrationTestsFixture::CuratorWithMovedValue>
+    {
+        static const ObjectType objectType = ObjectType::Curator;
+        static inline const TypeName typeName = "ReliquaryTestsCuratorWithMovedValue";
     };
 
     template<>
@@ -95,7 +131,17 @@ namespace Inscription
     {};
 
     template<>
+    class Scribe<::ReliquaryOriginRegistrationTestsFixture::GlobalRelicWithMovedValue, BinaryArchive> final
+        : public ArcaNullScribe<::ReliquaryOriginRegistrationTestsFixture::GlobalRelicWithMovedValue, BinaryArchive>
+    {};
+
+    template<>
     class Scribe<::ReliquaryOriginRegistrationTestsFixture::Curator, BinaryArchive> final
         : public ArcaNullScribe<::ReliquaryOriginRegistrationTestsFixture::Curator, BinaryArchive>
+    {};
+
+    template<>
+    class Scribe<::ReliquaryOriginRegistrationTestsFixture::CuratorWithMovedValue, BinaryArchive> final
+        : public ArcaNullScribe<::ReliquaryOriginRegistrationTestsFixture::CuratorWithMovedValue, BinaryArchive>
     {};
 }
