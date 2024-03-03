@@ -11,10 +11,8 @@
 namespace Arca
 {
     class Reliquary;
-    class ReliquaryRelics;
-    class OpenRelic;
 
-    class TypedRelic
+    class ClosedTypedRelic
     {
     public:
         operator Handle() const;
@@ -25,11 +23,11 @@ namespace Arca
         [[nodiscard]] RelicID ID() const;
         [[nodiscard]] Reliquary& Owner() const;
     public:
-        virtual ~TypedRelic() = 0;
+        virtual ~ClosedTypedRelic() = 0;
 
         void Initialize(Reliquary& owner);
     protected:
-        TypedRelic() = default;
+        ClosedTypedRelic() = default;
 
         virtual void InitializeImplementation() {}
         [[nodiscard]] virtual bool ReliquaryContainsSelf() const = 0;

@@ -2,7 +2,8 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/TypedRelicAutomation.h>
+#include <Arca/ClosedTypedRelicAutomation.h>
+#include <Arca/OpenTypedRelicAutomation.h>
 #include <Arca/Shard.h>
 
 #include <Arca/Serialization.h>
@@ -12,13 +13,13 @@ using namespace Arca;
 class RelicTestsFixture : public GeneralFixture
 {
 public:
-    class BasicShard
+    class Shard
     {
     public:
         std::string myValue;
     public:
-        BasicShard() = default;
-        explicit BasicShard(std::string myValue);
+        Shard() = default;
+        explicit Shard(std::string myValue);
     };
 
     class OtherShard
@@ -30,27 +31,37 @@ public:
         explicit OtherShard(int myValue);
     };
 
-    class BasicTypedRelic : public TypedRelicAutomation<BasicTypedRelic, BasicShard>
+    class TypedRelic : public ClosedTypedRelicAutomation<TypedRelic, Shard>
     {
     public:
-        Ptr<BasicShard> basicShard;
+        Ptr<Shard> basicShard;
     public:
-        BasicTypedRelic() = default;
+        TypedRelic() = default;
     protected:
         void InitializeImplementation() override;
     };
 
-    class GlobalRelic : public TypedRelicAutomation<GlobalRelic, BasicShard>
+    class OpenTypedRelic : public OpenTypedRelicAutomation<OpenTypedRelic, Shard>
     {
     public:
-        Ptr<BasicShard> basicShard;
+        Ptr<Shard> basicShard;
+    public:
+        OpenTypedRelic() = default;
+    protected:
+        void InitializeImplementation() override;
+    };
+
+    class GlobalRelic : public ClosedTypedRelicAutomation<GlobalRelic, Shard>
+    {
+    public:
+        Ptr<Shard> basicShard;
     public:
         GlobalRelic() = default;
     protected:
         void InitializeImplementation() override;
     };
 
-    class MostBasicCustomFactoryRelic : public TypedRelicAutomation<MostBasicCustomFactoryRelic>
+    class MostBasicCustomFactoryRelic : public ClosedTypedRelicAutomation<MostBasicCustomFactoryRelic>
     {
     public:
         int value = 0;
@@ -60,7 +71,7 @@ public:
         void InitializeImplementation() override {}
     };
 
-    class GuardedCustomFactoryRelic : public TypedRelicAutomation<GuardedCustomFactoryRelic>
+    class GuardedCustomFactoryRelic : public ClosedTypedRelicAutomation<GuardedCustomFactoryRelic>
     {
     public:
         int value = 0;
@@ -74,7 +85,7 @@ public:
 namespace Arca
 {
     template<>
-    struct Traits<::RelicTestsFixture::BasicShard>
+    struct Traits<::RelicTestsFixture::Shard>
     {
         static const ObjectType objectType = ObjectType::Shard;
         static const TypeHandleName typeName;
@@ -88,7 +99,14 @@ namespace Arca
     };
 
     template<>
-    struct Traits<::RelicTestsFixture::BasicTypedRelic>
+    struct Traits<::RelicTestsFixture::TypedRelic>
+    {
+        static const ObjectType objectType = ObjectType::Relic;
+        static const TypeHandleName typeName;
+    };
+
+    template<>
+    struct Traits<::RelicTestsFixture::OpenTypedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandleName typeName;
@@ -124,8 +142,8 @@ namespace Arca
 namespace Inscription
 {
     template<>
-    class Scribe<::RelicTestsFixture::BasicShard, BinaryArchive> final
-        : public ShardScribe<::RelicTestsFixture::BasicShard, BinaryArchive>
+    class Scribe<::RelicTestsFixture::Shard, BinaryArchive> final
+        : public ShardScribe<::RelicTestsFixture::Shard, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
@@ -146,8 +164,17 @@ namespace Inscription
     };
 
     template<>
-    class Scribe<::RelicTestsFixture::BasicTypedRelic, BinaryArchive> final
-        : public CompositeRelicScribe<::RelicTestsFixture::BasicTypedRelic, BinaryArchive>
+    class Scribe<::RelicTestsFixture::TypedRelic, BinaryArchive> final
+        : public CompositeRelicScribe<::RelicTestsFixture::TypedRelic, BinaryArchive>
+    {
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        {}
+    };
+
+    template<>
+    class Scribe<::RelicTestsFixture::OpenTypedRelic, BinaryArchive> final
+        : public CompositeRelicScribe<::RelicTestsFixture::OpenTypedRelic, BinaryArchive>
     {
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override

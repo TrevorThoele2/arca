@@ -2,7 +2,7 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/TypedRelicAutomation.h>
+#include <Arca/ClosedTypedRelicAutomation.h>
 #include <Arca/Shard.h>
 
 #include <Inscription/BinaryArchive.h>
@@ -80,7 +80,7 @@ struct IntegrationTestsFixture::BasicSignal
     int value = 0;
 };
 
-class IntegrationTestsFixture::ChildRelic : public TypedRelicAutomation<ChildRelic>
+class IntegrationTestsFixture::ChildRelic : public ClosedTypedRelicAutomation<ChildRelic>
 {
 public:
     int value = 0;
@@ -90,7 +90,7 @@ protected:
     void InitializeImplementation() override {}
 };
 
-class IntegrationTestsFixture::ParentRelic : public TypedRelicAutomation<ParentRelic>
+class IntegrationTestsFixture::ParentRelic : public ClosedTypedRelicAutomation<ParentRelic>
 {
 public:
     int value = 0;

@@ -9,6 +9,11 @@
 
 namespace Arca
 {
+    class OpenTypedRelic;
+    class OpenRelic;
+    class ClosedTypedRelic;
+    class ClosedRelic;
+
     template <class T, class = void>
     struct is_relic : std::false_type
     {};
@@ -20,27 +25,15 @@ namespace Arca
     template<class T>
     static constexpr bool is_relic_v = is_relic<T>::value;
 
-    template<class T, class = void>
-    struct has_openness : std::false_type
-    {};
-
-    template<class T>
-    struct has_openness<T, std::void_t<decltype(Traits<T>::openness)>> : std::true_type
-    {};
-
-    template<class T>
-    static constexpr bool has_openness_v = has_openness<T>::value;
-
     template <class T, class = void>
     struct is_open_relic : std::false_type
     {};
 
     template <class T>
-    struct is_open_relic<T, std::enable_if_t<is_relic_v<T> && !has_openness_v<T>>> : std::true_type
-    {};
-
-    template <class T>
-    struct is_open_relic<T, std::enable_if_t<is_relic_v<T> && Traits<T>::openness != Openness::Open>> : std::true_type
+    struct is_open_relic<
+        T,
+        std::enable_if_t<
+            is_relic_v<T> && (std::is_base_of_v<OpenTypedRelic, T> || std::is_same_v<OpenRelic, T>)>> : std::true_type
     {};
 
     template<class T>
@@ -51,22 +44,25 @@ namespace Arca
     {};
 
     template <class T>
-    struct is_closed_relic<T, std::enable_if_t<is_relic_v<T> && Traits<T>::openness == Openness::Closed>> : std::true_type
+    struct is_closed_relic<
+        T,
+        std::enable_if_t<
+            is_relic_v<T> && (std::is_base_of_v<ClosedTypedRelic, T> || std::is_same_v<ClosedRelic, T>)>> : std::true_type
     {};
 
     template<class T>
     static constexpr bool is_closed_relic_v = is_closed_relic<T>::value;
 
-    template<class T, std::enable_if_t<has_openness_v<T>, int> = 0>
-    constexpr Openness OpennessFor()
-    {
-        return Traits<T>::openness;
-    }
-
-    template<class T, std::enable_if_t<!has_openness_v<T>, int> = 0>
+    template<class T, std::enable_if_t<is_open_relic_v<T>, int> = 0>
     constexpr Openness OpennessFor()
     {
         return Openness::Open;
+    }
+
+    template<class T, std::enable_if_t<!is_open_relic_v<T>, int> = 0>
+    constexpr Openness OpennessFor()
+    {
+        return Openness::Closed;
     }
 
     template<class T, class = void>

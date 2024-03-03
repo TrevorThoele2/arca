@@ -2,7 +2,7 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/TypedRelicAutomation.h>
+#include <Arca/ClosedTypedRelicAutomation.h>
 #include <Arca/Shard.h>
 
 #include <Inscription/BinaryArchive.h>
@@ -15,10 +15,10 @@ public:
     class Shard
     {};
 
-    class Relic final : public TypedRelicAutomation<Relic, Shard>
+    class Relic final : public ClosedTypedRelicAutomation<Relic, Shard>
     {};
 
-    class GlobalRelic final : public TypedRelicAutomation<Relic>
+    class GlobalRelic final : public ClosedTypedRelicAutomation<Relic>
     {};
 
     class Curator final : public Arca::Curator

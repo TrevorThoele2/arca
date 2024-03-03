@@ -2,7 +2,7 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/TypedRelicAutomation.h>
+#include <Arca/ClosedTypedRelicAutomation.h>
 #include <Arca/Shard.h>
 
 #include <Inscription/BinaryArchive.h>
@@ -39,7 +39,7 @@ public:
         explicit OtherShard(int myValue);
     };
 
-    class BasicTypedRelic : public TypedRelicAutomation<BasicTypedRelic, BasicShard>
+    class BasicTypedRelic : public ClosedTypedRelicAutomation<BasicTypedRelic, BasicShard>
     {
     public:
         Ptr<BasicShard> basicShard;
@@ -49,7 +49,7 @@ public:
         void InitializeImplementation() override;
     };
 
-    class GlobalRelic : public TypedRelicAutomation<GlobalRelic, BasicShard>
+    class GlobalRelic : public ClosedTypedRelicAutomation<GlobalRelic, BasicShard>
     {
     public:
         Ptr<BasicShard> basicShard;

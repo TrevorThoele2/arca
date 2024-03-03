@@ -162,7 +162,8 @@ namespace Arca
         friend class ReliquarySignals;
 
         friend class OpenRelic;
-        friend class TypedRelic;
+        friend class ClosedTypedRelic;
+        friend class OpenTypedRelic;
         template<class, class>
         friend class Ptr;
     private:
@@ -531,6 +532,7 @@ namespace Inscription
 
 #include "OpenRelicDefinition.h"
 #include "ClosedRelicDefinition.h"
+#include "OpenTypedRelicDefinition.h"
 #include "ReliquaryRelicsDefinition.h"
 #include "ReliquaryShardsDefinition.h"
 #include "ReliquaryCuratorsDefinition.h"
