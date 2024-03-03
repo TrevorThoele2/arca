@@ -31,9 +31,12 @@ namespace Arca
         [[nodiscard]] ShardT* Of(RelicID id);
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] ShardT* Of(Index<ShardT> index);
+
+        [[nodiscard]] Arca::Reliquary& Reliquary();
+        [[nodiscard]] const Arca::Reliquary& Reliquary() const;
     private:
-        explicit MutablePointer(Reliquary& reliquary);
-        Reliquary* reliquary;
+        explicit MutablePointer(Arca::Reliquary& reliquary);
+        Arca::Reliquary* reliquary;
         friend class Curator;
     };
 }

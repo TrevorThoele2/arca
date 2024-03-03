@@ -63,7 +63,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             }
         }
 
-        WHEN("retrieving unregistered derivation")
+        WHEN("retrieving unregistered postulate")
         {
             THEN("throws error")
             {
@@ -73,6 +73,20 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The postulate ("s + typeid(int).name() + ") was not registered.")
+                );
+            }
+        }
+
+        WHEN("retrieving unregistered pointer postulate")
+        {
+            THEN("throws error")
+            {
+                REQUIRE_THROWS_MATCHES
+                (
+                    Arca::Postulate<int*>(*reliquary),
+                    NotRegistered,
+                    ::Catch::Matchers::Message(
+                        "The postulate ("s + typeid(int*).name() + ") was not registered.")
                 );
             }
         }
