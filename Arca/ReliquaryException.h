@@ -19,6 +19,8 @@ namespace Arca
             const std::string& objectType,
             const Type& type,
             const std::type_index& classType);
+    private:
+        [[nodiscard]] std::string BaseMessage(const std::string& objectType, const Type& type) const;
     };
 
     class AlreadyRegistered final : public Exception
@@ -31,32 +33,58 @@ namespace Arca
             const std::string& objectType,
             const Type& type,
             const std::type_index& classType);
+    private:
+        [[nodiscard]] std::string BaseMessage(const std::string& objectType, const Type& type) const;
     };
 
-    class CannotModify final : public Exception
+    class CannotCreate final : public Exception
     {
     public:
-        CannotModify(
+        CannotCreate(
             const std::string& objectType,
-            const RelicID id);
+            const Type& type);
+        CannotCreate(
+            const std::string& objectType,
+            const Type& type,
+            const std::type_index& classType);
+    private:
+        [[nodiscard]] std::string BaseMessage(const std::string& objectType, const Type& type) const;
     };
 
-    class CannotCreateShard final : public Exception
+    class CannotDestroy final : public Exception
     {
     public:
-        CannotCreateShard();
+        CannotDestroy(
+            const std::string& objectType,
+            const Type& type);
+        CannotDestroy(
+            const std::string& objectType,
+            const Type& type,
+            const std::type_index& classType);
+    private:
+        [[nodiscard]] std::string BaseMessage(const std::string& objectType, const Type& type) const;
     };
 
-    class CannotDestroyShard final : public Exception
+    class CannotFind final : public Exception
     {
     public:
-        CannotDestroyShard();
+        CannotFind(
+            const std::string& objectType,
+            const Type& type);
+        CannotFind(
+            const std::string& objectType,
+            const Type& type,
+            const std::type_index& classType);
+    private:
+        [[nodiscard]] std::string BaseMessage(const std::string& objectType, const Type& type) const;
     };
 
-    class CannotFindRelic final : public Exception
+    class CannotModifyShards final : public Exception
     {
     public:
-        explicit CannotFindRelic(RelicID id);
+        CannotModifyShards(
+            const std::string& objectType,
+            RelicID id);
     };
 
     class CannotParentRelic final : public Exception

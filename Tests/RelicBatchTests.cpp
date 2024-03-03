@@ -147,7 +147,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch", "[RelicBatch]")
 
                 THEN("destroying relic empties the batch")
                 {
-                    reliquary->Destroy(*createdRelic);
+                    reliquary->Destroy(AsHandle(*createdRelic));
                     REQUIRE(batch.IsEmpty());
                 }
             }

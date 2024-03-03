@@ -80,9 +80,9 @@ namespace Arca
         Pipeline curatorInitializationPipeline;
         Pipeline curatorWorkPipeline;
 
-        using CuratorSerializationTypeHandlesFactory = void(*)(Reliquary&);
-        using CuratorSerializationTypeHandlesFactoryList = std::vector<CuratorSerializationTypeHandlesFactory>;
-        CuratorSerializationTypeHandlesFactoryList curatorSerializationTypeHandlesFactoryList;
+        using CuratorSerializationTypesFactory = void(*)(Reliquary&);
+        using CuratorSerializationTypesFactoryList = std::vector<CuratorSerializationTypesFactory>;
+        CuratorSerializationTypesFactoryList curatorSerializationTypesFactoryList;
 
         std::vector<Arca::Curator*> PushAllCuratorsTo(Reliquary& reliquary) const;
 
@@ -134,7 +134,7 @@ namespace Arca
                     },
                     [](::Inscription::BinaryArchive& archive)
                     {
-                        return ::Inscription::InputTypeHandlesFor<RelicT>(archive);
+                        return ::Inscription::InputTypesFor<RelicT>(archive);
                     }
                 });
             reliquary.relics.initializers.push_back(
@@ -201,7 +201,7 @@ namespace Arca
                             },
                             [](::Inscription::BinaryArchive& archive)
                             {
-                                return ::Inscription::InputTypeHandlesFor<RelicT>(archive);
+                                return ::Inscription::InputTypesFor<RelicT>(archive);
                             }
                         });
                 }, args);
@@ -242,7 +242,7 @@ namespace Arca
                     {
                         auto added = found->Add(id);
                         reliquary.shards.AttemptAddToEitherBatches(id, *added);
-                        reliquary.Raise<Created>(Handle(id, reliquary, TypeFor<ShardT>()));
+                        reliquary.Raise<Created>(Handle(id, reliquary, TypeFor<ShardT>(), HandleObjectType::Shard));
                     };
 
                     isConst
@@ -263,7 +263,7 @@ namespace Arca
                     },
                     [](::Inscription::BinaryArchive& archive)
                     {
-                        return ::Inscription::InputTypeHandlesFor<ShardT>(archive);
+                        return ::Inscription::InputTypesFor<ShardT>(archive);
                     }
                 });
         };
@@ -362,7 +362,7 @@ namespace Arca
             throw AlreadyRegistered("curator", type, typeid(CuratorT));
 
         curatorProviders.emplace(type.name, std::make_unique<CuratorProvider>(std::forward<Args>(args)...));
-        const auto curatorSerializationTypeHandlesFactory = [](Reliquary& reliquary)
+        const auto curatorSerializationTypesFactory = [](Reliquary& reliquary)
         {
             const auto type = TypeFor<CuratorT>();
             reliquary.curators.serializers.push_back(
@@ -376,12 +376,12 @@ namespace Arca
                     },
                     [](::Inscription::BinaryArchive& archive)
                     {
-                        return ::Inscription::InputTypeHandlesFor<CuratorT>(archive);
+                        return ::Inscription::InputTypesFor<CuratorT>(archive);
                     }
                 });
         };
 
-        curatorSerializationTypeHandlesFactoryList.push_back(curatorSerializationTypeHandlesFactory);
+        curatorSerializationTypesFactoryList.push_back(curatorSerializationTypesFactory);
     }
 
     template<class CuratorT>

@@ -14,7 +14,6 @@ namespace Arca
     class OpenRelic
     {
     public:
-        operator Handle() const;
         explicit operator bool() const;
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>

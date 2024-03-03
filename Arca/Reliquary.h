@@ -40,6 +40,8 @@ namespace Arca
     public:
         void Work();
     public:
+        void Destroy(const Handle& handle);
+    public:
         template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         Ptr<RelicT> Create(CreationArgs&& ... creationArgs);
         template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
@@ -53,10 +55,6 @@ namespace Arca
         Ptr<RelicT> CreateChildWith(const Handle& parent, const RelicStructure& structure, CreationArgs&& ... creationArgs);
         template<class RelicT, class... CreationArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         Ptr<RelicT> CreateChildWith(const Handle& parent, const std::string& structureName, CreationArgs&& ... creationArgs);
-
-        void Destroy(const Handle& handle);
-        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        void Destroy(RelicT& relic);
 
         template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int> = 0>
         [[nodiscard]] Ptr<RelicT> Find(RelicID id) const;
@@ -147,7 +145,7 @@ namespace Arca
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] ShardT* FindStorage(RelicID id);
     private:
-        Handle HandleFrom(RelicID id, Type type);
+        Handle HandleFrom(RelicID id, Type type, HandleObjectType objectType);
         Handle HandleFrom(const RelicMetadata& metadata);
         template<class T>
         Ptr<T> PtrFrom(RelicID id) const;
@@ -207,16 +205,6 @@ namespace Arca
         const Handle& parent, const std::string& structureName, CreationArgs&& ... creationArgs)
     {
         return relics.CreateChildWith<RelicT>(parent, structureName, std::forward<CreationArgs>(creationArgs)...);
-    }
-
-    template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
-    void Reliquary::Destroy(RelicT& relic)
-    {
-        const auto metadata = relics.MetadataFor(relic.ID());
-        if (!relics.WillDestroy(metadata))
-            return;
-
-        relics.Destroy(*metadata);
     }
 
     template<class RelicT, std::enable_if_t<is_local_relic_v<RelicT>, int>>
@@ -306,36 +294,25 @@ namespace Arca
     template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int>>
     Curator* Reliquary::Find(const TypeName& type)
     {
-        const auto found = curators.map.find(type);
-        if (found == curators.map.end())
-            return nullptr;
-
-        return found->second->Get();
+        return curators.Find<CuratorT>(type);
     }
 
     template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int>>
     const Curator* Reliquary::Find(const TypeName& type) const
     {
-        return const_cast<Reliquary&>(*this).Find<CuratorT>(type);
+        return curators.Find<CuratorT>(type);
     }
 
     template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int>>
     CuratorT* Reliquary::Find()
     {
-        for (auto& loop : curators.map)
-        {
-            auto casted = dynamic_cast<CuratorT*>(loop.second->Get());
-            if (casted)
-                return casted;
-        }
-
-        return nullptr;
+        return curators.Find<CuratorT>();
     }
 
     template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int>>
     const CuratorT* Reliquary::Find() const
     {
-        return const_cast<Reliquary*>(this)->Find<CuratorT>();
+        return curators.Find<CuratorT>();
     }
 
     template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int>>
@@ -353,33 +330,19 @@ namespace Arca
     template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int>>
     void Reliquary::Raise(const SignalT& signal)
     {
-        auto batchSource = signals.batchSources.Find<SignalT>();
-        if (!batchSource)
-        {
-            const auto type = TypeFor<SignalT>();
-            throw signals.NotRegistered(type, typeid(SignalT));
-        }
-
-        batchSource->Raise(signal);
-        signals.ExecuteAllFor(signal);
+        signals.Raise(signal);
     }
 
     template<class SignalT, class... Args, std::enable_if_t<is_signal_v<SignalT>, int>>
     void Reliquary::Raise(Args&& ... args)
     {
-        Raise(SignalT{ std::forward<Args>(args)... });
+        signals.Raise<SignalT>(std::forward<Args>(args)...);
     }
 
     template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int>>
     void Reliquary::ExecuteOn(const std::function<void(const SignalT&)>& function)
     {
-        const auto typeName = TypeFor<SignalT>().name;
-        auto found = signals.executionMap.find(typeName);
-        if (found == signals.executionMap.end())
-            found = signals.executionMap.emplace(typeName, Signals::ExecutionList<SignalT>()).first;
-
-        auto& executionList = std::any_cast<Signals::ExecutionList<SignalT>&>(found->second);
-        executionList.push_back(function);
+        signals.ExecuteOn(function);
     }
 
     template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int>>
@@ -471,7 +434,7 @@ namespace Inscription
             KnownPolymorphicSerializerList& fromObject);
 
         static Arca::KnownPolymorphicSerializer* FindFrom(
-            TypeHandle mainTypeHandle,
+            Type mainType,
             KnownPolymorphicSerializerList& list);
     private:
         struct LoadedRelicMetadata
@@ -493,15 +456,15 @@ namespace Inscription
         struct TypePair
         {
             ::Arca::TypeName arca;
-            TypeHandle inscription;
+            Type inscription;
         };
 
         static std::vector<TypePair> PruneTypesToLoad(
             KnownPolymorphicSerializerList& fromObject,
             ArchiveT& archive,
-            const std::vector<TypeHandle>& typeHandlesFromArchive);
+            const std::vector<Type>& typesFromArchive);
 
-        static std::vector<TypePair> ExtractTypeHandles(
+        static std::vector<TypePair> ExtractTypes(
             KnownPolymorphicSerializerList& fromObject,
             ArchiveT& archive);
     };
@@ -514,7 +477,7 @@ namespace Inscription
         ObjectContainer& container,
         ValueToID valueToID)
     {
-        OutputJumpTable<TypeHandle, KnownPolymorphic> jumpTable;
+        OutputJumpTable<Type, KnownPolymorphic> jumpTable;
         std::vector<KnownPolymorphic> knownPolymorphics;
         knownPolymorphics.reserve(container.size());
         for (auto& loop : container)

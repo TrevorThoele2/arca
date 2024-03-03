@@ -164,7 +164,7 @@ namespace Arca
         added->Initialize(Owner());
         Shards().NotifyCompositesRelicCreate(id, structure);
 
-        Owner().Raise<Created>(HandleFrom(id, TypeFor<RelicT>()));
+        Owner().Raise<Created>(HandleFrom(id, TypeFor<RelicT>(), HandleObjectType::Relic));
 
         return PtrFrom<RelicT>(id);
     }

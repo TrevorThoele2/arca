@@ -9,6 +9,38 @@
 
 namespace Arca
 {
+    void ReliquaryRelics::Destroy(const Handle& handle)
+    {
+        assert(handle.ObjectType() == HandleObjectType::Relic);
+
+        if (&handle.Owner() != &Owner())
+            return;
+
+        const auto metadata = MetadataFor(handle.ID());
+        if (!WillDestroy(metadata))
+            return;
+
+        Shards().NotifyCompositesRelicDestroy(metadata->id);
+        Destroy(*metadata);
+    }
+
+    std::optional<Handle> ReliquaryRelics::ParentOf(const Handle& child) const
+    {
+        const auto childID = child.ID();
+        const auto metadata = MetadataFor(childID);
+        if (!metadata)
+            throw CannotFind(child.Type());
+
+        if (!metadata->parent)
+            return {};
+
+        return Handle(
+            metadata->parent->ID(),
+            const_cast<Reliquary&>(Owner()),
+            metadata->parent->Type(),
+            HandleObjectType::Relic);
+    }
+
     void ReliquaryRelics::SetupNewInternals(
         RelicID id,
         Openness openness,
@@ -78,7 +110,7 @@ namespace Arca
         for (auto& shardBatchSource : Shards().batchSources.map)
         {
             if (shardBatchSource.second->DestroyFromBase(id))
-                Owner().Raise<Destroying>(HandleFrom(id, shardBatchSource.second->Type()));
+                Owner().Raise<Destroying>(HandleFrom(id, shardBatchSource.second->Type(), HandleObjectType::Shard));
         }
 
         if (metadata.parent)
@@ -170,7 +202,7 @@ namespace Arca
 
         const auto parentMetadata = MetadataFor(parent.ID());
         if (!parentMetadata)
-            throw CannotFindRelic(parent.ID());
+            throw CannotFind(parent.Type());
 
         if (parentMetadata->locality == Locality::Global)
             throw CannotParentRelic(

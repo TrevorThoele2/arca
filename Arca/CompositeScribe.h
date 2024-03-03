@@ -17,11 +17,11 @@ namespace Inscription
     public:
         using BaseT::Scriven;
     public:
-        static TypeHandle OutputTypeHandle(const ArchiveT& archive);
+        static Type OutputType(const ArchiveT& archive);
     };
 
     template<class T, class Archive>
-    TypeHandle ArcaCompositeScribe<T, Archive>::OutputTypeHandle(const ArchiveT& archive)
+    Type ArcaCompositeScribe<T, Archive>::OutputType(const ArchiveT& archive)
     {
         return ::Arca::TypeFor<T>().name;
     }

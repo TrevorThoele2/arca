@@ -120,7 +120,7 @@ namespace Inscription
         public ArcaCompositeScribe<CuratorTestsFixture::OtherBasicCurator, BinaryArchive>
     {
     public:
-        static std::vector<TypeHandle> InputTypeHandles(const ArchiveT& archive);
+        static std::vector<Type> InputTypes(const ArchiveT& archive);
     protected:
         void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
     };

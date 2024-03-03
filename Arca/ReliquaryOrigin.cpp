@@ -25,7 +25,7 @@ namespace Arca
         shardList(arg.shardList),
         curatorInitializationPipeline(arg.curatorInitializationPipeline),
         curatorWorkPipeline(arg.curatorWorkPipeline),
-        curatorSerializationTypeHandlesFactoryList(arg.curatorSerializationTypeHandlesFactoryList),
+        curatorSerializationTypesFactoryList(arg.curatorSerializationTypesFactoryList),
         signalList(arg.signalList)
     {
         for (auto& provider : arg.curatorProviders)
@@ -42,7 +42,7 @@ namespace Arca
             curatorProviders.emplace(provider.first, provider.second->Clone());
         curatorInitializationPipeline = arg.curatorInitializationPipeline;
         curatorWorkPipeline = arg.curatorWorkPipeline;
-        curatorSerializationTypeHandlesFactoryList = arg.curatorSerializationTypeHandlesFactoryList;
+        curatorSerializationTypesFactoryList = arg.curatorSerializationTypesFactoryList;
         signalList = arg.signalList;
 
         return *this;
@@ -146,7 +146,7 @@ namespace Arca
             reliquary.curators.map.emplace(handle->type.name, std::move(handle));
         }
 
-        for (auto& loop : curatorSerializationTypeHandlesFactoryList)
+        for (auto& loop : curatorSerializationTypesFactoryList)
             loop(reliquary);
 
         return returnValue;

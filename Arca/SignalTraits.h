@@ -14,4 +14,10 @@ namespace Arca
 
     template<class T>
     static constexpr bool is_signal_v = is_signal<T>::value;
+
+    template<class T, std::enable_if_t<is_signal_v<T>, int> = 0>
+    ObjectType ObjectTypeFor()
+    {
+        return ObjectType::Signal;
+    }
 }

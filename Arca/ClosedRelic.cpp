@@ -4,11 +4,6 @@
 
 namespace Arca
 {
-    ClosedRelic::operator Handle() const
-    {
-        return Handle(ID(), Owner(), Type(Traits<ClosedRelic>::typeName, false));
-    }
-
     ClosedRelic::operator bool() const
     {
         if (!owner)
@@ -19,7 +14,7 @@ namespace Arca
 
     std::optional<Handle> ClosedRelic::Parent() const
     {
-        return owner->ParentOf(*this);
+        return owner->ParentOf(AsHandle(*this));
     }
 
     RelicID ClosedRelic::ID() const

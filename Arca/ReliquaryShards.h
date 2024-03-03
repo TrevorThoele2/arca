@@ -27,8 +27,8 @@ namespace Arca
         void Create(const Type& type, RelicID id);
         template<class ShardT>
         Ptr<ShardT> Create(RelicID id);
-        template<class ShardT>
-        void Destroy(RelicID id);
+
+        void Destroy(const Handle& handle);
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] Ptr<ShardT> Find(RelicID id) const;
