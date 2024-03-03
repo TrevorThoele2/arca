@@ -10,6 +10,18 @@ namespace Arca
     class OpenTypedRelic
     {
     public:
+        using Init = RelicInit;
+    public:
+        explicit OpenTypedRelic(Init init) :
+            id(init.id), owner(&init.owner)
+        {}
+
+        OpenTypedRelic(const OpenTypedRelic& arg) = default;
+        OpenTypedRelic(OpenTypedRelic && arg) noexcept = default;
+
+        OpenTypedRelic& operator=(const OpenTypedRelic & arg) = default;
+        OpenTypedRelic& operator=(OpenTypedRelic && arg) noexcept = default;
+
         template<class ShardT, class... ConstructorArgs, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         Index<ShardT> Create(ConstructorArgs&& ... constructorArgs) const
         {
@@ -66,18 +78,6 @@ namespace Arca
         {
             return *owner;
         }
-    protected:
-        using Init = RelicInit;
-
-        explicit OpenTypedRelic(Init init) :
-            id(init.id), owner(&init.owner)
-        {}
-
-        OpenTypedRelic(const OpenTypedRelic& arg) = default;
-        OpenTypedRelic(OpenTypedRelic&& arg) noexcept = default;
-
-        OpenTypedRelic& operator=(const OpenTypedRelic& arg) = default;
-        OpenTypedRelic& operator=(OpenTypedRelic&& arg) noexcept = default;
     private:
         RelicID id;
         Reliquary* owner;
