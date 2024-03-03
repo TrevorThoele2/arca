@@ -29,7 +29,6 @@ namespace Arca
         void Initialize(Reliquary& owner);
     protected:
         TypedRelic() = default;
-        explicit TypedRelic(const ::Inscription::BinaryTableData<TypedRelic>& data);
 
         virtual void InitializeImplementation() {}
         [[nodiscard]] virtual bool ReliquaryContainsSelf() const = 0;
@@ -43,32 +42,5 @@ namespace Arca
         friend class BatchSource;
     private:
         INSCRIPTION_ACCESS;
-    };
-}
-
-namespace Inscription
-{
-    template<>
-    struct TableData<::Arca::TypedRelic, BinaryArchive> final :
-        TableDataBase<::Arca::TypedRelic, BinaryArchive>
-    {
-        ::Arca::RelicID id;
-    };
-
-    template<>
-    class Scribe<::Arca::TypedRelic, BinaryArchive> final :
-        public TableScribe<::Arca::TypedRelic, BinaryArchive>
-    {
-    public:
-        class Table final : public TableBase
-        {
-        public:
-            Table()
-            {
-                MergeDataLinks({
-                    DataLink::Auto(&ObjectT::id, &DataT::id) }
-                );
-            }
-        };
     };
 }

@@ -79,47 +79,21 @@ namespace Inscription
     };
 
     template<>
-    struct TableData<::ReliquaryOriginRegistrationTestsFixture::Relic, BinaryArchive> final
-        : TableDataBase<::ReliquaryOriginRegistrationTestsFixture::Relic, BinaryArchive>
-    {
-        Base<TypedRelic> base;
-    };
-
-    template<>
     class Scribe<::ReliquaryOriginRegistrationTestsFixture::Relic, BinaryArchive> final
-        : public RelicScribe<::ReliquaryOriginRegistrationTestsFixture::Relic, BinaryArchive>
+        : public CompositeRelicScribe<::ReliquaryOriginRegistrationTestsFixture::Relic, BinaryArchive>
     {
-    public:
-        class Table : public TableBase
-        {
-        public:
-            Table()
-            {
-                AddDataLink(DataLink::Base(data.base));
-            }
-        };
-    };
-
-    template<>
-    struct TableData<::ReliquaryOriginRegistrationTestsFixture::GlobalRelic, BinaryArchive> final
-        : TableDataBase<::ReliquaryOriginRegistrationTestsFixture::GlobalRelic, BinaryArchive>
-    {
-        Base<TypedRelic> base;
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        {}
     };
 
     template<>
     class Scribe<::ReliquaryOriginRegistrationTestsFixture::GlobalRelic, BinaryArchive> final
-        : public RelicScribe<::ReliquaryOriginRegistrationTestsFixture::GlobalRelic, BinaryArchive>
+        : public CompositeRelicScribe<::ReliquaryOriginRegistrationTestsFixture::GlobalRelic, BinaryArchive>
     {
-    public:
-        class Table : public TableBase
-        {
-        public:
-            Table()
-            {
-                AddDataLink(DataLink::Base(data.base));
-            }
-        };
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        {}
     };
 
     template<>

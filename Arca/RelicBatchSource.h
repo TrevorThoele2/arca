@@ -1,6 +1,6 @@
 #pragma once
 
-#include <list>
+#include <vector>
 
 #include "BatchSource.h"
 #include "RelicID.h"
@@ -19,8 +19,6 @@ namespace Arca
     public:
         virtual ~RelicBatchSourceBase() = 0;
 
-        virtual void ChangeOwner(Reliquary& owner) = 0;
-
         virtual void DestroyFromBase(RelicID id) = 0;
 
         [[nodiscard]] virtual SizeT Size() const = 0;
@@ -37,7 +35,7 @@ namespace Arca
         using iterator = typename List::iterator;
         using const_iterator = typename List::const_iterator;
     public:
-        BatchSource() = default;
+        explicit BatchSource(Reliquary& owner);
 
         RelicT* Add(RelicT relic);
 
@@ -56,15 +54,18 @@ namespace Arca
         [[nodiscard]] const_iterator begin() const;
         [[nodiscard]] iterator end();
         [[nodiscard]] const_iterator end() const;
-
-        void ChangeOwner(Reliquary& owner) override;
     private:
         List list;
+        Reliquary* owner;
     private:
         friend class Reliquary;
     private:
         INSCRIPTION_ACCESS;
     };
+
+    template<class T>
+    BatchSource<T, std::enable_if_t<is_relic_v<T>>>::BatchSource(Reliquary& owner) : owner(&owner)
+    {}
 
     template<class T>
     auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Add(RelicT relic) -> RelicT*
@@ -155,13 +156,6 @@ namespace Arca
     {
         return list.end();
     }
-
-    template<class T>
-    void BatchSource<T, std::enable_if_t<is_relic_v<T>>>::ChangeOwner(Reliquary& owner)
-    {
-        for (auto& loop : list)
-            loop.owner = &owner;
-    }
 }
 
 namespace Inscription
@@ -192,7 +186,11 @@ namespace Inscription
             archive(size);
 
             for (auto& loop : object.list)
+            {
+                auto id = loop.ID();
+                archive(id);
                 archive(loop);
+            }
         }
         else
         {
@@ -203,9 +201,15 @@ namespace Inscription
 
             while (size-- > 0)
             {
+                Arca::RelicID id = 0;
+                archive(id);
+
                 ScopeConstructor<typename ObjectT::RelicT> constructor(archive);
                 object.list.push_back(std::move(constructor.GetMove()));
                 archive.AttemptReplaceTrackedObject(*constructor.Get(), object.list.back());
+
+                object.list.back().id = id;
+                object.list.back().owner = object.owner;
             }
         }
     }

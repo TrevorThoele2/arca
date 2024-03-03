@@ -22,8 +22,6 @@ namespace Arca
         virtual void Clear() = 0;
 
         [[nodiscard]] virtual SizeT Size() const = 0;
-    private:
-        friend Reliquary;
     };
 
     template<class T>

@@ -8,11 +8,13 @@
 
 #include "RelicBatch.h"
 #include "ShardBatch.h"
+#include "EitherShardBatch.h"
 #include "SignalBatch.h"
 #include "FixedRelic.h"
 #include "Global.h"
 #include "HasFactoryMethod.h"
 #include "StructureFrom.h"
+#include "Either.h"
 
 #include "Created.h"
 #include "Destroying.h"
@@ -98,10 +100,14 @@ namespace Arca
         [[nodiscard]] Ptr<ShardT> Find(RelicID id) const;
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] Ptr<ShardT> Contains(RelicID id) const;
+        [[nodiscard]] bool Contains(RelicID id) const;
+        template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
+        [[nodiscard]] bool Contains(RelicID id) const;
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] Arca::Batch<ShardT> Batch() const;
+        template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
+        [[nodiscard]] Arca::Batch<EitherT> Batch();
 
         [[nodiscard]] SizeT ShardSize() const;
     public:
@@ -390,15 +396,29 @@ namespace Arca
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    Ptr<ShardT> Reliquary::Contains(RelicID id) const
+    bool Reliquary::Contains(RelicID id) const
     {
         return static_cast<bool>(Find<ShardT>(id));
+    }
+
+    template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int>>
+    bool Reliquary::Contains(RelicID id) const
+    {
+        using ShardT = typename EitherT::BareT;
+        return static_cast<bool>(Find<ShardT>(id))
+            || static_cast<bool>(Find<const ShardT>(id));
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     Arca::Batch<ShardT> Reliquary::Batch() const
     {
         return shards.batchSources.Batch<ShardT>();
+    }
+
+    template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int>>
+    Arca::Batch<EitherT> Reliquary::Batch()
+    {
+        return shards.eitherBatchSources.Batch<EitherT>();
     }
 
     template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int>>

@@ -36,7 +36,6 @@ public:
         Ptr<BasicShard> basicShard;
     public:
         BasicTypedRelic() = default;
-        explicit BasicTypedRelic(const ::Inscription::BinaryTableData<BasicTypedRelic>& data);
     protected:
         void InitializeImplementation() override;
     };
@@ -47,7 +46,6 @@ public:
         Ptr<BasicShard> basicShard;
     public:
         GlobalRelic() = default;
-        explicit GlobalRelic(const ::Inscription::BinaryTableData<GlobalRelic>& data);
     protected:
         void InitializeImplementation() override;
     };
@@ -147,90 +145,38 @@ namespace Inscription
     };
 
     template<>
-    struct TableData<::RelicTestsFixture::BasicTypedRelic, BinaryArchive> final
-        : TableDataBase<::RelicTestsFixture::BasicTypedRelic, BinaryArchive>
-    {
-        Base<TypedRelic> base;
-    };
-
-    template<>
     class Scribe<::RelicTestsFixture::BasicTypedRelic, BinaryArchive> final
-        : public RelicScribe<::RelicTestsFixture::BasicTypedRelic, BinaryArchive>
+        : public CompositeRelicScribe<::RelicTestsFixture::BasicTypedRelic, BinaryArchive>
     {
-    public:
-        class Table : public TableBase
-        {
-        public:
-            Table()
-            {
-                AddDataLink(DataLink::Base(data.base));
-            }
-        };
-    };
-
-    template<>
-    struct TableData<::RelicTestsFixture::GlobalRelic, BinaryArchive> final
-        : TableDataBase<::RelicTestsFixture::GlobalRelic, BinaryArchive>
-    {
-        Base<TypedRelic> base;
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        {}
     };
 
     template<>
     class Scribe<::RelicTestsFixture::GlobalRelic, BinaryArchive> final
-        : public RelicScribe<::RelicTestsFixture::GlobalRelic, BinaryArchive>
+        : public CompositeRelicScribe<::RelicTestsFixture::GlobalRelic, BinaryArchive>
     {
-    public:
-        class Table : public TableBase
-        {
-        public:
-            Table()
-            {
-                AddDataLink(DataLink::Base(data.base));
-            }
-        };
-    };
-
-    template<>
-    struct TableData<::RelicTestsFixture::MostBasicCustomFactoryRelic, BinaryArchive> final
-        : TableDataBase<::RelicTestsFixture::MostBasicCustomFactoryRelic, BinaryArchive>
-    {
-        Base<TypedRelic> base;
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        {}
     };
 
     template<>
     class Scribe<::RelicTestsFixture::MostBasicCustomFactoryRelic, BinaryArchive> final
-        : public RelicScribe<::RelicTestsFixture::MostBasicCustomFactoryRelic, BinaryArchive>
+        : public CompositeRelicScribe<::RelicTestsFixture::MostBasicCustomFactoryRelic, BinaryArchive>
     {
-    public:
-        class Table : public TableBase
-        {
-        public:
-            Table()
-            {
-                AddDataLink(DataLink::Base(data.base));
-            }
-        };
-    };
-
-    template<>
-    struct TableData<::RelicTestsFixture::GuardedCustomFactoryRelic, BinaryArchive> final
-        : TableDataBase<::RelicTestsFixture::GuardedCustomFactoryRelic, BinaryArchive>
-    {
-        Base<TypedRelic> base;
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        {}
     };
 
     template<>
     class Scribe<::RelicTestsFixture::GuardedCustomFactoryRelic, BinaryArchive> final
-        : public RelicScribe<::RelicTestsFixture::GuardedCustomFactoryRelic, BinaryArchive>
+        : public CompositeRelicScribe<::RelicTestsFixture::GuardedCustomFactoryRelic, BinaryArchive>
     {
-    public:
-        class Table : public TableBase
-        {
-        public:
-            Table()
-            {
-                AddDataLink(DataLink::Base(data.base));
-            }
-        };
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        {}
     };
 }

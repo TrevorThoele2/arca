@@ -6,7 +6,6 @@
 #include <Arca/Shard.h>
 
 #include <Inscription/BinaryArchive.h>
-#include "Inscription/BaseScriven.h"
 
 using namespace Arca;
 
@@ -79,47 +78,21 @@ namespace Inscription
     };
 
     template<>
-    struct TableData<::ReliquaryRegistrationTestsFixture::Relic, BinaryArchive> final
-        : TableDataBase<::ReliquaryRegistrationTestsFixture::Relic, BinaryArchive>
-    {
-        Base<TypedRelic> base;
-    };
-
-    template<>
     class Scribe<::ReliquaryRegistrationTestsFixture::Relic, BinaryArchive> final
-        : public RelicScribe<::ReliquaryRegistrationTestsFixture::Relic, BinaryArchive>
+        : public CompositeRelicScribe<::ReliquaryRegistrationTestsFixture::Relic, BinaryArchive>
     {
-    public:
-        class Table : public TableBase
-        {
-        public:
-            Table()
-            {
-                AddDataLink(DataLink::Base(data.base));
-            }
-        };
-    };
-
-    template<>
-    struct TableData<::ReliquaryRegistrationTestsFixture::GlobalRelic, BinaryArchive> final
-        : TableDataBase<::ReliquaryRegistrationTestsFixture::GlobalRelic, BinaryArchive>
-    {
-        Base<TypedRelic> base;
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        {}
     };
 
     template<>
     class Scribe<::ReliquaryRegistrationTestsFixture::GlobalRelic, BinaryArchive> final
-        : public RelicScribe<::ReliquaryRegistrationTestsFixture::GlobalRelic, BinaryArchive>
+        : public CompositeRelicScribe<::ReliquaryRegistrationTestsFixture::GlobalRelic, BinaryArchive>
     {
-    public:
-        class Table : public TableBase
-        {
-        public:
-            Table()
-            {
-                AddDataLink(DataLink::Base(data.base));
-            }
-        };
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        {}
     };
 
     template<>

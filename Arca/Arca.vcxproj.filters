@@ -91,6 +91,9 @@
     <ClCompile Include="OpenRelic.cpp">
       <Filter>Source Files\Relic</Filter>
     </ClCompile>
+    <ClCompile Include="EitherShardBatchSource.cpp">
+      <Filter>Source Files\Shard\Batch</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Exception.h">
@@ -290,6 +293,21 @@
     </ClInclude>
     <ClInclude Include="RelicOpenness.h">
       <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="Either.h">
+      <Filter>Header Files\Shard</Filter>
+    </ClInclude>
+    <ClInclude Include="EitherShardBatch.h">
+      <Filter>Header Files\Shard\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="EitherShardBatchSource.h">
+      <Filter>Header Files\Shard\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="EitherShardBatchSourceDefinition.h">
+      <Filter>Header Files\Shard\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="EitherShardBatchIterator.h">
+      <Filter>Header Files\Shard\Batch</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

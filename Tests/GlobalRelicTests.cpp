@@ -7,19 +7,11 @@
 GlobalRelicTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std::move(myValue))
 {}
 
-GlobalRelicTestsFixture::BasicTypedRelic::BasicTypedRelic(const ::Inscription::BinaryTableData<BasicTypedRelic>& data) :
-    TypedRelicAutomation(data.base)
-{}
-
 void GlobalRelicTestsFixture::BasicTypedRelic::InitializeImplementation()
 {
     auto shards = ExtractShards();
     basicShard = std::get<0>(shards);
 }
-
-GlobalRelicTestsFixture::GlobalRelic::GlobalRelic(const ::Inscription::BinaryTableData<GlobalRelic>& data) :
-    TypedRelicAutomation(data.base)
-{}
 
 void GlobalRelicTestsFixture::GlobalRelic::InitializeImplementation()
 {

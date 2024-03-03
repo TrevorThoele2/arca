@@ -55,12 +55,8 @@ namespace Arca
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         RelicT* FindStorage(RelicID id);
     public:
-        class BatchSources : public BatchSourcesBase<RelicBatchSourceBase, ReliquaryRelics, BatchSources>
-        {
-        private:
-            template<class RelicT>
-            constexpr static bool is_object_v = is_relic_v<RelicT>;
-            friend BatchSourcesBase<RelicBatchSourceBase, ReliquaryRelics, BatchSources>;
+        class BatchSources : public StorageBatchSources<RelicBatchSourceBase, ReliquaryRelics, BatchSources>
+        { 
         public:
             template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
             [[nodiscard]] Map& MapFor();
@@ -69,6 +65,10 @@ namespace Arca
         private:
             explicit BatchSources(ReliquaryRelics& owner);
             friend ReliquaryRelics;
+        private:
+            template<class RelicT>
+            constexpr static bool is_object_v = is_relic_v<RelicT>;
+            friend StorageBatchSources<RelicBatchSourceBase, ReliquaryRelics, BatchSources>;
         } batchSources = BatchSources(*this);
 
         KnownPolymorphicSerializerList serializers;

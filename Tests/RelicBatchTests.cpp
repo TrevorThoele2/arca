@@ -2,15 +2,7 @@
 
 #include "RelicBatchTests.h"
 
-RelicBatchFixture::Relic::Relic(const ::Inscription::BinaryTableData<Relic>& data) :
-    TypedRelicAutomation(data.base), value(data.value)
-{}
-
 void RelicBatchFixture::Relic::InitializeImplementation()
-{}
-
-RelicBatchFixture::GlobalRelic::GlobalRelic(const ::Inscription::BinaryTableData<Relic>& data) :
-    TypedRelicAutomation(data.base), value(data.value)
 {}
 
 void RelicBatchFixture::GlobalRelic::InitializeImplementation()

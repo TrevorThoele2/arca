@@ -20,9 +20,13 @@ namespace Arca
         return found->second.get();
     }
 
-    ReliquaryShards::BatchSources::BatchSources(ReliquaryShards& owner) : BatchSourcesBase(owner)
+    ReliquaryShards::BatchSources::BatchSources(ReliquaryShards& owner) : StorageBatchSources(owner)
+    {}
+
+    ReliquaryShards::EitherBatchSources::EitherBatchSources(ReliquaryShards& owner) : MetaBatchSources(owner)
     {}
 
     ReliquaryShards::ReliquaryShards(Reliquary& owner) : ReliquaryComponent(owner, "shard")
     {}
+
 }

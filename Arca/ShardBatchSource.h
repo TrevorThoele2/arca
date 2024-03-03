@@ -5,6 +5,7 @@
 #include "BatchSource.h"
 #include "RelicID.h"
 #include "ShardTraits.h"
+#include "Either.h"
 
 #include "Serialization.h"
 
@@ -20,8 +21,6 @@ namespace Arca
         virtual bool DestroyFromBase(RelicID id) = 0;
 
         [[nodiscard]] virtual SizeT Size() const = 0;
-    protected:
-        friend class Reliquary;
     };
 
     template<class T>

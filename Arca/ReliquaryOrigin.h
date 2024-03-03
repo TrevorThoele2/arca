@@ -120,7 +120,9 @@ namespace Arca
         const auto factory = [](Reliquary& reliquary)
         {
             const auto typeHandle = TypeHandleFor<RelicT>();
-            reliquary.relics.batchSources.map.emplace(typeHandle.name, std::make_unique<BatchSource<RelicT>>());
+            reliquary.relics.batchSources.map.emplace(
+                typeHandle.name,
+                std::make_unique<BatchSource<RelicT>>(reliquary));
             reliquary.relics.serializers.push_back(
                 KnownPolymorphicSerializer
                 {
@@ -232,18 +234,16 @@ namespace Arca
                 typeHandle.name,
                 [](Reliquary& reliquary, RelicID id, bool isConst)
                 {
-                    if (isConst)
+                    const auto creator = [id, &reliquary](auto found)
                     {
-                        auto found = reliquary.shards.batchSources.Find<const ShardT>();
                         auto added = found->Add(id);
+                        reliquary.shards.AttemptAddToEitherBatches(id, *added);
                         reliquary.Raise<Created>(Handle(id, reliquary));
-                    }
-                    else
-                    {
-                        auto found = reliquary.shards.batchSources.Find<ShardT>();
-                        auto added = found->Add(id);
-                        reliquary.Raise<Created>(Handle(id, reliquary));
-                    }
+                    };
+
+                    isConst
+                        ? creator(reliquary.shards.batchSources.Find<const ShardT>())
+                        : creator(reliquary.shards.batchSources.Find<ShardT>());
                 });
             reliquary.shards.serializers.push_back(
                 KnownPolymorphicSerializer

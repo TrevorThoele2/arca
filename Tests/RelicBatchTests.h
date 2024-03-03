@@ -5,8 +5,6 @@
 #include <Arca/Shard.h>
 #include <Arca/TypedRelicAutomation.h>
 
-#include <Inscription/BaseScriven.h>
-
 using namespace Arca;
 
 class RelicBatchFixture : public ReliquaryFixture
@@ -24,7 +22,6 @@ public:
     int value = 0;
 public:
     Relic() = default;
-    Relic(const ::Inscription::BinaryTableData<Relic>& data);
 protected:
     void InitializeImplementation() override;
 };
@@ -35,7 +32,6 @@ public:
     int value = 0;
 public:
     GlobalRelic() = default;
-    GlobalRelic(const ::Inscription::BinaryTableData<Relic>& data);
 protected:
     void InitializeImplementation() override;
 };
@@ -89,55 +85,25 @@ namespace Arca
 namespace Inscription
 {
     template<>
-    struct TableData<::RelicBatchFixture::Relic, BinaryArchive> final
-        : TableDataBase<::RelicBatchFixture::Relic, BinaryArchive>
-    {
-        Base<::Arca::TypedRelic> base;
-        int value;
-    };
-
-    template<>
     class Scribe<::RelicBatchFixture::Relic, BinaryArchive> final
-        : public RelicScribe<::RelicBatchFixture::Relic, BinaryArchive>
+        : public CompositeRelicScribe<::RelicBatchFixture::Relic, BinaryArchive>
     {
-    public:
-        class Table : public TableBase
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
         {
-        public:
-            Table()
-            {
-                MergeDataLinks({
-                    DataLink::Base(data.base),
-                    DataLink::Auto(&ObjectT::value, &DataT::value) }
-                );
-            }
-        };
-    };
-
-    template<>
-    struct TableData<::RelicBatchFixture::GlobalRelic, BinaryArchive> final
-        : TableDataBase<::RelicBatchFixture::GlobalRelic, BinaryArchive>
-    {
-        Base<::Arca::TypedRelic> base;
-        int value;
+            archive(object.value);
+        }
     };
 
     template<>
     class Scribe<::RelicBatchFixture::GlobalRelic, BinaryArchive> final
-        : public RelicScribe<::RelicBatchFixture::Relic, BinaryArchive>
+        : public CompositeRelicScribe<::RelicBatchFixture::Relic, BinaryArchive>
     {
-    public:
-        class Table : public TableBase
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
         {
-        public:
-            Table()
-            {
-                MergeDataLinks({
-                    DataLink::Base(data.base),
-                    DataLink::Auto(&ObjectT::value, &DataT::value) }
-                );
-            }
-        };
+            archive(object.value);
+        }
     };
 
     template<>
