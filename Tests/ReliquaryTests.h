@@ -160,7 +160,7 @@ namespace Inscription
 
     template<>
     class Scribe<::ReliquaryTestsFixture::BasicTypedRelic, BinaryArchive> final
-        : RelicScribe<::ReliquaryTestsFixture::BasicTypedRelic, BinaryArchive>
+        : public RelicScribe<::ReliquaryTestsFixture::BasicTypedRelic, BinaryArchive>
     {
     public:
         class Table : public TableBase

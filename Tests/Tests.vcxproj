@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="CuratorTests.h" />
     <ClInclude Include="GeneralFixture.h" />
+    <ClInclude Include="IntegrationTests.h" />
     <ClInclude Include="RelicBatchTests.h" />
     <ClInclude Include="ShardBatchTests.h" />
     <ClInclude Include="ReliquaryFixture.h" />
@@ -31,6 +32,7 @@
   <ItemGroup>
     <ClCompile Include="CuratorTests.cpp" />
     <ClCompile Include="GeneralFixture.cpp" />
+    <ClCompile Include="IntegrationTests.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="RelicBatchTests.cpp" />
     <ClCompile Include="ShardBatchTests.cpp" />
@@ -105,7 +107,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\Trevor\Documents\Programming Projects\Catch;C:\Users\Trevor\Documents\Programming Projects\TestFramework;C:\Users\Trevor\Documents\Programming Projects\Chroma;C:\Users\Trevor\Documents\Programming Projects\Inscription;C:\Users\Trevor\Documents\Programming Projects\Arca;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Trevor\Documents\ProgrammingProjects\Catch;C:\Users\Trevor\Documents\ProgrammingProjects\TestFramework;C:\Users\Trevor\Documents\ProgrammingProjects\Chroma;C:\Users\Trevor\Documents\ProgrammingProjects\Inscription;C:\Users\Trevor\Documents\ProgrammingProjects\Arca;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>

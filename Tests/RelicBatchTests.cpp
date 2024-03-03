@@ -30,7 +30,7 @@ namespace Arca
 
 SCENARIO_METHOD(RelicBatchFixture, "default relic batch", "[RelicBatch]")
 {
-    GIVEN("default shard batch")
+    GIVEN("default relic batch")
     {
         RelicBatch<Relic> batch;
 

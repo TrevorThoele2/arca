@@ -176,13 +176,85 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
     }
 }
 
+SCENARIO_METHOD(ReliquaryTestsFixture, "registering relic structure with same name twice", "[ReliquaryOrigin]")
+{
+    GIVEN("reliquary origin")
+    {
+        auto reliquaryOrigin = ReliquaryOrigin();
+
+        WHEN("registering rleic structure")
+        {
+            const auto name = dataGeneration.Random<std::string>();
+            reliquaryOrigin.RelicStructure(name, RelicStructure());
+
+            THEN("throws error")
+            {
+                REQUIRE_THROWS_AS(reliquaryOrigin.RelicStructure(name, RelicStructure()), AlreadyRegistered);
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(ReliquaryTestsFixture, "creating relic from registered relic structure", "[reliquary]")
+{
+    GIVEN("reliquary registered with structure")
+    {
+        const auto structureName = dataGeneration.Random<std::string>();
+        const auto relicStructure = RelicStructure{ ShardTraits<BasicShard>::typeHandle };
+
+        auto reliquaryOrigin = ReliquaryOrigin()
+            .RelicStructure(structureName, relicStructure);
+
+        WHEN("constructing relic from registered structure")
+        {
+            auto reliquary = reliquaryOrigin
+                .Shard<BasicShard>()
+                .Actualize();
+
+            auto relic = reliquary.CreateRelic(structureName);
+
+            THEN("relic has shard")
+            {
+                REQUIRE(relic.FindShard<BasicShard>() != nullptr);
+                REQUIRE(relic.HasShard<BasicShard>());
+            }
+
+            THEN("relic is fixed")
+            {
+                REQUIRE(relic.Dynamism() == RelicDynamism::Fixed);
+            }
+        }
+
+        WHEN("constructing relic without registering shard")
+        {
+            auto reliquary = reliquaryOrigin
+                .Actualize();
+
+            THEN("throws error")
+            {
+                REQUIRE_THROWS_MATCHES
+                (
+                    reliquary.CreateRelic(structureName),
+                    NotRegistered,
+                    ::Catch::Matchers::Message(
+                        "The shard ("s + ShardTraits<BasicShard>::typeHandle + ") was not registered.")
+                );
+            }
+        }
+    }
+}
+
 SCENARIO_METHOD(ReliquaryTestsFixture, "registered reliquary with every type", "[reliquary]")
 {
     GIVEN("all registered")
     {
+        
+
         auto reliquary = ReliquaryOrigin()
-            .Shard<BasicShard>()
+            .Relic<BasicTypedRelic>()
             .StaticRelic<StaticRelic>()
+            .RelicStructure(dataGeneration.Random<std::string>(), RelicStructure())
+            .Shard<BasicShard>()
             .Curator<BasicCurator>()
             .CuratorPipeline(CuratorPipeline())
             .Signal<BasicSignal>()

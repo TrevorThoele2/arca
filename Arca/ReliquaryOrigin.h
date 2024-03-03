@@ -25,6 +25,7 @@ namespace Arca
         ReliquaryOrigin& Relic();
         template<class RelicT>
         ReliquaryOrigin& StaticRelic();
+        ReliquaryOrigin& RelicStructure(const std::string& name, const RelicStructure& structure);
     public:
         template<class ShardT>
         ReliquaryOrigin& Shard();
@@ -54,6 +55,10 @@ namespace Arca
 
         template<class RelicT>
         [[nodiscard]] bool IsStaticRelicRegistered() const;
+    private:
+        using NamedRelicStructure = Reliquary::NamedRelicStructure;
+        using NamedRelicStructureList = std::vector<NamedRelicStructure>;
+        NamedRelicStructureList namedRelicStructureList;
     private:
         TypedInitializerList shardList;
 

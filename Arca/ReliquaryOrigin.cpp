@@ -7,6 +7,7 @@ namespace Arca
     ReliquaryOrigin::ReliquaryOrigin(const ReliquaryOrigin& arg) :
         relicList(arg.relicList),
         staticRelicList(arg.staticRelicList),
+        namedRelicStructureList(arg.namedRelicStructureList),
         shardList(arg.shardList),
         curatorPipeline(arg.curatorPipeline),
         curatorSerializationTypeHandlesFactoryList(arg.curatorSerializationTypeHandlesFactoryList),
@@ -20,6 +21,7 @@ namespace Arca
     {
         relicList = arg.relicList;
         staticRelicList = arg.staticRelicList;
+        namedRelicStructureList = arg.namedRelicStructureList;
         shardList = arg.shardList;
         for (auto& provider : arg.curatorProviders)
             curatorProviders.emplace(provider.first, provider.second->Clone());
@@ -46,11 +48,25 @@ namespace Arca
         for (auto& initializer : staticRelicList)
             initializer.factory(reliquary);
 
+        reliquary.namedRelicStructureList = namedRelicStructureList;
+
         PushAllCuratorsTo(reliquary);
 
         PushCuratorPipeline(reliquary);
 
+        reliquary.Initialize();
+
         return reliquary;
+    }
+
+    ReliquaryOrigin& ReliquaryOrigin::RelicStructure(const std::string& name, const Arca::RelicStructure& structure)
+    {
+        for (auto& loop : namedRelicStructureList)
+            if (loop.name == name)
+                throw AlreadyRegistered();
+
+        namedRelicStructureList.emplace_back(name, structure);
+        return *this;
     }
 
     ReliquaryOrigin& ReliquaryOrigin::CuratorPipeline(const Arca::CuratorPipeline& pipeline)

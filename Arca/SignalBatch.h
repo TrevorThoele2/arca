@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SignalBatchSource.h"
-#include "SignalBatchException.h"
+#include "BatchException.h"
 
 #include "StaticAssert.h"
 
@@ -38,11 +38,7 @@ namespace Arca
         [[nodiscard]] const_iterator end() const;
     private:
         SourceT* source = nullptr;
-    private:
-        bool isInvalid = false;
-
-        void Invalidate();
-        void ThrowIfInvalid() const;
+        void SourceRequired() const;
     private:
         INSCRIPTION_ACCESS;
     private:
@@ -88,7 +84,7 @@ namespace Arca
     template<class Signal>
     auto SignalBatch<Signal>::Size() const -> SizeT
     {
-        ThrowIfInvalid();
+        SourceRequired();
 
         return source->Size();
     }
@@ -96,7 +92,7 @@ namespace Arca
     template<class Signal>
     bool SignalBatch<Signal>::IsEmpty() const
     {
-        ThrowIfInvalid();
+        SourceRequired();
 
         return source->IsEmpty();
     }
@@ -104,7 +100,7 @@ namespace Arca
     template<class Signal>
     auto SignalBatch<Signal>::begin() -> iterator
     {
-        ThrowIfInvalid();
+        SourceRequired();
 
         return source->begin();
     }
@@ -112,7 +108,7 @@ namespace Arca
     template<class Signal>
     auto SignalBatch<Signal>::begin() const -> const_iterator
     {
-        ThrowIfInvalid();
+        SourceRequired();
 
         return source->begin();
     }
@@ -120,7 +116,7 @@ namespace Arca
     template<class Signal>
     auto SignalBatch<Signal>::end() -> iterator
     {
-        ThrowIfInvalid();
+        SourceRequired();
 
         return source->end();
     }
@@ -128,22 +124,16 @@ namespace Arca
     template<class Signal>
     auto SignalBatch<Signal>::end() const -> const_iterator
     {
-        ThrowIfInvalid();
+        SourceRequired();
 
         return source->end();
     }
 
     template<class Signal>
-    void SignalBatch<Signal>::Invalidate()
+    void SignalBatch<Signal>::SourceRequired() const
     {
-        isInvalid = true;
-    }
-
-    template<class Signal>
-    void SignalBatch<Signal>::ThrowIfInvalid() const
-    {
-        if (isInvalid)
-            throw SignalBatchInvalidated();
+        if (!source)
+            throw BatchNotSetup();
     }
 
     template<class Signal>

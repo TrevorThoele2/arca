@@ -44,7 +44,6 @@
     <ClInclude Include="ReliquaryException.h" />
     <ClInclude Include="Serialization.h" />
     <ClInclude Include="SignalBatch.h" />
-    <ClInclude Include="SignalBatchException.h" />
     <ClInclude Include="SignalBatchSource.h" />
     <ClInclude Include="Curator.h" />
     <ClInclude Include="CuratorDependencyNotFound.h" />
@@ -75,7 +74,6 @@
     <ClCompile Include="Reliquary.cpp" />
     <ClCompile Include="ReliquaryOrigin.cpp" />
     <ClCompile Include="ReliquaryException.cpp" />
-    <ClCompile Include="SignalBatchException.cpp" />
     <ClCompile Include="SignalBatchSource.cpp" />
     <ClCompile Include="Curator.cpp" />
     <ClCompile Include="CuratorDependencyNotFound.cpp" />
@@ -140,7 +138,7 @@
     <IncludePath>C:\Users\Trevor\Documents\Programming Projects\Chroma;C:\Users\Trevor\Documents\Programming Projects\Inscription;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\Trevor\Documents\Programming Projects\Chroma;C:\Users\Trevor\Documents\Programming Projects\Inscription;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Trevor\Documents\ProgrammingProjects\Chroma;C:\Users\Trevor\Documents\ProgrammingProjects\Inscription;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

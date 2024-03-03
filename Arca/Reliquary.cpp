@@ -7,12 +7,16 @@
 #include <Inscription/VectorScribe.h>
 
 #include <utility>
+#include "Chroma/StringUtility.h"
+
+using namespace std::string_literals;
 
 namespace Arca
 {
     Reliquary::Reliquary(Reliquary&& arg) noexcept :
         relicMetadataList(std::move(arg.relicMetadataList)),
         occupiedRelicIDs(std::move(arg.occupiedRelicIDs)),
+        namedRelicStructureList(std::move(arg.namedRelicStructureList)),
         relicBatchSources(std::move(arg.relicBatchSources)),
         relicSerializerMap(std::move(arg.relicSerializerMap)),
         staticRelicIDMap(std::move(arg.staticRelicIDMap)),
@@ -32,6 +36,7 @@ namespace Arca
     {
         relicMetadataList = std::move(arg.relicMetadataList);
         occupiedRelicIDs = std::move(arg.occupiedRelicIDs);
+        namedRelicStructureList = std::move(arg.namedRelicStructureList);
         relicBatchSources = std::move(arg.relicBatchSources);
         relicSerializerMap = std::move(arg.relicSerializerMap);
         staticRelicIDMap = std::move(arg.staticRelicIDMap);
@@ -54,6 +59,9 @@ namespace Arca
         DoOnCurators([](Curator& curator) { curator.StartStep(); });
         DoOnCurators([](Curator& curator) { curator.Work(); });
         DoOnCurators([](Curator& curator) { curator.StopStep(); });
+
+        for(auto& signalBatchSource : signalBatchSources)
+            signalBatchSource.second->Clear();
     }
 
     Relic Reliquary::CreateRelic()
@@ -71,21 +79,40 @@ namespace Arca
         return Relic(id, dynamism, *this);
     }
 
+    Relic Reliquary::CreateRelic(const std::string& structureName)
+    {
+        for (auto& loop : namedRelicStructureList)
+            if (loop.name == structureName)
+                return CreateRelic(loop.value);
+
+        throw NotRegistered("relic structure", structureName);
+    }
+
     void Reliquary::ParentRelic(RelicID parent, RelicID child)
     {
         if (parent == child)
-            throw CannotParentRelicToSelf(parent);
+            throw CannotParentRelic(
+                "The relic with id ("s + Chroma::ToString(parent) + ") was attempted to be parented to itself.");
 
         auto parentMetadata = RelicMetadataFor(parent);
         if (!parentMetadata)
             throw CannotFindRelic(parent);
 
+        if (parentMetadata->dynamism == RelicDynamism::Static)
+            throw CannotParentRelic(
+                "The relic with id ("s + Chroma::ToString(child) + ") was attempted to be parented to a static relic.");
+
         auto childMetadata = RelicMetadataFor(child);
         if (!childMetadata)
             throw CannotFindRelic(child);
 
+        if (childMetadata->dynamism == RelicDynamism::Static)
+            throw CannotParentRelic(
+                "The relic with id ("s + Chroma::ToString(child) + ") is static and cannot be parented to anything.");
+
         if (childMetadata->parent.has_value())
-            throw RelicAlreadyParented(child);
+            throw CannotParentRelic(
+                "The relic with id("s + Chroma::ToString(child) + ") is already parented.");;
 
         parentMetadata->children.push_back(child);
         childMetadata->parent = parent;
@@ -125,6 +152,12 @@ namespace Arca
         for (auto& loop : curators)
             returnValue.push_back(loop.second->description);
         return returnValue;
+    }
+
+    void Reliquary::Initialize()
+    {
+        for (auto& loop : curators)
+            loop.second->Get()->Initialize();
     }
 
     Reliquary::KnownPolymorphicSerializer::KnownPolymorphicSerializer(
@@ -213,6 +246,10 @@ namespace Arca
             ? 1
             : itr->Start() + 1;
     }
+
+    Reliquary::NamedRelicStructure::NamedRelicStructure(std::string name, Arca::RelicStructure value) :
+        name(std::move(name)), value(std::move(value))
+    {}
 
     RelicBatchSourceBase* Reliquary::FindRelicBatchSource(const TypeHandle& typeHandle)
     {

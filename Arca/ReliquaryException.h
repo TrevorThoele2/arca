@@ -53,16 +53,10 @@ namespace Arca
         explicit CannotFindRelic(RelicID id);
     };
 
-    class RelicAlreadyParented final : public Exception
+    class CannotParentRelic final : public Exception
     {
     public:
-        explicit RelicAlreadyParented(RelicID id);
-    };
-
-    class CannotParentRelicToSelf final : public Exception
-    {
-    public:
-        explicit CannotParentRelicToSelf(RelicID id);
+        explicit CannotParentRelic(const std::string& message);
     };
 
     class InvalidCuratorPipeline final : public Exception
