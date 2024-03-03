@@ -20,6 +20,7 @@
 #include "Created.h"
 #include "Destroying.h"
 #include "RelicParented.h"
+#include "TransferableSignal.h"
 
 #include "Serialization.h"
 #include "TypeScribe.h"
@@ -114,9 +115,9 @@ namespace Arca
 
         [[nodiscard]] SizeT CuratorSize() const;
     public:
-        template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
+        template<class SignalT, std::enable_if_t<is_signal_v<SignalT> && !std::is_same_v<TransferableSignal, SignalT>, int> = 0>
         void Raise(const SignalT& signal);
-        template<class SignalT, class... Args, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
+        template<class SignalT, class... Args, std::enable_if_t<is_signal_v<SignalT> && !std::is_same_v<TransferableSignal, SignalT>, int> = 0>
         void Raise(Args&& ... args);
 
         template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
@@ -331,13 +332,13 @@ namespace Arca
         return static_cast<bool>(Find<CuratorT>());
     }
 
-    template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int>>
+    template<class SignalT, std::enable_if_t<is_signal_v<SignalT> && !std::is_same_v<TransferableSignal, SignalT>, int>>
     void Reliquary::Raise(const SignalT& signal)
     {
         signals.Raise(signal);
     }
 
-    template<class SignalT, class... Args, std::enable_if_t<is_signal_v<SignalT>, int>>
+    template<class SignalT, class... Args, std::enable_if_t<is_signal_v<SignalT> && !std::is_same_v<TransferableSignal, SignalT>, int>>
     void Reliquary::Raise(Args&& ... args)
     {
         signals.Raise<SignalT>(std::forward<Args>(args)...);
@@ -493,3 +494,4 @@ namespace Inscription
 #include "ReliquarySignalsDefinition.h"
 #include "RelicBatchSourceDefinition.h"
 #include "CompositeShardBatchSourceDefinition.h"
+#include "TransferableSignalDefinition.h"

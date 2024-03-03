@@ -6,6 +6,7 @@
 #include <any>
 
 #include "SignalBatch.h"
+#include "TransferableSignal.h"
 
 namespace Arca
 {
@@ -28,7 +29,7 @@ namespace Arca
         ExecutionMap executionMap;
 
         template<class SignalT>
-        void ExecuteAllFor(const SignalT& signal);
+        void ExecuteExecutionsFor(const SignalT& signal);
     public:
         class BatchSources
             : public StorageBatchSources<SignalBatchSourceBase, ReliquarySignals, BatchSources, is_signal>
@@ -38,6 +39,21 @@ namespace Arca
             [[nodiscard]] Map& MapFor();
             template<class RelicT, std::enable_if_t<is_signal_v<RelicT>, int> = 0>
             [[nodiscard]] const Map& MapFor() const;
+        public:
+            std::optional<BatchSource<TransferableSignal>> transferableSignals;
+
+            template<class ObjectT, std::enable_if_t<is_signal<ObjectT>::value && !std::is_same_v<ObjectT, TransferableSignal>, int> = 0>
+            [[nodiscard]] Arca::Batch<ObjectT> Batch() const
+            {
+                auto& batchSource = Required<ObjectT>();
+                return Arca::Batch<ObjectT>(batchSource);
+            }
+
+            template<class ObjectT, std::enable_if_t<std::is_same_v<ObjectT, TransferableSignal>, int> = 0>
+            [[nodiscard]] Arca::Batch<ObjectT> Batch() const
+            {
+                return Arca::Batch<ObjectT>(*const_cast<BatchSources&>(*this).transferableSignals);
+            }
         private:
             explicit BatchSources(ReliquarySignals& owner);
             friend ReliquarySignals;

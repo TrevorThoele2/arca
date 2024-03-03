@@ -88,6 +88,14 @@ SCENARIO_METHOD(SignalBatchFixture, "signal batch", "[SignalBatch]")
                 REQUIRE(batch.Size() == 1);
                 REQUIRE(batch.begin()->myValue == signal.myValue);
             }
+
+            THEN("starting transferable batch contains raised signal")
+            {
+                auto batch = reliquary->Batch<TransferableSignal>();
+
+                REQUIRE(!batch.IsEmpty());
+                REQUIRE(batch.Size() == 1);
+            }
         }
 
         WHEN("starting batch")
@@ -103,6 +111,21 @@ SCENARIO_METHOD(SignalBatchFixture, "signal batch", "[SignalBatch]")
                 REQUIRE(!batch.IsEmpty());
                 REQUIRE(batch.Size() == 1);
                 REQUIRE(batch.begin()->myValue == signal.myValue);
+            }
+        }
+
+        WHEN("starting transferable batch")
+        {
+            auto batch = reliquary->Batch<TransferableSignal>();
+
+            THEN("raising signal causes batch to contain signal")
+            {
+                BasicSignal signal;
+                signal.myValue = dataGeneration.Random<int>();
+                reliquary->Raise(signal);
+
+                REQUIRE(!batch.IsEmpty());
+                REQUIRE(batch.Size() == 1);
             }
         }
     }
