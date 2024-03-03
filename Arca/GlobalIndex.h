@@ -4,8 +4,6 @@
 #include "TypeFor.h"
 #include "UsableForGlobalIndex.h"
 
-#include "HandleObjectTypeFor.h"
-
 #include "Serialization.h"
 
 namespace Arca

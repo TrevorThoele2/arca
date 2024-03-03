@@ -37,7 +37,6 @@
     <ClInclude Include="CreateWith.h" />
     <ClInclude Include="CuratorInit.h" />
     <ClInclude Include="CuratorStage.h" />
-    <ClInclude Include="HandleObjectType.h" />
     <ClInclude Include="HasRelicInitConstructor.h" />
     <ClInclude Include="HasRelicSerializationConstructor.h" />
     <ClInclude Include="HasSelfContainedTrait.h" />
@@ -95,7 +94,6 @@
     <ClInclude Include="ShardIndexDefinition.h" />
     <ClInclude Include="AsHandle.h" />
     <ClInclude Include="CompositeScribeCategory.h" />
-    <ClInclude Include="HandleObjectTypeFor.h" />
     <ClInclude Include="GlobalIndex.h" />
     <ClInclude Include="HasLocalityTrait.h" />
     <ClInclude Include="IsGlobal.h" />
@@ -116,7 +114,7 @@
     <ClInclude Include="Batch.h" />
     <ClInclude Include="BatchSource.h" />
     <ClInclude Include="Destroying.h" />
-    <ClInclude Include="SlimHandle.h" />
+    <ClInclude Include="Handle.h" />
     <ClInclude Include="HasShouldCreateMethod.h" />
     <ClInclude Include="IsType.h" />
     <ClInclude Include="KnownPolymorphicSerializer.h" />
@@ -128,7 +126,6 @@
     <ClInclude Include="RelicBatchIterator.h" />
     <ClInclude Include="RelicBatchSource.h" />
     <ClInclude Include="Created.h" />
-    <ClInclude Include="Handle.h" />
     <ClInclude Include="RelicBatchSourceDefinition.h" />
     <ClInclude Include="RelicParented.h" />
     <ClInclude Include="ReliquaryCurators.h" />
@@ -172,14 +169,13 @@
     <ClCompile Include="MutablePointer.cpp" />
     <ClCompile Include="ReliquaryCommands.cpp" />
     <ClCompile Include="ReliquaryMatrices.cpp" />
-    <ClCompile Include="SlimHandle.cpp" />
+    <ClCompile Include="Handle.cpp" />
     <ClCompile Include="KnownPolymorphicSerializer.cpp" />
     <ClCompile Include="ObjectType.cpp" />
     <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="BatchException.cpp" />
     <ClCompile Include="PipelineException.cpp" />
     <ClCompile Include="RelicBatchSource.cpp" />
-    <ClCompile Include="Handle.cpp" />
     <ClCompile Include="ReliquaryCurators.cpp" />
     <ClCompile Include="ReliquaryRelics.cpp" />
     <ClCompile Include="ReliquaryRelicStructures.cpp" />

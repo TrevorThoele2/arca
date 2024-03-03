@@ -65,7 +65,7 @@ namespace Arca
     template<class T>
     Index<T, std::enable_if_t<usable_for_relic_index_v<T>>>::operator Handle() const
     {
-        return Handle(ID(), *Owner(), TypeFor<T>(), HandleObjectTypeFor<T>());
+        return Handle{ ID(), TypeFor<T>() };
     }
 
     template<class T>

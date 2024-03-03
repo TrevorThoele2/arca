@@ -55,11 +55,9 @@ namespace Arca
         if (!metadata->parent)
             return {};
 
-        return Handle(
-            metadata->parent->ID(),
-            const_cast<Reliquary&>(*owner),
-            metadata->parent->Type(),
-            HandleObjectType::Relic);
+        return Handle{
+            metadata->parent->id,
+            metadata->parent->type };
     }
 
     std::vector<Handle> ReliquaryRelics::ChildrenOf(RelicID parentID) const
@@ -71,14 +69,12 @@ namespace Arca
             if (!metadata.parent)
                 continue;
 
-            if (metadata.parent->ID() != parentID)
+            if (metadata.parent->id != parentID)
                 continue;
 
-            returnValue.emplace_back(
+            returnValue.push_back(Handle{
                 metadata.id,
-                const_cast<Reliquary&>(*owner),
-                metadata.type,
-                HandleObjectType::Relic);
+                metadata.type });
         }
 
         return returnValue;
@@ -172,10 +168,10 @@ namespace Arca
 
     void ReliquaryRelics::Destroy(RelicMetadata& metadata)
     {
-        owner->Raise(Destroying{ Handle{ metadata.id, const_cast<Reliquary&>(*owner), metadata.type, HandleObjectType::Relic } });
+        owner->Raise(Destroying{ Handle{ metadata.id, metadata.type }});
 
         while(!metadata.children.empty())
-            Destroy(*MetadataFor(metadata.children[0].ID()));
+            Destroy(*MetadataFor(metadata.children[0].id));
 
         const auto id = metadata.id;
 
@@ -184,14 +180,14 @@ namespace Arca
         if (metadata.parent)
         {
             const auto parent = *metadata.parent;
-            const auto parentMetadata = MetadataFor(parent.ID());
+            const auto parentMetadata = MetadataFor(parent.id);
             const auto eraseChildrenItr =
                 std::remove_if(
                     parentMetadata->children.begin(),
                     parentMetadata->children.end(),
-                    [id](const SlimHandle& child)
+                    [id](const Handle& child)
                     {
-                        return id == child.ID();
+                        return id == child.id;
                     });
             if (eraseChildrenItr != parentMetadata->children.end())
                 parentMetadata->children.erase(eraseChildrenItr);
@@ -227,16 +223,14 @@ namespace Arca
     {
         ValidateParentForParenting(parent);
 
-        assert(parent.ID() != child.id);
+        assert(parent.id != child.id);
     }
 
     void ReliquaryRelics::Parent(const Handle& parent, const Handle& child)
     {
         auto& parentMetadata = ValidateParentForParenting(parent);
-
-        assert(child.Owner() == owner);
-
-        const auto childMetadata = MetadataFor(child.ID());
+        
+        const auto childMetadata = MetadataFor(child.id);
         assert(childMetadata != nullptr);
         assert(childMetadata->locality != Locality::Global);
         assert(!childMetadata->parent.has_value());
@@ -318,13 +312,9 @@ namespace Arca
 
     RelicMetadata& ReliquaryRelics::ValidateParentForParenting(const Handle& parent)
     {
-        if (parent.Owner() != owner)
-            throw CannotParentRelic(
-                "Cannot parent a relic to a relic in a different Reliquary.");
-
-        const auto parentMetadata = MetadataFor(parent.ID());
+        const auto parentMetadata = MetadataFor(parent.id);
         if (!parentMetadata)
-            throw CannotFind(objectTypeName, parent.Type());
+            throw CannotFind(objectTypeName, parent.type);
 
         if (parentMetadata->locality == Locality::Global)
             throw CannotParentRelic(

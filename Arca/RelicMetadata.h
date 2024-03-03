@@ -6,7 +6,7 @@
 #include "RelicID.h"
 #include "Locality.h"
 #include "Type.h"
-#include "SlimHandle.h"
+#include "Handle.h"
 
 namespace Arca
 {
@@ -17,8 +17,8 @@ namespace Arca
         Type type;
         void* storage = nullptr;
 
-        std::optional<SlimHandle> parent;
-        std::vector<SlimHandle> children;
+        std::optional<Handle> parent;
+        std::vector<Handle> children;
 
         bool shouldSerializeBinary = true;
         bool shouldSerializeJson = true;

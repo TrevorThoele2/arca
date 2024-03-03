@@ -53,7 +53,7 @@ SCENARIO_METHOD(HandleTestsFixture, "basic handle", "[handle]")
 
             THEN("is not equal to same ID object with different type")
             {
-                auto handle2 = AsHandle<Shard>(relic1.ID(), *reliquary);
+                auto handle2 = AsHandle<Shard>(relic1.ID());
 
                 REQUIRE(handle1 != handle2);
             }
@@ -77,11 +77,11 @@ SCENARIO_METHOD(HandleTestsFixture, "handle comparison combinations", "[handle]"
         auto openRelic1 = reliquary->Do(Create<OpenRelic>());
         auto openRelicHandle1 = AsHandle(openRelic1);
         reliquary->Do(Create<OtherShard>(openRelic1.ID()));
-        auto openRelicOtherShardHandle1 = AsHandle<OtherShard>(openRelic1.ID(), *reliquary);
+        auto openRelicOtherShardHandle1 = AsHandle<OtherShard>(openRelic1.ID());
 
         auto typedRelic1 = reliquary->Do(Create<TypedRelic>());
         auto typedRelicHandle1 = AsHandle(typedRelic1);
-        auto typedRelicShardHandle1 = AsHandle<Shard>(typedRelic1.ID(), *reliquary);
+        auto typedRelicShardHandle1 = AsHandle<Shard>(typedRelic1.ID());
 
         auto globalRelic1 = Arca::Index<GlobalRelic>(*reliquary);
         auto globalRelicHandle1 = AsHandle(globalRelic1);
@@ -89,11 +89,11 @@ SCENARIO_METHOD(HandleTestsFixture, "handle comparison combinations", "[handle]"
         auto openRelic2 = reliquary->Do(Create<OpenRelic>());
         auto openRelicHandle2 = AsHandle(openRelic2);
         reliquary->Do(Create<OtherShard>(openRelic2.ID()));
-        auto openRelicOtherShardHandle2 = AsHandle<OtherShard>(openRelic2.ID(), *reliquary);
+        auto openRelicOtherShardHandle2 = AsHandle<OtherShard>(openRelic2.ID());
 
         auto typedRelic2 = reliquary->Do(Create<TypedRelic>());
         auto typedRelicHandle2 = AsHandle(typedRelic2);
-        auto typedRelicShardHandle2 = AsHandle<Shard>(typedRelic2.ID(), *reliquary);
+        auto typedRelicShardHandle2 = AsHandle<Shard>(typedRelic2.ID());
 
         auto globalRelic2 = Arca::Index<GlobalRelic>(*reliquary);
         auto globalRelicHandle2 = AsHandle(globalRelic2);
@@ -311,10 +311,8 @@ SCENARIO_METHOD(HandleTestsFixture, "handle serialization", "[handle][serializat
                 auto loadedHandleHolder = Arca::Index<HandleHolder>(
                     savedHandleHolder.ID(), *loadedReliquary);
 
-                REQUIRE(loadedHandleHolder->handle.ID() == savedHandleHolder->handle.ID());
-                REQUIRE(loadedHandleHolder->handle.Type() == savedHandleHolder->handle.Type());
-                REQUIRE(loadedHandleHolder->handle.Owner() == loadedReliquary.get());
-                REQUIRE(loadedHandleHolder->handle.ObjectType() == savedHandleHolder->handle.ObjectType());
+                REQUIRE(loadedHandleHolder->handle.id == savedHandleHolder->handle.id);
+                REQUIRE(loadedHandleHolder->handle.type == savedHandleHolder->handle.type);
             }
         }
     }
@@ -357,10 +355,8 @@ SCENARIO_METHOD(HandleTestsFixture, "handle serialization", "[handle][serializat
                 auto loadedHandleHolder = Arca::Index<HandleHolder>(
                     savedHandleHolder.ID(), *loadedReliquary);
 
-                REQUIRE(loadedHandleHolder->handle.ID() == savedHandleHolder->handle.ID());
-                REQUIRE(loadedHandleHolder->handle.Type() == savedHandleHolder->handle.Type());
-                REQUIRE(loadedHandleHolder->handle.Owner() == loadedReliquary.get());
-                REQUIRE(loadedHandleHolder->handle.ObjectType() == savedHandleHolder->handle.ObjectType());
+                REQUIRE(loadedHandleHolder->handle.id == savedHandleHolder->handle.id);
+                REQUIRE(loadedHandleHolder->handle.type == savedHandleHolder->handle.type);
             }
         }
     }
