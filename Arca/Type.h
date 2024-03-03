@@ -41,8 +41,8 @@ namespace Inscription
     public:
         using ObjectT = Arca::Type;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive);
-        void Scriven(ObjectT& object, JsonArchive& archive);
+        void Scriven(ObjectT& object, Archive::Binary& archive);
+        void Scriven(ObjectT& object, Archive::Json& archive);
     };
 
     template<class Archive>

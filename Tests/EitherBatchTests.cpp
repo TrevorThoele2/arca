@@ -253,7 +253,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either shard batch serialization", "[E
         savedReliquary->Do(Create<TypedClosedRelic>{ dataGeneration.Random<int>() });
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
+            auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -265,7 +265,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either shard batch serialization", "[E
                 .Actualize();
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                 inputArchive(*loadedReliquary);
             }
 

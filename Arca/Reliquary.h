@@ -390,8 +390,8 @@ namespace Inscription
     public:
         using ObjectT = KnownPolymorphic;
     public:
-        void Scriven(ObjectT& object, BinaryArchive& archive);
-        void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
+        void Scriven(ObjectT& object, Archive::Binary& archive);
+        void Scriven(const std::string& name, ObjectT& object, Archive::Json& archive);
     };
 
     template<>
@@ -432,58 +432,58 @@ namespace Inscription
             Type mainType,
             KnownPolymorphicSerializerList& list);
     private:
-        void Save(ObjectT& object, OutputBinaryArchive& archive);
-        void Load(ObjectT& object, InputBinaryArchive& archive);
+        void Save(ObjectT& object, Archive::OutputBinary& archive);
+        void Load(ObjectT& object, Archive::InputBinary& archive);
 
         static void SaveAll(
             ObjectT& object,
-            OutputBinaryArchive& archive,
+            Archive::OutputBinary& archive,
             KnownPolymorphicSerializerList& polymorphicsFromObject);
 
         static void LoadAll(
             ObjectT& object,
-            InputBinaryArchive& archive,
+            Archive::InputBinary& archive,
             KnownPolymorphicSerializerList& polymorphicsFromObject);
 
         static std::vector<TypePair> PruneTypesToLoad(
             KnownPolymorphicSerializerList& fromObject,
-            InputBinaryArchive& archive,
+            Archive::InputBinary& archive,
             const std::vector<Type>& typesFromArchive);
 
         static std::vector<TypePair> ExtractTypes(
             KnownPolymorphicSerializerList& fromObject,
-            InputBinaryArchive& archive);
+            Archive::InputBinary& archive);
 
-        static void SaveRelicMetadata(Arca::RelicMetadata& metadata, OutputBinaryArchive& archive);
-        static LoadedRelicMetadata LoadRelicMetadata(ObjectT& object, InputBinaryArchive& archive);
+        static void SaveRelicMetadata(Arca::RelicMetadata& metadata, Archive::OutputBinary& archive);
+        static LoadedRelicMetadata LoadRelicMetadata(ObjectT& object, Archive::InputBinary& archive);
     private:
-        void Save(ObjectT& object, OutputJsonArchive& archive);
-        void Load(ObjectT& object, InputJsonArchive& archive);
+        void Save(ObjectT& object, Archive::OutputJson& archive);
+        void Load(ObjectT& object, Archive::InputJson& archive);
 
         static void SaveAll(
             const std::string& name,
             ObjectT& object,
-            OutputJsonArchive& archive,
+            Archive::OutputJson& archive,
             KnownPolymorphicSerializerList& polymorphicsFromObject);
 
         static void LoadAll(
             const std::string& name,
             ObjectT& object,
-            InputJsonArchive& archive,
+            Archive::InputJson& archive,
             KnownPolymorphicSerializerList& polymorphicsFromObject);
 
-        static void SaveRelicMetadata(Arca::RelicMetadata& metadata, OutputJsonArchive& archive);
-        static LoadedRelicMetadata LoadRelicMetadata(ObjectT& object, InputJsonArchive& archive);
+        static void SaveRelicMetadata(Arca::RelicMetadata& metadata, Archive::OutputJson& archive);
+        static LoadedRelicMetadata LoadRelicMetadata(ObjectT& object, Archive::InputJson& archive);
         static void SetupLoadedRelicMetadata(
             const std::vector<LoadedRelicMetadata>& loadedRelicMetadata, ObjectT& object);
 
         static std::vector<TypePair> LoadTypes(
             KnownPolymorphicSerializerList& fromObject,
-            InputJsonArchive& archive);
+            Archive::InputJson& archive);
 
         static std::vector<TypePair> ExtractTypes(
             KnownPolymorphicSerializerList& fromObject,
-            InputJsonArchive& archive);
+            Archive::InputJson& archive);
     private:
         static void SignalCreation(ObjectT& object);
     };

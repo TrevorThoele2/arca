@@ -132,7 +132,7 @@ namespace Inscription
 {
     template<class T>
     void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::
-        Scriven(ObjectT& object, BinaryArchive& archive)
+        Scriven(ObjectT& object, Archive::Binary& archive)
     {
         if (archive.IsOutput())
         {
@@ -172,7 +172,7 @@ namespace Inscription
 
     template<class T>
     void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::
-        Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
+        Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
     {
         if (archive.IsOutput())
         {

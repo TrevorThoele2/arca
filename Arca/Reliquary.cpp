@@ -118,12 +118,12 @@ namespace Inscription
         reliquary(&reliquary), value(value)
     {}
 
-    void Scribe<KnownPolymorphic>::Scriven(ObjectT& object, BinaryArchive& archive)
+    void Scribe<KnownPolymorphic>::Scriven(ObjectT& object, Archive::Binary& archive)
     {
         object.value->Serialize(archive);
     }
 
-    void Scribe<KnownPolymorphic>::Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
+    void Scribe<KnownPolymorphic>::Scriven(const std::string& name, ObjectT& object, Archive::Json& archive)
     {
         object.value->Serialize(name, archive);
     }
@@ -164,7 +164,7 @@ namespace Inscription
             : static_cast<Arca::KnownPolymorphicSerializer*>(nullptr);
     }
 
-    void Scribe<Arca::Reliquary>::Save(ObjectT& object, OutputBinaryArchive& archive)
+    void Scribe<Arca::Reliquary>::Save(ObjectT& object, Archive::OutputBinary& archive)
     {
         SaveUserContext saveUserContext;
 
@@ -210,7 +210,7 @@ namespace Inscription
             curatorSerializers);
     }
 
-    void Scribe<Arca::Reliquary>::Load(ObjectT& object, InputBinaryArchive& archive)
+    void Scribe<Arca::Reliquary>::Load(ObjectT& object, Archive::InputBinary& archive)
     {
         ContainerSize metadataSize = 0;
         archive(metadataSize);
@@ -248,7 +248,7 @@ namespace Inscription
 
     void Scribe<Arca::Reliquary>::SaveAll(
         ObjectT& object,
-        OutputBinaryArchive& archive,
+        Archive::OutputBinary& archive,
         KnownPolymorphicSerializerList& polymorphicsFromObject)
     {
         OutputJumpTable<Type, KnownPolymorphic> jumpTable;
@@ -266,7 +266,7 @@ namespace Inscription
 
     void Scribe<Arca::Reliquary>::LoadAll(
         ObjectT& object,
-        InputBinaryArchive& archive,
+        Archive::InputBinary& archive,
         KnownPolymorphicSerializerList& polymorphicsFromObject)
     {
         InputJumpTable<Type, KnownPolymorphic> jumpTable;
@@ -287,7 +287,7 @@ namespace Inscription
 
     auto Scribe<Arca::Reliquary>::PruneTypesToLoad(
         KnownPolymorphicSerializerList& fromObject,
-        InputBinaryArchive& archive,
+        Archive::InputBinary& archive,
         const std::vector<Type>& typesFromArchive)
         ->
         std::vector<TypePair>
@@ -305,7 +305,7 @@ namespace Inscription
 
     auto Scribe<Arca::Reliquary>::ExtractTypes(
         KnownPolymorphicSerializerList& fromObject,
-        InputBinaryArchive& archive)
+        Archive::InputBinary& archive)
         ->
         std::vector<TypePair>
     {
@@ -321,7 +321,7 @@ namespace Inscription
     }
 
     void Scribe<Arca::Reliquary>::SaveRelicMetadata(
-        Arca::RelicMetadata& metadata, OutputBinaryArchive& archive)
+        Arca::RelicMetadata& metadata, Archive::OutputBinary& archive)
     {
         archive(metadata.id);
         archive(metadata.openness);
@@ -345,7 +345,7 @@ namespace Inscription
         }
     }
 
-    auto Scribe<Arca::Reliquary>::LoadRelicMetadata(ObjectT& object, InputBinaryArchive& archive)
+    auto Scribe<Arca::Reliquary>::LoadRelicMetadata(ObjectT& object, Archive::InputBinary& archive)
         -> LoadedRelicMetadata
     {
         LoadedRelicMetadata metadata;
@@ -375,7 +375,7 @@ namespace Inscription
         return metadata;
     }
 
-    void Scribe<Arca::Reliquary>::Save(ObjectT& object, OutputJsonArchive& archive)
+    void Scribe<Arca::Reliquary>::Save(ObjectT& object, Archive::OutputJson& archive)
     {
         SaveUserContext saveUserContext;
 
@@ -422,7 +422,7 @@ namespace Inscription
         archive.RemoveUserContext<SaveUserContext>();
     }
 
-    void Scribe<Arca::Reliquary>::Load(ObjectT& object, InputJsonArchive& archive)
+    void Scribe<Arca::Reliquary>::Load(ObjectT& object, Archive::InputJson& archive)
     {
         auto metadataSize = archive.StartList("relicMetadata");
         while (metadataSize-- > 0)
@@ -464,7 +464,7 @@ namespace Inscription
     void Scribe<Arca::Reliquary>::SaveAll(
         const std::string& name,
         ObjectT& object,
-        OutputJsonArchive& archive,
+        Archive::OutputJson& archive,
         KnownPolymorphicSerializerList& polymorphicsFromObject)
     {
         archive.StartObject(name);
@@ -484,7 +484,7 @@ namespace Inscription
     void Scribe<Arca::Reliquary>::LoadAll(
         const std::string& name,
         ObjectT& object,
-        InputJsonArchive& archive,
+        Archive::InputJson& archive,
         KnownPolymorphicSerializerList& polymorphicsFromObject)
     {
         archive.StartObject(name);
@@ -504,7 +504,7 @@ namespace Inscription
         archive.EndObject();
     }
 
-    void Scribe<Arca::Reliquary>::SaveRelicMetadata(Arca::RelicMetadata& metadata, OutputJsonArchive& archive)
+    void Scribe<Arca::Reliquary>::SaveRelicMetadata(Arca::RelicMetadata& metadata, Archive::OutputJson& archive)
     {
         archive.StartObject("");
 
@@ -524,7 +524,7 @@ namespace Inscription
         archive.EndObject();
     }
 
-    auto Scribe<Arca::Reliquary>::LoadRelicMetadata(ObjectT& object, InputJsonArchive& archive)
+    auto Scribe<Arca::Reliquary>::LoadRelicMetadata(ObjectT& object, Archive::InputJson& archive)
         -> LoadedRelicMetadata
     {
         LoadedRelicMetadata metadata;
@@ -581,7 +581,7 @@ namespace Inscription
         }
     }
 
-    auto Scribe<Arca::Reliquary>::LoadTypes(KnownPolymorphicSerializerList& fromObject, InputJsonArchive& archive)
+    auto Scribe<Arca::Reliquary>::LoadTypes(KnownPolymorphicSerializerList& fromObject, Archive::InputJson& archive)
         -> std::vector<TypePair>
     {
         auto typesFromReliquary = ExtractTypes(fromObject, archive);
@@ -593,7 +593,7 @@ namespace Inscription
         return returnValue;
     }
 
-    auto Scribe<Arca::Reliquary>::ExtractTypes(KnownPolymorphicSerializerList& fromObject, InputJsonArchive& archive)
+    auto Scribe<Arca::Reliquary>::ExtractTypes(KnownPolymorphicSerializerList& fromObject, Archive::InputJson& archive)
         -> std::vector<TypePair>
     {
         std::vector<TypePair> returnValue;

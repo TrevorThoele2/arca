@@ -19,7 +19,7 @@ SCENARIO_METHOD(
             .Actualize();
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
+            auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -41,7 +41,7 @@ SCENARIO_METHOD(
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                 inputArchive(*loadedReliquary);
             }
 
@@ -78,7 +78,7 @@ SCENARIO_METHOD(
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                 inputArchive(*loadedReliquary);
             }
 
@@ -115,7 +115,7 @@ SCENARIO_METHOD(
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                 inputArchive(*loadedReliquary);
             }
 
@@ -152,7 +152,7 @@ SCENARIO_METHOD(
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                 inputArchive(*loadedReliquary);
             }
 
@@ -183,7 +183,7 @@ SCENARIO_METHOD(
         savedReliquary->Do(Create<BasicShard>(savedRelic.ID()));
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
+            auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -201,7 +201,7 @@ SCENARIO_METHOD(
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                 inputArchive(*loadedReliquary);
             }
 
@@ -229,7 +229,7 @@ SCENARIO_METHOD(
         savedReliquary->Do(CreateWith<ClosedRelic>(RelicStructure{ TypeFor<BasicShard>() }));
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
+            auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -248,7 +248,7 @@ SCENARIO_METHOD(
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                 inputArchive(*loadedReliquary);
             }
 
@@ -278,7 +278,7 @@ SCENARIO_METHOD(
         savedReliquary->Do(Create<TypedOpenRelic>(dataGeneration.Random<int>()));
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
+            auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -297,7 +297,7 @@ SCENARIO_METHOD(
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                 inputArchive(*loadedReliquary);
             }
 
@@ -327,7 +327,7 @@ SCENARIO_METHOD(
         savedReliquary->Do(Create<TypedClosedRelic>(dataGeneration.Random<int>()));
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
+            auto outputArchive = ::Inscription::Archive::OutputBinary("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -346,7 +346,7 @@ SCENARIO_METHOD(
             auto specificShardDestroying = SignalListener<DestroyingKnown<BasicShard>>(*loadedReliquary);
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
+                auto inputArchive = ::Inscription::Archive::InputBinary("Test.dat");
                 inputArchive(*loadedReliquary);
             }
 

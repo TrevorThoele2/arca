@@ -305,7 +305,7 @@ SCENARIO_METHOD(
         WHEN("saving reliquary")
         {
             {
-                auto output = Inscription::OutputBinaryArchive("Test.dat");
+                auto output = Inscription::Archive::OutputBinary("Test.dat");
                 output(*savedReliquary);
             }
 
@@ -328,7 +328,7 @@ SCENARIO_METHOD(
                     allBatch = curator.TheOwner().Batch<All<BasicShard, OtherShard>>();
                 };
 
-                auto input = Inscription::InputBinaryArchive("Test.dat");
+                auto input = Inscription::Archive::InputBinary("Test.dat");
                 input(*loadedReliquary);
 
                 THEN("batch is occupied")
@@ -433,7 +433,7 @@ SCENARIO_METHOD(
         WHEN("saving and loading")
         {
             {
-                auto output = Inscription::OutputBinaryArchive("Test.dat");
+                auto output = Inscription::Archive::OutputBinary("Test.dat");
                 output(*savedReliquary);
             }
 
@@ -443,7 +443,7 @@ SCENARIO_METHOD(
                 .Register<GlobalRelicCreatingNullSerializedRelic::LocalRelic>()
                 .Actualize();
 
-            auto input = Inscription::InputBinaryArchive("Test.dat");
+            auto input = Inscription::Archive::InputBinary("Test.dat");
             input(*loadedReliquary);
 
             auto globalRelic = Arca::Index<GlobalRelicCreatingNullSerializedRelic>(*loadedReliquary);
