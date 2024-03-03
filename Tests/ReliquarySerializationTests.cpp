@@ -48,6 +48,11 @@ void ReliquarySerializationTestsFixture::GlobalRelicNullInscription::PostConstru
     basicShard = std::get<0>(shards);
 }
 
+void ReliquarySerializationTestsFixture::MovableOnlyRelic::PostConstruct(ShardTuple shards)
+{
+    basicShard = std::get<0>(shards);
+}
+
 namespace Arca
 {
     const TypeName Traits<::ReliquarySerializationTestsFixture::BasicShard>::typeName =
@@ -88,6 +93,9 @@ namespace Arca
 
     const TypeName Traits<::ReliquarySerializationTestsFixture::GlobalRelicNullInscription>::typeName =
         "ReliquarySerializationTestsGlobalRelicNullInscription";
+
+    const TypeName Traits<::ReliquarySerializationTestsFixture::MovableOnlyRelic>::typeName =
+        "ReliquarySerializationTestsMovableOnlyRelic";
 
     const TypeName Traits<::ReliquarySerializationTestsFixture::BasicCuratorNullInscription>::typeName =
         "ReliquarySerializationTestsBasicCuratorNullInscription";
@@ -357,6 +365,7 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             .Actualize();
 
         auto savedRelic = savedReliquary->Create<TypedClosedRelic>();
+        savedRelic->myInt = dataGeneration.Random<int>();
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
@@ -446,6 +455,55 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             THEN("loaded relic has other shard of saved")
             {
                 REQUIRE(savedOtherShard->myValue == loadedOtherShard->myValue);
+            }
+
+            THEN("input size is more than default output size")
+            {
+                REQUIRE(inputArchiveSize > defaultOutputArchiveSize);
+            }
+        }
+    }
+
+    GIVEN("saved reliquary with movable only relic")
+    {
+        auto savedReliquary = ReliquaryOrigin()
+            .Type<BasicShard>()
+            .Type<MovableOnlyRelic>()
+            .Actualize();
+
+        auto savedRelic = savedReliquary->Create<MovableOnlyRelic>();
+        savedRelic->myValue = dataGeneration.Random<int>();
+
+        {
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            outputArchive(*savedReliquary);
+        }
+
+        WHEN("loading reliquary")
+        {
+            auto loadedReliquary = ReliquaryOrigin()
+                .Type<BasicShard>()
+                .Type<MovableOnlyRelic>()
+                .Actualize();
+
+            ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
+
+            {
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                inputArchive(*loadedReliquary);
+                inputArchiveSize = inputArchive.TellStream();
+            }
+
+            auto loadedRelic = loadedReliquary->Find<MovableOnlyRelic>(savedRelic->ID());
+
+            THEN("loaded relic has value of saved")
+            {
+                REQUIRE(loadedRelic->myValue == savedRelic->myValue);
+            }
+
+            THEN("loaded relic has shard of saved")
+            {
+                REQUIRE(loadedRelic->basicShard->myValue == savedRelic->basicShard->myValue);
             }
 
             THEN("input size is more than default output size")

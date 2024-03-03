@@ -136,6 +136,22 @@ public:
         void PostConstruct(ShardTuple shards);
     };
 
+    class MovableOnlyRelic final : public ClosedTypedRelicAutomation<MovableOnlyRelic, BasicShard>
+    {
+    public:
+        Ptr<BasicShard> basicShard;
+
+        int myValue = 0;
+    public:
+        MovableOnlyRelic() = default;
+        MovableOnlyRelic(const MovableOnlyRelic& arg) = delete;
+        MovableOnlyRelic(MovableOnlyRelic&& arg) noexcept = default;
+        MovableOnlyRelic& operator=(const MovableOnlyRelic& arg) = delete;
+        MovableOnlyRelic& operator=(MovableOnlyRelic&& arg) noexcept = default;
+
+        void PostConstruct(ShardTuple shards);
+    };
+
     class BasicCuratorNullInscription final : public Curator
     {
     public:
@@ -239,6 +255,13 @@ namespace Arca
         static const ObjectType objectType = ObjectType::Relic;
         static const TypeName typeName;
         static const Locality locality = Locality::Global;
+    };
+
+    template<>
+    struct Traits<::ReliquarySerializationTestsFixture::MovableOnlyRelic>
+    {
+        static const ObjectType objectType = ObjectType::Relic;
+        static const TypeName typeName;
     };
 
     template<>
@@ -359,6 +382,17 @@ namespace Inscription
     class Scribe<::ReliquarySerializationTestsFixture::TypedOpenRelicNullInscription, BinaryArchive> final
         : public ArcaNullScribe<::ReliquarySerializationTestsFixture::TypedOpenRelicNullInscription, BinaryArchive>
     {};
+
+    template<>
+    class Scribe<::ReliquarySerializationTestsFixture::MovableOnlyRelic, BinaryArchive> final
+        : public ArcaCompositeScribe<::ReliquarySerializationTestsFixture::MovableOnlyRelic, BinaryArchive>
+    {
+    protected:
+        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+        {
+            archive(object.myValue);
+        }
+    };
 
     template<>
     class Scribe<::ReliquarySerializationTestsFixture::GlobalRelicNullInscription, BinaryArchive> final
