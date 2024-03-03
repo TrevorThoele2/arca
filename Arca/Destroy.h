@@ -35,7 +35,7 @@ namespace Arca
     struct Traits<Destroy<T, std::enable_if_t<is_relic_v<T>>>>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "Destroy<Relic>";
+        static inline const TypeName typeName = "Arca::Destroy<Relic>";
     };
 
     template<class T>
@@ -51,7 +51,7 @@ namespace Arca
     struct Traits<Destroy<T, std::enable_if_t<is_shard_v<T>>>>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "Destroy<Shard>";
+        static inline const TypeName typeName = "Arca::Destroy<Shard>";
     };
 
     template<class T>
@@ -67,7 +67,7 @@ namespace Arca
     struct Traits<Destroy<T, std::enable_if_t<is_matrix_v<T>>>>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "Destroy<Matrix>";
+        static inline const TypeName typeName = "Arca::Destroy<Matrix>";
     };
 
     template<>
@@ -83,6 +83,6 @@ namespace Arca
     struct Traits<Destroy<Handle>>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "Destroy<Handle>";
+        static inline const TypeName typeName = "Arca::Destroy<Handle>";
     };
 }

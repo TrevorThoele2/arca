@@ -21,6 +21,6 @@ namespace Arca
     struct Traits<Either<T>>
     {
         static const ObjectType objectType = ObjectType::Matrix;
-        static inline const TypeName typeName = "Either<" + Traits<std::decay_t<T>>::typeName + ">";
+        static inline const TypeName typeName = "Arca::Either<" + Traits<std::decay_t<T>>::typeName + ">";
     };
 }

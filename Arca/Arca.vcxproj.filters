@@ -97,6 +97,15 @@
     <ClCompile Include="MutablePointer.cpp">
       <Filter>Source Files\Curator</Filter>
     </ClCompile>
+    <ClCompile Include="InscriptionUserContext.cpp">
+      <Filter>Source Files\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="DependentReliquaries.cpp">
+      <Filter>Source Files\Reliquary\Dependent</Filter>
+    </ClCompile>
+    <ClCompile Include="CannotFindDependent.cpp">
+      <Filter>Source Files\Serialization</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Curator.h">
@@ -510,6 +519,18 @@
     <ClInclude Include="Assign.h">
       <Filter>Header Files\Command\Common</Filter>
     </ClInclude>
+    <ClInclude Include="InscriptionUserContext.h">
+      <Filter>Header Files\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="AddDependentReliquaries.h">
+      <Filter>Header Files\Reliquary\Dependent</Filter>
+    </ClInclude>
+    <ClInclude Include="DependentReliquaries.h">
+      <Filter>Header Files\Reliquary\Dependent</Filter>
+    </ClInclude>
+    <ClInclude Include="CannotFindDependent.h">
+      <Filter>Header Files\Serialization</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
@@ -685,6 +706,12 @@
     </Filter>
     <Filter Include="Header Files\Reference\Index\Shard">
       <UniqueIdentifier>{22a61877-3ec0-46fc-94ab-a99eb6bbb63f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Reliquary\Dependent">
+      <UniqueIdentifier>{9d2682c6-3aad-4154-871e-275255737016}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Reliquary\Dependent">
+      <UniqueIdentifier>{944af5a5-58b0-484e-bde2-88c274617c6e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

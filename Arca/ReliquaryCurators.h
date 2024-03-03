@@ -80,6 +80,7 @@ namespace Arca
         using Pipeline = std::vector<Stage>;
         Pipeline workPipeline;
 
+        [[nodiscard]] bool Contains(const TypeName& type) const;
         template<class CuratorT>
         [[nodiscard]] bool Contains() const;
 

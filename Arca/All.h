@@ -53,6 +53,6 @@ namespace Arca
     public:
         static const ObjectType objectType = ObjectType::Matrix;
         static inline const TypeName typeName =
-            "All<" + AllTypeNameIterator<Pack::count>::template Do<Pack>("") + ">";
+            "Arca::All<" + AllTypeNameIterator<Pack::count>::template Do<Pack>("") + ">";
     };
 }

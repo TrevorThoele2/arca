@@ -3,6 +3,10 @@
 #include "IndexTests.h"
 
 #include <Arca/ReliquaryOrigin.h>
+#include <Arca/DependentReliquaries.h>
+
+IndexTestsFixture::Shard::Shard(int myInt) : myInt(myInt)
+{}
 
 IndexTestsFixture::TypedClosedRelic::TypedClosedRelic(Init init) :
     ClosedTypedRelic(init)
@@ -20,6 +24,22 @@ IndexTestsFixture::GlobalRelic::GlobalRelic(Init init) :
     ClosedTypedRelic(init)
 {
     shard = FindOrCreate<Shard>();
+}
+
+IndexTestsFixture::RelicHolderRelic::RelicHolderRelic(Init init) :
+    ClosedTypedRelic(init)
+{}
+
+IndexTestsFixture::RelicHolderRelic::RelicHolderRelic(Init init, Index<OpenRelic> held) :
+    ClosedTypedRelic(init), held(held)
+{}
+
+namespace Inscription
+{
+    void Scribe<IndexTestsFixture::RelicHolderRelic, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    {
+        archive(object.held);
+    }
 }
 
 SCENARIO_METHOD(IndexTestsFixture, "Index resets to nullptr after underlying object destroyed", "[index]")
@@ -571,6 +591,49 @@ SCENARIO_METHOD(IndexTestsFixture, "Index moving", "[index]")
             THEN("index2 is true")
             {
                 REQUIRE(static_cast<bool>(index2) == true);
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(IndexTestsFixture, "Index from different reliquary is serializable", "[index][serialization]")
+{
+    GIVEN("two registered reliquaries")
+    {
+        auto origin = ReliquaryOrigin()
+            .Register<Shard>()
+            .Register<RelicHolderRelic>()
+            .Register<DependentReliquaries>();
+
+        auto dependentReliquary = origin.Actualize();
+        auto mainReliquary = origin.Actualize();
+        mainReliquary->Do(AddDependentReliquary{ dependentReliquary.get() });
+
+        WHEN("creating open relic giving to other reliquary and saving")
+        {
+            auto relic = mainReliquary->Do<Create<RelicHolderRelic>>(dependentReliquary->Do<Create<OpenRelic>>());
+            auto shard = relic->held->Create<Shard>(dataGeneration.Random<int>());
+
+            {
+                ::Inscription::OutputBinaryArchive archive("Testing.dat", "Testing", 1);
+
+                archive(*mainReliquary);
+            }
+
+            THEN("loading gives correct held relic")
+            {
+                auto loadedReliquary2 = origin.Actualize();
+                loadedReliquary2->Do(AddDependentReliquary{ dependentReliquary.get() });
+
+                {
+                    ::Inscription::InputBinaryArchive archive("Testing.dat", "Testing");
+
+                    archive(*loadedReliquary2);
+                }
+
+                auto loadedRelic = Arca::Index<RelicHolderRelic>(relic.ID(), *loadedReliquary2);
+
+                REQUIRE(loadedRelic->held->Find<Shard>()->myInt == shard->myInt);
             }
         }
     }

@@ -34,6 +34,7 @@
 #include "MatrixFormed.h"
 #include "MatrixDissolved.h"
 
+#include "InscriptionUserContext.h"
 #include "Serialization.h"
 #include "HasScribe.h"
 #include "TypeScribe.h"
@@ -285,13 +286,13 @@ namespace Arca
     template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int>>
     bool Reliquary::Contains(const TypeName& type) const
     {
-        return static_cast<bool>(Find<CuratorT>(type));
+        return curators.Contains<CuratorT>(type);
     }
 
     template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int>>
     bool Reliquary::Contains() const
     {
-        return static_cast<bool>(Find<CuratorT>());
+        return curators.Contains<CuratorT>();
     }
 
     template<class CommandT, std::enable_if_t<is_command_v<CommandT> && std::is_void_v<command_result_t<CommandT>>, int>>
@@ -410,6 +411,8 @@ namespace Inscription
         using KnownPolymorphicSerializerList = Arca::ReliquaryComponent::KnownPolymorphicSerializerList;
         template<class T>
         KnownPolymorphicSerializerList ToKnownPolymorphicSerializerList(std::vector<std::unique_ptr<T>>& stored);
+    private:
+        Arca::InscriptionUserContext userContext;
     private:
         void Save(ObjectT& object, ArchiveT& archive);
         void Load(ObjectT& object, ArchiveT& archive);
