@@ -37,10 +37,7 @@ namespace Arca
             {
                 return entry->typeName == typeName;
             });
-        if (found == handlers.end())
-            return nullptr;
-
-        return found->get();
+        return found == handlers.end() ? nullptr : found->get();
     }
 
     bool ReliquaryCurators::Contains(const TypeName& type) const

@@ -33,6 +33,23 @@ namespace Chroma
     std::string ToString(const Arca::Type& type);
 }
 
+namespace std
+{
+    template<>
+    struct hash<Arca::Type>
+    {
+        using argument_type = Arca::Type;
+        using result_type = std::size_t;
+
+        result_type operator()(const argument_type& arg) const noexcept
+        {
+            const result_type first(std::hash<Arca::TypeName>()(arg.name));
+            const result_type second(std::hash<bool>()(arg.isConst));
+            return first ^ (second << 1);
+        }
+    };
+}
+
 namespace Inscription
 {
     template<>

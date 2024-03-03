@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AllDefinition.h" />
     <ClInclude Include="AllImplementation.h" />
     <ClInclude Include="Assign.h" />
     <ClInclude Include="Assigned.h" />
@@ -28,7 +27,6 @@
     <ClInclude Include="Clear.h" />
     <ClInclude Include="Command.h" />
     <ClInclude Include="CommandHandler.h" />
-    <ClInclude Include="CommandHandlerDefinitions.h" />
     <ClInclude Include="CommandHandlerException.h" />
     <ClInclude Include="CommandResult.h" />
     <ClInclude Include="Create.h" />
@@ -43,7 +41,6 @@
     <ClInclude Include="HasShardDefaultConstructor.h" />
     <ClInclude Include="HasShardSerializationConstructor.h" />
     <ClInclude Include="Destroy.h" />
-    <ClInclude Include="EitherDefinition.h" />
     <ClInclude Include="EitherImplementation.h" />
     <ClInclude Include="GlobalIndexDefinition.h" />
     <ClInclude Include="HandledCommands.h" />
@@ -83,9 +80,7 @@
     <ClInclude Include="RelicInit.h" />
     <ClInclude Include="RelicInitDefinition.h" />
     <ClInclude Include="ReliquaryCommands.h" />
-    <ClInclude Include="ReliquaryCommandsDefinition.h" />
     <ClInclude Include="ReliquaryMatrices.h" />
-    <ClInclude Include="ReliquaryMatricesDefinition.h" />
     <ClInclude Include="SaveUserContext.h" />
     <ClInclude Include="SerializationConstructorMarker.h" />
     <ClInclude Include="ShardBatchSourceDefinition.h" />
@@ -129,14 +124,10 @@
     <ClInclude Include="RelicBatchSourceDefinition.h" />
     <ClInclude Include="RelicParented.h" />
     <ClInclude Include="ReliquaryCurators.h" />
-    <ClInclude Include="ReliquaryCuratorsDefinition.h" />
     <ClInclude Include="ReliquaryRelics.h" />
-    <ClInclude Include="ReliquaryRelicsDefinition.h" />
     <ClInclude Include="ReliquaryRelicStructures.h" />
     <ClInclude Include="ReliquaryShards.h" />
-    <ClInclude Include="ReliquaryShardsDefinition.h" />
     <ClInclude Include="ReliquarySignals.h" />
-    <ClInclude Include="ReliquarySignalsDefinition.h" />
     <ClInclude Include="ShardBatchIterator.h" />
     <ClInclude Include="Exception.h" />
     <ClInclude Include="IsSignal.h" />

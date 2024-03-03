@@ -15,13 +15,13 @@ namespace Arca
         if (handler == nullptr)
             throw NotRegistered(objectTypeName, Type(typeName));
 
-        handler->Destroy(id, *owner);
+        handler->Destroy(id, *this);
     }
 
     void ReliquaryRelics::Clear()
     {
         for (auto& loop : localHandlers)
-            loop->Clear(*owner);
+            loop->Clear(*this);
 
         for (auto loop = metadataList.begin(); loop != metadataList.end();)
         {
@@ -324,8 +324,11 @@ namespace Arca
     }
 
     ReliquaryRelics::ReliquaryRelics(
-        Reliquary& owner, ReliquaryRelicStructures& relicStructures, ReliquaryShards& shards)
+        Reliquary& owner,
+        ReliquaryRelicStructures& relicStructures,
+        ReliquaryShards& shards,
+        ReliquarySignals& signals)
         :
-        owner(&owner), relicStructures(&relicStructures), shards(&shards)
+        owner(&owner), relicStructures(&relicStructures), shards(&shards), signals(&signals)
     {}
 }

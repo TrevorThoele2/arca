@@ -168,18 +168,6 @@
     <ClInclude Include="ReliquarySignals.h">
       <Filter>Header Files\Reliquary\Components</Filter>
     </ClInclude>
-    <ClInclude Include="ReliquaryCuratorsDefinition.h">
-      <Filter>Header Files\Reliquary\Components\Definitions</Filter>
-    </ClInclude>
-    <ClInclude Include="ReliquaryRelicsDefinition.h">
-      <Filter>Header Files\Reliquary\Components\Definitions</Filter>
-    </ClInclude>
-    <ClInclude Include="ReliquaryShardsDefinition.h">
-      <Filter>Header Files\Reliquary\Components\Definitions</Filter>
-    </ClInclude>
-    <ClInclude Include="ReliquarySignalsDefinition.h">
-      <Filter>Header Files\Reliquary\Components\Definitions</Filter>
-    </ClInclude>
     <ClInclude Include="ReliquaryRelicStructures.h">
       <Filter>Header Files\Reliquary\Components</Filter>
     </ClInclude>
@@ -282,9 +270,6 @@
     <ClInclude Include="ReliquaryMatrices.h">
       <Filter>Header Files\Reliquary\Components</Filter>
     </ClInclude>
-    <ClInclude Include="ReliquaryMatricesDefinition.h">
-      <Filter>Header Files\Reliquary\Components\Definitions</Filter>
-    </ClInclude>
     <ClInclude Include="KnownMatrix.h">
       <Filter>Header Files\Matrix</Filter>
     </ClInclude>
@@ -298,12 +283,6 @@
       <Filter>Header Files\Matrix\All</Filter>
     </ClInclude>
     <ClInclude Include="EitherImplementation.h">
-      <Filter>Header Files\Matrix\Either</Filter>
-    </ClInclude>
-    <ClInclude Include="AllDefinition.h">
-      <Filter>Header Files\Matrix\All</Filter>
-    </ClInclude>
-    <ClInclude Include="EitherDefinition.h">
       <Filter>Header Files\Matrix\Either</Filter>
     </ClInclude>
     <ClInclude Include="KnownPolymorphicSerializer.h">
@@ -323,9 +302,6 @@
     </ClInclude>
     <ClInclude Include="ReliquaryCommands.h">
       <Filter>Header Files\Reliquary\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="ReliquaryCommandsDefinition.h">
-      <Filter>Header Files\Reliquary\Components\Definitions</Filter>
     </ClInclude>
     <ClInclude Include="HasHandledCommands.h">
       <Filter>Header Files\Command</Filter>
@@ -456,9 +432,6 @@
     <ClInclude Include="CommandHandler.h">
       <Filter>Header Files\Command</Filter>
     </ClInclude>
-    <ClInclude Include="CommandHandlerDefinitions.h">
-      <Filter>Header Files\Command</Filter>
-    </ClInclude>
     <ClInclude Include="IdentifiedCreate.h">
       <Filter>Header Files\Command\Common</Filter>
     </ClInclude>
@@ -577,9 +550,6 @@
     </Filter>
     <Filter Include="Source Files\Reliquary\Components">
       <UniqueIdentifier>{a6acee23-7cb3-4c9f-9549-5540cd370a28}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Reliquary\Components\Definitions">
-      <UniqueIdentifier>{6ef96acf-a18d-423e-86b9-391775f0d4e7}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Handle">
       <UniqueIdentifier>{83504bd3-278d-4458-899f-4fa22a50779d}</UniqueIdentifier>

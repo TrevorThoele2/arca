@@ -98,7 +98,7 @@ namespace Arca
     template<class T>
     void Destroy<T, std::enable_if_t<is_matrix_v<T>>>::Do(Reliquary& reliquary) const
     {
-        reliquary.matrices.Destroy<T>(id);
+        reliquary.shards.Destroy<T>(id);
     }
 
     template<class T>

@@ -3,7 +3,6 @@
 #include "SaveUserContext.h"
 
 #include <unordered_set>
-#include <cassert>
 #include <utility>
 
 #include <Inscription/MultimapScribe.h>
@@ -19,11 +18,11 @@ namespace Arca
     Reliquary::Reliquary() :
         relicStructures(),
         curators(*this),
-        shards(*this),
         matrices(*this),
-        signals(*this),
+        signals(matrices),
         commands(*this, curators),
-        relics(*this, relicStructures, shards)
+        shards(*this, signals, matrices),
+        relics(*this, relicStructures, shards, signals)
     {}
 
     std::optional<Handle> Reliquary::ParentOf(RelicID childID) const
@@ -604,9 +603,9 @@ namespace Inscription
     void Scribe<Arca::Reliquary>::SignalCreation(ObjectT& object)
     {
         for (auto& relicHandler : object.relics.localHandlers)
-            relicHandler->SignalAllCreated(object);
+            relicHandler->SignalAllCreated(object, object.relics);
 
         for (auto& shardHandler : object.shards.handlers)
-            shardHandler->SignalAllCreated(object);
+            shardHandler->SignalAllCreated(object, object.shards);
     }
 }
