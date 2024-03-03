@@ -90,9 +90,6 @@ namespace Inscription
                 archive(id);
                 object.id = id;
 
-                int reliquaryID;
-                archive(reliquaryID);
-
                 object.owner = archive.template UserContext<Arca::InscriptionUserContext>()->reliquary;
             }
         }

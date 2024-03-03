@@ -261,6 +261,8 @@ namespace Inscription
     void Scribe<::Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>, BinaryArchive>::
         DoScriven(ObjectT& object, ArchiveT& archive)
     {
+        using ShardT = typename ObjectT::ShardT;
+
         if (archive.IsOutput())
         {
             auto size = object.list.size();
@@ -282,19 +284,19 @@ namespace Inscription
                 ::Arca::RelicID id;
                 archive(id);
 
+                auto matrixSnapshot = object.owner->matrices.CreationSnapshot(id);
+
                 auto foundShard = object.Find(id);
                 if (foundShard)
                     archive(*foundShard);
                 else
                 {
-                    auto matrixSnapshot = object.owner->matrices.CreationSnapshot(id);
-
-                    auto shard = Create<typename ObjectT::ShardT>();
+                    auto shard = Create<ShardT>();
                     archive(shard);
                     object.list.emplace_back(id, std::move(shard));
-
-                    matrixSnapshot.Finalize();
                 }
+
+                matrixSnapshot.Finalize();
             }
         }
     }

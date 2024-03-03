@@ -242,6 +242,7 @@ public:
 public:
     explicit GlobalRelic(Init init);
     GlobalRelic(Init init, int myInt, std::string shardData);
+    GlobalRelic(Init init, Serialization);
 };
 
 class ReliquarySerializationTestsFixture::NonDefaultConstructorRelic final
