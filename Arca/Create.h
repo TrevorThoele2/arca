@@ -8,8 +8,7 @@
 #include "RelicID.h"
 #include "Index.h"
 
-#include "ReliquaryRelics.h"
-#include "ReliquaryShards.h"
+#include "Reliquary.h"
 
 namespace Arca
 {
