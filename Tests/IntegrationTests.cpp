@@ -92,11 +92,11 @@ SCENARIO_METHOD(IntegrationTestsFixture, "working with signals through curators"
 
         std::vector<BasicCuratorBase*> curatorsInOrder
         {
-            reliquary->Find<BasicCurator<1>>(),
-            reliquary->Find<BasicCurator<4>>(),
-            reliquary->Find<BasicCurator<3>>(),
-            reliquary->Find<BasicCurator<2>>(),
-            reliquary->Find<BasicCurator<0>>()
+            &reliquary->Find<BasicCurator<1>>(),
+            &reliquary->Find<BasicCurator<4>>(),
+            &reliquary->Find<BasicCurator<3>>(),
+            &reliquary->Find<BasicCurator<2>>(),
+            &reliquary->Find<BasicCurator<0>>()
         };
 
         WHEN("raising signal then working reliquary")
@@ -160,8 +160,8 @@ SCENARIO_METHOD(
 
         std::unordered_map<int, ParentRelic*> mappedParents;
 
-        auto curator = reliquary->Find<ParentChildCurator>();
-        curator->onWork = [&mappedParents](BasicCuratorBase& self)
+        auto& curator = reliquary->Find<ParentChildCurator>();
+        curator.onWork = [&mappedParents](BasicCuratorBase& self)
         {
             auto value = 100;
             auto parent = self.Owner().Create<ParentRelic>(value);

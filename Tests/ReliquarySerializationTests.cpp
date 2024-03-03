@@ -324,8 +324,6 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
 
             ::Inscription::BinaryArchive::StreamPosition inputArchiveSize = 0;
 
-            auto test = loadedReliquary->Find<GlobalRelic>();
-
             {
                 auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
                 inputArchive(*loadedReliquary);
@@ -463,8 +461,8 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
             .Type<BasicCurator>()
             .Actualize();
 
-        auto savedCurator = savedReliquary->Find<BasicCurator>();
-        savedCurator->myInt = dataGeneration.Random<int>();
+        auto& savedCurator = savedReliquary->Find<BasicCurator>();
+        savedCurator.myInt = dataGeneration.Random<int>();
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
@@ -485,11 +483,11 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "
                 inputArchiveSize = inputArchive.TellStream();
             }
 
-            auto loadedCurator = loadedReliquary->Find<BasicCurator>();
+            auto& loadedCurator = loadedReliquary->Find<BasicCurator>();
 
             THEN("loaded curator has value of saved")
             {
-                REQUIRE(loadedCurator->myInt == savedCurator->myInt);
+                REQUIRE(loadedCurator.myInt == savedCurator.myInt);
             }
 
             THEN("input size is more than default output size")
@@ -705,8 +703,8 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
             .Type<BasicCuratorNullInscription>()
             .Actualize();
 
-        auto savedCurator = savedReliquary->Find<BasicCuratorNullInscription>();
-        savedCurator->myInt = dataGeneration.Random<int>();
+        auto& savedCurator = savedReliquary->Find<BasicCuratorNullInscription>();
+        savedCurator.myInt = dataGeneration.Random<int>();
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
@@ -727,11 +725,11 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serializatio
                 inputArchiveSize = inputArchive.TellStream();
             }
 
-            auto loadedCurator = loadedReliquary->Find<BasicCuratorNullInscription>();
+            auto& loadedCurator = loadedReliquary->Find<BasicCuratorNullInscription>();
 
             THEN("loaded curator does not have value of saved")
             {
-                REQUIRE(loadedCurator->myInt != savedCurator->myInt);
+                REQUIRE(loadedCurator.myInt != savedCurator.myInt);
             }
 
             THEN("reliquary is empty")

@@ -65,10 +65,10 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator", "[curator]")
             .Type<BasicCurator>()
             .Actualize();
 
-        auto curator = reliquary->Find<BasicCurator>();
-        curator->onWork = [curator, &worked]()
+        auto& curator = reliquary->Find<BasicCurator>();
+        curator.onWork = [&curator, &worked]()
         {
-            worked.push_back(curator);
+            worked.push_back(&curator);
         };
 
         WHEN("checking reliquary curator size")
@@ -79,19 +79,11 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator", "[curator]")
             }
         }
 
-        WHEN("finding curator")
-        {
-            THEN("found is not null")
-            {
-                REQUIRE(curator != nullptr);
-            }
-        }
-
         WHEN("checking is initialized")
         {
             THEN("is initialized")
             {
-                REQUIRE(curator->isInitialized == true);
+                REQUIRE(curator.isInitialized == true);
             }
         }
 
@@ -99,13 +91,13 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator", "[curator]")
         {
             THEN("owner is reliquary")
             {
-                REQUIRE(&curator->OwnerFromOutside() == reliquary.get());
+                REQUIRE(&curator.OwnerFromOutside() == reliquary.get());
             }
 
             THEN("owner is reliquary const")
             {
-                const auto constCurator = curator;
-                REQUIRE(&constCurator->OwnerFromOutside() == reliquary.get());
+                const auto& constCurator = curator;
+                REQUIRE(&constCurator.OwnerFromOutside() == reliquary.get());
             }
         }
 
@@ -177,9 +169,9 @@ struct RequireDifferentiableCuratorCheckpointVerification
         if (checkpoints.size() < id + 1)
             return;
 
-        const auto curator = reliquary.Find<CuratorTestsFixture::DifferentiableCurator<id>>();
+        const auto& curator = reliquary.Find<CuratorTestsFixture::DifferentiableCurator<id>>();
 
-        output.push_back(checkpoints[id].curator == curator);
+        output.push_back(checkpoints[id].curator == &curator);
     }
 
     static void Do(
@@ -251,12 +243,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
         {
             THEN("throws error")
             {
-                REQUIRE_THROWS_MATCHES
-                (
-                    reliquaryOrigin.Actualize(),
-                    InvalidPipeline,
-                    ::Catch::Matchers::Message("Curator (" + Traits<BasicCurator>::typeName + ") was not found.")
-                );
+                REQUIRE_THROWS_AS(reliquaryOrigin.Actualize(), NotRegistered);
             }
         }
     }
@@ -376,12 +363,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator split pipeline", "[curator][pipeli
         {
             THEN("throws error")
             {
-                REQUIRE_THROWS_MATCHES
-                (
-                    reliquaryOrigin.Actualize(),
-                    InvalidPipeline,
-                    ::Catch::Matchers::Message("Curator (" + Traits<BasicCurator>::typeName + ") was not found.")
-                );
+                REQUIRE_THROWS_AS(reliquaryOrigin.Actualize(), NotRegistered);
             }
         }
     }
@@ -449,8 +431,8 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator aborts pipeline", "[curator][pipel
 
         WHEN("working reliquary when middle curator will abort")
         {
-            auto middleCurator = reliquary->Find<DifferentiableCurator<49>>();
-            middleCurator->shouldAbort = true;
+            auto& middleCurator = reliquary->Find<DifferentiableCurator<49>>();
+            middleCurator.shouldAbort = true;
 
             reliquary->Work();
 
@@ -505,8 +487,8 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator aborts pipeline", "[curator][pipel
 
         WHEN("working reliquary when middle stage will abort")
         {
-            auto middleCurator = reliquary->Find<DifferentiableCurator<4>>();
-            middleCurator->shouldAbort = true;
+            auto& middleCurator = reliquary->Find<DifferentiableCurator<4>>();
+            middleCurator.shouldAbort = true;
 
             reliquary->Work();
 
@@ -548,8 +530,8 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
             .Type<BasicCurator>()
             .Actualize();
 
-        auto savedCurator = savedReliquary->Find<BasicCurator>();
-        savedCurator->value = dataGeneration.Random<int>();
+        auto& savedCurator = savedReliquary->Find<BasicCurator>();
+        savedCurator.value = dataGeneration.Random<int>();
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
@@ -567,16 +549,11 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
                 inputArchive(*loadedReliquary);
             }
 
-            auto loadedCurator = loadedReliquary->Find<BasicCurator>();
-
-            THEN("loaded curator is not null")
-            {
-                REQUIRE(loadedCurator != nullptr);
-            }
+            auto& loadedCurator = loadedReliquary->Find<BasicCurator>();
 
             THEN("value is loaded")
             {
-                REQUIRE(loadedCurator->value == savedCurator->value);
+                REQUIRE(loadedCurator.value == savedCurator.value);
             }
         }
 
@@ -590,11 +567,9 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
                 inputArchive(*loadedReliquary);
             }
 
-            auto loadedCurator = loadedReliquary->Find<BasicCurator>();
-
-            THEN("loaded curator is null")
+            THEN("throws error")
             {
-                REQUIRE(loadedCurator == nullptr);
+                REQUIRE_THROWS_AS(loadedReliquary->Find<BasicCurator>(), NotRegistered);
             }
         }
 
@@ -609,16 +584,11 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
                 inputArchive(*loadedReliquary);
             }
 
-            auto loadedCurator = loadedReliquary->Find<OtherBasicCurator>();
-
-            THEN("loaded curator is not null")
-            {
-                REQUIRE(loadedCurator != nullptr);
-            }
+            auto& loadedCurator = loadedReliquary->Find<OtherBasicCurator>();
 
             THEN("value is loaded")
             {
-                REQUIRE(loadedCurator->value == savedCurator->value);
+                REQUIRE(loadedCurator.value == savedCurator.value);
             }
         }
     }

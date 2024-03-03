@@ -186,15 +186,13 @@ namespace Arca
             auto typeNames = stage.TypeNameList();
             for(auto& typeName : typeNames)
             {
-                auto found = reliquary.Find<Arca::Curator>(typeName);
-                if (found == nullptr)
-                    throw InvalidPipeline("Curator (" + typeName + ") was not found.");
+                auto& found = reliquary.Find<Arca::Curator>(typeName);
 
-                const auto wasAlreadySeen = !seenCurators.emplace(found).second;
+                const auto wasAlreadySeen = !seenCurators.emplace(&found).second;
                 if (wasAlreadySeen)
                     throw InvalidPipeline("Curator (" + typeName + ") was already in the pipeline.");
 
-                createdStage.push_back(found);
+                createdStage.push_back(&found);
             }
 
             if (!createdStage.empty())

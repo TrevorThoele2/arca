@@ -106,13 +106,13 @@ namespace Arca
         [[nodiscard]] SizeT ShardSize() const;
     public:
         template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int> = 0>
-        [[nodiscard]] Curator* Find(const TypeName& type);
+        [[nodiscard]] Curator& Find(const TypeName& type);
         template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int> = 0>
-        [[nodiscard]] const Curator* Find(const TypeName& type) const;
+        [[nodiscard]] const Curator& Find(const TypeName& type) const;
         template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int> = 0>
-        [[nodiscard]] CuratorT* Find();
+        [[nodiscard]] CuratorT& Find();
         template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int> = 0>
-        [[nodiscard]] const CuratorT* Find() const;
+        [[nodiscard]] const CuratorT& Find() const;
 
         template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int> = 0>
         [[nodiscard]] bool Contains(const TypeName& type) const;
@@ -309,25 +309,25 @@ namespace Arca
     }
 
     template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int>>
-    Curator* Reliquary::Find(const TypeName& type)
+    Curator& Reliquary::Find(const TypeName& type)
     {
         return curators.Find<CuratorT>(type);
     }
 
     template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int>>
-    const Curator* Reliquary::Find(const TypeName& type) const
+    const Curator& Reliquary::Find(const TypeName& type) const
     {
         return curators.Find<CuratorT>(type);
     }
 
     template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int>>
-    CuratorT* Reliquary::Find()
+    CuratorT& Reliquary::Find()
     {
         return curators.Find<CuratorT>();
     }
 
     template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int>>
-    const CuratorT* Reliquary::Find() const
+    const CuratorT& Reliquary::Find() const
     {
         return curators.Find<CuratorT>();
     }
