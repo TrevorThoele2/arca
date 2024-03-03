@@ -4,46 +4,46 @@
 
 namespace Arca
 {
-    template<class CommandT, std::enable_if_t<is_command_v<CommandT> && std::is_void_v<command_return_t<CommandT>>, int>>
+    template<class CommandT, std::enable_if_t<is_command_v<CommandT> && !has_command_result_v<CommandT>, int>>
     void ReliquaryCommands::Do(const CommandT& command)
     {
         auto& handler = RequiredHandler<CommandT>();
         handler.Handle(command, Curators());
     }
 
-    template<class CommandT, std::enable_if_t<is_command_v<CommandT> && !std::is_void_v<command_return_t<CommandT>>, int>>
-    command_return_t<CommandT> ReliquaryCommands::Do(const CommandT& command)
+    template<class CommandT, std::enable_if_t<is_command_v<CommandT> && has_command_result_v<CommandT>, int>>
+    command_result_t<CommandT> ReliquaryCommands::Do(const CommandT& command)
     {
         auto& handler = RequiredHandler<CommandT>();
         return handler.Handle(command, Curators());
     }
 
     template<class T, std::enable_if_t<is_relic_v<T>, int>>
-    command_return_t<Create<T>> ReliquaryCommands::Do(const Create<T>& command)
+    command_result_t<Create<T>> ReliquaryCommands::Do(const Create<T>& command)
     {
         return command.Do(Relics());
     }
 
     template<class T, std::enable_if_t<is_shard_v<T>, int>>
-    command_return_t<Create<T>> ReliquaryCommands::Do(const Create<T>& command)
+    command_result_t<Create<T>> ReliquaryCommands::Do(const Create<T>& command)
     {
         return command.Do(Shards());
     }
 
     template<class T>
-    command_return_t<CreateWith<T>> ReliquaryCommands::Do(const CreateWith<T>& command)
+    command_result_t<CreateWith<T>> ReliquaryCommands::Do(const CreateWith<T>& command)
     {
         return command.Do(Relics());
     }
 
     template<class T>
-    command_return_t<CreateChild<T>> ReliquaryCommands::Do(const CreateChild<T>& command)
+    command_result_t<CreateChild<T>> ReliquaryCommands::Do(const CreateChild<T>& command)
     {
         return command.Do(Relics());
     }
 
     template<class T>
-    command_return_t<CreateChildWith<T>> ReliquaryCommands::Do(const CreateChildWith<T>& command)
+    command_result_t<CreateChildWith<T>> ReliquaryCommands::Do(const CreateChildWith<T>& command)
     {
         return command.Do(Relics());
     }
@@ -89,14 +89,14 @@ namespace Arca
     }
 
     template<class CommandT>
-    command_return_t<CommandT> ReliquaryCommands::Handler<CommandT>::Handle(const CommandT& command, ReliquaryCurators& curators)
+    command_result_t<CommandT> ReliquaryCommands::Handler<CommandT>::Handle(const CommandT& command, ReliquaryCurators& curators)
     {
         return link->Handle(command, curators);
     }
 
     template<class CommandT>
     template<class CuratorT>
-    command_return_t<CommandT> ReliquaryCommands::Handler<CommandT>::Link<CuratorT>::Handle(const CommandT& command, ReliquaryCurators& curators)
+    command_result_t<CommandT> ReliquaryCommands::Handler<CommandT>::Link<CuratorT>::Handle(const CommandT& command, ReliquaryCurators& curators)
     {
         return curators.Find<CuratorT>().Handle(command);
     }

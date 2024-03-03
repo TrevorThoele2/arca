@@ -7,7 +7,7 @@ void CommandTestsFixture::Curator::Handle(const Command& command)
     handledCommands.push_back(command);
 }
 
-int CommandTestsFixture::Curator::Handle(const ReturnCommand& command)
+int CommandTestsFixture::Curator::Handle(const CommandWithResult& command)
 {
     return 5;
 }
@@ -37,7 +37,7 @@ SCENARIO_METHOD(CommandTestsFixture, "command", "[command]")
     }
 }
 
-SCENARIO_METHOD(CommandTestsFixture, "command return", "[command]")
+SCENARIO_METHOD(CommandTestsFixture, "command result", "[command]")
 {
     GIVEN("registered reliquary")
     {
@@ -45,13 +45,13 @@ SCENARIO_METHOD(CommandTestsFixture, "command return", "[command]")
             .Register<Curator>()
             .Actualize();
 
-        WHEN("emitting command with return")
+        WHEN("emitting command with result")
         {
-            auto returned = reliquary->Do<ReturnCommand>();
+            auto result = reliquary->Do<CommandWithResult>();
 
-            THEN("return value is correct")
+            THEN("result value is correct")
             {
-                REQUIRE(returned == 5);
+                REQUIRE(result == 5);
             }
         }
     }

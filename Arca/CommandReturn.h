@@ -2,22 +2,22 @@
 
 #include <type_traits>
 #include "Traits.h"
-#include "HasCommandReturn.h"
+#include "HasCommandResult.h"
 
 namespace Arca
 {
     template<class T, class Enable = void>
-    struct command_return
+    struct command_result
     {
         using Type = void;
     };
 
     template<class T>
-    struct command_return<T, std::enable_if_t<has_command_return_v<T>>>
+    struct command_result<T, std::enable_if_t<has_command_result_v<T>>>
     {
-        using Type = typename Traits<T>::Return;
+        using Type = typename Traits<T>::Result;
     };
 
     template<class T>
-    using command_return_t = typename command_return<T>::Type;
+    using command_result_t = typename command_result<T>::Type;
 }

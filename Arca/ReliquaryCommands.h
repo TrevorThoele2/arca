@@ -17,20 +17,20 @@ namespace Arca
     class ReliquaryCommands : public ReliquaryComponent
     {
     public:
-        template<class CommandT, std::enable_if_t<is_command_v<CommandT> && std::is_void_v<command_return_t<CommandT>>, int> = 0>
+        template<class CommandT, std::enable_if_t<is_command_v<CommandT> && !has_command_result_v<CommandT>, int> = 0>
         void Do(const CommandT& command);
-        template<class CommandT, std::enable_if_t<is_command_v<CommandT> && !std::is_void_v<command_return_t<CommandT>>, int> = 0>
-        command_return_t<CommandT> Do(const CommandT& command);
+        template<class CommandT, std::enable_if_t<is_command_v<CommandT> && has_command_result_v<CommandT>, int> = 0>
+        command_result_t<CommandT> Do(const CommandT& command);
         template<class T, std::enable_if_t<is_relic_v<T>, int> = 0>
-        command_return_t<Create<T>> Do(const Create<T>& command);
+        command_result_t<Create<T>> Do(const Create<T>& command);
         template<class T, std::enable_if_t<is_shard_v<T>, int> = 0>
-        command_return_t<Create<T>> Do(const Create<T>& command);
+        command_result_t<Create<T>> Do(const Create<T>& command);
         template<class T>
-        command_return_t<CreateWith<T>> Do(const CreateWith<T>& command);
+        command_result_t<CreateWith<T>> Do(const CreateWith<T>& command);
         template<class T>
-        command_return_t<CreateChild<T>> Do(const CreateChild<T>& command);
+        command_result_t<CreateChild<T>> Do(const CreateChild<T>& command);
         template<class T>
-        command_return_t<CreateChildWith<T>> Do(const CreateChildWith<T>& command);
+        command_result_t<CreateChildWith<T>> Do(const CreateChildWith<T>& command);
         template<class T, std::enable_if_t<is_relic_v<T>, int> = 0>
         void Do(const Destroy<T>& command);
         template<class T, std::enable_if_t<is_shard_v<T>, int> = 0>
@@ -58,21 +58,21 @@ namespace Arca
             template<class CuratorT>
             void LinkTo();
 
-            command_return_t<CommandT> Handle(const CommandT& command, ReliquaryCurators& curators);
+            command_result_t<CommandT> Handle(const CommandT& command, ReliquaryCurators& curators);
         private:
             class LinkBase
             {
             public:
                 virtual ~LinkBase() = 0;
 
-                virtual command_return_t<CommandT> Handle(const CommandT& command, ReliquaryCurators& curators) = 0;
+                virtual command_result_t<CommandT> Handle(const CommandT& command, ReliquaryCurators& curators) = 0;
             };
 
             template<class CuratorT>
             class Link : public LinkBase
             {
             public:
-                command_return_t<CommandT> Handle(const CommandT& command, ReliquaryCurators& curators) override;
+                command_result_t<CommandT> Handle(const CommandT& command, ReliquaryCurators& curators) override;
             };
 
             using LinkPtr = std::unique_ptr<LinkBase>;

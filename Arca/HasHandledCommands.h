@@ -11,7 +11,7 @@ namespace Arca
     {};
 
     template <class T>
-    struct has_handled_commands<T, std::void_t<typename T::HandledCommands>> : std::true_type
+    struct has_handled_commands<T, std::void_t<typename Traits<T>::HandledCommands>> : std::true_type
     {};
 
     template<class T>
