@@ -97,6 +97,11 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
                 REQUIRE(reliquary->RelicSize() == (preCreateRelicSize + 1));
             }
 
+            THEN("does not have parent")
+            {
+                REQUIRE(!relic.Parent());
+            }
+
             WHEN("creating shard")
             {
                 auto preCreateShardSize = reliquary->ShardSize();
@@ -389,7 +394,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary->ParentRelic(staticRelic, dynamicRelic),
+                    reliquary->ParentRelicTo(staticRelic, dynamicRelic),
                     CannotParentRelic,
                     ::Catch::Matchers::Message(
                         "The relic with id ("s + Chroma::ToString(dynamicRelic.ID()) + ") " +
@@ -401,6 +406,11 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             {
                 REQUIRE(onParented.IsEmpty());
             }
+
+            THEN("does not have parent")
+            {
+                REQUIRE(!dynamicRelic.Parent());
+            }
         }
 
         WHEN("parenting static child to parent")
@@ -409,7 +419,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary->ParentRelic(dynamicRelic, staticRelic),
+                    reliquary->ParentRelicTo(dynamicRelic, staticRelic),
                     CannotParentRelic,
                     ::Catch::Matchers::Message(
                         "The relic with id ("s + Chroma::ToString(staticRelic->ID()) + ") " +
@@ -420,6 +430,11 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             THEN("does not send signal")
             {
                 REQUIRE(onParented.IsEmpty());
+            }
+
+            THEN("does not have parent")
+            {
+                REQUIRE(!staticRelic->Parent());
             }
         }
     }
@@ -439,7 +454,13 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
 
         WHEN("parenting child to parent")
         {
-            reliquary->ParentRelic(parent, child);
+            reliquary->ParentRelicTo(parent, child);
+
+            THEN("child has parent")
+            {
+                REQUIRE(child.Parent());
+                REQUIRE(child.Parent()->ID() == parent.ID());
+            }
 
             THEN("destroying parent also destroys child")
             {
@@ -474,7 +495,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
                 {
                     REQUIRE_THROWS_MATCHES
                     (
-                        reliquary->ParentRelic(parent, child),
+                        reliquary->ParentRelicTo(parent, child),
                         CannotParentRelic,
                         ::Catch::Matchers::Message(
                             "The relic with id("s + Chroma::ToString(child.ID()) + ") is already parented.")
@@ -501,7 +522,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary->ParentRelic(nonExistentRelic, child),
+                    reliquary->ParentRelicTo(nonExistentRelic, child),
                     CannotParentRelic,
                     ::Catch::Matchers::Message(
                         "The relic with id ("s + ::Chroma::ToString(nonExistentRelic.ID()) + ") is from a different Reliquary.")
@@ -511,6 +532,11 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             THEN("does not send signal")
             {
                 REQUIRE(onParented.IsEmpty());
+            }
+
+            THEN("does not have parent")
+            {
+                REQUIRE(!child.Parent());
             }
         }
 
@@ -522,7 +548,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary->ParentRelic(parent, nonExistentRelic),
+                    reliquary->ParentRelicTo(parent, nonExistentRelic),
                     CannotParentRelic,
                     ::Catch::Matchers::Message(
                         "The relic with id ("s + ::Chroma::ToString(nonExistentRelic.ID()) + ") is from a different Reliquary.")
@@ -541,7 +567,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary->ParentRelic(parent, parent),
+                    reliquary->ParentRelicTo(parent, parent),
                     CannotParentRelic,
                     ::Catch::Matchers::Message(
                         "The relic with id ("s + Chroma::ToString(parent.ID()) + ") " +
@@ -552,6 +578,11 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             THEN("does not send signal")
             {
                 REQUIRE(onParented.IsEmpty());
+            }
+
+            THEN("does not have parent")
+            {
+                REQUIRE(!parent.Parent());
             }
         }
     }
@@ -575,7 +606,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    parentReliquary->ParentRelic(parent, child),
+                    parentReliquary->ParentRelicTo(parent, child),
                     CannotParentRelic,
                     ::Catch::Matchers::Message(
                         "The relic with id ("s + ::Chroma::ToString(child.ID()) + ") is from a different Reliquary.")
@@ -589,7 +620,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    childReliquary->ParentRelic(parent, child),
+                    childReliquary->ParentRelicTo(parent, child),
                     CannotParentRelic,
                     ::Catch::Matchers::Message(
                         "The relic with id ("s + ::Chroma::ToString(parent.ID()) + ") is from a different Reliquary.")
@@ -605,7 +636,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    irrelevantReliquary->ParentRelic(parent, child),
+                    irrelevantReliquary->ParentRelicTo(parent, child),
                     CannotParentRelic,
                     ::Catch::Matchers::Message(
                         "The relic with id ("s + ::Chroma::ToString(parent.ID()) + ") is from a different Reliquary.")

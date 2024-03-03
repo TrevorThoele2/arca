@@ -37,7 +37,7 @@ namespace Arca
         DestroyRelic(*metadata);
     }
 
-    void Reliquary::ParentRelic(const RelicHandle& parent, const RelicHandle& child)
+    void Reliquary::ParentRelicTo(const RelicHandle& parent, const RelicHandle& child)
     {
         const auto parentID = parent.ID();
         const auto childID = child.ID();
@@ -78,6 +78,19 @@ namespace Arca
         childMetadata->parent = parentID;
 
         SignalRelicParented(parent, child);
+    }
+
+    std::optional<RelicHandle> Reliquary::ParentOf(const RelicHandle& child)
+    {
+        const auto childID = child.ID();
+        const auto metadata = RelicMetadataFor(childID);
+        if (!metadata)
+            throw CannotFindRelic(childID);
+
+        if (!metadata->parent)
+            return {};
+
+        return RelicHandle(*metadata->parent, *this);
     }
 
     Reliquary::SizeT Reliquary::RelicSize() const

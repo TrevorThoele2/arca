@@ -11,7 +11,12 @@ namespace Arca
 
     void DynamicRelic::ParentTo(const RelicHandle& parent) const
     {
-        owner->ParentRelic(parent, *this);
+        owner->ParentRelicTo(parent, *this);
+    }
+
+    std::optional<RelicHandle> DynamicRelic::Parent() const
+    {
+        return owner->ParentOf(*this);
     }
 
     RelicID DynamicRelic::ID() const
