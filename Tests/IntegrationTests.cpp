@@ -310,3 +310,53 @@ SCENARIO_METHOD(
         }
     }
 }
+
+SCENARIO_METHOD(
+    IntegrationTestsFixture,
+    "reliquary continues to use previous ID string after serialization",
+    "[integration][serialization]")
+{
+    GIVEN("registered reliquary with three open relics created")
+    {
+        const auto savedReliquary = ReliquaryOrigin()
+            .Actualize();
+
+        auto relic0 = savedReliquary->Create<OpenRelic>();
+        auto relic1 = savedReliquary->Create<OpenRelic>();
+        auto relic2 = savedReliquary->Create<OpenRelic>();
+
+        WHEN("saving reliquary")
+        {
+            {
+                auto output = Inscription::OutputBinaryArchive("Test.dat", "Test", 1);
+                output(*savedReliquary);
+            }
+
+            WHEN("loading reliquary and creating three new open relics")
+            {
+                const auto loadedReliquary = ReliquaryOrigin()
+                    .Actualize();
+
+                auto input = Inscription::InputBinaryArchive("Test.dat", "Test");
+                input(*loadedReliquary);
+
+                auto relic3 = loadedReliquary->Create<OpenRelic>();
+                auto relic4 = loadedReliquary->Create<OpenRelic>();
+                auto relic5 = loadedReliquary->Create<OpenRelic>();
+
+                THEN("all loaded relics have greater IDs than saved")
+                {
+                    REQUIRE(relic3.ID() > relic0.ID());
+                    REQUIRE(relic3.ID() > relic1.ID());
+                    REQUIRE(relic3.ID() > relic2.ID());
+                    REQUIRE(relic4.ID() > relic0.ID());
+                    REQUIRE(relic4.ID() > relic1.ID());
+                    REQUIRE(relic4.ID() > relic2.ID());
+                    REQUIRE(relic5.ID() > relic0.ID());
+                    REQUIRE(relic5.ID() > relic1.ID());
+                    REQUIRE(relic5.ID() > relic2.ID());
+                }
+            }
+        }
+    }
+}

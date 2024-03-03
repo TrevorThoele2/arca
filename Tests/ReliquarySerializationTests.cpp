@@ -58,7 +58,7 @@ void ReliquarySerializationTestsFixture::MovableOnlyRelic::PostConstruct(ShardTu
     basicShard = std::get<0>(shards);
 }
 
-const Inscription::BinaryArchive::StreamPosition defaultOutputArchiveSize = 127;
+const Inscription::BinaryArchive::StreamPosition defaultOutputArchiveSize = 135;
 
 SCENARIO_METHOD(ReliquarySerializationTestsFixture, "reliquary serialization", "[reliquary][serialization]")
 {
