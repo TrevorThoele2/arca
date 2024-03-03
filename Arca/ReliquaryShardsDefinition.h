@@ -109,12 +109,12 @@ namespace Arca
 
         if (isConst)
             reliquary.shards
-            .FindBatchSource<const ShardT>()
-            ->Add(id, required, std::forward<ConstructorArgs>(constructorArgs)...);
+                .FindBatchSource<const ShardT>()
+                ->Add(id, required, std::forward<ConstructorArgs>(constructorArgs)...);
         else
             reliquary.shards
-            .FindBatchSource<ShardT>()
-            ->Add(id, required, std::forward<ConstructorArgs>(constructorArgs)...);
+                .FindBatchSource<ShardT>()
+                ->Add(id, required, std::forward<ConstructorArgs>(constructorArgs)...);
 
         matrixTransaction.Finalize();
         reliquary.shards.SignalCreation(reliquary.shards.CreateIndex<ShardT>(id));
@@ -248,10 +248,7 @@ namespace Arca
     ReliquaryShards::Handler<ShardT>* ReliquaryShards::FindHandler() const
     {
         auto found = FindHandler(TypeFor<ShardT>().name);
-        if (found == nullptr)
-            return nullptr;
-
-        return static_cast<Handler<ShardT>*>(found);
+        return found == nullptr ? nullptr : static_cast<Handler<ShardT>*>(found);
     }
 
     template<class ObjectT, std::enable_if_t<is_shard_v<ObjectT>, int>>
@@ -259,10 +256,7 @@ namespace Arca
     {
         const auto type = TypeFor<ObjectT>();
         auto batchSource = FindBatchSource(type);
-        if (batchSource == nullptr)
-            return nullptr;
-
-        return static_cast<BatchSource<ObjectT>*>(batchSource);
+        return batchSource == nullptr ? nullptr : static_cast<BatchSource<ObjectT>*>(batchSource);
     }
 
     template<class ObjectT, std::enable_if_t<is_shard_v<ObjectT>, int>>
@@ -281,7 +275,6 @@ namespace Arca
     template<class ObjectT, std::enable_if_t<is_shard_v<ObjectT>, int>>
     Arca::Batch<ObjectT> ReliquaryShards::Batch() const
     {
-
         auto& batchSource = RequiredBatchSource<ObjectT>();
         return Arca::Batch<ObjectT>(batchSource);
     }
