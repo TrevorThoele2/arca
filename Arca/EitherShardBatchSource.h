@@ -18,6 +18,7 @@ namespace Arca
 
         virtual void DestroyFromBase(RelicID id, bool isConst) = 0;
         virtual void DestroyFromBase(RelicID id) = 0;
+        virtual void Clear() = 0;
 
         [[nodiscard]] virtual SizeT Size() const = 0;
     };
@@ -57,6 +58,7 @@ namespace Arca
 
         void DestroyFromBase(RelicID id, bool isConst) override;
         void DestroyFromBase(RelicID id) override;
+        void Clear() override;
 
         const ShardT* Find(RelicID id, bool isConst);
         const ShardT* Find(RelicID id);

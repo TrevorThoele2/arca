@@ -22,6 +22,7 @@ namespace Arca
 
         virtual void NotifyShardCreated(RelicID id) = 0;
         virtual void NotifyShardDestroyed(RelicID id) = 0;
+        virtual void Clear() = 0;
 
         [[nodiscard]] virtual SizeT Size() const = 0;
     };
@@ -60,6 +61,7 @@ namespace Arca
 
         void NotifyShardCreated(RelicID id) override;
         void NotifyShardDestroyed(RelicID id) override;
+        void Clear() override;
 
         [[nodiscard]] SizeT Size() const override;
         [[nodiscard]] bool IsEmpty() const;

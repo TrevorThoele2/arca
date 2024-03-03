@@ -49,6 +49,12 @@ namespace Arca
     }
 
     template<class T>
+    void BatchSource<T, std::enable_if_t<is_composite_v<T>>>::Clear()
+    {
+        list.clear();
+    }
+
+    template<class T>
     auto BatchSource<T, std::enable_if_t<is_composite_v<T>>>::Size() const -> SizeT
     {
         return list.size();
