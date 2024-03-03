@@ -20,7 +20,7 @@ void IntegrationTestsFixture::ParentRelic::CreateChild() const
     Owner().Do<Arca::CreateChild<ChildRelic>>(AsHandle(*this));
 }
 
-Reliquary& IntegrationTestsFixture::BasicCuratorBase::Owner()
+Reliquary& IntegrationTestsFixture::BasicCuratorBase::TheOwner()
 {
     return Curator::Owner();
 }
@@ -162,7 +162,7 @@ SCENARIO_METHOD(
         curator.onWork = [&mappedParents](BasicCuratorBase& self)
         {
             auto value = 100;
-            auto parent = self.Owner().Do<Create<ParentRelic>>(value);
+            auto parent = self.TheOwner().Do<Create<ParentRelic>>(value);
             parent->CreateChild();
             mappedParents.emplace(value, parent);
         };
@@ -202,7 +202,7 @@ SCENARIO_METHOD(IntegrationTestsFixture, "curators with custom signal execution"
 
         FocusedCurator::onInitialize = [&executedSignals](BasicCuratorBase& curator)
         {
-            curator.Owner().ExecuteOn<BasicSignal>([&executedSignals](const BasicSignal& signal)
+            curator.TheOwner().ExecuteOn<BasicSignal>([&executedSignals](const BasicSignal& signal)
                 {
                     executedSignals.push_back(signal);
                 });
@@ -250,7 +250,7 @@ SCENARIO_METHOD(
 
         FocusedCurator::onPostConstruct = [&allBatch](BasicCuratorBase& curator)
         {
-            allBatch = curator.Owner().Batch<All<BasicShard, OtherShard>>();
+            allBatch = curator.TheOwner().Batch<All<BasicShard, OtherShard>>();
         };
 
         const auto savedReliquary = ReliquaryOrigin()
@@ -280,7 +280,7 @@ SCENARIO_METHOD(
             {
                 FocusedCurator::onPostConstruct = [&allBatch](BasicCuratorBase& curator)
                 {
-                    allBatch = curator.Owner().Batch<All<BasicShard, OtherShard>>();
+                    allBatch = curator.TheOwner().Batch<All<BasicShard, OtherShard>>();
                 };
 
                 const auto loadedReliquary = ReliquaryOrigin()
@@ -291,7 +291,7 @@ SCENARIO_METHOD(
 
                 FocusedCurator::onPostConstruct = [&allBatch](BasicCuratorBase& curator)
                 {
-                    allBatch = curator.Owner().Batch<All<BasicShard, OtherShard>>();
+                    allBatch = curator.TheOwner().Batch<All<BasicShard, OtherShard>>();
                 };
 
                 auto input = Inscription::InputBinaryArchive("Test.dat", "Test");
@@ -351,6 +351,55 @@ SCENARIO_METHOD(
                     REQUIRE(relic5.ID() > relic1.ID());
                     REQUIRE(relic5.ID() > relic2.ID());
                 }
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(
+    IntegrationTestsFixture,
+    "curator can mutate data",
+    "[integration][serialization]")
+{
+    GIVEN("registered reliquary with curator, shard registered and shard created")
+    {
+        using FocusedCurator = BasicCurator<0>;
+
+        const auto reliquary = ReliquaryOrigin()
+            .Register<BasicShard>()
+            .Register<FocusedCurator>()
+            .Actualize();
+
+        auto& curator = reliquary->Find<FocusedCurator>();
+
+        auto relic = reliquary->Do<Create<OpenRelic>>();
+        auto shard = relic->Create<BasicShard>();
+
+        auto setValue = dataGeneration.Random<std::string>();
+
+        curator.onWork = [relic, setValue](BasicCuratorBase& self)
+        {
+            auto data = self.TheData<BasicShard>(relic.ID());
+            data->myValue = setValue;
+        };
+
+        reliquary->Work();
+
+        WHEN("querying shard")
+        {
+            auto afterShard = relic->Find<BasicShard>();
+
+            THEN("data has been set")
+            {
+                REQUIRE(afterShard->myValue == setValue);
+            }
+        }
+
+        WHEN("querying index set before modification")
+        {
+            THEN("data has been set")
+            {
+                REQUIRE(shard->myValue == setValue);
             }
         }
     }

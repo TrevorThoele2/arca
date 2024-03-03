@@ -198,6 +198,8 @@ namespace Arca
 
         template<class, class>
         friend class BatchSource;
+
+        friend class Curator;
     private:
         INSCRIPTION_ACCESS;
     };
