@@ -141,9 +141,6 @@
     <ClInclude Include="RelicBatchSource.h">
       <Filter>Header Files\Relic\Batch</Filter>
     </ClInclude>
-    <ClInclude Include="ExtractShards.h">
-      <Filter>Header Files\Relic</Filter>
-    </ClInclude>
     <ClInclude Include="RelicParented.h">
       <Filter>Header Files\Signal\Common</Filter>
     </ClInclude>
@@ -194,9 +191,6 @@
     </ClInclude>
     <ClInclude Include="ReliquaryRelicStructures.h">
       <Filter>Header Files\Reliquary\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Actualization.h">
-      <Filter>Header Files\Handle</Filter>
     </ClInclude>
     <ClInclude Include="Handle.h">
       <Filter>Header Files\Handle</Filter>

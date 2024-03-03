@@ -407,7 +407,7 @@ namespace Arca
 
     template<class RelicT>
     ReliquaryRelics::GlobalHandler<RelicT>::GlobalHandler(ReliquaryRelics& owner, std::unique_ptr<RelicT>&& storage, RelicID id) :
-        GlobalHandlerBase(TypeFor<RelicT>().name, id), owner(&owner), storage(std::move(storage))
+        GlobalHandlerBase(TypeFor<RelicT>().name, id), storage(std::move(storage)), owner(&owner)
     {}
 
     template<class RelicT>

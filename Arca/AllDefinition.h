@@ -67,8 +67,8 @@ namespace Arca
     template<class... Ts>
     bool MatrixImplementation<All<Ts...>>::Contains(RelicID id, const Reliquary& reliquary)
     {
-        return ::Chroma::IterateRangeCheckStop<
-            ::Chroma::VariadicTemplateSize,
+        return Chroma::IterateRangeCheckStop<
+            Chroma::VariadicTemplateSize,
             ContainsAllShardsIterator,
             bool,
             Pack::count - 1>
@@ -79,8 +79,8 @@ namespace Arca
     template<class... Ts>
     void MatrixImplementation<All<Ts...>>::Destroy(RelicID id, Reliquary& reliquary)
     {
-        return ::Chroma::IterateRange<
-            ::Chroma::VariadicTemplateSize,
+        return Chroma::IterateRange<
+            Chroma::VariadicTemplateSize,
             DestroyAllShardsIterator,
             Pack::count - 1>
 
@@ -141,8 +141,8 @@ namespace Arca
     template<class... Ts>
     bool MatrixContains<All<Ts...>>::Contains(Type type)
     {
-        return ::Chroma::IterateRangeCheckStop<
-            ::Chroma::VariadicTemplateSize,
+        return Chroma::IterateRangeCheckStop<
+            Chroma::VariadicTemplateSize,
             ContainsTypeIterator,
             bool,
             Pack::count - 1>

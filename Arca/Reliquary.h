@@ -379,7 +379,7 @@ namespace Inscription
         KnownPolymorphic& operator=(const KnownPolymorphic& arg) = default;
     private:
         Arca::Reliquary* reliquary = nullptr;
-        Value value;
+        Value value = nullptr;
     private:
         INSCRIPTION_ACCESS;
     };

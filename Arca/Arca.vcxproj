@@ -132,9 +132,7 @@
     <ClInclude Include="RelicBatchIterator.h" />
     <ClInclude Include="RelicBatchSource.h" />
     <ClInclude Include="Created.h" />
-    <ClInclude Include="ExtractShards.h" />
     <ClInclude Include="Handle.h" />
-    <ClInclude Include="Actualization.h" />
     <ClInclude Include="RelicBatchSourceDefinition.h" />
     <ClInclude Include="RelicParented.h" />
     <ClInclude Include="ReliquaryComponent.h" />
