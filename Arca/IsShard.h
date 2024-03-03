@@ -5,7 +5,7 @@
 
 namespace Arca
 {
-    template <class T, class Enable = void>
+    template <class T, class = void>
     struct is_shard : std::false_type
     {};
 

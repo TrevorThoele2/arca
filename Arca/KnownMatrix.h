@@ -4,7 +4,6 @@
 
 #include "IsMatrix.h"
 #include "RelicID.h"
-#include "StructureFrom.h"
 
 namespace Arca
 {

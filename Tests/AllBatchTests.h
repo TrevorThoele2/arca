@@ -31,12 +31,18 @@ AllBatchTestsFixture::Shard<i>::Shard(int value) :
 {}
 
 class AllBatchTestsFixture::Relic final :
-    public ClosedTypedRelicAutomation<Relic, Shard<0>, Shard<1>, Shard<2>>
-{};
+    public ClosedTypedRelicAutomation<Relic>
+{
+public:
+    void Initialize();
+};
 
 class AllBatchTestsFixture::GlobalRelic final :
-    public ClosedTypedRelicAutomation<GlobalRelic, Shard<0>, Shard<1>, Shard<2>>
-{};
+    public ClosedTypedRelicAutomation<GlobalRelic>
+{
+public:
+    void Initialize();
+};
 
 namespace Arca
 {

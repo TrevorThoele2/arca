@@ -8,7 +8,7 @@ namespace Arca
     template<class ShardT>
     struct ShardListToTuple
     {
-        using Type = LocalPtr<ShardT>;
+        using Type = ComputedIndex<ShardT>;
     };
 
     template<class Shards>
@@ -22,7 +22,7 @@ namespace Arca
         {
             using ShardT = typename std::tuple_element_t<i - 1, ShardTuple>::ValueT;
 
-            auto shard = Arca::LocalPtr<ShardT>(id, reliquary);
+            auto shard = Arca::ComputedIndex<ShardT>(id, reliquary);
             std::get<i - 1>(tuple) = shard;
             return ShardListExtractor<i - 1>::Do(tuple, id, reliquary);
         }

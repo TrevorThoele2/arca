@@ -6,9 +6,14 @@ ShardBatchFixture::Shard::Shard(int value) :
     value(value)
 {}
 
-void ShardBatchFixture::GlobalRelic::PostConstruct(ShardTuple shards)
+void ShardBatchFixture::GlobalRelic::PostConstruct()
 {
-    shard = std::get<0>(shards);
+    shard = Find<Shard>();
+}
+
+void ShardBatchFixture::GlobalRelic::Initialize()
+{
+    shard = Create<Shard>();
 }
 
 SCENARIO_METHOD(ShardBatchFixture, "default shard batch", "[ShardBatch]")
@@ -75,7 +80,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
 {
     GIVEN("registered reliquary and relic")
     {
-        auto reliquary = ReliquaryOrigin().Type<Shard>().Actualize();
+        auto reliquary = ReliquaryOrigin().Register<Shard>().Actualize();
         auto relic = reliquary->Create<OpenRelic>();
 
         WHEN("creating shard")
@@ -159,8 +164,8 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
     GIVEN("registered reliquary with global relic")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<Shard>()
-            .Type<GlobalRelic>()
+            .Register<Shard>()
+            .Register<GlobalRelic>()
             .Actualize();
 
         WHEN("starting batch")
@@ -186,7 +191,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch serialization", "[ShardBatch][se
     GIVEN("saved reliquary")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Type<Shard>()
+            .Register<Shard>()
             .Actualize();
 
         auto savedRelic = savedReliquary->Create<OpenRelic>();
@@ -200,7 +205,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch serialization", "[ShardBatch][se
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Type<Shard>()
+                .Register<Shard>()
                 .Actualize();
 
             {

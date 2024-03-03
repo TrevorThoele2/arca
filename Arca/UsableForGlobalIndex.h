@@ -6,5 +6,5 @@
 namespace Arca
 {
     template<class T>
-    constexpr static bool usable_for_global_ptr_v = is_relic_v<T> && is_global_v<T>;
+    constexpr static bool usable_for_global_index_v = is_global_v<T>;
 }

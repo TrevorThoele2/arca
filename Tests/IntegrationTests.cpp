@@ -80,12 +80,12 @@ SCENARIO_METHOD(IntegrationTestsFixture, "working with signals through curators"
         };
 
         auto reliquary = ReliquaryOrigin()
-            .Type<BasicShard>()
-            .Type<BasicCurator<0>>()
-            .Type<BasicCurator<1>>()
-            .Type<BasicCurator<2>>()
-            .Type<BasicCurator<3>>()
-            .Type<BasicCurator<4>>()
+            .Register<BasicShard>()
+            .Register<BasicCurator<0>>()
+            .Register<BasicCurator<1>>()
+            .Register<BasicCurator<2>>()
+            .Register<BasicCurator<3>>()
+            .Register<BasicCurator<4>>()
             .CuratorPipeline(curatorPipeline)
             .Actualize();
 
@@ -151,9 +151,9 @@ SCENARIO_METHOD(
         using ParentChildCurator = BasicCurator<0>;
 
         auto reliquary = ReliquaryOrigin()
-            .Type<ChildRelic>()
-            .Type<ParentRelic>()
-            .Type<ParentChildCurator>()
+            .Register<ChildRelic>()
+            .Register<ParentRelic>()
+            .Register<ParentChildCurator>()
             .Actualize();
 
         std::unordered_map<int, ParentRelic*> mappedParents;
@@ -209,7 +209,7 @@ SCENARIO_METHOD(IntegrationTestsFixture, "curators with custom signal execution"
         };
 
         auto reliquary = ReliquaryOrigin()
-            .Type<FocusedCurator>()
+            .Register<FocusedCurator>()
             .Actualize();
 
         std::unordered_map<int, ParentRelic*> mappedParents;
@@ -254,9 +254,9 @@ SCENARIO_METHOD(
         };
 
         const auto savedReliquary = ReliquaryOrigin()
-            .Type<BasicShard>()
-            .Type<OtherShard>()
-            .Type<FocusedCurator>()
+            .Register<BasicShard>()
+            .Register<OtherShard>()
+            .Register<FocusedCurator>()
             .Actualize();
 
         auto relic0 = savedReliquary->Create<OpenRelic>();
@@ -284,9 +284,9 @@ SCENARIO_METHOD(
                 };
 
                 const auto loadedReliquary = ReliquaryOrigin()
-                    .Type<BasicShard>()
-                    .Type<OtherShard>()
-                    .Type<FocusedCurator>()
+                    .Register<BasicShard>()
+                    .Register<OtherShard>()
+                    .Register<FocusedCurator>()
                     .Actualize();
 
                 FocusedCurator::onPostConstruct = [&allBatch](BasicCuratorBase& curator)

@@ -3,29 +3,28 @@
 #include "Reliquary.h"
 #include "ReliquaryRelics.h"
 #include <cassert>
-#include <utility>
 
 namespace Arca
 {
     void ReliquaryShards::Create(const Type& type, RelicID id)
     {
-        const auto factory = factoryMap.find(type.name);
-        if (factory == factoryMap.end())
+        const auto handler = FindHandler(type.name);
+        if (handler == nullptr)
             throw NotRegistered(Type(type.name));
 
         if (Contains(Handle(id, Owner(), type, HandleObjectType::Shard)))
             throw CannotCreate(type);
 
-        factory->second(Owner(), id, type.isConst);
+        handler->Create(id, Owner(), type.isConst);
     }
 
     void ReliquaryShards::Destroy(const Type& type, RelicID id)
     {
-        const auto destroyer = destroyerMap.find(type.name);
-        if (destroyer == destroyerMap.end())
+        const auto handler = FindHandler(type.name);
+        if (handler == nullptr)
             throw NotRegistered(type);
 
-        destroyer->second(Owner(), id, type.isConst);
+        handler->Destroy(id, Owner());
     }
 
     bool ReliquaryShards::Contains(const Handle& handle) const
@@ -34,25 +33,57 @@ namespace Arca
 
         const auto id = handle.ID();
 
-        const auto shardBatchSource = batchSources.map.find(handle.Type().name);
-        if (shardBatchSource != batchSources.map.end())
-            return shardBatchSource->second->ContainsFromBase(id);
+        const auto shardBatchSource = FindBatchSource(handle.Type());
+        if (shardBatchSource != nullptr)
+            return shardBatchSource->ContainsFromBase(id);
 
         return false;
     }
 
-    ShardBatchSourceBase* ReliquaryShards::BatchSources::FindConst(const TypeName& typeName)
-    {
-        const auto found = constMap.find(typeName);
-        if (found == constMap.end())
-            return nullptr;
+    ReliquaryShards::HandlerBase::~HandlerBase() = default;
 
-        return found->second.get();
+    TypeName ReliquaryShards::HandlerBase::MainType() const
+    {
+        return typeName;
     }
 
-    ReliquaryShards::BatchSources::BatchSources(ReliquaryShards& owner) :
-        StorageBatchSourcesBase(owner)
+    ReliquaryShards::HandlerBase::HandlerBase(const TypeName& typeName) : typeName(typeName)
     {}
+
+    ReliquaryShards::HandlerBase* ReliquaryShards::FindHandler(const TypeName& typeName) const
+    {
+        const auto found = std::find_if(
+            handlers.begin(),
+            handlers.end(),
+            [typeName](const HandlerPtr& entry)
+            {
+                return entry->typeName == typeName;
+            });
+        if (found == handlers.end())
+            return nullptr;
+
+        return found->get();
+    }
+
+    ShardBatchSourceBase* ReliquaryShards::FindBatchSource(const Type& type) const
+    {
+        const auto found = FindHandler(type.name);
+        if (found == nullptr)
+            return nullptr;
+
+        return !type.isConst
+            ? &found->BatchSource()
+            : &found->ConstBatchSource();
+    }
+
+    ShardBatchSourceBase& ReliquaryShards::RequiredBatchSource(const Type& type) const
+    {
+        const auto found = FindBatchSource(type);
+        if (!found)
+            throw NotRegistered(Type(type));
+
+        return *found;
+    }
 
     ReliquaryShards::ReliquaryShards(Reliquary& owner) : ReliquaryComponent(owner, "shard")
     {}

@@ -1,13 +1,19 @@
 #include <catch.hpp>
 
 #include "EitherTests.h"
+#include "Arca/Actualization.h"
 
 EitherTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std::move(myValue))
 {}
 
-void EitherTestsFixture::BasicTypedRelic::PostConstruct(ShardTuple shards)
+void EitherTestsFixture::BasicTypedRelic::PostConstruct()
 {
-    basicShard = std::get<0>(shards);
+    basicShard = Find<BasicShard>();
+}
+
+void EitherTestsFixture::BasicTypedRelic::Initialize()
+{
+    basicShard = Create<BasicShard>();
 }
 
 SCENARIO_METHOD(EitherTestsFixture, "reliquary either", "[reliquary][either][shard]")
@@ -15,8 +21,8 @@ SCENARIO_METHOD(EitherTestsFixture, "reliquary either", "[reliquary][either][sha
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<BasicShard>()
-            .Type<BasicTypedRelic>()
+            .Register<BasicShard>()
+            .Register<BasicTypedRelic>()
             .Actualize();
 
         WHEN("not creating anything")
@@ -49,18 +55,6 @@ SCENARIO_METHOD(EitherTestsFixture, "reliquary either", "[reliquary][either][sha
             }
         }
 
-        WHEN("creating const and non-const shard")
-        {
-            auto relic = reliquary->Create<OpenRelic>();
-            relic->Create<const BasicShard>();
-            relic->Create<BasicShard>();
-
-            THEN("contains either")
-            {
-                REQUIRE(reliquary->Contains<Either<BasicShard>>(relic->ID()));
-            }
-        }
-
         WHEN("creating separate relic with shard")
         {
             auto relic = reliquary->Create<OpenRelic>();
@@ -80,8 +74,8 @@ SCENARIO_METHOD(EitherTestsFixture, "OpenRelic either", "[OpenRelic][either][sha
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<BasicShard>()
-            .Type<BasicTypedRelic>()
+            .Register<BasicShard>()
+            .Register<BasicTypedRelic>()
             .Actualize();
 
         WHEN("creating const shard")
@@ -98,18 +92,6 @@ SCENARIO_METHOD(EitherTestsFixture, "OpenRelic either", "[OpenRelic][either][sha
         WHEN("creating non-const shard")
         {
             auto relic = reliquary->Create<OpenRelic>();
-            relic->Create<BasicShard>();
-
-            THEN("contains either")
-            {
-                REQUIRE(relic->Contains<Either<BasicShard>>());
-            }
-        }
-
-        WHEN("creating const and non-const shard")
-        {
-            auto relic = reliquary->Create<OpenRelic>();
-            relic->Create<const BasicShard>();
             relic->Create<BasicShard>();
 
             THEN("contains either")
@@ -137,8 +119,8 @@ SCENARIO_METHOD(EitherTestsFixture, "ClosedRelic either", "[ClosedRelic][either]
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<BasicShard>()
-            .Type<BasicTypedRelic>()
+            .Register<BasicShard>()
+            .Register<BasicTypedRelic>()
             .Actualize();
 
         WHEN("creating const shard")
@@ -154,22 +136,6 @@ SCENARIO_METHOD(EitherTestsFixture, "ClosedRelic either", "[ClosedRelic][either]
         WHEN("creating non-const shard")
         {
             auto relic = reliquary->CreateWith<ClosedRelic>(RelicStructure{ TypeFor<BasicShard>() });
-
-            THEN("contains either")
-            {
-                REQUIRE(relic->Contains<Either<BasicShard>>());
-            }
-        }
-
-        WHEN("creating const and non-const shard")
-        {
-            auto relic = reliquary->CreateWith<ClosedRelic>(
-                RelicStructure
-                {
-                    TypeFor<const BasicShard>(),
-                    TypeFor<BasicShard>()
-                }
-            );
 
             THEN("contains either")
             {

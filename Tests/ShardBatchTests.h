@@ -26,12 +26,13 @@ public:
 class ShardBatchFixture::UnregisteredShard
 {};
 
-class ShardBatchFixture::GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic, Shard>
+class ShardBatchFixture::GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic>
 {
 public:
-    LocalPtr<Shard> shard;
+    ShardIndex<Shard> shard;
 
-    void PostConstruct(ShardTuple shards);
+    void PostConstruct();
+    void Initialize();
 };
 
 namespace Arca

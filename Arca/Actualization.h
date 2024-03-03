@@ -1,26 +1,18 @@
 #pragma once
 
 #include "Handle.h"
-#include "LocalPtr.h"
-#include "GlobalPtr.h"
+#include "RelicIndex.h"
+#include "ShardIndex.h"
+#include "GlobalIndex.h"
 
 namespace Arca
 {
-    template<class T, std::enable_if_t<!(is_global_v<T> && is_relic_v<T>), int> = 0>
-    LocalPtr<T> Actualize(const Handle& handle)
+    template<class T>
+    auto Actualize(const Handle& handle)
     {
         if (handle.Type() != TypeFor<T>())
-            return {};
+            return typename IndexTypeFor<T>::Type{};
 
-        return LocalPtr<T>(handle.ID(), handle.Owner());
-    }
-
-    template<class GlobalRelicT, std::enable_if_t<is_global_v<GlobalRelicT> && is_relic_v<GlobalRelicT>, int> = 0>
-    GlobalPtr<GlobalRelicT> Actualize(const Handle& handle)
-    {
-        if (handle.Type() != TypeFor<GlobalRelicT>())
-            return {};
-
-        return GlobalPtr<GlobalRelicT>(handle.Owner());
+        return ToIndex<T>(handle.ID(), handle.Owner());
     }
 }

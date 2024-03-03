@@ -4,9 +4,6 @@
     <ClCompile Include="Curator.cpp">
       <Filter>Source Files\Curator</Filter>
     </ClCompile>
-    <ClCompile Include="CuratorProvider.cpp">
-      <Filter>Source Files\Curator</Filter>
-    </ClCompile>
     <ClCompile Include="Reliquary.cpp">
       <Filter>Source Files\Reliquary</Filter>
     </ClCompile>
@@ -73,9 +70,6 @@
     <ClCompile Include="TypeScribe.cpp">
       <Filter>Source Files\Type</Filter>
     </ClCompile>
-    <ClCompile Include="StoredCurator.cpp">
-      <Filter>Source Files\Curator</Filter>
-    </ClCompile>
     <ClCompile Include="ClosedRelic.cpp">
       <Filter>Source Files\Relic\Closed</Filter>
     </ClCompile>
@@ -106,9 +100,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Curator.h">
-      <Filter>Header Files\Curator</Filter>
-    </ClInclude>
-    <ClInclude Include="CuratorProvider.h">
       <Filter>Header Files\Curator</Filter>
     </ClInclude>
     <ClInclude Include="Reliquary.h">
@@ -258,13 +249,7 @@
     <ClInclude Include="TypeFor.h">
       <Filter>Header Files\Type</Filter>
     </ClInclude>
-    <ClInclude Include="GlobalPtr.h">
-      <Filter>Header Files\Ptr</Filter>
-    </ClInclude>
     <ClInclude Include="HasShouldCreateMethod.h">
-      <Filter>Header Files\Relic\Traits</Filter>
-    </ClInclude>
-    <ClInclude Include="HasRequiredShards.h">
       <Filter>Header Files\Relic\Traits</Filter>
     </ClInclude>
     <ClInclude Include="HasPostConstructMethod.h">
@@ -296,9 +281,6 @@
     </ClInclude>
     <ClInclude Include="UsableInAll.h">
       <Filter>Header Files\Matrix\All</Filter>
-    </ClInclude>
-    <ClInclude Include="StoredCurator.h">
-      <Filter>Header Files\Curator</Filter>
     </ClInclude>
     <ClInclude Include="IsOpen.h">
       <Filter>Header Files\Relic\Traits\Openness</Filter>
@@ -354,23 +336,11 @@
     <ClInclude Include="OpenTypedRelicAutomation.h">
       <Filter>Header Files\Relic\Open</Filter>
     </ClInclude>
-    <ClInclude Include="StructureFrom.h">
-      <Filter>Header Files\Relic\Structure</Filter>
-    </ClInclude>
-    <ClInclude Include="RelicStructure.h">
-      <Filter>Header Files\Relic\Structure</Filter>
-    </ClInclude>
     <ClInclude Include="HasShards.h">
-      <Filter>Header Files\Relic\Traits</Filter>
-    </ClInclude>
-    <ClInclude Include="ShardsFor.h">
       <Filter>Header Files\Relic\Traits</Filter>
     </ClInclude>
     <ClInclude Include="ShardList.h">
       <Filter>Header Files\Relic\Traits</Filter>
-    </ClInclude>
-    <ClInclude Include="LocalPtr.h">
-      <Filter>Header Files\Ptr</Filter>
     </ClInclude>
     <ClInclude Include="Signal.h">
       <Filter>Header Files\Signal</Filter>
@@ -381,32 +351,14 @@
     <ClInclude Include="TransferableSignalDefinition.h">
       <Filter>Header Files\Signal</Filter>
     </ClInclude>
-    <ClInclude Include="ComputedPtr.h">
-      <Filter>Header Files\Ptr</Filter>
-    </ClInclude>
-    <ClInclude Include="UsableForLocalPtr.h">
-      <Filter>Header Files\Ptr\Usable</Filter>
-    </ClInclude>
-    <ClInclude Include="UsableForGlobalPtr.h">
-      <Filter>Header Files\Ptr\Usable</Filter>
-    </ClInclude>
-    <ClInclude Include="UsableForComputedPtr.h">
-      <Filter>Header Files\Ptr\Usable</Filter>
-    </ClInclude>
     <ClInclude Include="All.h">
       <Filter>Header Files\Matrix\All</Filter>
-    </ClInclude>
-    <ClInclude Include="PtrTypeFor.h">
-      <Filter>Header Files\Ptr</Filter>
     </ClInclude>
     <ClInclude Include="HasScribe.h">
       <Filter>Header Files\Serialization</Filter>
     </ClInclude>
     <ClInclude Include="HasLocalityTrait.h">
       <Filter>Header Files\Relic\Traits\Locality</Filter>
-    </ClInclude>
-    <ClInclude Include="MatrixPtr.h">
-      <Filter>Header Files\Ptr</Filter>
     </ClInclude>
     <ClInclude Include="MatrixDissolved.h">
       <Filter>Header Files\Signal\Common</Filter>
@@ -428,9 +380,6 @@
     </ClInclude>
     <ClInclude Include="MatrixBatchSourceDefinition.h">
       <Filter>Header Files\Matrix\Batch</Filter>
-    </ClInclude>
-    <ClInclude Include="UsableForMatrixPtr.h">
-      <Filter>Header Files\Ptr\Usable</Filter>
     </ClInclude>
     <ClInclude Include="ReliquaryMatrices.h">
       <Filter>Header Files\Reliquary\Components</Filter>
@@ -467,6 +416,42 @@
     </ClInclude>
     <ClInclude Include="MatrixTypeForSignal.h">
       <Filter>Header Files\Signal</Filter>
+    </ClInclude>
+    <ClInclude Include="MatrixIndex.h">
+      <Filter>Header Files\Index</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicIndex.h">
+      <Filter>Header Files\Index</Filter>
+    </ClInclude>
+    <ClInclude Include="ShardIndex.h">
+      <Filter>Header Files\Index</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalIndex.h">
+      <Filter>Header Files\Index</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputedIndex.h">
+      <Filter>Header Files\Index</Filter>
+    </ClInclude>
+    <ClInclude Include="UsableForShardIndex.h">
+      <Filter>Header Files\Index\Usable</Filter>
+    </ClInclude>
+    <ClInclude Include="UsableForRelicIndex.h">
+      <Filter>Header Files\Index\Usable</Filter>
+    </ClInclude>
+    <ClInclude Include="UsableForMatrixIndex.h">
+      <Filter>Header Files\Index\Usable</Filter>
+    </ClInclude>
+    <ClInclude Include="UsableForGlobalIndex.h">
+      <Filter>Header Files\Index\Usable</Filter>
+    </ClInclude>
+    <ClInclude Include="UsableForComputedIndex.h">
+      <Filter>Header Files\Index\Usable</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicStructure.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexTypeFor.h">
+      <Filter>Header Files\Index</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -572,9 +557,6 @@
     <Filter Include="Header Files\Traits">
       <UniqueIdentifier>{a358dbd0-8c99-4de9-9ff9-27db7776d056}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Ptr">
-      <UniqueIdentifier>{0af7c992-c8d6-4968-b66c-32a0a88b551e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Relic\Traits">
       <UniqueIdentifier>{8ee29fed-0593-482e-9bed-165183532f75}</UniqueIdentifier>
     </Filter>
@@ -590,17 +572,11 @@
     <Filter Include="Header Files\Relic\Closed">
       <UniqueIdentifier>{8cbe489a-ca83-4884-89b1-22c4e32767ee}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Relic\Structure">
-      <UniqueIdentifier>{6cd6e0af-90a0-4d32-8d45-e71b04e7e4e7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Relic\Closed">
       <UniqueIdentifier>{8ff883cd-a3b8-454e-a56f-e3ca4b22355f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Relic\Open">
       <UniqueIdentifier>{f42b3f06-82ee-428f-adf0-354c49789ba8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Ptr\Usable">
-      <UniqueIdentifier>{77a0550f-ea38-49d2-acd9-7f8379b18414}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Matrix">
       <UniqueIdentifier>{29e57911-d8b4-43c0-b905-3e23fec96b58}</UniqueIdentifier>
@@ -614,14 +590,20 @@
     <Filter Include="Source Files\Matrix\Batch">
       <UniqueIdentifier>{b8d40926-f8fa-4192-b682-56ff2a2e1e81}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Matrix\All">
-      <UniqueIdentifier>{6ecc1c89-7553-43b3-bf7d-21f3802d7326}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Matrix\Either">
       <UniqueIdentifier>{62973e57-95a4-4085-a9b8-be5b381ee5e1}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Serialization">
       <UniqueIdentifier>{73d7fa76-e6f8-461d-888b-df708ad13173}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Index">
+      <UniqueIdentifier>{0af7c992-c8d6-4968-b66c-32a0a88b551e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Index\Usable">
+      <UniqueIdentifier>{77a0550f-ea38-49d2-acd9-7f8379b18414}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Matrix\All">
+      <UniqueIdentifier>{6ecc1c89-7553-43b3-bf7d-21f3802d7326}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

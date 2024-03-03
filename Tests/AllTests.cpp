@@ -2,11 +2,11 @@
 
 #include "AllTests.h"
 
-void AllTestsFixture::BasicTypedRelic::PostConstruct(ShardTuple shards)
+void AllTestsFixture::BasicTypedRelic::Initialize()
 {
-    shard0 = std::get<0>(shards);
-    shard1 = std::get<1>(shards);
-    shard2 = std::get<2>(shards);
+    shard0 = Create<Shard<0>>();
+    shard1 = Create<Shard<1>>();
+    shard2 = Create<Shard<2>>();
 }
 
 SCENARIO_METHOD(AllTestsFixture, "all", "[all]")
@@ -14,11 +14,11 @@ SCENARIO_METHOD(AllTestsFixture, "all", "[all]")
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<Shard<0>>()
-            .Type<Shard<1>>()
-            .Type<Shard<2>>()
-            .Type<Shard<3>>()
-            .Type<BasicTypedRelic>()
+            .Register<Shard<0>>()
+            .Register<Shard<1>>()
+            .Register<Shard<2>>()
+            .Register<Shard<3>>()
+            .Register<BasicTypedRelic>()
             .Actualize();
 
         WHEN("not creating anything")
@@ -93,11 +93,11 @@ SCENARIO_METHOD(AllTestsFixture, "OpenRelic all", "[OpenRelic][all]")
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<Shard<0>>()
-            .Type<Shard<1>>()
-            .Type<Shard<2>>()
-            .Type<Shard<3>>()
-            .Type<BasicTypedRelic>()
+            .Register<Shard<0>>()
+            .Register<Shard<1>>()
+            .Register<Shard<2>>()
+            .Register<Shard<3>>()
+            .Register<BasicTypedRelic>()
             .Actualize();
 
         WHEN("creating shards")
@@ -164,10 +164,10 @@ SCENARIO_METHOD(AllTestsFixture, "ClosedRelic all", "[ClosedRelic][all]")
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<Shard<0>>()
-            .Type<Shard<1>>()
-            .Type<Shard<2>>()
-            .Type<BasicTypedRelic>()
+            .Register<Shard<0>>()
+            .Register<Shard<1>>()
+            .Register<Shard<2>>()
+            .Register<BasicTypedRelic>()
             .Actualize();
 
         WHEN("creating shards")

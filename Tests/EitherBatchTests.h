@@ -23,11 +23,17 @@ public:
     explicit Shard(int value);
 };
 
-class EitherBatchTestsFixture::Relic final : public ClosedTypedRelicAutomation<Relic, Shard>
-{};
+class EitherBatchTestsFixture::Relic final : public ClosedTypedRelicAutomation<Relic>
+{
+public:
+    void Initialize();
+};
 
-class EitherBatchTestsFixture::GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic, Shard>
-{};
+class EitherBatchTestsFixture::GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic>
+{
+public:
+    void Initialize();
+};
 
 namespace Arca
 {

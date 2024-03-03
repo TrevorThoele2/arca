@@ -9,7 +9,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
     GIVEN("registered reliquary with regular shard")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<Shard>()
+            .Register<Shard>()
             .Actualize();
 
         WHEN("creating open relic and non-const shard")
@@ -60,9 +60,9 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
     GIVEN("registered reliquary with three differentiable shards")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<DifferentiableShard<0>>()
-            .Type<DifferentiableShard<1>>()
-            .Type<DifferentiableShard<2>>()
+            .Register<DifferentiableShard<0>>()
+            .Register<DifferentiableShard<1>>()
+            .Register<DifferentiableShard<2>>()
             .Actualize();
 
         WHEN("creating open relic and three shards")
@@ -168,7 +168,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<Shard>()
+            .Register<Shard>()
             .Actualize();
 
         auto genericCreatedSignals = reliquary->Batch<Created>();
@@ -198,7 +198,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
             THEN("signal is emitted for known shard")
             {
                 REQUIRE(knownCreatedSignals.Size() == 1);
-                REQUIRE(knownCreatedSignals.begin()->ptr == shard);
+                REQUIRE(knownCreatedSignals.begin()->index == shard);
             }
 
             WHEN("destroying shard")
@@ -214,7 +214,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
                 THEN("signal is emitted for known relic")
                 {
                     REQUIRE(knownDestroyingSignals.Size() == 1);
-                    REQUIRE(knownDestroyingSignals.begin()->ptr == shard);
+                    REQUIRE(knownDestroyingSignals.begin()->index == shard);
                 }
             }
 
@@ -231,7 +231,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
                 THEN("signal is emitted for known relic")
                 {
                     REQUIRE(knownDestroyingSignals.Size() == 1);
-                    REQUIRE(knownDestroyingSignals.begin()->ptr == shard);
+                    REQUIRE(knownDestroyingSignals.begin()->index == shard);
                 }
             }
         }
@@ -260,7 +260,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
             THEN("signal is emitted for known shard")
             {
                 REQUIRE(knownCreatedSignals.Size() == 1);
-                REQUIRE(knownCreatedSignals.begin()->ptr == shard);
+                REQUIRE(knownCreatedSignals.begin()->index == shard);
             }
 
             WHEN("destroying shard")
@@ -276,7 +276,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
                 THEN("signal is emitted for known relic")
                 {
                     REQUIRE(knownDestroyingSignals.Size() == 1);
-                    REQUIRE(knownDestroyingSignals.begin()->ptr == shard);
+                    REQUIRE(knownDestroyingSignals.begin()->index == shard);
                 }
             }
 
@@ -293,7 +293,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
                 THEN("signal is emitted for known relic")
                 {
                     REQUIRE(knownDestroyingSignals.Size() == 1);
-                    REQUIRE(knownDestroyingSignals.begin()->ptr == shard);
+                    REQUIRE(knownDestroyingSignals.begin()->index == shard);
                 }
             }
         }
@@ -305,7 +305,7 @@ SCENARIO_METHOD(ShardTestsFixture, "either signals", "[either][signal]")
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<Shard>()
+            .Register<Shard>()
             .Actualize();
 
         auto createdSignals = reliquary->Batch<MatrixFormed<Either<Shard>>>();
@@ -320,7 +320,7 @@ SCENARIO_METHOD(ShardTestsFixture, "either signals", "[either][signal]")
             THEN("signal is emitted for known shard")
             {
                 REQUIRE(createdSignals.Size() == 1);
-                REQUIRE(createdSignals.begin()->ptr == shard);
+                REQUIRE(createdSignals.begin()->index == shard);
             }
 
             WHEN("destroying shard")
@@ -330,7 +330,7 @@ SCENARIO_METHOD(ShardTestsFixture, "either signals", "[either][signal]")
                 THEN("signal is emitted for known relic")
                 {
                     REQUIRE(destroyingSignals.Size() == 1);
-                    REQUIRE(destroyingSignals.begin()->ptr == shard);
+                    REQUIRE(destroyingSignals.begin()->index == shard);
                 }
             }
 
@@ -341,7 +341,7 @@ SCENARIO_METHOD(ShardTestsFixture, "either signals", "[either][signal]")
                 THEN("signal is emitted for known relic")
                 {
                     REQUIRE(destroyingSignals.Size() == 1);
-                    REQUIRE(destroyingSignals.begin()->ptr == shard);
+                    REQUIRE(destroyingSignals.begin()->index == shard);
                 }
             }
         }
@@ -355,7 +355,7 @@ SCENARIO_METHOD(ShardTestsFixture, "either signals", "[either][signal]")
             THEN("signal is emitted for known shard")
             {
                 REQUIRE(createdSignals.Size() == 1);
-                REQUIRE(createdSignals.begin()->ptr == shard);
+                REQUIRE(createdSignals.begin()->index == shard);
             }
 
             WHEN("destroying shard")
@@ -365,7 +365,7 @@ SCENARIO_METHOD(ShardTestsFixture, "either signals", "[either][signal]")
                 THEN("signal is emitted for known relic")
                 {
                     REQUIRE(destroyingSignals.Size() == 1);
-                    REQUIRE(destroyingSignals.begin()->ptr == shard);
+                    REQUIRE(destroyingSignals.begin()->index == shard);
                 }
             }
 
@@ -376,7 +376,7 @@ SCENARIO_METHOD(ShardTestsFixture, "either signals", "[either][signal]")
                 THEN("signal is emitted for known relic")
                 {
                     REQUIRE(destroyingSignals.Size() == 1);
-                    REQUIRE(destroyingSignals.begin()->ptr == shard);
+                    REQUIRE(destroyingSignals.begin()->index == shard);
                 }
             }
         }

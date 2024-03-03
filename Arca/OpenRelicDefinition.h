@@ -7,7 +7,7 @@
 namespace Arca
 {
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    LocalPtr<ShardT> OpenRelic::Create()
+    ShardIndex<ShardT> OpenRelic::Create()
     {
         return owner->shards.Create<ShardT>(id);
     }
@@ -25,15 +25,15 @@ namespace Arca
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
-    LocalPtr<ShardT> OpenRelic::Find() const
+    ShardIndex<ShardT> OpenRelic::Find() const
     {
-        return Arca::LocalPtr<ShardT>(id, Owner());
+        return Arca::ShardIndex<ShardT>(id, Owner());
     }
 
     template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int>>
-    MatrixPtr<MatrixT> OpenRelic::Find() const
+    MatrixIndex<MatrixT> OpenRelic::Find() const
     {
-        return Arca::MatrixPtr<MatrixT>(id, Owner());
+        return Arca::MatrixIndex<MatrixT>(id, Owner());
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>

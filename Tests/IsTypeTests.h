@@ -58,9 +58,4 @@ namespace Inscription
     class Scribe<::IsTypeTestsFixture::Relic, BinaryArchive> final
         : public ArcaNullScribe<::IsTypeTestsFixture::Relic, BinaryArchive>
     {};
-
-    template<>
-    class Scribe<::IsTypeTestsFixture::Curator, BinaryArchive> final
-        : public ArcaNullScribe<::IsTypeTestsFixture::Curator, BinaryArchive>
-    {};
 }

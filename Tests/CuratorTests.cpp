@@ -88,7 +88,7 @@ struct ReliquaryOriginIterator
 {
     static void Do(ReliquaryOrigin& reliquaryOrigin)
     {
-        reliquaryOrigin.Type<CuratorTestsFixture::DifferentiableCurator<id>>();
+        reliquaryOrigin.Register<CuratorTestsFixture::DifferentiableCurator<id>>();
     }
 };
 
@@ -143,7 +143,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator", "[curator]")
         std::vector<Curator*> worked;
 
         auto reliquary = ReliquaryOrigin()
-            .Type<BasicCurator>()
+            .Register<BasicCurator>()
             .Actualize();
 
         auto& curator = reliquary->Find<BasicCurator>();
@@ -265,7 +265,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
 
         const auto reliquaryOrigin = ReliquaryOrigin()
             .CuratorPipeline(pipeline)
-            .Type<BasicCurator>();
+            .Register<BasicCurator>();
 
         WHEN("actualized")
         {
@@ -401,7 +401,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator split pipeline", "[curator][pipeli
 
         const auto reliquaryOrigin = ReliquaryOrigin()
             .CuratorPipeline(pipeline)
-            .Type<BasicCurator>();
+            .Register<BasicCurator>();
 
         WHEN("actualized")
         {
@@ -548,78 +548,6 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator aborts pipeline", "[curator][pipel
     }
 }
 
-SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][serialization]")
-{
-    GIVEN("saved reliquary")
-    {
-        auto savedReliquary = ReliquaryOrigin()
-            .Type<BasicCurator>()
-            .Actualize();
-
-        auto& savedCurator = savedReliquary->Find<BasicCurator>();
-        savedCurator.value = dataGeneration.Random<int>();
-
-        {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
-            outputArchive(*savedReliquary);
-        }
-
-        WHEN("loading reliquary")
-        {
-            auto loadedReliquary = ReliquaryOrigin()
-                .Type<BasicCurator>()
-                .Actualize();
-
-            {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
-                inputArchive(*loadedReliquary);
-            }
-
-            auto& loadedCurator = loadedReliquary->Find<BasicCurator>();
-
-            THEN("value is loaded")
-            {
-                REQUIRE(loadedCurator.value == savedCurator.value);
-            }
-        }
-
-        WHEN("loading reliquary without curator registered")
-        {
-            auto loadedReliquary = ReliquaryOrigin()
-                .Actualize();
-
-            {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
-                inputArchive(*loadedReliquary);
-            }
-
-            THEN("throws error")
-            {
-                REQUIRE_THROWS_AS(loadedReliquary->Find<BasicCurator>(), NotRegistered);
-            }
-        }
-
-        WHEN("loading reliquary with different curator with same input type handle")
-        {
-            auto loadedReliquary = ReliquaryOrigin()
-                .Type<OtherBasicCurator>()
-                .Actualize();
-
-            {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");;
-                inputArchive(*loadedReliquary);
-            }
-
-            auto& loadedCurator = loadedReliquary->Find<OtherBasicCurator>();
-
-            THEN("value is loaded")
-            {
-                REQUIRE(loadedCurator.value == savedCurator.value);
-            }
-        }
-    }
-}
-
 SCENARIO_METHOD(CuratorTestsFixture, "non default curator construction", "[curator]")
 {
     GIVEN("registered reliquary")
@@ -627,7 +555,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "non default curator construction", "[curat
         auto myValue = dataGeneration.Random<int>();
 
         auto reliquary = ReliquaryOrigin()
-            .Type<CuratorWithNonDefaultConstructor>(myValue)
+            .Register<CuratorWithNonDefaultConstructor>(myValue)
             .Actualize();
 
         WHEN("retrieving curator")
@@ -639,26 +567,5 @@ SCENARIO_METHOD(CuratorTestsFixture, "non default curator construction", "[curat
                 REQUIRE(curator.myValue == myValue);
             }
         }
-    }
-}
-
-namespace Inscription
-{
-    void Scribe<CuratorTestsFixture::BasicCurator, BinaryArchive>::ScrivenImplementation(
-        ObjectT& object, ArchiveT& archive)
-    {
-        archive(object.value);
-    }
-
-    void Scribe<CuratorTestsFixture::OtherBasicCurator, BinaryArchive>::ScrivenImplementation(
-        ObjectT& object, ArchiveT& archive)
-    {
-        archive(object.value);
-    }
-
-    std::vector<Type> Scribe<CuratorTestsFixture::OtherBasicCurator, BinaryArchive>::InputTypes(
-        const ArchiveT&)
-    {
-        return { "BasicCurator" };
     }
 }

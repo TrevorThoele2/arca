@@ -15,29 +15,31 @@
 #include "IsLocal.h"
 #include "IsGlobal.h"
 
-#include "LocalPtr.h"
-#include "ComputedPtr.h"
+#include "RelicIndex.h"
+#include "ComputedIndex.h"
 
 #include "KnownPolymorphicSerializer.h"
 
 namespace Arca
 {
+    class Reliquary;
+
     class ReliquaryRelics : public ReliquaryComponent
     {
     public:
         template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        LocalPtr<RelicT> Create(InitializeArgs&& ... initializeArgs);
+        RelicIndex<RelicT> Create(InitializeArgs&& ... initializeArgs);
         template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        LocalPtr<RelicT> CreateWith(const RelicStructure& structure, InitializeArgs&& ... initializeArgs);
+        RelicIndex<RelicT> CreateWith(const RelicStructure& structure, InitializeArgs&& ... initializeArgs);
         template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        LocalPtr<RelicT> CreateWith(const std::string& structureName, InitializeArgs&& ... initializeArgs);
+        RelicIndex<RelicT> CreateWith(const std::string& structureName, InitializeArgs&& ... initializeArgs);
 
         template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        LocalPtr<RelicT> CreateChild(const Handle& parent, InitializeArgs&& ... initializeArgs);
+        RelicIndex<RelicT> CreateChild(const Handle& parent, InitializeArgs&& ... initializeArgs);
         template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        LocalPtr<RelicT> CreateChildWith(const Handle& parent, const RelicStructure& structure, InitializeArgs&& ... initializeArgs);
+        RelicIndex<RelicT> CreateChildWith(const Handle& parent, const RelicStructure& structure, InitializeArgs&& ... initializeArgs);
         template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-        LocalPtr<RelicT> CreateChildWith(const Handle& parent, const std::string& structureName, InitializeArgs&& ... initializeArgs);
+        RelicIndex<RelicT> CreateChildWith(const Handle& parent, const std::string& structureName, InitializeArgs&& ... initializeArgs);
 
         void Destroy(const TypeName& typeName, RelicID id);
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
@@ -100,39 +102,100 @@ namespace Arca
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         RelicT* FindStorage(RelicID id);
     public:
-        class BatchSources
-            : public StorageBatchSourcesBase<RelicBatchSourceBase, ReliquaryRelics, BatchSources, is_relic>
-        { 
-        public:
-            template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-            [[nodiscard]] Map& MapFor();
-            template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
-            [[nodiscard]] const Map& MapFor() const;
-        private:
-            explicit BatchSources(ReliquaryRelics& owner);
-            friend ReliquaryRelics;
-        } batchSources = BatchSources(*this);
-
-        using Destroyer = std::function<void(Reliquary&, RelicID)>;
-        using DestroyerMap = std::unordered_map<TypeName, Destroyer>;
-        DestroyerMap destroyerMap;
-
-        KnownPolymorphicSerializerList serializers;
-    public:
-        struct StoredGlobal
+        class LocalHandlerBase : public KnownPolymorphicSerializer
         {
-            std::shared_ptr<void> storage;
-            RelicID id;
+        public:
+            const TypeName typeName;
+        public:
+            virtual ~LocalHandlerBase() = 0;
+
+            virtual RelicBatchSourceBase& BatchSource() = 0;
+
+            virtual void Destroy(RelicID id, Reliquary& reliquary) = 0;
+        public:
+            [[nodiscard]] TypeName MainType() const override;
+        protected:
+            explicit LocalHandlerBase(const TypeName& typeName);
         };
 
-        using GlobalMap = std::unordered_map<TypeName, StoredGlobal>;
-        GlobalMap globalMap;
+        template<class RelicT>
+        class LocalHandler final : public LocalHandlerBase
+        {
+        public:
+            Arca::BatchSource<RelicT> batchSource;
+        public:
+            explicit LocalHandler(Reliquary& reliquary);
 
-        KnownPolymorphicSerializerList globalSerializers;
+            RelicBatchSourceBase& BatchSource() override;
 
-        using GlobalConstruct = std::function<void(Reliquary&)>;
-        using GlobalConstructList = std::vector<GlobalConstruct>;
-        GlobalConstructList globalConstructList;
+            void Destroy(RelicID id, Reliquary& reliquary) override;
+
+            bool WillSerialize() const override;
+            void Serialize(Inscription::BinaryArchive& archive) override;
+            [[nodiscard]] std::vector<::Inscription::Type> InscriptionTypes(Inscription::BinaryArchive& archive) const override;
+        };
+
+        using LocalHandlerPtr = std::unique_ptr<LocalHandlerBase>;
+        using LocalHandlerList = std::vector<LocalHandlerPtr>;
+        LocalHandlerList localHandlers;
+
+        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        void CreateLocalHandler();
+        [[nodiscard]] LocalHandlerBase* FindLocalHandler(const TypeName& typeName) const;
+        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        [[nodiscard]] LocalHandler<RelicT>* FindLocalHandler() const;
+
+        [[nodiscard]] RelicBatchSourceBase* FindBatchSource(const TypeName& typeName) const;
+        template<class ObjectT, std::enable_if_t<is_relic_v<ObjectT>, int> = 0>
+        [[nodiscard]] BatchSource<ObjectT>* FindBatchSource() const;
+
+        [[nodiscard]] RelicBatchSourceBase& RequiredBatchSource(const TypeName& typeName) const;
+        template<class ObjectT, std::enable_if_t<is_relic_v<ObjectT>, int> = 0>
+        [[nodiscard]] BatchSource<ObjectT>& RequiredBatchSource() const;
+
+        template<class ObjectT, std::enable_if_t<is_relic_v<ObjectT>, int> = 0>
+        [[nodiscard]] Arca::Batch<ObjectT> Batch() const;
+    public:
+        class GlobalHandlerBase : public KnownPolymorphicSerializer
+        {
+        public:
+            const TypeName typeName;
+            std::shared_ptr<void> storage;
+            RelicID id;
+        public:
+            virtual ~GlobalHandlerBase() = 0;
+
+            virtual void PostConstruct() = 0;
+        public:
+            [[nodiscard]] TypeName MainType() const override;
+        protected:
+            explicit GlobalHandlerBase(const TypeName& typeName, std::shared_ptr<void>&& storage, RelicID id);
+        };
+
+        template<class RelicT>
+        class GlobalHandler final : public GlobalHandlerBase
+        {
+        public:
+            explicit GlobalHandler(ReliquaryRelics& owner, std::shared_ptr<void>&& storage, RelicID id);
+
+            void PostConstruct() override;
+
+            bool WillSerialize() const override;
+            void Serialize(Inscription::BinaryArchive& archive) override;
+            [[nodiscard]] std::vector<::Inscription::Type> InscriptionTypes(Inscription::BinaryArchive& archive) const override;
+        private:
+            ReliquaryRelics* owner = nullptr;
+        };
+
+        using GlobalHandlerPtr = std::unique_ptr<GlobalHandlerBase>;
+        using GlobalHandlerList = std::vector<GlobalHandlerPtr>;
+        GlobalHandlerList globalHandlers;
+
+        template<class RelicT, class... InitializeArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        void CreateGlobalHandler(InitializeArgs&& ... initializeArgs);
+        [[nodiscard]] GlobalHandlerBase* FindGlobalHandler(const TypeName& typeName) const;
+        template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
+        [[nodiscard]] GlobalHandler<RelicT>* FindGlobalHandler() const;
 
         using GlobalComputationTransformation = std::function<std::any(Reliquary&)>;
         using GlobalComputationMap = std::unordered_map<std::type_index, GlobalComputationTransformation>;
@@ -158,12 +221,12 @@ namespace Arca
             bool ShouldCreate(InitializeArgs&& ... initializeArgs);
 
         template<class RelicT, class... InitializeArgs>
-        RelicT* PushNewRelic(RelicT&& relic, RelicStructure additionalStructure, InitializeArgs&& ... initializeArgs);
+        RelicT* PushNewRelic(RelicT&& relic, RelicStructure structure, InitializeArgs&& ... initializeArgs);
     private:
         RelicMetadata& ValidateParentForParenting(const Handle& parent);
     private:
         template<class T>
-        auto CreatePtr(RelicID id) const;
+        auto CreateIndex(RelicID id) const;
     private:
         explicit ReliquaryRelics(Reliquary& owner);
         ReliquaryRelics(ReliquaryRelics&& arg) noexcept = default;

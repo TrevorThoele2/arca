@@ -16,7 +16,7 @@ namespace Arca
         static bool Contains(RelicID id, const Reliquary& reliquary);
         static void Destroy(RelicID id, Reliquary& reliquary);
     public:
-        using Tuple = typename All<Ts...>::Pack::template Transform<PtrTypeFor>::Type::TupleT;
+        using Tuple = typename All<Ts...>::Pack::template Transform<TransformToIndex>::Type::TupleT;
     public:
         using Stored = Tuple;
 
@@ -29,10 +29,10 @@ namespace Arca
         static BatchReference ToBatchSourceReference(Stored& stored);
         static BatchOptional ToBatchSourceOptional(Stored& stored);
     public:
-        using PtrReference = Tuple;
-        using PtrOptional = std::optional<Tuple>;
+        using IndexReference = Tuple;
+        using IndexOptional = std::optional<Tuple>;
 
-        static PtrOptional CreatePtrValue(RelicID id, Reliquary& reliquary);
+        static IndexOptional CreateIndexValue(RelicID id, Reliquary& reliquary);
     private:
         using Pack = typename All<Ts...>::Pack;
     };

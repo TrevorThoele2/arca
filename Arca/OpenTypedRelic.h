@@ -5,8 +5,8 @@
 #include "IsShard.h"
 #include "IsMatrix.h"
 
-#include "LocalPtr.h"
-#include "MatrixPtr.h"
+#include "ShardIndex.h"
+#include "MatrixIndex.h"
 #include "Handle.h"
 
 namespace Arca
@@ -21,15 +21,15 @@ namespace Arca
         explicit operator bool() const;
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        LocalPtr<ShardT> Create();
+        ShardIndex<ShardT> Create();
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         void Destroy();
         template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
         void Destroy();
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
-        [[nodiscard]] LocalPtr<ShardT> Find() const;
+        [[nodiscard]] ShardIndex<ShardT> Find() const;
         template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
-        [[nodiscard]] MatrixPtr<MatrixT> Find() const;
+        [[nodiscard]] MatrixIndex<MatrixT> Find() const;
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] bool Contains() const;
         template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>

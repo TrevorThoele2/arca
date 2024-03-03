@@ -2,7 +2,19 @@
 
 #include "AllBatchTests.h"
 
-#include <Arca/All.h>
+void AllBatchTestsFixture::Relic::Initialize()
+{
+    Create<Shard<0>>();
+    Create<Shard<1>>();
+    Create<Shard<2>>();
+}
+
+void AllBatchTestsFixture::GlobalRelic::Initialize()
+{
+    Create<Shard<0>>();
+    Create<Shard<1>>();
+    Create<Shard<2>>();
+}
 
 SCENARIO_METHOD(AllBatchTestsFixture, "default all shards batch", "[all][batch]")
 {
@@ -69,10 +81,10 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all batch", "[all][batch]")
     GIVEN("registered reliquary and relic")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<Shard<0>>()
-            .Type<Shard<1>>()
-            .Type<Shard<2>>()
-            .Type<Shard<3>>()
+            .Register<Shard<0>>()
+            .Register<Shard<1>>()
+            .Register<Shard<2>>()
+            .Register<Shard<3>>()
             .Actualize();
         auto relic = reliquary->Create<OpenRelic>();
 
@@ -225,10 +237,10 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all batch", "[all][batch]")
     GIVEN("registered reliquary with global relic")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<Shard<0>>()
-            .Type<Shard<1>>()
-            .Type<Shard<2>>()
-            .Type<GlobalRelic>()
+            .Register<Shard<0>>()
+            .Register<Shard<1>>()
+            .Register<Shard<2>>()
+            .Register<GlobalRelic>()
             .Actualize();
 
         WHEN("starting batch")
@@ -254,10 +266,10 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all batch with either", "[all][batch][eit
     GIVEN("registered reliquary and relic")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<Shard<0>>()
-            .Type<Shard<1>>()
-            .Type<Shard<2>>()
-            .Type<Shard<3>>()
+            .Register<Shard<0>>()
+            .Register<Shard<1>>()
+            .Register<Shard<2>>()
+            .Register<Shard<3>>()
             .Actualize();
         auto relic = reliquary->Create<OpenRelic>();
 
@@ -335,10 +347,10 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all formed batch", "[all][batch][signal]"
     GIVEN("registered reliquary, created relic and created batches")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<Shard<0>>()
-            .Type<Shard<1>>()
-            .Type<Shard<2>>()
-            .Type<Shard<3>>()
+            .Register<Shard<0>>()
+            .Register<Shard<1>>()
+            .Register<Shard<2>>()
+            .Register<Shard<3>>()
             .Actualize();
 
         auto relic = reliquary->Create<OpenRelic>();
@@ -363,9 +375,9 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all formed batch", "[all][batch][signal]"
             THEN("formed batch contains matrix")
             {
                 auto& first = *formedBatch.begin();
-                REQUIRE(std::get<0>(*first.ptr) == createdShard0);
-                REQUIRE(std::get<1>(*first.ptr) == createdShard1);
-                REQUIRE(std::get<2>(*first.ptr) == createdShard2);
+                REQUIRE(std::get<0>(*first.index) == createdShard0);
+                REQUIRE(std::get<1>(*first.index) == createdShard1);
+                REQUIRE(std::get<2>(*first.index) == createdShard2);
             }
 
             THEN("formed batch begin is not end")
@@ -396,8 +408,8 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all formed batch", "[all][batch][signal]"
 
                 THEN("dissolved batch contains matrix")
                 {
-                    REQUIRE(dissolvedBatch.begin()->ptr.ID() == relic->ID());
-                    REQUIRE(dissolvedBatch.begin()->ptr.Owner() == reliquary.get());
+                    REQUIRE(dissolvedBatch.begin()->index.ID() == relic->ID());
+                    REQUIRE(dissolvedBatch.begin()->index.Owner() == reliquary.get());
                 }
 
                 THEN("dissolved batch begin is not end")
@@ -414,9 +426,9 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all batch serialization", "[all][batch][s
     GIVEN("saved reliquary")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Type<Shard<0>>()
-            .Type<Shard<1>>()
-            .Type<Shard<2>>()
+            .Register<Shard<0>>()
+            .Register<Shard<1>>()
+            .Register<Shard<2>>()
             .Actualize();
 
         auto savedRelic = savedReliquary->Create<OpenRelic>();
@@ -432,9 +444,9 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all batch serialization", "[all][batch][s
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Type<Shard<0>>()
-                .Type<Shard<1>>()
-                .Type<Shard<2>>()
+                .Register<Shard<0>>()
+                .Register<Shard<1>>()
+                .Register<Shard<2>>()
                 .Actualize();
 
             {

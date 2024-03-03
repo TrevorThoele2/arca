@@ -14,8 +14,11 @@ public:
     class Shard
     {};
 
-    class Relic final : public ClosedTypedRelicAutomation<Relic, Shard>
-    {};
+    class Relic final : public ClosedTypedRelicAutomation<Relic>
+    {
+    public:
+        void Initialize();
+    };
 
     class GlobalRelic final : public ClosedTypedRelicAutomation<Relic>
     {};
@@ -32,7 +35,7 @@ namespace Arca
     template<>
     struct Traits<::ReliquaryRegistrationTestsFixture::Shard>
     {
-        static const ObjectType objectType = ObjectType::Shard;
+        static constexpr ObjectType objectType = ObjectType::Shard;
         static inline const TypeName typeName = "ReliquaryTestsShard";
     };
 
@@ -81,10 +84,5 @@ namespace Inscription
     template<>
     class Scribe<::ReliquaryRegistrationTestsFixture::GlobalRelic, BinaryArchive> final
         : public ArcaNullScribe<::ReliquaryRegistrationTestsFixture::GlobalRelic, BinaryArchive>
-    {};
-
-    template<>
-    class Scribe<::ReliquaryRegistrationTestsFixture::Curator, BinaryArchive> final :
-        public ArcaNullScribe<::ReliquaryRegistrationTestsFixture::Curator, BinaryArchive>
     {};
 }

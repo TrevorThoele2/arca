@@ -8,7 +8,7 @@
 
 #include "IsShard.h"
 
-#include "LocalPtr.h"
+#include "ShardIndex.h"
 
 #include "RelicID.h"
 #include "Type.h"
@@ -21,13 +21,11 @@ namespace Arca
     class ReliquaryShards : public ReliquaryComponent
     {
     public:
-        using Factory = void(*)(Reliquary&, RelicID, bool);
-        using FactoryMap = std::unordered_map<TypeName, Factory>;
-        FactoryMap factoryMap;
-
         void Create(const Type& type, RelicID id);
         template<class ShardT>
-        LocalPtr<ShardT> Create(RelicID id);
+        ShardIndex<ShardT> Create(RelicID id);
+        template<class ShardT>
+        ShardIndex<ShardT> CreateFromInternal(RelicID id);
 
         void Destroy(const Type& type, RelicID id);
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
@@ -43,38 +41,73 @@ namespace Arca
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] ShardT* FindStorage(RelicID id);
     public:
-        class BatchSources
-            : public StorageBatchSourcesBase<ShardBatchSourceBase, ReliquaryShards, BatchSources, is_shard>
+        class HandlerBase : public KnownPolymorphicSerializer
         {
         public:
-            Map constMap;
+            const TypeName typeName;
+        public:
+            virtual ~HandlerBase() = 0;
 
-            [[nodiscard]] ShardBatchSourceBase* FindConst(const TypeName& typeName);
+            virtual ShardBatchSourceBase& BatchSource() = 0;
+            virtual ShardBatchSourceBase& ConstBatchSource() = 0;
 
-            template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && !std::is_const_v<ShardT>, int> = 0>
-            [[nodiscard]] Map& MapFor();
-            template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && !std::is_const_v<ShardT>, int> = 0>
-            [[nodiscard]] const Map& MapFor() const;
-            template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && std::is_const_v<ShardT>, int> = 0>
-            [[nodiscard]] Map& MapFor();
-            template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && std::is_const_v<ShardT>, int> = 0>
-            [[nodiscard]] const Map& MapFor() const;
-        private:
-            explicit BatchSources(ReliquaryShards& owner);
-            friend ReliquaryShards;
-        } batchSources = BatchSources(*this);
+            virtual void Create(RelicID id, Reliquary& reliquary, bool isConst) = 0;
+            virtual void Destroy(RelicID id, Reliquary& reliquary) = 0;
 
-        using Destroyer = std::function<void(Reliquary&, RelicID, bool)>;
-        using DestroyerMap = std::unordered_map<TypeName, Destroyer>;
-        DestroyerMap destroyerMap;
+            [[nodiscard]] TypeName MainType() const override;
+        protected:
+            explicit HandlerBase(const TypeName& typeName);
+        };
 
-        KnownPolymorphicSerializerList serializers;
+        template<class ShardT>
+        class Handler final : public HandlerBase
+        {
+        public:
+            Arca::BatchSource<ShardT> batchSource;
+            Arca::BatchSource<const ShardT> constBatchSource;
+        public:
+            Handler();
+
+            ShardBatchSourceBase& BatchSource() override;
+            ShardBatchSourceBase& ConstBatchSource() override;
+
+            void Create(RelicID id, Reliquary& reliquary, bool isConst) override;
+            void Destroy(RelicID id, Reliquary& reliquary) override;
+
+            bool WillSerialize() const override;
+            void Serialize(Inscription::BinaryArchive& archive) override;
+            [[nodiscard]] std::vector<::Inscription::Type> InscriptionTypes(Inscription::BinaryArchive& archive) const override;
+        };
+
+        using HandlerPtr = std::unique_ptr<HandlerBase>;
+        using HandlerList = std::vector<HandlerPtr>;
+        HandlerList handlers;
+
+        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        void CreateHandler();
+        [[nodiscard]] HandlerBase* FindHandler(const TypeName& typeName) const;
+        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        [[nodiscard]] Handler<ShardT>* FindHandler() const;
+
+        [[nodiscard]] ShardBatchSourceBase* FindBatchSource(const Type& type) const;
+        template<class ObjectT, std::enable_if_t<is_shard_v<ObjectT>, int> = 0>
+        [[nodiscard]] BatchSource<ObjectT>* FindBatchSource() const;
+
+        [[nodiscard]] ShardBatchSourceBase& RequiredBatchSource(const Type& type) const;
+        template<class ObjectT, std::enable_if_t<is_shard_v<ObjectT>, int> = 0>
+        [[nodiscard]] BatchSource<ObjectT>& RequiredBatchSource() const;
+
+        template<class ObjectT, std::enable_if_t<is_shard_v<ObjectT>, int> = 0>
+        [[nodiscard]] Arca::Batch<ObjectT> Batch() const;
     public:
         ReliquaryShards(const ReliquaryShards& arg) = delete;
         ReliquaryShards& operator=(const ReliquaryShards& arg) = delete;
     private:
+        template<class ShardT>
+        ShardIndex<ShardT> CreateCommon(RelicID id);
+    private:
         template<class T>
-        [[nodiscard]] auto CreatePtr(RelicID id) const;
+        [[nodiscard]] auto CreateIndex(RelicID id) const;
     private:
         template<::Chroma::VariadicTemplateSize i>
         struct DestroyAllShardsIterator

@@ -3,6 +3,11 @@ using namespace std::string_literals;
 
 #include "ReliquaryRegistrationTests.h"
 
+void ReliquaryRegistrationTestsFixture::Relic::Initialize()
+{
+    Create<Shard>();
+}
+
 SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reliquary]")
 {
     GIVEN("no types registered to origin")
@@ -58,28 +63,13 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             }
         }
 
-        WHEN("retrieving unregistered global relic")
-        {
-            THEN("throws error")
-            {
-                REQUIRE_THROWS_MATCHES
-                (
-                    Arca::GlobalPtr<GlobalRelic>(*reliquary),
-                    NotRegistered,
-                    ::Catch::Matchers::Message(
-                        "The relic ("s + ::Chroma::ToString(TypeFor<GlobalRelic>()) + ") was not registered. " +
-                        "The class name is: \"" + typeid(GlobalRelic).name() + "\".")
-                );
-            }
-        }
-
         WHEN("retrieving unregistered global computation")
         {
             THEN("throws error")
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    Arca::ComputedPtr<int>(*reliquary),
+                    Arca::ComputedIndex<int>(*reliquary),
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The global computation ("s + typeid(int).name() + ") was not registered.")
@@ -157,27 +147,6 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
                     Catch::Matchers::Message(
                         "The relic (" + ::Chroma::ToString(TypeFor<Relic>()) + ") was not registered. " +
                         "The class name is: \"" + typeid(Relic).name() + "\".")
-                );
-            }
-        }
-    }
-
-    GIVEN("only typed relic registered to reliquary")
-    {
-        auto reliquary = ReliquaryOrigin()
-            .Type<Relic>()
-            .Actualize();
-
-        WHEN("creating typed relic with unregistered shard")
-        {
-            THEN("throws error")
-            {
-                REQUIRE_THROWS_MATCHES
-                (
-                    reliquary->Create<Relic>(),
-                    NotRegistered,
-                    ::Catch::Matchers::Message(
-                        "The shard ("s + ::Chroma::ToString(TypeFor<Shard>()) + ") was not registered.")
                 );
             }
         }

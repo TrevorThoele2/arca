@@ -1,27 +1,47 @@
 #include <catch.hpp>
 
-#include "PtrTests.h"
+#include "IndexTests.h"
 
 #include <Arca/ReliquaryOrigin.h>
 
-void PtrTestsFixture::TypedClosedRelic::PostConstruct(ShardTuple shards)
+void IndexTestsFixture::TypedClosedRelic::PostConstruct()
 {
-    shard = std::get<0>(shards);
+    shard = Find<Shard>();
 }
 
-void PtrTestsFixture::TypedOpenRelic::PostConstruct(ShardTuple shards)
+void IndexTestsFixture::TypedClosedRelic::Initialize()
 {
-    shard = std::get<0>(shards);
+    shard = Create<Shard>();
 }
 
-SCENARIO_METHOD(PtrTestsFixture, "LocalPtr resets to nullptr after underlying object destroyed", "[ptr]")
+void IndexTestsFixture::TypedOpenRelic::PostConstruct()
+{
+    shard = Find<Shard>();
+}
+
+void IndexTestsFixture::TypedOpenRelic::Initialize()
+{
+    shard = Create<Shard>();
+}
+
+void IndexTestsFixture::GlobalRelic::PostConstruct()
+{
+    shard = Find<Shard>();
+}
+
+void IndexTestsFixture::GlobalRelic::Initialize()
+{
+    shard = Create<Shard>();
+}
+
+SCENARIO_METHOD(IndexTestsFixture, "Index resets to nullptr after underlying object destroyed", "[index]")
 {
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<Shard>()
-            .Type<TypedClosedRelic>()
-            .Type<TypedOpenRelic>()
+            .Register<Shard>()
+            .Register<TypedClosedRelic>()
+            .Register<TypedOpenRelic>()
             .Actualize();
 
         WHEN("creating open relic then destroying relic")
@@ -114,14 +134,14 @@ SCENARIO_METHOD(PtrTestsFixture, "LocalPtr resets to nullptr after underlying ob
     }
 }
 
-SCENARIO_METHOD(PtrTestsFixture, "MatrixPtr", "[ptr][matrix]")
+SCENARIO_METHOD(IndexTestsFixture, "Matrix Index", "[index][matrix]")
 {
     GIVEN("registered reliquary, open relic and three shards")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<DifferentiableShard<0>>()
-            .Type<DifferentiableShard<1>>()
-            .Type<DifferentiableShard<2>>()
+            .Register<DifferentiableShard<0>>()
+            .Register<DifferentiableShard<1>>()
+            .Register<DifferentiableShard<2>>()
             .Actualize();
 
         auto relic = reliquary->Create<OpenRelic>();
@@ -129,41 +149,41 @@ SCENARIO_METHOD(PtrTestsFixture, "MatrixPtr", "[ptr][matrix]")
         auto shard1 = relic->Create<DifferentiableShard<1>>();
         auto shard2 = relic->Create<DifferentiableShard<2>>();
 
-        WHEN("creating MatrixPtr out of all")
+        WHEN("creating Index out of all")
         {
-            auto ptr = MatrixPtr<All<
+            auto index = MatrixIndex<All<
                 DifferentiableShard<0>,
                 DifferentiableShard<1>,
                 DifferentiableShard<2>>>
                 (relic.ID(), *reliquary);
 
-            THEN("dereferencing results in tuple of all, valid ptrs")
+            THEN("dereferencing results in tuple of all, valid indexs")
             {
-                auto tuple = *ptr;
-                auto ptr0 = std::get<0>(tuple);
-                auto ptr1 = std::get<1>(tuple);
-                auto ptr2 = std::get<2>(tuple);
-                REQUIRE(ptr0);
-                REQUIRE(ptr1);
-                REQUIRE(ptr2);
-                REQUIRE(shard0 == ptr0);
-                REQUIRE(shard1 == ptr1);
-                REQUIRE(shard2 == ptr2);
+                auto tuple = *index;
+                auto index0 = std::get<0>(tuple);
+                auto index1 = std::get<1>(tuple);
+                auto index2 = std::get<2>(tuple);
+                REQUIRE(index0);
+                REQUIRE(index1);
+                REQUIRE(index2);
+                REQUIRE(shard0 == index0);
+                REQUIRE(shard1 == index1);
+                REQUIRE(shard2 == index2);
             }
 
             THEN("is true")
             {
-                REQUIRE(ptr);
+                REQUIRE(index);
             }
 
             THEN("id is same as relic")
             {
-                REQUIRE(ptr.ID() == relic.ID());
+                REQUIRE(index.ID() == relic.ID());
             }
 
             THEN("owner is same as relic")
             {
-                REQUIRE(ptr.Owner() == relic.Owner());
+                REQUIRE(index.Owner() == relic.Owner());
             }
         }
     }

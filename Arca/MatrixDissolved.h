@@ -2,7 +2,7 @@
 
 #include "Signal.h"
 
-#include "MatrixPtr.h"
+#include "MatrixIndex.h"
 #include "IsMatrix.h"
 
 namespace Arca
@@ -10,7 +10,7 @@ namespace Arca
     template<class T>
     struct MatrixDissolved
     {
-        MatrixPtr<T> ptr;
+        MatrixIndex<T> index;
 
         static_assert(is_matrix_v<T>, "MatrixFormed must be used for matrices.");
     };

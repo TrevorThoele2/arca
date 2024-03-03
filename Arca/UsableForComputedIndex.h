@@ -7,6 +7,6 @@
 namespace Arca
 {
     template<class T>
-    constexpr static bool usable_for_computed_ptr_v =
+    constexpr static bool usable_for_computed_index_v =
         !is_relic_v<T> && !is_shard_v<T> && !is_matrix_v<T>;
 }

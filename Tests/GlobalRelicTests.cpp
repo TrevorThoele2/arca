@@ -7,14 +7,24 @@
 GlobalRelicTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std::move(myValue))
 {}
 
-void GlobalRelicTestsFixture::BasicTypedRelic::PostConstruct(ShardTuple shards)
+void GlobalRelicTestsFixture::BasicTypedRelic::PostConstruct()
 {
-    basicShard = std::get<0>(shards);
+    basicShard = Find<BasicShard>();
 }
 
-void GlobalRelicTestsFixture::GlobalRelic::PostConstruct(ShardTuple shards)
+void GlobalRelicTestsFixture::BasicTypedRelic::Initialize()
 {
-    basicShard = std::get<0>(shards);
+    basicShard = Create<BasicShard>();
+}
+
+void GlobalRelicTestsFixture::GlobalRelic::PostConstruct()
+{
+    basicShard = Find<BasicShard>();
+}
+
+void GlobalRelicTestsFixture::GlobalRelic::Initialize()
+{
+    basicShard = Create<BasicShard>();
 }
 
 SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
@@ -22,18 +32,18 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
     GIVEN("all types registered")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<BasicShard>()
-            .Type<BasicTypedRelic>()
-            .Type<GlobalRelic>()
+            .Register<BasicShard>()
+            .Register<BasicTypedRelic>()
+            .Register<GlobalRelic>()
             .Actualize();
 
         WHEN("retrieving global relic")
         {
-            const auto globalRelic = Arca::GlobalPtr<GlobalRelic>(*reliquary);
+            const auto globalRelic = Arca::GlobalIndex<GlobalRelic>(*reliquary);
 
             THEN("structure has been satisfied")
             {
-                REQUIRE(Arca::LocalPtr<BasicShard>(globalRelic->ID(), globalRelic->Owner()));
+                REQUIRE(Arca::ShardIndex<BasicShard>(globalRelic->ID(), globalRelic->Owner()));
                 REQUIRE(globalRelic->basicShard);
             }
 
@@ -44,7 +54,7 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
 
             WHEN("retrieving global relic as open")
             {
-                const auto asOpen = Arca::LocalPtr<OpenRelic>(globalRelic->ID(), globalRelic->Owner());
+                const auto asOpen = Arca::RelicIndex<OpenRelic>(globalRelic->ID(), globalRelic->Owner());
 
                 THEN("open is empty")
                 {
@@ -54,7 +64,7 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
 
             WHEN("retrieving as closed")
             {
-                const auto asClosed = Arca::LocalPtr<ClosedRelic>(globalRelic->ID(), globalRelic->Owner());
+                const auto asClosed = Arca::RelicIndex<ClosedRelic>(globalRelic->ID(), globalRelic->Owner());
 
                 THEN("closed is empty")
                 {
@@ -64,7 +74,7 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
 
             WHEN("retrieving as typed")
             {
-                const auto asTyped = Arca::LocalPtr<BasicTypedRelic>(globalRelic->ID(), globalRelic->Owner());
+                const auto asTyped = Arca::RelicIndex<BasicTypedRelic>(globalRelic->ID(), globalRelic->Owner());
 
                 THEN("typed is empty")
                 {
@@ -77,8 +87,8 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
     GIVEN("global relic registered")
     {
         auto origin = ReliquaryOrigin()
-            .Type<BasicShard>()
-            .Type<GlobalRelic>();
+            .Register<BasicShard>()
+            .Register<GlobalRelic>();
 
         WHEN("registering int computation with global relic backing")
         {
@@ -87,7 +97,7 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
                 REQUIRE_NOTHROW(origin.Compute<int>(
                     [](Reliquary& reliquary)
                     {
-                        const GlobalPtr<GlobalRelic> backing(reliquary);
+                        const GlobalIndex<GlobalRelic> backing(reliquary);
                         return backing->myValue;
                     }));
             }
@@ -97,20 +107,20 @@ SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
     GIVEN("global computation registered")
     {
         auto reliquary = ReliquaryOrigin()
-            .Type<BasicShard>()
-            .Type<BasicTypedRelic>()
-            .Type<GlobalRelic>()
+            .Register<BasicShard>()
+            .Register<BasicTypedRelic>()
+            .Register<GlobalRelic>()
             .Compute<int>(
                 [](Reliquary& reliquary)
                 {
-                    const GlobalPtr<GlobalRelic> backing(reliquary);
+                    const GlobalIndex<GlobalRelic> backing(reliquary);
                     return backing->myValue;
                 })
             .Actualize();
 
         WHEN("retrieving backing relic type")
         {
-            GlobalPtr<GlobalRelic> global(*reliquary);
+            GlobalIndex<GlobalRelic> global(*reliquary);
 
             THEN("is retrieved")
             {

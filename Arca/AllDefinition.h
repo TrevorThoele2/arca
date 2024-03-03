@@ -2,6 +2,7 @@
 
 #include "AllImplementation.h"
 #include "Reliquary.h"
+#include <Chroma/Iterate.h>
 
 namespace Arca
 {
@@ -80,7 +81,7 @@ namespace Arca
         std::vector<std::tuple<RelicID, Stored>> list;
         for (auto id : reliquary.AllIDs())
         {
-            auto potential = CreatePtrValue(id, reliquary);
+            auto potential = CreateIndexValue(id, reliquary);
             if (potential)
                 list.emplace_back(id, *potential);
         }
@@ -90,7 +91,7 @@ namespace Arca
     template<class... Ts>
     auto MatrixImplementation<All<Ts...>>::CreateStored(RelicID id, Reliquary& reliquary) -> Stored
     {
-        return *CreatePtrValue(id, reliquary);
+        return *CreateIndexValue(id, reliquary);
     }
 
     template<class... Ts>
@@ -106,7 +107,7 @@ namespace Arca
     }
 
     template<class... Ts>
-    auto MatrixImplementation<All<Ts...>>::CreatePtrValue(RelicID id, Reliquary& reliquary) -> PtrOptional
+    auto MatrixImplementation<All<Ts...>>::CreateIndexValue(RelicID id, Reliquary& reliquary) -> IndexOptional
     {
         Tuple tuple;
         Chroma::IterateRange<Chroma::VariadicTemplateSize, AllToTuple, sizeof...(Ts) - 1>

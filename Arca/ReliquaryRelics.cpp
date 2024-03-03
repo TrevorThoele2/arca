@@ -11,16 +11,16 @@ namespace Arca
 {
     void ReliquaryRelics::Destroy(const TypeName& typeName, RelicID id)
     {
-        const auto destroyer = destroyerMap.find(typeName);
-        if (destroyer == destroyerMap.end())
+        const auto handler = FindLocalHandler(typeName);
+        if (handler == nullptr)
             throw NotRegistered(Type(typeName));
 
-        destroyer->second(Owner(), id);
+        handler->Destroy(id, Owner());
     }
 
     void ReliquaryRelics::Clear(const TypeName& typeName)
     {
-        auto& batchSource = batchSources.Required(typeName);
+        auto& batchSource = RequiredBatchSource(typeName);
         batchSource.DestroyAllFromBase(Owner());
     }
 
@@ -107,10 +107,12 @@ namespace Arca
 
         Owner().matrices.NotifyDestroying(id);
 
-        for (auto& shardBatchSource : Shards().batchSources.map)
+        for (auto& handler : Shards().handlers)
         {
-            if (shardBatchSource.second->DestroyFromBase(id))
-                Owner().Raise<Destroying>(HandleFrom(id, shardBatchSource.second->Type(), HandleObjectType::Shard));
+            if (handler->BatchSource().DestroyFromBase(id))
+                Owner().Raise<Destroying>(HandleFrom(id, Type{ handler->typeName, false }, HandleObjectType::Shard));
+            if (handler->ConstBatchSource().DestroyFromBase(id))
+                Owner().Raise<Destroying>(HandleFrom(id, Type{ handler->typeName, true }, HandleObjectType::Shard));
         }
 
         if (metadata.parent)
@@ -129,7 +131,7 @@ namespace Arca
                 parentMetadata->children.erase(eraseChildrenItr);
         }
 
-        auto batchSource = batchSources.Find(metadata.type.name);
+        auto batchSource = FindBatchSource(metadata.type.name);
         batchSource->DestroyFromBase(id);
 
         DestroyMetadata(id);
@@ -191,8 +193,76 @@ namespace Arca
         Owner().Raise<RelicParented>({ parent, child });
     }
 
-    ReliquaryRelics::BatchSources::BatchSources(ReliquaryRelics& owner) : StorageBatchSourcesBase(owner)
+    ReliquaryRelics::LocalHandlerBase::~LocalHandlerBase() = default;
+
+    TypeName ReliquaryRelics::LocalHandlerBase::MainType() const
+    {
+        return typeName;
+    }
+
+    ReliquaryRelics::LocalHandlerBase::LocalHandlerBase(const TypeName& typeName) : typeName(typeName)
     {}
+
+    ReliquaryRelics::LocalHandlerBase* ReliquaryRelics::FindLocalHandler(const TypeName & typeName) const
+    {
+        const auto found = std::find_if(
+            localHandlers.begin(),
+            localHandlers.end(),
+            [typeName](const LocalHandlerPtr& entry)
+            {
+                return entry->typeName == typeName;
+            });
+        if (found == localHandlers.end())
+            return nullptr;
+
+        return found->get();
+    }
+
+    RelicBatchSourceBase* ReliquaryRelics::FindBatchSource(const TypeName& typeName) const
+    {
+        const auto found = FindLocalHandler(typeName);
+        if (found == nullptr)
+            return nullptr;
+
+        return &found->BatchSource();
+    }
+
+    RelicBatchSourceBase& ReliquaryRelics::RequiredBatchSource(const TypeName& typeName) const
+    {
+        const auto found = FindBatchSource(typeName);
+        if (!found)
+            throw NotRegistered(Type(typeName));
+
+        return *found;
+    }
+
+    ReliquaryRelics::GlobalHandlerBase::~GlobalHandlerBase() = default;
+
+    TypeName ReliquaryRelics::GlobalHandlerBase::MainType() const
+    {
+        return typeName;
+    }
+
+    ReliquaryRelics::GlobalHandlerBase::GlobalHandlerBase(
+        const TypeName& typeName, std::shared_ptr<void>&& storage, RelicID id)
+        :
+        typeName(typeName), storage(std::move(storage)), id(id)
+    {}
+
+    ReliquaryRelics::GlobalHandlerBase* ReliquaryRelics::FindGlobalHandler(const TypeName& typeName) const
+    {
+        const auto found = std::find_if(
+            globalHandlers.begin(),
+            globalHandlers.end(),
+            [typeName](const GlobalHandlerPtr& entry)
+            {
+                return entry->typeName == typeName;
+            });
+        if (found == globalHandlers.end())
+            return nullptr;
+
+        return found->get();
+    }
 
     RelicMetadata& ReliquaryRelics::ValidateParentForParenting(const Handle& parent)
     {

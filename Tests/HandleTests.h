@@ -29,24 +29,26 @@ public:
         explicit OtherShard(std::string myValue);
     };
 
-    class TypedRelic final : public ClosedTypedRelicAutomation<TypedRelic, Shard>
+    class TypedRelic final : public ClosedTypedRelicAutomation<TypedRelic>
     {
     public:
-        LocalPtr<Shard> basicShard;
+        ShardIndex<Shard> basicShard;
     public:
         TypedRelic() = default;
 
-        void PostConstruct(ShardTuple shards);
+        void PostConstruct();
+        void Initialize();
     };
 
-    class GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic, Shard>
+    class GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic>
     {
     public:
-        LocalPtr<Shard> basicShard;
+        ShardIndex<Shard> basicShard;
     public:
         GlobalRelic() = default;
 
-        void PostConstruct(ShardTuple shards);
+        void PostConstruct();
+        void Initialize();
     };
 
     class Curator final : public Arca::Curator
@@ -134,10 +136,5 @@ namespace Inscription
     template<>
     class Scribe<::HandleTestsFixture::GlobalRelic, BinaryArchive> final
         : public ArcaNullScribe<::HandleTestsFixture::GlobalRelic, BinaryArchive>
-    {};
-
-    template<>
-    class Scribe<::HandleTestsFixture::Curator, BinaryArchive> final :
-        public ArcaNullScribe<::HandleTestsFixture::Curator, BinaryArchive>
     {};
 }

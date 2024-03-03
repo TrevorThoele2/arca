@@ -38,24 +38,26 @@ public:
         explicit OtherShard(int myValue);
     };
 
-    class BasicTypedRelic final : public ClosedTypedRelicAutomation<BasicTypedRelic, BasicShard>
+    class BasicTypedRelic final : public ClosedTypedRelicAutomation<BasicTypedRelic>
     {
     public:
-        LocalPtr<BasicShard> basicShard;
+        ShardIndex<BasicShard> basicShard;
     public:
         BasicTypedRelic() = default;
 
-        void PostConstruct(ShardTuple shards);
+        void PostConstruct();
+        void Initialize();
     };
 
-    class GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic, BasicShard>
+    class GlobalRelic final : public ClosedTypedRelicAutomation<GlobalRelic>
     {
     public:
-        LocalPtr<BasicShard> basicShard;
+        ShardIndex<BasicShard> basicShard;
     public:
         GlobalRelic() = default;
 
-        void PostConstruct(ShardTuple shards);
+        void PostConstruct();
+        void Initialize();
     };
 
     class BasicCurator final : public Curator
@@ -166,10 +168,5 @@ namespace Inscription
     template<>
     class Scribe<::ReliquaryTestsFixture::GlobalRelic, BinaryArchive> final
         : public ArcaNullScribe<::ReliquaryTestsFixture::GlobalRelic, BinaryArchive>
-    {};
-
-    template<>
-    class Scribe<::ReliquaryTestsFixture::BasicCurator, BinaryArchive> final :
-        public ArcaNullScribe<::ReliquaryTestsFixture::BasicCurator, BinaryArchive>
     {};
 }
