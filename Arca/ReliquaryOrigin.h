@@ -262,6 +262,10 @@ namespace Arca
 
         Type<CreatedKnown<ShardT>>();
         Type<DestroyingKnown<ShardT>>();
+        Type<CreatedKnown<const ShardT>>();
+        Type<DestroyingKnown<const ShardT>>();
+        Type<CreatedKnown<Either<ShardT>>>();
+        Type<DestroyingKnown<Either<ShardT>>>();
 
         return *this;
     }

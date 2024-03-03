@@ -149,8 +149,8 @@ namespace Arca
         void NotifyCompositesShardCreate(RelicID id);
         void NotifyCompositesShardDestroy(RelicID id);
     private:
-        template<class ShardT>
-        LocalPtr<ShardT> CreatePtr(RelicID id) const;
+        template<class T>
+        [[nodiscard]] auto CreatePtr(RelicID id) const;
     private:
         template<::Chroma::VariadicTemplateSize i>
         struct DestroyAllShardsIterator
