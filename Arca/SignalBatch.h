@@ -26,8 +26,6 @@ namespace Arca
         SignalBatch(const SignalBatch& arg);
         SignalBatch(SignalBatch&& arg) noexcept;
 
-        ~SignalBatch();
-
         SignalBatch& operator=(const SignalBatch& arg);
         SignalBatch& operator=(SignalBatch&& arg) noexcept;
 
@@ -40,9 +38,6 @@ namespace Arca
         [[nodiscard]] const_iterator end() const;
     private:
         SourceT* source = nullptr;
-
-        void IncrementSource();
-        void DecrementSource();
     private:
         bool isInvalid = false;
 
@@ -62,29 +57,16 @@ namespace Arca
 
     template<class Signal>
     SignalBatch<Signal>::SignalBatch(SourceT& source) : source(&source)
-    {
-        IncrementSource();
-    }
+    {}
 
     template<class Signal>
     SignalBatch<Signal>::SignalBatch(const SignalBatch& arg) : source(arg.source)
-    {
-        IncrementSource();
-    }
+    {}
 
     template<class Signal>
     SignalBatch<Signal>::SignalBatch(SignalBatch&& arg) noexcept : source(std::move(arg.source))
     {
         arg.source = nullptr;
-    }
-
-    template<class Signal>
-    SignalBatch<Signal>::~SignalBatch()
-    {
-        if (isInvalid)
-            return;
-
-        DecrementSource();
     }
 
     template<class Signal>
@@ -149,24 +131,6 @@ namespace Arca
         ThrowIfInvalid();
 
         return source->end();
-    }
-
-    template<class Signal>
-    void SignalBatch<Signal>::IncrementSource()
-    {
-        if (!source)
-            return;
-
-        source->IncrementReference();
-    }
-
-    template<class Signal>
-    void SignalBatch<Signal>::DecrementSource()
-    {
-        if (!source)
-            return;
-
-        source->DecrementReference();
     }
 
     template<class Signal>

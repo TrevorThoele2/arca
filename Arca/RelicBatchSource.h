@@ -2,8 +2,7 @@
 
 #include <type_traits>
 
-#include "Ref.h"
-#include "IDManager.h"
+#include "VesselID.h"
 
 #include "Serialization.h"
 
@@ -16,6 +15,8 @@ namespace Arca
     public:
         virtual ~RelicBatchSourceBase() = 0;
 
+        virtual void DestroyFromBase(VesselID id) = 0;
+
         [[nodiscard]] virtual SizeT Size() const = 0;
     protected:
         friend class Reliquary;
@@ -26,23 +27,29 @@ namespace Arca
     {
     public:
         using RelicT = T;
-        using Reference = Ref<T>;
     private:
-        using List = IDManager<RelicID, RelicT>;
+        struct Entry
+        {
+            VesselID id;
+            RelicT relic;
+        };
+
+        using List = std::vector<Entry>;
     public:
         using iterator = typename List::iterator;
         using const_iterator = typename List::const_iterator;
     public:
         RelicBatchSource() = default;
 
-        Reference Add(const RelicT& add);
-        Reference Add(RelicT&& add);
+        RelicT* Add(VesselID id);
 
-        void Destroy(Reference destroy);
-        void Destroy(iterator destroy);
-        void Destroy(const_iterator destroy);
+        iterator Destroy(VesselID destroy);
+        iterator Destroy(iterator destroy);
+        iterator Destroy(const_iterator destroy);
 
-        Reference Find(RelicID id);
+        void DestroyFromBase(VesselID id) override;
+
+        RelicT* Find(VesselID id);
 
         [[nodiscard]] SizeT Size() const override;
         [[nodiscard]] bool IsEmpty() const;
@@ -55,66 +62,72 @@ namespace Arca
         List list;
     private:
         friend class Reliquary;
-        friend class Ref<T>;
     private:
         INSCRIPTION_ACCESS;
     };
 
     template<class T>
-    auto RelicBatchSource<T>::Add(const RelicT& add) -> Reference
+    auto RelicBatchSource<T>::Add(VesselID id) -> RelicT*
     {
-        auto added = list.Add(add);
-        return Reference(added.ID(), *this);
+        auto found = Find(id);
+        if (found)
+            return found;
+
+        list.push_back({ id, RelicT{} });
+        return &list.back().relic;
     }
 
     template<class T>
-    auto RelicBatchSource<T>::Add(RelicT&& add) -> Reference
+    auto RelicBatchSource<T>::Destroy(VesselID destroy) -> iterator
     {
-        auto added = list.Add(std::move(add));
-        return Reference(added.ID(), *this);
+        auto itr = std::remove_if(
+            list.begin(),
+            list.end(),
+            [destroy](const Entry& entry) { return entry.id == destroy; });
+        return list.erase(itr);
     }
 
     template<class T>
-    void RelicBatchSource<T>::Destroy(Reference destroy)
+    auto RelicBatchSource<T>::Destroy(iterator destroy) -> iterator
     {
-        if (destroy.batchSource != this)
-            return;
-
-        list.Remove(destroy.id);
+        return list.erase(destroy);
     }
 
     template<class T>
-    void RelicBatchSource<T>::Destroy(iterator destroy)
+    auto RelicBatchSource<T>::Destroy(const_iterator destroy) -> iterator
     {
-        list.Remove(destroy);
+        return list.erase(destroy);
     }
 
     template<class T>
-    void RelicBatchSource<T>::Destroy(const_iterator destroy)
+    void RelicBatchSource<T>::DestroyFromBase(VesselID id)
     {
-        list.Destroy(destroy);
+        Destroy(id);
     }
 
     template<class T>
-    auto RelicBatchSource<T>::Find(RelicID id) -> Reference
+    auto RelicBatchSource<T>::Find(VesselID id) -> RelicT*
     {
-        auto found = list.Find(id);
+        auto found = std::find_if(
+            list.begin(),
+            list.end(),
+            [id](const Entry& entry) { return entry.id == id; });
         if (found == list.end())
             return {};
 
-        return Reference(found.ID(), *this);
+        return &found->relic;
     }
 
     template<class T>
     auto RelicBatchSource<T>::Size() const -> SizeT
     {
-        return list.Size();
+        return list.size();
     }
 
     template<class T>
     bool RelicBatchSource<T>::IsEmpty() const
     {
-        return list.IsEmpty();
+        return list.empty();
     }
 
     template<class T>

@@ -24,8 +24,6 @@ SCENARIO_METHOD(SignalBatchFixture, "SignalBatch")
 
         WHEN("initializing")
         {
-            reliquary.Initialize();
-
             WHEN("raising signal")
             {
                 BasicSignal signal{};

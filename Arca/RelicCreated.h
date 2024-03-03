@@ -6,6 +6,6 @@ namespace Arca
     struct RelicCreated
     {
         using RelicT = Relic;
-        Ref<RelicT> relic;
+        RelicT& relic;
     };
 }

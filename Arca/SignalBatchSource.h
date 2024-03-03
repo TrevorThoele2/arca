@@ -2,8 +2,6 @@
 
 #include <list>
 
-#include "RelicTraits.h"
-
 #include "Serialization.h"
 #include <Inscription/ListScribe.h>
 
@@ -15,13 +13,6 @@ namespace Arca
     {
     public:
         virtual ~SignalBatchSourceBase() = 0;
-    public:
-        virtual void IncrementReference() = 0;
-        virtual void DecrementReference() = 0;
-    protected:
-        Reliquary* owner;
-
-        explicit SignalBatchSourceBase(Reliquary& owner);
     private:
         friend Reliquary;
     };
@@ -36,7 +27,7 @@ namespace Arca
         using iterator = typename List::iterator;
         using const_iterator = typename List::const_iterator;
     public:
-        explicit SignalBatchSource(Reliquary& owner);
+        SignalBatchSource() = default;
         explicit SignalBatchSource(const Inscription::BinaryTableData<SignalBatchSource>& data);
 
         void Raise(const Signal& signal);
@@ -50,14 +41,62 @@ namespace Arca
         [[nodiscard]] const_iterator begin() const;
         [[nodiscard]] iterator end();
         [[nodiscard]] const_iterator end() const;
-    public:
-        void IncrementReference() override;
-        void DecrementReference() override;
     private:
         List list;
-
-        size_t referenceCount = 0;
     private:
         INSCRIPTION_TABLE_ACCESS;
     };
+
+    template<class Signal>
+    SignalBatchSource<Signal>::SignalBatchSource(const Inscription::BinaryTableData<SignalBatchSource>& data) :
+        SignalBatchSourceBase(*data.owner), list(std::move(data.list))
+    {}
+
+    template<class Signal>
+    void SignalBatchSource<Signal>::Raise(const Signal& signal)
+    {
+        list.push_back(signal);
+    }
+
+    template<class Signal>
+    void SignalBatchSource<Signal>::Clear()
+    {
+        list.clear();
+    }
+
+    template<class Signal>
+    auto SignalBatchSource<Signal>::Size() const -> SizeT
+    {
+        return list.size();
+    }
+
+    template<class Signal>
+    bool SignalBatchSource<Signal>::IsEmpty() const
+    {
+        return list.empty();
+    }
+
+    template<class Signal>
+    auto SignalBatchSource<Signal>::begin() -> iterator
+    {
+        return list.begin();
+    }
+
+    template<class Signal>
+    auto SignalBatchSource<Signal>::begin() const -> const_iterator
+    {
+        return list.begin();
+    }
+
+    template<class Signal>
+    auto SignalBatchSource<Signal>::end() -> iterator
+    {
+        return list.end();
+    }
+
+    template<class Signal>
+    auto SignalBatchSource<Signal>::end() const -> const_iterator
+    {
+        return list.end();
+    }
 }
