@@ -72,41 +72,53 @@ public:
 namespace Arca
 {
     template<>
-    struct ShardTraits<::ReliquaryTestsFixture::BasicShard>
+    struct Traits<::ReliquaryTestsFixture::BasicShard>
     {
+        static const ObjectType objectType = ObjectType::Shard;
         static const TypeHandle typeHandle;
     };
 
     template<>
-    struct ShardTraits<::ReliquaryTestsFixture::OtherBasicShard>
+    struct Traits<::ReliquaryTestsFixture::OtherBasicShard>
     {
+        static const ObjectType objectType = ObjectType::Shard;
         static const TypeHandle typeHandle;
     };
 
     template<>
-    struct ShardTraits<::ReliquaryTestsFixture::OtherShard>
+    struct Traits<::ReliquaryTestsFixture::OtherShard>
     {
+        static const ObjectType objectType = ObjectType::Shard;
         static const TypeHandle typeHandle;
     };
 
     template<>
-    struct RelicTraits<::ReliquaryTestsFixture::BasicTypedRelic>
+    struct Traits<::ReliquaryTestsFixture::BasicTypedRelic>
     {
+        static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandle typeHandle;
         using Shards = ShardList<::ReliquaryTestsFixture::BasicShard>;
     };
 
     template<>
-    struct RelicTraits<::ReliquaryTestsFixture::StaticRelic>
+    struct Traits<::ReliquaryTestsFixture::StaticRelic>
     {
+        static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandle typeHandle;
         using Shards = ShardList<::ReliquaryTestsFixture::BasicShard>;
     };
 
     template<>
-    struct CuratorTraits<::ReliquaryTestsFixture::BasicCurator>
+    struct Traits<::ReliquaryTestsFixture::BasicCurator>
     {
+        static const ObjectType objectType = ObjectType::Curator;
         static const TypeHandle typeHandle;
+    };
+
+    template<>
+    struct Traits<::ReliquaryTestsFixture::BasicSignal>
+    {
+        static const ObjectType objectType = ObjectType::Signal;
     };
 }
 

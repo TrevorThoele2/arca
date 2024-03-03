@@ -4,22 +4,9 @@
 
 SCENARIO_METHOD(SignalBatchFixture, "default signal batch", "[SignalBatch]")
 {
-    GIVEN("registered reliquary")
-    {
-        auto reliquary = ReliquaryOrigin().Signal<BasicSignal>().Actualize();
-
-        WHEN("starting batch with unregistered signal")
-        {
-            THEN("throws")
-            {
-                REQUIRE_THROWS_AS(reliquary.SignalBatch<UnregisteredSignal>(), NotRegistered);
-            }
-        }
-    }
-
     GIVEN("default signal batch")
     {
-        SignalBatch<BasicSignal> signalBatch;
+        Batch<BasicSignal> signalBatch;
 
         WHEN("querying size")
         {
@@ -85,11 +72,11 @@ SCENARIO_METHOD(SignalBatchFixture, "signal batch", "[SignalBatch]")
         {
             BasicSignal signal{};
             signal.myValue = dataGeneration.Random<int>();
-            reliquary.RaiseSignal(signal);
+            reliquary.Raise(signal);
 
             THEN("starting batch contains raised signal")
             {
-                auto batch = reliquary.SignalBatch<BasicSignal>();
+                auto batch = reliquary.Batch<BasicSignal>();
 
                 REQUIRE(!batch.IsEmpty());
                 REQUIRE(batch.Size() == 1);
@@ -99,13 +86,13 @@ SCENARIO_METHOD(SignalBatchFixture, "signal batch", "[SignalBatch]")
 
         WHEN("starting batch")
         {
-            auto batch = reliquary.SignalBatch<BasicSignal>();
+            auto batch = reliquary.Batch<BasicSignal>();
 
             THEN("raising signal causes batch to contain signal")
             {
                 BasicSignal signal;
                 signal.myValue = dataGeneration.Random<int>();
-                reliquary.RaiseSignal(signal);
+                reliquary.Raise(signal);
 
                 REQUIRE(!batch.IsEmpty());
                 REQUIRE(batch.Size() == 1);

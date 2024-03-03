@@ -3,6 +3,7 @@
 #include <unordered_set>
 
 #include "RelicParented.h"
+#include "PipelineException.h"
 
 namespace Arca
 {
@@ -16,7 +17,8 @@ namespace Arca
         staticRelicList(arg.staticRelicList),
         namedRelicStructureList(arg.namedRelicStructureList),
         shardList(arg.shardList),
-        curatorPipeline(arg.curatorPipeline),
+        curatorInitializationPipeline(arg.curatorInitializationPipeline),
+        curatorWorkPipeline(arg.curatorWorkPipeline),
         curatorSerializationTypeHandlesFactoryList(arg.curatorSerializationTypeHandlesFactoryList),
         signalList(arg.signalList)
     {
@@ -32,7 +34,8 @@ namespace Arca
         shardList = arg.shardList;
         for (auto& provider : arg.curatorProviders)
             curatorProviders.emplace(provider.first, provider.second->Clone());
-        curatorPipeline = arg.curatorPipeline;
+        curatorInitializationPipeline = arg.curatorInitializationPipeline;
+        curatorWorkPipeline = arg.curatorWorkPipeline;
         curatorSerializationTypeHandlesFactoryList = arg.curatorSerializationTypeHandlesFactoryList;
         signalList = arg.signalList;
 
@@ -54,16 +57,26 @@ namespace Arca
 
         reliquary.namedRelicStructureList = namedRelicStructureList;
 
-        PushAllCuratorsTo(reliquary);
+        const auto allCurators = PushAllCuratorsTo(reliquary);
 
-        PushCuratorPipeline(reliquary);
+        auto transformedCuratorInitializationPipeline =
+            TransformCuratorPipeline(
+                reliquary,
+                curatorInitializationPipeline,
+                allCurators);
+        reliquary.curatorWorkPipeline =
+            TransformCuratorPipeline(
+                reliquary,
+                curatorWorkPipeline,
+                allCurators);
 
         for (auto& initializer : staticRelicList)
             initializer.factory(reliquary);
 
         {
-            for (auto& loop : reliquary.curators)
-                loop.second->Get()->Initialize(reliquary);
+            for (auto& stage : transformedCuratorInitializationPipeline)
+                for (auto& curator : stage)
+                    curator->Initialize(reliquary);
 
             for (auto& loop : typedRelicInitializerList)
                 loop(reliquary);
@@ -76,21 +89,32 @@ namespace Arca
     {
         for (auto& loop : namedRelicStructureList)
             if (loop.name == name)
-                throw AlreadyRegistered();
+                throw AlreadyRegistered("relic structure", name);
 
         namedRelicStructureList.emplace_back(name, structure);
         return *this;
     }
 
-    ReliquaryOrigin& ReliquaryOrigin::CuratorPipeline(const Arca::CuratorPipeline& pipeline)
+    ReliquaryOrigin& ReliquaryOrigin::CuratorPipeline(const Arca::Pipeline& pipeline)
     {
-        curatorPipeline = pipeline;
+        curatorInitializationPipeline = pipeline;
+        curatorWorkPipeline = pipeline;
 
         return *this;
     }
 
-    void ReliquaryOrigin::PushAllCuratorsTo(Reliquary& reliquary) const
+    ReliquaryOrigin& ReliquaryOrigin::CuratorPipeline(const Pipeline& initialization, const Pipeline& work)
     {
+        curatorInitializationPipeline = initialization;
+        curatorWorkPipeline = work;
+
+        return *this;
+    }
+
+    std::vector<Curator*> ReliquaryOrigin::PushAllCuratorsTo(Reliquary& reliquary) const
+    {
+        std::vector<Arca::Curator*> returnValue;
+
         std::vector<CuratorProviderBase::Provided> provided;
 
         for (auto& loop : curatorProviders)
@@ -105,20 +129,45 @@ namespace Arca
             else
                 handle = std::make_unique<UnownedCuratorHandle>(std::get<1>(loop.curator), loop.typeHandle);
 
+            returnValue.push_back(handle->Get());
+
             reliquary.curators.emplace(handle->typeHandle, std::move(handle));
         }
 
         for (auto& loop : curatorSerializationTypeHandlesFactoryList)
             loop(reliquary);
+
+        return returnValue;
     }
 
-    void ReliquaryOrigin::PushCuratorPipeline(Reliquary& reliquary) const
+    Reliquary::CuratorPipeline ReliquaryOrigin::TransformCuratorPipeline(
+        Reliquary& reliquary,
+        const Pipeline& toTransform,
+        const std::vector<Arca::Curator*>& allCurators)
     {
+        auto pipeline = toTransform;
+        for (auto loop = pipeline.begin(); loop != pipeline.end();)
+        {
+            if (loop->Empty())
+                loop = pipeline.erase(loop);
+            else
+                ++loop;
+        }
+
         Reliquary::CuratorPipeline createdPipeline;
+
+        if (pipeline.empty())
+        {
+            createdPipeline.push_back(Reliquary::CuratorStage{});
+            for (auto& loop : allCurators)
+                createdPipeline.back().push_back(loop);
+
+            return createdPipeline;
+        }
 
         std::unordered_set<Arca::Curator*> seenCurators;
 
-        for(auto& stage : curatorPipeline)
+        for(auto& stage : toTransform)
         {
             Reliquary::CuratorStage createdStage;
 
@@ -127,11 +176,11 @@ namespace Arca
             {
                 auto found = reliquary.FindCurator(typeHandle);
                 if (found == nullptr)
-                    throw InvalidCuratorPipeline("Curator (" + typeHandle + ") was not found.");
+                    throw InvalidPipeline("Curator (" + typeHandle + ") was not found.");
 
                 const auto wasAlreadySeen = !seenCurators.emplace(found).second;
                 if (wasAlreadySeen)
-                    throw InvalidCuratorPipeline("Curator (" + typeHandle + ") was already in the pipeline.");
+                    throw InvalidPipeline("Curator (" + typeHandle + ") was already in the pipeline.");
 
                 createdStage.push_back(found);
             }
@@ -140,6 +189,6 @@ namespace Arca
                 createdPipeline.push_back(createdStage);
         }
 
-        reliquary.curatorPipeline = createdPipeline;
+        return createdPipeline;
     }
 }

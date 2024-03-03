@@ -1,34 +1,32 @@
 #pragma once
 
+#include "Batch.h"
 #include "ShardBatchSource.h"
 #include "ShardBatchIterator.h"
 #include "BatchException.h"
 
 namespace Arca
 {
-    using ShardBatchSizeT = size_t;
-
     template<class T>
-    class ShardBatch
+    class Batch<T, std::enable_if_t<is_shard_v<T>>>
     {
     private:
-        using SourceT = ShardBatchSource<T>;
+        using SourceT = BatchSource<std::decay_t<T>>;
     public:
-        using ShardT = typename SourceT::ShardT;
+        using ShardT = T;
 
-        using SizeT = ShardBatchSizeT;
         using iterator = ShardBatchIteratorBase<ShardT, typename SourceT::iterator>;
         using const_iterator = ShardBatchIteratorBase<const ShardT, typename SourceT::const_iterator>;
     public:
-        ShardBatch();
-        explicit ShardBatch(SourceT& source);
-        ShardBatch(const ShardBatch& arg);
-        ShardBatch(ShardBatch&& arg) noexcept;
+        Batch();
+        explicit Batch(SourceT& source);
+        Batch(const Batch& arg);
+        Batch(Batch&& arg) noexcept;
 
-        ShardBatch& operator=(const ShardBatch& arg);
-        ShardBatch& operator=(ShardBatch&& arg) noexcept;
+        Batch& operator=(const Batch& arg);
+        Batch& operator=(Batch&& arg) noexcept;
 
-        [[nodiscard]] SizeT Size() const;
+        [[nodiscard]] size_t Size() const;
         [[nodiscard]] bool IsEmpty() const;
 
         [[nodiscard]] iterator begin();
@@ -41,25 +39,25 @@ namespace Arca
     };
 
     template<class T>
-    ShardBatch<T>::ShardBatch()
+    Batch<T, std::enable_if_t<is_shard_v<T>>>::Batch()
     {}
 
     template<class T>
-    ShardBatch<T>::ShardBatch(SourceT& source) : source(&source)
+    Batch<T, std::enable_if_t<is_shard_v<T>>>::Batch(SourceT& source) : source(&source)
     {}
 
     template<class T>
-    ShardBatch<T>::ShardBatch(const ShardBatch& arg) : source(arg.source)
+    Batch<T, std::enable_if_t<is_shard_v<T>>>::Batch(const Batch& arg) : source(arg.source)
     {}
 
     template<class T>
-    ShardBatch<T>::ShardBatch(ShardBatch&& arg) noexcept : source(std::move(arg.source))
+    Batch<T, std::enable_if_t<is_shard_v<T>>>::Batch(Batch&& arg) noexcept : source(std::move(arg.source))
     {
         arg.source = nullptr;
     }
 
     template<class T>
-    ShardBatch<T>& ShardBatch<T>::operator=(const ShardBatch& arg)
+    auto Batch<T, std::enable_if_t<is_shard_v<T>>>::operator=(const Batch& arg) -> Batch&
     {
         source = arg.source;
 
@@ -67,7 +65,7 @@ namespace Arca
     }
 
     template<class T>
-    ShardBatch<T>& ShardBatch<T>::operator=(ShardBatch&& arg) noexcept
+    auto Batch<T, std::enable_if_t<is_shard_v<T>>>::operator=(Batch&& arg) noexcept -> Batch&
     {
         source = std::move(arg.source);
         arg.source = nullptr;
@@ -76,55 +74,59 @@ namespace Arca
     }
 
     template<class T>
-    auto ShardBatch<T>::Size() const -> SizeT
+    auto Batch<T, std::enable_if_t<is_shard_v<T>>>::Size() const -> size_t
     {
         SourceRequired();
 
-        return source->Size();
+        return !std::is_const_v<T>
+            ? source->NonConstSize()
+            : source->TotalSize();
     }
 
     template<class T>
-    bool ShardBatch<T>::IsEmpty() const
+    bool Batch<T, std::enable_if_t<is_shard_v<T>>>::IsEmpty() const
     {
         SourceRequired();
 
-        return source->IsEmpty();
+        return !std::is_const_v<T>
+            ? source->IsNonConstEmpty()
+            : source->IsEmpty();
     }
 
     template<class T>
-    auto ShardBatch<T>::begin() -> iterator
+    auto Batch<T, std::enable_if_t<is_shard_v<T>>>::begin() -> iterator
     {
         SourceRequired();
 
-        return iterator(source->begin());
+        return iterator(source->begin(), source->end());
     }
 
     template<class T>
-    auto ShardBatch<T>::begin() const -> const_iterator
+    auto Batch<T, std::enable_if_t<is_shard_v<T>>>::begin() const -> const_iterator
     {
         SourceRequired();
 
-        return const_iterator(source->begin());
+        return const_iterator(source->begin(), source->end());
     }
 
     template<class T>
-    auto ShardBatch<T>::end() -> iterator
+    auto Batch<T, std::enable_if_t<is_shard_v<T>>>::end() -> iterator
     {
         SourceRequired();
 
-        return iterator(source->end());
+        return iterator(source->end(), source->end());
     }
 
     template<class T>
-    auto ShardBatch<T>::end() const -> const_iterator
+    auto Batch<T, std::enable_if_t<is_shard_v<T>>>::end() const -> const_iterator
     {
         SourceRequired();
 
-        return const_iterator(source->end());
+        return const_iterator(source->end(), source->end());
     }
 
     template<class T>
-    void ShardBatch<T>::SourceRequired() const
+    void Batch<T, std::enable_if_t<is_shard_v<T>>>::SourceRequired() const
     {
         if (!source)
             throw BatchNotSetup();

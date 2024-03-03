@@ -13,3 +13,12 @@ public:
         int value = 0;
     };
 };
+
+namespace Arca
+{
+    template<>
+    struct Traits<::SignalTestsFixture::BasicSignal>
+    {
+        static const ObjectType objectType = ObjectType::Signal;
+    };
+}

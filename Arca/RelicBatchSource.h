@@ -2,7 +2,9 @@
 
 #include <list>
 
+#include "BatchSource.h"
 #include "RelicID.h"
+#include "RelicTraits.h"
 
 #include "Serialization.h"
 
@@ -25,7 +27,7 @@ namespace Arca
     };
 
     template<class T>
-    class RelicBatchSource : public RelicBatchSourceBase
+    class BatchSource<T, std::enable_if_t<is_relic_v<T>>> : public RelicBatchSourceBase
     {
     public:
         using RelicT = T;
@@ -35,7 +37,7 @@ namespace Arca
         using iterator = typename List::iterator;
         using const_iterator = typename List::const_iterator;
     public:
-        RelicBatchSource() = default;
+        BatchSource() = default;
 
         RelicT* Add(RelicT relic);
 
@@ -65,7 +67,7 @@ namespace Arca
     };
 
     template<class T>
-    auto RelicBatchSource<T>::Add(RelicT relic) -> RelicT*
+    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Add(RelicT relic) -> RelicT*
     {
         auto found = Find(relic.ID());
         if (found)
@@ -76,7 +78,7 @@ namespace Arca
     }
 
     template<class T>
-    auto RelicBatchSource<T>::Destroy(RelicID destroy) -> iterator
+    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Destroy(RelicID destroy) -> iterator
     {
         auto itr = std::remove_if(
             list.begin(),
@@ -88,25 +90,25 @@ namespace Arca
     }
 
     template<class T>
-    auto RelicBatchSource<T>::Destroy(iterator destroy) -> iterator
+    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Destroy(iterator destroy) -> iterator
     {
         return list.erase(destroy);
     }
 
     template<class T>
-    auto RelicBatchSource<T>::Destroy(const_iterator destroy) -> iterator
+    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Destroy(const_iterator destroy) -> iterator
     {
         return list.erase(destroy);
     }
 
     template<class T>
-    void RelicBatchSource<T>::DestroyFromBase(RelicID id)
+    void BatchSource<T, std::enable_if_t<is_relic_v<T>>>::DestroyFromBase(RelicID id)
     {
         Destroy(id);
     }
 
     template<class T>
-    auto RelicBatchSource<T>::Find(RelicID id) -> RelicT*
+    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Find(RelicID id) -> RelicT*
     {
         auto found = std::find_if(
             list.begin(),
@@ -119,43 +121,43 @@ namespace Arca
     }
 
     template<class T>
-    auto RelicBatchSource<T>::Size() const -> SizeT
+    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::Size() const -> SizeT
     {
         return list.size();
     }
 
     template<class T>
-    bool RelicBatchSource<T>::IsEmpty() const
+    bool BatchSource<T, std::enable_if_t<is_relic_v<T>>>::IsEmpty() const
     {
         return list.empty();
     }
 
     template<class T>
-    auto RelicBatchSource<T>::begin() -> iterator
+    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::begin() -> iterator
     {
         return list.begin();
     }
 
     template<class T>
-    auto RelicBatchSource<T>::begin() const -> const_iterator
+    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::begin() const -> const_iterator
     {
         return list.begin();
     }
 
     template<class T>
-    auto RelicBatchSource<T>::end() -> iterator
+    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::end() -> iterator
     {
         return list.end();
     }
 
     template<class T>
-    auto RelicBatchSource<T>::end() const -> const_iterator
+    auto BatchSource<T, std::enable_if_t<is_relic_v<T>>>::end() const -> const_iterator
     {
         return list.end();
     }
 
     template<class T>
-    void RelicBatchSource<T>::ChangeOwner(Reliquary& owner)
+    void BatchSource<T, std::enable_if_t<is_relic_v<T>>>::ChangeOwner(Reliquary& owner)
     {
         for (auto& loop : list)
             loop.owner = &owner;
@@ -165,11 +167,12 @@ namespace Arca
 namespace Inscription
 {
     template<class T>
-    class Scribe<::Arca::RelicBatchSource<T>, BinaryArchive> final :
-        public CompositeScribe<::Arca::RelicBatchSource<T>, BinaryArchive>
+    class Scribe<::Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>, BinaryArchive> final :
+        public CompositeScribe<::Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>, BinaryArchive>
     {
     private:
-        using BaseT = CompositeScribe<::Arca::RelicBatchSource<T>, BinaryArchive>;
+        using BaseT =
+            CompositeScribe<::Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>, BinaryArchive>;
     public:
         using ObjectT = typename BaseT::ObjectT;
         using ArchiveT = typename BaseT::ArchiveT;
@@ -180,7 +183,8 @@ namespace Inscription
     };
 
     template<class T>
-    void Scribe<::Arca::RelicBatchSource<T>, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    void Scribe<::Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>, BinaryArchive>::
+        ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
         if (archive.IsOutput())
         {

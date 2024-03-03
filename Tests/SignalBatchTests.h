@@ -8,7 +8,6 @@ class SignalBatchFixture : public ReliquaryFixture
 {
 public:
     class BasicSignal;
-    class UnregisteredSignal;
 };
 
 class SignalBatchFixture::BasicSignal
@@ -19,5 +18,11 @@ public:
     BasicSignal() = default;
 };
 
-class SignalBatchFixture::UnregisteredSignal
-{};
+namespace Arca
+{
+    template<>
+    struct Traits<::SignalBatchFixture::BasicSignal>
+    {
+        static const ObjectType objectType = ObjectType::Signal;
+    };
+}

@@ -32,8 +32,8 @@ namespace Arca
     private:
         friend class Reliquary;
         friend class ReliquaryOrigin;
-        template<class T>
-        friend class RelicBatchSource;
+        template<class T, class>
+        friend class BatchSource;
     private:
         INSCRIPTION_ACCESS;
     };

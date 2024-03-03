@@ -12,7 +12,7 @@ namespace Arca
     };
 
     template<class Shards>
-    using ShardTuple = typename Shards::template Transform<ShardListToTuple>::Type::template TupleT;
+    using ShardTuple = typename Shards::template Transform<ShardListToTuple>::Type::TupleT;
 
     template<::Chroma::VariadicTemplateSize i>
     struct ShardListExtractor

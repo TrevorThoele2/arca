@@ -3,19 +3,18 @@
 #include <vector>
 #include "CuratorTraits.h"
 #include "TypeHandle.h"
-#include "StaticAssert.h"
 #include <Chroma/Iterate.h>
 
 namespace Arca
 {
-    class CuratorStage
+    class Stage
     {
     private:
         template<::Chroma::VariadicTemplateSize i>
         struct AddIterator
         {
             template<class Template>
-            static void Do(Template, CuratorStage& stage)
+            static void Do(Template, Stage& stage)
             {
                 using Piece = typename Template::template Parameter<i>::Type;
 
@@ -23,36 +22,36 @@ namespace Arca
             }
         };
     public:
-        CuratorStage() = default;
+        Stage() = default;
 
-        template<class... Curator>
-        static CuratorStage All()
+        template<class... Ts>
+        static Stage All()
         {
-            CuratorStage stage;
+            Stage stage;
 
             ::Chroma::IterateRange<
                 ::Chroma::VariadicTemplateSize,
                 AddIterator,
-                sizeof...(Curator) - 1
+                sizeof...(Ts) - 1
             >(
-                ::Chroma::VariadicTemplate<Curator...>{}, stage
+                ::Chroma::VariadicTemplate<Ts...>{}, stage
             );
 
             return stage;
         }
 
-        template<class CuratorT>
+        template<class T>
         void Add()
         {
-            STATIC_ASSERT_TYPE_DERIVED_FROM_CURATOR(CuratorT);
-
-            typeHandles.push_back(TypeHandleFor<CuratorT>());
+            typeHandles.push_back(TypeHandleFor<T>());
         }
 
         [[nodiscard]] std::vector<TypeHandle> TypeHandleList() const;
+
+        [[nodiscard]] bool Empty() const;
     private:
         std::vector<TypeHandle> typeHandles;
     };
 
-    using CuratorPipeline = std::vector<CuratorStage>;
+    using Pipeline = std::vector<Stage>;
 }

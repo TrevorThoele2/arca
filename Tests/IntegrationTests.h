@@ -15,104 +15,122 @@ using namespace Arca;
 class IntegrationTestsFixture : public GeneralFixture
 {
 public:
-    class BasicShard
-    {
-    public:
-        std::string myValue;
-    public:
-        BasicShard() = default;
-        explicit BasicShard(std::string myValue);
-    };
-
-    struct BasicSignal
-    {
-        int value = 0;
-    };
-
-    class ChildRelic : public TypedRelic
-    {
-    public:
-        int value = 0;
-    public:
-        ChildRelic() = default;
-    protected:
-        void InitializeImplementation() override {}
-    };
-
-    class ParentRelic : public TypedRelic
-    {
-    public:
-        int value = 0;
-
-        ChildRelicBatch<ChildRelic> children;
-    public:
-        ParentRelic(int value);
-
-        void CreateChild();
-    protected:
-        void InitializeImplementation() override;
-    };
-
-    class BasicCuratorBase : public Curator
-    {
-    public:
-        bool shouldStart = true;
-        static std::function<void(BasicCuratorBase&)> onInitialize;
-        std::function<void(BasicCuratorBase&)> onStartStep;
-        std::function<void(BasicCuratorBase&)> onWork;
-        std::function<void(BasicCuratorBase&)> onStopStep;
-
-        SignalBatch<BasicSignal> basicSignals;
-
-        Reliquary& Owner();
-    public:
-        BasicCuratorBase();
-    protected:
-        void InitializeImplementation() override;
-        bool StartStepImplementation() override;
-        void WorkImplementation() override;
-        void StopStepImplementation() override;
-    };
-
+    class BasicShard;
+    struct BasicSignal;
+    class ChildRelic;
+    class ParentRelic;
+    class BasicCuratorBase;
     template<size_t differentiator>
-    class BasicCurator final : public BasicCuratorBase
-    {
-    public:
-        BasicCurator() = default;
-    };
+    class BasicCurator;
 };
 
 namespace Arca
 {
     template<>
-    struct ShardTraits<::IntegrationTestsFixture::BasicShard>
+    struct Traits<::IntegrationTestsFixture::BasicShard>
     {
+        static const ObjectType objectType = ObjectType::Shard;
         static const TypeHandle typeHandle;
     };
 
     template<>
-    struct RelicTraits<::IntegrationTestsFixture::ChildRelic>
+    struct Traits<::IntegrationTestsFixture::BasicSignal>
     {
+        static const ObjectType objectType = ObjectType::Signal;
+    };
+
+    template<>
+    struct Traits<::IntegrationTestsFixture::ChildRelic>
+    {
+        static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandle typeHandle;
     };
 
     template<>
-    struct RelicTraits<::IntegrationTestsFixture::ParentRelic>
+    struct Traits<::IntegrationTestsFixture::ParentRelic>
     {
+        static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandle typeHandle;
         static std::optional<IntegrationTestsFixture::ParentRelic> Factory(Reliquary& reliquary, int value);
     };
 
     template<size_t differentiator>
-    struct CuratorTraits<::IntegrationTestsFixture::BasicCurator<differentiator>>
+    struct Traits<::IntegrationTestsFixture::BasicCurator<differentiator>>
     {
+        static const ObjectType objectType = ObjectType::Curator;
         static const TypeHandle typeHandle;
     };
 
     template<size_t differentiator>
-    const TypeHandle CuratorTraits<::IntegrationTestsFixture::BasicCurator<differentiator>>::typeHandle =
+    const TypeHandle Traits<::IntegrationTestsFixture::BasicCurator<differentiator>>::typeHandle =
         "IntegrationTestsBasicCurator" + ::Chroma::ToString(differentiator);
 }
+
+class IntegrationTestsFixture::BasicShard
+{
+public:
+    std::string myValue;
+public:
+    BasicShard() = default;
+    explicit BasicShard(std::string myValue);
+};
+
+struct IntegrationTestsFixture::BasicSignal
+{
+    int value = 0;
+};
+
+class IntegrationTestsFixture::ChildRelic : public TypedRelic
+{
+public:
+    int value = 0;
+public:
+    ChildRelic() = default;
+protected:
+    void InitializeImplementation() override {}
+};
+
+class IntegrationTestsFixture::ParentRelic : public TypedRelic
+{
+public:
+    int value = 0;
+
+    ChildRelicBatch<ChildRelic> children;
+public:
+    ParentRelic(int value);
+
+    void CreateChild();
+protected:
+    void InitializeImplementation() override;
+};
+
+class IntegrationTestsFixture::BasicCuratorBase : public Curator
+{
+public:
+    bool shouldStart = true;
+    static std::function<void(BasicCuratorBase&)> onInitialize;
+    std::function<void(BasicCuratorBase&)> onStartStep;
+    std::function<void(BasicCuratorBase&)> onWork;
+    std::function<void(BasicCuratorBase&)> onStopStep;
+
+    Batch<BasicSignal> basicSignals;
+
+    Reliquary& Owner();
+public:
+    BasicCuratorBase();
+protected:
+    void InitializeImplementation() override;
+    bool StartStepImplementation() override;
+    void WorkImplementation() override;
+    void StopStepImplementation() override;
+};
+
+template<size_t differentiator>
+class IntegrationTestsFixture::BasicCurator final : public BasicCuratorBase
+{
+public:
+    BasicCurator() = default;
+};
 
 namespace Inscription
 {

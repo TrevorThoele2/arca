@@ -2,6 +2,7 @@
 
 #include "CuratorTests.h"
 
+#include <Arca/PipelineException.h>
 #include <Chroma/Iterate.h>
 
 CuratorTestsFixture::CuratorCheckpoint::CuratorCheckpoint(Curator* curator, CuratorState state) :
@@ -42,20 +43,22 @@ void CuratorTestsFixture::BasicCurator::StopStepImplementation()
 namespace Arca
 {
     template<>
-    struct CuratorTraits<CuratorTestsFixture::BasicCurator>
+    struct Traits<CuratorTestsFixture::BasicCurator>
     {
+        static const ObjectType objectType = ObjectType::Curator;
         static const TypeHandle typeHandle;
     };
 
-    const TypeHandle CuratorTraits<CuratorTestsFixture::BasicCurator>::typeHandle = "BasicCurator";
+    const TypeHandle Traits<CuratorTestsFixture::BasicCurator>::typeHandle = "BasicCurator";
 
     template<>
-    struct CuratorTraits<CuratorTestsFixture::OtherBasicCurator>
+    struct Traits<CuratorTestsFixture::OtherBasicCurator>
     {
+        static const ObjectType objectType = ObjectType::Curator;
         static const TypeHandle typeHandle;
     };
 
-    const TypeHandle CuratorTraits<CuratorTestsFixture::OtherBasicCurator>::typeHandle = "OtherBasicCurator";
+    const TypeHandle Traits<CuratorTestsFixture::OtherBasicCurator>::typeHandle = "OtherBasicCurator";
 }
 
 SCENARIO_METHOD(CuratorTestsFixture, "curator", "[curator]")
@@ -163,7 +166,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator", "[curator]")
 template<size_t id>
 struct PipelineIterator
 {
-    static void Do(CuratorPipeline& pipeline)
+    static void Do(Pipeline& pipeline)
     {
         pipeline.emplace_back();
         pipeline.back().Add<CuratorTestsFixture::DifferentiableCurator<id>>();
@@ -210,7 +213,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
         std::vector<CuratorCheckpoint> checkpoints;
         ::Chroma::IterateRange<size_t, SetupDifferentiableCurator, 99, 0>(checkpoints);
 
-        auto pipeline = CuratorPipeline();
+        auto pipeline = Pipeline();
         ::Chroma::IterateRange<size_t, PipelineIterator, 99, 0>(pipeline);
 
         auto reliquaryOrigin = ReliquaryOrigin()
@@ -293,7 +296,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
 
     GIVEN("reliquary origin with pipeline that contains nonexistent curator")
     {
-        auto pipeline = CuratorPipeline();
+        auto pipeline = Pipeline();
         pipeline.emplace_back();
         pipeline.back().Add<BasicCurator>();
 
@@ -307,8 +310,8 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
                 REQUIRE_THROWS_MATCHES
                 (
                     reliquaryOrigin.Actualize(),
-                    InvalidCuratorPipeline,
-                    ::Catch::Matchers::Message("Curator (" + CuratorTraits<BasicCurator>::typeHandle + ") was not found.")
+                    InvalidPipeline,
+                    ::Catch::Matchers::Message("Curator (" + Traits<BasicCurator>::typeHandle + ") was not found.")
                 );
             }
         }
@@ -316,7 +319,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
 
     GIVEN("reliquary origin with pipeline that contains curator multiple times")
     {
-        auto pipeline = CuratorPipeline();
+        auto pipeline = Pipeline();
         pipeline.emplace_back();
         pipeline.back().Add<BasicCurator>();
         pipeline.back().Add<BasicCurator>();
@@ -332,8 +335,8 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
                 REQUIRE_THROWS_MATCHES
                 (
                     reliquaryOrigin.Actualize(),
-                    InvalidCuratorPipeline,
-                    ::Catch::Matchers::Message("Curator (" + CuratorTraits<BasicCurator>::typeHandle + ") " +
+                    InvalidPipeline,
+                    ::Catch::Matchers::Message("Curator (" + Traits<BasicCurator>::typeHandle + ") " +
                         "was already in the pipeline.")
                 );
             }
@@ -342,7 +345,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
 
     GIVEN("reliquary origin with pipeline that contains only empty stage")
     {
-        auto pipeline = CuratorPipeline();
+        auto pipeline = Pipeline();
         pipeline.emplace_back();
 
         const auto reliquaryOrigin = ReliquaryOrigin()

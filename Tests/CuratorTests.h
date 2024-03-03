@@ -84,13 +84,14 @@ std::vector<CuratorTestsFixture::CuratorCheckpoint>* CuratorTestsFixture::Differ
 namespace Arca
 {
     template<size_t id>
-    struct CuratorTraits<CuratorTestsFixture::DifferentiableCurator<id>>
+    struct Traits<CuratorTestsFixture::DifferentiableCurator<id>>
     {
+        static const ObjectType objectType = ObjectType::Curator;
         static const TypeHandle typeHandle;
     };
 
     template<size_t id>
-    const TypeHandle CuratorTraits<CuratorTestsFixture::DifferentiableCurator<id>>::typeHandle =
+    const TypeHandle Traits<CuratorTestsFixture::DifferentiableCurator<id>>::typeHandle =
         "DifferentiableCurator" + Chroma::ToString(id);
 }
 

@@ -38,20 +38,23 @@ protected:
 namespace Arca
 {
     template<>
-    struct ShardTraits<::ShardBatchFixture::Shard>
+    struct Traits<::ShardBatchFixture::Shard>
     {
+        static const ObjectType objectType = ObjectType::Shard;
         static const TypeHandle typeHandle;
     };
 
     template<>
-    struct ShardTraits<::ShardBatchFixture::UnregisteredShard>
+    struct Traits<::ShardBatchFixture::UnregisteredShard>
     {
+        static const ObjectType objectType = ObjectType::Shard;
         static const TypeHandle typeHandle;
     };
 
     template<>
-    struct RelicTraits<::ShardBatchFixture::StaticRelic>
+    struct Traits<::ShardBatchFixture::StaticRelic>
     {
+        static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandle typeHandle;
         using Shards = ShardList<::ShardBatchFixture::Shard>;
     };

@@ -31,14 +31,16 @@ public:
 namespace Arca
 {
     template<>
-    struct ShardTraits<::ChildRelicBatchTestsFixture::BasicShard>
+    struct Traits<::ChildRelicBatchTestsFixture::BasicShard>
     {
+        static const ObjectType objectType = ObjectType::Shard;
         static const TypeHandle typeHandle;
     };
 
     template<>
-    struct RelicTraits<::ChildRelicBatchTestsFixture::BasicTypedRelic>
+    struct Traits<::ChildRelicBatchTestsFixture::BasicTypedRelic>
     {
+        static const ObjectType objectType = ObjectType::Relic;
         static const TypeHandle typeHandle;
         using Shards = ShardList<::ChildRelicBatchTestsFixture::BasicShard>;
     };

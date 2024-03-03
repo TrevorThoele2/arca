@@ -1,5 +1,6 @@
 #pragma once
 
+#include <typeindex>
 #include "Exception.h"
 #include "RelicID.h"
 
@@ -20,19 +21,25 @@ namespace Arca
     class NotRegistered final : public Exception
     {
     public:
-        explicit NotRegistered(const std::string& type, const std::string& name);
-    };
-
-    class CannotRegister final : public Exception
-    {
-    public:
-        CannotRegister();
+        explicit NotRegistered(
+            const std::string& type,
+            const std::string& name);
+        explicit NotRegistered(
+            const std::string& type,
+            const std::string& name,
+            const std::type_index& classType);
     };
 
     class AlreadyRegistered final : public Exception
     {
     public:
-        AlreadyRegistered();
+        AlreadyRegistered(
+            const std::string& type,
+            const std::string& name);
+        AlreadyRegistered(
+            const std::string& type,
+            const std::string& name,
+            const std::type_index& classType);
     };
 
     class CannotCreateShard final : public Exception
@@ -57,11 +64,5 @@ namespace Arca
     {
     public:
         explicit CannotParentRelic(const std::string& message);
-    };
-
-    class InvalidCuratorPipeline final : public Exception
-    {
-    public:
-        explicit InvalidCuratorPipeline(const std::string& reason);
     };
 }

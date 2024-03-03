@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SignalTraits.h"
 #include "RelicMetadata.h"
 
 namespace Arca
@@ -8,5 +9,11 @@ namespace Arca
     {
         RelicMetadata parent;
         RelicMetadata child;
+    };
+
+    template<>
+    struct Traits<RelicParented>
+    {
+        static const ObjectType objectType = ObjectType::Signal;
     };
 }

@@ -2,6 +2,9 @@
 
 #include <list>
 
+#include "BatchSource.h"
+#include "SignalTraits.h"
+
 #include "Serialization.h"
 #include <Inscription/ListScribe.h>
 
@@ -19,20 +22,22 @@ namespace Arca
         friend Reliquary;
     };
 
-    template<class Signal>
-    class SignalBatchSource : public SignalBatchSourceBase
+    template<class T>
+    class BatchSource<T, std::enable_if_t<is_signal_v<T>>> : public SignalBatchSourceBase
     {
     private:
-        using List = std::list<Signal>;
+        using List = std::list<T>;
+    public:
+        using SignalT = T;
     public:
         using SizeT = typename List::size_type;
         using iterator = typename List::iterator;
         using const_iterator = typename List::const_iterator;
     public:
-        SignalBatchSource() = default;
-        explicit SignalBatchSource(const Inscription::BinaryTableData<SignalBatchSource>& data);
+        BatchSource() = default;
+        explicit BatchSource(const Inscription::BinaryTableData<BatchSource>& data);
 
-        void Raise(const Signal& signal);
+        void Raise(const T& signal);
 
         void Clear() override;
 
@@ -47,43 +52,45 @@ namespace Arca
         INSCRIPTION_TABLE_ACCESS;
     };
 
-    template<class Signal>
-    SignalBatchSource<Signal>::SignalBatchSource(const Inscription::BinaryTableData<SignalBatchSource>& data) :
+    template<class T>
+    BatchSource<T, std::enable_if_t<is_signal_v<T>>>::BatchSource(
+        const Inscription::BinaryTableData<BatchSource>& data)
+        :
         SignalBatchSourceBase(*data.owner), list(std::move(data.list))
     {}
 
-    template<class Signal>
-    void SignalBatchSource<Signal>::Raise(const Signal& signal)
+    template<class T>
+    void BatchSource<T, std::enable_if_t<is_signal_v<T>>>::Raise(const T& signal)
     {
         list.push_back(signal);
     }
 
-    template<class Signal>
-    void SignalBatchSource<Signal>::Clear()
+    template<class T>
+    void BatchSource<T, std::enable_if_t<is_signal_v<T>>>::Clear()
     {
         list.clear();
     }
 
-    template<class Signal>
-    auto SignalBatchSource<Signal>::Size() const -> SizeT
+    template<class T>
+    auto BatchSource<T, std::enable_if_t<is_signal_v<T>>>::Size() const -> SizeT
     {
         return list.size();
     }
 
-    template<class Signal>
-    bool SignalBatchSource<Signal>::IsEmpty() const
+    template<class T>
+    bool BatchSource<T, std::enable_if_t<is_signal_v<T>>>::IsEmpty() const
     {
         return list.empty();
     }
 
-    template<class Signal>
-    auto SignalBatchSource<Signal>::begin() const -> const_iterator
+    template<class T>
+    auto BatchSource<T, std::enable_if_t<is_signal_v<T>>>::begin() const -> const_iterator
     {
         return list.begin();
     }
 
-    template<class Signal>
-    auto SignalBatchSource<Signal>::end() const -> const_iterator
+    template<class T>
+    auto BatchSource<T, std::enable_if_t<is_signal_v<T>>>::end() const -> const_iterator
     {
         return list.end();
     }
