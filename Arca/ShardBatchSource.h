@@ -1,6 +1,6 @@
 #pragma once
 
-#include <list>
+#include <vector>
 
 #include "BatchSource.h"
 #include "RelicID.h"
@@ -38,7 +38,7 @@ namespace Arca
             bool isConst;
         };
 
-        using List = std::list<Entry>;
+        using List = std::vector<Entry>;
     public:
         using iterator = typename List::iterator;
         using const_iterator = typename List::const_iterator;

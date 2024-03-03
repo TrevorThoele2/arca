@@ -26,7 +26,7 @@ public:
 class ConstShardTestsFixture::Relic : public TypedRelic
 {
 public:
-    const Shard* shard = nullptr;
+    Ptr<const Shard> shard;
 protected:
     void InitializeImplementation() override;
 };

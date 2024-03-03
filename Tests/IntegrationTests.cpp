@@ -13,12 +13,7 @@ IntegrationTestsFixture::ParentRelic::ParentRelic(int value) : value(value)
 void IntegrationTestsFixture::ParentRelic::CreateChild()
 {
     const auto child = Owner().Create<ChildRelic>();
-    Owner().ParentRelic(ID(), child->ID());
-}
-
-void IntegrationTestsFixture::ParentRelic::InitializeImplementation()
-{
-    children = Owner().ChildBatch<ChildRelic>(ID());
+    Owner().ParentRelic(*this, child);
 }
 
 Reliquary& IntegrationTestsFixture::BasicCuratorBase::Owner()
@@ -104,11 +99,11 @@ SCENARIO_METHOD(IntegrationTestsFixture, "working with signals through curators"
 
         std::vector<BasicCuratorBase*> curatorsInOrder
         {
-            reliquary.Find<BasicCurator<1>>(),
-            reliquary.Find<BasicCurator<4>>(),
-            reliquary.Find<BasicCurator<3>>(),
-            reliquary.Find<BasicCurator<2>>(),
-            reliquary.Find<BasicCurator<0>>()
+            reliquary->Find<BasicCurator<1>>(),
+            reliquary->Find<BasicCurator<4>>(),
+            reliquary->Find<BasicCurator<3>>(),
+            reliquary->Find<BasicCurator<2>>(),
+            reliquary->Find<BasicCurator<0>>()
         };
 
         WHEN("raising signal then working reliquary")
@@ -134,9 +129,9 @@ SCENARIO_METHOD(IntegrationTestsFixture, "working with signals through curators"
             }
 
             const auto value = dataGeneration.Random<int>();
-            reliquary.Raise(BasicSignal{ value });
+            reliquary->Raise(BasicSignal{ value });
 
-            reliquary.Work();
+            reliquary->Work();
 
             THEN("curators encounter signals in order")
             {
@@ -147,7 +142,7 @@ SCENARIO_METHOD(IntegrationTestsFixture, "working with signals through curators"
 
             THEN("signals are cleared")
             {
-                const auto signalBatch = reliquary.Batch<BasicSignal>();
+                const auto signalBatch = reliquary->Batch<BasicSignal>();
                 REQUIRE(signalBatch.IsEmpty());
             }
         }
@@ -170,9 +165,9 @@ SCENARIO_METHOD(
             .Curator<ParentChildCurator>()
             .Actualize();
 
-        std::unordered_map<int, ParentRelic*> mappedParents;
+        std::unordered_map<int, Ptr<ParentRelic>> mappedParents;
 
-        auto curator = reliquary.Find<ParentChildCurator>();
+        auto curator = reliquary->Find<ParentChildCurator>();
         curator->onStartStep = [&mappedParents](BasicCuratorBase& self)
         {
             auto value = 100;
@@ -183,12 +178,12 @@ SCENARIO_METHOD(
 
         WHEN("working reliquary")
         {
-            reliquary.Work();
+            reliquary->Work();
 
             THEN("has created parent and child")
             {
-                auto parents = reliquary.Batch<ParentRelic>();
-                auto children = reliquary.Batch<ChildRelic>();
+                auto parents = reliquary->Batch<ParentRelic>();
+                auto children = reliquary->Batch<ChildRelic>();
 
                 REQUIRE(parents.begin() != parents.end());
                 REQUIRE(children.begin() != children.end());
@@ -198,10 +193,9 @@ SCENARIO_METHOD(
 
                 REQUIRE(parent != nullptr);
                 REQUIRE(child != nullptr);
-                REQUIRE(&*parent->children.begin() == child);
 
                 REQUIRE(!mappedParents.empty());
-                REQUIRE(mappedParents[100] == parent);
+                REQUIRE(static_cast<ParentRelic*>(mappedParents[100]) == parent);
             }
         }
     }
@@ -233,7 +227,7 @@ SCENARIO_METHOD(IntegrationTestsFixture, "curators with custom signal execution"
         WHEN("raising signal many times")
         {
             for (auto loop = 0; loop < 1000; ++loop)
-                reliquary.Raise(BasicSignal{ loop });
+                reliquary->Raise(BasicSignal{ loop });
 
             THEN("executed signals contains all signals raised")
             {

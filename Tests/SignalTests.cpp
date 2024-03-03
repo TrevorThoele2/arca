@@ -14,7 +14,7 @@ SCENARIO_METHOD(SignalTestsFixture, "signal", "[signal]")
         {
             int foundValue = 0;
 
-            reliquary.ExecuteOn<BasicSignal>([&foundValue](const BasicSignal& signal)
+            reliquary->ExecuteOn<BasicSignal>([&foundValue](const BasicSignal& signal)
                 {
                     foundValue = signal.value;
                 });
@@ -23,7 +23,7 @@ SCENARIO_METHOD(SignalTestsFixture, "signal", "[signal]")
                 TestFramework::Range(1, std::numeric_limits<int>::max()));
 
             const BasicSignal signal{ emittedValue };
-            reliquary.Raise(signal);
+            reliquary->Raise(signal);
 
             THEN("custom emission logic is fired")
             {

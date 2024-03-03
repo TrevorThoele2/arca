@@ -42,44 +42,44 @@ namespace Arca
         return *this;
     }
 
-    Reliquary ReliquaryOrigin::Actualize() const
+    std::unique_ptr<Reliquary> ReliquaryOrigin::Actualize() const
     {
-        Reliquary reliquary;
+        auto reliquary = std::make_unique<Reliquary>();
 
         for (auto& initializer : signalList)
-            initializer.factory(reliquary);
+            initializer.factory(*reliquary);
 
         for (auto& initializer : shardList)
-            initializer.factory(reliquary);
+            initializer.factory(*reliquary);
 
         for (auto& initializer : relicList)
-            initializer.factory(reliquary);
+            initializer.factory(*reliquary);
 
-        reliquary.namedRelicStructureList = namedRelicStructureList;
+        reliquary->namedRelicStructureList = namedRelicStructureList;
 
-        const auto allCurators = PushAllCuratorsTo(reliquary);
+        const auto allCurators = PushAllCuratorsTo(*reliquary);
 
         auto transformedCuratorInitializationPipeline =
             TransformCuratorPipeline(
-                reliquary,
+                *reliquary,
                 curatorInitializationPipeline,
                 allCurators);
-        reliquary.curatorWorkPipeline =
+        reliquary->curatorWorkPipeline =
             TransformCuratorPipeline(
-                reliquary,
+                *reliquary,
                 curatorWorkPipeline,
                 allCurators);
 
         for (auto& initializer : staticRelicList)
-            initializer.factory(reliquary);
+            initializer.factory(*reliquary);
 
         {
             for (auto& stage : transformedCuratorInitializationPipeline)
                 for (auto& curator : stage)
-                    curator->Initialize(reliquary);
+                    curator->Initialize(*reliquary);
 
             for (auto& loop : typedRelicInitializerList)
-                loop(reliquary);
+                loop(*reliquary);
         }
 
         return reliquary;
@@ -174,7 +174,7 @@ namespace Arca
             auto typeHandles = stage.TypeHandleList();
             for(auto& typeHandle : typeHandles)
             {
-                auto found = reliquary.FindCurator(typeHandle);
+                auto found = reliquary.Find<Arca::Curator>(typeHandle);
                 if (found == nullptr)
                     throw InvalidPipeline("Curator (" + typeHandle + ") was not found.");
 

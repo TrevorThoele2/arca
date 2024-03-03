@@ -33,7 +33,7 @@ public:
     class BasicTypedRelic : public TypedRelic
     {
     public:
-        BasicShard* basicShard = nullptr;
+        Ptr<BasicShard> basicShard;
     public:
         BasicTypedRelic() = default;
         explicit BasicTypedRelic(const ::Inscription::BinaryTableData<BasicTypedRelic>& data);
@@ -44,7 +44,7 @@ public:
     class StaticRelic : public TypedRelic
     {
     public:
-        BasicShard* basicShard = nullptr;
+        Ptr<BasicShard> basicShard;
     public:
         StaticRelic() = default;
         explicit StaticRelic(const ::Inscription::BinaryTableData<StaticRelic>& data);

@@ -72,11 +72,11 @@ SCENARIO_METHOD(SignalBatchFixture, "signal batch", "[SignalBatch]")
         {
             BasicSignal signal{};
             signal.myValue = dataGeneration.Random<int>();
-            reliquary.Raise(signal);
+            reliquary->Raise(signal);
 
             THEN("starting batch contains raised signal")
             {
-                auto batch = reliquary.Batch<BasicSignal>();
+                auto batch = reliquary->Batch<BasicSignal>();
 
                 REQUIRE(!batch.IsEmpty());
                 REQUIRE(batch.Size() == 1);
@@ -86,13 +86,13 @@ SCENARIO_METHOD(SignalBatchFixture, "signal batch", "[SignalBatch]")
 
         WHEN("starting batch")
         {
-            auto batch = reliquary.Batch<BasicSignal>();
+            auto batch = reliquary->Batch<BasicSignal>();
 
             THEN("raising signal causes batch to contain signal")
             {
                 BasicSignal signal;
                 signal.myValue = dataGeneration.Random<int>();
-                reliquary.Raise(signal);
+                reliquary->Raise(signal);
 
                 REQUIRE(!batch.IsEmpty());
                 REQUIRE(batch.Size() == 1);

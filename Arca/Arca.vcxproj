@@ -19,14 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FixedRelic.h" />
+    <ClInclude Include="FixedRelicDefinition.h" />
     <ClInclude Include="Batch.h" />
     <ClInclude Include="BatchSource.h" />
     <ClInclude Include="Destroying.h" />
-    <ClInclude Include="ChildRelicBatch.h" />
-    <ClInclude Include="ChildRelicBatchSource.h" />
-    <ClInclude Include="ChildRelicBatchIterator.h" />
     <ClInclude Include="CuratorHandle.h" />
     <ClInclude Include="HasFactoryMethod.h" />
+    <ClInclude Include="IsType.h" />
     <ClInclude Include="ObjectType.h" />
     <ClInclude Include="PipelineException.h" />
     <ClInclude Include="Ptr.h" />
@@ -35,12 +35,15 @@
     <ClInclude Include="RelicBatchSource.h" />
     <ClInclude Include="Created.h" />
     <ClInclude Include="ExtractShards.h" />
+    <ClInclude Include="RelicHandle.h" />
+    <ClInclude Include="RelicHandleActualization.h" />
     <ClInclude Include="RelicParented.h" />
     <ClInclude Include="RelicScribe.h" />
     <ClInclude Include="Shard.h" />
     <ClInclude Include="ShardBatchIterator.h" />
     <ClInclude Include="Exception.h" />
     <ClInclude Include="SignalTraits.h" />
+    <ClInclude Include="Static.h" />
     <ClInclude Include="StructureFrom.h" />
     <ClInclude Include="ShardScribe.h" />
     <ClInclude Include="ReliquaryOrigin.h" />
@@ -74,11 +77,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CuratorHandle.cpp" />
+    <ClCompile Include="FixedRelic.cpp" />
     <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="BatchException.cpp" />
-    <ClCompile Include="ChildRelicBatchSource.cpp" />
     <ClCompile Include="PipelineException.cpp" />
     <ClCompile Include="RelicBatchSource.cpp" />
+    <ClCompile Include="RelicHandle.cpp" />
     <ClCompile Include="RelicStructure.cpp" />
     <ClCompile Include="ShardBatchSource.cpp" />
     <ClCompile Include="Exception.cpp" />

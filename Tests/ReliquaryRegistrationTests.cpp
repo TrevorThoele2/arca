@@ -26,7 +26,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
 
         auto reliquary = ReliquaryOrigin().Actualize();
 
-        auto dynamicRelic = reliquary.CreateRelic();
+        auto dynamicRelic = reliquary->Create<DynamicRelic>();
 
         WHEN("creating unregistered shard on dynamic relic")
         {
@@ -34,7 +34,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    dynamicRelic.CreateShard<Shard>(),
+                    dynamicRelic.Create<Shard>(),
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The shard ("s + TypeHandleFor<Shard>() + ") was not registered. " +
@@ -49,7 +49,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary.Create<Relic>(),
+                    reliquary->Create<Relic>(),
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The relic ("s + TypeHandleFor<Relic>() + ") was not registered. " +
@@ -64,7 +64,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary.Static<StaticRelic>(),
+                    reliquary->Static<StaticRelic>(),
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The static relic ("s + TypeHandleFor<StaticRelic>() + ") was not registered. " +
@@ -79,7 +79,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary.Raise(Signal{}),
+                    reliquary->Raise(Signal{}),
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The signal ("s + typeid(Signal).name() + ") was not registered.")
@@ -91,7 +91,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
         {
             THEN("returns nullptr")
             {
-                REQUIRE(reliquary.Find<Curator>() == nullptr);
+                REQUIRE(reliquary->Find<Curator>() == nullptr);
             }
         }
 
@@ -101,7 +101,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary.CreateRelic(relicStructureName),
+                    reliquary->Create<FixedRelic>(relicStructureName),
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The relic structure ("s + relicStructureName + ") was not registered.")
@@ -115,7 +115,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary.Batch<Shard>(),
+                    reliquary->Batch<Shard>(),
                     NotRegistered,
                     Catch::Matchers::Message(
                         "The shard (" + TypeHandleFor<Shard>() + ") was not registered. " +
@@ -130,22 +130,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary.Batch<Relic>(),
-                    NotRegistered,
-                    Catch::Matchers::Message(
-                        "The relic (" + TypeHandleFor<Relic>() + ") was not registered. " +
-                        "The class name is: \"" + typeid(Relic).name() + "\".")
-                );
-            }
-        }
-
-        WHEN("retrieving child relic batch")
-        {
-            THEN("throws error")
-            {
-                REQUIRE_THROWS_MATCHES
-                (
-                    reliquary.ChildBatch<Relic>(0),
+                    reliquary->Batch<Relic>(),
                     NotRegistered,
                     Catch::Matchers::Message(
                         "The relic (" + TypeHandleFor<Relic>() + ") was not registered. " +
@@ -160,7 +145,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary.Batch<Signal>(),
+                    reliquary->Batch<Signal>(),
                     NotRegistered,
                     Catch::Matchers::Message(
                         "The signal ("s + typeid(Signal).name() + ") was not registered.")
@@ -181,7 +166,7 @@ SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reli
             {
                 REQUIRE_THROWS_MATCHES
                 (
-                    reliquary.Create<Relic>(),
+                    reliquary->Create<Relic>(),
                     NotRegistered,
                     ::Catch::Matchers::Message(
                         "The shard ("s + TypeHandleFor<Shard>() + ") was not registered.")

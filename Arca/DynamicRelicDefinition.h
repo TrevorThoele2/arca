@@ -4,33 +4,27 @@
 
 namespace Arca
 {
-    template<class ShardT>
-    ShardT* DynamicRelic::CreateShard()
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
+    Ptr<ShardT> DynamicRelic::Create()
     {
         return owner->CreateShard<ShardT>(id);
     }
 
-    template<class ShardT>
-    void DynamicRelic::DestroyShard()
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
+    void DynamicRelic::Destroy()
     {
         owner->DestroyShard<ShardT>(id);
     }
 
-    template<class ShardT>
-    ShardT* DynamicRelic::FindShard()
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
+    Ptr<ShardT> DynamicRelic::Find() const
     {
         return owner->Find<ShardT>(id);
     }
 
-    template<class ShardT>
-    const ShardT* DynamicRelic::FindShard() const
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
+    bool DynamicRelic::Has() const
     {
-        return owner->Find<ShardT>(id);
-    }
-
-    template<class ShardT>
-    bool DynamicRelic::HasShard() const
-    {
-        return FindShard<ShardT>() != nullptr;
+        return static_cast<bool>(Find<ShardT>());
     }
 }

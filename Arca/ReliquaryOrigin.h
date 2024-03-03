@@ -20,7 +20,7 @@ namespace Arca
         ReliquaryOrigin& operator=(const ReliquaryOrigin& arg);
         ReliquaryOrigin& operator=(ReliquaryOrigin&& arg) = default;
     public:
-        [[nodiscard]] Reliquary Actualize() const;
+        [[nodiscard]] std::unique_ptr<Reliquary> Actualize() const;
     public:
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         ReliquaryOrigin& Relic();

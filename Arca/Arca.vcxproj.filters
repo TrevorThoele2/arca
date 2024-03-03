@@ -43,9 +43,6 @@
     <ClCompile Include="TypedRelic.cpp">
       <Filter>Source Files\Relic</Filter>
     </ClCompile>
-    <ClCompile Include="ChildRelicBatchSource.cpp">
-      <Filter>Source Files\Relic\ChildBatch</Filter>
-    </ClCompile>
     <ClCompile Include="Pipeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -53,6 +50,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RelicStructure.cpp">
+      <Filter>Source Files\Relic</Filter>
+    </ClCompile>
+    <ClCompile Include="FixedRelic.cpp">
+      <Filter>Source Files\Relic</Filter>
+    </ClCompile>
+    <ClCompile Include="RelicHandle.cpp">
       <Filter>Source Files\Relic</Filter>
     </ClCompile>
   </ItemGroup>
@@ -168,15 +171,6 @@
     <ClInclude Include="ExtractShards.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
-    <ClInclude Include="ChildRelicBatch.h">
-      <Filter>Header Files\Relic\ChildBatch</Filter>
-    </ClInclude>
-    <ClInclude Include="ChildRelicBatchSource.h">
-      <Filter>Header Files\Relic\ChildBatch</Filter>
-    </ClInclude>
-    <ClInclude Include="ChildRelicBatchIterator.h">
-      <Filter>Header Files\Relic\ChildBatch</Filter>
-    </ClInclude>
     <ClInclude Include="HasFactoryMethod.h">
       <Filter>Header Files\Relic</Filter>
     </ClInclude>
@@ -212,6 +206,24 @@
     </ClInclude>
     <ClInclude Include="Created.h">
       <Filter>Header Files\Signal\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="IsType.h">
+      <Filter>Header Files\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedRelic.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="FixedRelicDefinition.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicHandleActualization.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="RelicHandle.h">
+      <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="Static.h">
+      <Filter>Header Files\Relic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -283,12 +295,6 @@
     </Filter>
     <Filter Include="Source Files\Relic\Batch">
       <UniqueIdentifier>{9b182ee4-5e4d-4a4e-9aa5-e0725fe7685d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Relic\ChildBatch">
-      <UniqueIdentifier>{48ada9bf-fc58-47c3-9bb2-e35e5e390551}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Relic\ChildBatch">
-      <UniqueIdentifier>{2204847b-25e7-4a66-b284-61f73c251c9a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
