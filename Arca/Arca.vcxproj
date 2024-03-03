@@ -98,9 +98,7 @@
     <ClInclude Include="Shard.h" />
     <ClInclude Include="ShardList.h" />
     <ClInclude Include="Signal.h" />
-    <ClInclude Include="UsableForGlobalIndex.h" />
     <ClInclude Include="UsableForRelicIndex.h" />
-    <ClInclude Include="UsableForMatrixIndex.h" />
     <ClInclude Include="UsableForShardIndex.h" />
     <ClInclude Include="UsableInAll.h" />
     <ClInclude Include="Either.h" />

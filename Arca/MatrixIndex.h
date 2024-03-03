@@ -4,14 +4,14 @@
 #include "RelicID.h"
 
 #include "MatrixImplementation.h"
-#include "UsableForMatrixIndex.h"
+#include "IsMatrix.h"
 
 #include "Serialization.h"
 
 namespace Arca
 {
     template<class T>
-    class Index<T, std::enable_if_t<usable_for_matrix_index_v<T>>>
+    class Index<T, std::enable_if_t<is_matrix_v<T>>>
     {
     public:
         using ReferenceValueT = typename MatrixImplementation<T>::IndexReference;
@@ -49,20 +49,20 @@ namespace Arca
         INSCRIPTION_ACCESS;
     };
 
-    template<class T, std::enable_if_t<usable_for_matrix_index_v<T>, int> = 0>
-    Index<T, std::enable_if_t<usable_for_matrix_index_v<T>>> ToIndex(RelicID id, Reliquary* owner)
+    template<class T, std::enable_if_t<is_matrix_v<T>, int> = 0>
+    Index<T, std::enable_if_t<is_matrix_v<T>>> ToIndex(RelicID id, Reliquary* owner)
     {
-        return Index<T, std::enable_if_t<usable_for_matrix_index_v<T>>>(id, owner);
+        return Index<T, std::enable_if_t<is_matrix_v<T>>>(id, owner);
     }
 }
 
 namespace Inscription
 {
     template<class T>
-    class Scribe<Arca::Index<T, std::enable_if_t<Arca::usable_for_matrix_index_v<T>>>>
+    class Scribe<Arca::Index<T, std::enable_if_t<Arca::is_matrix_v<T>>>>
     {
     public:
-        using ObjectT = Arca::Index<T, std::enable_if_t<Arca::usable_for_matrix_index_v<T>>>;
+        using ObjectT = Arca::Index<T, std::enable_if_t<Arca::is_matrix_v<T>>>;
     protected:
         template<class Archive>
         void Scriven(ObjectT& object, Archive& archive)
@@ -84,8 +84,8 @@ namespace Inscription
     };
 
     template<class T, class Archive>
-    struct ScribeTraits<Arca::Index<T, std::enable_if_t<Arca::usable_for_matrix_index_v<T>>>, Archive> final
+    struct ScribeTraits<Arca::Index<T, std::enable_if_t<Arca::is_matrix_v<T>>>, Archive> final
     {
-        using Category = CompositeScribeCategory<Arca::Index<T, std::enable_if_t<Arca::usable_for_matrix_index_v<T>>>>;
+        using Category = CompositeScribeCategory<Arca::Index<T, std::enable_if_t<Arca::is_matrix_v<T>>>>;
     };
 }
