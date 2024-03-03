@@ -43,6 +43,8 @@ namespace Arca
         [[nodiscard]] bool WillDestroy(RelicMetadata* metadata) const;
         void Destroy(RelicMetadata& metadata);
 
+        [[nodiscard]] std::vector<RelicID> AllIDs() const;
+
         [[nodiscard]] RelicID NextID() const;
         [[nodiscard]] RelicID AdvanceID();
 

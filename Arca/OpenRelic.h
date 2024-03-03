@@ -5,6 +5,7 @@
 #include "ShardTraits.h"
 #include "Ptr.h"
 #include "Either.h"
+#include "AreAllShards.h"
 
 #include "Serialization.h"
 
@@ -27,6 +28,8 @@ namespace Arca
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] bool Contains() const;
         template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
+        [[nodiscard]] bool Contains() const;
+        template<class... ShardsT, std::enable_if_t<are_all_shards_v<ShardsT...> && (sizeof...(ShardsT) > 1), int> = 0>
         [[nodiscard]] bool Contains() const;
 
         [[nodiscard]] std::optional<Handle> Parent() const;

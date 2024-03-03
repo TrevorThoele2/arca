@@ -7,12 +7,11 @@
 #include "ShardTraits.h"
 #include "ShardBatchSource.h"
 #include "EitherShardBatchSource.h"
+#include "CompositeShardBatchSource.h"
 
 #include "RelicID.h"
 #include "TypeHandle.h"
 #include "Ptr.h"
-
-#include "KnownPolymorphicSerializer.h"
 
 namespace Arca
 {
@@ -31,8 +30,23 @@ namespace Arca
         template<class ShardT>
         void Destroy(RelicID id);
 
+        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        [[nodiscard]] Ptr<ShardT> Find(RelicID id) const;
+
+        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        [[nodiscard]] bool Contains(RelicID id) const;
+        template<class EitherT, std::enable_if_t<is_either_v<EitherT>, int> = 0>
+        [[nodiscard]] bool Contains(RelicID id) const;
+        template<class... ShardsT, std::enable_if_t<are_all_shards_v<ShardsT...> && (sizeof...(ShardsT) > 1), int> = 0>
+        [[nodiscard]] bool Contains(RelicID id) const;
+        template<class ShardsT, std::enable_if_t<is_composite_v<ShardsT>, int> = 0>
+        [[nodiscard]] bool Contains(RelicID id) const;
+
         template<class ShardT>
         void AttemptAddToEitherBatches(RelicID id, ShardT& shard);
+
+        void NotifyCompositesRelicCreate(RelicID id, const RelicStructure& structure);
+        void NotifyCompositesRelicDestroy(RelicID id);
 
         template<class ShardT>
         Factory FindFactory();
@@ -65,7 +79,7 @@ namespace Arca
         } batchSources = BatchSources(*this);
 
         class EitherBatchSources
-            : public MetaBatchSources<EitherShardBatchSourceBase, ReliquaryShards, EitherBatchSources>
+            : public MetaBatchSources<TypeHandleName, EitherShardBatchSourceBase, ReliquaryShards, EitherBatchSources>
         {
         public:
             template<class T, std::enable_if_t<is_either_v<T>, int> = 0>
@@ -80,28 +94,59 @@ namespace Arca
             using ShardT = typename T::BareT;
 
             template<class T>
-            std::unique_ptr<EitherShardBatchSourceBase> Create()
-            {
-                auto created = std::make_unique<BatchSource<T>>(*owner);
-                for (auto& loop : owner->batchSources.Required<ShardT<T>>())
-                    created->Add(loop.id, loop.shard, false);
-                for (auto& loop : owner->batchSources.Required<const ShardT<T>>())
-                    created->Add(loop.id, loop.shard, true);
-                return created;
-            }
+            std::unique_ptr<EitherShardBatchSourceBase> Create();
 
             template<class T>
-            [[nodiscard]] static TypeHandle TypeHandleFor()
-            {
-                return Arca::TypeHandleFor<ShardT<T>>();
-            }
+            [[nodiscard]] static TypeHandleName KeyFor();
 
             template<class T>
-            constexpr static bool is_object_v = is_either_v<T>;
-            friend MetaBatchSources<EitherShardBatchSourceBase, ReliquaryShards, EitherBatchSources>;
+            constexpr static bool should_accept = is_either_v<T>;
+            friend MetaBatchSources<TypeHandleName, EitherShardBatchSourceBase, ReliquaryShards, EitherBatchSources>;
         } eitherBatchSources = EitherBatchSources(*this);
 
+        class CompositeBatchSources
+            : public MetaBatchSources<
+                std::type_index,
+                CompositeShardBatchSourceBase,
+                ReliquaryShards,
+                CompositeBatchSources>
+        {
+        public:
+            template<class T, std::enable_if_t<is_composite_v<T>, int> = 0>
+            [[nodiscard]] Map& MapFor();
+            template<class T, std::enable_if_t<is_composite_v<T>, int> = 0>
+            [[nodiscard]] const Map& MapFor() const;
+        private:
+            explicit CompositeBatchSources(ReliquaryShards& owner);
+            friend ReliquaryShards;
+        private:
+            template<class T>
+            std::unique_ptr<CompositeShardBatchSourceBase> Create();
+
+            template<class T>
+            [[nodiscard]] static std::type_index KeyFor();
+
+            template<class T>
+            constexpr static bool should_accept = is_composite_v<T>;
+            friend MetaBatchSources<std::type_index, CompositeShardBatchSourceBase, ReliquaryShards, CompositeBatchSources>;
+        } compositeBatchSources = CompositeBatchSources(*this);
+
         KnownPolymorphicSerializerList serializers;
+    private:
+        void NotifyCompositesShardCreate(RelicID id);
+        void NotifyCompositesShardDestroy(RelicID id);
+    private:
+        template<::Chroma::VariadicTemplateSize i>
+        struct ContainsAllShardsIterator
+        {
+            template<class ShardPack>
+            static bool Check(ShardPack, RelicID id, const ReliquaryShards& shards)
+            {
+                using T = typename ShardPack::template Parameter<i>::Type;
+
+                return  shards.Contains<T>(id);
+            }
+        };
     private:
         explicit ReliquaryShards(Reliquary& owner);
         friend Reliquary;

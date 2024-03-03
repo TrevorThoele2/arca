@@ -55,6 +55,12 @@
     <ClCompile Include="EitherShardBatchTests.cpp">
       <Filter>Source Files\Test</Filter>
     </ClCompile>
+    <ClCompile Include="CompositeShardTests.cpp">
+      <Filter>Source Files\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="CompositeShardBatchTests.cpp">
+      <Filter>Source Files\Test</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneralFixture.h">
@@ -106,6 +112,12 @@
       <Filter>Header Files\Test</Filter>
     </ClInclude>
     <ClInclude Include="EitherShardBatchTests.h">
+      <Filter>Header Files\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="CompositeShardTests.h">
+      <Filter>Header Files\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="CompositeShardBatchTests.h">
       <Filter>Header Files\Test</Filter>
     </ClInclude>
   </ItemGroup>

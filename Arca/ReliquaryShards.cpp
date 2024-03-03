@@ -9,6 +9,19 @@ namespace Arca
             throw NotRegistered(typeHandle.name);
 
         factory->second(Owner(), id, typeHandle.isConst);
+        NotifyCompositesShardCreate(id);
+    }
+
+    void ReliquaryShards::NotifyCompositesRelicCreate(RelicID id, const RelicStructure& structure)
+    {
+        for (auto& loop : compositeBatchSources.map)
+            loop.second->NotifyRelicCreated(id, structure);
+    }
+
+    void ReliquaryShards::NotifyCompositesRelicDestroy(RelicID id)
+    {
+        for (auto& loop : compositeBatchSources.map)
+            loop.second->NotifyRelicDestroyed(id);
     }
 
     ShardBatchSourceBase* ReliquaryShards::BatchSources::FindConst(const TypeHandleName& typeHandle)
@@ -25,6 +38,21 @@ namespace Arca
 
     ReliquaryShards::EitherBatchSources::EitherBatchSources(ReliquaryShards& owner) : MetaBatchSources(owner)
     {}
+
+    ReliquaryShards::CompositeBatchSources::CompositeBatchSources(ReliquaryShards& owner) : MetaBatchSources(owner)
+    {}
+
+    void ReliquaryShards::NotifyCompositesShardCreate(RelicID id)
+    {
+        for (auto& loop : compositeBatchSources.map)
+            loop.second->NotifyShardCreated(id);
+    }
+
+    void ReliquaryShards::NotifyCompositesShardDestroy(RelicID id)
+    {
+        for (auto& loop : compositeBatchSources.map)
+            loop.second->NotifyShardDestroyed(id);
+    }
 
     ReliquaryShards::ReliquaryShards(Reliquary& owner) : ReliquaryComponent(owner, "shard")
     {}

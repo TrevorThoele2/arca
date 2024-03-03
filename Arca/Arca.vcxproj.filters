@@ -92,7 +92,10 @@
       <Filter>Source Files\Relic</Filter>
     </ClCompile>
     <ClCompile Include="EitherShardBatchSource.cpp">
-      <Filter>Source Files\Shard\Batch</Filter>
+      <Filter>Source Files\Shard\Batch\Either</Filter>
+    </ClCompile>
+    <ClCompile Include="CompositeShardBatchSource.cpp">
+      <Filter>Source Files\Shard\Batch\Composite</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -297,17 +300,35 @@
     <ClInclude Include="Either.h">
       <Filter>Header Files\Shard</Filter>
     </ClInclude>
+    <ClInclude Include="AreAllShards.h">
+      <Filter>Header Files\Shard</Filter>
+    </ClInclude>
     <ClInclude Include="EitherShardBatch.h">
-      <Filter>Header Files\Shard\Batch</Filter>
-    </ClInclude>
-    <ClInclude Include="EitherShardBatchSource.h">
-      <Filter>Header Files\Shard\Batch</Filter>
-    </ClInclude>
-    <ClInclude Include="EitherShardBatchSourceDefinition.h">
-      <Filter>Header Files\Shard\Batch</Filter>
+      <Filter>Header Files\Shard\Batch\Either</Filter>
     </ClInclude>
     <ClInclude Include="EitherShardBatchIterator.h">
-      <Filter>Header Files\Shard\Batch</Filter>
+      <Filter>Header Files\Shard\Batch\Either</Filter>
+    </ClInclude>
+    <ClInclude Include="EitherShardBatchSource.h">
+      <Filter>Header Files\Shard\Batch\Either</Filter>
+    </ClInclude>
+    <ClInclude Include="EitherShardBatchSourceDefinition.h">
+      <Filter>Header Files\Shard\Batch\Either</Filter>
+    </ClInclude>
+    <ClInclude Include="All.h">
+      <Filter>Header Files\Shard</Filter>
+    </ClInclude>
+    <ClInclude Include="CompositeShardBatch.h">
+      <Filter>Header Files\Shard\Batch\All</Filter>
+    </ClInclude>
+    <ClInclude Include="CompositeShardBatchIterator.h">
+      <Filter>Header Files\Shard\Batch\All</Filter>
+    </ClInclude>
+    <ClInclude Include="CompositeShardBatchSourceDefinition.h">
+      <Filter>Header Files\Shard\Batch\All</Filter>
+    </ClInclude>
+    <ClInclude Include="CompositeShardBatchSource.h">
+      <Filter>Header Files\Shard\Batch\All</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -394,6 +415,18 @@
     </Filter>
     <Filter Include="Source Files\Signal\Common">
       <UniqueIdentifier>{f92fb2f0-e8eb-4662-bf5e-2c887368d9b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Shard\Batch\Either">
+      <UniqueIdentifier>{a19aec0b-0410-4ad3-86f0-8ec08a398b0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Shard\Batch\Either">
+      <UniqueIdentifier>{ba0d62be-6fc6-42cb-9950-dfb82be604c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Shard\Batch\All">
+      <UniqueIdentifier>{e08ae1bc-fb86-4a8e-bf9c-82e1a92c7325}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Shard\Batch\Composite">
+      <UniqueIdentifier>{d48ea134-5016-4151-bfe1-407aff09ffad}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
