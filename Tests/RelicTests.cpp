@@ -60,6 +60,13 @@ RelicTestsFixture::RelicConstructedFromMovedValue::RelicConstructedFromMovedValu
     myInt(std::move(myInt))
 {}
 
+RelicTestsFixture::RelicWithUnorderedSet::RelicWithUnorderedSet(RelicInit init)
+{}
+
+RelicTestsFixture::RelicWithUnorderedSet::RelicWithUnorderedSet(RelicInit init, std::unordered_set<int> ints) :
+    ints(ints)
+{}
+
 namespace Arca
 {
     bool Traits<RelicTestsFixture::ShouldCreateRelic>::ShouldCreate(Reliquary& reliquary, int value)
@@ -900,6 +907,29 @@ SCENARIO_METHOD(RelicTestsFixture, "relic constructed from moved value", "[relic
             THEN("has moved value")
             {
                 REQUIRE(*relic->myInt == value);
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(RelicTestsFixture, "relic constructed with unordered_set", "[relic]")
+{
+    GIVEN("registered reliquary")
+    {
+        auto reliquary = ReliquaryOrigin()
+            .Register<RelicWithUnorderedSet>()
+            .Actualize();
+
+        WHEN("creating relic from unordered_set")
+        {
+            const auto ints = dataGeneration.RandomGroup<int>(3);
+            const auto passInts = std::unordered_set<int>{ ints.begin(), ints.end() };
+
+            auto relic = reliquary->Do(Create<RelicWithUnorderedSet>{passInts});
+
+            THEN("has ints")
+            {
+                REQUIRE(relic->ints == passInts);
             }
         }
     }
