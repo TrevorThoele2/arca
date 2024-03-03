@@ -119,9 +119,9 @@ namespace Arca
         IncorrectRegisteredCuratorType();
     };
 
-    class CommandAlreadyLinked final : public Exception
+    class CommandWithReturnValueAlreadyLinked final : public Exception
     {
     public:
-        explicit CommandAlreadyLinked(const Type& type);
+        explicit CommandWithReturnValueAlreadyLinked(const Type& type);
     };
 }

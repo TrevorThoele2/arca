@@ -27,6 +27,8 @@
     <ClInclude Include="CannotFindReliquaryDependency.h" />
     <ClInclude Include="Clear.h" />
     <ClInclude Include="Command.h" />
+    <ClInclude Include="CommandHandler.h" />
+    <ClInclude Include="CommandHandlerDefinitions.h" />
     <ClInclude Include="CommandResult.h" />
     <ClInclude Include="Create.h" />
     <ClInclude Include="CreateChild.h" />
@@ -36,6 +38,7 @@
     <ClInclude Include="HandleObjectType.h" />
     <ClInclude Include="HasRelicDefaultConstructor.h" />
     <ClInclude Include="HasRelicSerializationConstructor.h" />
+    <ClInclude Include="HasSelfContainedTrait.h" />
     <ClInclude Include="HasShardDefaultConstructor.h" />
     <ClInclude Include="HasShardSerializationConstructor.h" />
     <ClInclude Include="Destroy.h" />
@@ -46,7 +49,12 @@
     <ClInclude Include="HasCommandResult.h" />
     <ClInclude Include="HasHandledCommands.h" />
     <ClInclude Include="HasWorkMethod.h" />
+    <ClInclude Include="IdentifiedCreate.h" />
+    <ClInclude Include="IdentifiedCreateChild.h" />
+    <ClInclude Include="IdentifiedCreateChildWith.h" />
+    <ClInclude Include="IdentifiedCreateWith.h" />
     <ClInclude Include="Index.h" />
+    <ClInclude Include="IsSelfContained.h" />
     <ClInclude Include="ReliquaryUserContext.h" />
     <ClInclude Include="MatrixIndexDefinition.h" />
     <ClInclude Include="MutablePointer.h" />
@@ -75,7 +83,10 @@
     <ClInclude Include="ReliquaryCommandsDefinition.h" />
     <ClInclude Include="ReliquaryMatrices.h" />
     <ClInclude Include="ReliquaryMatricesDefinition.h" />
+    <ClInclude Include="SaveUserContext.h" />
     <ClInclude Include="SerializationConstructorMarker.h" />
+    <ClInclude Include="ShardBatchSourceDefinition.h" />
+    <ClInclude Include="ShardBatchSource.h" />
     <ClInclude Include="ShardIndex.h" />
     <ClInclude Include="ShardIndexDefinition.h" />
     <ClInclude Include="AsHandle.h" />
@@ -153,7 +164,6 @@
     <ClInclude Include="Type.h" />
     <ClInclude Include="ShardBatch.h" />
     <ClInclude Include="BatchException.h" />
-    <ClInclude Include="ShardBatchSource.h" />
     <ClInclude Include="OpenRelic.h" />
     <ClInclude Include="RelicMetadata.h" />
     <ClInclude Include="RelicStructure.h" />
@@ -161,6 +171,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CannotFindReliquaryDependency.cpp" />
+    <ClCompile Include="CommandHandler.cpp" />
     <ClCompile Include="KnownMatrix.cpp" />
     <ClCompile Include="MatrixBatchSource.cpp" />
     <ClCompile Include="MutablePointer.cpp" />
@@ -190,6 +201,14 @@
     <ClCompile Include="OpenRelic.cpp" />
     <ClCompile Include="RelicMetadata.cpp" />
     <ClCompile Include="Type.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Chroma\Chroma\Chroma.vcxproj">
+      <Project>{11d859bd-185b-40e3-9eba-0fa17d6fd187}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Inscription\Inscription\Inscription.vcxproj">
+      <Project>{93a2633a-46a4-4a08-aa6a-2c4dd75990b5}</Project>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -244,7 +263,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\Users\Trevor\Documents\Programming Projects\Chroma;C:\Users\Trevor\Documents\Programming Projects\Inscription;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Trevor\Documents\ProgrammingProjects\Chroma;C:\Users\Trevor\Documents\ProgrammingProjects\Inscription;C:\Users\Trevor\Documents\ProgrammingProjects\function2\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>C:\Users\Trevor\Documents\ProgrammingProjects\function2\include;C:\Users\Trevor\Documents\ProgrammingProjects\Chroma;C:\Users\Trevor\Documents\ProgrammingProjects\Inscription;$(IncludePath)</IncludePath>
@@ -276,7 +295,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>

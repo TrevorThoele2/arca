@@ -13,12 +13,12 @@ namespace Arca
     class ReliquaryRelics;
 
     template<class T>
-    struct CreateChild
+    struct IdentifiedCreateChild
     {
         template<class... Args>
-        explicit CreateChild(const Handle& parent, Args&& ... args) :
-            base(std::make_unique<Derived<Handle, Args...>>(
-                parent, std::forward<Args>(args)...))
+        explicit IdentifiedCreateChild(RelicID id, const Handle& parent, Args&& ... args) :
+            base(std::make_unique<Derived<RelicID, Handle, Args...>>(
+                id, parent, std::forward<Args>(args)...))
         {}
 
         Index<T> Do(Reliquary& reliquary) const
@@ -46,28 +46,27 @@ namespace Arca
 
             Index<T> Do(ReliquaryRelics& relics) override
             {
-
                 return std::apply(
                     [&relics](auto&& ... args)
                     {
-                        return relics.template CreateChild<T>(std::forward<decltype(args)>(args)...);
+                        return relics.template IdentifiedCreateChild<T>(std::forward<decltype(args)>(args)...);
                     }, std::move(args));
             }
         private:
             std::tuple<Args...> args;
         };
 
-        static_assert(is_relic_v<T>, "CreateChild can only be used with relics.");
+        static_assert(is_relic_v<T>, "IdentifiedCreateChild can only be used with relics.");
     };
 
     template <class T>
-    CreateChild<T>::Base::~Base() = default;
+    IdentifiedCreateChild<T>::Base::~Base() = default;
 
     template<class T>
-    struct Traits<CreateChild<T>>
+    struct Traits<IdentifiedCreateChild<T>>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "Arca::CreateChild<" + Traits<std::remove_const_t<T>>::typeName + ">";
+        static inline const TypeName typeName = "Arca::IdentifiedCreateChild<" + Traits<std::remove_const_t<T>>::typeName + ">";
         using Result = Index<T>;
         static const bool selfContained = true;
     };

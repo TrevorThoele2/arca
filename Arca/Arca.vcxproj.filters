@@ -91,6 +91,9 @@
     <ClCompile Include="CannotFindReliquaryDependency.cpp">
       <Filter>Source Files\Serialization</Filter>
     </ClCompile>
+    <ClCompile Include="CommandHandler.cpp">
+      <Filter>Source Files\Command</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Curator.h">
@@ -112,9 +115,6 @@
       <Filter>Header Files\Shard\Batch</Filter>
     </ClInclude>
     <ClInclude Include="ShardBatchIterator.h">
-      <Filter>Header Files\Shard\Batch</Filter>
-    </ClInclude>
-    <ClInclude Include="ShardBatchSource.h">
       <Filter>Header Files\Shard\Batch</Filter>
     </ClInclude>
     <ClInclude Include="RelicID.h">
@@ -509,6 +509,39 @@
     </ClInclude>
     <ClInclude Include="TableScribeCategory.h">
       <Filter>Header Files\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandHandler.h">
+      <Filter>Header Files\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandHandlerDefinitions.h">
+      <Filter>Header Files\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="IdentifiedCreate.h">
+      <Filter>Header Files\Command\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="IdentifiedCreateChild.h">
+      <Filter>Header Files\Command\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="IdentifiedCreateChildWith.h">
+      <Filter>Header Files\Command\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="IdentifiedCreateWith.h">
+      <Filter>Header Files\Command\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="IsSelfContained.h">
+      <Filter>Header Files\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="HasSelfContainedTrait.h">
+      <Filter>Header Files\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="SaveUserContext.h">
+      <Filter>Header Files\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="ShardBatchSource.h">
+      <Filter>Header Files\Shard\Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="ShardBatchSourceDefinition.h">
+      <Filter>Header Files\Shard\Batch</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -4,6 +4,7 @@
 
 #include "IsRelic.h"
 #include "Handle.h"
+#include "RelicStructure.h"
 #include "Index.h"
 
 #include "ReliquaryRelics.h"
@@ -13,12 +14,18 @@ namespace Arca
     class ReliquaryRelics;
 
     template<class T>
-    struct CreateChild
+    struct IdentifiedCreateChildWith
     {
         template<class... Args>
-        explicit CreateChild(const Handle& parent, Args&& ... args) :
-            base(std::make_unique<Derived<Handle, Args...>>(
-                parent, std::forward<Args>(args)...))
+        explicit IdentifiedCreateChildWith(RelicID id, const Handle& parent, const RelicStructure& structure, Args&& ... args) :
+            base(std::make_unique<Derived<RelicID, Handle, RelicStructure, Args...>>(
+                id, parent, structure, std::forward<Args>(args)...))
+        {}
+
+        template<class... Args>
+        explicit IdentifiedCreateChildWith(RelicID id, const Handle& parent, const std::string& structureName, Args&& ... args) :
+            base(std::make_unique<Derived<RelicID, Handle, std::string, Args...>>(
+                id, parent, structureName, std::forward<Args>(args)...))
         {}
 
         Index<T> Do(Reliquary& reliquary) const
@@ -46,28 +53,27 @@ namespace Arca
 
             Index<T> Do(ReliquaryRelics& relics) override
             {
-
                 return std::apply(
                     [&relics](auto&& ... args)
                     {
-                        return relics.template CreateChild<T>(std::forward<decltype(args)>(args)...);
+                        return relics.template IdentifiedCreateChildWith<T>(std::forward<decltype(args)>(args)...);
                     }, std::move(args));
             }
         private:
             std::tuple<Args...> args;
         };
 
-        static_assert(is_relic_v<T>, "CreateChild can only be used with relics.");
+        static_assert(is_relic_v<T>, "IdentifiedCreateChildWith can only be used with relics.");
     };
 
     template <class T>
-    CreateChild<T>::Base::~Base() = default;
+    IdentifiedCreateChildWith<T>::Base::~Base() = default;
 
     template<class T>
-    struct Traits<CreateChild<T>>
+    struct Traits<IdentifiedCreateChildWith<T>>
     {
         static const ObjectType objectType = ObjectType::Command;
-        static inline const TypeName typeName = "Arca::CreateChild<" + Traits<std::remove_const_t<T>>::typeName + ">";
+        static inline const TypeName typeName = "Arca::IdentifiedCreateChildWith<" + Traits<std::remove_const_t<T>>::typeName + ">";
         using Result = Index<T>;
         static const bool selfContained = true;
     };

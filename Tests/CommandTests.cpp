@@ -15,7 +15,14 @@ int CommandTestsFixture::Curator::Handle(const CommandWithResult& command)
 }
 
 void CommandTestsFixture::CuratorWithSameLink::Handle(const Command& command)
-{}
+{
+    handledCommands.push_back(command);
+}
+
+int CommandTestsFixture::CuratorWithSameResultLink::Handle(const CommandWithResult& command)
+{
+    return 10;
+}
 
 CommandTestsFixture::Relic::Relic(Init init) : ClosedTypedRelic(init)
 {}
@@ -70,13 +77,38 @@ SCENARIO_METHOD(CommandTestsFixture, "command result", "[command]")
     }
 }
 
-SCENARIO_METHOD(CommandTestsFixture, "command linked multiple times", "[command]")
+SCENARIO_METHOD(CommandTestsFixture, "void result command linked multiple times", "[command]")
+{
+    GIVEN("registered reliquary")
+    {
+        auto reliquary = Arca::ReliquaryOrigin()
+            .Register<Curator>()
+            .Register<CuratorWithSameLink>()
+            .Actualize();
+
+        auto& curator = reliquary->Find<Curator>();
+        auto& otherCurator = reliquary->Find<CuratorWithSameLink>();
+
+        WHEN("emitting command")
+        {
+            reliquary->Do(Command{});
+
+            THEN("handled it from multiple curators")
+            {
+                REQUIRE(curator.handledCommands.size() == 1);
+                REQUIRE(otherCurator.handledCommands.size() == 1);
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(CommandTestsFixture, "non-void result command linked multiple times", "[command]")
 {
     GIVEN("registered reliquary")
     {
         auto reliquaryOrigin = Arca::ReliquaryOrigin()
             .Register<Curator>()
-            .Register<CuratorWithSameLink>();
+            .Register<CuratorWithSameResultLink>();
 
         WHEN("acualizing")
         {
@@ -85,9 +117,9 @@ SCENARIO_METHOD(CommandTestsFixture, "command linked multiple times", "[command]
                 REQUIRE_THROWS_MATCHES
                 (
                     reliquaryOrigin.Actualize(),
-                    Arca::CommandAlreadyLinked,
+                    Arca::CommandWithReturnValueAlreadyLinked,
                     Catch::Matchers::Message(
-                        "The command (" + Arca::TypeFor<Command>().name + ") has already been linked.")
+                        "The command (" + Arca::TypeFor<CommandWithResult>().name + ") has already been linked and returns a value. Multiple handlers are not allowed when the command has a return value.")
                 );
             }
         }

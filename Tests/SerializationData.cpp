@@ -54,64 +54,17 @@ SerializationData::GlobalRelic::GlobalRelic(Init init, Serialization) :
 
 SerializationData::NonDefaultConstructorRelic::NonDefaultConstructorRelic(
     Init init, int myInt)
-    : ClosedTypedRelic(init), myInt(myInt)
-{}
-
-SerializationData::BasicShardNullInscription::BasicShardNullInscription(std::string myValue)
-    : myValue(std::move(myValue))
-{}
-
-SerializationData::OtherShardNullInscription::OtherShardNullInscription(int myValue)
-    : myValue(myValue)
-{}
-
-SerializationData::TypedClosedRelicNullInscription::TypedClosedRelicNullInscription(
-    Init init)
-    :
-    ClosedTypedRelic(init)
-{
-    basicShard = Create<BasicShardNullInscription>();
-}
-
-SerializationData::TypedClosedRelicNullInscription::TypedClosedRelicNullInscription(
-    Init init, int myInt)
     :
     ClosedTypedRelic(init), myInt(myInt)
-{
-    basicShard = Create<BasicShardNullInscription>();
-}
+{}
 
-SerializationData::TypedOpenRelicNullInscription::TypedOpenRelicNullInscription(
-    Init init)
-    :
-    OpenTypedRelic(init)
-{
-    basicShard = Create<BasicShardNullInscription>();
-}
+SerializationData::BasicShardNullInscription::BasicShardNullInscription(std::string myValue) :
+    myValue(std::move(myValue))
+{}
 
-SerializationData::TypedOpenRelicNullInscription::TypedOpenRelicNullInscription(
-    Init init, int myInt)
-    :
-    OpenTypedRelic(init), myInt(myInt)
-{
-    basicShard = Create<BasicShardNullInscription>();
-}
-
-SerializationData::GlobalRelicNullInscription::GlobalRelicNullInscription(
-    Init init)
-    :
-    ClosedTypedRelic(init)
-{
-    basicShard = Create<BasicShardNullInscription>();
-}
-
-SerializationData::GlobalRelicNullInscription::GlobalRelicNullInscription(
-    Init init, int myInt, std::string shardData)
-    :
-    ClosedTypedRelic(init), myInt(myInt)
-{
-    basicShard = Create<BasicShardNullInscription>(std::move(shardData));
-}
+SerializationData::OtherShardNullInscription::OtherShardNullInscription(int myValue) :
+    myValue(myValue)
+{}
 
 SerializationData::MovableOnlyRelic::MovableOnlyRelic(
     Init init, int myInt, std::string shardData)
