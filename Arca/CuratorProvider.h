@@ -5,7 +5,7 @@
 
 #include "Curator.h"
 #include "CuratorTypeDescription.h"
-#include "ProcessedCuratorTraits.h"
+#include "CuratorTraits.h"
 
 namespace Arca
 {
@@ -18,23 +18,22 @@ namespace Arca
             ProvidedCurator curator;
             CuratorTypeDescription description;
         };
-
-        using CuratorMap = std::unordered_map<TypeHandle, Curator*>;
-        using CuratorProviderMap = std::unordered_map<TypeHandle, CuratorProviderBase*>;
     public:
-        CuratorProviderBase(const CuratorProviderBase& arg) = delete;
+        CuratorProviderBase(const CuratorProviderBase& arg) = default;
         CuratorProviderBase(CuratorProviderBase&& arg) = delete;
 
         virtual ~CuratorProviderBase() = 0;
 
+        [[nodiscard]] virtual std::unique_ptr<CuratorProviderBase> Clone() const = 0;
+
         CuratorProviderBase& operator=(const CuratorProviderBase& arg) = delete;
         CuratorProviderBase& operator=(CuratorProviderBase&& arg) = delete;
 
-        Provided Provide(CuratorMap& curators, CuratorProviderMap& curatorProviders, Reliquary& reliquary);
+        Provided Provide(Reliquary& reliquary);
     protected:
         explicit CuratorProviderBase(CuratorTypeDescription typeDescription);
     protected:
-        virtual ProvidedCurator ProvideImpl(CuratorMap& curators, CuratorProviderMap& curatorProviders, Reliquary& reliquary) = 0;
+        virtual ProvidedCurator ProvideImpl(Reliquary& reliquary) = 0;
     private:
         CuratorTypeDescription typeDescription;
     };
@@ -47,43 +46,27 @@ namespace Arca
         ArgumentTuple arguments;
     public:
         explicit CuratorProvider(ArgumentTuple&& arguments);
+
+        [[nodiscard]] std::unique_ptr<CuratorProviderBase> Clone() const override;
     protected:
-        ProvidedCurator ProvideImpl(CuratorMap& curators, CuratorProviderMap& curatorProviders, Reliquary& reliquary) override;
+        ProvidedCurator ProvideImpl(Reliquary& reliquary) override;
     };
 
     template<class Curator, class... Args>
     CuratorProvider<Curator, Args...>::CuratorProvider(ArgumentTuple&& arguments) :
-        CuratorProviderBase(ProcessedCuratorTraits<Curator>::TypeDescription()), arguments(std::move(arguments))
+        CuratorProviderBase(CuratorTypeDescriptionFor<Curator>()), arguments(std::move(arguments))
     {}
 
     template<class Curator, class... Args>
-    auto CuratorProvider<Curator, Args...>::ProvideImpl(
-        CuratorMap& curators, CuratorProviderMap& curatorProviders, Reliquary& reliquary)
-        -> ProvidedCurator
+    std::unique_ptr<CuratorProviderBase> CuratorProvider<Curator, Args...>::Clone() const
     {
-        using ProcessedTraits = ProcessedCuratorTraits<Curator>;
+        return std::make_unique<CuratorProvider>(*this);
+    }
 
-        std::unique_ptr<Curator> created;
-        ProcessedTraits::DoWithDependencies
-        (
-            [&created, &reliquary, this](typename ProcessedTraits::DependencyTuple& dependencies)
-            {
-                auto tuple = std::tuple_cat
-                (
-                    std::forward_as_tuple(reliquary),
-                    dependencies,
-                    arguments
-                );
-
-                created = std::move(std::apply(
-                    [](auto&& ... args)
-                    {
-                        return std::make_unique<Curator>(std::forward<decltype(args)>(args)...);
-                    }, tuple));
-            },
-            curators
-        );
-        return created;
+    template<class Curator, class... Args>
+    auto CuratorProvider<Curator, Args...>::ProvideImpl(Reliquary& reliquary) -> ProvidedCurator
+    {
+        return std::make_unique<Curator>(reliquary);
     }
 
     class ExternalCuratorProvider final : public CuratorProviderBase
@@ -92,7 +75,9 @@ namespace Arca
         Curator* external;
     public:
         ExternalCuratorProvider(Curator* external, CuratorTypeDescription typeDescription);
+
+        [[nodiscard]] std::unique_ptr<CuratorProviderBase> Clone() const override;
     protected:
-        ProvidedCurator ProvideImpl(CuratorMap& curators, CuratorProviderMap& curatorProviders, Reliquary& reliquary) override;
+        ProvidedCurator ProvideImpl(Reliquary& reliquary) override;
     };
 }

@@ -6,15 +6,6 @@ namespace Arca
 {
     Curator::~Curator() = default;
 
-    void Curator::Initialize()
-    {
-        if (IsInitialized())
-            return;
-
-        InitializeImplementation();
-        isInitialized = true;
-    }
-
     void Curator::StartStep()
     {
         isStarted = StartStepImplementation();
@@ -37,16 +28,6 @@ namespace Arca
         isStarted = false;
     }
 
-    void Curator::Finalize()
-    {
-        FinalizeImplementation();
-    }
-
-    bool Curator::IsInitialized() const
-    {
-        return isInitialized;
-    }
-
     bool Curator::IsStarted() const
     {
         return isStarted;
@@ -65,9 +46,6 @@ namespace Arca
         return *owner;
     }
 
-    void Curator::InitializeImplementation()
-    {}
-
     bool Curator::StartStepImplementation()
     {
         return true;
@@ -77,9 +55,6 @@ namespace Arca
     {}
 
     void Curator::StopStepImplementation()
-    {}
-
-    void Curator::FinalizeImplementation()
     {}
 }
 

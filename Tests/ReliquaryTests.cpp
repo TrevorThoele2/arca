@@ -177,7 +177,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "registered reliquary with every type", "
             .Relic<BasicRelic>()
             .StaticVessel<StaticVessel>()
             .Curator<BasicCurator>()
-            .CuratorLayout(CuratorLayout())
+            .CuratorPipeline(CuratorPipeline())
             .Signal<BasicSignal>()
             .Actualize();
 
@@ -199,7 +199,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
             .Relic<BasicRelic>()
             .StaticVessel<StaticVessel>()
             .Curator<BasicCurator>()
-            .CuratorLayout(CuratorLayout())
+            .CuratorPipeline(CuratorPipeline())
             .Signal<BasicSignal>()
             .Actualize();
 
@@ -214,7 +214,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary serialization", "[reliquary][s
                 .Relic<BasicRelic>()
                 .StaticVessel<StaticVessel>()
                 .Curator<BasicCurator>()
-                .CuratorLayout(CuratorLayout())
+                .CuratorPipeline(CuratorPipeline())
                 .Signal<BasicSignal>()
                 .Actualize();
 

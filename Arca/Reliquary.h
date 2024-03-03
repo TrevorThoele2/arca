@@ -20,9 +20,9 @@
 #include "BeforeRelicDestroyed.h"
 
 #include "Curator.h"
-#include "CuratorLayout.h"
+#include "CuratorPipeline.h"
 #include "CuratorHandle.h"
-#include "ProcessedCuratorTraits.h"
+#include "CuratorTraits.h"
 
 #include "IntervalList.h"
 
@@ -84,8 +84,6 @@ namespace Arca
 
         template<class SignalT>
         SignalBatch<SignalT> StartSignalBatch();
-    private:
-        void Initialize();
     private:
         using VesselMetadataList = std::vector<VesselMetadata>;
         VesselMetadataList vesselMetadataList;
@@ -158,15 +156,17 @@ namespace Arca
         using CuratorMap = std::unordered_map<TypeHandle, CuratorHandlePtr>;
         CuratorMap curators;
 
-        using CuratorLayoutList = std::vector<CuratorLayout>;
-        CuratorLayoutList curatorLayouts;
+        using CuratorStage = std::vector<Curator*>;
+        using CuratorPipeline = std::vector<CuratorStage>;
+        CuratorPipeline curatorPipeline;
 
         KnownPolymorphicSerializerMap curatorSerializerMap;
 
         template<class Curator>
         [[nodiscard]] bool HasCurator() const;
 
-        void DoOnCurators(const std::function<void(Curator*)>& function);
+        template<class Function>
+        void DoOnCurators(Function function);
 
         template<class Curator>
         static TypeHandle TypeHandleForCurator();
@@ -386,6 +386,22 @@ namespace Arca
     bool Reliquary::HasCurator() const
     {
         return FindCurator<Curator>() != nullptr;
+    }
+
+    template<class Function>
+    void Reliquary::DoOnCurators(Function function)
+    {
+        if (curatorPipeline.empty())
+        {
+            for (auto& curator : curators)
+                function(*curator.second->Get());
+        }
+        else
+        {
+            for (auto& stage : curatorPipeline)
+                for (auto& curator : stage)
+                    function(*curator);
+        }
     }
 
     template<class Curator>

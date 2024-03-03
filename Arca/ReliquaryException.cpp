@@ -43,4 +43,8 @@ namespace Arca
     CannotParentVesselToSelf::CannotParentVesselToSelf(VesselID id) :
         Exception("The vessel with id (" + ::Chroma::ToString(id) + ") was attempted to be parented to itself.")
     {}
+
+    InvalidCuratorPipeline::InvalidCuratorPipeline(const std::string& reason) :
+        Exception(reason)
+    {}
 }

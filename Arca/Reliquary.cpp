@@ -6,7 +6,6 @@
 #include <Inscription/MemoryScribe.h>
 #include <Inscription/VectorScribe.h>
 
-#include <cassert>
 #include <utility>
 
 namespace Arca
@@ -19,7 +18,7 @@ namespace Arca
         relicBatchSources(std::move(arg.relicBatchSources)),
         relicSerializerMap(std::move(arg.relicSerializerMap)),
         curators(std::move(arg.curators)),
-        curatorLayouts(std::move(arg.curatorLayouts)),
+        curatorPipeline(std::move(arg.curatorPipeline)),
         curatorSerializerMap(std::move(arg.curatorSerializerMap)),
         signalBatchSources(std::move(arg.signalBatchSources))
     {
@@ -36,7 +35,7 @@ namespace Arca
         relicBatchSources = std::move(arg.relicBatchSources);
         relicSerializerMap = std::move(arg.relicSerializerMap);
         curators = std::move(arg.curators);
-        curatorLayouts = std::move(arg.curatorLayouts);
+        curatorPipeline = std::move(arg.curatorPipeline);
         curatorSerializerMap = std::move(arg.curatorSerializerMap);
         signalBatchSources = std::move(arg.signalBatchSources);
 
@@ -48,8 +47,9 @@ namespace Arca
 
     void Reliquary::Work()
     {
-        for (auto& loop : curators)
-            loop.second->Get()->Work();
+        DoOnCurators([](Curator& curator) { curator.StartStep(); });
+        DoOnCurators([](Curator& curator) { curator.Work(); });
+        DoOnCurators([](Curator& curator) { curator.StopStep(); });
     }
 
     Vessel Reliquary::CreateVessel()
@@ -121,12 +121,6 @@ namespace Arca
         for (auto& loop : curators)
             returnValue.push_back(loop.second->description);
         return returnValue;
-    }
-
-    void Reliquary::Initialize()
-    {
-        for (auto& loop : curators)
-            loop.second->Get()->Initialize();
     }
 
     VesselID Reliquary::SetupNewVesselInternals(VesselDynamism dynamism, std::optional<TypeHandle> typeHandle)
@@ -226,46 +220,6 @@ namespace Arca
             return nullptr;
 
         return found->second.get();
-    }
-
-    void Reliquary::DoOnCurators(const std::function<void(Curator*)>& function)
-    {
-        using RelicMap = std::unordered_set<std::type_index>;
-        RelicMap used;
-
-        const auto runFunction = [&used, &function](const std::type_index& type, Curator* curator)
-        {
-            function(curator);
-            used.emplace(type);
-        };
-
-        for (auto& currentLayout : curatorLayouts)
-        {
-            for (auto& currentCuratorType : currentLayout)
-            {
-                if (used.find(currentCuratorType) != used.end())
-                    continue;
-
-                auto handle = std::find_if(
-                    curators.begin(),
-                    curators.end(),
-                    [&currentCuratorType](const CuratorMap::value_type& entry)
-                    {
-                        return entry.second->Type() == currentCuratorType;
-                    });
-                assert(handle != curators.end());
-                runFunction(currentCuratorType, handle->second->Get());
-            }
-        }
-
-        for (auto& loop : curators)
-        {
-            auto type = loop.second->Type();
-            if (used.find(type) != used.end())
-                continue;
-
-            runFunction(type, loop.second->Get());
-        }
     }
 
     SignalBatchSourceBase* Reliquary::FindSignalBatchSource(const std::type_index& type)

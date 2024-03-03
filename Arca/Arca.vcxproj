@@ -37,15 +37,13 @@
     <ClInclude Include="BeforeRelicDestroyed.h" />
     <ClInclude Include="Reliquary.h" />
     <ClInclude Include="ReliquaryException.h" />
-    <ClInclude Include="RelicMap.h" />
-    <ClInclude Include="ProcessedCuratorTraits.h" />
     <ClInclude Include="Serialization.h" />
     <ClInclude Include="SignalBatch.h" />
     <ClInclude Include="SignalBatchException.h" />
     <ClInclude Include="SignalBatchSource.h" />
     <ClInclude Include="Curator.h" />
     <ClInclude Include="CuratorDependencyNotFound.h" />
-    <ClInclude Include="CuratorLayout.h" />
+    <ClInclude Include="CuratorPipeline.h" />
     <ClInclude Include="CuratorProvider.h" />
     <ClInclude Include="CuratorScribe.h" />
     <ClInclude Include="CuratorTraits.h" />
@@ -56,7 +54,6 @@
     <ClInclude Include="RelicBatch.h" />
     <ClInclude Include="RelicBatchException.h" />
     <ClInclude Include="RelicBatchSource.h" />
-    <ClInclude Include="RelicMapIterator.h" />
     <ClInclude Include="StaticAssert.h" />
     <ClInclude Include="Vessel.h" />
     <ClInclude Include="VesselMetadata.h" />
@@ -65,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CuratorHandle.cpp" />
+    <ClCompile Include="CuratorPipeline.cpp" />
     <ClCompile Include="CuratorTypeDescription.cpp" />
     <ClCompile Include="RelicBatchException.cpp" />
     <ClCompile Include="RelicBatchSource.cpp" />
