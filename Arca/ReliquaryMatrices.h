@@ -1,7 +1,5 @@
 #pragma once
 
-#include "ReliquaryComponent.h"
-
 #include "MatrixBatch.h"
 #include "KnownMatrix.h"
 
@@ -10,7 +8,7 @@
 
 namespace Arca
 {
-    class ReliquaryMatrices : public ReliquaryComponent
+    class ReliquaryMatrices
     {
     public:
         template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
@@ -108,7 +106,7 @@ namespace Arca
                 const auto key = KeyFor<ObjectT>();
                 auto emplaced = map.emplace(key, std::make_unique<BatchSource<ObjectT>>(*owner)).first->second.get();
                 auto& batchSource = static_cast<BatchSource<ObjectT>&>(*emplaced);
-                for (auto& stored : MatrixImplementation<ObjectT>::AllFrom(owner->Owner()))
+                for (auto& stored : MatrixImplementation<ObjectT>::AllFrom(*owner->owner))
                     batchSource.Add(stored);
                 owner->EnsureInteraction<ObjectT>(&KnownMatrix::InteractWithBatchSource);
                 return batchSource;
@@ -141,6 +139,8 @@ namespace Arca
 
         template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
         KnownList::iterator EnsuredKnown();
+    private:
+        Reliquary* owner;
     private:
         explicit ReliquaryMatrices(Reliquary& owner);
         ReliquaryMatrices(ReliquaryMatrices&& arg) noexcept = default;

@@ -40,9 +40,6 @@
     <ClCompile Include="ReliquarySignals.cpp">
       <Filter>Source Files\Reliquary\Components</Filter>
     </ClCompile>
-    <ClCompile Include="ReliquaryComponent.cpp">
-      <Filter>Source Files\Reliquary\Components</Filter>
-    </ClCompile>
     <ClCompile Include="ReliquaryRelicStructures.cpp">
       <Filter>Source Files\Reliquary\Components</Filter>
     </ClCompile>
@@ -172,9 +169,6 @@
       <Filter>Header Files\Reliquary\Components</Filter>
     </ClInclude>
     <ClInclude Include="ReliquarySignals.h">
-      <Filter>Header Files\Reliquary\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="ReliquaryComponent.h">
       <Filter>Header Files\Reliquary\Components</Filter>
     </ClInclude>
     <ClInclude Include="ReliquaryCuratorsDefinition.h">

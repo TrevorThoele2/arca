@@ -38,7 +38,7 @@ namespace Arca
     public:
         using SizeT = size_t;
     public:
-        Reliquary() = default;
+        Reliquary();
         Reliquary(const Reliquary& arg) = delete;
         Reliquary(Reliquary&& arg) noexcept = delete;
         ~Reliquary() = default;
@@ -132,20 +132,20 @@ namespace Arca
     public:
         void Destroy(const Handle& handle);
     private:
-        using Relics = ReliquaryRelics;
         using RelicStructures = ReliquaryRelicStructures;
-        using Shards = ReliquaryShards;
-        using Matrices = ReliquaryMatrices;
+        RelicStructures relicStructures;
         using Curators = ReliquaryCurators;
-        using Commands = ReliquaryCommands;
+        Curators curators;
+        using Shards = ReliquaryShards;
+        Shards shards;
+        using Matrices = ReliquaryMatrices;
+        Matrices matrices;
         using Signals = ReliquarySignals;
-        Relics relics = Relics(*this);
-        RelicStructures relicStructures = RelicStructures(*this);
-        Shards shards = Shards(*this);
-        Matrices matrices = Matrices(*this);
-        Curators curators = Curators(*this);
-        Commands commands = Commands(*this);
-        Signals signals = Signals(*this);
+        Signals signals;
+        using Commands = ReliquaryCommands;
+        Commands commands;
+        using Relics = ReliquaryRelics;
+        Relics relics;
     private:
         template<class ShardT, class... ConstructorArgs, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         Index<ShardT> CreateFromInternal(RelicID id, ConstructorArgs&& ... constructorArgs);
@@ -405,7 +405,7 @@ namespace Inscription
         template<class Archive>
         void Scriven(ObjectT& object, Archive& archive);
     private:
-        using KnownPolymorphicSerializerList = Arca::ReliquaryComponent::KnownPolymorphicSerializerList;
+        using KnownPolymorphicSerializerList = std::vector<Arca::KnownPolymorphicSerializer*>;
         template<class T>
         KnownPolymorphicSerializerList ToKnownPolymorphicSerializerList(std::vector<std::unique_ptr<T>>& stored);
     private:

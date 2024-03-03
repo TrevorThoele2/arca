@@ -131,7 +131,6 @@
     <ClInclude Include="Handle.h" />
     <ClInclude Include="RelicBatchSourceDefinition.h" />
     <ClInclude Include="RelicParented.h" />
-    <ClInclude Include="ReliquaryComponent.h" />
     <ClInclude Include="ReliquaryCurators.h" />
     <ClInclude Include="ReliquaryCuratorsDefinition.h" />
     <ClInclude Include="ReliquaryRelics.h" />
@@ -181,7 +180,6 @@
     <ClCompile Include="PipelineException.cpp" />
     <ClCompile Include="RelicBatchSource.cpp" />
     <ClCompile Include="Handle.cpp" />
-    <ClCompile Include="ReliquaryComponent.cpp" />
     <ClCompile Include="ReliquaryCurators.cpp" />
     <ClCompile Include="ReliquaryRelics.cpp" />
     <ClCompile Include="ReliquaryRelicStructures.cpp" />

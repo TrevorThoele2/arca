@@ -2,6 +2,7 @@
 
 #include "Reliquary.h"
 #include "ReliquaryRelics.h"
+#include "ReliquaryException.h"
 #include <cassert>
 
 namespace Arca
@@ -10,21 +11,21 @@ namespace Arca
     {
         const auto handler = FindHandler(type.name);
         if (handler == nullptr)
-            throw NotRegistered(Type(type.name));
+            throw NotRegistered(objectTypeName, Type(type.name));
 
-        if (Contains(Handle(id, Owner(), type, HandleObjectType::Shard)))
-            throw CannotCreate(type);
+        if (Contains(Handle(id, *owner, type, HandleObjectType::Shard)))
+            throw CannotCreate(objectTypeName, type);
 
-        handler->Create(id, Owner(), type.isConst, required);
+        handler->Create(id, *owner, type.isConst, required);
     }
 
     void ReliquaryShards::TransactionalDestroy(const Type& type, RelicID id)
     {
         const auto handler = FindHandler(type.name);
         if (handler == nullptr)
-            throw NotRegistered(type);
+            throw NotRegistered(objectTypeName, type);
 
-        handler->RequiredTransactionalDestroy(id, Owner(), Owner().matrices);
+        handler->RequiredTransactionalDestroy(id, *owner, owner->matrices);
     }
 
     void ReliquaryShards::Clear()
@@ -35,7 +36,7 @@ namespace Arca
 
     void ReliquaryShards::Clear(RelicID id)
     {
-        auto matrixSnapshot = Owner().matrices.StartDestroyingTransaction(id);
+        auto matrixSnapshot = owner->matrices.StartDestroyingTransaction(id);
 
         for (auto& handler : handlers)
         {
@@ -53,7 +54,7 @@ namespace Arca
         }
 
         for (auto& handler : handlers)
-            handler->RequiredDestroy(id, Owner());
+            handler->RequiredDestroy(id, *owner);
     }
 
     bool ReliquaryShards::IsShardTypeName(const TypeName& typeName) const
@@ -134,11 +135,11 @@ namespace Arca
     {
         const auto found = FindBatchSource(type);
         if (!found)
-            throw NotRegistered(Type(type));
+            throw NotRegistered(objectTypeName, Type(type));
 
         return *found;
     }
 
-    ReliquaryShards::ReliquaryShards(Reliquary& owner) : ReliquaryComponent(owner, "shard")
+    ReliquaryShards::ReliquaryShards(Reliquary& owner) : owner(&owner)
     {}
 }

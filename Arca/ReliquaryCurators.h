@@ -1,7 +1,5 @@
 #pragma once
 
-#include "ReliquaryComponent.h"
-
 #include <memory>
 #include <unordered_map>
 
@@ -12,7 +10,7 @@
 
 namespace Arca
 {
-    class ReliquaryCurators : public ReliquaryComponent
+    class ReliquaryCurators
     {
     public:
         [[nodiscard]] Curator& Find(const TypeName& type);
@@ -75,6 +73,10 @@ namespace Arca
     public:
         ReliquaryCurators(const ReliquaryCurators& arg) = delete;
         ReliquaryCurators& operator=(const ReliquaryCurators& arg) = delete;
+    private:
+        Reliquary* owner;
+
+        const std::string objectTypeName = "curator";
     private:
         explicit ReliquaryCurators(Reliquary& owner);
         ReliquaryCurators(ReliquaryCurators&& arg) noexcept = default;

@@ -126,7 +126,7 @@ namespace Arca
                 }
 
                 if (!foundInitializer)
-                    throw NotRegistered("Curator", Type{ typeName });
+                    throw NotRegistered("curator", Type{ typeName });
             }
         }
     }

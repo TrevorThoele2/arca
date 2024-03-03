@@ -10,13 +10,13 @@ namespace Arca
     template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int>>
     void ReliquaryMatrices::Destroy(RelicID id)
     {
-        MatrixImplementation<MatrixT>::Destroy(id, Owner());
+        MatrixImplementation<MatrixT>::Destroy(id, *owner);
     }
 
     template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int>>
     bool ReliquaryMatrices::Contains(RelicID id) const
     {
-        return MatrixImplementation<MatrixT>::Contains(id, Owner());
+        return MatrixImplementation<MatrixT>::Contains(id, *owner);
     }
 
     template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int>>

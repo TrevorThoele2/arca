@@ -1,7 +1,5 @@
 #pragma once
 
-#include "ReliquaryComponent.h"
-
 #include <vector>
 #include <any>
 
@@ -21,8 +19,10 @@
 namespace Arca
 {
     class Reliquary;
+    class ReliquaryRelicStructures;
+    class ReliquaryShards;
 
-    class ReliquaryRelics : public ReliquaryComponent
+    class ReliquaryRelics
     {
     public:
         template<class RelicT, class... ConstructorArgs, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
@@ -274,7 +274,14 @@ namespace Arca
     private:
         RelicMetadata& ValidateParentForParenting(const Handle& parent);
     private:
-        explicit ReliquaryRelics(Reliquary& owner);
+        Reliquary* owner;
+        ReliquaryRelicStructures* relicStructures;
+        ReliquaryShards* shards;
+
+        const std::string objectTypeName = "relic";
+    private:
+        explicit ReliquaryRelics(
+            Reliquary& owner, ReliquaryRelicStructures& relicStructures, ReliquaryShards& shards);
         ReliquaryRelics(ReliquaryRelics&& arg) noexcept = default;
         friend Reliquary;
     };

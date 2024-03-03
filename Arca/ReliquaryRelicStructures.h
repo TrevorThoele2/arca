@@ -1,7 +1,5 @@
 #pragma once
 
-#include "ReliquaryComponent.h"
-
 #include <string>
 #include <vector>
 
@@ -9,10 +7,10 @@
 
 namespace Arca
 {
-    class ReliquaryRelicStructures : public ReliquaryComponent
+    class ReliquaryRelicStructures
     {
     public:
-        explicit ReliquaryRelicStructures(Reliquary& owner);
+        ReliquaryRelicStructures() = default;
 
         [[nodiscard]] RelicStructure RequiredRelicStructure(const std::string& name) const;
     public:
@@ -25,5 +23,7 @@ namespace Arca
         };
         using NamedList = std::vector<Named>;
         NamedList namedList{};
+    private:
+        const std::string objectTypeName = "relic structure";
     };
 }

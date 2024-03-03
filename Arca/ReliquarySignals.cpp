@@ -2,7 +2,7 @@
 
 namespace Arca
 {
-    ReliquarySignals::ReliquarySignals(Reliquary& owner) : ReliquaryComponent(owner, "signal")
+    ReliquarySignals::ReliquarySignals(Reliquary& owner) : owner(&owner)
     {}
 
     ReliquarySignals::ListenerListBase::~ListenerListBase() = default;
