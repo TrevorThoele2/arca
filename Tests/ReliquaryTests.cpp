@@ -36,22 +36,22 @@ void ReliquaryTestsFixture::StaticRelic::InitializeImplementation()
 
 namespace Arca
 {
-    const TypeHandle Traits<::ReliquaryTestsFixture::BasicShard>::typeHandle =
+    const TypeHandleName Traits<::ReliquaryTestsFixture::BasicShard>::typeName =
         "ReliquaryTestsBasicShard";
 
-    const TypeHandle Traits<::ReliquaryTestsFixture::OtherBasicShard>::typeHandle =
+    const TypeHandleName Traits<::ReliquaryTestsFixture::OtherBasicShard>::typeName =
         "ReliquaryTestsOtherBasicShard";
 
-    const TypeHandle Traits<::ReliquaryTestsFixture::OtherShard>::typeHandle =
+    const TypeHandleName Traits<::ReliquaryTestsFixture::OtherShard>::typeName =
         "ReliquaryTestsOtherShard";
 
-    const TypeHandle Traits<::ReliquaryTestsFixture::BasicTypedRelic>::typeHandle =
+    const TypeHandleName Traits<::ReliquaryTestsFixture::BasicTypedRelic>::typeName =
         "ReliquaryTestsBasicTypedRelic";
 
-    const TypeHandle Traits<::ReliquaryTestsFixture::StaticRelic>::typeHandle =
+    const TypeHandleName Traits<::ReliquaryTestsFixture::StaticRelic>::typeName =
         "ReliquaryTestsStaticRelic";
 
-    const TypeHandle Traits<::ReliquaryTestsFixture::BasicCurator>::typeHandle =
+    const TypeHandleName Traits<::ReliquaryTestsFixture::BasicCurator>::typeName =
         "ReliquaryTestsBasicCurator";
 }
 
@@ -146,7 +146,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "creating relic from registered relic str
                     reliquary->Create<FixedRelic>(structureName),
                     NotRegistered,
                     ::Catch::Matchers::Message(
-                        "The shard ("s + Traits<BasicShard>::typeHandle + ") was not registered.")
+                        "The shard ("s + Traits<BasicShard>::typeName + ") was not registered.")
                 );
             }
         }

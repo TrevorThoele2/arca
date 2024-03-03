@@ -79,21 +79,21 @@ namespace Arca
     struct Traits<::RelicTestsFixture::BasicShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeHandle typeHandle;
+        static const TypeHandleName typeName;
     };
 
     template<>
     struct Traits<::RelicTestsFixture::OtherShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeHandle typeHandle;
+        static const TypeHandleName typeName;
     };
 
     template<>
     struct Traits<::RelicTestsFixture::BasicTypedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeHandle typeHandle;
+        static const TypeHandleName typeName;
         using Shards = ShardList<::RelicTestsFixture::BasicShard>;
     };
 
@@ -101,7 +101,7 @@ namespace Arca
     struct Traits<::RelicTestsFixture::StaticRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeHandle typeHandle;
+        static const TypeHandleName typeName;
         using Shards = ShardList<::RelicTestsFixture::BasicShard>;
     };
 
@@ -109,16 +109,18 @@ namespace Arca
     struct Traits<::RelicTestsFixture::MostBasicCustomFactoryRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeHandle typeHandle;
-        static std::optional<RelicTestsFixture::MostBasicCustomFactoryRelic> Factory(Reliquary& reliquary);
+        static const TypeHandleName typeName;
+        static std::optional<RelicTestsFixture::MostBasicCustomFactoryRelic>
+            Factory(Reliquary& reliquary);
     };
 
     template<>
     struct Traits<::RelicTestsFixture::GuardedCustomFactoryRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeHandle typeHandle;
-        static std::optional<RelicTestsFixture::GuardedCustomFactoryRelic> Factory(Reliquary& reliquary, int value);
+        static const TypeHandleName typeName;
+        static std::optional<RelicTestsFixture::GuardedCustomFactoryRelic>
+            Factory(Reliquary& reliquary, int value);
     };
 }
 

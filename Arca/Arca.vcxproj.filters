@@ -49,14 +49,17 @@
     <ClCompile Include="PipelineException.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RelicStructure.cpp">
-      <Filter>Source Files\Relic</Filter>
-    </ClCompile>
     <ClCompile Include="FixedRelic.cpp">
       <Filter>Source Files\Relic</Filter>
     </ClCompile>
     <ClCompile Include="RelicHandle.cpp">
       <Filter>Source Files\Relic</Filter>
+    </ClCompile>
+    <ClCompile Include="TypeHandle.cpp">
+      <Filter>Source Files\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectType.cpp">
+      <Filter>Source Files\Type</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -186,9 +189,6 @@
     <ClInclude Include="Ptr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectType.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Traits.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -224,6 +224,9 @@
     </ClInclude>
     <ClInclude Include="Static.h">
       <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectType.h">
+      <Filter>Header Files\Type</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -295,6 +298,9 @@
     </Filter>
     <Filter Include="Source Files\Relic\Batch">
       <UniqueIdentifier>{9b182ee4-5e4d-4a4e-9aa5-e0725fe7685d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Type">
+      <UniqueIdentifier>{e64f272b-71ae-4647-bfcf-a89367385ff9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -17,9 +17,12 @@ void ShardBatchFixture::StaticRelic::InitializeImplementation()
 
 namespace Arca
 {
-    const TypeHandle Traits<ShardBatchFixture::Shard>::typeHandle = "ShardBatchTestsShard";
-    const TypeHandle Traits<ShardBatchFixture::UnregisteredShard>::typeHandle = "ShardBatchTestsUnregisteredShard";
-    const TypeHandle Traits<ShardBatchFixture::StaticRelic>::typeHandle = "ShardBatchTestsStaticRelic";
+    const TypeHandleName Traits<ShardBatchFixture::Shard>::typeName
+        = "ShardBatchTestsShard";
+    const TypeHandleName Traits<ShardBatchFixture::UnregisteredShard>::typeName
+        = "ShardBatchTestsUnregisteredShard";
+    const TypeHandleName Traits<ShardBatchFixture::StaticRelic>::typeName
+        = "ShardBatchTestsStaticRelic";
 }
 
 SCENARIO_METHOD(ShardBatchFixture, "default shard batch", "[ShardBatch]")

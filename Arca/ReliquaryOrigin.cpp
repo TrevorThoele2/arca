@@ -111,6 +111,12 @@ namespace Arca
         return *this;
     }
 
+    ReliquaryOrigin::TypeConstructor::TypeConstructor(
+        TypeHandleName typeHandleName, std::function<void(Reliquary&)>&& factory)
+        :
+        typeHandleName(std::move(typeHandleName)), factory(std::move(factory))
+    {}
+
     std::vector<Curator*> ReliquaryOrigin::PushAllCuratorsTo(Reliquary& reliquary) const
     {
         std::vector<Arca::Curator*> returnValue;
@@ -131,7 +137,7 @@ namespace Arca
 
             returnValue.push_back(handle->Get());
 
-            reliquary.curators.emplace(handle->typeHandle, std::move(handle));
+            reliquary.curators.emplace(handle->typeHandle.name, std::move(handle));
         }
 
         for (auto& loop : curatorSerializationTypeHandlesFactoryList)
@@ -171,16 +177,16 @@ namespace Arca
         {
             Reliquary::CuratorStage createdStage;
 
-            auto typeHandles = stage.TypeHandleList();
-            for(auto& typeHandle : typeHandles)
+            auto typeHandleNames = stage.TypeHandleNameList();
+            for(auto& typeHandleName : typeHandleNames)
             {
-                auto found = reliquary.Find<Arca::Curator>(typeHandle);
+                auto found = reliquary.Find<Arca::Curator>(typeHandleName);
                 if (found == nullptr)
-                    throw InvalidPipeline("Curator (" + typeHandle + ") was not found.");
+                    throw InvalidPipeline("Curator (" + typeHandleName + ") was not found.");
 
                 const auto wasAlreadySeen = !seenCurators.emplace(found).second;
                 if (wasAlreadySeen)
-                    throw InvalidPipeline("Curator (" + typeHandle + ") was already in the pipeline.");
+                    throw InvalidPipeline("Curator (" + typeHandleName + ") was already in the pipeline.");
 
                 createdStage.push_back(found);
             }
@@ -191,4 +197,8 @@ namespace Arca
 
         return createdPipeline;
     }
+
+    ReliquaryOrigin::SignalConstructor::SignalConstructor(std::type_index type, void(*factory)(Reliquary&))
+        : type(std::move(type)), factory(factory)
+    {}
 }

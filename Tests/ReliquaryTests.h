@@ -75,28 +75,28 @@ namespace Arca
     struct Traits<::ReliquaryTestsFixture::BasicShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeHandle typeHandle;
+        static const TypeHandleName typeName;
     };
 
     template<>
     struct Traits<::ReliquaryTestsFixture::OtherBasicShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeHandle typeHandle;
+        static const TypeHandleName typeName;
     };
 
     template<>
     struct Traits<::ReliquaryTestsFixture::OtherShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeHandle typeHandle;
+        static const TypeHandleName typeName;
     };
 
     template<>
     struct Traits<::ReliquaryTestsFixture::BasicTypedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeHandle typeHandle;
+        static const TypeHandleName typeName;
         using Shards = ShardList<::ReliquaryTestsFixture::BasicShard>;
     };
 
@@ -104,7 +104,7 @@ namespace Arca
     struct Traits<::ReliquaryTestsFixture::StaticRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeHandle typeHandle;
+        static const TypeHandleName typeName;
         using Shards = ShardList<::ReliquaryTestsFixture::BasicShard>;
     };
 
@@ -112,7 +112,7 @@ namespace Arca
     struct Traits<::ReliquaryTestsFixture::BasicCurator>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static const TypeHandle typeHandle;
+        static const TypeHandleName typeName;
     };
 
     template<>

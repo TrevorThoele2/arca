@@ -19,8 +19,7 @@ namespace Arca
 
         virtual void DestroyFromBase(RelicID id) = 0;
 
-        [[nodiscard]] virtual SizeT TotalSize() const = 0;
-        [[nodiscard]] virtual SizeT NonConstSize() const = 0;
+        [[nodiscard]] virtual SizeT Size() const = 0;
     protected:
         friend class Reliquary;
     };
@@ -31,11 +30,14 @@ namespace Arca
     public:
         using ShardT = T;
     private:
+        using StoredT = std::decay_t<ShardT>;
+
         struct Entry
         {
             RelicID id;
-            ShardT shard;
-            bool isConst;
+            StoredT shard;
+
+            Entry(RelicID id, StoredT&& shard);
         };
 
         using List = std::vector<Entry>;
@@ -45,7 +47,7 @@ namespace Arca
     public:
         BatchSource() = default;
 
-        ShardT* Add(RelicID id, bool isConst);
+        ShardT* Add(RelicID id);
 
         iterator Destroy(RelicID destroy);
         iterator Destroy(iterator destroy);
@@ -53,12 +55,10 @@ namespace Arca
 
         void DestroyFromBase(RelicID id) override;
 
-        ShardT* Find(RelicID id, bool isConst);
+        ShardT* Find(RelicID id);
 
-        [[nodiscard]] SizeT TotalSize() const override;
-        [[nodiscard]] SizeT NonConstSize() const override;
+        [[nodiscard]] SizeT Size() const override;
         [[nodiscard]] bool IsEmpty() const;
-        [[nodiscard]] bool IsNonConstEmpty() const;
 
         [[nodiscard]] iterator begin();
         [[nodiscard]] const_iterator begin() const;
@@ -66,7 +66,6 @@ namespace Arca
         [[nodiscard]] const_iterator end() const;
     private:
         List list;
-        size_t nonConstSize = 0;
     private:
         friend class Reliquary;
     private:
@@ -74,19 +73,19 @@ namespace Arca
     };
 
     template<class T>
-    auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Add(RelicID id, bool isConst) -> ShardT*
+    BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Entry::Entry(RelicID id, StoredT&& shard)
+        : id(id), shard(std::move(shard))
+    {}
+
+    template<class T>
+    auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Add(RelicID id) -> ShardT*
     {
-        auto found = Find(id, isConst);
+        auto found = Find(id);
         if (found)
             return found;
 
-        list.push_back({ id, ShardT{}, isConst });
-        auto shard = &list.back().shard;
-
-        if (!isConst)
-            ++nonConstSize;
-
-        return shard;
+        list.emplace_back(id, StoredT{});
+        return &list.back().shard;
     }
 
     template<class T>
@@ -99,25 +98,18 @@ namespace Arca
         if (itr == list.end())
             return list.end();
 
-        if (!itr->isConst)
-            --nonConstSize;
-
         return list.erase(itr);
     }
 
     template<class T>
     auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Destroy(iterator destroy) -> iterator
     {
-        if (!destroy->isConst)
-            --nonConstSize;
         return list.erase(destroy);
     }
 
     template<class T>
     auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Destroy(const_iterator destroy) -> iterator
     {
-        if (!destroy->isConst)
-            --nonConstSize;
         return list.erase(destroy);
     }
 
@@ -128,17 +120,14 @@ namespace Arca
     }
 
     template<class T>
-    auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Find(RelicID id, bool isConst) -> ShardT*
+    auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Find(RelicID id) -> ShardT*
     {
         auto found = std::find_if(
             list.begin(),
             list.end(),
-            [id, isConst](const Entry& entry)
+            [id](const Entry& entry)
             {
-                if (entry.id != id)
-                    return false;
-
-                return entry.isConst ? isConst : true;
+                return entry.id == id;
             });
         if (found == list.end())
             return {};
@@ -147,27 +136,15 @@ namespace Arca
     }
 
     template<class T>
-    auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::TotalSize() const -> SizeT
+    auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Size() const -> SizeT
     {
         return list.size();
-    }
-
-    template<class T>
-    auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::NonConstSize() const -> SizeT
-    {
-        return nonConstSize;
     }
 
     template<class T>
     bool BatchSource<T, std::enable_if_t<is_shard_v<T>>>::IsEmpty() const
     {
         return list.empty();
-    }
-
-    template<class T>
-    bool BatchSource<T, std::enable_if_t<is_shard_v<T>>>::IsNonConstEmpty() const
-    {
-        return nonConstSize == 0;
     }
 
     template<class T>
@@ -227,8 +204,6 @@ namespace Inscription
                 archive(id);
                 auto shard = loop.shard;
                 archive(shard);
-                auto isConst = loop.isConst;
-                archive(isConst);
             }
         }
         else
@@ -238,26 +213,16 @@ namespace Inscription
 
             object.list.clear();
 
-            size_t nonConstSize = 0;
-
             while(size-- > 0)
             {
                 ::Arca::RelicID id;
                 archive(id);
 
-                typename ObjectT::ShardT shard;
+                typename ObjectT::StoredT shard;
                 archive(shard);
 
-                auto isConst = false;
-                archive(isConst);
-
-                object.list.push_back({ id, std::move(shard), isConst });
-
-                if (!isConst)
-                    ++nonConstSize;
+                object.list.emplace_back(id, std::move(shard));
             }
-
-            object.nonConstSize = nonConstSize;
         }
     }
 }

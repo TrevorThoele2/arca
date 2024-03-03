@@ -87,11 +87,11 @@ namespace Arca
     struct Traits<CuratorTestsFixture::DifferentiableCurator<id>>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static const TypeHandle typeHandle;
+        static const TypeHandleName typeName;
     };
 
     template<size_t id>
-    const TypeHandle Traits<CuratorTestsFixture::DifferentiableCurator<id>>::typeHandle =
+    const TypeHandleName Traits<CuratorTestsFixture::DifferentiableCurator<id>>::typeName =
         "DifferentiableCurator" + Chroma::ToString(id);
 }
 

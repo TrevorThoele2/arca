@@ -78,12 +78,12 @@
   <ItemGroup>
     <ClCompile Include="CuratorHandle.cpp" />
     <ClCompile Include="FixedRelic.cpp" />
+    <ClCompile Include="ObjectType.cpp" />
     <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="BatchException.cpp" />
     <ClCompile Include="PipelineException.cpp" />
     <ClCompile Include="RelicBatchSource.cpp" />
     <ClCompile Include="RelicHandle.cpp" />
-    <ClCompile Include="RelicStructure.cpp" />
     <ClCompile Include="ShardBatchSource.cpp" />
     <ClCompile Include="Exception.cpp" />
     <ClCompile Include="Reliquary.cpp" />
@@ -95,6 +95,7 @@
     <ClCompile Include="DynamicRelic.cpp" />
     <ClCompile Include="RelicMetadata.cpp" />
     <ClCompile Include="TypedRelic.cpp" />
+    <ClCompile Include="TypeHandle.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

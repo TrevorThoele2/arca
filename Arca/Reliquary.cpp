@@ -86,7 +86,7 @@ namespace Arca
     }
 
     Reliquary::KnownPolymorphicSerializer::KnownPolymorphicSerializer(
-        TypeHandle mainTypeHandle,
+        TypeHandleName mainTypeHandle,
         Serializer&& serializer,
         InscriptionTypeHandleProvider&& inscriptionTypeProvider)
         :
@@ -138,7 +138,7 @@ namespace Arca
     void Reliquary::SatisfyRelicStructure(const RelicStructure& structure, RelicID id)
     {
         for(auto& entry : structure)
-            CreateShard(entry.typeHandle, id, entry.isConst);
+            CreateShard(entry, id);
     }
 
     bool Reliquary::WillDestroyRelic(RelicMetadata* metadata) const
@@ -171,7 +171,7 @@ namespace Arca
 
         if (metadata.typeHandle)
         {
-            auto batchSource = FindRelicBatchSource(*metadata.typeHandle);
+            auto batchSource = FindRelicBatchSource(metadata.typeHandle->name);
             batchSource->DestroyFromBase(id);
         }
 
@@ -196,7 +196,7 @@ namespace Arca
         name(std::move(name)), value(std::move(value))
     {}
 
-    RelicBatchSourceBase* Reliquary::FindRelicBatchSource(const TypeHandle& typeHandle)
+    RelicBatchSourceBase* Reliquary::FindRelicBatchSource(const TypeHandleName& typeHandle)
     {
         const auto found = relicBatchSources.find(typeHandle);
         if (found == relicBatchSources.end())
@@ -205,19 +205,28 @@ namespace Arca
         return found->second.get();
     }
 
-    void Reliquary::CreateShard(const TypeHandle& typeHandle, RelicID id, bool isConst)
+    void Reliquary::CreateShard(const TypeHandle& typeHandle, RelicID id)
     {
-        const auto factory = shardFactoryMap.find(typeHandle);
+        const auto factory = shardFactoryMap.find(typeHandle.name);
         if (factory == shardFactoryMap.end())
-            throw NotRegistered("shard", typeHandle);
+            throw NotRegistered("shard", typeHandle.name);
 
-        factory->second(*this, id, isConst);
+        factory->second(*this, id, typeHandle.isConst);
     }
 
-    ShardBatchSourceBase* Reliquary::FindShardBatchSource(const TypeHandle& typeHandle)
+    ShardBatchSourceBase* Reliquary::FindShardBatchSource(const TypeHandleName& typeHandle)
     {
         const auto found = shardBatchSources.find(typeHandle);
         if (found == shardBatchSources.end())
+            return nullptr;
+
+        return found->second.get();
+    }
+
+    ShardBatchSourceBase* Reliquary::FindConstShardBatchSource(const TypeHandleName& typeHandle)
+    {
+        const auto found = constShardBatchSources.find(typeHandle);
+        if (found == constShardBatchSources.end())
             return nullptr;
 
         return found->second.get();
@@ -235,13 +244,13 @@ namespace Arca
 
 namespace Inscription
 {
-    KnownPolymorphic::KnownPolymorphic(void* underlying, Arca::Reliquary& reliquary, Serializer serializer) :
-        underlying(underlying), reliquary(&reliquary), serializer(std::move(serializer))
+    KnownPolymorphic::KnownPolymorphic(Arca::Reliquary& reliquary, Serializer serializer) :
+        reliquary(&reliquary), serializer(std::move(serializer))
     {}
 
     void Scribe<KnownPolymorphic, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
     {
-        object.serializer(object.underlying, *object.reliquary, archive);
+        object.serializer(*object.reliquary, archive);
     }
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
@@ -261,7 +270,6 @@ namespace Inscription
             archive,
             object.shardSerializers,
             object.shardBatchSources,
-            [](ObjectT::ShardBatchSourceMap::value_type& entry) -> void* { return entry.second.get(); },
             [](ObjectT::ShardBatchSourceMap::value_type& entry) { return entry.first; });
 
         JumpSaveAll(
@@ -269,7 +277,6 @@ namespace Inscription
             archive,
             object.relicSerializers,
             object.relicBatchSources,
-            [](ObjectT::RelicBatchSourceMap::value_type& entry) -> void* { return entry.second.get(); },
             [](ObjectT::RelicBatchSourceMap::value_type& entry) { return entry.first; });
 
         JumpSaveAll(
@@ -277,7 +284,6 @@ namespace Inscription
             archive,
             object.staticRelicSerializers,
             object.staticRelicMap,
-            [](ObjectT::StaticRelicMap::value_type& entry) -> void* { return &entry.second; },
             [](ObjectT::StaticRelicMap::value_type& entry) { return entry.first; });
 
         JumpSaveAll(
@@ -285,7 +291,6 @@ namespace Inscription
             archive,
             object.curatorSerializers,
             object.curators,
-            [](ObjectT::CuratorMap::value_type& entry) -> void* { return entry.second->Get(); },
             [](ObjectT::CuratorMap::value_type& entry) { return entry.first; });
     }
 
@@ -296,38 +301,43 @@ namespace Inscription
         JumpLoadAll(
             object,
             archive,
-            object.shardSerializers,
-            [](ObjectT& object, const ::Arca::TypeHandle& typeHandle)
-            {
-                return object.FindShardBatchSource(typeHandle);
-            });
+            object.shardSerializers);
 
         JumpLoadAll(
             object,
             archive,
-            object.relicSerializers,
-            [](ObjectT& object, const ::Arca::TypeHandle& typeHandle)
-            {
-                return object.FindRelicBatchSource(typeHandle);
-            });
+            object.relicSerializers);
 
         JumpLoadAll(
             object,
             archive,
-            object.staticRelicSerializers,
-            [](ObjectT& object, const ::Arca::TypeHandle& typeHandle)
-            {
-                return &object.staticRelicMap.find(typeHandle)->second;
-            });
+            object.staticRelicSerializers);
 
         JumpLoadAll(
             object,
             archive,
-            object.curatorSerializers,
-            [](ObjectT& object, const ::Arca::TypeHandle& typeHandle)
-            {
-                return object.Find<Arca::Curator>(typeHandle);
-            });
+            object.curatorSerializers);
+    }
+
+    void Scribe<::Arca::Reliquary, BinaryArchive>::JumpLoadAll(
+        ObjectT& object,
+        ArchiveT& archive,
+        ObjectT::KnownPolymorphicSerializerList& fromObject)
+    {
+        InputJumpTable<TypeHandle, KnownPolymorphic> jumpTable;
+        archive(jumpTable);
+
+        auto typesToLoad = PruneTypesToLoad(
+            fromObject,
+            archive,
+            jumpTable.AllIDs());
+
+        for (auto& typeToLoad : typesToLoad)
+        {
+            const auto& serializer = FindFrom(typeToLoad.arca, fromObject)->serializer;
+            auto adapter = KnownPolymorphic(object, serializer);
+            jumpTable.FillObject(typeToLoad.inscription, adapter, archive);
+        }
     }
 
     auto Scribe<::Arca::Reliquary, BinaryArchive>::FindFrom(

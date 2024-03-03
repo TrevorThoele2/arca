@@ -16,10 +16,10 @@ void ConstShardTestsFixture::Relic::InitializeImplementation()
 
 namespace Arca
 {
-    const TypeHandle Traits<ConstShardTestsFixture::Shard>::typeHandle =
+    const TypeHandleName Traits<ConstShardTestsFixture::Shard>::typeName =
         "ConstShardTestsShard";
 
-    const TypeHandle Traits<ConstShardTestsFixture::Relic>::typeHandle =
+    const TypeHandleName Traits<ConstShardTestsFixture::Relic>::typeName =
         "ConstShardTestsRelic";
 }
 
@@ -119,9 +119,9 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
             {
                 auto batch = reliquary->Batch<const Shard>();
 
-                THEN("has size 3")
+                THEN("is empty")
                 {
-                    REQUIRE(batch.Size() == 3);
+                    REQUIRE(batch.IsEmpty());
                 }
             }
 
@@ -188,9 +188,9 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
             {
                 auto batch = reliquary->Batch<const Shard>();
 
-                THEN("has size 6")
+                THEN("has size 3")
                 {
-                    REQUIRE(batch.Size() == 6);
+                    REQUIRE(batch.Size() == 3);
                 }
             }
 
@@ -213,7 +213,7 @@ SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
             .Actualize();
 
         auto relicStructure = RelicStructure{};
-        relicStructure.emplace_back(TypeHandleFor<Shard>(), true);
+        relicStructure.emplace_back(TypeHandleFor<const Shard>());
         auto relic = reliquary->Create<FixedRelic>(relicStructure);
 
         WHEN("finding const shard")

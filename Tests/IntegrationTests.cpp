@@ -56,13 +56,13 @@ void IntegrationTestsFixture::BasicCuratorBase::StopStepImplementation()
 
 namespace Arca
 {
-    const TypeHandle Traits<::IntegrationTestsFixture::BasicShard>::typeHandle =
+    const TypeHandleName Traits<::IntegrationTestsFixture::BasicShard>::typeName =
         "IntegrationTestsBasicShard";
 
-    const TypeHandle Traits<::IntegrationTestsFixture::ChildRelic>::typeHandle =
+    const TypeHandleName Traits<::IntegrationTestsFixture::ChildRelic>::typeName =
         "IntegrationTestsChildRelic";
 
-    const TypeHandle Traits<::IntegrationTestsFixture::ParentRelic>::typeHandle =
+    const TypeHandleName Traits<::IntegrationTestsFixture::ParentRelic>::typeName =
         "IntegrationTestsParentRelic";
 
     std::optional<::IntegrationTestsFixture::ParentRelic>

@@ -22,10 +22,10 @@ RelicBatchFixture::Shard::Shard(int value) :
 
 namespace Arca
 {
-    const TypeHandle Traits<RelicBatchFixture::Relic>::typeHandle = "RelicBatchTestsRelic";
-    const TypeHandle Traits<RelicBatchFixture::StaticRelic>::typeHandle = "RelicBatchTestsStaticRelic";
-    const TypeHandle Traits<RelicBatchFixture::UnregisteredRelic>::typeHandle = "RelicBatchTestsUnregisteredRelic";
-    const TypeHandle Traits<RelicBatchFixture::Shard>::typeHandle = "RelicBatchTestsShard";
+    const TypeHandleName Traits<RelicBatchFixture::Relic>::typeName = "RelicBatchTestsRelic";
+    const TypeHandleName Traits<RelicBatchFixture::StaticRelic>::typeName = "RelicBatchTestsStaticRelic";
+    const TypeHandleName Traits<RelicBatchFixture::UnregisteredRelic>::typeName = "RelicBatchTestsUnregisteredRelic";
+    const TypeHandleName Traits<RelicBatchFixture::Shard>::typeName = "RelicBatchTestsShard";
 }
 
 SCENARIO_METHOD(RelicBatchFixture, "default relic batch", "[RelicBatch]")
@@ -117,7 +117,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch", "[RelicBatch]")
 
                 THEN("destroying relic empties the batch")
                 {
-                    reliquary->Destroy(*createdRelic);
+                    reliquary->Destroy(createdRelic);
                     REQUIRE(batch.IsEmpty());
                 }
             }

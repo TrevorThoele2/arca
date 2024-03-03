@@ -46,19 +46,19 @@ namespace Arca
     struct Traits<CuratorTestsFixture::BasicCurator>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static const TypeHandle typeHandle;
+        static const TypeHandleName typeName;
     };
 
-    const TypeHandle Traits<CuratorTestsFixture::BasicCurator>::typeHandle = "BasicCurator";
+    const TypeHandleName Traits<CuratorTestsFixture::BasicCurator>::typeName = "BasicCurator";
 
     template<>
     struct Traits<CuratorTestsFixture::OtherBasicCurator>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static const TypeHandle typeHandle;
+        static const TypeHandleName typeName;
     };
 
-    const TypeHandle Traits<CuratorTestsFixture::OtherBasicCurator>::typeHandle = "OtherBasicCurator";
+    const TypeHandleName Traits<CuratorTestsFixture::OtherBasicCurator>::typeName = "OtherBasicCurator";
 }
 
 SCENARIO_METHOD(CuratorTestsFixture, "curator", "[curator]")
@@ -311,7 +311,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
                 (
                     reliquaryOrigin.Actualize(),
                     InvalidPipeline,
-                    ::Catch::Matchers::Message("Curator (" + Traits<BasicCurator>::typeHandle + ") was not found.")
+                    ::Catch::Matchers::Message("Curator (" + Traits<BasicCurator>::typeName + ") was not found.")
                 );
             }
         }
@@ -336,7 +336,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
                 (
                     reliquaryOrigin.Actualize(),
                     InvalidPipeline,
-                    ::Catch::Matchers::Message("Curator (" + Traits<BasicCurator>::typeHandle + ") " +
+                    ::Catch::Matchers::Message("Curator (" + Traits<BasicCurator>::typeName + ") " +
                         "was already in the pipeline.")
                 );
             }

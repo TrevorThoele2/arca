@@ -5,16 +5,16 @@ using namespace std::string_literals;
 
 namespace Arca
 {
-    const TypeHandle Traits<::ReliquaryOriginRegistrationTestsFixture::Shard>::typeHandle =
+    const TypeHandleName Traits<::ReliquaryOriginRegistrationTestsFixture::Shard>::typeName =
         "ReliquaryTestsBasicShard";
 
-    const TypeHandle Traits<::ReliquaryOriginRegistrationTestsFixture::Relic>::typeHandle =
+    const TypeHandleName Traits<::ReliquaryOriginRegistrationTestsFixture::Relic>::typeName =
         "ReliquaryTestsBasicTypedRelic";
 
-    const TypeHandle Traits<::ReliquaryOriginRegistrationTestsFixture::StaticRelic>::typeHandle =
+    const TypeHandleName Traits<::ReliquaryOriginRegistrationTestsFixture::StaticRelic>::typeName =
         "ReliquaryTestsStaticRelic";
 
-    const TypeHandle Traits<::ReliquaryOriginRegistrationTestsFixture::Curator>::typeHandle =
+    const TypeHandleName Traits<::ReliquaryOriginRegistrationTestsFixture::Curator>::typeName =
         "ReliquaryTestsBasicCurator";
 }
 
@@ -41,7 +41,7 @@ SCENARIO_METHOD(ReliquaryOriginRegistrationTestsFixture, "registering types mult
                     reliquaryOrigin.Shard<Shard>(),
                     AlreadyRegistered,
                     Catch::Matchers::Message(
-                        "The shard (" + TypeHandleFor<Shard>() + ") was already registered. " +
+                        "The shard (" + TypeHandleFor<Shard>().name + ") was already registered. " +
                         "The class name is: \"" + typeid(Shard).name() + "\".")
                 );
             }
@@ -56,7 +56,7 @@ SCENARIO_METHOD(ReliquaryOriginRegistrationTestsFixture, "registering types mult
                     reliquaryOrigin.Relic<Relic>(),
                     AlreadyRegistered,
                     Catch::Matchers::Message(
-                        "The relic (" + TypeHandleFor<Relic>() + ") was already registered. " +
+                        "The relic (" + TypeHandleFor<Relic>().name + ") was already registered. " +
                         "The class name is: \"" + typeid(Relic).name() + "\".")
                 );
             }
@@ -71,7 +71,7 @@ SCENARIO_METHOD(ReliquaryOriginRegistrationTestsFixture, "registering types mult
                     reliquaryOrigin.StaticRelic<StaticRelic>(),
                     AlreadyRegistered,
                     Catch::Matchers::Message(
-                        "The static relic (" + TypeHandleFor<StaticRelic>() + ") was already registered. " +
+                        "The static relic (" + TypeHandleFor<StaticRelic>().name + ") was already registered. " +
                         "The class name is: \"" + typeid(StaticRelic).name() + "\".")
                 );
             }
@@ -86,7 +86,7 @@ SCENARIO_METHOD(ReliquaryOriginRegistrationTestsFixture, "registering types mult
                     reliquaryOrigin.Curator<Curator>(),
                     AlreadyRegistered,
                     Catch::Matchers::Message(
-                        "The curator (" + TypeHandleFor<Curator>() + ") was already registered. " +
+                        "The curator (" + TypeHandleFor<Curator>().name + ") was already registered. " +
                         "The class name is: \"" + typeid(Curator).name() + "\".")
                 );
             }

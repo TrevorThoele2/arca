@@ -2,13 +2,13 @@
 
 namespace Arca
 {
-    std::vector<TypeHandle> Stage::TypeHandleList() const
+    std::vector<TypeHandleName> Stage::TypeHandleNameList() const
     {
-        return typeHandles;
+        return typeHandleNames;
     }
 
     bool Stage::Empty() const
     {
-        return typeHandles.empty();
+        return typeHandleNames.empty();
     }
 }

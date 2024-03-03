@@ -39,19 +39,19 @@ void RelicTestsFixture::StaticRelic::InitializeImplementation()
 
 namespace Arca
 {
-    const TypeHandle Traits<RelicTestsFixture::BasicShard>::typeHandle =
+    const TypeHandleName Traits<RelicTestsFixture::BasicShard>::typeName =
         "RelicTestsBasicShard";
 
-    const TypeHandle Traits<RelicTestsFixture::OtherShard>::typeHandle =
+    const TypeHandleName Traits<RelicTestsFixture::OtherShard>::typeName =
         "ReliquaryTestsOtherShard";
 
-    const TypeHandle Traits<RelicTestsFixture::BasicTypedRelic>::typeHandle =
+    const TypeHandleName Traits<RelicTestsFixture::BasicTypedRelic>::typeName =
         "ReliquaryTestsBasicTypedRelic";
 
-    const TypeHandle Traits<RelicTestsFixture::StaticRelic>::typeHandle =
+    const TypeHandleName Traits<RelicTestsFixture::StaticRelic>::typeName =
         "ReliquaryTestsStaticRelic";
 
-    const TypeHandle Traits<RelicTestsFixture::MostBasicCustomFactoryRelic>::typeHandle =
+    const TypeHandleName Traits<RelicTestsFixture::MostBasicCustomFactoryRelic>::typeName =
         "ReliquaryTestsMostBasicCustomFactoryRelic";
 
     std::optional<RelicTestsFixture::MostBasicCustomFactoryRelic>
@@ -62,7 +62,7 @@ namespace Arca
         return relic;
     }
 
-    const TypeHandle Traits<RelicTestsFixture::GuardedCustomFactoryRelic>::typeHandle =
+    const TypeHandleName Traits<RelicTestsFixture::GuardedCustomFactoryRelic>::typeName =
         "ReliquaryTestsGuardedCustomFactoryRelic";
 
     std::optional<RelicTestsFixture::GuardedCustomFactoryRelic>
@@ -132,11 +132,9 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             THEN("structure has been satisfied")
             {
-                auto shardFromReliquary = reliquary->Find<BasicShard>(relic.ID());
-                REQUIRE(shardFromReliquary);
+                REQUIRE(reliquary->Find<BasicShard>(relic.ID()));
 
-                auto shardFromRelic = relic.Find<BasicShard>();
-                REQUIRE(shardFromRelic);
+                REQUIRE(relic.Find<BasicShard>());
                 REQUIRE(relic.Has<BasicShard>());
             }
 
@@ -154,8 +152,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
                 THEN("finding relic returns empty")
                 {
-                    auto found = reliquary->Find<FixedRelic>(id);
-                    REQUIRE(!found);
+                    REQUIRE(!reliquary->Find<FixedRelic>(id));
                 }
 
                 THEN("destroying again does not throw")
@@ -176,18 +173,15 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
             THEN("structure has been satisfied")
             {
-                auto shardFromReliquary = reliquary->Find<BasicShard>(staticRelic->ID());
-                REQUIRE(shardFromReliquary);
-
-                auto shardFromRelic = staticRelic->basicShard;
-                REQUIRE(shardFromRelic);
+                REQUIRE(reliquary->Find<BasicShard>(staticRelic->ID()));
+                REQUIRE(staticRelic->basicShard);
             }
 
             THEN("cannot destroy relic")
             {
                 auto preDestroyRelicCount = reliquary->RelicSize();
 
-                reliquary->Destroy(*staticRelic);
+                reliquary->Destroy(staticRelic);
 
                 auto foundAgain = reliquary->Static<StaticRelic>();
 

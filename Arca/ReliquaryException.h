@@ -1,8 +1,12 @@
 #pragma once
 
 #include <typeindex>
+
 #include "Exception.h"
+
 #include "RelicID.h"
+#include "ObjectType.h"
+#include "TypeHandle.h"
 
 namespace Arca
 {
@@ -22,11 +26,11 @@ namespace Arca
     {
     public:
         explicit NotRegistered(
-            const std::string& type,
-            const std::string& name);
+            const std::string& objectType,
+            const TypeHandle& type);
         explicit NotRegistered(
-            const std::string& type,
-            const std::string& name,
+            const std::string& objectType,
+            const TypeHandle& type,
             const std::type_index& classType);
     };
 
@@ -34,11 +38,11 @@ namespace Arca
     {
     public:
         AlreadyRegistered(
-            const std::string& type,
-            const std::string& name);
+            const std::string& objectType,
+            const TypeHandle& type);
         AlreadyRegistered(
-            const std::string& type,
-            const std::string& name,
+            const std::string& objectType,
+            const TypeHandle& type,
             const std::type_index& classType);
     };
 

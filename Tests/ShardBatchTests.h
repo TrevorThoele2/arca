@@ -41,21 +41,21 @@ namespace Arca
     struct Traits<::ShardBatchFixture::Shard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeHandle typeHandle;
+        static const TypeHandleName typeName;
     };
 
     template<>
     struct Traits<::ShardBatchFixture::UnregisteredShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeHandle typeHandle;
+        static const TypeHandleName typeName;
     };
 
     template<>
     struct Traits<::ShardBatchFixture::StaticRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeHandle typeHandle;
+        static const TypeHandleName typeName;
         using Shards = ShardList<::ShardBatchFixture::Shard>;
     };
 }

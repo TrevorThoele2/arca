@@ -104,7 +104,7 @@ namespace Arca
         [[nodiscard]] Arca::Batch<ShardT> Batch();
     public:
         template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int> = 0>
-        Curator* Find(const TypeHandle& typeHandle);
+        Curator* Find(const TypeHandleName& typeHandle);
         template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int> = 0>
         [[nodiscard]] CuratorT* Find();
         template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int> = 0>
@@ -112,6 +112,8 @@ namespace Arca
     public:
         template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
         void Raise(const SignalT& signal);
+        template<class SignalT, class... Args, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
+        void Raise(Args&& ... args);
 
         template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
         void ExecuteOn(const std::function<void(const SignalT&)>& function);
@@ -121,9 +123,9 @@ namespace Arca
     private:
         struct KnownPolymorphicSerializer
         {
-            const TypeHandle mainTypeHandle;
+            const TypeHandleName mainTypeHandle;
 
-            using Serializer = std::function<void(void*, Reliquary&, ::Inscription::BinaryArchive&)>;
+            using Serializer = std::function<void(Reliquary&, ::Inscription::BinaryArchive&)>;
             const Serializer serializer;
 
             using InscriptionTypeHandles = std::vector<::Inscription::TypeHandle>;
@@ -132,7 +134,7 @@ namespace Arca
             InscriptionTypeHandleProvider inscriptionTypeProvider;
 
             KnownPolymorphicSerializer(
-                TypeHandle mainTypeHandle,
+                TypeHandleName mainTypeHandle,
                 Serializer&& serializer,
                 InscriptionTypeHandleProvider&& inscriptionTypeProvider);
         };
@@ -169,24 +171,24 @@ namespace Arca
             std::string name;
             RelicStructure value;
 
-            NamedRelicStructure(std::string name, Arca::RelicStructure value);
+            NamedRelicStructure(std::string name, RelicStructure value);
         };
         using NamedRelicStructureList = std::vector<NamedRelicStructure>;
         NamedRelicStructureList namedRelicStructureList;
     private:
         using RelicBatchSourcePtr = std::unique_ptr<RelicBatchSourceBase>;
-        using RelicBatchSourceMap = std::unordered_map<TypeHandle, RelicBatchSourcePtr>;
+        using RelicBatchSourceMap = std::unordered_map<TypeHandleName, RelicBatchSourcePtr>;
         RelicBatchSourceMap relicBatchSources;
 
         KnownPolymorphicSerializerList relicSerializers;
 
-        [[nodiscard]] RelicBatchSourceBase* FindRelicBatchSource(const TypeHandle& typeHandle);
+        [[nodiscard]] RelicBatchSourceBase* FindRelicBatchSource(const TypeHandleName& typeHandle);
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         [[nodiscard]] BatchSource<RelicT>* FindBatchSource();
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         [[nodiscard]] BatchSource<RelicT>& RequiredBatchSource();
     private:
-        using StaticRelicMap = std::unordered_map<TypeHandle, std::any>;
+        using StaticRelicMap = std::unordered_map<TypeHandleName, std::any>;
         StaticRelicMap staticRelicMap;
 
         KnownPolymorphicSerializerList staticRelicSerializers;
@@ -195,19 +197,14 @@ namespace Arca
         RelicT* FindStaticStorage(RelicID id);
     private:
         using ShardFactory = void(*)(Reliquary&, RelicID, bool);
-        using ShardFactoryMap = std::unordered_map<TypeHandle, ShardFactory>;
+        using ShardFactoryMap = std::unordered_map<TypeHandleName, ShardFactory>;
         ShardFactoryMap shardFactoryMap;
 
-        void CreateShard(const TypeHandle& typeHandle, RelicID id, bool isConst);
+        void CreateShard(const TypeHandle& typeHandle, RelicID id);
         template<class ShardT>
         Ptr<ShardT> CreateShard(RelicID id);
         template<class ShardT>
         void DestroyShard(RelicID id);
-
-        template<class ShardT>
-        void SignalShardCreation(ShardT& shard);
-        template<class ShardT>
-        void SignalShardDestruction(ShardT& shard);
 
         template<class ShardT>
         ShardFactory FindShardFactory();
@@ -216,19 +213,25 @@ namespace Arca
         [[nodiscard]] ShardT* FindStorage(RelicID id);
     private:
         using ShardBatchSourcePtr = std::unique_ptr<ShardBatchSourceBase>;
-        using ShardBatchSourceMap = std::unordered_map<TypeHandle, ShardBatchSourcePtr>;
+        using ShardBatchSourceMap = std::unordered_map<TypeHandleName, ShardBatchSourcePtr>;
         ShardBatchSourceMap shardBatchSources;
+        ShardBatchSourceMap constShardBatchSources;
 
         KnownPolymorphicSerializerList shardSerializers;
 
-        [[nodiscard]] ShardBatchSourceBase* FindShardBatchSource(const TypeHandle& typeHandle);
-        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        [[nodiscard]] ShardBatchSourceBase* FindShardBatchSource(const TypeHandleName& typeHandle);
+        [[nodiscard]] ShardBatchSourceBase* FindConstShardBatchSource(const TypeHandleName& typeHandle);
+        template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && !std::is_const_v<ShardT>, int> = 0>
         [[nodiscard]] BatchSource<ShardT>* FindBatchSource();
-        template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
+        template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && std::is_const_v<ShardT>, int> = 0>
+        [[nodiscard]] BatchSource<ShardT>* FindBatchSource();
+        template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && !std::is_const_v<ShardT>, int> = 0>
+        [[nodiscard]] BatchSource<ShardT>& RequiredBatchSource();
+        template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && std::is_const_v<ShardT>, int> = 0>
         [[nodiscard]] BatchSource<ShardT>& RequiredBatchSource();
     private:
         using CuratorHandlePtr = std::unique_ptr<CuratorHandle>;
-        using CuratorMap = std::unordered_map<TypeHandle, CuratorHandlePtr>;
+        using CuratorMap = std::unordered_map<TypeHandleName, CuratorHandlePtr>;
         CuratorMap curators;
 
         using CuratorStage = std::vector<Curator*>;
@@ -265,11 +268,6 @@ namespace Arca
 
         template<class SignalT>
         static std::type_index KeyForSignalBatchSource();
-    private:
-        template<class T>
-        void SignalCreation(T& object);
-        template<class T>
-        void SignalDestroying(T& object);
     private:
         friend class ReliquaryOrigin;
         friend class DynamicRelic;
@@ -328,7 +326,7 @@ namespace Arca
 
         SetupNewRelicInternals(id, RelicDynamism::Fixed, TypeHandleFor<RelicT>(), added);
         SatisfyRelicStructure(StructureFrom<shards_for_t<RelicT>>(), id);
-        SignalCreation(*added);
+        Raise<Created<RelicT>>(Ptr<RelicT>(id, *this));
 
         added->Initialize(*this);
 
@@ -350,7 +348,7 @@ namespace Arca
 
         SetupNewRelicInternals(id, RelicDynamism::Fixed, TypeHandleFor<RelicT>(), added);
         SatisfyRelicStructure(StructureFrom<shards_for_t<RelicT>>(), id);
-        SignalCreation(*added);
+        Raise<Created<RelicT>>(Ptr<RelicT>(id, *this));
 
         added->Initialize(*this);
 
@@ -364,7 +362,7 @@ namespace Arca
         if (!WillDestroyRelic(metadata))
             return;
 
-        SignalDestroying(relic);
+        Raise<Destroying<RelicT>>(Ptr<RelicT>(relic.ID(), *this));
         DestroyRelic(*metadata);
     }
 
@@ -407,7 +405,7 @@ namespace Arca
     Static<RelicT> Reliquary::Static()
     {
         const auto typeHandle = TypeHandleFor<RelicT>();
-        const auto found = staticRelicMap.find(typeHandle);
+        const auto found = staticRelicMap.find(typeHandle.name);
         if (found == staticRelicMap.end())
             throw NotRegistered("static relic", typeHandle, typeid(RelicT));
 
@@ -426,8 +424,8 @@ namespace Arca
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     Ptr<ShardT> Reliquary::Find(RelicID id)
     {
-        auto& batch = RequiredBatchSource<std::decay_t<ShardT>>();
-        auto found = batch.Find(id, std::is_const_v<ShardT>);
+        auto& batch = RequiredBatchSource<ShardT>();
+        auto found = batch.Find(id);
         if (!found)
             return {};
 
@@ -438,7 +436,7 @@ namespace Arca
     Arca::Batch<ShardT> Reliquary::Batch()
     {
         const auto typeHandle = TypeHandleFor<ShardT>();
-        auto batchSource = FindBatchSource<std::decay_t<ShardT>>();
+        auto batchSource = FindBatchSource<ShardT>();
         if (!batchSource)
             throw NotRegistered("shard", typeHandle, typeid(ShardT));
 
@@ -446,7 +444,7 @@ namespace Arca
     }
 
     template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int>>
-    Curator* Reliquary::Find(const TypeHandle& typeHandle)
+    Curator* Reliquary::Find(const TypeHandleName& typeHandle)
     {
         const auto found = curators.find(typeHandle);
         if (found == curators.end())
@@ -490,10 +488,16 @@ namespace Arca
     {
         auto signalBatchSource = FindBatchSource<SignalT>();
         if (!signalBatchSource)
-            throw NotRegistered("signal", typeid(SignalT).name());
+            throw NotRegistered("signal", { typeid(SignalT).name() });
 
         signalBatchSource->Raise(signal);
         ExecuteAllForSignal(signal);
+    }
+
+    template<class SignalT, class... Args, std::enable_if_t<is_signal_v<SignalT>, int>>
+    void Reliquary::Raise(Args&& ... args)
+    {
+        Raise(SignalT{ std::forward<Args>(args)... });
     }
 
     template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int>>
@@ -513,7 +517,7 @@ namespace Arca
     {
         auto signalBatchSource = FindBatchSource<SignalT>();
         if (!signalBatchSource)
-            throw NotRegistered("signal", typeid(SignalT).name());
+            throw NotRegistered("signal", { typeid(SignalT).name() });
 
         return Arca::Batch<SignalT>(*signalBatchSource);
     }
@@ -532,7 +536,7 @@ namespace Arca
     template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int>>
     BatchSource<RelicT>* Reliquary::FindBatchSource()
     {
-        auto found = relicBatchSources.find(TypeHandleFor<RelicT>());
+        auto found = relicBatchSources.find(TypeHandleFor<RelicT>().name);
         if (found == relicBatchSources.end())
             return nullptr;
 
@@ -554,7 +558,7 @@ namespace Arca
     RelicT* Reliquary::FindStaticStorage(RelicID id)
     {
         const auto typeHandle = TypeHandleFor<RelicT>();
-        const auto found = staticRelicMap.find(typeHandle);
+        const auto found = staticRelicMap.find(typeHandle.name);
         if (found == staticRelicMap.end())
             throw NotRegistered("static relic", typeHandle, typeid(RelicT));
 
@@ -571,9 +575,9 @@ namespace Arca
         if (metadata->dynamism == RelicDynamism::Fixed)
             throw CannotCreateShard();
 
-        auto& batch = RequiredBatchSource<std::decay_t<ShardT>>();
-        auto added = batch.Add(id, std::is_const_v<ShardT>);
-        SignalShardCreation(*added);
+        auto& batch = RequiredBatchSource<ShardT>();
+        auto added = batch.Add(id);
+        Raise<Created<ShardT>>(Ptr<ShardT>(id, *this));
         return Ptr<ShardT>(id, *this);
     }
 
@@ -592,20 +596,6 @@ namespace Arca
     }
 
     template<class ShardT>
-    void Reliquary::SignalShardCreation(ShardT& shard)
-    {
-        Created<ShardT> signal{ shard };
-        Raise(signal);
-    }
-
-    template<class ShardT>
-    void Reliquary::SignalShardDestruction(ShardT& shard)
-    {
-        Destroying<ShardT> signal{ shard };
-        Raise(signal);
-    }
-
-    template<class ShardT>
     auto Reliquary::FindShardFactory() -> ShardFactory
     {
         auto typeHandle = TypeHandleFor<ShardT>();
@@ -619,27 +609,48 @@ namespace Arca
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
     ShardT* Reliquary::FindStorage(RelicID id)
     {
-        auto& batch = RequiredBatchSource<std::decay_t<ShardT>>();
-        return batch.Find(id, std::is_const_v<ShardT>);
+        auto& batch = RequiredBatchSource<ShardT>();
+        return batch.Find(id);
     }
 
-    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && !std::is_const_v<ShardT>, int>>
     BatchSource<ShardT>* Reliquary::FindBatchSource()
     {
-        auto found = shardBatchSources.find(TypeHandleFor<ShardT>());
+        auto found = shardBatchSources.find(TypeHandleFor<ShardT>().name);
         if (found == shardBatchSources.end())
             return nullptr;
 
         return static_cast<BatchSource<ShardT>*>(found->second.get());
     }
 
-    template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && std::is_const_v<ShardT>, int>>
+    BatchSource<ShardT>* Reliquary::FindBatchSource()
+    {
+        auto found = constShardBatchSources.find(TypeHandleFor<ShardT>().name);
+        if (found == constShardBatchSources.end())
+            return nullptr;
+
+        return static_cast<BatchSource<ShardT>*>(found->second.get());
+    }
+
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && !std::is_const_v<ShardT>, int>>
     BatchSource<ShardT>& Reliquary::RequiredBatchSource()
     {
         const auto typeHandle = TypeHandleFor<ShardT>();
         auto found = FindBatchSource<ShardT>();
         if (!found)
             throw NotRegistered("shard", typeHandle, typeid(ShardT));
+
+        return *found;
+    }
+
+    template<class ShardT, std::enable_if_t<is_shard_v<ShardT> && std::is_const_v<ShardT>, int>>
+    BatchSource<ShardT>& Reliquary::RequiredBatchSource()
+    {
+        const auto typeHandle = TypeHandleFor<ShardT>();
+        auto found = FindBatchSource<ShardT>();
+        if (!found)
+            throw NotRegistered("const shard", typeHandle, typeid(ShardT));
 
         return *found;
     }
@@ -696,20 +707,6 @@ namespace Arca
     {
         return typeid(SignalT);
     }
-
-    template<class T>
-    void Reliquary::SignalCreation(T& object)
-    {
-        Created<T> signal{ object };
-        Raise(signal);
-    }
-
-    template<class T>
-    void Reliquary::SignalDestroying(T& object)
-    {
-        Destroying<T> signal{ object };
-        Raise(signal);
-    }
 }
 
 namespace Inscription
@@ -717,11 +714,10 @@ namespace Inscription
     class KnownPolymorphic
     {
     public:
-        using Serializer = std::function<void(void*, Arca::Reliquary&, BinaryArchive&)>;
+        using Serializer = std::function<void(Arca::Reliquary&, BinaryArchive&)>;
     public:
-        explicit KnownPolymorphic(void* underlying, Arca::Reliquary& reliquary, Serializer serializer);
+        explicit KnownPolymorphic(Arca::Reliquary& reliquary, Serializer serializer);
     private:
-        void* underlying;
         Arca::Reliquary* reliquary;
         Serializer serializer;
     private:
@@ -746,21 +742,18 @@ namespace Inscription
         static void Save(ObjectT& object, ArchiveT& archive);
         static void Load(ObjectT& object, ArchiveT& archive);
 
-        template<class ObjectContainer, class ValueToPiece, class ValueToID>
+        template<class ObjectContainer, class ValueToID>
         static void JumpSaveAll(
             ObjectT& object,
             ArchiveT& archive,
             ObjectT::KnownPolymorphicSerializerList& fromObject,
             ObjectContainer& container,
-            ValueToPiece valueToPiece,
             ValueToID valueToID);
 
-        template<class FindObject>
         static void JumpLoadAll(
             ObjectT& object,
             ArchiveT& archive,
-            ObjectT::KnownPolymorphicSerializerList& fromObject,
-            FindObject findSerializedObject);
+            ObjectT::KnownPolymorphicSerializerList& fromObject);
 
         static ObjectT::KnownPolymorphicSerializer* FindFrom(
             TypeHandle mainTypeHandle,
@@ -768,7 +761,7 @@ namespace Inscription
     private:
         struct TypeHandlePair
         {
-            ::Arca::TypeHandle arca;
+            ::Arca::TypeHandleName arca;
             TypeHandle inscription;
         };
 
@@ -782,13 +775,12 @@ namespace Inscription
             ArchiveT& archive);
     };
 
-    template<class ObjectContainer, class ValueToPiece, class ValueToID>
+    template<class ObjectContainer, class ValueToID>
     void Scribe<::Arca::Reliquary, BinaryArchive>::JumpSaveAll(
         ObjectT& object,
         ArchiveT& archive,
         ObjectT::KnownPolymorphicSerializerList& fromObject,
         ObjectContainer& container,
-        ValueToPiece valueToPiece,
         ValueToID valueToID)
     {
         OutputJumpTable<TypeHandle, KnownPolymorphic> jumpTable;
@@ -796,37 +788,12 @@ namespace Inscription
         for (auto& loop : container)
         {
             auto id = valueToID(loop);
-            void* piece = valueToPiece(loop);
             auto serializer = FindFrom(id, fromObject)->serializer;
-            knownPolymorphics.emplace_back(piece, object, serializer);
+            knownPolymorphics.emplace_back(object, serializer);
             jumpTable.Add(id, knownPolymorphics.back());
         }
 
         archive(jumpTable);
-    }
-
-    template<class FindObject>
-    void Scribe<::Arca::Reliquary, BinaryArchive>::JumpLoadAll(
-        ObjectT& object,
-        ArchiveT& archive,
-        ObjectT::KnownPolymorphicSerializerList& fromObject,
-        FindObject findSerializedObject)
-    {
-        InputJumpTable<TypeHandle, KnownPolymorphic> jumpTable;
-        archive(jumpTable);
-
-        auto typesToLoad = PruneTypesToLoad(
-            fromObject,
-            archive,
-            jumpTable.AllIDs());
-
-        for (auto& typeToLoad : typesToLoad)
-        {
-            const auto serializedObject = findSerializedObject(object, typeToLoad.arca);
-            const auto& serializer = FindFrom(typeToLoad.arca, fromObject)->serializer;
-            auto adapter = KnownPolymorphic(serializedObject, object, serializer);
-            jumpTable.FillObject(typeToLoad.inscription, adapter, archive);
-        }
     }
 }
 
