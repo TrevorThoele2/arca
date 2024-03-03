@@ -13,6 +13,7 @@ namespace Arca
         using Shards = ShardList<AllShards...>;
     protected:
         ClosedTypedRelicAutomation() = default;
+        ClosedTypedRelicAutomation(ClosedTypedRelicAutomation&& arg) noexcept = default;
     protected:
         using ShardTuple = ShardTuple<Shards>;
 
