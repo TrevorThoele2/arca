@@ -9,7 +9,6 @@
 #include "ShardIndex.h"
 #include "GlobalIndex.h"
 #include "MatrixIndex.h"
-#include "Postulate.h"
 
 #include "Serialization.h"
 

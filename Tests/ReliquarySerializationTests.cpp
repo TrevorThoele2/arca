@@ -665,62 +665,6 @@ SCENARIO_METHOD(ReliquarySerializationTestsFixture, "preferential serialization"
     }
 }
 
-SCENARIO_METHOD(ReliquarySerializationTestsFixture, "postulate serialization", "[global][postulate][serialization]")
-{
-    GIVEN("saved reliquary with postulate")
-    {
-        const auto savedReliquary = ReliquaryOrigin()
-            .Register<BasicShard>()
-            .Register<GlobalRelic>(dataGeneration.Random<int>(), dataGeneration.Random<std::string>())
-            .Postulate<int>(
-                [](Reliquary& reliquary)
-                {
-                    const Index<GlobalRelic> backing(reliquary);
-                    return backing->myInt;
-                })
-            .Actualize();
-
-        auto savedPostulate = Arca::Postulate<int>(*savedReliquary);
-
-        {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
-            outputArchive(*savedReliquary);
-        }
-
-        WHEN("loading reliquary")
-        {
-            auto loadedReliquary = ReliquaryOrigin()
-                .Register<BasicShard>()
-                .Register<GlobalRelic>()
-                .Postulate<int>(
-                    [](Reliquary& reliquary)
-                    {
-                        const Index<GlobalRelic> backing(reliquary);
-                        return backing->myInt;
-                    })
-                .Actualize();
-
-            {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
-                inputArchive(*loadedReliquary);
-            }
-
-            auto loadedPostulate = Arca::Postulate<int>(*loadedReliquary);
-
-            THEN("loaded relic has saved value")
-            {
-                REQUIRE(*loadedPostulate == *savedPostulate);
-            }
-
-            THEN("reliquary has global, shard for global")
-            {
-                REQUIRE(loadedReliquary->RelicSize() == 1);
-                REQUIRE(loadedReliquary->ShardSize() == 1);
-            }
-        }
-    }
-}
-
 SCENARIO_METHOD(ReliquarySerializationTestsFixture, "null reliquary serialization", "[reliquary][serialization]")
 {
     GIVEN("saved reliquary with global relic")
