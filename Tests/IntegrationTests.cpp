@@ -455,3 +455,44 @@ SCENARIO_METHOD(
         }
     }
 }
+
+SCENARIO_METHOD(IntegrationTestsFixture, "listening for both non-const and const shard created", "[integration][shard][signal]")
+{
+    GIVEN("registered reliquary with shard")
+    {
+        const auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
+            .Register<BasicShard>()
+            .Actualize();
+
+        WHEN("listening for both non-const and const shard created and creating both")
+        {
+            auto nonConstSignaled = 0;
+            auto constSignaled = 0;
+
+            reliquary->On<CreatedKnown<BasicShard>>(
+                [&nonConstSignaled](const CreatedKnown<BasicShard>&)
+                {
+                    ++nonConstSignaled;
+                });
+
+            reliquary->On<CreatedKnown<const BasicShard>>(
+                [&constSignaled](const CreatedKnown<const BasicShard>&)
+                {
+                    ++constSignaled;
+                });
+
+            const auto nonConstRelic = reliquary->Do(Create<OpenRelic>());
+            reliquary->Do(Create<BasicShard>(nonConstRelic.ID()));
+
+            const auto constRelic = reliquary->Do(Create<OpenRelic>());
+            reliquary->Do(Create<const BasicShard>(constRelic.ID()));
+
+            THEN("has signaled both once")
+            {
+                REQUIRE(nonConstSignaled == 1);
+                REQUIRE(constSignaled == 1);
+            }
+        }
+    }
+}
