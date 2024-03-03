@@ -46,9 +46,6 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ReliquarySerializationTests.cpp">
-      <Filter>Source Files\Tests</Filter>
-    </ClCompile>
     <ClCompile Include="ReliquaryFixture.cpp">
       <Filter>Source Files\Fixtures</Filter>
     </ClCompile>
@@ -80,6 +77,18 @@
       <Filter>Source Files\Tests</Filter>
     </ClCompile>
     <ClCompile Include="RelicParentingTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="ReliquaryBinarySerializationTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="SerializationData.cpp">
+      <Filter>Source Files\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicShard.cpp">
+      <Filter>Source Files\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="ReliquaryJsonSerializationTests.cpp">
       <Filter>Source Files\Tests</Filter>
     </ClCompile>
   </ItemGroup>
@@ -129,9 +138,6 @@
     <ClInclude Include="GeneralFixture.h">
       <Filter>Header Files\Fixtures</Filter>
     </ClInclude>
-    <ClInclude Include="ReliquarySerializationTests.h">
-      <Filter>Header Files\Tests</Filter>
-    </ClInclude>
     <ClInclude Include="ReliquaryFixture.h">
       <Filter>Header Files\Fixtures</Filter>
     </ClInclude>
@@ -166,6 +172,27 @@
       <Filter>Header Files\Tests</Filter>
     </ClInclude>
     <ClInclude Include="RelicParentingTests.h">
+      <Filter>Header Files\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquaryBinarySerializationTests.h">
+      <Filter>Header Files\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="SerializationData.h">
+      <Filter>Header Files\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="DifferentiableShard.h">
+      <Filter>Header Files\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicShard.h">
+      <Filter>Header Files\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicLocalClosedTypedRelic.h">
+      <Filter>Header Files\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicGlobalClosedTypedRelic.h">
+      <Filter>Header Files\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliquaryJsonSerializationTests.h">
       <Filter>Header Files\Tests</Filter>
     </ClInclude>
   </ItemGroup>

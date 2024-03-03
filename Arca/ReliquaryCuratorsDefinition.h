@@ -52,9 +52,15 @@ namespace Arca
     }
 
     template<class CuratorT>
-    bool ReliquaryCurators::Handler<CuratorT>::WillSerialize() const
+    bool ReliquaryCurators::Handler<CuratorT>::WillBinarySerialize() const
     {
-        return HasScribe<CuratorT>();
+        return HasScribe<CuratorT, Inscription::BinaryArchive>();
+    }
+
+    template<class CuratorT>
+    bool ReliquaryCurators::Handler<CuratorT>::WillJsonSerialize() const
+    {
+        return HasScribe<CuratorT, Inscription::JsonArchive>();
     }
 
     template<class CuratorT>
@@ -64,9 +70,21 @@ namespace Arca
     }
 
     template<class CuratorT>
+    void ReliquaryCurators::Handler<CuratorT>::Serialize(const std::string& name, Inscription::JsonArchive& archive)
+    {
+        archive(name, curator);
+    }
+
+    template<class CuratorT>
     std::vector<::Inscription::Type> ReliquaryCurators::Handler<CuratorT>::InscriptionTypes(Inscription::BinaryArchive& archive) const
     {
-        return ::Inscription::InputTypesFor<CuratorT>(archive);
+        return Inscription::InputTypesFor<CuratorT>(archive);
+    }
+
+    template<class CuratorT>
+    std::vector<::Inscription::Type> ReliquaryCurators::Handler<CuratorT>::InscriptionTypes(Inscription::JsonArchive& archive) const
+    {
+        return Inscription::InputTypesFor<CuratorT>(archive);
     }
 
     template<class CuratorT>

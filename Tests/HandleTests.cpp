@@ -5,12 +5,6 @@ using namespace std::string_literals;
 
 #include <Arca/Actualization.h>
 
-HandleTestsFixture::Shard::Shard(std::string myValue) : myValue(std::move(myValue))
-{}
-
-HandleTestsFixture::OtherShard::OtherShard(std::string myValue) : myValue(std::move(myValue))
-{}
-
 HandleTestsFixture::TypedRelic::TypedRelic(Init init) : ClosedTypedRelic(init)
 {
     basicShard = Create<Shard>();
@@ -641,7 +635,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle serialization", "[handle][serializat
         WHEN("saving handle")
         {
             {
-                auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+                auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
                 outputArchive(*savedReliquary);
             }
 
@@ -654,7 +648,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle serialization", "[handle][serializat
                     .Actualize();
 
                 {
-                    auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                    auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                     inputArchive(*loadedReliquary);
                 }
 
@@ -683,7 +677,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle serialization", "[handle][serializat
         WHEN("saving handle")
         {
             {
-                auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+                auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
                 outputArchive(*savedReliquary);
             }
 
@@ -698,7 +692,7 @@ SCENARIO_METHOD(HandleTestsFixture, "handle serialization", "[handle][serializat
                 Handle loadedHandle;
 
                 {
-                    auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                    auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                     inputArchive(*loadedReliquary);
                 }
 

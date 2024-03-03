@@ -3,7 +3,8 @@
 #include "GeneralFixture.h"
 
 #include <Arca/Curator.h>
-#include <Arca/ClosedTypedRelic.h>
+#include "BasicLocalClosedTypedRelic.h"
+#include "BasicGlobalClosedTypedRelic.h"
 
 #include <Inscription/BinaryArchive.h>
 
@@ -12,9 +13,6 @@ using namespace Arca;
 class CuratorTestsFixture : public GeneralFixture
 {
 public:
-    class LocalRelic;
-    class GlobalRelic;
-
     class BasicCurator;
     class OtherBasicCurator;
     class CuratorWithNonDefaultConstructor;
@@ -24,21 +22,6 @@ public:
 
 namespace Arca
 {
-    template<>
-    struct Traits<CuratorTestsFixture::LocalRelic>
-    {
-        static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "LocalRelic";
-    };
-
-    template<>
-    struct Traits<CuratorTestsFixture::GlobalRelic>
-    {
-        static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "GlobalRelic";
-        static const Locality locality = Locality::Global;
-    };
-
     template<>
     struct Traits<CuratorTestsFixture::BasicCurator>
     {
@@ -75,30 +58,6 @@ namespace Arca
     };
 }
 
-class CuratorTestsFixture::LocalRelic : public ClosedTypedRelic<LocalRelic>
-{
-public:
-    int value = 0;
-
-    explicit LocalRelic(Init init) : ClosedTypedRelic(init)
-    {}
-
-    LocalRelic(Init init, int value) : ClosedTypedRelic(init), value(value)
-    {}
-};
-
-class CuratorTestsFixture::GlobalRelic : public ClosedTypedRelic<GlobalRelic>
-{
-public:
-    int value = 0;
-
-    explicit GlobalRelic(Init init) : ClosedTypedRelic(init)
-    {}
-
-    GlobalRelic(Init init, int value) : ClosedTypedRelic(init), value(value)
-    {}
-};
-
 class CuratorTestsFixture::BasicCurator final : public Curator
 {
 public:
@@ -134,17 +93,20 @@ public:
 class CuratorTestsFixture::CuratorWithLocalRelicConstructor final : public Curator
 {
 public:
-    Index<LocalRelic> localRelic;
-    int localRelicValue = 0;
+    Index<BasicLocalClosedTypedRelic> localRelic;
+    int localRelicInteger = 0;
+    std::string localRelicString;
 
-    explicit CuratorWithLocalRelicConstructor(Init init, int localRelicValue);
+    explicit CuratorWithLocalRelicConstructor(
+        Init init, int localRelicInteger, const std::string& localRelicString);
 };
 
 class CuratorTestsFixture::CuratorWithGlobalRelicConstructor final : public Curator
 {
 public:
-    Index<GlobalRelic> globalRelic;
-    int globalRelicValue = 0;
+    Index<BasicGlobalClosedTypedRelic> globalRelic;
+    int globalRelicInteger = 0;
+    std::string globalRelicString;
 
     explicit CuratorWithGlobalRelicConstructor(Init init);
 };
@@ -152,57 +114,117 @@ public:
 namespace Inscription
 {
     template<>
-    class Scribe<CuratorTestsFixture::LocalRelic, BinaryArchive> final :
-        public ArcaCompositeScribe<CuratorTestsFixture::LocalRelic, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-    };
-
-    template<>
-    class Scribe<CuratorTestsFixture::GlobalRelic, BinaryArchive> final :
-        public ArcaCompositeScribe<CuratorTestsFixture::GlobalRelic, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-    };
-
-    template<>
-    class Scribe<CuratorTestsFixture::BasicCurator, BinaryArchive> final :
-        public ArcaCompositeScribe<CuratorTestsFixture::BasicCurator, BinaryArchive>
-    {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
-    };
-
-    template<>
-    class Scribe<CuratorTestsFixture::OtherBasicCurator, BinaryArchive> final :
-        public ArcaCompositeScribe<CuratorTestsFixture::OtherBasicCurator, BinaryArchive>
+    class Scribe<CuratorTestsFixture::BasicCurator> final
     {
     public:
-        static std::vector<Type> InputTypes(const ArchiveT& archive);
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+        using ObjectT = CuratorTestsFixture::BasicCurator;
+    public:
+        template<class Archive>
+        void Scriven(ObjectT& object, Archive& archive);
+    };
+
+    template <class Archive>
+    void Scribe<CuratorTestsFixture::BasicCurator>::Scriven(ObjectT& object, Archive& archive)
+    {
+        archive("value", object.value);
+    }
+
+    template<class Archive>
+    struct ScribeTraits<CuratorTestsFixture::BasicCurator, Archive> final
+    {
+        using Category = ArcaCompositeScribeCategory<CuratorTestsFixture::BasicCurator>;
     };
 
     template<>
-    class Scribe<CuratorTestsFixture::CuratorWithNonDefaultConstructor, BinaryArchive> final :
-        public ArcaNullScribe<CuratorTestsFixture::CuratorWithNonDefaultConstructor, BinaryArchive>
-    {};
-
-    template<>
-    class Scribe<CuratorTestsFixture::CuratorWithLocalRelicConstructor, BinaryArchive> final :
-        public ArcaCompositeScribe<CuratorTestsFixture::CuratorWithLocalRelicConstructor, BinaryArchive>
+    class Scribe<CuratorTestsFixture::OtherBasicCurator> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+    public:
+        using ObjectT = CuratorTestsFixture::OtherBasicCurator;
+    public:
+        template<class Archive>
+        void Scriven(ObjectT& object, Archive& archive);
+
+        template<class Archive>
+        static std::vector<Type> InputTypes(const Archive& archive);
+    };
+
+    template<class Archive>
+    void Scribe<CuratorTestsFixture::OtherBasicCurator>::Scriven(ObjectT& object, Archive& archive)
+    {
+        archive("value", object.value);
+    }
+
+    template <class Archive>
+    std::vector<Type> Scribe<CuratorTestsFixture::OtherBasicCurator>::InputTypes(const Archive&)
+    {
+        return { "BasicCurator" };
+    }
+
+    template<class Archive>
+    struct ScribeTraits<CuratorTestsFixture::OtherBasicCurator, Archive> final
+    {
+        using Category = ArcaCompositeScribeCategory<CuratorTestsFixture::OtherBasicCurator>;
+    };
+
+    template<class Archive>
+    struct ScribeTraits<CuratorTestsFixture::CuratorWithNonDefaultConstructor, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<CuratorTestsFixture::CuratorWithNonDefaultConstructor>;
     };
 
     template<>
-    class Scribe<CuratorTestsFixture::CuratorWithGlobalRelicConstructor, BinaryArchive> final :
-        public ArcaCompositeScribe<CuratorTestsFixture::CuratorWithGlobalRelicConstructor, BinaryArchive>
+    class Scribe<CuratorTestsFixture::CuratorWithLocalRelicConstructor> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+    public:
+        using ObjectT = CuratorTestsFixture::CuratorWithLocalRelicConstructor;
+    public:
+        template<class Archive>
+        void Scriven(ObjectT& object, Archive& archive);
+    };
+
+    template<class Archive>
+    void Scribe<CuratorTestsFixture::CuratorWithLocalRelicConstructor>::Scriven(ObjectT& object, Archive& archive)
+    {
+        archive("localRelic", object.localRelic);
+
+        if (archive.IsInput())
+        {
+            object.localRelicInteger = object.localRelic->integer;
+            object.localRelicString = object.localRelic->string;
+        }
+    }
+
+    template<class Archive>
+    struct ScribeTraits<CuratorTestsFixture::CuratorWithLocalRelicConstructor, Archive>
+    {
+        using Category = ArcaCompositeScribeCategory<CuratorTestsFixture::CuratorWithLocalRelicConstructor>;
+    };
+
+    template<>
+    class Scribe<CuratorTestsFixture::CuratorWithGlobalRelicConstructor> final
+    {
+    public:
+        using ObjectT = CuratorTestsFixture::CuratorWithGlobalRelicConstructor;
+    public:
+        template<class Archive>
+        void Scriven(ObjectT& object, Archive& archive);
+    };
+
+    template <class Archive>
+    void Scribe<CuratorTestsFixture::CuratorWithGlobalRelicConstructor>::Scriven(ObjectT& object, Archive& archive)
+    {
+        archive("globalRelic", object.globalRelic);
+
+        if (archive.IsInput())
+        {
+            object.globalRelicInteger = object.globalRelic->integer;
+            object.globalRelicString = object.globalRelic->string;
+        }
+    }
+
+    template<class Archive>
+    struct ScribeTraits<CuratorTestsFixture::CuratorWithGlobalRelicConstructor, Archive>
+    {
+        using Category = ArcaCompositeScribeCategory<CuratorTestsFixture::CuratorWithGlobalRelicConstructor>;
     };
 }

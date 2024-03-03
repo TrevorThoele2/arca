@@ -38,10 +38,31 @@ namespace Arca
 namespace Inscription
 {
     template<>
-    class Scribe<Arca::Handle, BinaryArchive> final :
-        public CompositeScribe<Arca::Handle, BinaryArchive>
+    class Scribe<Arca::Handle> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+    public:
+        using ObjectT = Arca::Handle;
+    public:
+        template<class Archive>
+        void Scriven(ObjectT& object, Archive& archive)
+        {
+            archive("id", object.id);
+            archive("type", object.type);
+
+            if (archive.IsInput())
+            {
+                const auto context = archive.template UserContext<ReliquaryUserContext>();
+                object.owner = context->reliquary;
+
+                const auto objectType = context->reliquary->ObjectHandleTypeFor(object.type.name);
+                object.objectType = *objectType;
+            }
+        }
+    };
+
+    template<class Archive>
+    struct ScribeTraits<Arca::Handle, Archive> final
+    {
+        using Category = CompositeScribeCategory<Arca::Handle>;
     };
 }

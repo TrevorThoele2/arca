@@ -28,16 +28,21 @@ CuratorTestsFixture::CuratorWithNonDefaultConstructor::CuratorWithNonDefaultCons
     Curator(init), myValue(myValue)
 {}
 
-CuratorTestsFixture::CuratorWithLocalRelicConstructor::CuratorWithLocalRelicConstructor(Init init, int localRelicValue) :
-    Curator(init), localRelic(init.owner.Do<Create<LocalRelic>>(localRelicValue))
+CuratorTestsFixture::CuratorWithLocalRelicConstructor::CuratorWithLocalRelicConstructor(
+    Init init, int localRelicInteger, const std::string& localRelicString)
+    :
+    Curator(init),
+    localRelic(init.owner.Do<Create<BasicLocalClosedTypedRelic>>(localRelicInteger, localRelicString))
 {
-    this->localRelicValue = localRelic->value;
+    this->localRelicInteger = localRelic->integer;
+    this->localRelicString = localRelic->string;
 }
 
 CuratorTestsFixture::CuratorWithGlobalRelicConstructor::CuratorWithGlobalRelicConstructor(Init init) :
     Curator(init), globalRelic(init.owner)
 {
-    globalRelicValue = globalRelic->value;
+    globalRelicInteger = globalRelic->integer;
+    globalRelicString = globalRelic->string;
 }
 
 template<size_t id>
@@ -159,13 +164,15 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator constructor", "[curator]")
 {
     GIVEN("reliquary registered")
     {
-        auto localRelicValue = dataGeneration.Random<int>();
-        auto globalRelicValue = dataGeneration.Random<int>();
+        auto localRelicInteger = dataGeneration.Random<int>();
+        auto localRelicString = dataGeneration.Random<std::string>();
+        auto globalRelicInteger = dataGeneration.Random<int>();
+        auto globalRelicString = dataGeneration.Random<std::string>();
 
         auto reliquary = ReliquaryOrigin()
-            .Register<LocalRelic>()
-            .Register<GlobalRelic>(globalRelicValue)
-            .Register<CuratorWithLocalRelicConstructor>(localRelicValue)
+            .Register<BasicLocalClosedTypedRelic>()
+            .Register<BasicGlobalClosedTypedRelic>(globalRelicInteger, globalRelicString)
+            .Register<CuratorWithLocalRelicConstructor>(localRelicInteger, localRelicString)
             .Register<CuratorWithGlobalRelicConstructor>()
             .Actualize();
 
@@ -179,9 +186,10 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator constructor", "[curator]")
                 REQUIRE(localRelic);
             }
 
-            THEN("curator has value")
+            THEN("curator has values")
             {
-                REQUIRE(curator.localRelicValue == localRelicValue);
+                REQUIRE(curator.localRelicInteger == localRelicInteger);
+                REQUIRE(curator.localRelicString == localRelicString);
             }
         }
 
@@ -195,9 +203,10 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator constructor", "[curator]")
                 REQUIRE(globalRelic);
             }
 
-            THEN("curator has value")
+            THEN("curator has values")
             {
-                REQUIRE(curator.globalRelicValue == globalRelicValue);
+                REQUIRE(curator.globalRelicInteger == globalRelicInteger);
+                REQUIRE(curator.globalRelicString == globalRelicString);
             }
         }
     }
@@ -570,7 +579,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
         savedCurator.value = dataGeneration.Random<int>();
     
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
             outputArchive(*savedReliquary);
         }
     
@@ -581,7 +590,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
                 .Actualize();
         
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                 inputArchive(*loadedReliquary);
             }
         
@@ -599,7 +608,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
                 .Actualize();
         
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                 inputArchive(*loadedReliquary);
             }
         
@@ -616,7 +625,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
                 .Actualize();
         
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");;
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");;
                 inputArchive(*loadedReliquary);
             }
         
@@ -631,35 +640,39 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
 
     GIVEN("saved reliquary with local and global")
     {
-        auto localRelicValue = dataGeneration.Random<int>();
-        auto globalRelicValue = dataGeneration.Random<int>();
+        auto localRelicInteger = dataGeneration.Random<int>();
+        auto localRelicString = dataGeneration.Random<std::string>();
+        auto globalRelicInteger = dataGeneration.Random<int>();
+        auto globalRelicString = dataGeneration.Random<std::string>();
 
         auto savedReliquary = ReliquaryOrigin()
-            .Register<LocalRelic>()
-            .Register<GlobalRelic>(globalRelicValue)
-            .Register<CuratorWithLocalRelicConstructor>(localRelicValue)
+            .Register<BasicLocalClosedTypedRelic>()
+            .Register<BasicGlobalClosedTypedRelic>(globalRelicInteger, globalRelicString)
+            .Register<CuratorWithLocalRelicConstructor>(localRelicInteger, localRelicString)
             .Register<CuratorWithGlobalRelicConstructor>()
             .Actualize();
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
             outputArchive(*savedReliquary);
         }
 
         WHEN("loading reliquary")
         {
-            auto localRelicValue2 = dataGeneration.Random<int>();
-            auto globalRelicValue2 = dataGeneration.Random<int>();
+            auto localRelicInteger2 = dataGeneration.Random<int>();
+            auto localRelicString2 = dataGeneration.Random<std::string>();
+            auto globalRelicInteger2 = dataGeneration.Random<int>();
+            auto globalRelicString2 = dataGeneration.Random<std::string>();
 
             auto loadedReliquary = ReliquaryOrigin()
-                .Register<LocalRelic>()
-                .Register<GlobalRelic>(globalRelicValue2)
-                .Register<CuratorWithLocalRelicConstructor>(localRelicValue2)
+                .Register<BasicLocalClosedTypedRelic>()
+                .Register<BasicGlobalClosedTypedRelic>(globalRelicInteger2, globalRelicString2)
+                .Register<CuratorWithLocalRelicConstructor>(localRelicInteger2, localRelicString2)
                 .Register<CuratorWithGlobalRelicConstructor>()
                 .Actualize();
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                 inputArchive(*loadedReliquary);
             }
 
@@ -673,9 +686,10 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
                     REQUIRE(localRelic);
                 }
 
-                THEN("curator has value")
+                THEN("curator has values")
                 {
-                    REQUIRE(curator.localRelicValue == localRelicValue);
+                    REQUIRE(curator.localRelicInteger == localRelicInteger);
+                    REQUIRE(curator.localRelicString == localRelicString);
                 }
             }
 
@@ -689,62 +703,12 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
                     REQUIRE(globalRelic);
                 }
 
-                THEN("curator has value")
+                THEN("curator has values")
                 {
-                    REQUIRE(curator.globalRelicValue == globalRelicValue);
+                    REQUIRE(curator.globalRelicInteger == globalRelicInteger);
+                    REQUIRE(curator.globalRelicString == globalRelicString);
                 }
             }
         }
-    }
-}
-
-namespace Inscription
-{
-    void Scribe<CuratorTestsFixture::LocalRelic, BinaryArchive>::ScrivenImplementation(
-        ObjectT& object, ArchiveT& archive)
-    {
-        archive(object.value);
-    }
-
-    void Scribe<CuratorTestsFixture::GlobalRelic, BinaryArchive>::ScrivenImplementation(
-        ObjectT& object, ArchiveT& archive)
-    {
-        archive(object.value);
-    }
-
-    void Scribe<CuratorTestsFixture::BasicCurator, BinaryArchive>::ScrivenImplementation(
-        ObjectT& object, ArchiveT& archive)
-    {
-        archive(object.value);
-    }
-
-    void Scribe<CuratorTestsFixture::OtherBasicCurator, BinaryArchive>::ScrivenImplementation(
-        ObjectT& object, ArchiveT& archive)
-    {
-        archive(object.value);
-    }
-
-    std::vector<Type> Scribe<CuratorTestsFixture::OtherBasicCurator, BinaryArchive>::InputTypes(
-        const ArchiveT&)
-    {
-        return { "BasicCurator" };
-    }
-
-    void Scribe<CuratorTestsFixture::CuratorWithLocalRelicConstructor, BinaryArchive>::ScrivenImplementation(
-        ObjectT& object, ArchiveT& archive)
-    {
-        archive(object.localRelic);
-
-        if (archive.IsInput())
-            object.localRelicValue = object.localRelic->value;
-    }
-
-    void Scribe<CuratorTestsFixture::CuratorWithGlobalRelicConstructor, BinaryArchive>::ScrivenImplementation(
-        ObjectT& object, ArchiveT& archive)
-    {
-        archive(object.globalRelic);
-
-        if (archive.IsInput())
-            object.globalRelicValue = object.globalRelic->value;
     }
 }

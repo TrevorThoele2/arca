@@ -25,7 +25,7 @@ namespace Arca
 
         for (auto loop = metadataList.begin(); loop != metadataList.end();)
         {
-            if (loop->locality == Arca::Locality::Global && !loop->shouldSerialize)
+            if (loop->locality == Arca::Locality::Global && !loop->shouldSerializeBinary)
                 ++loop;
             else
                 loop = metadataList.erase(loop);
@@ -98,10 +98,18 @@ namespace Arca
         RelicID id,
         Openness openness,
         Locality locality,
-        bool shouldSerialize,
+        bool shouldSerializeBinary,
+        bool shouldSerializeJson,
         Type type)
     {
-        metadataList.emplace_back(id, openness, locality, std::move(type), nullptr, shouldSerialize);
+        metadataList.emplace_back(
+            id,
+            openness,
+            locality,
+            std::move(type),
+            nullptr,
+            shouldSerializeBinary,
+            shouldSerializeJson);
         return &metadataList.back();
     }
 

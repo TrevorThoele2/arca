@@ -3,6 +3,7 @@
 #include "GeneralFixture.h"
 
 #include <Arca/ClosedTypedRelic.h>
+#include "BasicShard.h"
 
 class CommandTestsFixture : public GeneralFixture
 {
@@ -12,7 +13,6 @@ public:
     class Curator;
     class CuratorWithSameLink;
     class Relic;
-    class Shard;
     class RelicWithShard;
 };
 
@@ -56,13 +56,6 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "CommandTestsFixtureRelic";
-    };
-
-    template<>
-    struct Traits<CommandTestsFixture::Shard>
-    {
-        static const ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "CommandTestsFixtureShard";
     };
 
     template<>
@@ -112,48 +105,37 @@ public:
     explicit Relic(Init init, int integer, const std::string& string);
 };
 
-class CommandTestsFixture::Shard final
-{
-public:
-    int integer = 0;
-    std::string string;
-public:
-    explicit Shard() = default;
-    explicit Shard(int integer, const std::string& string);
-};
-
 class CommandTestsFixture::RelicWithShard final : public Arca::ClosedTypedRelic<RelicWithShard>
 {
 public:
-    Arca::Index<Shard> shard;
+    Arca::Index<BasicShard> shard;
 public:
     RelicWithShard(Init init, int integer, const std::string& string);
 };
 
 namespace Inscription
 {
-    template<>
-    class Scribe<CommandTestsFixture::Curator, BinaryArchive> final
-        : public ArcaNullScribe<CommandTestsFixture::Curator, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<CommandTestsFixture::Curator, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<CommandTestsFixture::Curator>;
+    };
 
-    template<>
-    class Scribe<CommandTestsFixture::CuratorWithSameLink, BinaryArchive> final
-        : public ArcaNullScribe<CommandTestsFixture::CuratorWithSameLink, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<CommandTestsFixture::CuratorWithSameLink, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<CommandTestsFixture::CuratorWithSameLink>;
+    };
 
-    template<>
-    class Scribe<CommandTestsFixture::Relic, BinaryArchive> final
-        : public ArcaNullScribe<CommandTestsFixture::Relic, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<CommandTestsFixture::Relic, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<CommandTestsFixture::Relic>;
+    };
 
-    template<>
-    class Scribe<CommandTestsFixture::Shard, BinaryArchive> final
-        : public ArcaNullScribe<CommandTestsFixture::Shard, BinaryArchive>
-    {};
-
-    template<>
-    class Scribe<CommandTestsFixture::RelicWithShard, BinaryArchive> final
-        : public ArcaNullScribe<CommandTestsFixture::RelicWithShard, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<CommandTestsFixture::RelicWithShard, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<CommandTestsFixture::RelicWithShard>;
+    };
 }

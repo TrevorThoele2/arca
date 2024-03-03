@@ -115,33 +115,39 @@ namespace Arca
 
 namespace Inscription
 {
-    template<>
-    class Scribe<::ReliquaryOriginRegistrationTestsFixture::Shard, BinaryArchive> final
-        : public ArcaNullScribe<::ReliquaryOriginRegistrationTestsFixture::Shard, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<ReliquaryOriginRegistrationTestsFixture::Shard, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<ReliquaryOriginRegistrationTestsFixture::Shard>;
+    };
 
-    template<>
-    class Scribe<::ReliquaryOriginRegistrationTestsFixture::Relic, BinaryArchive> final
-        : public ArcaNullScribe<::ReliquaryOriginRegistrationTestsFixture::Relic, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<ReliquaryOriginRegistrationTestsFixture::Relic, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<ReliquaryOriginRegistrationTestsFixture::Relic>;
+    };
 
-    template<>
-    class Scribe<::ReliquaryOriginRegistrationTestsFixture::GlobalRelic, BinaryArchive> final
-        : public ArcaNullScribe<::ReliquaryOriginRegistrationTestsFixture::GlobalRelic, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<ReliquaryOriginRegistrationTestsFixture::GlobalRelic, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<ReliquaryOriginRegistrationTestsFixture::GlobalRelic>;
+    };
 
-    template<>
-    class Scribe<::ReliquaryOriginRegistrationTestsFixture::GlobalRelicWithMovedValue, BinaryArchive> final
-        : public ArcaNullScribe<::ReliquaryOriginRegistrationTestsFixture::GlobalRelicWithMovedValue, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<ReliquaryOriginRegistrationTestsFixture::GlobalRelicWithMovedValue, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<ReliquaryOriginRegistrationTestsFixture::GlobalRelicWithMovedValue>;
+    };
 
-    template<>
-    class Scribe<::ReliquaryOriginRegistrationTestsFixture::Curator, BinaryArchive> final
-        : public ArcaNullScribe<::ReliquaryOriginRegistrationTestsFixture::Curator, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<ReliquaryOriginRegistrationTestsFixture::Curator, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<ReliquaryOriginRegistrationTestsFixture::Curator>;
+    };
 
-    template<>
-    class Scribe<::ReliquaryOriginRegistrationTestsFixture::CuratorWithMovedValue, BinaryArchive> final
-        : public ArcaNullScribe<::ReliquaryOriginRegistrationTestsFixture::CuratorWithMovedValue, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<ReliquaryOriginRegistrationTestsFixture::CuratorWithMovedValue, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<ReliquaryOriginRegistrationTestsFixture::CuratorWithMovedValue>;
+    };
 }

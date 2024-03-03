@@ -4,6 +4,8 @@
 
 #include <Arca/ClosedTypedRelic.h>
 
+#include "DifferentiableShard.h"
+
 #include <Inscription/BinaryArchive.h>
 
 using namespace Arca;
@@ -11,8 +13,8 @@ using namespace Arca;
 class HandleTestsFixture : public GeneralFixture
 {
 public:
-    class Shard;
-    class OtherShard;
+    using Shard = DifferentiableShard<0>;
+    using OtherShard = DifferentiableShard<1>;
 
     class TypedRelic;
     class GlobalRelic;
@@ -76,24 +78,6 @@ namespace Arca
     };
 }
 
-class HandleTestsFixture::Shard
-{
-public:
-    std::string myValue;
-public:
-    explicit Shard() = default;
-    explicit Shard(std::string myValue);
-};
-
-class HandleTestsFixture::OtherShard
-{
-public:
-    std::string myValue;
-public:
-    explicit OtherShard() = default;
-    explicit OtherShard(std::string myValue);
-};
-
 class HandleTestsFixture::TypedRelic final : public ClosedTypedRelic<TypedRelic>
 {
 public:
@@ -130,51 +114,40 @@ struct HandleTestsFixture::Signal
 
 namespace Inscription
 {
-    template<>
-    class Scribe<::HandleTestsFixture::Shard, BinaryArchive> final
-        : public ArcaCompositeScribe<::HandleTestsFixture::Shard, BinaryArchive>
+    template<class Archive>
+    struct ScribeTraits<HandleTestsFixture::TypedRelic, Archive> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {
-            archive(object.myValue);
-        }
+        using Category = ArcaNullScribeCategory<HandleTestsFixture::TypedRelic>;
+    };
+
+    template<class Archive>
+    struct ScribeTraits<HandleTestsFixture::GlobalRelic, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<HandleTestsFixture::GlobalRelic>;
     };
 
     template<>
-    class Scribe<::HandleTestsFixture::OtherShard, BinaryArchive> final
-        : public ArcaCompositeScribe<::HandleTestsFixture::OtherShard, BinaryArchive>
+    class Scribe<HandleTestsFixture::HandleHolder> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
+    public:
+        using ObjectT = HandleTestsFixture::HandleHolder;
+    public:
+        template<class Archive>
+        void Scriven(ObjectT& object, Archive& archive)
         {
-            archive(object.myValue);
+            archive("handle", object.handle);
         }
     };
 
-    template<>
-    class Scribe<::HandleTestsFixture::TypedRelic, BinaryArchive> final
-        : public ArcaNullScribe<::HandleTestsFixture::TypedRelic, BinaryArchive>
-    {};
-
-    template<>
-    class Scribe<::HandleTestsFixture::GlobalRelic, BinaryArchive> final
-        : public ArcaNullScribe<::HandleTestsFixture::GlobalRelic, BinaryArchive>
-    {};
-
-    template<>
-    class Scribe<::HandleTestsFixture::HandleHolder, BinaryArchive> final
-        : public ArcaCompositeScribe<::HandleTestsFixture::HandleHolder, BinaryArchive>
+    template<class Archive>
+    struct ScribeTraits<HandleTestsFixture::HandleHolder, Archive> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {
-            archive(object.handle);
-        }
+        using Category = ArcaCompositeScribeCategory<HandleTestsFixture::HandleHolder>;
     };
 
-    template<>
-    class Scribe<::HandleTestsFixture::Curator, BinaryArchive> final
-        : public ArcaNullScribe<::HandleTestsFixture::Curator, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<HandleTestsFixture::Curator, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<HandleTestsFixture::Curator>;
+    };
 }

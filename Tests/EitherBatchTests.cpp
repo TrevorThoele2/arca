@@ -4,25 +4,23 @@
 
 #include <Arca/Either.h>
 
-EitherBatchTestsFixture::Shard::Shard(int value) :
-    value(value)
-{}
+#include "BasicShard.h"
 
 EitherBatchTestsFixture::Relic::Relic(Init init) : ClosedTypedRelic(init)
 {
-    Create<Shard>();
+    Create<BasicShard>();
 }
 
 EitherBatchTestsFixture::GlobalRelic::GlobalRelic(Init init) : ClosedTypedRelic(init)
 {
-    Create<Shard>();
+    Create<BasicShard>();
 }
 
 SCENARIO_METHOD(EitherBatchTestsFixture, "default either batch", "[either][batch]")
 {
     GIVEN("default either batch")
     {
-        Batch<Either<Shard>> batch;
+        Batch<Either<BasicShard>> batch;
 
         WHEN("querying size")
         {
@@ -82,16 +80,16 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
 {
     GIVEN("registered reliquary and relic")
     {
-        auto reliquary = ReliquaryOrigin().Register<Shard>().Actualize();
+        auto reliquary = ReliquaryOrigin().Register<BasicShard>().Actualize();
         auto relic = reliquary->Do<Create<OpenRelic>>();
 
         WHEN("creating shard")
         {
-            auto createdShard = relic->Create<Shard>();
+            auto createdShard = relic->Create<BasicShard>();
 
             WHEN("starting batch")
             {
-                auto batch = reliquary->Batch<Either<Shard>>();
+                auto batch = reliquary->Batch<Either<BasicShard>>();
 
                 THEN("batch contains shard")
                 {
@@ -102,7 +100,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
                 THEN("returned shard is referentially equal to beginning")
                 {
                     auto& first = *batch.begin();
-                    REQUIRE(&first == static_cast<const Shard*>(createdShard));
+                    REQUIRE(&first == static_cast<const BasicShard*>(createdShard));
                 }
 
                 THEN("begin is not end")
@@ -112,7 +110,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
 
                 THEN("removing shard empties the batch")
                 {
-                    relic->Destroy<Shard>();
+                    relic->Destroy<BasicShard>();
                     REQUIRE(batch.IsEmpty());
                 }
             }
@@ -120,11 +118,11 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
 
         WHEN("creating const shard")
         {
-            auto createdShard = relic->Create<const Shard>();
+            auto createdShard = relic->Create<const BasicShard>();
 
             WHEN("starting batch")
             {
-                auto batch = reliquary->Batch<Either<Shard>>();
+                auto batch = reliquary->Batch<Either<BasicShard>>();
 
                 THEN("batch contains shard")
                 {
@@ -135,7 +133,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
                 THEN("returned shard is referentially equal to beginning")
                 {
                     auto& first = *batch.begin();
-                    REQUIRE(&first == static_cast<const Shard*>(createdShard));
+                    REQUIRE(&first == static_cast<const BasicShard*>(createdShard));
                 }
 
                 THEN("begin is not end")
@@ -145,7 +143,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
 
                 THEN("removing shard empties the batch")
                 {
-                    relic->Destroy<const Shard>();
+                    relic->Destroy<const BasicShard>();
                     REQUIRE(batch.IsEmpty());
                 }
             }
@@ -153,7 +151,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
 
         WHEN("starting batch")
         {
-            auto batch = reliquary->Batch<Either<Shard>>();
+            auto batch = reliquary->Batch<Either<BasicShard>>();
 
             THEN("batch is empty")
             {
@@ -168,7 +166,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
 
             WHEN("creating non-const shard")
             {
-                auto createdShard = relic->Create<Shard>();
+                auto createdShard = relic->Create<BasicShard>();
 
                 THEN("batch contains derived shard")
                 {
@@ -179,7 +177,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
                 THEN("returned shard is referentially equal to beginning")
                 {
                     auto& first = *batch.begin();
-                    REQUIRE(&first == static_cast<const Shard*>(createdShard));
+                    REQUIRE(&first == static_cast<const BasicShard*>(createdShard));
                 }
 
                 THEN("begin is not end")
@@ -189,14 +187,14 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
 
                 THEN("removing shard empties the batch")
                 {
-                    relic->Destroy<Shard>();
+                    relic->Destroy<BasicShard>();
                     REQUIRE(batch.IsEmpty());
                 }
             }
 
             WHEN("creating const shard")
             {
-                auto createdShard = relic->Create<const Shard>();
+                auto createdShard = relic->Create<const BasicShard>();
 
                 THEN("batch contains derived shard")
                 {
@@ -207,7 +205,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
                 THEN("returned shard is referentially equal to beginning")
                 {
                     auto& first = *batch.begin();
-                    REQUIRE(&first == static_cast<const Shard*>(createdShard));
+                    REQUIRE(&first == static_cast<const BasicShard*>(createdShard));
                 }
 
                 THEN("begin is not end")
@@ -217,7 +215,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
 
                 THEN("removing shard empties the batch")
                 {
-                    relic->Destroy<const Shard>();
+                    relic->Destroy<const BasicShard>();
                     REQUIRE(batch.IsEmpty());
                 }
             }
@@ -227,13 +225,13 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
     GIVEN("registered reliquary with global relic")
     {
         auto reliquary = ReliquaryOrigin()
-            .Register<Shard>()
+            .Register<BasicShard>()
             .Register<GlobalRelic>()
             .Actualize();
 
         WHEN("starting batch")
         {
-            auto batch = reliquary->Batch<Either<Shard>>();
+            auto batch = reliquary->Batch<Either<BasicShard>>();
 
             THEN("batch contains shard")
             {
@@ -255,13 +253,13 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either shard batch serialization", "[E
     {
         auto savedReliquary = ReliquaryOrigin()
             .Register<Relic>()
-            .Register<Shard>()
+            .Register<BasicShard>()
             .Actualize();
 
         savedReliquary->Do<Create<Relic>>();
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -269,15 +267,15 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either shard batch serialization", "[E
         {
             auto loadedReliquary = ReliquaryOrigin()
                 .Register<Relic>()
-                .Register<Shard>()
+                .Register<BasicShard>()
                 .Actualize();
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                 inputArchive(*loadedReliquary);
             }
 
-            auto batch = loadedReliquary->Batch<Either<Shard>>();
+            auto batch = loadedReliquary->Batch<Either<BasicShard>>();
 
             THEN("batch is occupied")
             {

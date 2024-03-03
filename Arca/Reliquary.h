@@ -32,7 +32,7 @@
 #include "MatrixFormed.h"
 #include "MatrixDissolved.h"
 
-#include "InscriptionUserContext.h"
+#include "ReliquaryUserContext.h"
 #include "Serialization.h"
 #include "HasScribe.h"
 #include <Inscription/OutputJumpTable.h>
@@ -379,42 +379,29 @@ namespace Inscription
     };
 
     template<>
-    class Scribe<KnownPolymorphic, BinaryArchive> final :
-        public CompositeScribe<KnownPolymorphic, BinaryArchive>
+    class Scribe<KnownPolymorphic> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+    public:
+        using ObjectT = KnownPolymorphic;
+    public:
+        void Scriven(ObjectT& object, BinaryArchive& archive);
+        void Scriven(const std::string& name, ObjectT& object, JsonArchive& archive);
     };
 
     template<>
-    class Scribe<::Arca::Reliquary, BinaryArchive> final :
-        public CompositeScribe<::Arca::Reliquary, BinaryArchive>
+    class Scribe<Arca::Reliquary> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override;
+    public:
+        using ObjectT = Arca::Reliquary;
+    public:
+        template<class Archive>
+        void Scriven(ObjectT& object, Archive& archive);
     private:
         using KnownPolymorphicSerializerList = Arca::ReliquaryComponent::KnownPolymorphicSerializerList;
         template<class T>
         KnownPolymorphicSerializerList ToKnownPolymorphicSerializerList(std::vector<std::unique_ptr<T>>& stored);
     private:
-        Arca::InscriptionUserContext userContext;
-    private:
-        void Save(ObjectT& object, ArchiveT& archive);
-        void Load(ObjectT& object, ArchiveT& archive);
-
-        static void JumpSaveAll(
-            ObjectT& object,
-            ArchiveT& archive,
-            KnownPolymorphicSerializerList& polymorphicsFromObject);
-
-        static void JumpLoadAll(
-            ObjectT& object,
-            ArchiveT& archive,
-            KnownPolymorphicSerializerList& polymorphicsFromObject);
-
-        static Arca::KnownPolymorphicSerializer* FindFrom(
-            Type mainType,
-            KnownPolymorphicSerializerList& list);
+        ReliquaryUserContext userContext;
     private:
         struct LoadedRelicMetadata
         {
@@ -426,39 +413,104 @@ namespace Inscription
         };
         std::vector<LoadedRelicMetadata> loadedRelicMetadata;
 
-        static void SaveRelicMetadata(Arca::RelicMetadata& metadata, ArchiveT& archive);
-        static LoadedRelicMetadata LoadRelicMetadata(ObjectT& object, ArchiveT& archive);
-
         using MetadataExtension = std::tuple<Arca::Type, Arca::Locality, void*>;
         static MetadataExtension FindExtensionForLoadedMetadata(Arca::RelicID id, ObjectT& object);
     private:
         struct TypePair
         {
-            ::Arca::TypeName arca;
+            Arca::TypeName arca;
             Type inscription;
         };
+    private:
+        static Arca::KnownPolymorphicSerializer* FindFrom(
+            Type mainType,
+            KnownPolymorphicSerializerList& list);
+    private:
+        void Save(ObjectT& object, OutputBinaryArchive& archive);
+        void Load(ObjectT& object, InputBinaryArchive& archive);
+
+        static void SaveAll(
+            ObjectT& object,
+            OutputBinaryArchive& archive,
+            KnownPolymorphicSerializerList& polymorphicsFromObject);
+
+        static void LoadAll(
+            ObjectT& object,
+            InputBinaryArchive& archive,
+            KnownPolymorphicSerializerList& polymorphicsFromObject);
 
         static std::vector<TypePair> PruneTypesToLoad(
             KnownPolymorphicSerializerList& fromObject,
-            ArchiveT& archive,
+            InputBinaryArchive& archive,
             const std::vector<Type>& typesFromArchive);
 
         static std::vector<TypePair> ExtractTypes(
             KnownPolymorphicSerializerList& fromObject,
-            ArchiveT& archive);
+            InputBinaryArchive& archive);
+
+        static void SaveRelicMetadata(Arca::RelicMetadata& metadata, OutputBinaryArchive& archive);
+        static LoadedRelicMetadata LoadRelicMetadata(ObjectT& object, InputBinaryArchive& archive);
+    private:
+        void Save(ObjectT& object, OutputJsonArchive& archive);
+        void Load(ObjectT& object, InputJsonArchive& archive);
+
+        static void SaveAll(
+            const std::string& name,
+            ObjectT& object,
+            OutputJsonArchive& archive,
+            KnownPolymorphicSerializerList& polymorphicsFromObject);
+
+        static void LoadAll(
+            const std::string& name,
+            ObjectT& object,
+            InputJsonArchive& archive,
+            KnownPolymorphicSerializerList& polymorphicsFromObject);
+
+        static void SaveRelicMetadata(Arca::RelicMetadata& metadata, OutputJsonArchive& archive);
+        static LoadedRelicMetadata LoadRelicMetadata(ObjectT& object, InputJsonArchive& archive);
+
+        static std::vector<TypePair> LoadTypes(
+            KnownPolymorphicSerializerList& fromObject,
+            InputJsonArchive& archive);
+
+        static std::vector<TypePair> ExtractTypes(
+            KnownPolymorphicSerializerList& fromObject,
+            InputJsonArchive& archive);
     };
 
+    template<class Archive>
+    void Scribe<Arca::Reliquary>::Scriven(ObjectT& object, Archive& archive)
+    {
+        userContext.reliquary = &object;
+        archive.EmplaceUserContext(&userContext);
+
+        archive("nextRelicId", object.relics.nextRelicID);
+
+        if (archive.IsOutput())
+            Save(object, *archive.AsOutput());
+        else
+            Load(object, *archive.AsInput());
+
+        archive.template RemoveUserContext<ReliquaryUserContext>();
+    }
+
     template<class T>
-    auto Scribe<::Arca::Reliquary, BinaryArchive>::ToKnownPolymorphicSerializerList(std::vector<std::unique_ptr<T>>& stored)
+    auto Scribe<Arca::Reliquary>::ToKnownPolymorphicSerializerList(std::vector<std::unique_ptr<T>>& stored)
         -> KnownPolymorphicSerializerList
     {
         KnownPolymorphicSerializerList list;
         list.reserve(stored.size());
         for (auto& loop : stored)
-            if (loop->WillSerialize())
+            if (loop->WillBinarySerialize())
                 list.push_back(loop.get());
         return list;
     }
+
+    template<class Archive>
+    struct ScribeTraits<Arca::Reliquary, Archive> final
+    {
+        using Category = CompositeScribeCategory<Arca::Reliquary>;
+    };
 }
 
 #include "OpenRelicDefinition.h"

@@ -8,12 +8,6 @@ using namespace std::string_literals;
 
 #include <Chroma/StringUtility.h>
 
-RelicTestsFixture::Shard::Shard(std::string myValue) : myValue(myValue)
-{}
-
-RelicTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
-{}
-
 RelicTestsFixture::TypedClosedRelic::TypedClosedRelic(Init init)
     : ClosedTypedRelic(init)
 {
@@ -339,7 +333,7 @@ SCENARIO_METHOD(RelicTestsFixture, "many relics", "[relic]")
         for (size_t i = 0; i < 100; ++i)
         {
             relics.push_back(reliquary->Do<Create<OpenRelic>>());
-            relics.back()->Create<Shard>(::Chroma::ToString(i));
+            relics.back()->Create<Shard>(static_cast<int>(i));
         }
 
         WHEN("deleting all but the last")
@@ -359,7 +353,7 @@ SCENARIO_METHOD(RelicTestsFixture, "many relics", "[relic]")
 
                 auto shard = relic->Find<Shard>();
                 REQUIRE(shard);
-                REQUIRE(shard->myValue == ::Chroma::ToString(99));
+                REQUIRE(shard->value == 99);
             }
         }
 
@@ -444,7 +438,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
                 REQUIRE(genericCreatedSignals.Executions().size() == 1);
                 REQUIRE(genericCreatedSignals.Executions().begin()->handle == createdHandle);
                 REQUIRE(knownCreatedSignals.Executions().size() == 1);
-                REQUIRE(knownCreatedSignals.Executions().begin()->reference == created);
+                REQUIRE(knownCreatedSignals.Executions().begin()->index == created);
             }
 
             WHEN("destroying relic")
@@ -456,7 +450,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
                     REQUIRE(genericDestroyingSignals.Executions().size() == 1);
                     REQUIRE(genericDestroyingSignals.Executions().begin()->handle == createdHandle);
                     REQUIRE(knownDestroyingSignals.Executions().size() == 1);
-                    REQUIRE(knownDestroyingSignals.Executions().begin()->reference == created);
+                    REQUIRE(knownDestroyingSignals.Executions().begin()->index == created);
                 }
             }
 
@@ -469,7 +463,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
                     REQUIRE(genericDestroyingSignals.Executions().size() == 1);
                     REQUIRE(genericDestroyingSignals.Executions().begin()->handle == createdHandle);
                     REQUIRE(knownDestroyingSignals.Executions().size() == 1);
-                    REQUIRE(knownDestroyingSignals.Executions().begin()->reference == created);
+                    REQUIRE(knownDestroyingSignals.Executions().begin()->index == created);
                 }
             }
 
@@ -482,7 +476,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
                     REQUIRE(genericDestroyingSignals.Executions().size() == 1);
                     REQUIRE(genericDestroyingSignals.Executions().begin()->handle == createdHandle);
                     REQUIRE(knownDestroyingSignals.Executions().size() == 1);
-                    REQUIRE(knownDestroyingSignals.Executions().begin()->reference == created);
+                    REQUIRE(knownDestroyingSignals.Executions().begin()->index == created);
                 }
             }
         }
@@ -510,7 +504,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
             THEN("signal is emitted for known relic")
             {
                 REQUIRE(knownCreatedSignals.Executions().size() == 1);
-                REQUIRE(knownCreatedSignals.Executions().begin()->reference == created);
+                REQUIRE(knownCreatedSignals.Executions().begin()->index == created);
             }
 
             WHEN("destroying relic")
@@ -532,7 +526,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
                 THEN("signal is emitted for known relic")
                 {
                     REQUIRE(knownDestroyingSignals.Executions().size() == 1);
-                    REQUIRE(knownDestroyingSignals.Executions().begin()->reference == created);
+                    REQUIRE(knownDestroyingSignals.Executions().begin()->index == created);
                 }
             }
 
@@ -555,7 +549,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
                 THEN("signal is emitted for known relic")
                 {
                     REQUIRE(knownDestroyingSignals.Executions().size() == 1);
-                    REQUIRE(knownDestroyingSignals.Executions().begin()->reference == created);
+                    REQUIRE(knownDestroyingSignals.Executions().begin()->index == created);
                 }
             }
 
@@ -578,7 +572,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
                 THEN("signal is emitted for known relic")
                 {
                     REQUIRE(knownDestroyingSignals.Executions().size() == 1);
-                    REQUIRE(knownDestroyingSignals.Executions().begin()->reference == created);
+                    REQUIRE(knownDestroyingSignals.Executions().begin()->index == created);
                 }
             }
         }
@@ -606,7 +600,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
             THEN("signal is emitted for known relic")
             {
                 REQUIRE(knownCreatedSignals.Executions().size() == 1);
-                REQUIRE(knownCreatedSignals.Executions().begin()->reference == created);
+                REQUIRE(knownCreatedSignals.Executions().begin()->index == created);
             }
 
             WHEN("destroying relic")
@@ -628,7 +622,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
                 THEN("signal is emitted for known relic")
                 {
                     REQUIRE(knownDestroyingSignals.Executions().size() == 1);
-                    REQUIRE(knownDestroyingSignals.Executions().begin()->reference == created);
+                    REQUIRE(knownDestroyingSignals.Executions().begin()->index == created);
                 }
             }
 
@@ -651,7 +645,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
                 THEN("signal is emitted for known relic")
                 {
                     REQUIRE(knownDestroyingSignals.Executions().size() == 1);
-                    REQUIRE(knownDestroyingSignals.Executions().begin()->reference == created);
+                    REQUIRE(knownDestroyingSignals.Executions().begin()->index == created);
                 }
             }
 
@@ -674,7 +668,7 @@ SCENARIO_METHOD(RelicTestsFixture, "relic signals", "[relic][signal]")
                 THEN("signal is emitted for known relic")
                 {
                     REQUIRE(knownDestroyingSignals.Executions().size() == 1);
-                    REQUIRE(knownDestroyingSignals.Executions().begin()->reference == created);
+                    REQUIRE(knownDestroyingSignals.Executions().begin()->index == created);
                 }
             }
         }

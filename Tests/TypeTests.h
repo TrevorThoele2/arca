@@ -46,13 +46,15 @@ public:
 
 namespace Inscription
 {
-    template<>
-    class Scribe<::TypeTestsFixture::Shard, BinaryArchive> final
-        : public ArcaNullScribe<::TypeTestsFixture::Shard, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<TypeTestsFixture::Shard, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<TypeTestsFixture::Shard>;
+    };
 
-    template<>
-    class Scribe<::TypeTestsFixture::TypedRelic, BinaryArchive> final
-        : public ArcaNullScribe<::TypeTestsFixture::TypedRelic, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<TypeTestsFixture::TypedRelic, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<TypeTestsFixture::TypedRelic>;
+    };
 }

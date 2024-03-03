@@ -125,9 +125,15 @@ namespace Arca
     }
 
     template<class ShardT>
-    bool ReliquaryShards::Handler<ShardT>::WillSerialize() const
+    bool ReliquaryShards::Handler<ShardT>::WillBinarySerialize() const
     {
-        return HasScribe<ShardT>();
+        return HasScribe<ShardT, Inscription::BinaryArchive>();
+    }
+
+    template<class ShardT>
+    bool ReliquaryShards::Handler<ShardT>::WillJsonSerialize() const
+    {
+        return HasScribe<ShardT, Inscription::JsonArchive>();
     }
 
     template<class ShardT>
@@ -138,9 +144,24 @@ namespace Arca
     }
 
     template<class ShardT>
+    void ReliquaryShards::Handler<ShardT>::Serialize(const std::string& name, Inscription::JsonArchive& archive)
+    {
+        const auto constName = !name.empty() ? name + "Const" : "";
+
+        archive(name, batchSource);
+        archive(constName, constBatchSource);
+    }
+
+    template<class ShardT>
     std::vector<::Inscription::Type> ReliquaryShards::Handler<ShardT>::InscriptionTypes(Inscription::BinaryArchive& archive) const
     {
-        return ::Inscription::InputTypesFor<std::remove_const_t<ShardT>>(archive);
+        return Inscription::InputTypesFor<std::remove_const_t<ShardT>>(archive);
+    }
+
+    template<class ShardT>
+    std::vector<::Inscription::Type> ReliquaryShards::Handler<ShardT>::InscriptionTypes(Inscription::JsonArchive& archive) const
+    {
+        return Inscription::InputTypesFor<std::remove_const_t<ShardT>>(archive);
     }
 
     template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int>>

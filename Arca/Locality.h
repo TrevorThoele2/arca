@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Inscription/EnumScribe.h>
+#include <Inscription/EnumScribeCategory.h>
 
 namespace Arca
 {
@@ -13,8 +13,9 @@ namespace Arca
 
 namespace Inscription
 {
-    template<>
-    class Scribe<::Arca::Locality, BinaryArchive> final :
-        public EnumScribe<::Arca::Locality, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<Arca::Locality, Archive>
+    {
+        using Category = EnumScribeCategory<Arca::Locality>;
+    };
 }

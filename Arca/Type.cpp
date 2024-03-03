@@ -1,5 +1,8 @@
 #include "Type.h"
 
+#include <Inscription/StringScribe.h>
+#include <Inscription/NumericScribe.h>
+
 namespace Arca
 {
     Type::Type(TypeName name) : name(std::move(name))
@@ -32,9 +35,15 @@ namespace Chroma
 
 namespace Inscription
 {
-    void Scribe<Arca::Type, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    void Scribe<Arca::Type>::Scriven(ObjectT& object, BinaryArchive& archive)
     {
         archive(object.name);
         archive(object.isConst);
+    }
+
+    void Scribe<Arca::Type>::Scriven(ObjectT& object, JsonArchive& archive)
+    {
+        archive("name", object.name);
+        archive("isConst", object.isConst);
     }
 }

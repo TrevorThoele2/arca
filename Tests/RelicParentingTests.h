@@ -6,24 +6,18 @@
 
 #include <Arca/Serialization.h>
 
+#include "BasicShard.h"
+
 using namespace Arca;
 
 class RelicParentingTestsFixture : public GeneralFixture
 {
 public:
-    class Shard;
     class GlobalRelic;
 };
 
 namespace Arca
 {
-    template<>
-    struct Traits<::RelicParentingTestsFixture::Shard>
-    {
-        static const ObjectType objectType = ObjectType::Shard;
-        static inline const TypeName typeName = "RelicTestsShard";
-    };
-
     template<>
     struct Traits<::RelicParentingTestsFixture::GlobalRelic>
     {
@@ -33,38 +27,19 @@ namespace Arca
     };
 }
 
-class RelicParentingTestsFixture::Shard
-{
-public:
-    std::string myValue;
-public:
-    Shard() = default;
-    explicit Shard(std::string myValue);
-};
-
 class RelicParentingTestsFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
 {
 public:
-    Index<Shard> basicShard;
+    Index<BasicShard> basicShard;
 public:
     explicit GlobalRelic(Init init);
 };
 
 namespace Inscription
 {
-    template<>
-    class Scribe<::RelicParentingTestsFixture::Shard, BinaryArchive> final
-        : public ArcaCompositeScribe<::RelicParentingTestsFixture::Shard, BinaryArchive>
+    template<class Archive>
+    struct ScribeTraits<RelicParentingTestsFixture::GlobalRelic, Archive> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {
-            archive(object.myValue);
-        }
+        using Category = ArcaNullScribeCategory<RelicParentingTestsFixture::GlobalRelic>;
     };
-
-    template<>
-    class Scribe<::RelicParentingTestsFixture::GlobalRelic, BinaryArchive> final
-        : public ArcaNullScribe<::RelicParentingTestsFixture::GlobalRelic, BinaryArchive>
-    {};
 }

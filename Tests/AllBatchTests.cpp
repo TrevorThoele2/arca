@@ -2,25 +2,27 @@
 
 #include "AllBatchTests.h"
 
+#include "DifferentiableShard.h"
+
 AllBatchTestsFixture::Relic::Relic(Init init) : ClosedTypedRelic(init)
 {
-    Create<Shard<0>>();
-    Create<Shard<1>>();
-    Create<Shard<2>>();
+    Create<DifferentiableShard<0>>();
+    Create<DifferentiableShard<1>>();
+    Create<DifferentiableShard<2>>();
 }
 
 AllBatchTestsFixture::GlobalRelic::GlobalRelic(Init init) : ClosedTypedRelic(init)
 {
-    Create<Shard<0>>();
-    Create<Shard<1>>();
-    Create<Shard<2>>();
+    Create<DifferentiableShard<0>>();
+    Create<DifferentiableShard<1>>();
+    Create<DifferentiableShard<2>>();
 }
 
 SCENARIO_METHOD(AllBatchTestsFixture, "default all shards batch", "[all][batch]")
 {
     GIVEN("default all batch")
     {
-        Batch<All<Shard<0>, Shard<1>, Shard<2>>> batch;
+        Batch<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>> batch;
 
         WHEN("querying size")
         {
@@ -81,22 +83,22 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all batch", "[all][batch]")
     GIVEN("registered reliquary and relic")
     {
         auto reliquary = ReliquaryOrigin()
-            .Register<Shard<0>>()
-            .Register<Shard<1>>()
-            .Register<Shard<2>>()
-            .Register<Shard<3>>()
+            .Register<DifferentiableShard<0>>()
+            .Register<DifferentiableShard<1>>()
+            .Register<DifferentiableShard<2>>()
+            .Register<DifferentiableShard<3>>()
             .Actualize();
         auto relic = reliquary->Do<Create<OpenRelic>>();
 
         WHEN("creating shards")
         {
-            auto createdShard0 = relic->Create<Shard<0>>();
-            auto createdShard1 = relic->Create<Shard<1>>();
-            auto createdShard2 = relic->Create<Shard<2>>();
+            auto createdShard0 = relic->Create<DifferentiableShard<0>>();
+            auto createdShard1 = relic->Create<DifferentiableShard<1>>();
+            auto createdShard2 = relic->Create<DifferentiableShard<2>>();
 
             WHEN("starting batch")
             {
-                auto batch = reliquary->Batch<All<Shard<0>, Shard<1>, Shard<2>>>();
+                auto batch = reliquary->Batch<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>();
 
                 THEN("batch is not empty")
                 {
@@ -119,13 +121,13 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all batch", "[all][batch]")
 
                 THEN("removing one shard empties the batch")
                 {
-                    relic->Destroy<Shard<0>>();
+                    relic->Destroy<DifferentiableShard<0>>();
                     REQUIRE(batch.IsEmpty());
                 }
 
                 WHEN("adding a new shard")
                 {
-                    relic->Create<Shard<3>>();
+                    relic->Create<DifferentiableShard<3>>();
 
                     THEN("batch is not empty")
                     {
@@ -148,7 +150,7 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all batch", "[all][batch]")
 
                     THEN("removing fourth shard does not empty batch")
                     {
-                        relic->Destroy<Shard<3>>();
+                        relic->Destroy<DifferentiableShard<3>>();
                         REQUIRE(!batch.IsEmpty());
                     }
                 }
@@ -157,7 +159,7 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all batch", "[all][batch]")
 
         WHEN("starting batch")
         {
-            auto batch = reliquary->Batch<All<Shard<0>, Shard<1>, Shard<2>>>();
+            auto batch = reliquary->Batch<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>();
 
             THEN("batch is empty")
             {
@@ -172,9 +174,9 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all batch", "[all][batch]")
 
             WHEN("creating shards")
             {
-                auto createdShard0 = relic->Create<Shard<0>>();
-                auto createdShard1 = relic->Create<Shard<1>>();
-                auto createdShard2 = relic->Create<Shard<2>>();
+                auto createdShard0 = relic->Create<DifferentiableShard<0>>();
+                auto createdShard1 = relic->Create<DifferentiableShard<1>>();
+                auto createdShard2 = relic->Create<DifferentiableShard<2>>();
 
                 THEN("batch is not empty")
                 {
@@ -197,13 +199,13 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all batch", "[all][batch]")
 
                 THEN("removing one shard empties the batch")
                 {
-                    relic->Destroy<Shard<0>>();
+                    relic->Destroy<DifferentiableShard<0>>();
                     REQUIRE(batch.IsEmpty());
                 }
 
                 WHEN("adding a new shard")
                 {
-                    relic->Create<Shard<3>>();
+                    relic->Create<DifferentiableShard<3>>();
 
                     THEN("batch is not empty")
                     {
@@ -226,7 +228,7 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all batch", "[all][batch]")
 
                     THEN("removing fourth shard does not empty batch")
                     {
-                        relic->Destroy<Shard<3>>();
+                        relic->Destroy<DifferentiableShard<3>>();
                         REQUIRE(!batch.IsEmpty());
                     }
                 }
@@ -237,15 +239,15 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all batch", "[all][batch]")
     GIVEN("registered reliquary with global relic")
     {
         auto reliquary = ReliquaryOrigin()
-            .Register<Shard<0>>()
-            .Register<Shard<1>>()
-            .Register<Shard<2>>()
+            .Register<DifferentiableShard<0>>()
+            .Register<DifferentiableShard<1>>()
+            .Register<DifferentiableShard<2>>()
             .Register<GlobalRelic>()
             .Actualize();
 
         WHEN("starting batch")
         {
-            auto batch = reliquary->Batch<All<Shard<0>, Shard<1>, Shard<2>>>();
+            auto batch = reliquary->Batch<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>();
 
             THEN("batch contains shard")
             {
@@ -266,22 +268,22 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all batch with either", "[all][batch][eit
     GIVEN("registered reliquary and relic")
     {
         auto reliquary = ReliquaryOrigin()
-            .Register<Shard<0>>()
-            .Register<Shard<1>>()
-            .Register<Shard<2>>()
-            .Register<Shard<3>>()
+            .Register<DifferentiableShard<0>>()
+            .Register<DifferentiableShard<1>>()
+            .Register<DifferentiableShard<2>>()
+            .Register<DifferentiableShard<3>>()
             .Actualize();
         auto relic = reliquary->Do<Create<OpenRelic>>();
 
         WHEN("creating shards")
         {
-            auto createdShard0 = relic->Create<Shard<0>>();
-            auto createdShard1 = relic->Create<Shard<1>>();
-            auto createdShard2 = relic->Create<Shard<2>>();
+            auto createdShard0 = relic->Create<DifferentiableShard<0>>();
+            auto createdShard1 = relic->Create<DifferentiableShard<1>>();
+            auto createdShard2 = relic->Create<DifferentiableShard<2>>();
 
             WHEN("starting batch")
             {
-                auto batch = reliquary->Batch<All<Either<Shard<0>>, Either<Shard<1>>, Either<Shard<2>>>>();
+                auto batch = reliquary->Batch<All<Either<DifferentiableShard<0>>, Either<DifferentiableShard<1>>, Either<DifferentiableShard<2>>>>();
 
                 THEN("batch is not empty")
                 {
@@ -304,13 +306,13 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all batch with either", "[all][batch][eit
 
                 THEN("removing one shard empties the batch")
                 {
-                    relic->Destroy<Shard<0>>();
+                    relic->Destroy<DifferentiableShard<0>>();
                     REQUIRE(batch.IsEmpty());
                 }
 
                 WHEN("adding a new relic")
                 {
-                    relic->Create<Shard<3>>();
+                    relic->Create<DifferentiableShard<3>>();
 
                     THEN("batch is not empty")
                     {
@@ -333,7 +335,7 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all batch with either", "[all][batch][eit
 
                     THEN("removing fourth shard does not empty batch")
                     {
-                        relic->Destroy<Shard<3>>();
+                        relic->Destroy<DifferentiableShard<3>>();
                         REQUIRE(!batch.IsEmpty());
                     }
                 }
@@ -347,35 +349,35 @@ SCENARIO_METHOD(AllBatchTestsFixture, "all batch serialization", "[all][batch][s
     GIVEN("saved reliquary")
     {
         auto savedReliquary = ReliquaryOrigin()
-            .Register<Shard<0>>()
-            .Register<Shard<1>>()
-            .Register<Shard<2>>()
+            .Register<DifferentiableShard<0>>()
+            .Register<DifferentiableShard<1>>()
+            .Register<DifferentiableShard<2>>()
             .Actualize();
 
         auto savedRelic = savedReliquary->Do<Create<OpenRelic>>();
-        savedRelic->Create<Shard<0>>();
-        savedRelic->Create<Shard<1>>();
-        savedRelic->Create<Shard<2>>();
+        savedRelic->Create<DifferentiableShard<0>>();
+        savedRelic->Create<DifferentiableShard<1>>();
+        savedRelic->Create<DifferentiableShard<2>>();
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
             outputArchive(*savedReliquary);
         }
 
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
-                .Register<Shard<0>>()
-                .Register<Shard<1>>()
-                .Register<Shard<2>>()
+                .Register<DifferentiableShard<0>>()
+                .Register<DifferentiableShard<1>>()
+                .Register<DifferentiableShard<2>>()
                 .Actualize();
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                 inputArchive(*loadedReliquary);
             }
 
-            auto batch = loadedReliquary->Batch<All<Shard<0>, Shard<1>, Shard<2>>>();
+            auto batch = loadedReliquary->Batch<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>();
 
             THEN("batch is occupied")
             {

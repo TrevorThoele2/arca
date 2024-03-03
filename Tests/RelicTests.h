@@ -7,13 +7,15 @@
 
 #include <Arca/Serialization.h>
 
+#include "DifferentiableShard.h"
+
 using namespace Arca;
 
 class RelicTestsFixture : public GeneralFixture
 {
 public:
-    class Shard;
-    class OtherShard;
+    using Shard = DifferentiableShard<0>;
+    using OtherShard = DifferentiableShard<1>;
 
     class TypedClosedRelic;
     class TypedOpenRelic;
@@ -108,24 +110,6 @@ namespace Arca
     };
 }
 
-class RelicTestsFixture::Shard
-{
-public:
-    std::string myValue;
-public:
-    Shard() = default;
-    explicit Shard(std::string myValue);
-};
-
-class RelicTestsFixture::OtherShard
-{
-public:
-    int myValue;
-public:
-    OtherShard() = default;
-    explicit OtherShard(int myValue);
-};
-
 class RelicTestsFixture::TypedClosedRelic final : public ClosedTypedRelic<TypedClosedRelic>
 {
 public:
@@ -211,70 +195,57 @@ public:
 
 namespace Inscription
 {
-    template<>
-    class Scribe<::RelicTestsFixture::Shard, BinaryArchive> final
-        : public ArcaCompositeScribe<::RelicTestsFixture::Shard, BinaryArchive>
+    template<class Archive>
+    struct ScribeTraits<RelicTestsFixture::TypedClosedRelic, Archive> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {
-            archive(object.myValue);
-        }
+        using Category = ArcaNullScribeCategory<RelicTestsFixture::TypedClosedRelic>;
     };
 
-    template<>
-    class Scribe<::RelicTestsFixture::OtherShard, BinaryArchive> final
-        : public ArcaCompositeScribe<::RelicTestsFixture::OtherShard, BinaryArchive>
+    template<class Archive>
+    struct ScribeTraits<RelicTestsFixture::TypedOpenRelic, Archive> final
     {
-    protected:
-        void ScrivenImplementation(ObjectT& object, ArchiveT& archive) override
-        {
-            archive(object.myValue);
-        }
+        using Category = ArcaNullScribeCategory<RelicTestsFixture::TypedOpenRelic>;
     };
 
-    template<>
-    class Scribe<::RelicTestsFixture::TypedClosedRelic, BinaryArchive> final
-        : public ArcaNullScribe<::RelicTestsFixture::TypedClosedRelic, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<RelicTestsFixture::GlobalRelic, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<RelicTestsFixture::GlobalRelic>;
+    };
 
-    template<>
-    class Scribe<::RelicTestsFixture::TypedOpenRelic, BinaryArchive> final
-        : public ArcaNullScribe<::RelicTestsFixture::TypedOpenRelic, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<RelicTestsFixture::ShouldCreateRelic, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<RelicTestsFixture::ShouldCreateRelic>;
+    };
 
-    template<>
-    class Scribe<::RelicTestsFixture::GlobalRelic, BinaryArchive> final
-        : public ArcaNullScribe<::RelicTestsFixture::GlobalRelic, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<RelicTestsFixture::InitializedRelic, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<RelicTestsFixture::InitializedRelic>;
+    };
 
-    template<>
-    class Scribe<::RelicTestsFixture::ShouldCreateRelic, BinaryArchive> final
-        : public ArcaNullScribe<::RelicTestsFixture::ShouldCreateRelic, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<RelicTestsFixture::MovableOnlyRelic, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<RelicTestsFixture::MovableOnlyRelic>;
+    };
 
-    template<>
-    class Scribe<::RelicTestsFixture::InitializedRelic, BinaryArchive> final
-        : public ArcaNullScribe<::RelicTestsFixture::InitializedRelic, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<RelicTestsFixture::RelicConstructedFromMovedValue, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<RelicTestsFixture::RelicConstructedFromMovedValue>;
+    };
 
-    template<>
-    class Scribe<::RelicTestsFixture::MovableOnlyRelic, BinaryArchive> final
-        : public ArcaNullScribe<::RelicTestsFixture::MovableOnlyRelic, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<RelicTestsFixture::ClosedTypedRelicWithUsingConstructor, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<RelicTestsFixture::ClosedTypedRelicWithUsingConstructor>;
+    };
 
-    template<>
-    class Scribe<::RelicTestsFixture::RelicConstructedFromMovedValue, BinaryArchive> final
-        : public ArcaNullScribe<::RelicTestsFixture::RelicConstructedFromMovedValue, BinaryArchive>
-    {};
-
-    template<>
-    class Scribe<::RelicTestsFixture::ClosedTypedRelicWithUsingConstructor, BinaryArchive> final
-        : public ArcaNullScribe<::RelicTestsFixture::ClosedTypedRelicWithUsingConstructor, BinaryArchive>
-    {};
-
-    template<>
-    class Scribe<::RelicTestsFixture::OpenTypedRelicWithUsingConstructor, BinaryArchive> final
-        : public ArcaNullScribe<::RelicTestsFixture::OpenTypedRelicWithUsingConstructor, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<RelicTestsFixture::OpenTypedRelicWithUsingConstructor, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<RelicTestsFixture::OpenTypedRelicWithUsingConstructor>;
+    };
 }

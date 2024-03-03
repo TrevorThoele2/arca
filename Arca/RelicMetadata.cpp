@@ -8,13 +8,15 @@ namespace Arca
         Locality locality,
         Type type,
         void* storage,
-        bool shouldSerialize)
+        bool shouldSerializeBinary,
+        bool shouldSerializeJson)
         :
         id(id),
         openness(openness),
         locality(locality),
         type(std::move(type)),
         storage(storage),
-        shouldSerialize(shouldSerialize)
+        shouldSerializeBinary(shouldSerializeBinary),
+        shouldSerializeJson(shouldSerializeJson)
     {}
 }

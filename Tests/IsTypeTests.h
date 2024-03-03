@@ -49,18 +49,21 @@ namespace Arca
 
 namespace Inscription
 {
-    template<>
-    class Scribe<::IsTypeTestsFixture::Shard, BinaryArchive> final
-        : public ArcaNullScribe<::IsTypeTestsFixture::Shard, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<IsTypeTestsFixture::Shard, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<IsTypeTestsFixture::Shard>;
+    };
 
-    template<>
-    class Scribe<::IsTypeTestsFixture::Relic, BinaryArchive> final
-        : public ArcaNullScribe<::IsTypeTestsFixture::Relic, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<IsTypeTestsFixture::Relic, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<IsTypeTestsFixture::Relic>;
+    };
 
-    template<>
-    class Scribe<::IsTypeTestsFixture::Curator, BinaryArchive> final
-        : public ArcaNullScribe<::IsTypeTestsFixture::Curator, BinaryArchive>
-    {};
+    template<class Archive>
+    struct ScribeTraits<IsTypeTestsFixture::Curator, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<IsTypeTestsFixture::Curator>;
+    };
 }

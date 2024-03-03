@@ -6,12 +6,6 @@ using namespace std::string_literals;
 
 #include "DifferentiableCurator.h"
 
-IntegrationTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std::move(myValue))
-{}
-
-IntegrationTestsFixture::OtherShard::OtherShard(int myValue) : myValue(myValue)
-{}
-
 IntegrationTestsFixture::ParentRelic::ParentRelic(Init init, int value)
     : ClosedTypedRelic(init), value(value)
 {}
@@ -295,7 +289,7 @@ SCENARIO_METHOD(
         WHEN("saving reliquary")
         {
             {
-                auto output = Inscription::OutputBinaryArchive("Test.dat", "Test", 1);
+                auto output = Inscription::OutputBinaryArchive("Test.dat");
                 output(*savedReliquary);
             }
 
@@ -317,7 +311,7 @@ SCENARIO_METHOD(
                     allBatch = curator.TheOwner().Batch<All<BasicShard, OtherShard>>();
                 };
 
-                auto input = Inscription::InputBinaryArchive("Test.dat", "Test");
+                auto input = Inscription::InputBinaryArchive("Test.dat");
                 input(*loadedReliquary);
 
                 THEN("batch is occupied")
@@ -346,7 +340,7 @@ SCENARIO_METHOD(
         WHEN("saving reliquary")
         {
             {
-                auto output = Inscription::OutputBinaryArchive("Test.dat", "Test", 1);
+                auto output = Inscription::OutputBinaryArchive("Test.dat");
                 output(*savedReliquary);
             }
 
@@ -355,7 +349,7 @@ SCENARIO_METHOD(
                 const auto loadedReliquary = ReliquaryOrigin()
                     .Actualize();
 
-                auto input = Inscription::InputBinaryArchive("Test.dat", "Test");
+                auto input = Inscription::InputBinaryArchive("Test.dat");
                 input(*loadedReliquary);
 
                 auto relic3 = loadedReliquary->Do<Create<OpenRelic>>();
@@ -397,12 +391,12 @@ SCENARIO_METHOD(
         auto relic = reliquary->Do<Create<OpenRelic>>();
         auto shard = relic->Create<BasicShard>();
 
-        auto setValue = dataGeneration.Random<std::string>();
+        auto setValue = dataGeneration.Random<int>();
 
         curator.onWork = [relic, setValue](DifferentiableCuratorBase& self)
         {
             auto data = self.TheData<BasicShard>(relic.ID());
-            data->myValue = setValue;
+            data->value = setValue;
         };
 
         reliquary->Work();
@@ -413,7 +407,7 @@ SCENARIO_METHOD(
 
             THEN("data has been set")
             {
-                REQUIRE(afterShard->myValue == setValue);
+                REQUIRE(afterShard->value == setValue);
             }
         }
 
@@ -421,7 +415,7 @@ SCENARIO_METHOD(
         {
             THEN("data has been set")
             {
-                REQUIRE(shard->myValue == setValue);
+                REQUIRE(shard->value == setValue);
             }
         }
     }

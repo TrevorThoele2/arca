@@ -13,10 +13,14 @@ namespace Arca
     public:
         virtual ~KnownPolymorphicSerializer() = 0;
 
-        [[nodiscard]] virtual bool WillSerialize() const = 0;
+        [[nodiscard]] virtual bool WillBinarySerialize() const = 0;
+        [[nodiscard]] virtual bool WillJsonSerialize() const = 0;
         virtual void Serialize(Inscription::BinaryArchive& archive) = 0;
+        virtual void Serialize(const std::string& name, Inscription::JsonArchive& archive) = 0;
         [[nodiscard]] virtual TypeName MainType() const = 0;
-        [[nodiscard]] virtual std::vector<::Inscription::Type>
+        [[nodiscard]] virtual std::vector<Inscription::Type>
             InscriptionTypes(Inscription::BinaryArchive& archive) const = 0;
+        [[nodiscard]] virtual std::vector<Inscription::Type>
+            InscriptionTypes(Inscription::JsonArchive& archive) const = 0;
     };
 }

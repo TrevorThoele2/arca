@@ -3,14 +3,14 @@
 #include <Chroma/VariadicTemplate.h>
 #include "Traits.h"
 #include "TypeFor.h"
-#include "ReferenceTypeFor.h"
+#include "Index.h"
 
 namespace Arca
 {
     template<class T>
     struct TransformToReference
     {
-        using Type = typename ReferenceTypeFor<T>::Type;
+        using Type = Index<T>;
     };
 
     template<class... Ts>

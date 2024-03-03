@@ -4,6 +4,10 @@
 
 namespace Arca
 {
+    ClosedRelic::ClosedRelic(RelicInit init) :
+        id(init.id), owner(&init.owner)
+    {}
+
     std::optional<Handle> ClosedRelic::Parent() const
     {
         return owner->ParentOf(ID());
@@ -18,8 +22,4 @@ namespace Arca
     {
         return *owner;
     }
-
-    ClosedRelic::ClosedRelic(RelicInit init) :
-        id(init.id), owner(&init.owner)
-    {}
 }

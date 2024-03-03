@@ -7,6 +7,7 @@
 #include <Inscription/MultimapScribe.h>
 #include <Inscription/MemoryScribe.h>
 #include <Inscription/VectorScribe.h>
+#include <Inscription/OptionalScribe.h>
 #include "Chroma/Contract.h"
 
 using namespace std::string_literals;
@@ -120,31 +121,56 @@ namespace Inscription
         reliquary(&reliquary), value(value)
     {}
 
-    void Scribe<KnownPolymorphic, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    void Scribe<KnownPolymorphic>::Scriven(ObjectT& object, BinaryArchive& archive)
     {
         object.value->Serialize(archive);
     }
 
-    void Scribe<::Arca::Reliquary, BinaryArchive>::ScrivenImplementation(ObjectT& object, ArchiveT& archive)
+    void Scribe<KnownPolymorphic>::Scriven(const std::string& name, ObjectT& object, JsonArchive& archive)
     {
-        userContext.reliquary = &object;
-        archive.EmplaceUserContext(&userContext);
-
-        archive(object.relics.nextRelicID);
-
-        if (archive.IsOutput())
-            Save(object, archive);
-        else
-            Load(object, archive);
-
-        archive.RemoveUserContext<Arca::InscriptionUserContext>();
+        object.value->Serialize(name, archive);
     }
 
-    void Scribe<::Arca::Reliquary, BinaryArchive>::Save(ObjectT& object, ArchiveT& archive)
+    auto Scribe<::Arca::Reliquary>::FindExtensionForLoadedMetadata(Arca::RelicID id, ObjectT& object)
+        -> MetadataExtension
+    {
+        for (auto& handler : object.relics.localHandlers)
+        {
+            auto& batchSource = handler->BatchSource();
+            auto found = batchSource.FindStorage(id);
+            if (found)
+                return { batchSource.Type(), Arca::Locality::Local, found };
+        }
+
+        for (auto& global : object.relics.globalHandlers)
+            if (global->id == id)
+                return { Arca::Type(global->typeName, false), Arca::Locality::Global, global->Storage() };
+
+        DEBUG_ASSERT(false);
+    }
+
+    auto Scribe<::Arca::Reliquary>::FindFrom(
+        Type mainType,
+        KnownPolymorphicSerializerList& list)
+        -> Arca::KnownPolymorphicSerializer*
+    {
+        const auto found = std::find_if(
+            list.begin(),
+            list.end(),
+            [&mainType](const Arca::KnownPolymorphicSerializer* entry)
+            {
+                return entry->MainType() == mainType;
+            });
+        return found != list.end()
+            ? *found
+            : static_cast<Arca::KnownPolymorphicSerializer*>(nullptr);
+    }
+
+    void Scribe<Arca::Reliquary>::Save(ObjectT& object, OutputBinaryArchive& archive)
     {
         std::vector<Arca::RelicMetadata> metadataToSave;
         for (auto& loop : object.relics.metadataList)
-            if (loop.shouldSerialize)
+            if (loop.shouldSerializeBinary)
                 metadataToSave.push_back(loop);
 
         ContainerSize metadataSize = metadataToSave.size();
@@ -158,28 +184,28 @@ namespace Inscription
         auto globalRelicSerializers = ToKnownPolymorphicSerializerList(object.relics.globalHandlers);
         auto curatorSerializers = ToKnownPolymorphicSerializerList(object.curators.handlers);
 
-        JumpSaveAll(
+        SaveAll(
             object,
             archive,
             shardSerializers);
 
-        JumpSaveAll(
+        SaveAll(
             object,
             archive,
             relicSerializers);
 
-        JumpSaveAll(
+        SaveAll(
             object,
             archive,
             globalRelicSerializers);
 
-        JumpSaveAll(
+        SaveAll(
             object,
             archive,
             curatorSerializers);
     }
 
-    void Scribe<::Arca::Reliquary, BinaryArchive>::Load(ObjectT& object, ArchiveT& archive)
+    void Scribe<Arca::Reliquary>::Load(ObjectT& object, InputBinaryArchive& archive)
     {
         ContainerSize metadataSize = 0;
         archive(metadataSize);
@@ -192,17 +218,17 @@ namespace Inscription
         auto globalRelicSerializers = ToKnownPolymorphicSerializerList(object.relics.globalHandlers);
         auto curatorSerializers = ToKnownPolymorphicSerializerList(object.curators.handlers);
 
-        JumpLoadAll(
+        LoadAll(
             object,
             archive,
             shardSerializers);
 
-        JumpLoadAll(
+        LoadAll(
             object,
             archive,
             relicSerializers);
 
-        JumpLoadAll(
+        LoadAll(
             object,
             archive,
             globalRelicSerializers);
@@ -216,7 +242,7 @@ namespace Inscription
             Arca::RelicMetadata createdMetadata;
             createdMetadata.id = metadata.id;
             createdMetadata.openness = metadata.openness;
-            createdMetadata.shouldSerialize = true;
+            createdMetadata.shouldSerializeBinary = true;
             createdMetadata.type = type;
             createdMetadata.locality = locality;
             createdMetadata.storage = storage;
@@ -236,15 +262,15 @@ namespace Inscription
             object.relics.metadataList.push_back(createdMetadata);
         }
 
-        JumpLoadAll(
+        LoadAll(
             object,
             archive,
             curatorSerializers);
     }
 
-    void Scribe<::Arca::Reliquary, BinaryArchive>::JumpSaveAll(
+    void Scribe<Arca::Reliquary>::SaveAll(
         ObjectT& object,
-        ArchiveT& archive,
+        OutputBinaryArchive& archive,
         KnownPolymorphicSerializerList& polymorphicsFromObject)
     {
         OutputJumpTable<Type, KnownPolymorphic> jumpTable;
@@ -260,9 +286,9 @@ namespace Inscription
         archive(jumpTable);
     }
 
-    void Scribe<::Arca::Reliquary, BinaryArchive>::JumpLoadAll(
+    void Scribe<Arca::Reliquary>::LoadAll(
         ObjectT& object,
-        ArchiveT& archive,
+        InputBinaryArchive& archive,
         KnownPolymorphicSerializerList& polymorphicsFromObject)
     {
         InputJumpTable<Type, KnownPolymorphic> jumpTable;
@@ -281,27 +307,46 @@ namespace Inscription
         }
     }
 
-    auto Scribe<::Arca::Reliquary, BinaryArchive>::FindFrom(
-        Type mainType,
-        KnownPolymorphicSerializerList& list)
-        -> Arca::KnownPolymorphicSerializer*
+
+    auto Scribe<::Arca::Reliquary>::PruneTypesToLoad(
+        KnownPolymorphicSerializerList& fromObject,
+        InputBinaryArchive& archive,
+        const std::vector<Type>& typesFromArchive)
+        ->
+        std::vector<TypePair>
     {
-        const auto found = std::find_if(
-            list.begin(),
-            list.end(),
-            [&mainType](const Arca::KnownPolymorphicSerializer* entry)
-            {
-                return entry->MainType() == mainType;
-            });
-        return found != list.end()
-            ? *found
-            : static_cast<Arca::KnownPolymorphicSerializer*>(nullptr);
+        auto typesFromReliquary = ExtractTypes(fromObject, archive);
+
+        std::vector<TypePair> returnValue;
+        for (auto& typeFromArchive : typesFromArchive)
+            for (auto& typeFromReliquary : typesFromReliquary)
+                if (typeFromReliquary.inscription == typeFromArchive)
+                    returnValue.push_back(typeFromReliquary);
+
+        return returnValue;
     }
 
-    void Scribe<Arca::Reliquary, BinaryArchive>::SaveRelicMetadata(
-        Arca::RelicMetadata& metadata, ArchiveT& archive)
+    auto Scribe<Arca::Reliquary>::ExtractTypes(
+        KnownPolymorphicSerializerList& fromObject,
+        InputBinaryArchive& archive)
+        ->
+        std::vector<TypePair>
     {
-        assert(metadata.shouldSerialize);
+        std::vector<TypePair> returnValue;
+        for (auto& loop : fromObject)
+        {
+            auto inscriptionTypes = loop->InscriptionTypes(archive);
+
+            for (auto& inscriptionType : inscriptionTypes)
+                returnValue.push_back({ loop->MainType(), inscriptionType });
+        }
+        return returnValue;
+    }
+
+    void Scribe<Arca::Reliquary>::SaveRelicMetadata(
+        Arca::RelicMetadata& metadata, OutputBinaryArchive& archive)
+    {
+        assert(metadata.shouldSerializeBinary);
 
         archive(metadata.id);
         archive(metadata.openness);
@@ -325,7 +370,7 @@ namespace Inscription
         }
     }
 
-    auto Scribe<Arca::Reliquary, BinaryArchive>::LoadRelicMetadata(ObjectT& object, ArchiveT& archive)
+    auto Scribe<Arca::Reliquary>::LoadRelicMetadata(ObjectT& object, InputBinaryArchive& archive)
         -> LoadedRelicMetadata
     {
         LoadedRelicMetadata metadata;
@@ -355,56 +400,225 @@ namespace Inscription
         return metadata;
     }
 
-    auto Scribe<::Arca::Reliquary, BinaryArchive>::FindExtensionForLoadedMetadata(
-        Arca::RelicID id, ObjectT& object)
-
-        -> MetadataExtension
+    void Scribe<Arca::Reliquary>::Save(ObjectT& object, OutputJsonArchive& archive)
     {
-        for (auto& handler : object.relics.localHandlers)
-        {
-            auto& batchSource = handler->BatchSource();
-            auto found = batchSource.FindStorage(id);
-            if (found)
-                return { batchSource.Type(), Arca::Locality::Local, found };
-        }
+        std::vector<Arca::RelicMetadata> metadataToSave;
+        for (auto& loop : object.relics.metadataList)
+            if (loop.shouldSerializeBinary)
+                metadataToSave.push_back(loop);
 
-        for(auto& global : object.relics.globalHandlers)
-            if (global->id == id)
-                return { Arca::Type(global->typeName, false), Arca::Locality::Global, global->Storage() };
+        archive.StartList("relicMetadata");
+        for (auto& metadata : metadataToSave)
+            SaveRelicMetadata(metadata, archive);
+        archive.EndList();
 
-        DEBUG_ASSERT(false);
+        auto shardSerializers = ToKnownPolymorphicSerializerList(object.shards.handlers);
+        auto relicSerializers = ToKnownPolymorphicSerializerList(object.relics.localHandlers);
+        auto globalRelicSerializers = ToKnownPolymorphicSerializerList(object.relics.globalHandlers);
+        auto curatorSerializers = ToKnownPolymorphicSerializerList(object.curators.handlers);
+
+        SaveAll(
+            "shards",
+            object,
+            archive,
+            shardSerializers);
+
+        SaveAll(
+            "localRelics",
+            object,
+            archive,
+            relicSerializers);
+
+        SaveAll(
+            "globalRelics",
+            object,
+            archive,
+            globalRelicSerializers);
+
+        SaveAll(
+            "curators",
+            object,
+            archive,
+            curatorSerializers);
     }
 
-    auto Scribe<::Arca::Reliquary, BinaryArchive>::PruneTypesToLoad(
-        KnownPolymorphicSerializerList& fromObject,
-        ArchiveT& archive,
-        const std::vector<Type>& typesFromArchive)
-        ->
-        std::vector<TypePair>
+    void Scribe<Arca::Reliquary>::Load(ObjectT& object, InputJsonArchive& archive)
+    {
+        auto metadataSize = archive.StartList("relicMetadata");
+        while (metadataSize-- > 0)
+            loadedRelicMetadata.push_back(LoadRelicMetadata(object, archive));
+        archive.EndList();
+
+        auto shardSerializers = ToKnownPolymorphicSerializerList(object.shards.handlers);
+        auto relicSerializers = ToKnownPolymorphicSerializerList(object.relics.localHandlers);
+        auto globalRelicSerializers = ToKnownPolymorphicSerializerList(object.relics.globalHandlers);
+        auto curatorSerializers = ToKnownPolymorphicSerializerList(object.curators.handlers);
+
+        LoadAll(
+            "shards",
+            object,
+            archive,
+            shardSerializers);
+
+        LoadAll(
+            "localRelics",
+            object,
+            archive,
+            relicSerializers);
+
+        LoadAll(
+            "globalRelics",
+            object,
+            archive,
+            globalRelicSerializers);
+
+        for (auto& metadata : loadedRelicMetadata)
+        {
+            auto [type, locality, storage] = FindExtensionForLoadedMetadata(metadata.id, object);
+            if (locality == Arca::Locality::Global)
+                continue;
+
+            Arca::RelicMetadata createdMetadata;
+            createdMetadata.id = metadata.id;
+            createdMetadata.openness = metadata.openness;
+            createdMetadata.shouldSerializeBinary = true;
+            createdMetadata.type = type;
+            createdMetadata.locality = locality;
+            createdMetadata.storage = storage;
+            if (metadata.parent)
+            {
+                const auto parentID = *metadata.parent;
+                const auto parentType = std::get<0>(FindExtensionForLoadedMetadata(parentID, object));
+                createdMetadata.parent = Arca::HandleSlim(parentID, parentType, Arca::HandleObjectType::Relic);
+            }
+            for (auto& child : metadata.children)
+            {
+                const auto childID = child;
+                const auto childType = std::get<0>(FindExtensionForLoadedMetadata(childID, object));
+                createdMetadata.parent = Arca::HandleSlim(childID, childType, Arca::HandleObjectType::Relic);
+            }
+
+            object.relics.metadataList.push_back(createdMetadata);
+        }
+
+        LoadAll(
+            "curators",
+            object,
+            archive,
+            curatorSerializers);
+    }
+
+    void Scribe<Arca::Reliquary>::SaveAll(
+        const std::string& name,
+        ObjectT& object,
+        OutputJsonArchive& archive,
+        KnownPolymorphicSerializerList& polymorphicsFromObject)
+    {
+        archive.StartObject(name);
+
+        std::vector<KnownPolymorphic> knownPolymorphics;
+        knownPolymorphics.reserve(polymorphicsFromObject.size());
+        for (auto& polymorphic : polymorphicsFromObject)
+        {
+            const auto id = polymorphic->MainType();
+            knownPolymorphics.emplace_back(object, polymorphic);
+            archive(id, knownPolymorphics.back());
+        }
+
+        archive.EndObject();
+    }
+
+    void Scribe<Arca::Reliquary>::LoadAll(
+        const std::string& name,
+        ObjectT& object,
+        InputJsonArchive& archive,
+        KnownPolymorphicSerializerList& polymorphicsFromObject)
+    {
+        archive.StartObject(name);
+
+        auto typesToLoad = LoadTypes(polymorphicsFromObject, archive);
+
+        for (auto& typeToLoad : typesToLoad)
+        {
+            const auto serializer = FindFrom(typeToLoad.arca, polymorphicsFromObject);
+            auto adapter = KnownPolymorphic(object, serializer);
+            if (!archive.HasValue(typeToLoad.inscription))
+                continue;
+
+            archive(typeToLoad.inscription, adapter);
+        }
+
+        archive.EndObject();
+    }
+
+    void Scribe<Arca::Reliquary>::SaveRelicMetadata(Arca::RelicMetadata& metadata, OutputJsonArchive& archive)
+    {
+        assert(metadata.shouldSerializeJson);
+
+        archive.StartObject("");
+
+        archive("id", metadata.id);
+        archive("openness", metadata.openness);
+
+        auto parentID = static_cast<bool>(metadata.parent)
+            ? std::optional<Arca::RelicID> { metadata.parent->ID() }
+            : std::optional<Arca::RelicID>{};
+        archive("parentID", parentID);
+
+        std::vector<Arca::RelicID> childrenIDs;
+        for (auto& child : metadata.children)
+            childrenIDs.push_back(child.ID());
+        archive("childrenIDs", childrenIDs);
+
+        archive.EndObject();
+    }
+
+    auto Scribe<Arca::Reliquary>::LoadRelicMetadata(ObjectT& object, InputJsonArchive& archive)
+        -> LoadedRelicMetadata
+    {
+        LoadedRelicMetadata metadata;
+
+        archive.StartObject("");
+
+        archive("id", metadata.id);
+        archive("openness", metadata.openness);
+
+        std::optional<Arca::RelicID> parentID;
+        archive("parentID", parentID);
+        if (parentID)
+            metadata.parent = *parentID;
+
+        std::vector<Arca::RelicID> childrenIDs;
+        archive("childrenIDs", childrenIDs);
+        for (auto& childID : childrenIDs)
+            metadata.children.push_back(childID);
+
+        archive.EndObject();
+
+        return metadata;
+    }
+
+    auto Scribe<Arca::Reliquary>::LoadTypes(KnownPolymorphicSerializerList& fromObject, InputJsonArchive& archive)
+        -> std::vector<TypePair>
     {
         auto typesFromReliquary = ExtractTypes(fromObject, archive);
 
         std::vector<TypePair> returnValue;
-        for (auto& typeFromArchive : typesFromArchive)
-            for (auto& typeFromReliquary : typesFromReliquary)
-                if (typeFromReliquary.inscription == typeFromArchive)
-                    returnValue.push_back(typeFromReliquary);
+        for (auto& typeFromReliquary : typesFromReliquary)
+            returnValue.push_back(typeFromReliquary);
 
         return returnValue;
     }
 
-    auto Scribe<::Arca::Reliquary, BinaryArchive>::ExtractTypes(
-        KnownPolymorphicSerializerList& fromObject,
-        ArchiveT& archive)
-        ->
-        std::vector<TypePair>
+    auto Scribe<::Arca::Reliquary>::ExtractTypes(KnownPolymorphicSerializerList& fromObject, InputJsonArchive& archive)
+        -> std::vector<TypePair>
     {
         std::vector<TypePair> returnValue;
-        for(auto& loop : fromObject)
+        for (auto& loop : fromObject)
         {
             auto inscriptionTypes = loop->InscriptionTypes(archive);
 
-            for(auto& inscriptionType : inscriptionTypes)
+            for (auto& inscriptionType : inscriptionTypes)
                 returnValue.push_back({ loop->MainType(), inscriptionType });
         }
         return returnValue;

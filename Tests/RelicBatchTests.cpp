@@ -2,9 +2,7 @@
 
 #include "RelicBatchTests.h"
 
-RelicBatchFixture::Shard::Shard(int value) :
-    value(value)
-{}
+#include "BasicShard.h"
 
 SCENARIO_METHOD(RelicBatchFixture, "default relic batch", "[RelicBatch]")
 {
@@ -152,7 +150,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch serialization", "[RelicBatch][se
         savedReliquary->Do<Create<Relic>>();
 
         {
-            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
             outputArchive(*savedReliquary);
         }
 
@@ -163,7 +161,7 @@ SCENARIO_METHOD(RelicBatchFixture, "relic batch serialization", "[RelicBatch][se
                 .Actualize();
 
             {
-                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat");
                 inputArchive(*loadedReliquary);
             }
 

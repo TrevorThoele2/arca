@@ -22,7 +22,8 @@ namespace Arca
         std::optional<HandleSlim> parent;
         std::vector<HandleSlim> children;
 
-        bool shouldSerialize = true;
+        bool shouldSerializeBinary = true;
+        bool shouldSerializeJson = true;
 
         RelicMetadata() = default;
         RelicMetadata(
@@ -31,6 +32,7 @@ namespace Arca
             Locality locality,
             Type type,
             void* storage,
-            bool shouldSerialize);
+            bool shouldSerializeBinary,
+            bool shouldSerializeJson);
     };
 }

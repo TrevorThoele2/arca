@@ -3,9 +3,6 @@
 #include "EitherTests.h"
 #include "Arca/Actualization.h"
 
-EitherTestsFixture::BasicShard::BasicShard(std::string myValue) : myValue(std::move(myValue))
-{}
-
 EitherTestsFixture::BasicTypedRelic::BasicTypedRelic(Init init) : ClosedTypedRelic(init)
 {
     basicShard = Create<BasicShard>();

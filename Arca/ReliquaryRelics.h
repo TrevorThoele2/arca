@@ -80,7 +80,8 @@ namespace Arca
             RelicID id,
             Openness openness,
             Locality locality,
-            bool shouldSerialize,
+            bool shouldSerializeBinary,
+            bool shouldSerializeJson,
             Type type = {});
         void DestroyMetadata(RelicID id);
         [[nodiscard]] RelicMetadata* MetadataFor(RelicID id);
@@ -135,9 +136,12 @@ namespace Arca
             void Destroy(RelicID id, Reliquary& reliquary) override;
             void Clear() override;
 
-            [[nodiscard]] bool WillSerialize() const override;
+            [[nodiscard]] bool WillBinarySerialize() const override;
+            [[nodiscard]] bool WillJsonSerialize() const override;
             void Serialize(Inscription::BinaryArchive& archive) override;
+            void Serialize(const std::string& name, Inscription::JsonArchive& archive) override;
             [[nodiscard]] std::vector<::Inscription::Type> InscriptionTypes(Inscription::BinaryArchive& archive) const override;
+            [[nodiscard]] std::vector<::Inscription::Type> InscriptionTypes(Inscription::JsonArchive& archive) const override;
         };
 
         using LocalHandlerPtr = std::unique_ptr<LocalHandlerBase>;
@@ -186,9 +190,12 @@ namespace Arca
 
             [[nodiscard]] void* Storage() const override;
 
-            [[nodiscard]] bool WillSerialize() const override;
+            [[nodiscard]] bool WillBinarySerialize() const override;
+            [[nodiscard]] bool WillJsonSerialize() const override;
             void Serialize(Inscription::BinaryArchive& archive) override;
+            void Serialize(const std::string& name, Inscription::JsonArchive& archive) override;
             [[nodiscard]] std::vector<::Inscription::Type> InscriptionTypes(Inscription::BinaryArchive& archive) const override;
+            [[nodiscard]] std::vector<::Inscription::Type> InscriptionTypes(Inscription::JsonArchive& archive) const override;
         private:
             ReliquaryRelics* owner = nullptr;
         };
