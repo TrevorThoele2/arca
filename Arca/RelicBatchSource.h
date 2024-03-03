@@ -80,6 +80,12 @@ namespace Arca
         template<class U, class... ConstructorArgs>
         RelicT* CreateImpl(RelicInit init, ConstructorArgs&& ... constructorArgs)
         {
+            static_assert(
+                (std::is_constructible_v<U, RelicInit, ConstructorArgs...> && !std::is_constructible_v<U, ConstructorArgs...>)
+                || (std::is_constructible_v<U, ConstructorArgs...>),
+
+                "Cannot create Relic.");
+
             if constexpr (std::is_constructible_v<U, RelicInit, ConstructorArgs...> && !std::is_constructible_v<U, ConstructorArgs...>)
             {
                 auto emplaced = map.emplace(init.id, std::make_shared<RelicT>(init, std::forward<ConstructorArgs>(constructorArgs)...));
@@ -92,7 +98,6 @@ namespace Arca
             }
             else
             {
-                static_assert(false, "Cannot create Relic.");
                 return nullptr;
             }
         }
@@ -312,6 +317,19 @@ namespace Inscription
     template<class T>
     auto Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_relic_v<T>>>>::Create(Arca::RelicInit init) -> std::shared_ptr<RelicT>
     {
+        static_assert(
+            Arca::has_relic_init_serialization_constructor_v<RelicT>
+            || Arca::has_relic_serialization_constructor_v<RelicT>
+            || Arca::has_relic_init_constructor_v<RelicT>
+            || Chroma::is_braces_default_constructible_v<RelicT>,
+
+            "A relic requires a constructor of form "
+            "(RelicInit, Serialization), "
+            "(Serialization), "
+            "(RelicInit) or "
+            "() "
+            "in order to be serialized. Order given is priority order.");
+
         using RelicT = typename ObjectT::RelicT;
         if constexpr (Arca::has_relic_init_serialization_constructor_v<RelicT>)
             return std::make_shared<RelicT>(init, Arca::Serialization{});
@@ -322,17 +340,6 @@ namespace Inscription
         else if constexpr (Chroma::is_braces_default_constructible_v<RelicT>)
             return std::make_shared<RelicT>();
         else
-        {
-            static_assert(
-                false,
-                "A relic requires a constructor of form "
-                "(RelicInit, Serialization), "
-                "(Serialization), "
-                "(RelicInit) or "
-                "() "
-                "in order to be serialized. Order given is priority order.");
-            using RelicT = typename ObjectT::RelicT;
             return std::make_shared<RelicT>(init);
-        }
     }
 }
