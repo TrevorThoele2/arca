@@ -126,12 +126,12 @@ namespace Arca
         return owner->signals;
     }
 
-    Handle ReliquaryComponent::HandleFrom(RelicID id, Type type, HandleObjectType objectType)
+    Handle ReliquaryComponent::HandleFrom(RelicID id, Type type, HandleObjectType objectType) const
     {
-        return Handle{ id, Owner(), std::move(type), objectType };
+        return Handle{ id, const_cast<Reliquary&>(Owner()), std::move(type), objectType };
     }
 
-    Handle ReliquaryComponent::HandleFrom(const RelicMetadata& metadata)
+    Handle ReliquaryComponent::HandleFrom(const RelicMetadata& metadata) const
     {
         return HandleFrom(metadata.id, metadata.type, HandleObjectType::Relic);
     }
