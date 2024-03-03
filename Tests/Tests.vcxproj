@@ -25,6 +25,7 @@
     <ClInclude Include="ReliquaryFixture.h" />
     <ClInclude Include="ReliquaryTests.h" />
     <ClInclude Include="SignalBatchTests.h" />
+    <ClInclude Include="VesselTests.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CuratorTests.cpp" />
@@ -35,6 +36,7 @@
     <ClCompile Include="ReliquaryFixture.cpp" />
     <ClCompile Include="ReliquaryTests.cpp" />
     <ClCompile Include="SignalBatchTests.cpp" />
+    <ClCompile Include="VesselTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Chroma\Chroma\Chroma.vcxproj">

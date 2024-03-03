@@ -4,9 +4,9 @@
 
 namespace Arca
 {
-    class RelicBatchInvalidated final : public std::runtime_error
+    class RelicBatchNotSetup final : public std::runtime_error
     {
     public:
-        RelicBatchInvalidated();
+        RelicBatchNotSetup();
     };
 }

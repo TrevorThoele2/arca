@@ -53,30 +53,33 @@ namespace Arca
     Vessel Reliquary::CreateVessel()
     {
         const auto dynamism = VesselDynamism::Dynamic;
-        const auto id = SetupNewVesselInternals(dynamism);
+        const auto id = SetupNewVesselInternals(dynamism, false);
         return Vessel(id, dynamism, *this);
     }
 
     Vessel Reliquary::CreateVessel(const VesselStructure& structure)
     {
         const auto dynamism = VesselDynamism::Fixed;
-        const auto id = SetupNewVesselInternals(dynamism);
+        const auto id = SetupNewVesselInternals(dynamism, false);
         SatisfyVesselStructure(structure, id);
         return Vessel(id, dynamism, *this);
     }
 
     void Reliquary::ParentVessel(VesselID parent, VesselID child)
     {
+        if (parent == child)
+            throw CannotParentVesselToSelf(parent);
+
         auto parentMetadata = VesselMetadataFor(parent);
         if (!parentMetadata)
-            throw CannotFindVessel();
+            throw CannotFindVessel(parent);
 
         auto childMetadata = VesselMetadataFor(child);
         if (!childMetadata)
-            throw CannotFindVessel();
+            throw CannotFindVessel(child);
 
         if (childMetadata->parent.has_value())
-            throw VesselAlreadyParented();
+            throw VesselAlreadyParented(child);
 
         parentMetadata->children.push_back(child);
         childMetadata->parent = parent;
@@ -118,24 +121,17 @@ namespace Arca
     Reliquary::VesselMetadata::VesselMetadata(
         VesselID id,
         VesselDynamism dynamism,
+        bool isStatic,
         std::optional<TypeHandle> typeHandle)
         :
-        id(id), dynamism(dynamism), typeHandle(std::move(typeHandle))
+        id(id), dynamism(dynamism), isStatic(isStatic), typeHandle(std::move(typeHandle))
     {}
 
-    VesselID Reliquary::SetupNewVesselInternals(VesselDynamism dynamism)
+    VesselID Reliquary::SetupNewVesselInternals(VesselDynamism dynamism, bool isStatic, std::optional<TypeHandle> typeHandle)
     {
         const auto id = NextVesselID();
         occupiedVesselIDs.Include(id);
-        vesselMetadataList.push_back({ id, dynamism });
-        return id;
-    }
-
-    VesselID Reliquary::SetupNewVesselInternals(VesselDynamism dynamism, const TypeHandle& typeHandle)
-    {
-        const auto id = NextVesselID();
-        occupiedVesselIDs.Include(id);
-        vesselMetadataList.push_back({ id, dynamism, typeHandle });
+        vesselMetadataList.push_back({ id, dynamism, isStatic, std::move(typeHandle) });
         return id;
     }
 
@@ -146,6 +142,8 @@ namespace Arca
             vesselMetadataList.begin(),
             vesselMetadataList.end(),
             [id](const VesselMetadata& metadata) { return metadata.id == id; });
+        if (itr == vesselMetadataList.end())
+            return;
         vesselMetadataList.erase(itr);
     }
 
@@ -166,8 +164,33 @@ namespace Arca
 
     void Reliquary::DestroyVessel(VesselID id)
     {
+        const auto metadata = VesselMetadataFor(id);
+        if (!metadata)
+            return;
+
+        if (metadata->isStatic)
+            return;
+
+        for (auto& child : metadata->children)
+            DestroyVessel(child);
+
         for (auto& relicBatchSource : relicBatchSources)
             relicBatchSource.second->DestroyFromBase(id);
+
+        if (metadata->parent)
+        {
+            const auto parent = *metadata->parent;
+            auto parentMetadata = VesselMetadataFor(parent);
+            const auto eraseChildrenItr =
+                std::remove_if(
+                    parentMetadata->children.begin(),
+                    parentMetadata->children.end(),
+                    [id](const VesselID& childId) { return id == childId; });
+            if (eraseChildrenItr != parentMetadata->children.end())
+                parentMetadata->children.erase(eraseChildrenItr);
+        }
+
+        DestroyVesselMetadata(id);
     }
 
     VesselID Reliquary::NextVesselID() const
@@ -182,7 +205,7 @@ namespace Arca
     {
         const auto factory = relicFactoryMap.find(typeHandle);
         if (factory == relicFactoryMap.end())
-            throw NotRegistered();
+            throw NotRegistered("relic", typeHandle);
 
         factory->second(*this, id);
     }
@@ -254,96 +277,11 @@ namespace Inscription
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::Save(ObjectT& object, ArchiveT& archive)
     {
-        // Relics
-        {
-            /*
-            OutputJumpTable<::Arca::TypeHandle, ::Arca::ExtendedRelicSerializer> jumpTable;
-            for(auto& loop : )
-            std::unordered_map<::Arca::TypeHandle, RelicList> map;
-            for (auto& loop : object.relics)
-                map[loop->TypeDescription().typeHandle].push_back(RelicPtr(loop.get()));
-            for (auto& relicType : map)
-                jumpTable.Add(relicType.first, relicType.second);
-            archive(jumpTable);
-            for (auto& relicList : map)
-                for (auto& loop : relicList.second)
-                    loop.release();*/
-        }
 
-        // Curators
-        /*
-        {
-            OutputJumpTable<::Arca::TypeHandle, ::Arca::Curator&> jumpTable;
-            std::vector<::Arca::Curator*> curators;
-            for (auto& loop : object.curators)
-            {
-                if (!loop->IsOwning())
-                    continue;
-
-                curators.push_back(loop->Get());
-                jumpTable.Add(loop->description.typeHandle, *curators.back());
-            }
-            archive(jumpTable);
-        }
-        */
     }
 
     void Scribe<::Arca::Reliquary, BinaryArchive>::Load(ObjectT& object, ArchiveT& archive)
     {
-        /*
-        if (object.isInitialized)
-            throw ::Arca::AttemptedLoadWhileInitialized();
 
-        // Relics
-        {
-            using RelicPtr = std::unique_ptr<::Arca::AnyExtendedRelic>;
-            using RelicList = std::vector<RelicPtr>;
-            InputJumpTable<::Arca::TypeHandle, RelicList> jumpTable;
-            archive(jumpTable);
-
-            const auto allDescriptions = object.RelicTypeGraph().AllDescriptions();
-            for(auto& loadedTypeHandle : jumpTable.AllIDs())
-            {
-                const auto shouldLoad = ShouldLoadRelic(loadedTypeHandle, allDescriptions, archive);
-
-                if (!shouldLoad)
-                    continue;
-
-                auto relicList = jumpTable.ConstructObject(loadedTypeHandle, archive);
-                for (auto& relic : *relicList)
-                    object.AddRelic(std::move(relic));
-            }
-        }
-
-        object.staticVesselInitializerList.clear();
-        object.CreateAllCurators();
-
-        // Curators
-        {
-            InputJumpTable<::Arca::TypeHandle, ::Arca::Curator&> jumpTable;
-            archive(jumpTable);
-
-            for (auto& loadedTypeHandle : jumpTable.AllIDs())
-            {
-                const auto anyRepresentedIsLoaded = [loadedTypeHandle, &archive](const std::unique_ptr<::Arca::CuratorHandle>& curator)
-                {
-                    auto representedTypeHandles = curator->description.AllSerializationRepresentedTypeHandles(archive);
-                    const auto anyRepresentedIsLoaded = [loadedTypeHandle](const TypeHandle& representedTypeHandle)
-                    {
-                        return representedTypeHandle == loadedTypeHandle;
-                    };
-                    return std::any_of(representedTypeHandles.begin(), representedTypeHandles.end(), anyRepresentedIsLoaded);
-                };
-
-                auto foundCurator = std::find_if(object.curators.begin(), object.curators.end(), anyRepresentedIsLoaded);
-                if (foundCurator == object.curators.end())
-                    continue;
-
-                jumpTable.FillObject(*(*foundCurator)->Get(), loadedTypeHandle, archive);
-            }
-        }
-
-        object.isInitialized = true;
-        */
     }
 }

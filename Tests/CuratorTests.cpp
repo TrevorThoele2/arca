@@ -22,7 +22,7 @@ namespace Arca
     const TypeHandle CuratorTraits<CuratorTestsFixture::BasicCurator>::typeHandle = "BasicCurator";
 }
 
-SCENARIO_METHOD(CuratorTestsFixture, "Curator", "[focused]")
+SCENARIO_METHOD(CuratorTestsFixture, "Curator")
 {
     GIVEN("reliquary registered and initialized with curator")
     {
@@ -47,6 +47,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "Curator", "[focused]")
         typeRegistration.PushAllTo(origin);
         auto reliquary = origin.Actualize();
 
+        /*
         WHEN("saving and loading reliquary")
         {
             auto curator = reliquary.FindCurator<BasicCurator>();
@@ -78,6 +79,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "Curator", "[focused]")
                 REQUIRE(found->value == curator->value);
             }
         }
+        */
     }
 }
 

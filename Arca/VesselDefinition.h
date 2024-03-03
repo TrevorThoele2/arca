@@ -32,6 +32,6 @@ namespace Arca
     template<class RelicT>
     bool Vessel::HasRelic() const
     {
-        return FindRelic<RelicT>(id) != nullptr;
+        return FindRelic<RelicT>() != nullptr;
     }
 }

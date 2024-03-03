@@ -2,6 +2,7 @@
 
 #include "RelicBatchSource.h"
 #include "RelicBatchIterator.h"
+#include "RelicBatchException.h"
 
 namespace Arca
 {
@@ -36,6 +37,7 @@ namespace Arca
         [[nodiscard]] const_iterator end() const;
     private:
         SourceT* source = nullptr;
+        void SourceRequired() const;
     private:
         INSCRIPTION_ACCESS;
     };
@@ -78,36 +80,55 @@ namespace Arca
     template<class T>
     auto RelicBatch<T>::Size() const -> SizeT
     {
+        SourceRequired();
+
         return source->Size();
     }
 
     template<class T>
     bool RelicBatch<T>::IsEmpty() const
     {
+        SourceRequired();
+
         return source->IsEmpty();
     }
 
     template<class T>
     auto RelicBatch<T>::begin() -> iterator
     {
+        SourceRequired();
+
         return iterator(source->begin());
     }
 
     template<class T>
     auto RelicBatch<T>::begin() const -> const_iterator
     {
+        SourceRequired();
+
         return iterator(source->begin());
     }
 
     template<class T>
     auto RelicBatch<T>::end() -> iterator
     {
+        SourceRequired();
+
         return iterator(source->end());
     }
 
     template<class T>
     auto RelicBatch<T>::end() const -> const_iterator
     {
+        SourceRequired();
+
         return iterator(source->end());
+    }
+
+    template<class T>
+    void RelicBatch<T>::SourceRequired() const
+    {
+        if (!source)
+            throw RelicBatchNotSetup();
     }
 }

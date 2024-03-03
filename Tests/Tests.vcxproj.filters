@@ -25,6 +25,9 @@
     <ClCompile Include="CuratorTests.cpp">
       <Filter>Source Files\Test</Filter>
     </ClCompile>
+    <ClCompile Include="VesselTests.cpp">
+      <Filter>Source Files\Test</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneralFixture.h">
@@ -43,6 +46,9 @@
       <Filter>Header Files\Test</Filter>
     </ClInclude>
     <ClInclude Include="CuratorTests.h">
+      <Filter>Header Files\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="VesselTests.h">
       <Filter>Header Files\Test</Filter>
     </ClInclude>
   </ItemGroup>
