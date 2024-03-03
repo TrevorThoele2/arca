@@ -210,6 +210,12 @@ namespace Arca
     }
 
     template<class RelicT>
+    void ReliquaryRelics::LocalHandler<RelicT>::Clear()
+    {
+        batchSource.Clear();
+    }
+
+    template<class RelicT>
     bool ReliquaryRelics::LocalHandler<RelicT>::WillSerialize() const
     {
         return HasScribe<RelicT>();

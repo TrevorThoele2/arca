@@ -21,8 +21,7 @@ namespace Arca
                 curator.Work(stage);
             });
 
-        for (auto& batchSource : signals.batchSources.map)
-            batchSource.second->Clear();
+        signals.Clear();
     }
 
     void Reliquary::Clear(const Type& type)
@@ -164,14 +163,9 @@ namespace Inscription
     void Scribe<::Arca::Reliquary, BinaryArchive>::Load(ObjectT& object, ArchiveT& archive)
     {
         object.matrices.Clear();
-
-        for(auto loop = object.relics.metadataList.begin(); loop != object.relics.metadataList.end();)
-        {
-            if (loop->locality == Arca::Locality::Global && !loop->shouldSerialize)
-                ++loop;
-            else
-                loop = object.relics.metadataList.erase(loop);
-        }
+        object.shards.Clear();
+        object.relics.Clear();
+        object.signals.Clear();
 
         ContainerSize metadataSize = 0;
         archive(metadataSize);

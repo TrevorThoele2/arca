@@ -30,6 +30,7 @@ namespace Arca
         void Destroy(const Type& type, RelicID id);
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         void Destroy(RelicID id);
+        void Clear();
 
         [[nodiscard]] bool Contains(const Handle& handle) const;
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
@@ -53,6 +54,7 @@ namespace Arca
 
             virtual void Create(RelicID id, Reliquary& reliquary, bool isConst) = 0;
             virtual void Destroy(RelicID id, Reliquary& reliquary) = 0;
+            virtual void Clear() = 0;
 
             [[nodiscard]] TypeName MainType() const override;
         protected:
@@ -73,6 +75,7 @@ namespace Arca
 
             void Create(RelicID id, Reliquary& reliquary, bool isConst) override;
             void Destroy(RelicID id, Reliquary& reliquary) override;
+            void Clear() override;
 
             [[nodiscard]] bool WillSerialize() const override;
             void Serialize(Inscription::BinaryArchive& archive) override;

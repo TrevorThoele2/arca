@@ -61,6 +61,8 @@ namespace Arca
 
         bool DestroyFromBase(RelicID id) override;
 
+        void Clear();
+
         [[nodiscard]] ShardT* Find(RelicID id);
         [[nodiscard]] const ShardT* Find(RelicID id) const;
 
@@ -127,6 +129,12 @@ namespace Arca
         const auto size = Size();
         Destroy(id);
         return size != Size();
+    }
+
+    template<class T>
+    void BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Clear()
+    {
+        list.clear();
     }
 
     template<class T>

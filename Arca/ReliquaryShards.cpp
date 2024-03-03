@@ -27,6 +27,12 @@ namespace Arca
         handler->Destroy(id, Owner());
     }
 
+    void ReliquaryShards::Clear()
+    {
+        for (auto& loop : handlers)
+            loop->Clear();
+    }
+
     bool ReliquaryShards::Contains(const Handle& handle) const
     {
         assert(handle.ObjectType() == HandleObjectType::Shard);

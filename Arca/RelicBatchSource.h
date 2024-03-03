@@ -55,6 +55,8 @@ namespace Arca
         void DestroyFromBase(RelicID id) override;
         void DestroyAllFromBase(Reliquary& reliquary) override;
 
+        void Clear();
+
         void Construct(Reliquary& owner) override;
 
         [[nodiscard]] void* FindStorage(RelicID id) override;

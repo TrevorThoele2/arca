@@ -45,6 +45,7 @@ namespace Arca
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         void Destroy(RelicID id);
 
+        void Clear();
         void Clear(const TypeName& typeName);
         template<class RelicT, std::enable_if_t<is_relic_v<RelicT>, int> = 0>
         void Clear();
@@ -112,6 +113,7 @@ namespace Arca
             virtual RelicBatchSourceBase& BatchSource() = 0;
 
             virtual void Destroy(RelicID id, Reliquary& reliquary) = 0;
+            virtual void Clear() = 0;
         public:
             [[nodiscard]] TypeName MainType() const override;
         protected:
@@ -129,8 +131,9 @@ namespace Arca
             RelicBatchSourceBase& BatchSource() override;
 
             void Destroy(RelicID id, Reliquary& reliquary) override;
+            void Clear() override;
 
-            bool WillSerialize() const override;
+            [[nodiscard]] bool WillSerialize() const override;
             void Serialize(Inscription::BinaryArchive& archive) override;
             [[nodiscard]] std::vector<::Inscription::Type> InscriptionTypes(Inscription::BinaryArchive& archive) const override;
         };
