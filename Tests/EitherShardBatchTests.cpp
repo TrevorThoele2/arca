@@ -250,3 +250,42 @@ SCENARIO_METHOD(EitherShardBatchFixture, "either shard batch", "[EitherShardBatc
         }
     }
 }
+
+SCENARIO_METHOD(EitherShardBatchFixture, "either shard batch serialization", "[EitherShardBatch][serialization]")
+{
+    GIVEN("saved reliquary")
+    {
+        auto savedReliquary = ReliquaryOrigin()
+            .Type<Relic>()
+            .Type<Shard>()
+            .Actualize();
+
+        savedReliquary->Create<Relic>();
+
+        {
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            outputArchive(*savedReliquary);
+        }
+
+        WHEN("loading reliquary")
+        {
+            auto loadedReliquary = ReliquaryOrigin()
+                .Type<Relic>()
+                .Type<Shard>()
+                .Actualize();
+
+            {
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                inputArchive(*loadedReliquary);
+            }
+
+            auto batch = loadedReliquary->Batch<Either<Shard>>();
+
+            THEN("batch is occupied")
+            {
+                REQUIRE(batch.Size() == 1);
+                REQUIRE(!batch.IsEmpty());
+            }
+        }
+    }
+}
