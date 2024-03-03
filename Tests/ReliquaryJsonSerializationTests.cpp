@@ -170,7 +170,7 @@ SCENARIO_METHOD(ReliquaryJsonSerializationTestsFixture, "reliquary json serializ
 
             THEN("relic does not have shard")
             {
-                REQUIRE_THROWS_AS(loadedReliquary->Find<BasicShard>(loadedRelic.ID()).Get(), NotRegistered);
+                REQUIRE(loadedReliquary->Find<BasicShard>(loadedRelic.ID()).Get() == nullptr);
             }
 
             THEN("relic id is saved id")
