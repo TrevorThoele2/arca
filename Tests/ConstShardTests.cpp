@@ -11,15 +11,6 @@ void ConstShardTestsFixture::Relic::PostConstruct(ShardTuple shards)
     shard = std::get<0>(shards);
 }
 
-namespace Arca
-{
-    const TypeName Traits<ConstShardTestsFixture::Shard>::typeName =
-        "ConstShardTestsShard";
-
-    const TypeName Traits<ConstShardTestsFixture::Relic>::typeName =
-        "ConstShardTestsRelic";
-}
-
 SCENARIO_METHOD(ConstShardTestsFixture, "const shards", "[shard][const]")
 {
     GIVEN("open relic created")

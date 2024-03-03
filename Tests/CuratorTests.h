@@ -85,12 +85,8 @@ namespace Arca
     struct Traits<CuratorTestsFixture::DifferentiableCurator<id>>
     {
         static const ObjectType objectType = ObjectType::Curator;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "DifferentiableCurator" + Chroma::ToString(id);
     };
-
-    template<size_t id>
-    const TypeName Traits<CuratorTestsFixture::DifferentiableCurator<id>>::typeName =
-        "DifferentiableCurator" + Chroma::ToString(id);
 }
 
 namespace Inscription

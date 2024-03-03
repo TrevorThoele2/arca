@@ -11,16 +11,6 @@ void ShardBatchFixture::GlobalRelic::PostConstruct(ShardTuple shards)
     shard = std::get<0>(shards);
 }
 
-namespace Arca
-{
-    const TypeName Traits<ShardBatchFixture::Shard>::typeName
-        = "ShardBatchTestsShard";
-    const TypeName Traits<ShardBatchFixture::UnregisteredShard>::typeName
-        = "ShardBatchTestsUnregisteredShard";
-    const TypeName Traits<ShardBatchFixture::GlobalRelic>::typeName
-        = "ShardBatchTestsGlobalRelic";
-}
-
 SCENARIO_METHOD(ShardBatchFixture, "default shard batch", "[ShardBatch]")
 {
     GIVEN("default shard batch")

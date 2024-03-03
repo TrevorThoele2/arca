@@ -105,35 +105,35 @@ namespace Arca
     struct Traits<::RelicTestsFixture::Shard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "RelicTestsShard";
     };
 
     template<>
     struct Traits<::RelicTestsFixture::OtherShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "RelicTestsOtherShard";
     };
 
     template<>
     struct Traits<::RelicTestsFixture::TypedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "RelicTestsTypedRelic";
     };
 
     template<>
     struct Traits<::RelicTestsFixture::OpenTypedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "RelicTestsOpenTypedRelic";
     };
 
     template<>
     struct Traits<::RelicTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "RelicTestsGlobalRelic";
         static const Locality locality = Locality::Global;
     };
 
@@ -141,7 +141,7 @@ namespace Arca
     struct Traits<::RelicTestsFixture::ShouldCreateRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "ReliquaryTestsShouldCreateRelic";
         static bool ShouldCreate(Reliquary& reliquary, int value);
     };
 
@@ -149,14 +149,14 @@ namespace Arca
     struct Traits<::RelicTestsFixture::InitializedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "ReliquaryTestsInitializedRelic";
     };
 
     template<>
     struct Traits<::RelicTestsFixture::MovableOnlyRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "ReliquaryTestsMovableOnlyRelic";
     };
 }
 

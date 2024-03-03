@@ -9,12 +9,6 @@ void CompositeShardTestsFixture::BasicTypedRelic::PostConstruct(ShardTuple shard
     shard2 = std::get<2>(shards);
 }
 
-namespace Arca
-{
-    const TypeName Traits<CompositeShardTestsFixture::BasicTypedRelic>::typeName =
-        "ReliquaryTestsBasicTypedRelic";
-}
-
 SCENARIO_METHOD(CompositeShardTestsFixture, "reliquary composite shards", "[reliquary][shard][composite]")
 {
     GIVEN("registered reliquary")

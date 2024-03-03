@@ -22,27 +22,6 @@ void HandleTestsFixture::GlobalRelic::PostConstruct(ShardTuple shards)
     basicShard = std::get<0>(shards);
 }
 
-namespace Arca
-{
-    const TypeName Traits<::HandleTestsFixture::Shard>::typeName =
-        "HandleTestsShard";
-
-    const TypeName Traits<::HandleTestsFixture::OtherShard>::typeName =
-        "HandleTestsOtherShard";
-
-    const TypeName Traits<::HandleTestsFixture::TypedRelic>::typeName =
-        "HandleTestsTypedRelic";
-
-    const TypeName Traits<::HandleTestsFixture::GlobalRelic>::typeName =
-        "HandleTestsGlobalRelic";
-
-    const TypeName Traits<::HandleTestsFixture::Curator>::typeName =
-        "HandleTestsBasicCurator";
-
-    const TypeName Traits<::HandleTestsFixture::Signal>::typeName =
-        "HandleTestsBasicSignal";
-}
-
 SCENARIO_METHOD(HandleTestsFixture, "basic handle", "[handle]")
 {
     GIVEN("registered reliquary")

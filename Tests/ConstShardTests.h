@@ -36,14 +36,14 @@ namespace Arca
     struct Traits<::ConstShardTestsFixture::Shard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "ConstShardTestsShard";
     };
 
     template<>
     struct Traits<::ConstShardTestsFixture::Relic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "ConstShardTestsRelic";
     };
 }
 

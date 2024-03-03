@@ -10,15 +10,6 @@ void EitherTestsFixture::BasicTypedRelic::PostConstruct(ShardTuple shards)
     basicShard = std::get<0>(shards);
 }
 
-namespace Arca
-{
-    const TypeName Traits<EitherTestsFixture::BasicShard>::typeName =
-        "RelicTestsBasicShard";
-
-    const TypeName Traits<EitherTestsFixture::BasicTypedRelic>::typeName =
-        "ReliquaryTestsBasicTypedRelic";
-}
-
 SCENARIO_METHOD(EitherTestsFixture, "reliquary either", "[reliquary][either][shard]")
 {
     GIVEN("registered reliquary")

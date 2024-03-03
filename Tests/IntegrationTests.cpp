@@ -62,21 +62,6 @@ void IntegrationTestsFixture::BasicCuratorBase::WorkImplementation(Stage& stage)
 
 namespace Arca
 {
-    const TypeName Traits<::IntegrationTestsFixture::BasicShard>::typeName =
-        "IntegrationTestsBasicShard";
-
-    const TypeName Traits<::IntegrationTestsFixture::OtherShard>::typeName =
-        "IntegrationTestsOtherShard";
-
-    const TypeName Traits<::IntegrationTestsFixture::BasicSignal>::typeName =
-        "IntegrationTestsBasicSignal";
-
-    const TypeName Traits<::IntegrationTestsFixture::ChildRelic>::typeName =
-        "IntegrationTestsChildRelic";
-
-    const TypeName Traits<::IntegrationTestsFixture::ParentRelic>::typeName =
-        "IntegrationTestsParentRelic";
-
     bool Traits<::IntegrationTestsFixture::ParentRelic>::ShouldCreate(Reliquary& reliquary, int value)
     {
         return value >= 100;

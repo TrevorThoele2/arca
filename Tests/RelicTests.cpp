@@ -51,34 +51,10 @@ void RelicTestsFixture::MovableOnlyRelic::PostConstruct(ShardTuple shards)
 
 namespace Arca
 {
-    const TypeName Traits<RelicTestsFixture::Shard>::typeName =
-        "RelicTestsShard";
-
-    const TypeName Traits<RelicTestsFixture::OtherShard>::typeName =
-        "RelicTestsOtherShard";
-
-    const TypeName Traits<RelicTestsFixture::TypedRelic>::typeName =
-        "RelicTestsTypedRelic";
-
-    const TypeName Traits<RelicTestsFixture::OpenTypedRelic>::typeName =
-        "RelicTestsOpenTypedRelic";
-
-    const TypeName Traits<RelicTestsFixture::GlobalRelic>::typeName =
-        "RelicTestsGlobalRelic";
-
-    const TypeName Traits<RelicTestsFixture::ShouldCreateRelic>::typeName =
-        "ReliquaryTestsShouldCreateRelic";
-
     bool Traits<RelicTestsFixture::ShouldCreateRelic>::ShouldCreate(Reliquary& reliquary, int value)
     {
         return value >= 100;
     }
-
-    const TypeName Traits<RelicTestsFixture::InitializedRelic>::typeName =
-        "ReliquaryTestsInitializedRelic";
-
-    const TypeName Traits<RelicTestsFixture::MovableOnlyRelic>::typeName =
-        "ReliquaryTestsMovableOnlyRelic";
 }
 
 SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")

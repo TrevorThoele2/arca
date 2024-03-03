@@ -35,21 +35,21 @@ namespace Arca
     struct Traits<::EitherShardBatchFixture::Shard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "EitherShardBatchTestsShard";
     };
 
     template<>
     struct Traits<::EitherShardBatchFixture::Relic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "EitherShardBatchTestsRelic";
     };
 
     template<>
     struct Traits<::EitherShardBatchFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "EitherShardBatchTestsGlobalRelic";
         static const Locality locality = Locality::Global;
     };
 }

@@ -20,30 +20,6 @@ void ReliquaryTestsFixture::GlobalRelic::PostConstruct(ShardTuple shards)
     basicShard = std::get<0>(shards);
 }
 
-namespace Arca
-{
-    const TypeName Traits<::ReliquaryTestsFixture::BasicShard>::typeName =
-        "ReliquaryTestsBasicShard";
-
-    const TypeName Traits<::ReliquaryTestsFixture::OtherBasicShard>::typeName =
-        "ReliquaryTestsOtherBasicShard";
-
-    const TypeName Traits<::ReliquaryTestsFixture::OtherShard>::typeName =
-        "ReliquaryTestsOtherShard";
-
-    const TypeName Traits<::ReliquaryTestsFixture::BasicTypedRelic>::typeName =
-        "ReliquaryTestsBasicTypedRelic";
-
-    const TypeName Traits<::ReliquaryTestsFixture::GlobalRelic>::typeName =
-        "ReliquaryTestsGlobalRelic";
-
-    const TypeName Traits<::ReliquaryTestsFixture::BasicCurator>::typeName =
-        "ReliquaryTestsBasicCurator";
-
-    const TypeName Traits<::ReliquaryTestsFixture::BasicSignal>::typeName =
-        "ReliquaryTestsBasicSignal";
-}
-
 SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
 {
     GIVEN("default reliquary")

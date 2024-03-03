@@ -2,12 +2,6 @@
 
 #include "SignalTests.h"
 
-namespace Arca
-{
-    const TypeName Traits<::SignalTestsFixture::BasicSignal>::typeName =
-        "SignalTestsBasicSignal";
-}
-
 SCENARIO_METHOD(SignalTestsFixture, "signal", "[signal]")
 {
     GIVEN("registered reliquary")

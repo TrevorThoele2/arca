@@ -17,18 +17,6 @@ void GlobalRelicTestsFixture::GlobalRelic::PostConstruct(ShardTuple shards)
     basicShard = std::get<0>(shards);
 }
 
-namespace Arca
-{
-    const TypeName Traits<GlobalRelicTestsFixture::BasicShard>::typeName =
-        "GlobalRelicTestsBasicShard";
-
-    const TypeName Traits<GlobalRelicTestsFixture::BasicTypedRelic>::typeName =
-        "GlobalRelicTestsBasicTypedRelic";
-
-    const TypeName Traits<GlobalRelicTestsFixture::GlobalRelic>::typeName =
-        "GlobalRelicTestsGlobalRelic";
-}
-
 SCENARIO_METHOD(GlobalRelicTestsFixture, "global relic", "[relic][global]")
 {
     GIVEN("all types registered")

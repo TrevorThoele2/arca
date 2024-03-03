@@ -44,18 +44,14 @@ namespace Arca
     struct Traits<::CompositeShardTestsFixture::Shard<i>>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "RelicTestsBasicShard" + ::Chroma::ToString(i);
     };
-
-    template<size_t i>
-    const TypeName Traits<CompositeShardTestsFixture::Shard<i>>::typeName =
-        "RelicTestsBasicShard" + ::Chroma::ToString(i);
 
     template<>
     struct Traits<::CompositeShardTestsFixture::BasicTypedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "ReliquaryTestsBasicTypedRelic";
     };
 }
 

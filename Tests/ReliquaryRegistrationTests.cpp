@@ -3,24 +3,6 @@ using namespace std::string_literals;
 
 #include "ReliquaryRegistrationTests.h"
 
-namespace Arca
-{
-    const TypeName Traits<::ReliquaryRegistrationTestsFixture::Shard>::typeName =
-        "ReliquaryTestsShard";
-
-    const TypeName Traits<::ReliquaryRegistrationTestsFixture::Relic>::typeName =
-        "ReliquaryTestsRelic";
-
-    const TypeName Traits<::ReliquaryRegistrationTestsFixture::GlobalRelic>::typeName =
-        "ReliquaryTestsGlobalRelic";
-
-    const TypeName Traits<::ReliquaryRegistrationTestsFixture::Curator>::typeName =
-        "ReliquaryTestsCurator";
-
-    const TypeName Traits<::ReliquaryRegistrationTestsFixture::Signal>::typeName =
-        "ReliquaryTestsSignal";
-}
-
 SCENARIO_METHOD(ReliquaryRegistrationTestsFixture, "registering nothing", "[reliquary]")
 {
     GIVEN("no types registered to origin")

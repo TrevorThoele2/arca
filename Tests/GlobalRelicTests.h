@@ -48,21 +48,21 @@ namespace Arca
     struct Traits<::GlobalRelicTestsFixture::BasicShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "GlobalRelicTestsBasicShard";
     };
 
     template<>
     struct Traits<::GlobalRelicTestsFixture::BasicTypedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "GlobalRelicTestsBasicTypedRelic";
     };
 
     template<>
     struct Traits<::GlobalRelicTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
-        static const TypeName typeName;
+        static inline const TypeName typeName = "GlobalRelicTestsGlobalRelic";
         static const Locality locality = Locality::Global;
     };
 }
