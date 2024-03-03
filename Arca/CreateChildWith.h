@@ -17,13 +17,13 @@ namespace Arca
     struct CreateChildWith
     {
         template<class... Args>
-        explicit CreateChildWith(const Handle& parent, const RelicStructure& structure, Args&& ... args) :
+        explicit CreateChildWith(const Handle& parent, const RelicStructure& structure, Args ... args) :
             base(std::make_unique<Derived<Handle, RelicStructure, Args...>>(
                 parent, structure, std::forward<Args>(args)...))
         {}
 
         template<class... Args>
-        explicit CreateChildWith(const Handle& parent, const std::string& structureName, Args&& ... args) :
+        explicit CreateChildWith(const Handle& parent, const std::string& structureName, Args ... args) :
             base(std::make_unique<Derived<Handle, std::string, Args...>>(
                 parent, structureName, std::forward<Args>(args)...))
         {}
@@ -41,7 +41,7 @@ namespace Arca
             virtual Index<T> Do(ReliquaryRelics& relics) = 0;
         };
 
-        std::unique_ptr<Base> base;
+        std::shared_ptr<Base> base;
 
         template<class... Args>
         class Derived final : public Base

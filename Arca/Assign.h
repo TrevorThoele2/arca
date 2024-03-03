@@ -22,10 +22,15 @@ namespace Arca
     struct AssignCopy<T, std::enable_if_t<is_relic_v<T>>>
     {
         template<class... Args>
-        explicit AssignCopy(RelicID id, Args&& ... args) :
+        explicit AssignCopy(RelicID id, Args ... args) :
             base(std::make_unique<Derived<Args...>>(
                 id, std::forward<Args>(args)...))
         {}
+
+        AssignCopy(const AssignCopy& arg) = default;
+        AssignCopy(AssignCopy&& arg) noexcept = default;
+        AssignCopy& operator=(const AssignCopy& arg) = default;
+        AssignCopy& operator=(AssignCopy&& arg) noexcept = default;
 
         Index<T> Do(Reliquary& reliquary) const
         {
@@ -40,7 +45,7 @@ namespace Arca
             virtual Index<T> Do(ReliquaryRelics& relics, ReliquaryShards& shards, ReliquarySignals& signals) = 0;
         };
 
-        std::unique_ptr<Base> base;
+        std::shared_ptr<Base> base;
 
         template<class... Args>
         class Derived final : public Base
@@ -112,10 +117,15 @@ namespace Arca
     struct AssignCopy<T, std::enable_if_t<is_shard_v<T>>>
     {
         template<class... Args>
-        explicit AssignCopy(RelicID id, Args&& ... args) :
+        explicit AssignCopy(RelicID id, Args ... args) :
             base(std::make_unique<Derived<Args...>>(
                 id, std::forward<Args>(args)...))
         {}
+
+        AssignCopy(const AssignCopy& arg) = default;
+        AssignCopy(AssignCopy&& arg) noexcept = default;
+        AssignCopy& operator=(const AssignCopy& arg) = default;
+        AssignCopy& operator=(AssignCopy&& arg) noexcept = default;
 
         Index<T> Do(Reliquary& reliquary) const
         {
@@ -130,13 +140,13 @@ namespace Arca
             virtual Index<T> Do(ReliquaryShards& shards, ReliquarySignals& signals) = 0;
         };
 
-        std::unique_ptr<Base> base;
+        std::shared_ptr<Base> base;
 
         template<class... Args>
         class Derived final : public Base
         {
         public:
-            explicit Derived(RelicID id, Args&& ... args) :
+            explicit Derived(RelicID id, Args ... args) :
                 id(id),
                 args(std::forward<Args>(args)...)
             {}
@@ -184,10 +194,15 @@ namespace Arca
     struct AssignMove<T, std::enable_if_t<is_relic_v<T>>>
     {
         template<class... Args>
-        explicit AssignMove(RelicID id, Args&& ... args) :
+        explicit AssignMove(RelicID id, Args ... args) :
             base(std::make_unique<Derived<Args...>>(
                 id, std::forward<Args>(args)...))
         {}
+
+        AssignMove(const AssignMove& arg) = default;
+        AssignMove(AssignMove&& arg) noexcept = default;
+        AssignMove& operator=(const AssignMove& arg) = default;
+        AssignMove& operator=(AssignMove&& arg) noexcept = default;
 
         Index<T> Do(Reliquary& reliquary) const
         {
@@ -202,7 +217,7 @@ namespace Arca
             virtual Index<T> Do(ReliquaryRelics& relics, ReliquaryShards& shards, ReliquarySignals& signals) = 0;
         };
 
-        std::unique_ptr<Base> base;
+        std::shared_ptr<Base> base;
 
         template<class... Args>
         class Derived final : public Base
@@ -274,10 +289,15 @@ namespace Arca
     struct AssignMove<T, std::enable_if_t<is_shard_v<T>>>
     {
         template<class... Args>
-        explicit AssignMove(RelicID id, Args&& ... args) :
+        explicit AssignMove(RelicID id, Args ... args) :
             base(std::make_unique<Derived<Args...>>(
                 id, std::forward<Args>(args)...))
         {}
+
+        AssignMove(const AssignMove& arg) = default;
+        AssignMove(AssignMove&& arg) noexcept = default;
+        AssignMove& operator=(const AssignMove& arg) = default;
+        AssignMove& operator=(AssignMove&& arg) noexcept = default;
 
         Index<T> Do(Reliquary& reliquary) const
         {
@@ -292,7 +312,7 @@ namespace Arca
             virtual Index<T> Do(ReliquaryShards& shards, ReliquarySignals& signals) = 0;
         };
 
-        std::unique_ptr<Base> base;
+        std::shared_ptr<Base> base;
 
         template<class... Args>
         class Derived final : public Base

@@ -13,6 +13,7 @@ public:
     class Curator;
     class CuratorWithSameLink;
     class CuratorWithSameResultLink;
+    class ThrowingCurator;
     class Relic;
     class RelicWithShard;
 };
@@ -60,6 +61,14 @@ namespace Arca
         static inline const TypeName typeName = "CommandTestsFixture::CuratorWithSameResultLink";
         using HandledCommands = Arca::HandledCommands<
             CommandTestsFixture::CommandWithResult>;
+    };
+
+    template<>
+    struct Traits<CommandTestsFixture::ThrowingCurator>
+    {
+        static const ObjectType objectType = ObjectType::Curator;
+        static inline const TypeName typeName = "CommandTestsFixture::ThrowingCurator";
+        using HandledCommands = Arca::HandledCommands<CommandTestsFixture::Command>;
     };
 
     template<>
@@ -115,6 +124,14 @@ public:
     using Arca::Curator::Curator;
 };
 
+class CommandTestsFixture::ThrowingCurator final : public Arca::Curator
+{
+public:
+    void Handle(const Command& command);
+public:
+    using Arca::Curator::Curator;
+};
+
 class CommandTestsFixture::Relic final
 {
 public:
@@ -152,6 +169,12 @@ namespace Inscription
     struct ScribeTraits<CommandTestsFixture::CuratorWithSameResultLink, Archive> final
     {
         using Category = ArcaNullScribeCategory<CommandTestsFixture::CuratorWithSameResultLink>;
+    };
+
+    template<class Archive>
+    struct ScribeTraits<CommandTestsFixture::ThrowingCurator, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<CommandTestsFixture::ThrowingCurator>;
     };
 
     template<class Archive>

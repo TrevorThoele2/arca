@@ -20,16 +20,16 @@ public:
 namespace Arca
 {
     template<>
-    struct Traits<::SignalTestsFixture::BasicSignal>
+    struct Traits<SignalTestsFixture::BasicSignal>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static inline const TypeName typeName = "SignalTests_BasicSignal";
+        static inline const TypeName typeName = "SignalTestsFixture::BasicSignal";
     };
 
     template<>
-    struct Traits<::SignalTestsFixture::EmptySignal>
+    struct Traits<SignalTestsFixture::EmptySignal>
     {
         static const ObjectType objectType = ObjectType::Signal;
-        static inline const TypeName typeName = "SignalTests_EmptySignal";
+        static inline const TypeName typeName = "SignalTestsFixture::EmptySignal";
     };
 }

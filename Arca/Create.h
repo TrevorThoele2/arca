@@ -22,10 +22,15 @@ namespace Arca
     struct Create<T, std::enable_if_t<is_relic_v<T>>>
     {
         template<class... Args>
-        explicit Create(Args&& ... args) :
+        explicit Create(Args ... args) :
             base(std::make_unique<Derived<Args...>>(
                 std::forward<Args>(args)...))
         {}
+
+        Create(const Create& arg) = default;
+        Create(Create&& arg) noexcept = default;
+        Create& operator=(const Create& arg) = default;
+        Create& operator=(Create&& arg) noexcept = default;
 
         Index<T> Do(Reliquary& reliquary) const
         {
@@ -40,7 +45,7 @@ namespace Arca
             virtual Index<T> Do(ReliquaryRelics& relics) = 0;
         };
 
-        std::unique_ptr<Base> base;
+        std::shared_ptr<Base> base;
 
         template<class... Args>
         class Derived final : public Base
@@ -79,16 +84,21 @@ namespace Arca
     struct Create<T, std::enable_if_t<is_shard_v<T>>>
     {
         template<class... Args>
-        explicit Create(Args&& ... args) :
+        explicit Create(Args ... args) :
             base(std::make_unique<Derived<Args...>>(
                 std::forward<Args>(args)...))
         {}
 
         template<class U, class... Args, std::enable_if_t<is_relic_v<U>, int> = 0>
-        explicit Create(Index<U> relic, Args && ... args) :
+        explicit Create(Index<U> relic, Args ... args) :
             base(std::make_unique<Derived<RelicID, Args...>>(
                 relic.ID(), std::forward<Args>(args)...))
         {}
+
+        Create(const Create& arg) = default;
+        Create(Create && arg) noexcept = default;
+        Create& operator=(const Create & arg) = default;
+        Create& operator=(Create && arg) noexcept = default;
 
         Index<T> Do(Reliquary& reliquary) const
         {
@@ -103,7 +113,7 @@ namespace Arca
             virtual Index<T> Do(ReliquaryShards& shards) = 0;
         };
 
-        std::unique_ptr<Base> base;
+        std::shared_ptr<Base> base;
 
         template<class... Args>
         class Derived final : public Base

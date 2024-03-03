@@ -16,10 +16,15 @@ namespace Arca
     struct CreateChild
     {
         template<class... Args>
-        explicit CreateChild(const Handle& parent, Args&& ... args) :
+        explicit CreateChild(const Handle& parent, Args ... args) :
             base(std::make_unique<Derived<Handle, Args...>>(
                 parent, std::forward<Args>(args)...))
         {}
+
+        CreateChild(const CreateChild& arg) = default;
+        CreateChild(CreateChild&& arg) noexcept = default;
+        CreateChild& operator=(const CreateChild& arg) = default;
+        CreateChild& operator=(CreateChild&& arg) noexcept = default;
 
         Index<T> Do(Reliquary& reliquary) const
         {
@@ -34,7 +39,7 @@ namespace Arca
             virtual Index<T> Do(ReliquaryRelics& relics) = 0;
         };
 
-        std::unique_ptr<Base> base;
+        std::shared_ptr<Base> base;
 
         template<class... Args>
         class Derived final : public Base
@@ -46,7 +51,6 @@ namespace Arca
 
             Index<T> Do(ReliquaryRelics& relics) override
             {
-
                 return std::apply(
                     [&relics](auto&& ... args)
                     {

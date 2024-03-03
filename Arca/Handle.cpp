@@ -22,9 +22,9 @@ namespace Arca
         return !(*this == arg);
     }
 
-    Handle::operator HandleSlim() const
+    Handle::operator SlimHandle() const
     {
-        return HandleSlim(ID(), Type(), ObjectType());
+        return SlimHandle(ID(), Type(), ObjectType());
     }
 
     Reliquary* Handle::Owner() const

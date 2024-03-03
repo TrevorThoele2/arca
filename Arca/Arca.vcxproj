@@ -120,7 +120,7 @@
     <ClInclude Include="Batch.h" />
     <ClInclude Include="BatchSource.h" />
     <ClInclude Include="Destroying.h" />
-    <ClInclude Include="HandleSlim.h" />
+    <ClInclude Include="SlimHandle.h" />
     <ClInclude Include="HasShouldCreateMethod.h" />
     <ClInclude Include="IsType.h" />
     <ClInclude Include="KnownPolymorphicSerializer.h" />
@@ -180,7 +180,7 @@
     <ClCompile Include="MutablePointer.cpp" />
     <ClCompile Include="ReliquaryCommands.cpp" />
     <ClCompile Include="ReliquaryMatrices.cpp" />
-    <ClCompile Include="HandleSlim.cpp" />
+    <ClCompile Include="SlimHandle.cpp" />
     <ClCompile Include="KnownPolymorphicSerializer.cpp" />
     <ClCompile Include="ObjectType.cpp" />
     <ClCompile Include="Pipeline.cpp" />

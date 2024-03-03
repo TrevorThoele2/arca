@@ -49,9 +49,6 @@
     <ClCompile Include="Handle.cpp">
       <Filter>Source Files\Handle</Filter>
     </ClCompile>
-    <ClCompile Include="HandleSlim.cpp">
-      <Filter>Source Files\Handle</Filter>
-    </ClCompile>
     <ClCompile Include="PipelineException.cpp">
       <Filter>Source Files\Pipeline</Filter>
     </ClCompile>
@@ -99,6 +96,9 @@
     </ClCompile>
     <ClCompile Include="CommandHandlerException.cpp">
       <Filter>Source Files\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="SlimHandle.cpp">
+      <Filter>Source Files\Handle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -196,9 +196,6 @@
       <Filter>Header Files\Reliquary\Components</Filter>
     </ClInclude>
     <ClInclude Include="Actualization.h">
-      <Filter>Header Files\Handle</Filter>
-    </ClInclude>
-    <ClInclude Include="HandleSlim.h">
       <Filter>Header Files\Handle</Filter>
     </ClInclude>
     <ClInclude Include="Handle.h">
@@ -545,6 +542,9 @@
     </ClInclude>
     <ClInclude Include="CommandHandlerException.h">
       <Filter>Header Files\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="SlimHandle.h">
+      <Filter>Header Files\Handle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -2,7 +2,7 @@
 
 #include "RelicID.h"
 #include "Type.h"
-#include "HandleSlim.h"
+#include "SlimHandle.h"
 
 #include "Serialization.h"
 
@@ -17,10 +17,10 @@ namespace Arca
         Handle(RelicID id, Reliquary* owner, Type type, HandleObjectType objectType);
         Handle(RelicID id, Reliquary& owner, Type type, HandleObjectType objectType);
 
-        bool operator==(const Handle& arg) const;
-        bool operator!=(const Handle& arg) const;
+        [[nodiscard]] bool operator==(const Handle& arg) const;
+        [[nodiscard]] bool operator!=(const Handle& arg) const;
 
-        operator HandleSlim() const;
+        [[nodiscard]] operator SlimHandle() const;
 
         [[nodiscard]] Reliquary* Owner() const;
         [[nodiscard]] RelicID ID() const;

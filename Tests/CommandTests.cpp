@@ -25,6 +25,11 @@ int CommandTestsFixture::CuratorWithSameResultLink::Handle(const CommandWithResu
     return 10;
 }
 
+void CommandTestsFixture::ThrowingCurator::Handle(const Command& command)
+{
+    throw std::runtime_error("Error.");
+}
+
 CommandTestsFixture::Relic::Relic(int integer, const std::string& string) :
     integer(integer), string(string)
 {}
@@ -55,6 +60,24 @@ SCENARIO_METHOD(CommandTestsFixture, "command", "[command]")
             THEN("handled it")
             {
                 REQUIRE(curator.handledCommands.size() == 1);
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(CommandTestsFixture, "command that throws", "[command]")
+{
+    GIVEN("registered reliquary")
+    {
+        auto reliquary = Arca::ReliquaryOrigin()
+            .Register<ThrowingCurator>()
+            .Actualize();
+
+        WHEN("emitting command")
+        {
+            THEN("error propagates")
+            {
+                REQUIRE_THROWS_AS(reliquary->Do(Command()), std::runtime_error);
             }
         }
     }

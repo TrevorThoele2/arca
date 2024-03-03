@@ -244,14 +244,16 @@ namespace Inscription
     template<class U, std::enable_if_t<Arca::has_shard_serialization_constructor_v<U>, int>>
     U Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::Create()
     {
-        return ObjectT::StoredT{ Arca::Serialization{} };
+        using StoredT = typename ObjectT::StoredT;
+        return StoredT{ Arca::Serialization{} };
     }
 
     template<class T>
     template<class U, std::enable_if_t<!Arca::has_shard_serialization_constructor_v<U> && Arca::has_shard_default_constructor_v<U>, int>>
     U Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::Create()
     {
-        return ObjectT::StoredT{};
+        using StoredT = typename ObjectT::StoredT;
+        return StoredT{};
     }
 
     template<class T>
@@ -261,6 +263,7 @@ namespace Inscription
         static_assert(
             "A shard requires a serialization constructor (taking only the class Serialization) "
             "or a default constructor in order to be serialized.");
-        return ObjectT::StoredT{};
+        using StoredT = typename ObjectT::StoredT;
+        return StoredT{};
     }
 }
