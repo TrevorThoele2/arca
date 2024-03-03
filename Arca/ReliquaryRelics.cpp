@@ -239,7 +239,7 @@ namespace Arca
     {
         auto& parentMetadata = ValidateParentForParenting(parent);
 
-        assert(&child.Owner() == &Owner());
+        assert(child.Owner() == &Owner());
 
         const auto childMetadata = MetadataFor(child.ID());
         assert(childMetadata != nullptr);
@@ -323,7 +323,7 @@ namespace Arca
 
     RelicMetadata& ReliquaryRelics::ValidateParentForParenting(const Handle& parent)
     {
-        if (&parent.Owner() != &Owner())
+        if (parent.Owner() != &Owner())
             throw CannotParentRelic(
                 "Cannot parent a relic to a relic in a different Reliquary.");
 

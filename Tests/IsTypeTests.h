@@ -2,8 +2,6 @@
 
 #include "ReliquaryFixture.h"
 
-#include <Arca/ClosedTypedRelic.h>
-
 using namespace Arca;
 
 class IsTypeTestsFixture : public ReliquaryFixture
@@ -17,7 +15,7 @@ public:
 class IsTypeTestsFixture::Shard
 {};
 
-class IsTypeTestsFixture::Relic : public ClosedTypedRelic<Relic>
+class IsTypeTestsFixture::Relic
 {};
 
 class IsTypeTestsFixture::Curator : public Arca::Curator

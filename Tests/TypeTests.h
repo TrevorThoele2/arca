@@ -2,8 +2,6 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/ClosedTypedRelic.h>
-
 #include <Inscription/BinaryArchive.h>
 
 using namespace Arca;
@@ -38,11 +36,8 @@ public:
     explicit Shard() = default;
 };
 
-class TypeTestsFixture::TypedRelic final : public ClosedTypedRelic<TypedRelic>
-{
-public:
-    explicit TypedRelic(Init init);
-};
+class TypeTestsFixture::TypedRelic final
+{};
 
 namespace Inscription
 {

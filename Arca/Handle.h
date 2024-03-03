@@ -14,6 +14,7 @@ namespace Arca
     {
     public:
         Handle() = default;
+        Handle(RelicID id, Reliquary* owner, Type type, HandleObjectType objectType);
         Handle(RelicID id, Reliquary& owner, Type type, HandleObjectType objectType);
 
         bool operator==(const Handle& arg) const;
@@ -21,7 +22,7 @@ namespace Arca
 
         operator HandleSlim() const;
 
-        [[nodiscard]] Reliquary& Owner() const;
+        [[nodiscard]] Reliquary* Owner() const;
         [[nodiscard]] RelicID ID() const;
         [[nodiscard]] Type Type() const;
         [[nodiscard]] HandleObjectType ObjectType() const;

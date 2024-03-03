@@ -6,12 +6,6 @@
 
 namespace Arca
 {
-    ReliquaryOrigin::ReliquaryOrigin()
-    {
-        Register<OpenRelic>();
-        Register<ClosedRelic>();
-    }
-
     std::unique_ptr<Reliquary> ReliquaryOrigin::Actualize()
     {
         ValidateCuratorPipeline(curatorConstructionPipeline);

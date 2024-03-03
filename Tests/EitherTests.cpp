@@ -2,10 +2,11 @@
 
 #include "EitherTests.h"
 #include "Arca/Actualization.h"
+#include <Arca/LocalRelic.h>
 
-EitherTestsFixture::BasicTypedRelic::BasicTypedRelic(Init init) : ClosedTypedRelic(init)
+EitherTestsFixture::BasicTypedRelic::BasicTypedRelic(RelicInit init)
 {
-    basicShard = Create<BasicShard>();
+    basicShard = init.Create<BasicShard>();
 }
 
 SCENARIO_METHOD(EitherTestsFixture, "reliquary either", "[reliquary][either][shard]")
@@ -13,6 +14,7 @@ SCENARIO_METHOD(EitherTestsFixture, "reliquary either", "[reliquary][either][sha
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
             .Register<BasicShard>()
             .Register<BasicTypedRelic>()
             .Actualize();
@@ -28,34 +30,34 @@ SCENARIO_METHOD(EitherTestsFixture, "reliquary either", "[reliquary][either][sha
         WHEN("creating const shard")
         {
             auto relic = reliquary->Do(Create<OpenRelic>());
-            relic->Create<const BasicShard>();
+            reliquary->Do(Create<const BasicShard>(relic));
 
             THEN("contains either")
             {
-                REQUIRE(reliquary->Contains<Either<BasicShard>>(relic->ID()));
+                REQUIRE(reliquary->Contains<Either<BasicShard>>(relic.ID()));
             }
         }
 
         WHEN("creating non-const shard")
         {
             auto relic = reliquary->Do(Create<OpenRelic>());
-            relic->Create<BasicShard>();
+            reliquary->Do(Create<BasicShard>(relic));
 
             THEN("contains either")
             {
-                REQUIRE(reliquary->Contains<Either<BasicShard>>(relic->ID()));
+                REQUIRE(reliquary->Contains<Either<BasicShard>>(relic.ID()));
             }
         }
 
         WHEN("creating separate relic with shard")
         {
             auto relic = reliquary->Do(Create<OpenRelic>());
-            relic->Create<BasicShard>();
+            reliquary->Do(Create<BasicShard>(relic));
 
             THEN("irrelevant relic does not contain either")
             {
                 auto irrelevant = reliquary->Do(Create<OpenRelic>());
-                REQUIRE(!reliquary->Contains<Either<BasicShard>>(irrelevant->ID()));
+                REQUIRE(!reliquary->Contains<Either<BasicShard>>(irrelevant.ID()));
             }
         }
     }
@@ -66,6 +68,7 @@ SCENARIO_METHOD(EitherTestsFixture, "OpenRelic either", "[OpenRelic][either][sha
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
             .Register<BasicShard>()
             .Register<BasicTypedRelic>()
             .Actualize();
@@ -73,34 +76,34 @@ SCENARIO_METHOD(EitherTestsFixture, "OpenRelic either", "[OpenRelic][either][sha
         WHEN("creating const shard")
         {
             auto relic = reliquary->Do(Create<OpenRelic>());
-            relic->Create<const BasicShard>();
+            reliquary->Do(Create<const BasicShard>(relic));
 
             THEN("contains either")
             {
-                REQUIRE(relic->Contains<Either<BasicShard>>());
+                REQUIRE(Arca::Index<Either<BasicShard>>(relic.ID(), *reliquary));
             }
         }
 
         WHEN("creating non-const shard")
         {
             auto relic = reliquary->Do(Create<OpenRelic>());
-            relic->Create<BasicShard>();
+            reliquary->Do(Create<BasicShard>(relic));
 
             THEN("contains either")
             {
-                REQUIRE(relic->Contains<Either<BasicShard>>());
+                REQUIRE(Arca::Index<Either<BasicShard>>(relic.ID(), *reliquary));
             }
         }
 
         WHEN("creating separate relic with shard")
         {
             auto relic = reliquary->Do(Create<OpenRelic>());
-            relic->Create<BasicShard>();
+            reliquary->Do(Create<BasicShard>(relic));
 
             THEN("irrelevant relic does not contain either")
             {
                 auto irrelevant = reliquary->Do(Create<OpenRelic>());
-                REQUIRE(!irrelevant->Contains<Either<BasicShard>>());
+                REQUIRE(!Arca::Index<Either<BasicShard>>(irrelevant.ID(), *reliquary));
             }
         }
     }
@@ -111,6 +114,7 @@ SCENARIO_METHOD(EitherTestsFixture, "ClosedRelic either", "[ClosedRelic][either]
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
+            .Register<ClosedRelic>()
             .Register<BasicShard>()
             .Register<BasicTypedRelic>()
             .Actualize();
@@ -121,7 +125,7 @@ SCENARIO_METHOD(EitherTestsFixture, "ClosedRelic either", "[ClosedRelic][either]
 
             THEN("contains either")
             {
-                REQUIRE(relic->Contains<Either<BasicShard>>());
+                REQUIRE(Arca::Index<Either<BasicShard>>(relic.ID(), *reliquary));
             }
         }
 
@@ -131,7 +135,7 @@ SCENARIO_METHOD(EitherTestsFixture, "ClosedRelic either", "[ClosedRelic][either]
 
             THEN("contains either")
             {
-                REQUIRE(relic->Contains<Either<BasicShard>>());
+                REQUIRE(Arca::Index<Either<BasicShard>>(relic.ID(), *reliquary));
             }
         }
 
@@ -142,7 +146,7 @@ SCENARIO_METHOD(EitherTestsFixture, "ClosedRelic either", "[ClosedRelic][either]
             THEN("irrelevant relic does not contain either")
             {
                 auto irrelevant = reliquary->Do(CreateWith<ClosedRelic>{ RelicStructure{} });
-                REQUIRE(!irrelevant->Contains<Either<BasicShard>>());
+                REQUIRE(!Arca::Index<Either<BasicShard>>(irrelevant.ID(), *reliquary));
             }
         }
     }

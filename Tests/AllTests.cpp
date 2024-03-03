@@ -2,12 +2,13 @@
 
 #include "AllTests.h"
 
-AllTestsFixture::BasicTypedRelic::BasicTypedRelic(Init init) :
-    ClosedTypedRelic(init)
+#include <Arca/LocalRelic.h>
+
+AllTestsFixture::BasicTypedRelic::BasicTypedRelic(RelicInit init)
 {
-    shard0 = Create<DifferentiableShard<0>>();
-    shard1 = Create<DifferentiableShard<1>>();
-    shard2 = Create<DifferentiableShard<2>>();
+    shard0 = init.Create<DifferentiableShard<0>>();
+    shard1 = init.Create<DifferentiableShard<1>>();
+    shard2 = init.Create<DifferentiableShard<2>>();
 }
 
 SCENARIO_METHOD(AllTestsFixture, "all", "[all]")
@@ -15,6 +16,7 @@ SCENARIO_METHOD(AllTestsFixture, "all", "[all]")
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
             .Register<DifferentiableShard<0>>()
             .Register<DifferentiableShard<1>>()
             .Register<DifferentiableShard<2>>()
@@ -26,48 +28,61 @@ SCENARIO_METHOD(AllTestsFixture, "all", "[all]")
         {
             THEN("does not contain")
             {
-                REQUIRE(!reliquary->Contains<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(1));
+                auto contains = reliquary->Contains<
+                    All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(1);
+                REQUIRE(!contains);
             }
         }
 
         WHEN("creating shards")
         {
             auto relic = reliquary->Do(Create<OpenRelic>{});
-            relic->Create<DifferentiableShard<0>>();
-            relic->Create<DifferentiableShard<1>>();
-            relic->Create<DifferentiableShard<2>>();
+            reliquary->Do(Create<DifferentiableShard<0>>(relic));
+            reliquary->Do(Create<DifferentiableShard<1>>(relic));
+            reliquary->Do(Create<DifferentiableShard<2>>(relic));
 
             THEN("contains all")
             {
-                REQUIRE(reliquary->Contains<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(relic->ID()));
+                auto contains = reliquary->Contains<
+                    All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(
+                        relic.ID());
+                REQUIRE(contains);
             }
 
             WHEN("removing a shard")
             {
-                relic->Destroy<DifferentiableShard<0>>();
+                reliquary->Do(Destroy<DifferentiableShard<0>>(relic.ID()));
 
                 THEN("does not contain all")
                 {
-                    REQUIRE(!reliquary->Contains<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(relic->ID()));
+                    auto contains = reliquary->Contains<
+                        All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(relic.ID());
+                    REQUIRE(!contains);
                 }
             }
 
             WHEN("adding a new shard")
             {
-                relic->Create<DifferentiableShard<3>>();
+                reliquary->Do(Create<DifferentiableShard<3>>(relic));
 
                 THEN("contains all")
                 {
-                    REQUIRE(reliquary->Contains<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(relic->ID()));
+                    auto index = Arca::Index<
+                        All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(
+                            relic.ID(), *reliquary);
+                    REQUIRE(index);
                 }
 
                 WHEN("removing that shard")
                 {
-                    relic->Destroy<DifferentiableShard<3>>();
+                    reliquary->Do(Destroy<DifferentiableShard<3>>(relic.ID()));
 
                     THEN("contains all")
                     {
-                        REQUIRE(reliquary->Contains<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(relic->ID()));
+                        auto contains = reliquary->Contains
+                            <All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(
+                                relic.ID());
+                        REQUIRE(contains);
                     }
                 }
             }
@@ -76,14 +91,16 @@ SCENARIO_METHOD(AllTestsFixture, "all", "[all]")
         WHEN("creating separate relic with shards")
         {
             auto relic = reliquary->Do(Create<OpenRelic>{});
-            relic->Create<DifferentiableShard<0>>();
-            relic->Create<DifferentiableShard<1>>();
-            relic->Create<DifferentiableShard<2>>();
+            reliquary->Do(Create<DifferentiableShard<0>>(relic));
+            reliquary->Do(Create<DifferentiableShard<1>>(relic));
+            reliquary->Do(Create<DifferentiableShard<2>>(relic));
 
             THEN("irrelevant relic does not contain all")
             {
                 auto irrelevant = reliquary->Do(Create<OpenRelic>{});
-                REQUIRE(!reliquary->Contains<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(irrelevant->ID()));
+                auto contains = reliquary->Contains<
+                    All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(irrelevant.ID());
+                REQUIRE(!contains);
             }
         }
     }
@@ -94,6 +111,7 @@ SCENARIO_METHOD(AllTestsFixture, "OpenRelic all", "[OpenRelic][all]")
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
             .Register<DifferentiableShard<0>>()
             .Register<DifferentiableShard<1>>()
             .Register<DifferentiableShard<2>>()
@@ -104,41 +122,53 @@ SCENARIO_METHOD(AllTestsFixture, "OpenRelic all", "[OpenRelic][all]")
         WHEN("creating shards")
         {
             auto relic = reliquary->Do(Create<OpenRelic>{});
-            relic->Create<DifferentiableShard<0>>();
-            relic->Create<DifferentiableShard<1>>();
-            relic->Create<DifferentiableShard<2>>();
+            reliquary->Do(Create<DifferentiableShard<0>>(relic));
+            reliquary->Do(Create<DifferentiableShard<1>>(relic));
+            reliquary->Do(Create<DifferentiableShard<2>>(relic));
 
             THEN("contains all")
             {
-                REQUIRE(relic->Contains<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>());
+                auto index = Arca::Index<
+                    All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(
+                        relic.ID(), *reliquary);
+                REQUIRE(index);
             }
 
             WHEN("removing a shard")
             {
-                relic->Destroy<DifferentiableShard<0>>();
+                reliquary->Do(Destroy<DifferentiableShard<0>>(relic.ID()));
 
                 THEN("does not contain all")
                 {
-                    REQUIRE(!relic->Contains<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>());
+                    auto index = Arca::Index<
+                        All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(
+                            relic.ID(), *reliquary);
+                    REQUIRE(!index);
                 }
             }
 
             WHEN("adding a new shard")
             {
-                relic->Create<DifferentiableShard<3>>();
+                reliquary->Do(Create<DifferentiableShard<3>>(relic));
 
                 THEN("contains all")
                 {
-                    REQUIRE(relic->Contains<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>());
+                    auto index = Arca::Index<
+                        All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(
+                            relic.ID(), *reliquary);
+                    REQUIRE(index);
                 }
 
                 WHEN("removing that shard")
                 {
-                    relic->Destroy<DifferentiableShard<3>>();
+                    reliquary->Do(Destroy<DifferentiableShard<3>>(relic.ID()));
 
                     THEN("contains all")
                     {
-                        REQUIRE(relic->Contains<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>());
+                        auto index = Arca::Index<
+                            All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(
+                                relic.ID(), *reliquary);
+                        REQUIRE(index);
                     }
                 }
             }
@@ -147,14 +177,17 @@ SCENARIO_METHOD(AllTestsFixture, "OpenRelic all", "[OpenRelic][all]")
         WHEN("creating separate relic with shards")
         {
             auto relic = reliquary->Do(Create<OpenRelic>{});
-            relic->Create<DifferentiableShard<0>>();
-            relic->Create<DifferentiableShard<1>>();
-            relic->Create<DifferentiableShard<2>>();
+            reliquary->Do(Create<DifferentiableShard<0>>(relic));
+            reliquary->Do(Create<DifferentiableShard<1>>(relic));
+            reliquary->Do(Create<DifferentiableShard<2>>(relic));
 
             THEN("irrelevant relic does not contain all")
             {
                 auto irrelevant = reliquary->Do(Create<OpenRelic>{});
-                REQUIRE(!irrelevant->Contains<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>());
+                auto index = Arca::Index<
+                    All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(
+                        irrelevant.ID(), *reliquary);
+                REQUIRE(!index);
             }
         }
     }
@@ -165,6 +198,7 @@ SCENARIO_METHOD(AllTestsFixture, "ClosedRelic all", "[ClosedRelic][all]")
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
+            .Register<ClosedRelic>()
             .Register<DifferentiableShard<0>>()
             .Register<DifferentiableShard<1>>()
             .Register<DifferentiableShard<2>>()
@@ -173,7 +207,7 @@ SCENARIO_METHOD(AllTestsFixture, "ClosedRelic all", "[ClosedRelic][all]")
 
         WHEN("creating shards")
         {
-            auto relic = reliquary->Do(CreateWith<ClosedRelic>{
+            const auto relic = reliquary->Do(CreateWith<ClosedRelic>{
                 RelicStructure
                 {
                     TypeFor<DifferentiableShard<0>>(),
@@ -183,7 +217,10 @@ SCENARIO_METHOD(AllTestsFixture, "ClosedRelic all", "[ClosedRelic][all]")
 
             THEN("contains all")
             {
-                REQUIRE(relic->Contains<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>());
+                auto index = Arca::Index<
+                    All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(
+                        relic.ID(), *reliquary);
+                REQUIRE(index);
             }
         }
 
@@ -199,8 +236,11 @@ SCENARIO_METHOD(AllTestsFixture, "ClosedRelic all", "[ClosedRelic][all]")
 
             THEN("irrelevant relic does not contain either")
             {
-                auto irrelevant = reliquary->Do(CreateWith<ClosedRelic>{ RelicStructure{} });
-                REQUIRE(!irrelevant->Contains<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>());
+                const auto irrelevant = reliquary->Do(CreateWith<ClosedRelic>{ RelicStructure{} });
+                auto index = Arca::Index<
+                    All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(
+                        irrelevant.ID(), *reliquary);
+                REQUIRE(!index);
             }
         }
     }

@@ -2,8 +2,6 @@
 
 #include "ReliquaryFixture.h"
 
-#include <Arca/ClosedTypedRelic.h>
-
 #include "BasicShard.h"
 
 using namespace Arca;
@@ -18,14 +16,14 @@ public:
 namespace Arca
 {
     template<>
-    struct Traits<::ShardBatchFixture::UnregisteredShard>
+    struct Traits<ShardBatchFixture::UnregisteredShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
         static inline const TypeName typeName = "ShardBatchTestsUnregisteredShard";
     };
 
     template<>
-    struct Traits<::ShardBatchFixture::GlobalRelic>
+    struct Traits<ShardBatchFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "ShardBatchTestsGlobalRelic";
@@ -36,12 +34,12 @@ namespace Arca
 class ShardBatchFixture::UnregisteredShard
 {};
 
-class ShardBatchFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
+class ShardBatchFixture::GlobalRelic final
 {
 public:
     Index<BasicShard> shard;
 
-    explicit GlobalRelic(Init init);
+    explicit GlobalRelic(RelicInit init);
 };
 
 namespace Inscription

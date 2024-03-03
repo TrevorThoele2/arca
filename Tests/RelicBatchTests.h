@@ -2,8 +2,6 @@
 
 #include "ReliquaryFixture.h"
 
-#include <Arca/ClosedTypedRelic.h>
-
 using namespace Arca;
 
 class RelicBatchFixture : public ReliquaryFixture
@@ -14,30 +12,20 @@ public:
     class UnregisteredRelic;
 };
 
-class RelicBatchFixture::Relic final : public ClosedTypedRelic<Relic>
+class RelicBatchFixture::Relic final
 {
 public:
     int value = 0;
-public:
-    explicit Relic(Init init) : ClosedTypedRelic(init)
-    {}
 };
 
-class RelicBatchFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
+class RelicBatchFixture::GlobalRelic final
 {
 public:
     int value = 0;
-public:
-    explicit GlobalRelic(Init init) : ClosedTypedRelic(init)
-    {}
 };
 
-class RelicBatchFixture::UnregisteredRelic final : public ClosedTypedRelic<UnregisteredRelic>
-{
-public:
-    explicit UnregisteredRelic(Init init) : ClosedTypedRelic(init)
-    {}
-};
+class RelicBatchFixture::UnregisteredRelic final
+{};
 
 namespace Arca
 {

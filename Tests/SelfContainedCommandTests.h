@@ -2,7 +2,6 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/ClosedTypedRelic.h>
 #include "BasicShard.h"
 
 class SelfContainedCommandTestsFixture : public GeneralFixture

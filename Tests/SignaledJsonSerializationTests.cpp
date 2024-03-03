@@ -3,6 +3,7 @@ using namespace std::string_literals;
 
 #include "SignaledJsonSerializationTests.h"
 
+#include <Arca/LocalRelic.h>
 #include "SignalListener.h"
 
 SCENARIO_METHOD(
@@ -13,6 +14,7 @@ SCENARIO_METHOD(
     GIVEN("saved empty reliquary")
     {
         auto savedReliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
             .Register<BasicShard>()
             .Actualize();
 
@@ -24,11 +26,12 @@ SCENARIO_METHOD(
         WHEN("loading with open relic with shards")
         {
             auto loadedReliquary = ReliquaryOrigin()
+                .Register<OpenRelic>()
                 .Register<BasicShard>()
                 .Actualize();
 
             auto premadeRelic = loadedReliquary->Do(Create<OpenRelic>());
-            premadeRelic->Create<BasicShard>();
+            loadedReliquary->Do(Create<BasicShard>(premadeRelic.ID()));
 
             auto generalCreated = SignalListener<Created>(*loadedReliquary);
             auto specificRelicCreated = SignalListener<CreatedKnown<OpenRelic>>(*loadedReliquary);
@@ -60,6 +63,7 @@ SCENARIO_METHOD(
         WHEN("loading with closed relic with shards")
         {
             auto loadedReliquary = ReliquaryOrigin()
+                .Register<ClosedRelic>()
                 .Register<BasicShard>()
                 .Actualize();
 
@@ -168,11 +172,12 @@ SCENARIO_METHOD(
     GIVEN("saved open relic with shards")
     {
         auto savedReliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
             .Register<BasicShard>()
             .Actualize();
 
         auto savedRelic = savedReliquary->Do(Create<OpenRelic>());
-        savedRelic->Create<BasicShard>();
+        savedReliquary->Do(Create<BasicShard>(savedRelic.ID()));
 
         {
             auto outputArchive = ::Inscription::OutputJsonArchive("Test.dat");
@@ -182,6 +187,7 @@ SCENARIO_METHOD(
         WHEN("loading")
         {
             auto loadedReliquary = ReliquaryOrigin()
+                .Register<OpenRelic>()
                 .Register<BasicShard>()
                 .Actualize();
 
@@ -216,6 +222,7 @@ SCENARIO_METHOD(
     GIVEN("saved closed relic with shards")
     {
         auto savedReliquary = ReliquaryOrigin()
+            .Register<ClosedRelic>()
             .Register<BasicShard>()
             .Actualize();
 
@@ -229,6 +236,7 @@ SCENARIO_METHOD(
         WHEN("loading")
         {
             auto loadedReliquary = ReliquaryOrigin()
+                .Register<ClosedRelic>()
                 .Register<BasicShard>()
                 .Actualize();
 

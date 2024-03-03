@@ -36,7 +36,8 @@
     <ClInclude Include="CreateWith.h" />
     <ClInclude Include="CuratorInit.h" />
     <ClInclude Include="HandleObjectType.h" />
-    <ClInclude Include="HasRelicDefaultConstructor.h" />
+    <ClInclude Include="HasOpennessTrait.h" />
+    <ClInclude Include="HasRelicInitConstructor.h" />
     <ClInclude Include="HasRelicSerializationConstructor.h" />
     <ClInclude Include="HasSelfContainedTrait.h" />
     <ClInclude Include="HasShardDefaultConstructor.h" />
@@ -55,6 +56,8 @@
     <ClInclude Include="IdentifiedCreateWith.h" />
     <ClInclude Include="Index.h" />
     <ClInclude Include="IsSelfContained.h" />
+    <ClInclude Include="LocalRelic.h" />
+    <ClInclude Include="Relic.h" />
     <ClInclude Include="ReliquaryUserContext.h" />
     <ClInclude Include="MatrixIndexDefinition.h" />
     <ClInclude Include="MutablePointer.h" />
@@ -112,8 +115,6 @@
     <ClInclude Include="UsableForShardIndex.h" />
     <ClInclude Include="UsableInAll.h" />
     <ClInclude Include="Either.h" />
-    <ClInclude Include="ClosedRelic.h" />
-    <ClInclude Include="ClosedRelicDefinition.h" />
     <ClInclude Include="Batch.h" />
     <ClInclude Include="BatchSource.h" />
     <ClInclude Include="Destroying.h" />
@@ -124,7 +125,6 @@
     <ClInclude Include="Locality.h" />
     <ClInclude Include="NullScribeCategory.h" />
     <ClInclude Include="ObjectType.h" />
-    <ClInclude Include="OpenTypedRelic.h" />
     <ClInclude Include="PipelineException.h" />
     <ClInclude Include="RelicBatch.h" />
     <ClInclude Include="RelicBatchIterator.h" />
@@ -151,7 +151,6 @@
     <ClInclude Include="ReliquaryOrigin.h" />
     <ClInclude Include="TableScribeCategory.h" />
     <ClInclude Include="Traits.h" />
-    <ClInclude Include="OpenRelicDefinition.h" />
     <ClInclude Include="Openness.h" />
     <ClInclude Include="RelicID.h" />
     <ClInclude Include="Reliquary.h" />
@@ -160,11 +159,9 @@
     <ClInclude Include="Curator.h" />
     <ClInclude Include="Pipeline.h" />
     <ClInclude Include="IsCurator.h" />
-    <ClInclude Include="ClosedTypedRelic.h" />
     <ClInclude Include="Type.h" />
     <ClInclude Include="ShardBatch.h" />
     <ClInclude Include="BatchException.h" />
-    <ClInclude Include="OpenRelic.h" />
     <ClInclude Include="RelicMetadata.h" />
     <ClInclude Include="RelicStructure.h" />
     <ClInclude Include="TypeFor.h" />
@@ -179,7 +176,6 @@
     <ClCompile Include="MutablePointer.cpp" />
     <ClCompile Include="ReliquaryCommands.cpp" />
     <ClCompile Include="ReliquaryMatrices.cpp" />
-    <ClCompile Include="ClosedRelic.cpp" />
     <ClCompile Include="HandleSlim.cpp" />
     <ClCompile Include="KnownPolymorphicSerializer.cpp" />
     <ClCompile Include="ObjectType.cpp" />
@@ -200,7 +196,6 @@
     <ClCompile Include="ReliquaryOrigin.cpp" />
     <ClCompile Include="ReliquaryException.cpp" />
     <ClCompile Include="Curator.cpp" />
-    <ClCompile Include="OpenRelic.cpp" />
     <ClCompile Include="RelicMetadata.cpp" />
     <ClCompile Include="Type.cpp" />
   </ItemGroup>

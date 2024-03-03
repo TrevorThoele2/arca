@@ -2,9 +2,11 @@
 
 #include "ShardBatchTests.h"
 
-ShardBatchFixture::GlobalRelic::GlobalRelic(Init init) : ClosedTypedRelic(init)
+#include <Arca/LocalRelic.h>
+
+ShardBatchFixture::GlobalRelic::GlobalRelic(RelicInit init)
 {
-    shard = Create<BasicShard>();
+    shard = init.Create<BasicShard>();
 }
 
 SCENARIO_METHOD(ShardBatchFixture, "default shard batch", "[ShardBatch]")
@@ -71,12 +73,15 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
 {
     GIVEN("registered reliquary and relic")
     {
-        auto reliquary = ReliquaryOrigin().Register<BasicShard>().Actualize();
+        auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
+            .Register<BasicShard>()
+            .Actualize();
         auto relic = reliquary->Do(Create<OpenRelic>());
 
         WHEN("creating shard")
         {
-            auto createdShard = relic->Create<BasicShard>();
+            auto createdShard = reliquary->Do(Create<BasicShard>(relic.ID()));
 
             WHEN("starting batch")
             {
@@ -101,7 +106,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
 
                 THEN("removing shard empties the batch")
                 {
-                    relic->Destroy<BasicShard>();
+                    reliquary->Do(Destroy<BasicShard>(relic.ID()));
                     REQUIRE(batch.IsEmpty());
                 }
             }
@@ -124,7 +129,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
 
             WHEN("creating derived shard")
             {
-                auto createdShard = relic->Create<BasicShard>();
+                auto createdShard = reliquary->Do(Create<BasicShard>(relic.ID()));
                 
                 THEN("batch contains derived shard")
                 {
@@ -145,7 +150,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch", "[ShardBatch]")
 
                 THEN("removing shard empties the batch")
                 {
-                    relic->Destroy<BasicShard>();
+                    reliquary->Do(Destroy<BasicShard>(relic.ID()));
                     REQUIRE(batch.IsEmpty());
                 }
             }
@@ -182,11 +187,12 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch serialization", "[ShardBatch][se
     GIVEN("saved reliquary")
     {
         auto savedReliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
             .Register<BasicShard>()
             .Actualize();
 
         auto savedRelic = savedReliquary->Do(Create<OpenRelic>());
-        savedRelic->Create<BasicShard>();
+        savedReliquary->Do(Create<BasicShard>(savedRelic.ID()));
 
         {
             auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat");
@@ -196,6 +202,7 @@ SCENARIO_METHOD(ShardBatchFixture, "shard batch serialization", "[ShardBatch][se
         WHEN("loading reliquary")
         {
             auto loadedReliquary = ReliquaryOrigin()
+                .Register<OpenRelic>()
                 .Register<BasicShard>()
                 .Actualize();
 

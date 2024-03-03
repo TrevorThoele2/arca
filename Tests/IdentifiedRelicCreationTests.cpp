@@ -99,17 +99,17 @@ SCENARIO_METHOD(IdentifiedRelicCreationTestsFixture, "identified relic creation"
 
             THEN("reliquary contains relic")
             {
-                REQUIRE(reliquary->Contains<Relic>(relic->ID()));
+                REQUIRE(reliquary->Contains<Relic>(relic.ID()));
             }
 
             WHEN("finding relic")
             {
-                auto found = Arca::Index<Relic>(relic->ID(), *reliquary);
+                auto found = Arca::Index<Relic>(relic.ID(), *reliquary);
 
                 THEN("found is same as created")
                 {
-                    REQUIRE(found->ID() == relic->ID());
-                    REQUIRE(&found->Owner() == &relic->Owner());
+                    REQUIRE(found.ID() == relic.ID());
+                    REQUIRE(found.Owner() == relic.Owner());
                 }
             }
         }
@@ -126,7 +126,7 @@ SCENARIO_METHOD(IdentifiedRelicCreationTestsFixture, "identified relic creation"
 
             THEN("structure has been satisfied")
             {
-                REQUIRE(Arca::Index<Shard>(relic->ID(), *reliquary));
+                REQUIRE(Arca::Index<Shard>(relic.ID(), *reliquary));
             }
 
             THEN("reliquary relic count increments by one")
@@ -136,7 +136,7 @@ SCENARIO_METHOD(IdentifiedRelicCreationTestsFixture, "identified relic creation"
 
             THEN("reliquary contains relic")
             {
-                REQUIRE(reliquary->Contains<Relic>(relic->ID()));
+                REQUIRE(reliquary->Contains<Relic>(relic.ID()));
             }
         }
 
@@ -153,7 +153,7 @@ SCENARIO_METHOD(IdentifiedRelicCreationTestsFixture, "identified relic creation"
 
             THEN("has parent")
             {
-                REQUIRE(relic->Parent());
+                REQUIRE(reliquary->ParentOf(relic.ID()));
             }
 
             THEN("reliquary has one more relic")
@@ -163,7 +163,7 @@ SCENARIO_METHOD(IdentifiedRelicCreationTestsFixture, "identified relic creation"
 
             THEN("reliquary contains relic")
             {
-                REQUIRE(reliquary->Contains<Relic>(relic->ID()));
+                REQUIRE(reliquary->Contains<Relic>(relic.ID()));
             }
         }
 
@@ -180,12 +180,12 @@ SCENARIO_METHOD(IdentifiedRelicCreationTestsFixture, "identified relic creation"
 
             THEN("has parent")
             {
-                REQUIRE(relic->Parent());
+                REQUIRE(reliquary->ParentOf(relic.ID()));
             }
 
             THEN("structure has been satisfied")
             {
-                REQUIRE(Arca::Index<Shard>(relic->ID(), *reliquary));
+                REQUIRE(Arca::Index<Shard>(relic.ID(), *reliquary));
             }
 
             THEN("reliquary has one more relic")
@@ -195,7 +195,7 @@ SCENARIO_METHOD(IdentifiedRelicCreationTestsFixture, "identified relic creation"
 
             THEN("reliquary contains relic")
             {
-                REQUIRE(reliquary->Contains<Relic>(relic->ID()));
+                REQUIRE(reliquary->Contains<Relic>(relic.ID()));
             }
         }
 

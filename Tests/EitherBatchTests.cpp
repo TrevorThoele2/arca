@@ -3,6 +3,7 @@
 #include "EitherBatchTests.h"
 
 #include <Arca/Either.h>
+#include <Arca/LocalRelic.h>
 
 #include "BasicShard.h"
 
@@ -70,12 +71,15 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
 {
     GIVEN("registered reliquary and relic")
     {
-        auto reliquary = ReliquaryOrigin().Register<BasicShard>().Actualize();
+        auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
+            .Register<BasicShard>()
+            .Actualize();
         auto relic = reliquary->Do(Create<OpenRelic>());
 
         WHEN("creating shard")
         {
-            auto createdShard = relic->Create<BasicShard>();
+            auto createdShard = reliquary->Do(Create<BasicShard>(relic));
 
             WHEN("starting batch")
             {
@@ -100,7 +104,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
 
                 THEN("removing shard empties the batch")
                 {
-                    relic->Destroy<BasicShard>();
+                    reliquary->Do(Destroy<BasicShard>(relic.ID()));
                     REQUIRE(batch.IsEmpty());
                 }
             }
@@ -108,7 +112,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
 
         WHEN("creating const shard")
         {
-            auto createdShard = relic->Create<const BasicShard>();
+            auto createdShard = reliquary->Do(Create<const BasicShard>(relic));
 
             WHEN("starting batch")
             {
@@ -133,7 +137,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
 
                 THEN("removing shard empties the batch")
                 {
-                    relic->Destroy<const BasicShard>();
+                    reliquary->Do(Destroy<const BasicShard>(relic.ID()));
                     REQUIRE(batch.IsEmpty());
                 }
             }
@@ -156,7 +160,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
 
             WHEN("creating non-const shard")
             {
-                auto createdShard = relic->Create<BasicShard>();
+                auto createdShard = reliquary->Do(Create<BasicShard>(relic));
 
                 THEN("batch contains derived shard")
                 {
@@ -177,14 +181,14 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
 
                 THEN("removing shard empties the batch")
                 {
-                    relic->Destroy<BasicShard>();
+                    reliquary->Do(Destroy<BasicShard>(relic.ID()));
                     REQUIRE(batch.IsEmpty());
                 }
             }
 
             WHEN("creating const shard")
             {
-                auto createdShard = relic->Create<const BasicShard>();
+                auto createdShard = reliquary->Do(Create<const BasicShard>(relic));
 
                 THEN("batch contains derived shard")
                 {
@@ -205,7 +209,7 @@ SCENARIO_METHOD(EitherBatchTestsFixture, "either batch", "[either][batch]")
 
                 THEN("removing shard empties the batch")
                 {
-                    relic->Destroy<const BasicShard>();
+                    reliquary->Do(Destroy<const BasicShard>(relic.ID()));
                     REQUIRE(batch.IsEmpty());
                 }
             }

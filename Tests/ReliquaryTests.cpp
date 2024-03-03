@@ -1,26 +1,27 @@
 #include <catch.hpp>
-#include <utility>
 using namespace std::string_literals;
 
 #include "ReliquaryTests.h"
 
-ReliquaryTestsFixture::BasicTypedRelic::BasicTypedRelic(Init init)
-    : ClosedTypedRelic(init)
+#include <Arca/LocalRelic.h>
+
+ReliquaryTestsFixture::BasicTypedRelic::BasicTypedRelic(RelicInit init)
 {
-    basicShard = Create<BasicShard>();
+    basicShard = init.Create<BasicShard>();
 }
 
-ReliquaryTestsFixture::GlobalRelic::GlobalRelic(Init init)
-    : ClosedTypedRelic(init)
+ReliquaryTestsFixture::GlobalRelic::GlobalRelic(RelicInit init)
 {
-    basicShard = Create<BasicShard>();
+    basicShard = init.Create<BasicShard>();
 }
 
 SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
 {
     GIVEN("default reliquary")
     {
-        auto reliquary = ReliquaryOrigin().Actualize();
+        auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
+            .Actualize();
 
         WHEN("checking relic size")
         {
@@ -101,22 +102,23 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "reliquary wih single shard")
     GIVEN("reliquary registered with single shard")
     {
         auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
             .Register<BasicShard>()
             .Actualize();
 
         WHEN("creating open relic with non-const shard")
         {
             auto relic = reliquary->Do(Create<OpenRelic>());
-            auto shard = relic->Create<BasicShard>();
+            auto shard = reliquary->Do(Create<BasicShard>(relic.ID()));
 
             THEN("creating const shard of same type throws")
             {
-                REQUIRE_THROWS_AS(relic->Create<const BasicShard>(), CannotCreate);
+                REQUIRE_THROWS_AS(reliquary->Do(Create<const BasicShard>(relic.ID())), CannotCreate);
             }
 
             THEN("finding either shard gives correct")
             {
-                auto found = Arca::Index<Either<BasicShard>>(relic->ID(), relic->Owner());
+                auto found = Arca::Index<Either<BasicShard>>(relic.ID(), *relic.Owner());
                 REQUIRE(found);
                 REQUIRE(&*found == &*shard);
             }
@@ -137,6 +139,7 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "creating relic from registered relic str
         WHEN("constructing relic from registered structure")
         {
             auto reliquary = reliquaryOrigin
+                .Register<ClosedRelic>()
                 .Register<BasicShard>()
                 .Actualize();
 
@@ -144,14 +147,14 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "creating relic from registered relic str
 
             THEN("relic has shard")
             {
-                REQUIRE(relic->Find<BasicShard>());
-                REQUIRE(relic->Contains<BasicShard>());
+                REQUIRE(Arca::Index<BasicShard>(relic.ID(), *reliquary));
             }
         }
 
         WHEN("constructing relic without registering shard")
         {
             auto reliquary = reliquaryOrigin
+                .Register<ClosedRelic>()
                 .Actualize();
 
             THEN("throws error")

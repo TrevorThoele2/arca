@@ -10,56 +10,46 @@ SerializationData::PreferentialSerializationConstructorShard::PreferentialSerial
 SerializationData::OtherShard::OtherShard(int myValue) : myValue(myValue)
 {}
 
-SerializationData::TypedClosedRelic::TypedClosedRelic(Init init, int myInt) :
-    ClosedTypedRelic(init), myInt(myInt)
+SerializationData::TypedClosedRelic::TypedClosedRelic(RelicInit init, int myInt)
 {
-    basicShard = Create<BasicShard>();
+    basicShard = init.Create<BasicShard>();
 }
 
-SerializationData::TypedClosedRelic::TypedClosedRelic(Init init, Serialization) :
-    ClosedTypedRelic(init)
+SerializationData::TypedClosedRelic::TypedClosedRelic(RelicInit init, Serialization)
 {
-    basicShard = Find<BasicShard>();
+    basicShard = init.Find<BasicShard>();
 }
 
-SerializationData::TypedOpenRelic::TypedOpenRelic(Init init, int myInt) :
-    OpenTypedRelic(init), myInt(myInt)
+SerializationData::TypedOpenRelic::TypedOpenRelic(RelicInit init, int myInt)
 {
-    basicShard = Create<BasicShard>();
+    basicShard = init.Create<BasicShard>();
 }
 
-SerializationData::TypedOpenRelic::TypedOpenRelic(Init init, Serialization) :
-    OpenTypedRelic(init)
+SerializationData::TypedOpenRelic::TypedOpenRelic(RelicInit init, Serialization)
 {
-    basicShard = Find<BasicShard>();
+    basicShard = init.Find<BasicShard>();
 }
 
-SerializationData::GlobalRelic::GlobalRelic(Init init) :
-    ClosedTypedRelic(init)
+SerializationData::GlobalRelic::GlobalRelic(RelicInit init)
 {
-    basicShard = Create<BasicShard>();
+    basicShard = init.Create<BasicShard>();
 }
 
-SerializationData::GlobalRelic::GlobalRelic(Init init, int myInt, std::string shardData) :
-    ClosedTypedRelic(init), myInt(myInt)
+SerializationData::GlobalRelic::GlobalRelic(RelicInit init, int myInt, std::string shardData)
 {
-    basicShard = Create<BasicShard>(std::move(shardData));
+    basicShard = init.Create<BasicShard>(std::move(shardData));
 }
 
-SerializationData::GlobalRelic::GlobalRelic(Init init, Serialization) :
-    ClosedTypedRelic(init)
+SerializationData::GlobalRelic::GlobalRelic(RelicInit init, Serialization)
 {
-    basicShard = Find<BasicShard>();
+    basicShard = init.Find<BasicShard>();
 }
 
 SerializationData::NonDefaultConstructorRelic::NonDefaultConstructorRelic(
-    Init init, int myInt)
-    :
-    ClosedTypedRelic(init), myInt(myInt)
+    RelicInit init, int myInt)
 {}
 
-SerializationData::NonDefaultConstructorRelic::NonDefaultConstructorRelic(Init init, Serialization) :
-    ClosedTypedRelic(init)
+SerializationData::NonDefaultConstructorRelic::NonDefaultConstructorRelic(RelicInit init, Serialization)
 {}
 
 SerializationData::BasicShardNullInscription::BasicShardNullInscription(std::string myValue) :
@@ -74,15 +64,14 @@ SerializationData::OtherShardNullInscription::OtherShardNullInscription(int myVa
 {}
 
 SerializationData::MovableOnlyRelic::MovableOnlyRelic(
-    Init init, int myInt, std::string shardData)
+    RelicInit init, int myInt, std::string shardData)
     :
-    ClosedTypedRelic(init), myValue(myInt)
+    myValue(myInt)
 {
-    basicShard = Create<BasicShard>(std::move(shardData));
+    basicShard = init.Create<BasicShard>(std::move(shardData));
 }
 
-SerializationData::MovableOnlyRelic::MovableOnlyRelic(Init init, Serialization) :
-    ClosedTypedRelic(init)
+SerializationData::MovableOnlyRelic::MovableOnlyRelic(RelicInit init, Serialization)
 {
-    basicShard = Find<BasicShard>();
+    basicShard = init.Find<BasicShard>();
 }

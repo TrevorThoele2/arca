@@ -2,8 +2,6 @@
 
 #include "ReliquaryFixture.h"
 
-#include <Arca/ClosedTypedRelic.h>
-
 using namespace Arca;
 
 class AllBatchTestsFixture : public ReliquaryFixture
@@ -13,16 +11,16 @@ public:
     class GlobalRelic;
 };
 
-class AllBatchTestsFixture::Relic final : public ClosedTypedRelic<Relic>
+class AllBatchTestsFixture::Relic final
 {
 public:
-    explicit Relic(Init init);
+    explicit Relic(RelicInit init);
 };
 
-class AllBatchTestsFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
+class AllBatchTestsFixture::GlobalRelic final
 {
 public:
-    explicit GlobalRelic(Init init);
+    explicit GlobalRelic(RelicInit init);
 };
 
 namespace Arca

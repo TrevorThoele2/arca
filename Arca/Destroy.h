@@ -21,7 +21,6 @@ namespace Arca
         RelicID id;
 
         explicit Destroy(RelicID id);
-        explicit Destroy(const T& relic);
         explicit Destroy(Index<T> index);
 
         void Do(Reliquary& reliquary) const;
@@ -29,10 +28,6 @@ namespace Arca
 
     template<class T>
     Destroy<T, std::enable_if_t<is_relic_v<T>>>::Destroy(RelicID id) : id(id)
-    {}
-
-    template<class T>
-    Destroy<T, std::enable_if_t<is_relic_v<T>>>::Destroy(const T& relic) : id(relic.id)
     {}
 
     template<class T>
@@ -59,12 +54,17 @@ namespace Arca
         RelicID id;
 
         explicit Destroy(RelicID id);
+        explicit Destroy(Index<T> index);
 
         void Do(Reliquary& reliquary) const;
     };
 
     template<class T>
     Destroy<T, std::enable_if_t<is_shard_v<T>>>::Destroy(RelicID id) : id(id)
+    {}
+
+    template<class T>
+    Destroy<T, std::enable_if_t<is_shard_v<T>>>::Destroy(Arca::Index<T> index) : id(index.ID())
     {}
 
     template<class T>

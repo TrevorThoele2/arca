@@ -2,9 +2,6 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/ClosedTypedRelic.h>
-#include <Arca/OpenTypedRelic.h>
-
 #include <Arca/Serialization.h>
 
 #include "DifferentiableShard.h"
@@ -23,9 +20,8 @@ public:
     class ShouldCreateRelic;
     class InitializedRelic;
     class MovableOnlyRelic;
+    class DefaultConstructedRelic;
     class RelicConstructedFromMovedValue;
-    class ClosedTypedRelicWithUsingConstructor;
-    class OpenTypedRelicWithUsingConstructor;
 };
 
 namespace Arca
@@ -56,6 +52,7 @@ namespace Arca
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "RelicTestsFixture::TypedOpenRelic";
+        static const Openness openness = Openness::Open;
     };
 
     template<>
@@ -89,110 +86,92 @@ namespace Arca
     };
 
     template<>
+    struct Traits<RelicTestsFixture::DefaultConstructedRelic>
+    {
+        static const ObjectType objectType = ObjectType::Relic;
+        static inline const TypeName typeName = "RelicTestsFixture::DefaultConstructedRelic";
+    };
+
+    template<>
     struct Traits<RelicTestsFixture::RelicConstructedFromMovedValue>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "RelicTestsFixture::RelicConstructedFromMoveValue";
     };
-
-    template<>
-    struct Traits<RelicTestsFixture::ClosedTypedRelicWithUsingConstructor>
-    {
-        static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "RelicTestsFixture::ClosedTypedRelicWithUsingConstructor";
-    };
-
-    template<>
-    struct Traits<RelicTestsFixture::OpenTypedRelicWithUsingConstructor>
-    {
-        static const ObjectType objectType = ObjectType::Relic;
-        static inline const TypeName typeName = "RelicTestsFixture::OpenTypedRelicWithUsingConstructor";
-    };
 }
 
-class RelicTestsFixture::TypedClosedRelic final : public ClosedTypedRelic<TypedClosedRelic>
+class RelicTestsFixture::TypedClosedRelic final
 {
 public:
     Index<Shard> basicShard;
 public:
-    explicit TypedClosedRelic(Init init);
+    explicit TypedClosedRelic(RelicInit init);
 };
 
-class RelicTestsFixture::TypedOpenRelic final : public OpenTypedRelic<TypedOpenRelic>
+class RelicTestsFixture::TypedOpenRelic final
 {
 public:
     Index<Shard> basicShard;
 public:
-    explicit TypedOpenRelic(Init init);
+    explicit TypedOpenRelic(RelicInit init);
 };
 
-class RelicTestsFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
+class RelicTestsFixture::GlobalRelic final
 {
 public:
     Index<Shard> basicShard;
 public:
-    explicit GlobalRelic(Init init);
+    explicit GlobalRelic(RelicInit init);
 };
 
-class RelicTestsFixture::ShouldCreateRelic final : public ClosedTypedRelic<ShouldCreateRelic>
+class RelicTestsFixture::ShouldCreateRelic final
 {
 public:
     int value = 0;
 public:
-    explicit ShouldCreateRelic(Init init) : ClosedTypedRelic(init)
-    {}
-    ShouldCreateRelic(Init init, int value);
+    explicit ShouldCreateRelic(RelicInit init);
+    ShouldCreateRelic(RelicInit init, int value);
 };
 
-class RelicTestsFixture::InitializedRelic final : public ClosedTypedRelic<InitializedRelic>
+class RelicTestsFixture::InitializedRelic final
 {
 public:
     Index<Shard> basicShard;
 
     int myValue = 0;
 public:
-    explicit InitializedRelic(Init init);
-    InitializedRelic(Init init, int value);
+    explicit InitializedRelic(RelicInit init);
+    InitializedRelic(RelicInit init, int value);
 };
 
-class RelicTestsFixture::MovableOnlyRelic final : public ClosedTypedRelic<MovableOnlyRelic>
+class RelicTestsFixture::MovableOnlyRelic final
 {
 public:
     Index<Shard> basicShard;
 
     int myValue = 0;
 public:
-    explicit MovableOnlyRelic(Init init);
-    MovableOnlyRelic(Init init, int myInt);
+    explicit MovableOnlyRelic(RelicInit init);
+    MovableOnlyRelic(RelicInit init, int myInt);
     MovableOnlyRelic(const MovableOnlyRelic& arg) = delete;
     MovableOnlyRelic(MovableOnlyRelic&& arg) noexcept = default;
     MovableOnlyRelic& operator=(const MovableOnlyRelic& arg) = delete;
     MovableOnlyRelic& operator=(MovableOnlyRelic&& arg) noexcept = default;
 };
 
-class RelicTestsFixture::RelicConstructedFromMovedValue final : public ClosedTypedRelic<RelicConstructedFromMovedValue>
+class RelicTestsFixture::DefaultConstructedRelic final
+{
+public:
+    DefaultConstructedRelic() = default;
+};
+
+class RelicTestsFixture::RelicConstructedFromMovedValue final
 {
 public:
     std::unique_ptr<int> myInt;
 public:
-    explicit RelicConstructedFromMovedValue(Init init) : ClosedTypedRelic(init)
-    {}
-
-    RelicConstructedFromMovedValue(Init init, std::unique_ptr<int>&& myInt);
-};
-
-class RelicTestsFixture::ClosedTypedRelicWithUsingConstructor final :
-    public ClosedTypedRelic<ClosedTypedRelicWithUsingConstructor>
-{
-public:
-    using ClosedTypedRelic::ClosedTypedRelic;
-};
-
-class RelicTestsFixture::OpenTypedRelicWithUsingConstructor final :
-    public OpenTypedRelic<OpenTypedRelicWithUsingConstructor>
-{
-public:
-    using OpenTypedRelic::OpenTypedRelic;
+    explicit RelicConstructedFromMovedValue(RelicInit init);
+    RelicConstructedFromMovedValue(RelicInit init, std::unique_ptr<int>&& myInt);
 };
 
 namespace Inscription
@@ -234,20 +213,14 @@ namespace Inscription
     };
 
     template<class Archive>
+    struct ScribeTraits<RelicTestsFixture::DefaultConstructedRelic, Archive> final
+    {
+        using Category = ArcaNullScribeCategory<RelicTestsFixture::DefaultConstructedRelic>;
+    };
+
+    template<class Archive>
     struct ScribeTraits<RelicTestsFixture::RelicConstructedFromMovedValue, Archive> final
     {
         using Category = ArcaNullScribeCategory<RelicTestsFixture::RelicConstructedFromMovedValue>;
-    };
-
-    template<class Archive>
-    struct ScribeTraits<RelicTestsFixture::ClosedTypedRelicWithUsingConstructor, Archive> final
-    {
-        using Category = ArcaNullScribeCategory<RelicTestsFixture::ClosedTypedRelicWithUsingConstructor>;
-    };
-
-    template<class Archive>
-    struct ScribeTraits<RelicTestsFixture::OpenTypedRelicWithUsingConstructor, Archive> final
-    {
-        using Category = ArcaNullScribeCategory<RelicTestsFixture::OpenTypedRelicWithUsingConstructor>;
     };
 }

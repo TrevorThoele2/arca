@@ -2,8 +2,6 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/ClosedTypedRelic.h>
-
 #include "BasicShard.h"
 
 #include <Arca/Serialization.h>
@@ -20,14 +18,14 @@ public:
 namespace Arca
 {
     template<>
-    struct Traits<::GlobalRelicTestsFixture::BasicTypedRelic>
+    struct Traits<GlobalRelicTestsFixture::BasicTypedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "GlobalRelicTestsBasicTypedRelic";
     };
 
     template<>
-    struct Traits<::GlobalRelicTestsFixture::GlobalRelic>
+    struct Traits<GlobalRelicTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "GlobalRelicTestsGlobalRelic";
@@ -35,21 +33,21 @@ namespace Arca
     };
 }
 
-class GlobalRelicTestsFixture::BasicTypedRelic final : public ClosedTypedRelic<BasicTypedRelic>
+class GlobalRelicTestsFixture::BasicTypedRelic final
 {
 public:
     Index<BasicShard> basicShard;
 public:
-    explicit BasicTypedRelic(Init init);
+    explicit BasicTypedRelic(RelicInit init);
 };
 
-class GlobalRelicTestsFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
+class GlobalRelicTestsFixture::GlobalRelic final
 {
 public:
     int myValue = 0;
     Index<BasicShard> basicShard;
 public:
-    explicit GlobalRelic(Init init);
+    explicit GlobalRelic(RelicInit init);
 };
 
 namespace Inscription

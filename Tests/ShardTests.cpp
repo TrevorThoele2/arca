@@ -3,6 +3,7 @@
 #include "ShardTests.h"
 #include "SignalListener.h"
 
+#include <Arca/LocalRelic.h>
 #include <Arca/AsHandle.h>
 
 #include "BasicShard.h"
@@ -17,17 +18,18 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
     GIVEN("registered reliquary with regular shard")
     {
         auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
             .Register<BasicShard>()
             .Actualize();
 
         WHEN("creating open relic and non-const shard")
         {
             const auto relic = reliquary->Do(Create<OpenRelic>());
-            auto shard = relic->Create<BasicShard>();
+            auto shard = reliquary->Do(Create<BasicShard>(relic.ID()));
 
             WHEN("destroying shard by either")
             {
-                relic->Destroy<Either<BasicShard>>();
+                reliquary->Do(Destroy<Either<BasicShard>>(relic.ID()));
 
                 THEN("shard is nullptr")
                 {
@@ -45,11 +47,11 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
         WHEN("creating open relic and const shard")
         {
             const auto relic = reliquary->Do(Create<OpenRelic>());
-            auto shard = relic->Create<const BasicShard>();
+            auto shard = reliquary->Do(Create<const BasicShard>(relic.ID()));
 
             WHEN("destroying shard by either")
             {
-                relic->Destroy<Either<BasicShard>>();
+                reliquary->Do(Destroy<Either<BasicShard>>(relic.ID()));
 
                 THEN("shard is nullptr")
                 {
@@ -68,6 +70,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
     GIVEN("registered reliquary with three differentiable shards")
     {
         auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
             .Register<DifferentiableShard<0>>()
             .Register<DifferentiableShard<1>>()
             .Register<DifferentiableShard<2>>()
@@ -76,13 +79,14 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
         WHEN("creating open relic and three shards")
         {
             const auto relic = reliquary->Do(Create<OpenRelic>());
-            auto shard0 = relic->Create<DifferentiableShard<0>>();
-            auto shard1 = relic->Create<DifferentiableShard<1>>();
-            auto shard2 = relic->Create<DifferentiableShard<2>>();
+            auto shard0 = reliquary->Do(Create<DifferentiableShard<0>>(relic.ID()));
+            auto shard1 = reliquary->Do(Create<DifferentiableShard<1>>(relic.ID()));
+            auto shard2 = reliquary->Do(Create<DifferentiableShard<2>>(relic.ID()));
 
             WHEN("destroying all shards by all")
             {
-                relic->Destroy<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>();
+                reliquary->Do(
+                    Destroy<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(relic.ID()));
 
                 THEN("shards are nullptr")
                 {
@@ -104,7 +108,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
 
             WHEN("destroying two shards by all")
             {
-                relic->Destroy<All<DifferentiableShard<0>, DifferentiableShard<1>>>();
+                reliquary->Do(Destroy<All<DifferentiableShard<0>, DifferentiableShard<1>>>(relic.ID()));
 
                 THEN("two shards are nullptr")
                 {
@@ -134,7 +138,9 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
 
             WHEN("finding all shards by all")
             {
-                auto tuple = *relic->Find<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>();
+                auto tuple =
+                    *Arca::Index<All<DifferentiableShard<0>, DifferentiableShard<1>, DifferentiableShard<2>>>(
+                        relic.ID(), *reliquary);
 
                 THEN("tuple shards are equal to created")
                 {
@@ -153,7 +159,8 @@ SCENARIO_METHOD(ShardTestsFixture, "shard destruction")
 
             WHEN("finding two shards by all")
             {
-                auto tuple = *relic->Find<All<DifferentiableShard<1>, DifferentiableShard<2>>>();
+                auto tuple = *Arca::Index<All<DifferentiableShard<1>, DifferentiableShard<2>>>(
+                    relic.ID(), *reliquary);
 
                 THEN("tuple shards are equal to created")
                 {
@@ -176,6 +183,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
             .Register<BasicShard>()
             .Actualize();
 
@@ -188,7 +196,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
             auto knownDestroyingSignals = SignalListener<DestroyingKnown<BasicShard>>(*reliquary);
 
             const auto relic = reliquary->Do(Create<OpenRelic>());
-            auto shard = relic->Create<BasicShard>();
+            auto shard = reliquary->Do(Create<BasicShard>(relic.ID()));
             auto shardHandle = AsHandle<BasicShard>(shard.ID(), *shard.Owner());
 
             THEN("generic signal is emitted for relic and shard")
@@ -211,7 +219,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
 
             WHEN("destroying shard")
             {
-                relic->Destroy<BasicShard>();
+                reliquary->Do(Destroy<BasicShard>(relic.ID()));
 
                 THEN("signal is emitted for shard")
                 {
@@ -228,7 +236,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
 
             WHEN("destroying shard by either")
             {
-                relic->Destroy<Either<BasicShard>>();
+                reliquary->Do(Destroy<Either<BasicShard>>(relic.ID()));
 
                 THEN("signal is emitted for shard")
                 {
@@ -250,7 +258,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
             auto knownDestroyingSignals = SignalListener<DestroyingKnown<const BasicShard>>(*reliquary);
 
             const auto relic = reliquary->Do(Create<OpenRelic>());
-            auto shard = relic->Create<const BasicShard>();
+            auto shard = reliquary->Do(Create<const BasicShard>(relic.ID()));
             auto shardHandle = AsHandle<const BasicShard>(shard.ID(), *shard.Owner());
 
             THEN("generic signal is emitted for relic and shard")
@@ -273,7 +281,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
 
             WHEN("destroying shard")
             {
-                relic->Destroy<const BasicShard>();
+                reliquary->Do(Destroy<const BasicShard>(relic.ID()));
 
                 THEN("signal is emitted for shard")
                 {
@@ -290,7 +298,7 @@ SCENARIO_METHOD(ShardTestsFixture, "shard signals")
 
             WHEN("destroying shard by either")
             {
-                relic->Destroy<Either<BasicShard>>();
+                reliquary->Do(Destroy<Either<BasicShard>>(relic.ID()));
 
                 THEN("signal is emitted for shard")
                 {
@@ -313,6 +321,7 @@ SCENARIO_METHOD(ShardTestsFixture, "either signals", "[either][signal]")
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
             .Register<BasicShard>()
             .Actualize();
 
@@ -322,7 +331,7 @@ SCENARIO_METHOD(ShardTestsFixture, "either signals", "[either][signal]")
         WHEN("creating open relic and non-const shard")
         {
             const auto relic = reliquary->Do(Create<OpenRelic>());
-            auto shard = relic->Create<BasicShard>();
+            auto shard = reliquary->Do(Create<BasicShard>(relic.ID()));
             auto shardHandle = AsHandle<BasicShard>(shard.ID(), *shard.Owner());
 
             THEN("signal is emitted for known shard")
@@ -333,7 +342,7 @@ SCENARIO_METHOD(ShardTestsFixture, "either signals", "[either][signal]")
 
             WHEN("destroying shard")
             {
-                relic->Destroy<BasicShard>();
+                reliquary->Do(Destroy<BasicShard>(relic.ID()));
 
                 THEN("signal is emitted for known relic")
                 {
@@ -344,7 +353,7 @@ SCENARIO_METHOD(ShardTestsFixture, "either signals", "[either][signal]")
 
             WHEN("destroying shard by either")
             {
-                relic->Destroy<Either<BasicShard>>();
+                reliquary->Do(Destroy<Either<BasicShard>>(relic.ID()));
 
                 THEN("signal is emitted for known relic")
                 {
@@ -357,7 +366,7 @@ SCENARIO_METHOD(ShardTestsFixture, "either signals", "[either][signal]")
         WHEN("creating open relic and const shard")
         {
             const auto relic = reliquary->Do(Create<OpenRelic>());
-            auto shard = relic->Create<const BasicShard>();
+            auto shard = reliquary->Do(Create<const BasicShard>(relic.ID()));
             auto shardHandle = AsHandle<const BasicShard>(shard.ID(), *shard.Owner());
 
             THEN("signal is emitted for known shard")
@@ -368,7 +377,7 @@ SCENARIO_METHOD(ShardTestsFixture, "either signals", "[either][signal]")
 
             WHEN("destroying shard")
             {
-                relic->Destroy<const BasicShard>();
+                reliquary->Do(Destroy<const BasicShard>(relic.ID()));
 
                 THEN("signal is emitted for known relic")
                 {
@@ -379,7 +388,7 @@ SCENARIO_METHOD(ShardTestsFixture, "either signals", "[either][signal]")
 
             WHEN("destroying shard by either")
             {
-                relic->Destroy<Either<BasicShard>>();
+                reliquary->Do(Destroy<Either<BasicShard>>(relic.ID()));
 
                 THEN("signal is emitted for known relic")
                 {
@@ -396,18 +405,19 @@ SCENARIO_METHOD(ShardTestsFixture, "shard constructed from moved value", "[shard
     GIVEN("registered reliquary")
     {
         auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
             .Register<ShardConstructedFromMovedValue>()
             .Actualize();
 
         WHEN("creating shard from moved value")
         {
-            auto relic = reliquary->Do(Create<OpenRelic>());
+            const auto relic = reliquary->Do(Create<OpenRelic>());
 
             const auto generatedInt = dataGeneration.Random<int>();
             auto backingInt = new int(generatedInt);
             auto myInt = std::unique_ptr<int>(backingInt);
 
-            auto shard = relic->Create<ShardConstructedFromMovedValue>(std::move(myInt));
+            auto shard = reliquary->Do(Create<ShardConstructedFromMovedValue>(relic.ID(), std::move(myInt)));
 
             THEN("has moved value")
             {

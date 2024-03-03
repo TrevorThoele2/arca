@@ -39,7 +39,7 @@ namespace Arca
 
     std::string NotRegistered::BaseMessage(const std::string & objectType, const Type& type) const
     {
-        return "The " + objectType + " (" + ::Chroma::ToString(type) + ") was not registered.";
+        return "The " + objectType + " (" + Chroma::ToString(type) + ") was not registered.";
     }
 
     AlreadyRegistered::AlreadyRegistered(
@@ -71,7 +71,7 @@ namespace Arca
 
     std::string AlreadyRegistered::BaseMessage(const std::string& objectType, const Type& type) const
     {
-        return "The " + objectType + " (" + ::Chroma::ToString(type) + ") was already registered.";
+        return "The " + objectType + " (" + Chroma::ToString(type) + ") was already registered.";
     }
 
     CannotCreate::CannotCreate(
@@ -103,7 +103,7 @@ namespace Arca
 
     std::string CannotCreate::BaseMessage(const std::string& objectType, const Type& type) const
     {
-        return "The " + objectType + " (" + ::Chroma::ToString(type) + ") cannot be created.";
+        return "The " + objectType + " (" + Chroma::ToString(type) + ") cannot be created.";
     }
 
     CannotDestroy::CannotDestroy(
@@ -135,7 +135,7 @@ namespace Arca
 
     std::string CannotDestroy::BaseMessage(const std::string& objectType, const Type& type) const
     {
-        return "The " + objectType + " (" + ::Chroma::ToString(type) + ") cannot be destroyed.";
+        return "The " + objectType + " (" + Chroma::ToString(type) + ") cannot be destroyed.";
     }
 
     CannotFind::CannotFind(
@@ -167,7 +167,7 @@ namespace Arca
 
     std::string CannotFind::BaseMessage(const std::string& objectType, const Type& type) const
     {
-        return "The " + objectType + " (" + ::Chroma::ToString(type) + ") cannot be found.";
+        return "The " + objectType + " (" + Chroma::ToString(type) + ") cannot be found.";
     }
 
     CannotModifyShards::CannotModifyShards(
@@ -175,7 +175,7 @@ namespace Arca
         RelicID id)
         :
         Exception(
-            "The " + objectType + " with ID (" + ::Chroma::ToString(id) + ") " +
+            "The " + objectType + " with ID (" + Chroma::ToString(id) + ") " +
             "needs to be able to have its shards modified but cannot. Is the object closed?")
     {}
 

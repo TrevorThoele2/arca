@@ -3,8 +3,7 @@
 #include "GeneralFixture.h"
 
 #include <Arca/Shard.h>
-#include <Arca/ClosedTypedRelic.h>
-#include <Arca/OpenTypedRelic.h>
+#include <Arca/LocalRelic.h>
 
 #include "BasicShard.h"
 
@@ -52,37 +51,37 @@ namespace Arca
     };
 }
 
-class IndexTestsFixture::TypedClosedRelic final : public ClosedTypedRelic<TypedClosedRelic>
+class IndexTestsFixture::TypedClosedRelic final
 {
 public:
     Index<BasicShard> shard;
 public:
-    explicit TypedClosedRelic(Init init);
+    explicit TypedClosedRelic(RelicInit init);
 };
 
-class IndexTestsFixture::TypedOpenRelic final : public OpenTypedRelic<TypedOpenRelic>
+class IndexTestsFixture::TypedOpenRelic final
 {
 public:
     Index<BasicShard> shard;
 public:
-    explicit TypedOpenRelic(Init init);
+    explicit TypedOpenRelic(RelicInit init);
 };
 
-class IndexTestsFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
+class IndexTestsFixture::GlobalRelic final
 {
 public:
     Index<BasicShard> shard;
 public:
-    explicit GlobalRelic(Init init);
+    explicit GlobalRelic(RelicInit init);
 };
 
-class IndexTestsFixture::RelicHolderRelic final : public ClosedTypedRelic<RelicHolderRelic>
+class IndexTestsFixture::RelicHolderRelic final
 {
 public:
     Index<OpenRelic> held;
 public:
-    explicit RelicHolderRelic(Init init);
-    explicit RelicHolderRelic(Init init, Index<OpenRelic> held);
+    explicit RelicHolderRelic(RelicInit init);
+    explicit RelicHolderRelic(RelicInit init, Index<OpenRelic> held);
 };
 
 namespace Inscription

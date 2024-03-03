@@ -5,18 +5,12 @@ using namespace std::string_literals;
 #include "IntegrationTests.h"
 
 #include "DifferentiableCurator.h"
+#include <Arca/LocalRelic.h>
 
-IntegrationTestsFixture::ParentRelic::ParentRelic(Init init, int value)
-    : ClosedTypedRelic(init), value(value)
+IntegrationTestsFixture::ParentRelic::ParentRelic(int value) : value(value)
 {}
 
-void IntegrationTestsFixture::ParentRelic::CreateChild() const
-{
-    Owner().Do(Arca::CreateChild<ChildRelic>{AsHandle(*this)});
-}
-
-IntegrationTestsFixture::MatrixCreatingRelic::MatrixCreatingRelic(Init init) :
-    ClosedTypedRelic(init)
+IntegrationTestsFixture::MatrixCreatingRelic::MatrixCreatingRelic(RelicInit init)
 {
     init.Create<BasicShard>();
     init.Create<OtherShard>();
@@ -32,10 +26,10 @@ IntegrationTestsFixture::MatrixAndParentCurator::MatrixAndParentCurator(Init ini
         });
 }
 
-IntegrationTestsFixture::RelicListeningToSignalFromConstructor::RelicListeningToSignalFromConstructor(Init init) :
-    ClosedTypedRelic(init)
+IntegrationTestsFixture::RelicListeningToSignalFromConstructor::RelicListeningToSignalFromConstructor(
+    RelicInit init)
 {
-    Owner().On<BasicSignal>(
+    init.owner.On<BasicSignal>(
         [this](const BasicSignal& signal)
         {
             signalExecutions.push_back(signal.value);
@@ -43,16 +37,13 @@ IntegrationTestsFixture::RelicListeningToSignalFromConstructor::RelicListeningTo
 }
 
 IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic::GlobalRelicCreatingNullSerializedRelic(
-    Init init)
+    RelicInit init)
     :
-    ClosedTypedRelic(init),
     localRelic(init.owner.Do(Arca::Create<LocalRelic>()))
 {}
 
 IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic::GlobalRelicCreatingNullSerializedRelic(
-    Init init, Serialization)
-    :
-    ClosedTypedRelic(init)
+    RelicInit init, Serialization)
 {}
 
 namespace Arca
@@ -173,11 +164,11 @@ SCENARIO_METHOD(
         std::unordered_map<int, Index<ParentRelic>> mappedParents;
 
         auto& curator = reliquary->Find<ParentChildCurator>();
-        curator.onWork = [&mappedParents](DifferentiableCuratorBase& self)
+        curator.onWork = [&mappedParents, &reliquary](DifferentiableCuratorBase& self)
         {
             auto value = 100;
             auto parent = self.TheOwner().Do(Create<ParentRelic>{value});
-            parent->CreateChild();
+            reliquary->Do(Arca::CreateChild<ChildRelic>{AsHandle(parent)});
             mappedParents.emplace(value, parent);
         };
 
@@ -257,6 +248,7 @@ SCENARIO_METHOD(
     GIVEN("registered reliquary with curator, shard registered and shard created")
     {
         const auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
             .Register<BasicShard>()
             .Register<OtherShard>()
             .Register<MatrixCreatingRelic>()
@@ -294,20 +286,21 @@ SCENARIO_METHOD(
         };
 
         const auto savedReliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
             .Register<BasicShard>()
             .Register<OtherShard>()
             .Register<DerivedCurator>()
             .Actualize();
 
         const auto relic0 = savedReliquary->Do(Create<OpenRelic>());
-        relic0->Create<BasicShard>();
-        relic0->Create<OtherShard>();
+        savedReliquary->Do(Create<BasicShard>(relic0));
+        savedReliquary->Do(Create<OtherShard>(relic0));
         const auto relic1 = savedReliquary->Do(Create<OpenRelic>());
-        relic1->Create<BasicShard>();
-        relic1->Create<OtherShard>();
+        savedReliquary->Do(Create<BasicShard>(relic1));
+        savedReliquary->Do(Create<OtherShard>(relic1));
         const auto relic2 = savedReliquary->Do(Create<OpenRelic>());
-        relic2->Create<BasicShard>();
-        relic2->Create<OtherShard>();
+        savedReliquary->Do(Create<BasicShard>(relic2));
+        savedReliquary->Do(Create<OtherShard>(relic2));
 
         WHEN("saving reliquary")
         {
@@ -324,6 +317,7 @@ SCENARIO_METHOD(
                 };
 
                 const auto loadedReliquary = ReliquaryOrigin()
+                    .Register<OpenRelic>()
                     .Register<BasicShard>()
                     .Register<OtherShard>()
                     .Register<DerivedCurator>()
@@ -354,6 +348,7 @@ SCENARIO_METHOD(
     GIVEN("registered reliquary with curator, shard registered and shard created")
     {
         const auto reliquary = ReliquaryOrigin()
+            .Register<OpenRelic>()
             .Register<BasicShard>()
             .Register<OtherShard>()
             .Register<DerivedCurator>()
@@ -362,7 +357,7 @@ SCENARIO_METHOD(
         auto& curator = reliquary->Find<DerivedCurator>();
 
         auto relic = reliquary->Do(Create<OpenRelic>());
-        auto shard = relic->Create<BasicShard>();
+        auto shard = reliquary->Do(Create<BasicShard>(relic));
 
         auto setValue = dataGeneration.Random<int>();
 
@@ -376,7 +371,7 @@ SCENARIO_METHOD(
 
         WHEN("querying shard")
         {
-            auto afterShard = relic->Find<BasicShard>();
+            auto afterShard = Arca::Index<BasicShard>(relic.ID(), *reliquary);
 
             THEN("data has been set")
             {

@@ -2,8 +2,6 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/ClosedTypedRelic.h>
-
 #include "DifferentiableShard.h"
 
 #include <Inscription/BinaryArchive.h>
@@ -28,28 +26,28 @@ public:
 namespace Arca
 {
     template<>
-    struct Traits<::HandleTestsFixture::Shard>
+    struct Traits<HandleTestsFixture::Shard>
     {
         static const ObjectType objectType = ObjectType::Shard;
         static inline const TypeName typeName = "HandleTestsShard";
     };
 
     template<>
-    struct Traits<::HandleTestsFixture::OtherShard>
+    struct Traits<HandleTestsFixture::OtherShard>
     {
         static const ObjectType objectType = ObjectType::Shard;
         static inline const TypeName typeName = "HandleTestsOtherShard";
     };
 
     template<>
-    struct Traits<::HandleTestsFixture::TypedRelic>
+    struct Traits<HandleTestsFixture::TypedRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "HandleTestsTypedRelic";
     };
 
     template<>
-    struct Traits<::HandleTestsFixture::GlobalRelic>
+    struct Traits<HandleTestsFixture::GlobalRelic>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "HandleTestsGlobalRelic";
@@ -57,51 +55,51 @@ namespace Arca
     };
 
     template<>
-    struct Traits<::HandleTestsFixture::HandleHolder>
+    struct Traits<HandleTestsFixture::HandleHolder>
     {
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "HandleTestsHandleHolder";
     };
 
     template<>
-    struct Traits<::HandleTestsFixture::Curator>
+    struct Traits<HandleTestsFixture::Curator>
     {
         static const ObjectType objectType = ObjectType::Curator;
         static inline const TypeName typeName = "HandleTestsBasicCurator";
     };
 
     template<>
-    struct Traits<::HandleTestsFixture::Signal>
+    struct Traits<HandleTestsFixture::Signal>
     {
         static const ObjectType objectType = ObjectType::Signal;
         static inline const TypeName typeName = "HandleTestsBasicSignal";
     };
 }
 
-class HandleTestsFixture::TypedRelic final : public ClosedTypedRelic<TypedRelic>
+class HandleTestsFixture::TypedRelic final
 {
 public:
     Index<Shard> basicShard;
 public:
-    explicit TypedRelic(Init init);
-    TypedRelic(Init init, Serialization);
+    explicit TypedRelic(RelicInit init);
+    TypedRelic(RelicInit init, Serialization);
 };
 
-class HandleTestsFixture::GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
+class HandleTestsFixture::GlobalRelic final
 {
 public:
     Index<Shard> basicShard;
 public:
-    explicit GlobalRelic(Init init);
+    explicit GlobalRelic(RelicInit init);
 };
 
-class HandleTestsFixture::HandleHolder final : public ClosedTypedRelic<HandleHolder>
+class HandleTestsFixture::HandleHolder final
 {
 public:
     Handle handle;
 public:
-    explicit HandleHolder(Init init);
-    explicit HandleHolder(Init init, Handle handle);
+    explicit HandleHolder(RelicInit init);
+    explicit HandleHolder(RelicInit init, Handle handle);
 };
 
 class HandleTestsFixture::Curator final : public Arca::Curator

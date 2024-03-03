@@ -2,7 +2,6 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/ClosedTypedRelic.h>
 #include <Arca/Reliquary.h>
 
 #include "DifferentiableShard.h"
@@ -88,32 +87,28 @@ struct IntegrationTestsFixture::BasicSignal
     int value = 0;
 };
 
-class IntegrationTestsFixture::ChildRelic final : public ClosedTypedRelic<ChildRelic>
+class IntegrationTestsFixture::ChildRelic final
 {
 public:
     int value = 0;
 public:
-    explicit ChildRelic(Init init) : ClosedTypedRelic(init)
-    {}
+    ChildRelic() = default;
 };
 
-class IntegrationTestsFixture::ParentRelic final : public ClosedTypedRelic<ParentRelic>
+class IntegrationTestsFixture::ParentRelic final
 {
 public:
     int value = 0;
 public:
-    explicit ParentRelic(Init init) : ClosedTypedRelic(init)
-    {}
+    explicit ParentRelic() = default;
 
-    ParentRelic(Init init, int value);
-
-    void CreateChild() const;
+    ParentRelic(int value);
 };
 
-class IntegrationTestsFixture::MatrixCreatingRelic final : public ClosedTypedRelic<MatrixCreatingRelic>
+class IntegrationTestsFixture::MatrixCreatingRelic final
 {
 public:
-    explicit MatrixCreatingRelic(Init init);
+    explicit MatrixCreatingRelic(RelicInit init);
 };
 
 class IntegrationTestsFixture::MatrixAndParentCurator final : public Curator
@@ -124,25 +119,23 @@ public:
     MatrixAndParentCurator(Init init);
 };
 
-class IntegrationTestsFixture::RelicListeningToSignalFromConstructor final :
-    public ClosedTypedRelic<RelicListeningToSignalFromConstructor>
+class IntegrationTestsFixture::RelicListeningToSignalFromConstructor final
 {
 public:
     std::vector<int> signalExecutions;
 public:
-    RelicListeningToSignalFromConstructor(Init init);
+    RelicListeningToSignalFromConstructor(RelicInit init);
 };
 
-class IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic final :
-    public ClosedTypedRelic<GlobalRelicCreatingNullSerializedRelic>
+class IntegrationTestsFixture::GlobalRelicCreatingNullSerializedRelic final
 {
 public:
     using LocalShard = SerializationData::BasicShardNullInscription;
     using LocalRelic = SerializationData::TypedClosedRelicNullInscription<LocalShard>;
     Index<LocalRelic> localRelic;
 public:
-    GlobalRelicCreatingNullSerializedRelic(Init init);
-    GlobalRelicCreatingNullSerializedRelic(Init init, Serialization);
+    GlobalRelicCreatingNullSerializedRelic(RelicInit init);
+    GlobalRelicCreatingNullSerializedRelic(RelicInit init, Serialization);
 };
 
 namespace Inscription

@@ -2,8 +2,6 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/ClosedTypedRelic.h>
-
 #include <Inscription/BinaryArchive.h>
 
 using namespace Arca;
@@ -14,31 +12,25 @@ public:
     class Shard
     {};
 
-    class Relic final : public ClosedTypedRelic<Relic>
+    class Relic final
     {
     public:
-        explicit Relic(Init init) : ClosedTypedRelic(init)
-        {}
+        Relic() = default;
     };
 
-    class GlobalRelic final : public ClosedTypedRelic<GlobalRelic>
+    class GlobalRelic final
     {
     public:
-        explicit GlobalRelic(Init init) : ClosedTypedRelic(init)
-        {}
+        GlobalRelic() = default;
     };
 
-    class GlobalRelicWithMovedValue final : public ClosedTypedRelic<GlobalRelicWithMovedValue>
+    class GlobalRelicWithMovedValue final
     {
     public:
         std::unique_ptr<int> myInt;
     public:
-        explicit GlobalRelicWithMovedValue(Init init) : ClosedTypedRelic(init)
-        {}
-
-        GlobalRelicWithMovedValue(Init init, std::unique_ptr<int>&& myInt) :
-            ClosedTypedRelic(init), myInt(std::move(myInt))
-        {}
+        GlobalRelicWithMovedValue() = default;
+        explicit GlobalRelicWithMovedValue(std::unique_ptr<int>&& myInt);
     };
 
     class Curator final : public Arca::Curator

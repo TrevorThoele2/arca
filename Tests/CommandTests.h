@@ -2,7 +2,7 @@
 
 #include "GeneralFixture.h"
 
-#include <Arca/ClosedTypedRelic.h>
+#include <Arca/Relic.h>
 #include "BasicShard.h"
 
 class CommandTestsFixture : public GeneralFixture
@@ -115,23 +115,23 @@ public:
     using Arca::Curator::Curator;
 };
 
-class CommandTestsFixture::Relic final : public Arca::ClosedTypedRelic<Relic>
+class CommandTestsFixture::Relic final
 {
 public:
     int integer = 0;
     std::string string;
 public:
-    explicit Relic(Init init);
-    explicit Relic(Init init, int integer, const std::string& string);
+    Relic() = default;
+    Relic(int integer, const std::string& string);
 };
 
-class CommandTestsFixture::RelicWithShard final : public Arca::ClosedTypedRelic<RelicWithShard>
+class CommandTestsFixture::RelicWithShard final
 {
 public:
     Arca::Index<BasicShard> shard;
 public:
-    RelicWithShard(Init init, int integer, const std::string& string);
-    RelicWithShard(Init init, Arca::Serialization);
+    RelicWithShard(Arca::RelicInit init, int integer, const std::string& string);
+    RelicWithShard(Arca::RelicInit init, Arca::Serialization);
 };
 
 namespace Inscription
