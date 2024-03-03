@@ -27,6 +27,8 @@ namespace Arca
         void EnsureInteraction(void(KnownMatrix::* interaction)(bool));
         template<class MatrixT, std::enable_if_t<is_matrix_v<MatrixT>, int> = 0>
         void EnsureStopInteraction(void(KnownMatrix::* stopInteraction)(bool));
+
+        [[nodiscard]] std::vector<KnownMatrix> AllKnown() const;
     public:
         ReliquaryMatrices(const ReliquaryMatrices& arg) = delete;
         ReliquaryMatrices& operator=(const ReliquaryMatrices& arg) = delete;
