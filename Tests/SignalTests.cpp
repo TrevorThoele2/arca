@@ -10,6 +10,16 @@ SCENARIO_METHOD(SignalTestsFixture, "signal", "[signal]")
             .Signal<BasicSignal>()
             .Actualize();
 
+        WHEN("raising signal")
+        {
+            reliquary->Raise<BasicSignal>(1);
+
+            THEN("reliquary has signal size of 1")
+            {
+                REQUIRE(reliquary->SignalSize() == 1);
+            }
+        }
+
         WHEN("raising signal with custom emission logic")
         {
             int foundValue = 0;

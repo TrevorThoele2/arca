@@ -61,11 +61,35 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "default reliquary", "[reliquary]")
     {
         auto reliquary = ReliquaryOrigin().Actualize();
 
-        WHEN("checking relic count")
+        WHEN("checking relic size")
         {
-            THEN("has relic count of zero")
+            THEN("has size of zero")
             {
                 REQUIRE(reliquary->RelicSize() == 0);
+            }
+        }
+
+        WHEN("checking shard size")
+        {
+            THEN("has size of zero")
+            {
+                REQUIRE(reliquary->ShardSize() == 0);
+            }
+        }
+
+        WHEN("checking curator size")
+        {
+            THEN("has size of zero")
+            {
+                REQUIRE(reliquary->CuratorSize() == 0);
+            }
+        }
+
+        WHEN("checking signal size")
+        {
+            THEN("has size of zero")
+            {
+                REQUIRE(reliquary->SignalSize() == 0);
             }
         }
 
@@ -167,11 +191,16 @@ SCENARIO_METHOD(ReliquaryTestsFixture, "registered reliquary with every type", "
             .Signal<BasicSignal>()
             .Actualize();
 
-        WHEN("checking relic count")
+        WHEN("checking relic size")
         {
-            THEN("has count of one for static shard")
+            THEN("has one relic for static relic")
             {
                 REQUIRE(reliquary->RelicSize() == 1);
+            }
+
+            THEN("has one shard for static relic")
+            {
+                REQUIRE(reliquary->ShardSize() == 1);
             }
         }
     }

@@ -89,17 +89,23 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
 
         WHEN("creating dynamic relic")
         {
-            auto preCreateRelicCount = reliquary->RelicSize();
+            auto preCreateRelicSize = reliquary->RelicSize();
             auto relic = reliquary->Create<DynamicRelic>();
 
-            THEN("reliquary relic count increments by one")
+            THEN("reliquary has one more relic")
             {
-                REQUIRE(reliquary->RelicSize() == (preCreateRelicCount + 1));
+                REQUIRE(reliquary->RelicSize() == (preCreateRelicSize + 1));
             }
 
             WHEN("creating shard")
             {
+                auto preCreateShardSize = reliquary->ShardSize();
                 auto shard = relic.Create<BasicShard>();
+
+                THEN("reliquary has one more shard")
+                {
+                    REQUIRE(reliquary->ShardSize() == (preCreateShardSize + 1));
+                }
 
                 THEN("shard is returned")
                 {
@@ -116,11 +122,26 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
                 {
                     relic.Destroy<BasicShard>();
 
+                    THEN("reliquary loses a shard")
+                    {
+                        REQUIRE(reliquary->ShardSize() == preCreateRelicSize);
+                    }
+
                     THEN("relic does not have shard")
                     {
                         REQUIRE(!relic.Find<BasicShard>());
                         REQUIRE(!relic.Has<BasicShard>());
                     }
+                }
+            }
+
+            WHEN("retrieving fixed relic with same id")
+            {
+                auto fixedRelic = reliquary->Find<FixedRelic>(relic.ID());
+
+                THEN("fixed relic is not found")
+                {
+                    REQUIRE(!fixedRelic);
                 }
             }
         }
@@ -165,6 +186,16 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
                     REQUIRE(reliquary->RelicSize() == (preDestroyRelicCount - 1));
                 }
             }
+
+            WHEN("retrieving dynamic relic with same id")
+            {
+                auto dynamicRelic = reliquary->Find<DynamicRelic>(relic.ID());
+
+                THEN("dynamic relic is not found")
+                {
+                    REQUIRE(!dynamicRelic);
+                }
+            }
         }
 
         WHEN("retrieving static relic")
@@ -199,6 +230,17 @@ SCENARIO_METHOD(RelicTestsFixture, "relic", "[relic]")
             THEN("dynamic is empty")
             {
                 REQUIRE(!asDynamic);
+            }
+        }
+
+        WHEN("retrieving static relic as fixed")
+        {
+            const auto staticRelic = reliquary->Static<StaticRelic>();
+            const auto asFixed = reliquary->Find<FixedRelic>(staticRelic->ID());
+
+            THEN("fixed is empty")
+            {
+                REQUIRE(!asFixed);
             }
         }
     }
@@ -510,6 +552,64 @@ SCENARIO_METHOD(RelicTestsFixture, "relic parenting", "[relic][parenting]")
             THEN("does not send signal")
             {
                 REQUIRE(onParented.IsEmpty());
+            }
+        }
+    }
+
+    GIVEN("parent from one reliquary and child from another")
+    {
+        auto origin = ReliquaryOrigin()
+            .Shard<BasicShard>();
+
+        auto parentReliquary = origin.Actualize();
+        auto childReliquary = origin.Actualize();
+
+        auto parent = parentReliquary->Create<DynamicRelic>();
+        parent.Create<BasicShard>();
+        auto child = childReliquary->Create<DynamicRelic>();
+        child.Create<BasicShard>();
+
+        WHEN("parenting child inside parent reliquary")
+        {
+            THEN("throws error")
+            {
+                REQUIRE_THROWS_MATCHES
+                (
+                    parentReliquary->ParentRelic(parent, child),
+                    CannotParentRelic,
+                    ::Catch::Matchers::Message(
+                        "The relic with id ("s + ::Chroma::ToString(child.ID()) + ") is from a different Reliquary.")
+                );
+            }
+        }
+
+        WHEN("parenting child inside child reliquary")
+        {
+            THEN("throws error")
+            {
+                REQUIRE_THROWS_MATCHES
+                (
+                    childReliquary->ParentRelic(parent, child),
+                    CannotParentRelic,
+                    ::Catch::Matchers::Message(
+                        "The relic with id ("s + ::Chroma::ToString(parent.ID()) + ") is from a different Reliquary.")
+                );
+            }
+        }
+
+        WHEN("parenting child inside irrelevant reliquary")
+        {
+            auto irrelevantReliquary = origin.Actualize();
+
+            THEN("throws error")
+            {
+                REQUIRE_THROWS_MATCHES
+                (
+                    irrelevantReliquary->ParentRelic(parent, child),
+                    CannotParentRelic,
+                    ::Catch::Matchers::Message(
+                        "The relic with id ("s + ::Chroma::ToString(parent.ID()) + ") is from a different Reliquary.")
+                );
             }
         }
     }

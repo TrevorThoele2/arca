@@ -85,6 +85,14 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator", "[curator]")
             states.push_back(CuratorState::Stopped);
         };
 
+        WHEN("checking reliquary curator size")
+        {
+            THEN("has one curator")
+            {
+                REQUIRE(reliquary->CuratorSize() == 1);
+            }
+        }
+
         WHEN("finding curator")
         {
             THEN("found is not null")
@@ -189,20 +197,39 @@ struct SetupDifferentiableCurator
     {
         CuratorTestsFixture::DifferentiableCurator<id>::checkpoints = &checkpoints;
     }
+
+    static void Do(
+        std::vector<CuratorTestsFixture::CuratorCheckpoint>& checkpoints,
+        std::vector<Curator*>& initializationCheckpoints)
+    {
+        CuratorTestsFixture::DifferentiableCurator<id>::checkpoints = &checkpoints;
+        CuratorTestsFixture::DifferentiableCurator<id>::initializationCheckpoints = &initializationCheckpoints;
+    }
 };
 
 template<size_t id>
-struct RequireDifferentiableCuratorCheckpointCadence
+struct RequireDifferentiableCuratorCheckpointVerification
 {
     static void Do(
         std::vector<CuratorTestsFixture::CuratorCheckpoint>::iterator beginPosition,
         Reliquary& reliquary,
         std::list<bool>& output)
     {
-        auto curator = reliquary.Find<CuratorTestsFixture::DifferentiableCurator<id>>();
+        const auto curator = reliquary.Find<CuratorTestsFixture::DifferentiableCurator<id>>();
 
-        auto position = beginPosition + id;
+        const auto position = beginPosition + id;
         output.push_back(position->curator == curator);
+    }
+
+    static void Do(
+        std::vector<Curator*>::iterator beginPosition,
+        Reliquary& reliquary,
+        std::list<bool>& output)
+    {
+        const auto curator = reliquary.Find<CuratorTestsFixture::DifferentiableCurator<id>>();
+
+        const auto position = beginPosition + id;
+        output.push_back(*position == curator);
     }
 };
 
@@ -233,7 +260,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
                 std::list<bool> output;
                 ::Chroma::IterateRange<
                     size_t,
-                    RequireDifferentiableCuratorCheckpointCadence,
+                    RequireDifferentiableCuratorCheckpointVerification,
                     99,
                     0
                 >
@@ -253,7 +280,7 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
 
                 ::Chroma::IterateRange<
                     size_t,
-                    RequireDifferentiableCuratorCheckpointCadence,
+                    RequireDifferentiableCuratorCheckpointVerification,
                     99,
                     0
                 >
@@ -273,7 +300,177 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator pipeline", "[curator][pipeline]")
 
                 ::Chroma::IterateRange<
                     size_t,
-                    RequireDifferentiableCuratorCheckpointCadence,
+                    RequireDifferentiableCuratorCheckpointVerification,
+                    99,
+                    0
+                >
+                    (checkpoints.begin() + 200, *reliquary, output);
+
+                REQUIRE(output.size() == 100);
+                REQUIRE(std::all_of(
+                    output.begin(),
+                    output.end(),
+                    [](const bool& entry) { return entry; }));
+                output.clear();
+
+                REQUIRE(std::all_of(
+                    checkpoints.begin() + 200,
+                    checkpoints.end(),
+                    [](const CuratorCheckpoint& checkpoint) { return checkpoint.state == CuratorState::Stopped; }));
+            }
+        }
+    }
+
+    GIVEN("reliquary origin with pipeline that contains nonexistent curator")
+    {
+        auto pipeline = Pipeline();
+        pipeline.emplace_back();
+        pipeline.back().Add<BasicCurator>();
+
+        const auto reliquaryOrigin = ReliquaryOrigin()
+            .CuratorPipeline(pipeline);
+
+        WHEN("actualized")
+        {
+            THEN("throws error")
+            {
+                REQUIRE_THROWS_MATCHES
+                (
+                    reliquaryOrigin.Actualize(),
+                    InvalidPipeline,
+                    ::Catch::Matchers::Message("Curator (" + Traits<BasicCurator>::typeName + ") was not found.")
+                );
+            }
+        }
+    }
+
+    GIVEN("reliquary origin with pipeline that contains curator multiple times")
+    {
+        auto pipeline = Pipeline();
+        pipeline.emplace_back();
+        pipeline.back().Add<BasicCurator>();
+        pipeline.back().Add<BasicCurator>();
+
+        const auto reliquaryOrigin = ReliquaryOrigin()
+            .CuratorPipeline(pipeline)
+            .Curator<BasicCurator>();
+
+        WHEN("actualized")
+        {
+            THEN("throws error")
+            {
+                REQUIRE_THROWS_MATCHES
+                (
+                    reliquaryOrigin.Actualize(),
+                    InvalidPipeline,
+                    ::Catch::Matchers::Message("Curator (" + Traits<BasicCurator>::typeName + ") " +
+                        "was already in the pipeline.")
+                );
+            }
+        }
+    }
+
+    GIVEN("reliquary origin with pipeline that contains only empty stage")
+    {
+        auto pipeline = Pipeline();
+        pipeline.emplace_back();
+
+        const auto reliquaryOrigin = ReliquaryOrigin()
+            .CuratorPipeline(pipeline);
+
+        WHEN("actualized")
+        {
+            THEN("no throw")
+            {
+                REQUIRE_NOTHROW(reliquaryOrigin.Actualize());
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(CuratorTestsFixture, "curator split pipeline", "[curator][pipeline]")
+{
+    GIVEN("reliquary with pipeline with one hundred stages with one curator in each")
+    {
+        std::vector<CuratorCheckpoint> checkpoints;
+        std::vector<Curator*> initializationCheckpoints;
+        ::Chroma::IterateRange<size_t, SetupDifferentiableCurator, 99, 0>(checkpoints, initializationCheckpoints);
+
+        auto initializationPipeline = Pipeline();
+        ::Chroma::IterateRangeBackward<size_t, PipelineIterator, 99, 0>(initializationPipeline);
+        auto workPipeline = Pipeline();
+        ::Chroma::IterateRange<size_t, PipelineIterator, 99, 0>(workPipeline);
+
+        auto reliquaryOrigin = ReliquaryOrigin()
+            .CuratorPipeline(initializationPipeline, workPipeline);
+        ::Chroma::IterateRange<size_t, ReliquaryOriginIterator, 99, 0>(reliquaryOrigin);
+
+        auto reliquary = reliquaryOrigin.Actualize();
+
+        THEN("executed initialization in backwards order")
+        {
+            std::list<bool> output;
+            ::Chroma::IterateRangeBackward<
+                size_t,
+                RequireDifferentiableCuratorCheckpointVerification,
+                99,
+                0
+            >
+                (initializationCheckpoints.begin(), *reliquary, output);
+        }
+
+        WHEN("working reliquary")
+        {
+            reliquary->Work();
+
+            THEN("executes all in order")
+            {
+                REQUIRE(checkpoints.size() == 300);
+
+                std::list<bool> output;
+                ::Chroma::IterateRange<
+                    size_t,
+                    RequireDifferentiableCuratorCheckpointVerification,
+                    99,
+                    0
+                >
+                    (checkpoints.begin(), *reliquary, output);
+
+                REQUIRE(output.size() == 100);
+                REQUIRE(std::all_of(
+                    output.begin(),
+                    output.end(),
+                    [](const bool& entry) { return entry; }));
+                output.clear();
+
+                REQUIRE(std::all_of(
+                    checkpoints.begin(),
+                    checkpoints.begin() + 100,
+                    [](const CuratorCheckpoint& checkpoint) { return checkpoint.state == CuratorState::Started; }));
+
+                ::Chroma::IterateRange<
+                    size_t,
+                    RequireDifferentiableCuratorCheckpointVerification,
+                    99,
+                    0
+                >
+                    (checkpoints.begin() + 100, *reliquary, output);
+
+                REQUIRE(output.size() == 100);
+                REQUIRE(std::all_of(
+                    output.begin(),
+                    output.end(),
+                    [](const bool& entry) { return entry; }));
+                output.clear();
+
+                REQUIRE(std::all_of(
+                    checkpoints.begin() + 100,
+                    checkpoints.begin() + 200,
+                    [](const CuratorCheckpoint& checkpoint) { return checkpoint.state == CuratorState::Worked; }));
+
+                ::Chroma::IterateRange<
+                    size_t,
+                    RequireDifferentiableCuratorCheckpointVerification,
                     99,
                     0
                 >

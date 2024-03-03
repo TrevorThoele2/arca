@@ -37,9 +37,6 @@
 
 #include "IntervalList.h"
 
-#include "Chroma/StringUtility.h"
-using namespace std::string_literals;
-
 #include "Serialization.h"
 #include <Inscription/OutputJumpTable.h>
 #include <Inscription/InputJumpTable.h>
@@ -102,6 +99,8 @@ namespace Arca
 
         template<class ShardT, std::enable_if_t<is_shard_v<ShardT>, int> = 0>
         [[nodiscard]] Arca::Batch<ShardT> Batch();
+
+        [[nodiscard]] SizeT ShardSize() const;
     public:
         template<class CuratorT, std::enable_if_t<std::is_same_v<CuratorT, Curator>, int> = 0>
         Curator* Find(const TypeHandleName& typeHandle);
@@ -109,6 +108,8 @@ namespace Arca
         [[nodiscard]] CuratorT* Find();
         template<class CuratorT, std::enable_if_t<is_curator_v<CuratorT>, int> = 0>
         [[nodiscard]] const CuratorT* Find() const;
+
+        [[nodiscard]] SizeT CuratorSize() const;
     public:
         template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
         void Raise(const SignalT& signal);
@@ -120,6 +121,8 @@ namespace Arca
 
         template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
         Arca::Batch<SignalT> Batch();
+
+        [[nodiscard]] SizeT SignalSize() const;
     private:
         struct KnownPolymorphicSerializer
         {
