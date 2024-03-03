@@ -21,31 +21,31 @@ namespace Arca
     template<class T, std::enable_if_t<is_relic_v<T>, int>>
     command_return_t<Create<T>> ReliquaryCommands::Do(const Create<T>& command)
     {
-        return command.function(Relics());
+        return command.Do(Relics());
     }
 
     template<class T, std::enable_if_t<is_shard_v<T>, int>>
     command_return_t<Create<T>> ReliquaryCommands::Do(const Create<T>& command)
     {
-        return command.function(Shards());
+        return command.Do(Shards());
     }
 
     template<class T>
     command_return_t<CreateWith<T>> ReliquaryCommands::Do(const CreateWith<T>& command)
     {
-        return command.function(Relics());
+        return command.Do(Relics());
     }
 
     template<class T>
     command_return_t<CreateChild<T>> ReliquaryCommands::Do(const CreateChild<T>& command)
     {
-        return command.function(Relics());
+        return command.Do(Relics());
     }
 
     template<class T>
     command_return_t<CreateChildWith<T>> ReliquaryCommands::Do(const CreateChildWith<T>& command)
     {
-        return command.function(Relics());
+        return command.Do(Relics());
     }
 
     template<class T, std::enable_if_t<is_relic_v<T>, int>>

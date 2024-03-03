@@ -59,6 +59,12 @@ RelicTestsFixture::MovableOnlyRelic::MovableOnlyRelic(Init init, int myInt)
     basicShard = Create<Shard>();
 }
 
+RelicTestsFixture::RelicConstructedFromMovedValue::RelicConstructedFromMovedValue(
+    Init init, std::unique_ptr<int>&& myInt)
+    :
+    ClosedTypedRelic(init), myInt(std::move(myInt))
+{}
+
 namespace Arca
 {
     bool Traits<RelicTestsFixture::ShouldCreateRelic>::ShouldCreate(Reliquary& reliquary, int value)
@@ -959,6 +965,80 @@ SCENARIO_METHOD(RelicTestsFixture, "relic moving only", "[relic]")
             THEN("has shard")
             {
                 REQUIRE(relic->basicShard);
+            }
+        }
+    }
+}
+
+SCENARIO_METHOD(RelicTestsFixture, "relic constructed from moved value", "[relic]")
+{
+    GIVEN("registered reliquary")
+    {
+        auto reliquary = ReliquaryOrigin()
+            .Register<RelicConstructedFromMovedValue>()
+            .Register<Shard>()
+            .Actualize();
+
+        WHEN("creating relic from moved value")
+        {
+            const auto generatedInt = dataGeneration.Random<int>();
+            auto backingInt = new int(generatedInt);
+            auto myInt = std::unique_ptr<int>(backingInt);
+
+            auto relic = reliquary->Do<Create<RelicConstructedFromMovedValue>>(std::move(myInt));
+
+            THEN("has moved value")
+            {
+                REQUIRE(relic->myInt.get() == backingInt);
+            }
+        }
+
+        WHEN("creating child relic from moved value")
+        {
+            auto parent = reliquary->Do<Create<OpenRelic>>();
+
+            const auto generatedInt = dataGeneration.Random<int>();
+            auto backingInt = new int(generatedInt);
+            auto myInt = std::unique_ptr<int>(backingInt);
+
+            auto relic = reliquary->Do<CreateChild<RelicConstructedFromMovedValue>>(parent, std::move(myInt));
+
+            THEN("has moved value")
+            {
+                REQUIRE(relic->myInt.get() == backingInt);
+            }
+        }
+
+        WHEN("creating relic from moved value with structure")
+        {
+            auto structure = RelicStructure{};
+
+            const auto generatedInt = dataGeneration.Random<int>();
+            auto backingInt = new int(generatedInt);
+            auto myInt = std::unique_ptr<int>(backingInt);
+
+            auto relic = reliquary->Do<CreateWith<RelicConstructedFromMovedValue>>(structure, std::move(myInt));
+
+            THEN("has moved value")
+            {
+                REQUIRE(relic->myInt.get() == backingInt);
+            }
+        }
+
+        WHEN("creating child relic from moved value with structure")
+        {
+            auto parent = reliquary->Do<Create<OpenRelic>>();
+            auto structure = RelicStructure{};
+
+            const auto generatedInt = dataGeneration.Random<int>();
+            auto backingInt = new int(generatedInt);
+            auto myInt = std::unique_ptr<int>(backingInt);
+
+            auto relic = reliquary->Do<CreateChildWith<RelicConstructedFromMovedValue>>(parent, structure, std::move(myInt));
+
+            THEN("has moved value")
+            {
+                REQUIRE(relic->myInt.get() == backingInt);
             }
         }
     }

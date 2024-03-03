@@ -2,12 +2,14 @@
 
 #include "Command.h"
 
-#include <functional>
 #include "IsRelic.h"
 #include "IsShard.h"
 #include "RelicID.h"
 #include "RelicIndex.h"
 #include "ShardIndex.h"
+
+#include "ReliquaryRelics.h"
+#include "ReliquaryShards.h"
 
 namespace Arca
 {
@@ -20,23 +22,50 @@ namespace Arca
     template<class T>
     struct Create<T, std::enable_if_t<is_relic_v<T>>>
     {
-        std::function<RelicIndex<T>(ReliquaryRelics&)> function;
+        template<class... Args>
+        explicit Create(Args&& ... args) :
+            base(std::make_unique<Derived<Args...>>(
+                std::forward<Args>(args)...))
+        {}
 
-        template<class... ConstructorArgs>
-        explicit Create(ConstructorArgs&& ... constructorArgs)
+        RelicIndex<T> Do(ReliquaryRelics& relics) const
         {
-            function =
-                [args = std::make_tuple(std::forward<ConstructorArgs>(constructorArgs)...)] (ReliquaryRelics& relics) mutable
+            return base->Do(relics);
+        }
+    private:
+        class Base
+        {
+        public:
+            virtual ~Base() = 0;
+
+            virtual RelicIndex<T> Do(ReliquaryRelics& relics) = 0;
+        };
+
+        std::unique_ptr<Base> base;
+
+        template<class... Args>
+        class Derived final : public Base
+        {
+        public:
+            explicit Derived(Args&& ... args) :
+                args(std::forward<Args>(args)...)
+            {}
+
+            RelicIndex<T> Do(ReliquaryRelics& relics) override
             {
                 return std::apply(
                     [&relics](auto&& ... args)
-                    {
-                        return relics.template Create<T>(std::forward<ConstructorArgs>(args)...);
-                    },
-                    args);
-            };
-        }
+                {
+                    return relics.template Create<T>(std::forward<decltype(args)>(args)...);
+                }, std::move(args));
+            }
+        private:
+            std::tuple<Args...> args;
+        };
     };
+
+    template <class T>
+    Create<T, typename std::enable_if<is_relic_v<T>>::type>::Base::~Base() = default;
 
     template<class T>
     struct Traits<Create<T, std::enable_if_t<is_relic_v<T>>>>
@@ -49,23 +78,50 @@ namespace Arca
     template<class T>
     struct Create<T, std::enable_if_t<is_shard_v<T>>>
     {
-        std::function<ShardIndex<T>(ReliquaryShards&)> function;
+        template<class... Args>
+        explicit Create(Args&& ... args) :
+            base(std::make_unique<Derived<Args...>>(
+                std::forward<Args>(args)...))
+        {}
 
-        template<class... ConstructorArgs>
-        explicit Create(RelicID id, ConstructorArgs&& ... constructorArgs)
+        ShardIndex<T> Do(ReliquaryShards& shards) const
         {
-            function =
-                [id, args = std::make_tuple(std::forward<ConstructorArgs>(constructorArgs)...)](ReliquaryShards& shards) mutable
+            return base->Do(shards);
+        }
+    private:
+        class Base
+        {
+        public:
+            virtual ~Base() = 0;
+
+            virtual ShardIndex<T> Do(ReliquaryShards& shards) = 0;
+        };
+
+        std::unique_ptr<Base> base;
+
+        template<class... Args>
+        class Derived final : public Base
+        {
+        public:
+            explicit Derived(Args&& ... args) :
+                args(std::forward<Args>(args)...)
+            {}
+
+            ShardIndex<T> Do(ReliquaryShards& shards) override
             {
                 return std::apply(
-                    [id, &shards](auto&& ... args)
+                    [&shards](auto&& ... args)
                     {
-                        return shards.template Create<T>(id, std::forward<ConstructorArgs>(args)...);
-                    },
-                    args);
-            };
-        }
+                        return shards.template Create<T>(std::forward<decltype(args)>(args)...);
+                    }, std::move(args));
+            }
+        private:
+            std::tuple<Args...> args;
+        };
     };
+
+    template <class T>
+    Create<T, typename std::enable_if<is_shard_v<T>>::type>::Base::~Base() = default;
 
     template<class T>
     struct Traits<Create<T, std::enable_if_t<is_shard_v<T>>>>

@@ -197,7 +197,6 @@ namespace Inscription
 
                 auto reliquary = archive.template UserContext<Arca::Reliquary>();
                 object.owner = reliquary;
-                object.value = object.FindValueFromOwner();
             }
         }
     };

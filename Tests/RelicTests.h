@@ -89,6 +89,17 @@ public:
         MovableOnlyRelic& operator=(const MovableOnlyRelic& arg) = delete;
         MovableOnlyRelic& operator=(MovableOnlyRelic&& arg) noexcept = default;
     };
+
+    class RelicConstructedFromMovedValue final : public ClosedTypedRelic<RelicConstructedFromMovedValue>
+    {
+    public:
+        std::unique_ptr<int> myInt;
+    public:
+        explicit RelicConstructedFromMovedValue(Init init) : ClosedTypedRelic(init)
+        {}
+
+        RelicConstructedFromMovedValue(Init init, std::unique_ptr<int>&& myInt);
+    };
 };
 
 namespace Arca
@@ -150,6 +161,13 @@ namespace Arca
         static const ObjectType objectType = ObjectType::Relic;
         static inline const TypeName typeName = "ReliquaryTestsMovableOnlyRelic";
     };
+
+    template<>
+    struct Traits<::RelicTestsFixture::RelicConstructedFromMovedValue>
+    {
+        static const ObjectType objectType = ObjectType::Relic;
+        static inline const TypeName typeName = "ReliquaryTestsRelicConstructedFromMoveValue";
+    };
 }
 
 namespace Inscription
@@ -204,5 +222,10 @@ namespace Inscription
     template<>
     class Scribe<::RelicTestsFixture::MovableOnlyRelic, BinaryArchive> final
         : public ArcaNullScribe<::RelicTestsFixture::MovableOnlyRelic, BinaryArchive>
+    {};
+
+    template<>
+    class Scribe<::RelicTestsFixture::RelicConstructedFromMovedValue, BinaryArchive> final
+        : public ArcaNullScribe<::RelicTestsFixture::RelicConstructedFromMovedValue, BinaryArchive>
     {};
 }
