@@ -325,11 +325,6 @@ SCENARIO_METHOD(
                     .Register<DerivedCurator>()
                     .Actualize();
 
-                DerivedCurator::onConstructor = [&allBatch](DifferentiableCuratorBase& curator)
-                {
-                    allBatch = curator.TheOwner().Batch<All<BasicShard, OtherShard>>();
-                };
-
                 auto input = Inscription::Archive::InputBinary("Test.dat");
                 input(*loadedReliquary);
 

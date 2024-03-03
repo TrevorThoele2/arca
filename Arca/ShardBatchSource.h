@@ -98,7 +98,9 @@ namespace Arca
     };
 
     template<class T>
-    BatchSource<T, std::enable_if_t<is_shard_v<T>>>::BatchSource(Reliquary& owner, ReliquaryShards& shards, ReliquaryMatrices& matrices) :
+    BatchSource<T, std::enable_if_t<is_shard_v<T>>>::BatchSource(
+        Reliquary& owner, ReliquaryShards& shards, ReliquaryMatrices& matrices)
+        :
         owner(&owner), shards(&shards), matrices(&matrices)
     {}
 

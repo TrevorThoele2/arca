@@ -9,11 +9,5 @@ namespace Arca
     class MatrixImplementation;
 
     template<class T>
-    struct MatrixContains
-    {
-        static bool Contains(Type type)
-        {
-            return TypeFor<T>() == type;
-        }
-    };
+    struct MatrixContains;
 }
