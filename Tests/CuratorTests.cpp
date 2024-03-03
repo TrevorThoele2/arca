@@ -28,13 +28,17 @@ CuratorTestsFixture::CuratorWithNonDefaultConstructor::CuratorWithNonDefaultCons
     Curator(init), myValue(myValue)
 {}
 
-CuratorTestsFixture::CuratorWithLocalRelicConstructor::CuratorWithLocalRelicConstructor(Init init) :
-    Curator(init), localRelic(init.owner.Do<Create<LocalRelic>>())
-{}
+CuratorTestsFixture::CuratorWithLocalRelicConstructor::CuratorWithLocalRelicConstructor(Init init, int localRelicValue) :
+    Curator(init), localRelic(init.owner.Do<Create<LocalRelic>>(localRelicValue))
+{
+    this->localRelicValue = localRelic->value;
+}
 
 CuratorTestsFixture::CuratorWithGlobalRelicConstructor::CuratorWithGlobalRelicConstructor(Init init) :
     Curator(init), globalRelic(init.owner)
-{}
+{
+    globalRelicValue = globalRelic->value;
+}
 
 template<size_t id>
 struct StagePerCuratorIterator
@@ -155,12 +159,13 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator constructor", "[curator]")
 {
     GIVEN("reliquary registered")
     {
-        std::vector<Curator*> worked;
+        auto localRelicValue = dataGeneration.Random<int>();
+        auto globalRelicValue = dataGeneration.Random<int>();
 
         auto reliquary = ReliquaryOrigin()
             .Register<LocalRelic>()
-            .Register<GlobalRelic>()
-            .Register<CuratorWithLocalRelicConstructor>()
+            .Register<GlobalRelic>(globalRelicValue)
+            .Register<CuratorWithLocalRelicConstructor>(localRelicValue)
             .Register<CuratorWithGlobalRelicConstructor>()
             .Actualize();
 
@@ -173,6 +178,11 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator constructor", "[curator]")
             {
                 REQUIRE(localRelic);
             }
+
+            THEN("curator has value")
+            {
+                REQUIRE(curator.localRelicValue == localRelicValue);
+            }
         }
 
         WHEN("querying curator with global relic's value")
@@ -183,6 +193,11 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator constructor", "[curator]")
             THEN("is occupied")
             {
                 REQUIRE(globalRelic);
+            }
+
+            THEN("curator has value")
+            {
+                REQUIRE(curator.globalRelicValue == globalRelicValue);
             }
         }
     }
@@ -613,10 +628,90 @@ SCENARIO_METHOD(CuratorTestsFixture, "curator serialization", "[curator][seriali
             }
         }
     }
+
+    GIVEN("saved reliquary with local and global")
+    {
+        auto localRelicValue = dataGeneration.Random<int>();
+        auto globalRelicValue = dataGeneration.Random<int>();
+
+        auto savedReliquary = ReliquaryOrigin()
+            .Register<LocalRelic>()
+            .Register<GlobalRelic>(globalRelicValue)
+            .Register<CuratorWithLocalRelicConstructor>(localRelicValue)
+            .Register<CuratorWithGlobalRelicConstructor>()
+            .Actualize();
+
+        {
+            auto outputArchive = ::Inscription::OutputBinaryArchive("Test.dat", "Testing", 1);
+            outputArchive(*savedReliquary);
+        }
+
+        WHEN("loading reliquary")
+        {
+            auto localRelicValue2 = dataGeneration.Random<int>();
+            auto globalRelicValue2 = dataGeneration.Random<int>();
+
+            auto loadedReliquary = ReliquaryOrigin()
+                .Register<LocalRelic>()
+                .Register<GlobalRelic>(globalRelicValue2)
+                .Register<CuratorWithLocalRelicConstructor>(localRelicValue2)
+                .Register<CuratorWithGlobalRelicConstructor>()
+                .Actualize();
+
+            {
+                auto inputArchive = ::Inscription::InputBinaryArchive("Test.dat", "Testing");
+                inputArchive(*loadedReliquary);
+            }
+
+            WHEN("querying curator with local relic's value")
+            {
+                auto& curator = loadedReliquary->Find<CuratorWithLocalRelicConstructor>();
+                auto localRelic = curator.localRelic;
+
+                THEN("is occupied")
+                {
+                    REQUIRE(localRelic);
+                }
+
+                THEN("curator has value")
+                {
+                    REQUIRE(curator.localRelicValue == localRelicValue);
+                }
+            }
+
+            WHEN("querying curator with global relic's value")
+            {
+                auto& curator = loadedReliquary->Find<CuratorWithGlobalRelicConstructor>();
+                auto globalRelic = curator.globalRelic;
+
+                THEN("is occupied")
+                {
+                    REQUIRE(globalRelic);
+                }
+
+                THEN("curator has value")
+                {
+                    REQUIRE(curator.globalRelicValue == globalRelicValue);
+                }
+            }
+        }
+    }
 }
 
 namespace Inscription
 {
+    void Scribe<CuratorTestsFixture::LocalRelic, BinaryArchive>::ScrivenImplementation(
+        ObjectT& object, ArchiveT& archive)
+    {
+        archive(object.value);
+    }
+
+    void Scribe<CuratorTestsFixture::GlobalRelic, BinaryArchive>::ScrivenImplementation(
+        ObjectT& object, ArchiveT& archive)
+    {
+        archive(object.value);
+    }
+
     void Scribe<CuratorTestsFixture::BasicCurator, BinaryArchive>::ScrivenImplementation(
         ObjectT& object, ArchiveT& archive)
     {
@@ -633,5 +728,23 @@ namespace Inscription
         const ArchiveT&)
     {
         return { "BasicCurator" };
+    }
+
+    void Scribe<CuratorTestsFixture::CuratorWithLocalRelicConstructor, BinaryArchive>::ScrivenImplementation(
+        ObjectT& object, ArchiveT& archive)
+    {
+        archive(object.localRelic);
+
+        if (archive.IsInput())
+            object.localRelicValue = object.localRelic->value;
+    }
+
+    void Scribe<CuratorTestsFixture::CuratorWithGlobalRelicConstructor, BinaryArchive>::ScrivenImplementation(
+        ObjectT& object, ArchiveT& archive)
+    {
+        archive(object.globalRelic);
+
+        if (archive.IsInput())
+            object.globalRelicValue = object.globalRelic->value;
     }
 }
