@@ -46,7 +46,7 @@ namespace Arca
         [[nodiscard]] T* Get() const;
 
         [[nodiscard]] RelicID ID() const;
-        [[nodiscard]] Reliquary& Owner() const;
+        [[nodiscard]] Reliquary* Owner() const;
     private:
         RelicID id = 0;
         Reliquary* owner = nullptr;
@@ -155,15 +155,17 @@ namespace Arca
     }
 
     template<class T>
-    Reliquary& Ptr<T, std::enable_if_t<!is_global_relic_v<T> && !is_either_v<T>>>::Owner() const
+    Reliquary* Ptr<T, std::enable_if_t<!is_global_relic_v<T> && !is_either_v<T>>>::Owner() const
     {
-        return *owner;
+        return owner;
     }
 
     template<class T>
     T* Ptr<T, std::enable_if_t<!is_global_relic_v<T> && !is_either_v<T>>>::FindValueFromOwner()
     {
-        return Owner().FindStorage<T>(id);
+        if (owner == nullptr)
+            return nullptr;
+        return owner->FindStorage<T>(id);
     }
 }
 
@@ -238,7 +240,7 @@ namespace Arca
         [[nodiscard]] ShardT* Get() const;
 
         [[nodiscard]] RelicID ID() const;
-        [[nodiscard]] Reliquary& Owner() const;
+        [[nodiscard]] Reliquary* Owner() const;
     private:
         RelicID id = 0;
         Reliquary* owner = nullptr;
@@ -331,15 +333,17 @@ namespace Arca
     }
 
     template<class T>
-    Reliquary& Ptr<T, std::enable_if_t<is_either_v<T>>>::Owner() const
+    Reliquary* Ptr<T, std::enable_if_t<is_either_v<T>>>::Owner() const
     {
-        return *owner;
+        return owner;
     }
 
     template<class T>
     auto Ptr<T, std::enable_if_t<is_either_v<T>>>::FindValueFromOwner() -> ShardT*
     {
-        return Owner().template FindStorage<T>(id);
+        if (owner == nullptr)
+            return nullptr;
+        return owner->template FindStorage<T>(id);
     }
 }
 
@@ -397,7 +401,7 @@ namespace Arca
         [[nodiscard]] T* Get() const;
 
         [[nodiscard]] RelicID ID() const;
-        [[nodiscard]] Reliquary& Owner() const;
+        [[nodiscard]] Reliquary* Owner() const;
     private:
         RelicID id = 0;
         Reliquary* owner = nullptr;
@@ -505,15 +509,17 @@ namespace Arca
     }
 
     template<class T>
-    Reliquary& Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::Owner() const
+    Reliquary* Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::Owner() const
     {
-        return *owner;
+        return owner;
     }
 
     template<class T>
     T* Ptr<T, std::enable_if_t<is_global_relic_v<T>>>::FindValueFromOwner()
     {
-        return Owner().template FindGlobalStorage<T>();
+        if (owner == nullptr)
+            return nullptr;
+        return owner->template FindGlobalStorage<T>();
     }
 }
 
