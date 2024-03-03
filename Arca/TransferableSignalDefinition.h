@@ -6,7 +6,8 @@
 namespace Arca
 {
     template<class T>
-    TransferableSignal::TransferableSignal(const T& signal) : base(std::make_unique<Derived<T>>(signal))
+    TransferableSignal::TransferableSignal(const T& signal) :
+        base(std::make_unique<Derived<T>>(signal)), transferringTypeName(Traits<T>::typeName)
     {}
 
     template<class T>

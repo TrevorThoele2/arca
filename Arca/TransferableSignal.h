@@ -17,6 +17,8 @@ namespace Arca
         TransferableSignal(TransferableSignal&& arg) noexcept;
 
         void Raise(Reliquary& reliquary) const;
+
+        [[nodiscard]] TypeName TransferringTypeName() const;
     private:
         class Base
         {
@@ -37,6 +39,7 @@ namespace Arca
         };
 
         std::unique_ptr<Base> base;
+        const TypeName transferringTypeName;
     };
 
     template<>

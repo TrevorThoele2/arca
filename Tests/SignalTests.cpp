@@ -72,3 +72,28 @@ SCENARIO_METHOD(SignalTestsFixture, "signal", "[signal]")
         }
     }
 }
+
+SCENARIO_METHOD(SignalTestsFixture, "batching transferable signals", "[signal][transferable]")
+{
+    GIVEN("reliquary and batch of transferable signals")
+    {
+        auto reliquary = ReliquaryOrigin().Actualize();
+
+        auto batch = reliquary->Batch<TransferableSignal>();
+
+        WHEN("raising signal")
+        {
+            reliquary->Raise<BasicSignal>(1);
+
+            THEN("batch has size of 1")
+            {
+                REQUIRE(batch.Size() == 1);
+            }
+
+            THEN("batch element has type name of raised signal")
+            {
+                REQUIRE(batch.begin()->TransferringTypeName() == Traits<BasicSignal>::typeName);
+            }
+        }
+    }
+}
