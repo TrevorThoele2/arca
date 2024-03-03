@@ -14,7 +14,7 @@ namespace Arca
     template<>
     struct Traits<RelicParented>
     {
-        static const ObjectType objectType = ObjectType::Signal;
-        static TypeName TypeName() { return "Arca::RelicParented"; }
+        static constexpr ObjectType objectType = ObjectType::Signal;
+        static constexpr TypeName TypeName() { return "Arca::RelicParented"; }
     };
 }

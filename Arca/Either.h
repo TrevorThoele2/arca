@@ -22,8 +22,8 @@ namespace Arca
     template<class T>
     struct Traits<Either<T>>
     {
-        static const ObjectType objectType = ObjectType::Matrix;
-        static TypeName TypeName() { return "Arca::Either<" + Traits<std::decay_t<T>>::TypeName() + ">"; }
+        static constexpr ObjectType objectType = ObjectType::Matrix;
+        static constexpr TypeName TypeName() { return "Arca::Either<" + Traits<std::decay_t<T>>::TypeName() + ">"; }
     };
 
     template<class T>

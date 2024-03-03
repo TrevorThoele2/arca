@@ -84,10 +84,10 @@ namespace Arca
     template<class T>
     struct Traits<Create<T, std::enable_if_t<is_relic_v<T>>>>
     {
-        static const ObjectType objectType = ObjectType::Command;
-        static TypeName TypeName() { return "Arca::Create<" + Traits<std::remove_const_t<T>>::TypeName() + ">"; }
+        static constexpr ObjectType objectType = ObjectType::Command;
+        static constexpr TypeName TypeName() { return "Arca::Create<" + Traits<std::remove_const_t<T>>::TypeName() + ">"; }
         using Result = Index<T>;
-        static const bool selfContained = true;
+        static constexpr bool selfContained = true;
     };
 
     template<class T>
@@ -152,9 +152,9 @@ namespace Arca
     template<class T>
     struct Traits<Create<T, std::enable_if_t<is_shard_v<T>>>>
     {
-        static const ObjectType objectType = ObjectType::Command;
-        static TypeName TypeName() { return "Arca::Create<" + Traits<std::remove_const_t<T>>::TypeName() + ">"; }
+        static constexpr ObjectType objectType = ObjectType::Command;
+        static constexpr TypeName TypeName() { return "Arca::Create<" + Traits<std::remove_const_t<T>>::TypeName() + ">"; }
         using Result = Index<T>;
-        static const bool selfContained = true;
+        static constexpr bool selfContained = true;
     };
 }

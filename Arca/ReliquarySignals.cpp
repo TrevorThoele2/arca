@@ -2,7 +2,7 @@
 
 namespace Arca
 {
-    ReliquarySignals::ReliquarySignals(ReliquaryMatrices& matrices) : matrices(&matrices)
+    ReliquarySignals::ReliquarySignals()
     {}
 
     ReliquarySignals::ListenerListBase::~ListenerListBase() = default;

@@ -26,14 +26,14 @@ namespace Arca
     template<>
     struct Traits<Destroying>
     {
-        static const ObjectType objectType = ObjectType::Signal;
-        static TypeName TypeName() { return "Arca::Destroying"; }
+        static constexpr ObjectType objectType = ObjectType::Signal;
+        static constexpr TypeName TypeName() { return "Arca::Destroying"; }
     };
 
     template<class T>
     struct Traits<DestroyingKnown<T>>
     {
-        static const ObjectType objectType = ObjectType::Signal;
-        static TypeName TypeName() { return "Arca::DestroyingKnown<" + FullTypeNameFor<T>() + ">"; }
+        static constexpr ObjectType objectType = ObjectType::Signal;
+        static constexpr TypeName TypeName() { return "Arca::DestroyingKnown<" + FullTypeNameFor<T>() + ">"; }
     };
 }

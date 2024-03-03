@@ -18,6 +18,7 @@
 namespace Arca
 {
     class Reliquary;
+    class ReliquaryShards;
     
     class ShardBatchSourceBase
     {
@@ -53,7 +54,7 @@ namespace Arca
         using iterator = typename Map::iterator;
         using const_iterator = typename Map::const_iterator;
     public:
-        explicit BatchSource(Reliquary& owner, ReliquaryMatrices& matrices);
+        explicit BatchSource(Reliquary& owner, ReliquaryShards& shards, ReliquaryMatrices& matrices);
         BatchSource(const BatchSource& arg) = delete;
         BatchSource(BatchSource&& arg) noexcept = default;
 
@@ -61,7 +62,7 @@ namespace Arca
         BatchSource& operator=(BatchSource&& arg) noexcept = default;
 
         template<class... ConstructorArgs>
-        ShardT* Add(RelicID id, bool required, ConstructorArgs&& ... constructorArgs);
+        std::weak_ptr<ShardT> Add(RelicID id, bool required, ConstructorArgs&& ... constructorArgs);
 
         iterator Destroy(RelicID destroy);
         iterator Destroy(iterator destroy);
@@ -89,6 +90,7 @@ namespace Arca
         Map map;
     private:
         Reliquary* owner = nullptr;
+        ReliquaryShards* shards = nullptr;
         ReliquaryMatrices* matrices = nullptr;
         friend class Reliquary;
     private:
@@ -96,21 +98,22 @@ namespace Arca
     };
 
     template<class T>
-    BatchSource<T, std::enable_if_t<is_shard_v<T>>>::BatchSource(Reliquary& owner, ReliquaryMatrices& matrices) :
-        owner(&owner), matrices(&matrices)
+    BatchSource<T, std::enable_if_t<is_shard_v<T>>>::BatchSource(Reliquary& owner, ReliquaryShards& shards, ReliquaryMatrices& matrices) :
+        owner(&owner), shards(&shards), matrices(&matrices)
     {}
 
     template<class T>
     template<class... ConstructorArgs>
-    auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Add(RelicID id, bool required, ConstructorArgs&& ... constructorArgs) -> ShardT*
+    auto BatchSource<T, std::enable_if_t<is_shard_v<T>>>::Add(
+        RelicID id, bool required, ConstructorArgs&& ... constructorArgs) -> std::weak_ptr<ShardT>
     {
         auto found = Find(id).lock();
         return found
-            ? found.get()
+            ? found
             : map.emplace(
                 id,
                 StoredT{ required, std::make_shared<std::decay_t<ShardT>>(std::forward<ConstructorArgs>(constructorArgs)...) })
-                    .first->second.shard.get();
+                    .first->second.shard;
     }
 
     template<class T>
@@ -224,148 +227,4 @@ namespace Inscription
         using CreateT = std::decay_t<ShardT>;
         std::shared_ptr<CreateT> Create();
     };
-
-    template<class T>
-    void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::Scriven(
-        ObjectT& object, Archive::Binary& archive)
-    {
-        if (archive.IsOutput())
-        {
-            auto& saveIDs = archive.UserContext<SaveUserContext>()->ids;
-
-            std::vector<typename ObjectT::iterator> save;
-            for (auto& id : saveIDs)
-            {
-                auto found = object.map.find(id);
-                if (found != object.map.end())
-                    save.push_back(found);
-            }
-
-            auto size = save.size();
-            archive(size);
-
-            for (auto& stored : save)
-            {
-                if (saveIDs.find(stored->first) != saveIDs.end())
-                {
-                    archive(stored->first);
-                    archive(*stored->second.shard);
-                    archive(stored->second.required);
-                }
-            }
-        }
-        else
-        {
-            ContainerSize size;
-            archive(size);
-
-            while (size-- > 0)
-            {
-                Arca::RelicID id;
-                archive(id);
-
-                auto matrixSnapshot = object.matrices->StartCreationTransaction(id);
-
-                auto foundShard = object.Find(id).lock();
-                if (foundShard)
-                {
-                    archive(*foundShard);
-                    bool required = false;
-                    archive(required);
-                }
-                else
-                {
-                    auto shard = Create();
-                    archive(*shard);
-                    bool required = false;
-                    archive(required);
-                    object.map.emplace(id, typename ObjectT::StoredT{ required, shard });
-                }
-
-                matrixSnapshot.Finalize();
-            }
-        }
-    }
-
-    template<class T>
-    void Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::Scriven(
-        const std::string& name, ObjectT& object, Archive::Json& archive)
-    {
-        if (archive.IsOutput())
-        {
-            auto& saveIDs = archive.UserContext<SaveUserContext>()->ids;
-
-            std::vector<typename ObjectT::iterator> save;
-            for (auto& id : saveIDs)
-            {
-                auto found = object.map.find(id);
-                if (found != object.map.end())
-                    save.push_back(found);
-            }
-
-            auto output = archive.AsOutput();
-            output->StartList(name);
-            for (auto& stored : save)
-            {
-                output->StartObject("");
-                archive("id", stored->first);
-                archive("shard", *stored->second.shard);
-                archive("required", stored->second.required);
-                output->EndObject();
-            }
-            output->EndList();
-        }
-        else
-        {
-            auto input = archive.AsInput();
-            auto size = input->StartList(name);
-            while (size-- > 0)
-            {
-                input->StartObject("");
-
-                Arca::RelicID id = Arca::nullRelicID;
-                archive("id", id);
-
-                auto matrixSnapshot = object.matrices->StartCreationTransaction(id);
-
-                auto foundShard = object.Find(id).lock();
-                if (foundShard)
-                {
-                    archive("shard", *foundShard);
-                    bool required = false;
-                    archive("required", required);
-                }
-                else
-                {
-                    auto shard = Create();
-                    archive("shard", *shard);
-                    bool required = false;
-                    archive("required", required);
-                    object.map.emplace(id, typename ObjectT::StoredT{ required, shard });
-                }
-
-                matrixSnapshot.Finalize();
-
-                input->EndObject();
-            }
-            input->EndList();
-        }
-    }
-
-    template<class T>
-    auto Scribe<Arca::BatchSource<T, std::enable_if_t<Arca::is_shard_v<T>>>>::Create() -> std::shared_ptr<CreateT>
-    {
-        using CreateT = std::decay_t<typename ObjectT::ShardT>;
-        if constexpr (Arca::has_shard_serialization_constructor_v<ShardT>)
-            return std::make_shared<CreateT>(Arca::Serialization{});
-        else if constexpr (Arca::has_shard_default_constructor_v<ShardT>)
-            return std::make_shared<CreateT>();
-        else
-        {
-            static_assert(
-                "A shard requires a serialization constructor (taking only the class Serialization) "
-                "or a default constructor in order to be serialized.");
-            return std::make_shared<CreateT>();
-        }
-    }
 }

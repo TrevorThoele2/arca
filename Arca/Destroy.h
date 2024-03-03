@@ -43,9 +43,9 @@ namespace Arca
     template<class T>
     struct Traits<Destroy<T, std::enable_if_t<is_relic_v<T>>>>
     {
-        static const ObjectType objectType = ObjectType::Command;
-        static TypeName TypeName() { return "Arca::Destroy<" + Chroma::ToString(TypeFor<T>()) + ">"; }
-        static const bool selfContained = true;
+        static constexpr ObjectType objectType = ObjectType::Command;
+        static constexpr TypeName TypeName() { return "Arca::Destroy<" + Chroma::ToString(TypeFor<T>()) + ">"; }
+        static constexpr bool selfContained = true;
     };
 
     template<class T>
@@ -76,9 +76,9 @@ namespace Arca
     template<class T>
     struct Traits<Destroy<T, std::enable_if_t<is_shard_v<T>>>>
     {
-        static const ObjectType objectType = ObjectType::Command;
-        static TypeName TypeName() { return "Arca::Destroy<" + Chroma::ToString(TypeFor<T>()) + ">"; }
-        static const bool selfContained = true;
+        static constexpr ObjectType objectType = ObjectType::Command;
+        static constexpr TypeName TypeName() { return "Arca::Destroy<" + Chroma::ToString(TypeFor<T>()) + ">"; }
+        static constexpr bool selfContained = true;
     };
 
     template<class T>
@@ -104,9 +104,9 @@ namespace Arca
     template<class T>
     struct Traits<Destroy<T, std::enable_if_t<is_matrix_v<T>>>>
     {
-        static const ObjectType objectType = ObjectType::Command;
-        static TypeName TypeName() { return "Arca::Destroy<" + Chroma::ToString(TypeFor<T>()) + ">"; }
-        static const bool selfContained = true;
+        static constexpr ObjectType objectType = ObjectType::Command;
+        static constexpr TypeName TypeName() { return "Arca::Destroy<" + Chroma::ToString(TypeFor<T>()) + ">"; }
+        static constexpr bool selfContained = true;
     };
 
     template<>
@@ -120,7 +120,7 @@ namespace Arca
     template<>
     struct Traits<Destroy<Handle>>
     {
-        static const ObjectType objectType = ObjectType::Command;
-        static TypeName TypeName() { return "Arca::Destroy<Handle>"; }
+        static constexpr ObjectType objectType = ObjectType::Command;
+        static constexpr TypeName TypeName() { return "Arca::Destroy<Handle>"; }
     };
 }

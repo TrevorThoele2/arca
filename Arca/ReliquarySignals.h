@@ -3,10 +3,8 @@
 #include <functional>
 
 #include "IsSignal.h"
-#include "IsMatrixSignal.h"
 #include "MatrixTypeForSignal.h"
-#include "KnownMatrix.h"
-#include "ReliquaryMatrices.h"
+#include "MatrixInteraction.h"
 
 namespace Arca
 {
@@ -18,9 +16,7 @@ namespace Arca
         template<class SignalT, class... Args, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
         void Raise(Args&& ... args);
 
-        template<class SignalT, std::enable_if_t<is_signal_v<SignalT> && !is_matrix_signal_v<SignalT>, int> = 0>
-        void On(const std::function<void(const SignalT&)>& function);
-        template<class SignalT, std::enable_if_t<is_signal_v<SignalT> && is_matrix_signal_v<SignalT>, int> = 0>
+        template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int> = 0>
         void On(const std::function<void(const SignalT&)>& function);
     public:
         template<class SignalT>
@@ -51,11 +47,9 @@ namespace Arca
         template<class SignalT>
         void ExecuteOnCommon(const std::function<void(const SignalT&)>& function);
     private:
-        ReliquaryMatrices* matrices;
-    private:
-        explicit ReliquarySignals(ReliquaryMatrices& matrices);
+        explicit ReliquarySignals();
         ReliquarySignals(ReliquarySignals&& arg) noexcept = default;
-        friend Reliquary;
+        friend class Reliquary;
     };
 
     template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int>>
@@ -70,17 +64,10 @@ namespace Arca
         Raise(SignalT{ std::forward<Args>(args)... });
     }
 
-    template<class SignalT, std::enable_if_t<is_signal_v<SignalT> && !is_matrix_signal_v<SignalT>, int>>
+    template<class SignalT, std::enable_if_t<is_signal_v<SignalT>, int>>
     void ReliquarySignals::On(const std::function<void(const SignalT&)>& function)
     {
         ExecuteOnCommon<SignalT>(function);
-    }
-
-    template<class SignalT, std::enable_if_t<is_signal_v<SignalT>&& is_matrix_signal_v<SignalT>, int>>
-    void ReliquarySignals::On(const std::function<void(const SignalT&)>& function)
-    {
-        ExecuteOnCommon<SignalT>(function);
-        matrices->EnsureInteraction<typename MatrixTypeForSignal<SignalT>::Type>(&KnownMatrix::InteractWithSignals);
     }
 
     template<class SignalT>

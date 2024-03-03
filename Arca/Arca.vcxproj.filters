@@ -61,9 +61,6 @@
     <ClCompile Include="ReliquaryMatrices.cpp">
       <Filter>Source Files\Reliquary\Components</Filter>
     </ClCompile>
-    <ClCompile Include="KnownMatrix.cpp">
-      <Filter>Source Files\Matrix</Filter>
-    </ClCompile>
     <ClCompile Include="KnownPolymorphicSerializer.cpp">
       <Filter>Source Files\Serialization</Filter>
     </ClCompile>
@@ -239,12 +236,6 @@
     </ClInclude>
     <ClInclude Include="MatrixBatchSource.h">
       <Filter>Header Files\Matrix\Batch</Filter>
-    </ClInclude>
-    <ClInclude Include="KnownMatrix.h">
-      <Filter>Header Files\Matrix</Filter>
-    </ClInclude>
-    <ClInclude Include="KnownMatrixDefinition.h">
-      <Filter>Header Files\Matrix</Filter>
     </ClInclude>
     <ClInclude Include="MatrixImplementation.h">
       <Filter>Header Files\Matrix</Filter>
@@ -428,6 +419,12 @@
     </ClInclude>
     <ClInclude Include="CreateData.h">
       <Filter>Header Files\Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="MatrixInteraction.h">
+      <Filter>Header Files\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="ShardBatchSourceDefinition.h">
+      <Filter>Header Files\Shard\Batch</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
